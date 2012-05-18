@@ -102,7 +102,7 @@ public enum VariableAtom implements Atom<String> {
      * @return The name
      */
     public String attribute() {
-        return String.format("var:%s", this.name);
+        return String.format("var-%s", this.name);
     }
 
     /**

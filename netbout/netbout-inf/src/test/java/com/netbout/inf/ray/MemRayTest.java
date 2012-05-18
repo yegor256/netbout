@@ -89,12 +89,25 @@ public final class MemRayTest {
             "title",
             "How are you, \u0434\u0440\u0443\u0433?"
         );
-        ray.close();
-        final File file = new File(dir, "index-map.txt");
+        ray.flush();
+        final String ver = FileUtils.readFileToString(
+            new File(dir, Files.MARKER)
+        );
         MatcherAssert.assertThat(
-            FileUtils.readFileToString(file).split(" *\\n"),
+            dir.list(),
+            Matchers.arrayContainingInAnyOrder(
+                Files.MARKER,
+                // @checkstyle MultipleStringLiterals (10 lines)
+                String.format("%s-map.txt", ver),
+                String.format("%s-a-title.txt", ver)
+            )
+        );
+        final File map = new File(dir, String.format("%s-map.txt", ver));
+        MatcherAssert.assertThat(
+            FileUtils.readFileToString(map).split(" *\\n"),
             Matchers.arrayContaining("2", "1")
         );
+        ray.close();
     }
 
 }

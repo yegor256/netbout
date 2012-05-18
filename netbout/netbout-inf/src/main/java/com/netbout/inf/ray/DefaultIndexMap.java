@@ -29,7 +29,6 @@ package com.netbout.inf.ray;
 import com.jcabi.log.Logger;
 import com.jcabi.log.VerboseThreads;
 import java.io.BufferedReader;
-import java.io.Closeable;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -50,9 +49,6 @@ import java.util.concurrent.ConcurrentSkipListSet;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.CharEncoding;
 
@@ -66,7 +62,7 @@ import org.apache.commons.lang.CharEncoding;
  * @checkstyle ClassDataAbstractionCoupling (500 lines)
  */
 @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
-final class DefaultIndexMap implements IndexMap, Closeable {
+final class DefaultIndexMap implements IndexMap {
 
     /**
      * The map.
@@ -80,9 +76,9 @@ final class DefaultIndexMap implements IndexMap, Closeable {
     private final transient SortedSet<Long> all;
 
     /**
-     * The file to work with.
+     * The files to work with.
      */
-    private final transient File file;
+    private final transient Files files;
 
     /**
      * Public ctor.
@@ -90,20 +86,16 @@ final class DefaultIndexMap implements IndexMap, Closeable {
      * @throws IOException If some IO error
      */
     public DefaultIndexMap(final File dir) throws IOException {
-        this.file = new File(dir, "index-map.txt");
-        FileUtils.touch(this.file);
-        final InputStream stream = new FileInputStream(this.file);
+        this.files = new Files(dir);
+        final Snapshot snapshot = this.files.reader();
+        final InputStream stream = new FileInputStream(snapshot.map());
         try {
             this.all = DefaultIndexMap.restore(stream);
         } finally {
             IOUtils.closeQuietly(stream);
         }
-        final Pattern pattern = Pattern.compile("attr-(.*?)\\.txt");
-        for (String name : dir.list()) {
-            final Matcher matcher = pattern.matcher(name);
-            if (matcher.matches()) {
-                this.index(matcher.group(1));
-            }
+        for (String name : snapshot.attrs()) {
+            this.map.put(name, new DefaultIndex(snapshot.attr(name)));
         }
     }
 
@@ -115,30 +107,8 @@ final class DefaultIndexMap implements IndexMap, Closeable {
         if (attr == null || attr.isEmpty()) {
             throw new IllegalArgumentException("attribute name is empty");
         }
-        if (this.map.get(attr) == null) {
-            try {
-                this.map.putIfAbsent(
-                    attr,
-                    new DefaultIndex(
-                        new File(
-                            this.file.getParentFile(),
-                            String.format("attr-%s.txt", attr)
-                        )
-                    )
-                );
-            } catch (java.io.IOException ex) {
-                throw new IllegalArgumentException(ex);
-            }
-        }
+        this.map.putIfAbsent(attr, new DefaultIndex());
         return this.map.get(attr);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void close() throws IOException {
-        this.flush();
     }
 
     /**
@@ -212,13 +182,14 @@ final class DefaultIndexMap implements IndexMap, Closeable {
             Runtime.getRuntime().availableProcessors() * 4,
             new VerboseThreads()
         );
+        final Snapshot snapshot = this.files.writer();
         final Collection<Callable<Void>> tasks =
             new ArrayList<Callable<Void>>(this.map.size() + 1);
         tasks.add(
             new Callable<Void>() {
                 public Void call() throws IOException {
                     final OutputStream stream =
-                        new FileOutputStream(DefaultIndexMap.this.file);
+                        new FileOutputStream(snapshot.map());
                     try {
                         final PrintWriter writer = new PrintWriter(
                             new OutputStreamWriter(stream, CharEncoding.UTF_8)
@@ -234,11 +205,12 @@ final class DefaultIndexMap implements IndexMap, Closeable {
                 }
             }
         );
-        for (final DefaultIndex index : this.map.values()) {
+        for (final String attr : this.map.keySet()) {
             tasks.add(
                 new Callable<Void>() {
                     public Void call() throws IOException {
-                        index.flush();
+                        DefaultIndexMap.this.map.get(attr)
+                            .flush(snapshot.attr(attr));
                         return null;
                     }
                 }
@@ -255,12 +227,12 @@ final class DefaultIndexMap implements IndexMap, Closeable {
             throw new IOException(ex);
         }
         service.shutdown();
+        this.files.publish(snapshot);
         Logger.info(
             this,
-            "#save(): saved %d msg numbers to %s (%d bytes) in %[ms]s",
+            "#save(): saved %d messages to %s in %[ms]s",
             this.all.size(),
-            this.file,
-            this.file.length(),
+            snapshot,
             System.currentTimeMillis() - start
         );
     }
