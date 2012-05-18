@@ -26,7 +26,6 @@
  */
 package com.netbout.inf.functors;
 
-import com.jcabi.log.Logger;
 import com.netbout.inf.Atom;
 import com.netbout.inf.Cursor;
 import com.netbout.inf.Functor;
@@ -75,15 +74,6 @@ final class Limit implements Functor {
                             }
                         }
                     }
-                    Logger.debug(
-                        this,
-                        "#shift(%s): %s to %s (pos=%d, recent=%d)",
-                        cursor,
-                        this,
-                        shifted,
-                        this.pos.get(),
-                        this.recent.get()
-                    );
                     return shifted;
                 }
                 /**

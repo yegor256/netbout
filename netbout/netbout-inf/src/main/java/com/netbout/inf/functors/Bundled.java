@@ -26,7 +26,6 @@
  */
 package com.netbout.inf.functors;
 
-import com.jcabi.log.Logger;
 import com.netbout.inf.Atom;
 import com.netbout.inf.Cursor;
 import com.netbout.inf.Functor;
@@ -82,7 +81,6 @@ final class Bundled implements Functor {
                         )
                     );
                 }
-                Logger.debug(this, "#shift(%s): to %s", cursor, shifted);
                 return shifted;
             }
             @Override
