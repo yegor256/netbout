@@ -38,6 +38,11 @@ import com.restfb.types.FacebookType;
 final class AppRequest extends FacebookType {
 
     /**
+     * Serialization marker.
+     */
+    private static final long serialVersionUID = 0x1529F1789ED11669L;
+
+    /**
      * Data of request.
      */
     @Facebook("data")

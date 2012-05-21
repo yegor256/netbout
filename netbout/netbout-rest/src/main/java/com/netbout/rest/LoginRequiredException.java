@@ -38,6 +38,11 @@ import javax.ws.rs.core.UriBuilder;
 public final class LoginRequiredException extends ForwardException {
 
     /**
+     * Serialization marker.
+     */
+    private static final long serialVersionUID = 0x7529FA789ED21669L;
+
+    /**
      * Constructor.
      * @param res The originator of the exception
      * @param cause Cause of this problem

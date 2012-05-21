@@ -32,6 +32,7 @@ package com.netbout.spi.cpa;
 import java.net.URLDecoder;
 import java.util.HashMap;
 import java.util.Map;
+import org.apache.commons.lang.CharEncoding;
 
 /**
  * Usefull instruments for CPA helpers.
@@ -62,11 +63,24 @@ public final class CpaUtils {
             if (parts.length == 1) {
                 value = "";
             } else {
-                value = URLDecoder.decode(parts[1]);
+                value = CpaUtils.decode(parts[1]);
             }
-            args.put(URLDecoder.decode(parts[0]), value);
+            args.put(CpaUtils.decode(parts[0]), value);
         }
         return args;
+    }
+
+    /**
+     * URL decode simple text.
+     * @param text The text to decode
+     * @return Decoded
+     */
+    private static String decode(final String text) {
+        try {
+            return URLDecoder.decode(text, CharEncoding.UTF_8);
+        } catch (java.io.UnsupportedEncodingException ex) {
+            throw new IllegalStateException(ex);
+        }
     }
 
 }

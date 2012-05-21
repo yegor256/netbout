@@ -37,6 +37,8 @@ import org.apache.commons.lang.StringUtils;
 /**
  * List of log events.
  *
+ * <p>The class is NOT thread-safe.
+ *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
@@ -94,6 +96,7 @@ public final class LogList {
      * Get list of events.
      * @return The list
      */
+    @SuppressWarnings("unchecked")
     public List<String> events() {
         return ListUtils.union(this.list, WebAppender.get());
     }

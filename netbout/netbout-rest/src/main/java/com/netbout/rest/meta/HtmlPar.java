@@ -42,6 +42,7 @@ final class HtmlPar extends AbstractPar {
     /**
      * Public ctor.
      */
+    @SuppressWarnings("unchecked")
     public HtmlPar() {
         super(
             ArrayUtils.toMap(

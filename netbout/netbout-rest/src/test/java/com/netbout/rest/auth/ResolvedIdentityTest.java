@@ -59,14 +59,12 @@ public final class ResolvedIdentityTest {
         identity.profile().setLocale(Locale.CHINESE);
         MatcherAssert.assertThat(
             new JaxbPrinter(new LongIdentity(identity)).print(),
-            Matchers.allOf(
-                XhtmlMatchers.hasXPaths(
-                    "/identity[name='urn:test:johnny']",
-                    "/identity[authority='http://localhost/authority']",
-                    "/identity/aliases[alias='Johnny']",
-                    "/identity[photo='http://localhost/pic.png']",
-                    "/identity[locale='zh']"
-                )
+            XhtmlMatchers.hasXPaths(
+                "/identity[name='urn:test:johnny']",
+                "/identity[authority='http://localhost/authority']",
+                "/identity/aliases[alias='Johnny']",
+                "/identity[photo='http://localhost/pic.png']",
+                "/identity[locale='zh']"
             )
         );
     }

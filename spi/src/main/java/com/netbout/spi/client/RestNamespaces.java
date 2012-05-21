@@ -37,6 +37,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.util.AbstractMap;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
@@ -88,7 +89,7 @@ final class RestNamespaces extends AbstractMap<String, URL> {
                 throw new IllegalArgumentException(ex);
             }
         }
-        return namespaces;
+        return Collections.unmodifiableSet(namespaces);
     }
 
     /**
@@ -158,7 +159,7 @@ final class RestNamespaces extends AbstractMap<String, URL> {
             .rel("//link[@rel='namespaces']/@href")
             .post(
                 "re-register namespaces",
-                String.format("text=%s", URLEncoder.encode(post.toString()))
+                String.format("text=%s", RestExpert.encode(post.toString()))
             )
             .assertStatus(HttpURLConnection.HTTP_SEE_OTHER);
     }

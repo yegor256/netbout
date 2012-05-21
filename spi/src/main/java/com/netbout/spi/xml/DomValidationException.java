@@ -38,6 +38,11 @@ package com.netbout.spi.xml;
 public final class DomValidationException extends Exception {
 
     /**
+     * Serialization marker.
+     */
+    private static final long serialVersionUID = 0x7526FA8811D21470L;
+
+    /**
      * Public ctor.
      * @param cause The cause
      */

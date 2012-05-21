@@ -39,6 +39,7 @@ import java.net.HttpURLConnection;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import org.joda.time.DateTimeZone;
@@ -182,7 +183,7 @@ final class RestBout implements Bout {
                 new RestParticipant(this.client.copy(), Urn.create(name))
             );
         }
-        return dudes;
+        return Collections.unmodifiableList(dudes);
     }
 
     /**
@@ -243,7 +244,7 @@ final class RestBout implements Bout {
                 )
             );
         }
-        return msgs;
+        return Collections.unmodifiableList(msgs);
     }
 
     /**

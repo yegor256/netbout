@@ -39,6 +39,11 @@ package com.netbout.spi;
 public final class BoutNotFoundException extends Exception {
 
     /**
+     * Serialization marker.
+     */
+    private static final long serialVersionUID = 0x7526FA78EED21470L;
+
+    /**
      * Public ctor.
      * @param num The number of bout not found
      */

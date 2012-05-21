@@ -37,6 +37,7 @@ import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -185,7 +186,7 @@ final class RestIdentity implements Identity {
         for (String href : hrefs) {
             bouts.add(new RestBout(this.client.copy(href)));
         }
-        return bouts;
+        return Collections.unmodifiableList(bouts);
     }
 
     /**
@@ -241,7 +242,7 @@ final class RestIdentity implements Identity {
         for (String name : names) {
             friends.add(new Friend(Urn.create(name)));
         }
-        return friends;
+        return Collections.unmodifiableSet(friends);
     }
 
     /**

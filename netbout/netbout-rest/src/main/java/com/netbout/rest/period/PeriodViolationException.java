@@ -35,6 +35,11 @@ package com.netbout.rest.period;
 public final class PeriodViolationException extends Exception {
 
     /**
+     * Serialization marker.
+     */
+    private static final long serialVersionUID = 0x7229FF789CD21669L;
+
+    /**
      * Public ctor.
      * @param cause Cause of it
      */

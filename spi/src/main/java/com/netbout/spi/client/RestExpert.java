@@ -40,6 +40,7 @@ import java.util.Map;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.UriBuilder;
+import org.apache.commons.lang.CharEncoding;
 
 /**
  * Expert of REST features.
@@ -80,7 +81,7 @@ public final class RestExpert {
                 .rel("/page/links/link[@rel='promote']/@href")
                 .post(
                     "promoting helper",
-                    String.format("url=%s", URLEncoder.encode(url.toString()))
+                    String.format("url=%s", RestExpert.encode(url.toString()))
                 )
                 .assertStatus(HttpURLConnection.HTTP_SEE_OTHER);
         } else {
@@ -110,6 +111,19 @@ public final class RestExpert {
      */
     public Map<String, URL> namespaces() {
         return new RestNamespaces(this.home);
+    }
+
+    /**
+     * URL encode simple text.
+     * @param text The text to encode
+     * @return Encoded
+     */
+    public static String encode(final String text) {
+        try {
+            return URLEncoder.encode(text, CharEncoding.UTF_8);
+        } catch (java.io.UnsupportedEncodingException ex) {
+            throw new IllegalStateException(ex);
+        }
     }
 
 }

@@ -35,6 +35,11 @@ package com.netbout.notifiers.email;
 final class MessageParsingException extends Exception {
 
     /**
+     * Serialization marker.
+     */
+    private static final long serialVersionUID = 0x7525FA789E42166EL;
+
+    /**
      * Public ctor.
      * @param cause The cause of it
      */

@@ -66,8 +66,8 @@ public final class MemCursorTest {
         MatcherAssert.assertThat(
             IteratorUtils.toList(map.index(attr).values(msg)),
             Matchers.allOf(
-                (Matcher) Matchers.hasSize(1),
-                Matchers.hasItem(value)
+                Matchers.<String>iterableWithSize(1),
+                Matchers.everyItem(Matchers.equalTo(value))
             )
         );
     }
@@ -92,8 +92,8 @@ public final class MemCursorTest {
         MatcherAssert.assertThat(
             IteratorUtils.toList(map.index(attr).values(msg)),
             Matchers.allOf(
-                (Matcher) Matchers.hasSize(1),
-                Matchers.hasItem(value)
+                Matchers.<String>iterableWithSize(1),
+                Matchers.everyItem(Matchers.equalTo(value))
             )
         );
     }

@@ -56,6 +56,10 @@ public interface UrnResolver {
      */
     class DuplicateNamespaceException extends Exception {
         /**
+         * Serialization marker.
+         */
+        private static final long serialVersionUID = 0x7529FA789EEEE479L;
+        /**
          * Public ctor.
          * @param owner Already registered owner
          * @param nsp The namespace

@@ -121,7 +121,7 @@ final class RexslRestResponse implements RestResponse {
     @Override
     public String header(final String name) {
         return this.response
-            .assertHeader(name, Matchers.notNullValue())
+            .assertHeader(name, Matchers.not(Matchers.<String>emptyIterable()))
             .getHeaders()
             .getFirst(name);
     }

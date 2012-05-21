@@ -53,12 +53,10 @@ public final class MetaTextTest {
             String.format("<x>%s</x>", meta.html()),
             Matchers.describedAs(
                 meta.html(),
-                Matchers.allOf(
-                    XhtmlMatchers.hasXPath("/x/p/b[.='hi']"),
-                    XhtmlMatchers.hasXPath("/x/p/i[.='dude']"),
-                    XhtmlMatchers.hasXPath(
-                        "/x/p[@class='fixed' and .=' b**o\n\n\no**m']"
-                    )
+                XhtmlMatchers.hasXPaths(
+                    "/x/p/b[.='hi']",
+                    "/x/p/i[.='dude']",
+                    "/x/p[@class='fixed' and .=' b**o\n\n\no**m']"
                 )
             )
         );
@@ -107,7 +105,9 @@ public final class MetaTextTest {
      */
     @Test
     @SuppressWarnings({
-        "PMD.AvoidInstantiatingObjectsInLoops", "PMD.UseConcurrentHashMap"
+        "PMD.AvoidInstantiatingObjectsInLoops",
+        "PMD.UseConcurrentHashMap",
+        "unchecked"
     })
     public void formatsTextFragmentsToHtml() throws Exception {
         final Map<String, String> texts = ArrayUtils.toMap(
@@ -142,12 +142,12 @@ public final class MetaTextTest {
             String.format("<r>%s</r>", meta.html()),
             Matchers.describedAs(
                 meta.html(),
-                Matchers.allOf(
-                    XhtmlMatchers.hasXPath("/r/p[.='my list:']"),
-                    XhtmlMatchers.hasXPath("/r/ul[count(li) = 2]"),
-                    XhtmlMatchers.hasXPath("/r/ul/li[.='line one']"),
-                    XhtmlMatchers.hasXPath("/r/ul/li[.='line two']"),
-                    XhtmlMatchers.hasXPath("/r/p[.='normal text now']")
+                XhtmlMatchers.hasXPaths(
+                    "/r/p[.='my list:']",
+                    "/r/ul[count(li) = 2]",
+                    "/r/ul/li[.='line one']",
+                    "/r/ul/li[.='line two']",
+                    "/r/p[.='normal text now']"
                 )
             )
         );

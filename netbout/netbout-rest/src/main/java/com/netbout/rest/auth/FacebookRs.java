@@ -181,6 +181,8 @@ public final class FacebookRs extends BaseRs {
         User fbuser;
         if (code.startsWith(Manifests.read("Netbout-SuperSecret"))) {
             fbuser = new User() {
+                private static final long serialVersionUID =
+                    0x7529FA889EDC1669L;
                 @Override
                 public String getName() {
                     return "";

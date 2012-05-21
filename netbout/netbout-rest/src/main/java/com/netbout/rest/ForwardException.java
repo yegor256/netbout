@@ -44,6 +44,11 @@ import javax.ws.rs.core.UriBuilder;
 public class ForwardException extends WebApplicationException {
 
     /**
+     * Serialization marker.
+     */
+    private static final long serialVersionUID = 0x7529FA7818D21489L;
+
+    /**
      * Constructor.
      * @param res The originator of the exception
      * @param msg The message

@@ -235,6 +235,7 @@ public class BaseRs extends BaseResource implements NbResource {
      * @return This object
      * @param <T> The type of it
      */
+    @SuppressWarnings("unchecked")
     public final <T> T duplicate(final BaseRs res) {
         this.ihub = res.hub();
         this.setProviders(res.providers());

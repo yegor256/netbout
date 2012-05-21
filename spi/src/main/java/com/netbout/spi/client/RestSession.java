@@ -137,8 +137,10 @@ public final class RestSession {
         final String token = RestTester.start(uri)
             .get("authorization")
             .assertStatus(HttpURLConnection.HTTP_SEE_OTHER)
-            .assertHeader(this.AUTH_HEADER, Matchers.notNullValue())
-            .assertHeader(this.AUTH_HEADER, Matchers.not(Matchers.empty()))
+            .assertHeader(
+                this.AUTH_HEADER,
+                Matchers.not(Matchers.<String>emptyIterable())
+            )
             .getHeaders()
             .getFirst(this.AUTH_HEADER);
         Logger.debug(

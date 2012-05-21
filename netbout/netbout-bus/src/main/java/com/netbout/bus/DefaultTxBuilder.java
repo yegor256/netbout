@@ -180,6 +180,7 @@ final class DefaultTxBuilder implements TxBuilder {
      * {@inheritDoc}
      */
     @Override
+    @SuppressWarnings("unchecked")
     public <T> T exec() {
         final Transaction trans = new DefaultTransaction(
             this.mnemo,

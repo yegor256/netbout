@@ -106,7 +106,7 @@ public final class JaxbPrinter {
                     required
                 );
             }
-            final SchemaLocation schema = (SchemaLocation) this.object
+            final SchemaLocation schema = this.object
                 .getClass()
                 .getAnnotation(SchemaLocation.class);
             if (schema == null) {
@@ -142,6 +142,7 @@ public final class JaxbPrinter {
      * Convert object to DOM document.
      * @return The document
      */
+    @SuppressWarnings("unchecked")
     private Document marshall() {
         JAXBContext ctx;
         try {
@@ -183,7 +184,7 @@ public final class JaxbPrinter {
      * @param type The type
      * @return The namespace of it
      */
-    public static Urn namespace(final Class type) {
+    public static Urn namespace(final Class<?> type) {
         Urn namespace;
         final XmlType tannot = XmlType.class.cast(
             type.getAnnotation(XmlType.class)

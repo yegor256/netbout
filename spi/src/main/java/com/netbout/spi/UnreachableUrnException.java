@@ -38,6 +38,11 @@ package com.netbout.spi;
 public final class UnreachableUrnException extends Exception {
 
     /**
+     * Serialization marker.
+     */
+    private static final long serialVersionUID = 0x7526FA78EFD214F0L;
+
+    /**
      * Public ctor.
      * @param urn The URN
      * @param cause The cause of the exception

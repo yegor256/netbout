@@ -134,7 +134,7 @@ public final class NbResourceMocker {
      * @return The resource just created
      * @throws Exception If any
      */
-    public <T> T mock(final Class<? extends Resource> type) throws Exception {
+    public <T extends Resource> T mock(final Class<T> type) throws Exception {
         if (this.hub == null) {
             final Urn iname = this.identity.name();
             this.hub = new HubMocker()
@@ -160,7 +160,7 @@ public final class NbResourceMocker {
         Mockito.doReturn(this.hub).when(context)
             .getAttribute("com.netbout.rest.HUB");
         rest.setServletContext(context);
-        return (T) rest;
+        return type.cast(rest);
     }
 
     /**

@@ -151,7 +151,7 @@ public final class SecureString {
     private static byte[] unpack(final String input)
         throws StringDecryptionException {
         final int length = input.length();
-        final byte[] output = new byte[(int) length * 5 / 8];
+        final byte[] output = new byte[length * 5 / 8];
         long buffer = 0;
         int bits = 0;
         int opos = 0;

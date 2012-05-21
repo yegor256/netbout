@@ -55,9 +55,7 @@ public final class StageTest {
         final String xml = new JaxbPrinter(stage).print();
         MatcherAssert.assertThat(
             xml,
-            Matchers.allOf(
-                XhtmlMatchers.hasXPath("/data/docs/doc[name='name']")
-            )
+            XhtmlMatchers.hasXPath("/data/docs/doc[name='name']")
         );
     }
 

@@ -60,7 +60,7 @@ public final class LoginRsTest {
      */
     @Test
     public void doesntForwardIfUserAlreadyLoggedIn() throws Exception {
-        ((LoginRs) new NbResourceMocker().mock(LoginRs.class)).login();
+        new NbResourceMocker().mock(LoginRs.class).login();
     }
 
 }

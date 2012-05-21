@@ -115,7 +115,9 @@ final class DefaultIndexMap implements IndexMap {
         if (attr == null || attr.isEmpty()) {
             throw new IllegalArgumentException("attribute name is empty");
         }
-        this.map.putIfAbsent(attr, new DefaultIndex());
+        if (!this.map.containsKey(attr)) {
+            this.map.putIfAbsent(attr, new DefaultIndex());
+        }
         return this.map.get(attr);
     }
 

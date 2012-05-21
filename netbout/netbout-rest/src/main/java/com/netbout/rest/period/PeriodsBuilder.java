@@ -253,7 +253,7 @@ public final class PeriodsBuilder {
      * @param num How many of them
      * @return The text
      */
-    @SuppressWarnings("PMD.UseConcurrentHashMap")
+    @SuppressWarnings({"PMD.UseConcurrentHashMap", "unchecked"})
     private static String plural(final String noun, final int num) {
         final Map<String, String> digits = ArrayUtils.toMap(
             new String[][] {

@@ -39,6 +39,11 @@ package com.netbout.spi;
 public final class MessagePostException extends Exception {
 
     /**
+     * Serialization marker.
+     */
+    private static final long serialVersionUID = 0x8726FA78BBD21470L;
+
+    /**
      * Public ctor.
      * @param cause The cause of the problem
      */
