@@ -24,69 +24,62 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.inf.ray;
+package com.netbout.inf;
 
-import com.jcabi.log.Logger;
-import com.netbout.inf.Cursor;
-import com.netbout.inf.Term;
+import java.io.File;
+import java.security.SecureRandom;
+import java.util.Random;
+import org.apache.commons.io.FileUtils;
+import org.hamcrest.MatcherAssert;
+import org.hamcrest.Matchers;
+import org.mockito.Mockito;
 
 /**
- * NOT term.
- *
- * <p>The class is immutable and thread-safe.
- *
+ * Profiler of {@link DefaultInfinity}.
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-final class NotTerm implements Term {
+public final class DefaultInfinityProf {
 
     /**
-     * Index map.
+     * The randomizer.
      */
-    private final transient IndexMap imap;
+    private final transient Random random = new SecureRandom();
 
     /**
-     * Term to negate.
+     * Main entrance, for profiler.
+     * @param args Optional arguments
+     * @throws Exception If there is some problem inside
      */
-    private final transient Term term;
-
-    /**
-     * Public ctor.
-     * @param map The index map
-     * @param trm The term
-     */
-    public NotTerm(final IndexMap map, final Term trm) {
-        this.imap = map;
-        this.term = trm;
+    public static void main(final String... args) throws Exception {
+        new DefaultInfinityProf().run();
     }
 
     /**
-     * {@inheritDoc}
+     * Run it.
+     * @throws Exception If there is some problem inside
      */
-    @Override
-    public String toString() {
-        final StringBuilder text = new StringBuilder();
-        text.append("(NOT ").append(this.term).append(')');
-        return text.toString();
+    private void run() throws Exception {
+        final Infinity inf = this.prepare();
+        MatcherAssert.assertThat(
+            inf.messages("(talks-with 'urn:test:Jeff')"),
+            Matchers.<Long>iterableWithSize(Matchers.greaterThan(10))
+        );
+        inf.close();
     }
 
     /**
-     * {@inheritDoc}
+     * Prepare infinity.
+     * @return Infinity
+     * @throws Exception If there is some problem inside
      */
-    @Override
-    public Cursor shift(final Cursor cursor) {
-        Cursor shifted = cursor;
-        Cursor candidate = cursor;
-        final Term always = new AlwaysTerm(this.imap);
-        while (!shifted.end()) {
-            candidate = shifted.shift(always);
-            shifted = this.term.shift(shifted);
-            if (shifted.compareTo(candidate) < 0) {
-                break;
-            }
-        }
-        Logger.debug(this, "#shift(%s): to %s", cursor, candidate);
-        return candidate;
+    private Infinity prepare() throws Exception {
+        final Folder folder = new FolderMocker().mock();
+        FileUtils.copyDirectory(
+            new File("./src/prof/resources/com/netbout/inf/ray"),
+            new File(folder.path(), "/ray")
+        );
+        return new DefaultInfinity(folder);
     }
 
 }

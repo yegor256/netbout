@@ -85,8 +85,8 @@ public final class DefaultInfinity implements Infinity {
         StageFarm.register(this);
         Logger.info(
             this,
-            "#DefaultInfinity(%[type]s): instantiated (max=%d)",
-            this.folder,
+            "#DefaultInfinity(%s): instantiated (max=%d)",
+            this.folder.path(),
             this.maximum()
         );
     }

@@ -192,7 +192,7 @@ final class DefaultIndexMap implements IndexMap {
         final ExecutorService service = Executors.newFixedThreadPool(
             // @checkstyle MagicNumber (1 line)
             Runtime.getRuntime().availableProcessors() * 4,
-            new VerboseThreads()
+            new VerboseThreads("imap-flush")
         );
         final Snapshot snapshot = this.files.writer();
         final Collection<Callable<Void>> tasks =

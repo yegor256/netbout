@@ -215,6 +215,59 @@
                 </plugins>
             </build>
         </profile>
+        <profile>
+            <id>inf-profiling</id>
+            <activation>
+                <file><exists>${basedir}/pom.xml</exists></file>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>build-helper-maven-plugin</artifactId>
+                        <version since="2 Dec 2011">1.7</version>
+                        <executions>
+                            <execution>
+                                <id>add-prof-sources</id>
+                                <phase>validate</phase>
+                                <goals>
+                                    <goal>add-test-source</goal>
+                                </goals>
+                                <configuration>
+                                    <sources>
+                                        <source>${basedir}/src/prof/java</source>
+                                    </sources>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>exec-maven-plugin</artifactId>
+                        <version since="22 May 2012">1.2.1</version>
+                        <executions>
+                            <execution>
+                                <id>profile-infinity</id>
+                                <phase>test</phase>
+                                <goals>
+                                    <goal>exec</goal>
+                                </goals>
+                                <configuration>
+                                    <executable>java</executable>
+                                    <classpathScope>test</classpathScope>
+                                    <arguments>
+                                        <argument>-agentlib:hprof=cpu=times</argument>
+                                        <argument>-classpath</argument>
+                                        <classpath/>
+                                        <argument>com.netbout.inf.DefaultInfinityProf</argument>
+                                    </arguments>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
     </profiles>
 
     <build>

@@ -50,6 +50,15 @@ import org.junit.Test;
 public final class InfinityTest {
 
     /**
+     * Main entrance, for profiler.
+     * @param args Optional arguments
+     * @throws Exception If there is some problem inside
+     */
+    public static void main(final String... args) throws Exception {
+        new InfinityTest().consumesMessagesAndFindsThem();
+    }
+
+    /**
      * Infinity can consume messages and then find them.
      * @throws Exception If there is some problem inside
      */
