@@ -72,9 +72,7 @@ public final class SlipTest {
         ).parse(Slip.class);
         MatcherAssert.assertThat(
             slip,
-            Matchers.allOf(
-                Matchers.hasProperty("allow", Matchers.equalTo(true))
-            )
+            Matchers.hasProperty("allow", Matchers.equalTo(true))
         );
     }
 
@@ -84,7 +82,9 @@ public final class SlipTest {
      */
     @Test
     @SuppressWarnings({
-        "PMD.UseConcurrentHashMap", "PMD.AvoidInstantiatingObjectsInLoops"
+        "PMD.UseConcurrentHashMap",
+        "PMD.AvoidInstantiatingObjectsInLoops",
+        "unchecked"
     })
     public void understandsMediaTypeOfUri() throws Exception {
         final Map<String, String> types = ArrayUtils.toMap(

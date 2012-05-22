@@ -38,6 +38,11 @@ package com.netbout.spi.text;
 public final class StringDecryptionException extends Exception {
 
     /**
+     * Serialization marker.
+     */
+    private static final long serialVersionUID = 0x7526FAFFEED21E70L;
+
+    /**
      * Public ctor.
      * @param cause The cause of it
      */

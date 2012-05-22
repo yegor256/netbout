@@ -214,7 +214,9 @@ final class DefaultTokenExecutor implements TokenExecutor, StatsProvider {
                 this.exec(
                     new DefaultTxToken(
                         "save-bills",
-                        Arrays.asList(new Plain<?>[] {new PlainList(lines)})
+                        Arrays.asList(
+                            new Plain<?>[] {new PlainList<String>(lines)}
+                        )
                     )
                 );
             }

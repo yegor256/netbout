@@ -31,7 +31,6 @@ import com.rexsl.test.XhtmlMatchers;
 import java.util.ArrayList;
 import java.util.Collection;
 import org.hamcrest.MatcherAssert;
-import org.hamcrest.Matchers;
 import org.junit.Test;
 
 /**
@@ -55,9 +54,7 @@ public final class StageTest {
         final String xml = new JaxbPrinter(stage).print();
         MatcherAssert.assertThat(
             xml,
-            Matchers.allOf(
-                XhtmlMatchers.hasXPath("/data/docs/doc[name='name']")
-            )
+            XhtmlMatchers.hasXPath("/data/docs/doc[name='name']")
         );
     }
 

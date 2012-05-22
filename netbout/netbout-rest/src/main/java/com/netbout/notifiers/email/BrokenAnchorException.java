@@ -35,6 +35,11 @@ package com.netbout.notifiers.email;
 final class BrokenAnchorException extends Exception {
 
     /**
+     * Serialization marker.
+     */
+    private static final long serialVersionUID = 0x7529FA739ED31663L;
+
+    /**
      * Public ctor.
      * @param cause The cause of it
      */

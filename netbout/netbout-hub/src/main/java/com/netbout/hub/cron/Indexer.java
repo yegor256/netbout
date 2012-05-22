@@ -108,7 +108,10 @@ final class Indexer extends AbstractCron {
      * When message is broken for some reason.
      */
     private static final class BrokenMessageException extends Exception {
-        // empty
+        /**
+         * Serialization marker.
+         */
+        private static final long serialVersionUID = 0x7E29FAF89ED214F9L;
     }
 
     /**

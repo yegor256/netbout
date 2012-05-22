@@ -34,7 +34,6 @@ import com.netbout.spi.IdentityMocker;
 import com.rexsl.test.XhtmlMatchers;
 import javax.ws.rs.core.Response;
 import org.hamcrest.MatcherAssert;
-import org.hamcrest.Matchers;
 import org.junit.Test;
 import org.mockito.Mockito;
 
@@ -77,19 +76,15 @@ public final class BoutRsTest {
         final Response response = rest.front();
         MatcherAssert.assertThat(
             NbResourceMocker.the((NbPage) response.getEntity(), rest),
-            Matchers.allOf(
-                XhtmlMatchers.hasXPath(
-                    "/page/bout/participants/participant/identity"
-                ),
-                XhtmlMatchers.hasXPath(
-                    String.format("/page/bout[title='%s']", title)
-                ),
-                XhtmlMatchers.hasXPath("/page/links/link[@rel='top']"),
-                XhtmlMatchers.hasXPath("/page/links/link[@rel='leave']"),
-                XhtmlMatchers.hasXPath("/page/links/link[@rel='post']"),
-                XhtmlMatchers.hasXPath("/page[@searcheable='true']"),
-                XhtmlMatchers.hasXPath("/page[query='hello']"),
-                XhtmlMatchers.hasXPath("/page/bout[view='10-20']")
+            XhtmlMatchers.hasXPaths(
+                "/page/bout/participants/participant/identity",
+                String.format("/page/bout[title='%s']", title),
+                "/page/links/link[@rel='top']",
+                "/page/links/link[@rel='leave']",
+                "/page/links/link[@rel='post']",
+                "/page[@searcheable='true']",
+                "/page[query='hello']",
+                "/page/bout[view='10-20']"
             )
         );
     }

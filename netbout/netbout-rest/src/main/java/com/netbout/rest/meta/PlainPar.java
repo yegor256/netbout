@@ -41,6 +41,7 @@ final class PlainPar extends AbstractPar {
     /**
      * Public ctor.
      */
+    @SuppressWarnings("unchecked")
     public PlainPar() {
         super(
             ArrayUtils.toMap(

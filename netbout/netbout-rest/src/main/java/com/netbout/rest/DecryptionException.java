@@ -37,6 +37,11 @@ import com.jcabi.log.Logger;
 public final class DecryptionException extends Exception {
 
     /**
+     * Serialization marker.
+     */
+    private static final long serialVersionUID = 0x7529FA789EC21879L;
+
+    /**
      * Public ctor.
      */
     public DecryptionException() {

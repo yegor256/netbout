@@ -31,7 +31,6 @@ import com.netbout.spi.Identity;
 import com.netbout.spi.IdentityMocker;
 import com.rexsl.test.XhtmlMatchers;
 import org.hamcrest.MatcherAssert;
-import org.hamcrest.Matchers;
 import org.junit.Test;
 
 /**
@@ -56,9 +55,7 @@ public final class StageFarmTest {
         );
         MatcherAssert.assertThat(
             xml,
-            Matchers.allOf(
-                XhtmlMatchers.hasXPath("/data/server")
-            )
+            XhtmlMatchers.hasXPath("/data/server")
         );
     }
 

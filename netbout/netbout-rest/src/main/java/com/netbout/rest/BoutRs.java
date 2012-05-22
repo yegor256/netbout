@@ -408,7 +408,10 @@ public final class BoutRs extends BaseRs {
         page.link(
             new Link(
                 "top",
-                this.self("").replaceQueryParam(BoutRs.PERIOD_PARAM, null)
+                this.self("").replaceQueryParam(
+                    BoutRs.PERIOD_PARAM,
+                    new Object[0]
+                )
             )
         );
         if (NetboutUtils.participantOf(myself, this.bout()).confirmed()) {

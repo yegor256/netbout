@@ -66,7 +66,7 @@ public final class ProfileMocker {
             new Answer() {
                 @Override
                 public Object answer(final InvocationOnMock invocation) {
-                    return new HashSet(ProfileMocker.this.aliases);
+                    return new HashSet<String>(ProfileMocker.this.aliases);
                 }
             }
         ).when(this.profile).aliases();

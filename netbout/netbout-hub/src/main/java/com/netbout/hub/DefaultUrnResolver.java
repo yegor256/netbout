@@ -229,6 +229,10 @@ final class DefaultUrnResolver implements UrnResolver {
      */
     private static final class NamespaceNotFoundException extends Exception {
         /**
+         * Serialization marker.
+         */
+        private static final long serialVersionUID = 0x7529AAA89ED21A79L;
+        /**
          * Public ctor.
          * @param desc Description of the problem
          */

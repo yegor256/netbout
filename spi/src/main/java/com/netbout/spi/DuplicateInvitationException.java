@@ -39,6 +39,11 @@ package com.netbout.spi;
 public final class DuplicateInvitationException extends Exception {
 
     /**
+     * Serialization marker.
+     */
+    private static final long serialVersionUID = 0x7526FA7AEBD21470L;
+
+    /**
      * Public ctor.
      * @param cause The cause of the problem
      */

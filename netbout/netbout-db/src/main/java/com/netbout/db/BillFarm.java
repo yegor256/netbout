@@ -54,7 +54,7 @@ public final class BillFarm {
     public void saveBills(final List<String> lines) {
         final JdbcSession session = new JdbcSession(Database.source());
         session.autocommit(false);
-        final JdbcSession.Handler handler = new VoidHandler();
+        final JdbcSession.Handler<Void> handler = new VoidHandler();
         for (String line : lines) {
             final String[] parts = line.split("[ ]+");
             Long bout = null;

@@ -39,6 +39,11 @@ package com.netbout.spi;
 public final class MessageNotFoundException extends Exception {
 
     /**
+     * Serialization marker.
+     */
+    private static final long serialVersionUID = 0x7526FA78EED67470L;
+
+    /**
      * Public ctor.
      * @param num Number of it
      */

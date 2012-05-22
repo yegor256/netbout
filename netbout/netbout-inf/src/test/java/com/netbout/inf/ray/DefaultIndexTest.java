@@ -37,7 +37,6 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import org.apache.commons.collections.IteratorUtils;
-import org.hamcrest.Matcher;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Rule;
@@ -75,8 +74,8 @@ public final class DefaultIndexTest {
         MatcherAssert.assertThat(
             IteratorUtils.toList(index.values(msg)),
             Matchers.allOf(
-                (Matcher) Matchers.hasSize(1),
-                Matchers.hasItem(value)
+                Matchers.<String>iterableWithSize(1),
+                Matchers.everyItem(Matchers.equalTo(value))
             )
         );
         MatcherAssert.assertThat(
@@ -113,7 +112,7 @@ public final class DefaultIndexTest {
      * @throws Exception If there is some problem inside
      */
     @Test
-    @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
+    @SuppressWarnings({ "PMD.AvoidInstantiatingObjectsInLoops", "unchecked" })
     public void updatesInMultipleThreads() throws Exception {
         final Index index = new DefaultIndex(this.temp.newFile("file-3"));
         final long msg = new Random().nextLong();
@@ -150,7 +149,9 @@ public final class DefaultIndexTest {
                     @Override
                     public boolean matches(final Object future) {
                         try {
-                            return ((Future<Boolean>) future).get();
+                            return Boolean.class.cast(
+                                Future.class.cast(future).get()
+                            );
                         } catch (InterruptedException ex) {
                             Thread.currentThread().interrupt();
                             throw new IllegalStateException(ex);
@@ -162,7 +163,7 @@ public final class DefaultIndexTest {
             )
         );
         MatcherAssert.assertThat(
-            IteratorUtils.toList(index.values(msg)),
+            (Iterable<String>) IteratorUtils.toList(index.values(msg)),
             Matchers.contains(value)
         );
     }

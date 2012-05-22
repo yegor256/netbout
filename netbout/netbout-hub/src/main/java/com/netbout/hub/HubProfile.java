@@ -269,14 +269,13 @@ public final class HubProfile implements Profile {
     private Set<String> nicknames() {
         synchronized (this.person) {
             if (this.ialiases == null) {
-                this.ialiases = new CopyOnWriteArraySet<String>(
-                    (List<String>) this.hub
-                        .make("get-aliases-of-identity")
-                        .synchronously()
-                        .arg(this.person.name())
-                        .asDefault(new ArrayList<String>(0))
-                        .exec()
-                );
+                final List<String> aliases = this.hub
+                    .make("get-aliases-of-identity")
+                    .synchronously()
+                    .arg(this.person.name())
+                    .asDefault(new ArrayList<String>(0))
+                    .exec();
+                this.ialiases = new CopyOnWriteArraySet<String>(aliases);
                 Logger.debug(
                     this,
                     "#nicknames(): %d loaded for '%s': %[list]s",

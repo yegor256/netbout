@@ -86,6 +86,7 @@ final class DefaultIndexMap implements IndexMap {
      * @throws IOException If some IO error
      */
     public DefaultIndexMap(final File dir) throws IOException {
+        final long start = System.currentTimeMillis();
         this.files = new Files(dir);
         final Snapshot snapshot = this.files.reader();
         final InputStream stream = new FileInputStream(snapshot.map());
@@ -97,6 +98,13 @@ final class DefaultIndexMap implements IndexMap {
         for (String name : snapshot.attrs()) {
             this.map.put(name, new DefaultIndex(snapshot.attr(name)));
         }
+        Logger.info(
+            this,
+            "#DefaultIndexMap(): restored %d msg numbers from %s in %[ms]s",
+            this.all.size(),
+            snapshot,
+            System.currentTimeMillis() - start
+        );
     }
 
     /**
@@ -107,7 +115,9 @@ final class DefaultIndexMap implements IndexMap {
         if (attr == null || attr.isEmpty()) {
             throw new IllegalArgumentException("attribute name is empty");
         }
-        this.map.putIfAbsent(attr, new DefaultIndex());
+        if (!this.map.containsKey(attr)) {
+            this.map.putIfAbsent(attr, new DefaultIndex());
+        }
         return this.map.get(attr);
     }
 
@@ -155,7 +165,9 @@ final class DefaultIndexMap implements IndexMap {
         final StringBuilder text = new StringBuilder();
         text.append(String.format("%d msgs\n", this.all.size()));
         final String[] attrs = new String[] {
+            com.netbout.inf.atoms.VariableAtom.NUMBER.attribute(),
             com.netbout.inf.atoms.VariableAtom.BOUT_NUMBER.attribute(),
+            com.netbout.inf.atoms.VariableAtom.AUTHOR_NAME.attribute(),
             "talks-with",
             "bundled-marker",
         };
@@ -247,7 +259,6 @@ final class DefaultIndexMap implements IndexMap {
         throws IOException {
         final SortedSet<Long> numbers =
             new ConcurrentSkipListSet<Long>(Collections.reverseOrder());
-        final long start = System.currentTimeMillis();
         final BufferedReader reader = new BufferedReader(
             new InputStreamReader(stream, CharEncoding.UTF_8)
         );
@@ -258,12 +269,6 @@ final class DefaultIndexMap implements IndexMap {
             }
             numbers.add(Long.valueOf(line));
         }
-        Logger.info(
-            DefaultIndexMap.class,
-            "#restore(): restored %d msg numbers in %[ms]s",
-            numbers.size(),
-            System.currentTimeMillis() - start
-        );
         return numbers;
     }
 

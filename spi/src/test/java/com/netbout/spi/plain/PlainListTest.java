@@ -51,13 +51,13 @@ public final class PlainListTest {
     /**
      * The data to test against.
      */
-    private final transient List list;
+    private final transient List<?> list;
 
     /**
      * Public ctor.
      * @param lst The list
      */
-    public PlainListTest(final List lst) {
+    public PlainListTest(final List<?> lst) {
         this.list = lst;
     }
 
@@ -92,6 +92,7 @@ public final class PlainListTest {
      * @throws Exception If there is some problem inside
      */
     @Test
+    @SuppressWarnings("unchecked")
     public void convertsInBothWays() throws Exception {
         final String sep = ", ";
         final String original = StringUtils.join(this.list, sep);

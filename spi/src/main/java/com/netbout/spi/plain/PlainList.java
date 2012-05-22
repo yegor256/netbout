@@ -76,6 +76,7 @@ public final class PlainList<T> implements Plain<List<T>> {
      * @return Is it or not?
      * @param <T> Type to return
      */
+    @SuppressWarnings("unchecked")
     public static <T> PlainList<T> valueOf(final String text) {
         final List<T> parts = new ArrayList<T>();
         for (String element : PlainList.unpack(text)) {

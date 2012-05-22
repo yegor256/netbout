@@ -33,6 +33,7 @@ import com.jcabi.jdbc.JdbcSession
 import com.netbout.db.Database
 import com.rexsl.core.Manifests
 import com.jcabi.log.Logger
+import java.security.SecureRandom
 
 def urlFile = new File(rexsl.basedir, 'jdbc.txt')
 if (urlFile.exists()) {
@@ -53,18 +54,30 @@ new File(rexsl.basedir, 'src/test/rexsl/start.sql').text.split('\n').each { text
 }
 
 // let's create a big amount of bouts and messages for one identity
-(5000..5200).each {
+def calendar = new GregorianCalendar()
+calendar.add(Calendar.YEAR, -5)
+(5200..5000).each {
+    calendar.add(Calendar.MINUTE, -new SecureRandom().nextInt(120))
+    def date = String.format('%tF', calendar.time)
     queries.add(
         'INSERT IGNORE INTO bout (number, title, date) VALUES'
-        + " (${it}, 'test', '2001-01-01')"
+        + " (${it}, 'test ${it}', '${date}')"
     )
     queries.add(
         'INSERT IGNORE INTO participant (bout, identity, confirmed, date) VALUES'
-        + " (${it}, 'urn:test:bumper', 1, '2001-01-01')"
+        + " (${it}, 'urn:test:bumper', 1, '${date}')"
+    )
+    queries.add(
+        'INSERT IGNORE INTO identity (name, photo, date) VALUES'
+        + " ('urn:test:somebody${it}', 'http://img.netbout.com/unknown.png', '${date}')"
+    )
+    queries.add(
+        'INSERT IGNORE INTO participant (bout, identity, confirmed, date) VALUES '
+        + " (${it}, 'urn:test:somebody${it}', 1, '${date}')"
     )
     queries.add(
         'INSERT IGNORE INTO message (number, bout, date, author, text) VALUES'
-        + " (${it}, ${it}, '2001-01-01', 'urn:test:bumper', 'hi!')"
+        + " (${it}, ${it}, '${date}', 'urn:test:bumper', 'hi!')"
     )
 }
 

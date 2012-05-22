@@ -33,7 +33,6 @@ import com.rexsl.test.RestTester;
 import com.rexsl.test.TestClient;
 import com.rexsl.test.TestResponse;
 import java.net.URI;
-import java.net.URLEncoder;
 import javax.ws.rs.core.Cookie;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
@@ -98,7 +97,10 @@ final class RexslRestClient implements RestClient {
                 new Cookie(RestSession.AUTH_COOKIE, this.token)
             )
             .get(message)
-            .assertHeader(RestSession.ERROR_HEADER, Matchers.nullValue())
+            .assertHeader(
+                RestSession.ERROR_HEADER,
+                Matchers.<String>emptyIterable()
+            )
             .assertThat(new EtaAssertion());
         return new RexslRestResponse(this, response);
     }
@@ -113,9 +115,9 @@ final class RexslRestClient implements RestClient {
             if (pos > 0) {
                 data.append("&");
             }
-            data.append(URLEncoder.encode(params[pos]))
+            data.append(RestExpert.encode(params[pos]))
                 .append("=")
-                .append(URLEncoder.encode(params[pos + 1]));
+                .append(RestExpert.encode(params[pos + 1]));
         }
         final TestResponse response = this.client
             .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_XML)
@@ -125,7 +127,10 @@ final class RexslRestClient implements RestClient {
                 new Cookie(RestSession.AUTH_COOKIE, this.token)
             )
             .post(message, data.toString())
-            .assertHeader(RestSession.ERROR_HEADER, Matchers.nullValue());
+            .assertHeader(
+                RestSession.ERROR_HEADER,
+                Matchers.<String>emptyIterable()
+            );
         return new RexslRestResponse(this, response);
     }
 

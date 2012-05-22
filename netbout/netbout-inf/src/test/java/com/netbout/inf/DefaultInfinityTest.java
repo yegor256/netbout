@@ -35,7 +35,6 @@ import com.netbout.spi.MessageMocker;
 import com.netbout.spi.Urn;
 import com.netbout.spi.UrnMocker;
 import java.util.concurrent.TimeUnit;
-import org.hamcrest.Matcher;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;
@@ -79,7 +78,7 @@ public final class DefaultInfinityTest {
         );
         MatcherAssert.assertThat(
             inf.messages(query),
-            (Matcher) Matchers.iterableWithSize(1)
+            Matchers.<Long>iterableWithSize(1)
         );
         inf.close();
     }
@@ -114,7 +113,7 @@ public final class DefaultInfinityTest {
         final Infinity restored = new DefaultInfinity(folder);
         MatcherAssert.assertThat(
             restored.messages("(matches '\u0433')"),
-            (Matcher) Matchers.iterableWithSize(1)
+            Matchers.<Long>iterableWithSize(1)
         );
         restored.close();
     }

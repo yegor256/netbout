@@ -32,6 +32,7 @@ package com.netbout.spi.client;
 import com.netbout.spi.Profile;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
@@ -120,7 +121,7 @@ final class RestProfile implements Profile {
             .assertStatus(HttpURLConnection.HTTP_OK)
             .assertXPath("/page/identity/aliases")
             .xpath("/page/identity/aliases/alias/text()");
-        return new HashSet(names);
+        return Collections.unmodifiableSet(new HashSet<String>(names));
     }
 
     /**

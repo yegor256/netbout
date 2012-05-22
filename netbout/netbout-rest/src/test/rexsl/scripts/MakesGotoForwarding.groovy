@@ -58,4 +58,10 @@ RestTester.start(uri)
     .header(HttpHeaders.COOKIE, cookie.toString())
     .get('authenticate the user')
     .assertStatus(HttpURLConnection.HTTP_SEE_OTHER)
-    .assertHeader(HttpHeaders.LOCATION, Matchers.equalTo(path.toString()))
+    .assertHeader(
+        HttpHeaders.LOCATION,
+        Matchers.allOf(
+            Matchers.iterableWithSize(1),
+            Matchers.everyItem(Matchers.equalTo(path.toString()))
+        )
+    )

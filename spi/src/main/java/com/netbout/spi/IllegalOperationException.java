@@ -40,6 +40,11 @@ package com.netbout.spi;
 public final class IllegalOperationException extends RuntimeException {
 
     /**
+     * Serialization marker.
+     */
+    private static final long serialVersionUID = 0x7526FA7AEDD61470L;
+
+    /**
      * Public ctor.
      * @param cause The cause of the problem
      */

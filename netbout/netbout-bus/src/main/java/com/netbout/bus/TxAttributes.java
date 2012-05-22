@@ -60,7 +60,7 @@ final class TxAttributes {
                 throw new IllegalArgumentException(ex);
             }
         }
-        return (T) this.attrs.get(type);
+        return type.cast(this.attrs.get(type));
     }
 
 }

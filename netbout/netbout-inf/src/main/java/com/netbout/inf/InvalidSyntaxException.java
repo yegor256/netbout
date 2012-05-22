@@ -37,6 +37,11 @@ package com.netbout.inf;
 public final class InvalidSyntaxException extends Exception {
 
     /**
+     * Serialization marker.
+     */
+    private static final long serialVersionUID = 0x7529FA789ED21479L;
+
+    /**
      * Public ctor.
      * @param cause The cause of it
      */

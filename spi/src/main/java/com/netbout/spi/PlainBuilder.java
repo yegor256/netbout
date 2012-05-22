@@ -48,7 +48,7 @@ import org.apache.commons.lang.StringEscapeUtils;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-@SuppressWarnings("PMD.CyclomaticComplexity")
+@SuppressWarnings({ "PMD.CyclomaticComplexity", "unchecked" })
 public final class PlainBuilder {
 
     /**
@@ -64,7 +64,6 @@ public final class PlainBuilder {
      * @return The plain object
      * @param <T> Type to return
      */
-    @SuppressWarnings("PMD.CyclomaticComplexity")
     public static <T> Plain<T> fromObject(final Object data) {
         if (data == null) {
             throw new IllegalArgumentException("Can't convert NULL");
@@ -83,7 +82,7 @@ public final class PlainBuilder {
         } else if (data instanceof Urn) {
             result = (Plain) new PlainUrn((Urn) data);
         } else if (data instanceof List) {
-            result = (Plain) new PlainList((List) data);
+            result = (Plain) new PlainList<T>((List<T>) data);
         } else {
             throw new IllegalArgumentException(
                 Logger.format(
@@ -102,7 +101,6 @@ public final class PlainBuilder {
      * @return The plain object
      * @param <T> Type to return
      */
-    @SuppressWarnings("PMD.CyclomaticComplexity")
     public static <T> Plain<T> fromText(final String text) {
         if (text == null) {
             throw new IllegalArgumentException("Can't convert NULL as text");

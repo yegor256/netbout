@@ -112,7 +112,7 @@ public final class DefaultStore implements Store {
         );
         final ConcurrentMap<String, Functor> map =
             new ConcurrentHashMap<String, Functor>();
-        for (Class type : ref.getSubTypesOf(Functor.class)) {
+        for (Class<?> type : ref.getSubTypesOf(Functor.class)) {
             if (type.isMemberClass() || type.isAnonymousClass()) {
                 continue;
             }
@@ -125,7 +125,7 @@ public final class DefaultStore implements Store {
                 throw new IllegalStateException(ex);
             }
             map.put(
-                NamedAs.class.cast(type.getAnnotation(NamedAs.class)).value(),
+                type.getAnnotation(NamedAs.class).value(),
                 functor
             );
         }

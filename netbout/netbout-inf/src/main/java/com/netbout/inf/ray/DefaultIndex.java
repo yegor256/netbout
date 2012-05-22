@@ -230,7 +230,7 @@ final class DefaultIndex implements Index {
                 value = line;
                 data.put(
                     value,
-                    new ConcurrentSkipListSet(Collections.reverseOrder())
+                    new ConcurrentSkipListSet<Long>(Collections.reverseOrder())
                 );
             }
         }
@@ -257,7 +257,7 @@ final class DefaultIndex implements Index {
             for (Long number : entry.getValue()) {
                 data.putIfAbsent(
                     number,
-                    new ConcurrentSkipListSet()
+                    new ConcurrentSkipListSet<String>()
                 );
                 data.get(number).add(entry.getKey());
             }
@@ -285,7 +285,7 @@ final class DefaultIndex implements Index {
      * @return Texts (link to existing structure)
      */
     private Set<String> texts(final long number) {
-        this.rmap.putIfAbsent(number, new ConcurrentSkipListSet());
+        this.rmap.putIfAbsent(number, new ConcurrentSkipListSet<String>());
         return this.rmap.get(number);
     }
 
@@ -297,7 +297,7 @@ final class DefaultIndex implements Index {
     private SortedSet<Long> numbers(final String text) {
         this.map.putIfAbsent(
             text,
-            new ConcurrentSkipListSet(Collections.reverseOrder())
+            new ConcurrentSkipListSet<Long>(Collections.reverseOrder())
         );
         return this.map.get(text);
     }
