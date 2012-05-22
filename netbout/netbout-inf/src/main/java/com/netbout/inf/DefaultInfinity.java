@@ -166,7 +166,7 @@ public final class DefaultInfinity implements Infinity {
             .parse(query)
             .term(this.ray);
         Logger.debug(this, "#messages('%[text]s'): term '%s'", query, term);
-        return new LazyMessages(this.ray.cursor(), term);
+        return new LazyMessages(this.ray, term);
     }
 
     /**

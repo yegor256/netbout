@@ -100,8 +100,9 @@ final class DefaultIndexMap implements IndexMap {
         }
         Logger.info(
             this,
-            "#DefaultIndexMap(): restored %d msg numbers from %s in %[ms]s",
+            "#DefaultIndexMap(): restored %d msgs (%[list]s) from %s in %[ms]s",
             this.all.size(),
+            this.map.keySet(),
             snapshot,
             System.currentTimeMillis() - start
         );

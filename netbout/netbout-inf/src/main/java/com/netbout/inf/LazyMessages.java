@@ -41,9 +41,9 @@ import java.util.NoSuchElementException;
 final class LazyMessages implements Iterable<Long> {
 
     /**
-     * The cursor.
+     * The ray.
      */
-    private final transient Cursor cursor;
+    private final transient Ray ray;
 
     /**
      * The term.
@@ -52,11 +52,11 @@ final class LazyMessages implements Iterable<Long> {
 
     /**
      * Public ctor.
-     * @param crs The cursor
+     * @param iray The ray to use
      * @param trm The term
      */
-    public LazyMessages(final Cursor crs, final Term trm) {
-        this.cursor = crs;
+    public LazyMessages(final Ray iray, final Term trm) {
+        this.ray = iray;
         this.term = trm;
     }
 
@@ -65,7 +65,7 @@ final class LazyMessages implements Iterable<Long> {
      */
     @Override
     public Iterator<Long> iterator() {
-        return new MessagesIterator(this.cursor);
+        return new MessagesIterator(this.ray.cursor());
     }
 
     /**
@@ -92,7 +92,7 @@ final class LazyMessages implements Iterable<Long> {
          */
         @Override
         public boolean hasNext() {
-            synchronized (this.cursor) {
+            synchronized (LazyMessages.this.ray) {
                 if (!this.shifted) {
                     this.cursor = this.cursor.shift(LazyMessages.this.term);
                     this.shifted = true;
@@ -108,10 +108,12 @@ final class LazyMessages implements Iterable<Long> {
             if (!this.hasNext()) {
                 throw new NoSuchElementException();
             }
-            this.shifted = false;
-            final Long number = this.cursor.msg().number();
-            Logger.debug(this, "#next(): #%d", number);
-            return number;
+            synchronized (LazyMessages.this.ray) {
+                this.shifted = false;
+                final Long number = this.cursor.msg().number();
+                Logger.debug(this, "#next(): #%d", number);
+                return number;
+            }
         }
         /**
          * {@inheritDoc}
