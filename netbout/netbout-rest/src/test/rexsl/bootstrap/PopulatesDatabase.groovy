@@ -33,6 +33,7 @@ import com.jcabi.jdbc.JdbcSession
 import com.netbout.db.Database
 import com.rexsl.core.Manifests
 import com.jcabi.log.Logger
+import java.security.SecureRandom
 
 def urlFile = new File(rexsl.basedir, 'jdbc.txt')
 if (urlFile.exists()) {
@@ -56,8 +57,8 @@ new File(rexsl.basedir, 'src/test/rexsl/start.sql').text.split('\n').each { text
 def calendar = new GregorianCalendar()
 calendar.add(Calendar.YEAR, -5)
 (5200..5000).each {
-    calendar.add(Calendar.MINUTE, -new Random().nextInt(120))
-    def date = String.format("%tF", calendar.getTime())
+    calendar.add(Calendar.MINUTE, -new SecureRandom().nextInt(120))
+    def date = String.format('%tF', calendar.time)
     queries.add(
         'INSERT IGNORE INTO bout (number, title, date) VALUES'
         + " (${it}, 'test ${it}', '${date}')"
@@ -71,7 +72,7 @@ calendar.add(Calendar.YEAR, -5)
         + " ('urn:test:somebody${it}', 'http://img.netbout.com/unknown.png', '${date}')"
     )
     queries.add(
-        'INSERT IGNORE INTO participant (bout, identity, confirmed, date) VALUES'
+        'INSERT IGNORE INTO participant (bout, identity, confirmed, date) VALUES '
         + " (${it}, 'urn:test:somebody${it}', 1, '${date}')"
     )
     queries.add(
