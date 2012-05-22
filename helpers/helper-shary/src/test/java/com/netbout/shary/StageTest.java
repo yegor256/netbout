@@ -31,7 +31,6 @@ import com.rexsl.test.XhtmlMatchers;
 import java.util.ArrayList;
 import java.util.Collection;
 import org.hamcrest.MatcherAssert;
-import org.hamcrest.Matchers;
 import org.junit.Test;
 
 /**

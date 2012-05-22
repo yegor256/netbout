@@ -48,7 +48,7 @@ import org.apache.commons.lang.StringEscapeUtils;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-@SuppressWarnings({"PMD.CyclomaticComplexity", "unchecked"})
+@SuppressWarnings({ "PMD.CyclomaticComplexity", "unchecked" })
 public final class PlainBuilder {
 
     /**

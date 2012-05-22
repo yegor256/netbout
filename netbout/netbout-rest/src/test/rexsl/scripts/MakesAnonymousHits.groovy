@@ -49,5 +49,8 @@ import org.hamcrest.Matchers
         .header(HttpHeaders.SET_COOKIE, 'netbout=some-invalid-text')
         .get('anonymous hit')
         .assertStatus(Response.Status.TEMPORARY_REDIRECT.statusCode)
-        .assertHeader(HttpHeaders.SET_COOKIE, Matchers.containsString(RestSession.GOTO_COOKIE))
+        .assertHeader(
+            HttpHeaders.SET_COOKIE,
+            Matchers.hasItem(Matchers.containsString(RestSession.GOTO_COOKIE))
+        )
 }

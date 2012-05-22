@@ -33,7 +33,6 @@ import com.rexsl.test.RestTester;
 import com.rexsl.test.TestClient;
 import com.rexsl.test.TestResponse;
 import java.net.URI;
-import java.net.URLEncoder;
 import javax.ws.rs.core.Cookie;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
@@ -100,7 +99,7 @@ final class RexslRestClient implements RestClient {
             .get(message)
             .assertHeader(
                 RestSession.ERROR_HEADER,
-                Matchers.not(Matchers.<String>emptyIterable())
+                Matchers.<String>emptyIterable()
             )
             .assertThat(new EtaAssertion());
         return new RexslRestResponse(this, response);

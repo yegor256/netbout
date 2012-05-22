@@ -55,7 +55,7 @@ new File(rexsl.basedir, 'src/test/rexsl/start.sql').text.split('\n').each { text
 // let's create a big amount of bouts and messages for one identity
 def calendar = new GregorianCalendar()
 calendar.add(Calendar.YEAR, -5)
-(10200..5000).each {
+(5200..5000).each {
     calendar.add(Calendar.MINUTE, -new Random().nextInt(120))
     def date = String.format("%tF", calendar.getTime())
     queries.add(

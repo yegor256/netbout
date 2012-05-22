@@ -28,7 +28,6 @@ package com.netbout.inf.ray;
 
 import java.util.Random;
 import org.apache.commons.collections.IteratorUtils;
-import org.hamcrest.Matcher;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Rule;

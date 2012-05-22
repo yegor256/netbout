@@ -34,7 +34,6 @@ import com.rexsl.test.XhtmlMatchers;
 import java.net.URL;
 import java.util.Locale;
 import org.hamcrest.MatcherAssert;
-import org.hamcrest.Matchers;
 import org.junit.Test;
 
 /**

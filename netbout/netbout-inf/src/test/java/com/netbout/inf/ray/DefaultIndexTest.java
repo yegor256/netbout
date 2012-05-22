@@ -37,7 +37,6 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import org.apache.commons.collections.IteratorUtils;
-import org.hamcrest.Matcher;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Rule;
@@ -113,7 +112,7 @@ public final class DefaultIndexTest {
      * @throws Exception If there is some problem inside
      */
     @Test
-    @SuppressWarnings({"PMD.AvoidInstantiatingObjectsInLoops", "unchecked"})
+    @SuppressWarnings({ "PMD.AvoidInstantiatingObjectsInLoops", "unchecked" })
     public void updatesInMultipleThreads() throws Exception {
         final Index index = new DefaultIndex(this.temp.newFile("file-3"));
         final long msg = new Random().nextLong();
