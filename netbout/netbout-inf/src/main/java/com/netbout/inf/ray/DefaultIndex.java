@@ -89,7 +89,16 @@ final class DefaultIndex implements Index {
     public DefaultIndex(final File file) throws IOException {
         final InputStream stream = new FileInputStream(file);
         try {
+            final long start = System.currentTimeMillis();
             this.map = DefaultIndex.restore(stream);
+            Logger.debug(
+                DefaultIndex.class,
+                "#DefaultIndex(%s): restored %d values from %d bytes in %[ms]s",
+                file.getName(),
+                this.map.size(),
+                file.length(),
+                System.currentTimeMillis() - start
+            );
         } finally {
             IOUtils.closeQuietly(stream);
         }
@@ -196,9 +205,9 @@ final class DefaultIndex implements Index {
         }
         Logger.debug(
             this,
-            "#save(): saved %d values to %s (%d bytes) in %[ms]s",
+            "#flush(): saved %d values to %s (%d bytes) in %[ms]s",
             this.map.size(),
-            file,
+            file.getName(),
             file.length(),
             System.currentTimeMillis() - start
         );
@@ -214,7 +223,6 @@ final class DefaultIndex implements Index {
         final InputStream stream) throws IOException {
         final ConcurrentMap<String, SortedSet<Long>> data =
             new ConcurrentHashMap<String, SortedSet<Long>>();
-        final long start = System.currentTimeMillis();
         final BufferedReader reader = new BufferedReader(
             new InputStreamReader(stream, CharEncoding.UTF_8)
         );
@@ -234,12 +242,6 @@ final class DefaultIndex implements Index {
                 );
             }
         }
-        Logger.debug(
-            DefaultIndex.class,
-            "#restore(): restored %d values in %[ms]s",
-            data.size(),
-            System.currentTimeMillis() - start
-        );
         return data;
     }
 

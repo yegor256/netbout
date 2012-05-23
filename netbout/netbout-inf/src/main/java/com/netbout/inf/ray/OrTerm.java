@@ -26,6 +26,7 @@
  */
 package com.netbout.inf.ray;
 
+import com.jcabi.log.Logger;
 import com.netbout.inf.Cursor;
 import com.netbout.inf.Term;
 import java.util.ArrayList;
@@ -102,6 +103,7 @@ final class OrTerm implements Term {
                 slider = new MemCursor(Collections.max(msgs), this.imap);
             }
         }
+        Logger.debug(this, "#shift(%s): to %s", cursor, slider);
         return slider;
     }
 

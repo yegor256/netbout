@@ -26,67 +26,56 @@
  */
 package com.netbout.inf.ray;
 
-import com.jcabi.log.Logger;
 import com.netbout.inf.Cursor;
 import com.netbout.inf.Term;
+import java.util.Random;
+import org.hamcrest.MatcherAssert;
+import org.hamcrest.Matchers;
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
 
 /**
- * NOT term.
- *
- * <p>The class is immutable and thread-safe.
- *
+ * Test case of {@link NotMatcherTerm}.
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-final class NotTerm implements Term {
+public final class NotMatcherTermTest {
 
     /**
-     * Index map.
+     * Temporary folder.
+     * @checkstyle VisibilityModifier (3 lines)
      */
-    private final transient IndexMap imap;
+    @Rule
+    public transient TemporaryFolder temp = new TemporaryFolder();
 
     /**
-     * Term to negate.
+     * NotMatcherTerm can shift a cursor.
+     * @throws Exception If there is some problem inside
      */
-    private final transient Term term;
-
-    /**
-     * Public ctor.
-     * @param map The index map
-     * @param trm The term
-     */
-    public NotTerm(final IndexMap map, final Term trm) {
-        this.imap = map;
-        this.term = trm;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String toString() {
-        final StringBuilder text = new StringBuilder();
-        text.append("(NOT ").append(this.term).append(')');
-        return text.toString();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Cursor shift(final Cursor cursor) {
-        Cursor shifted = cursor;
-        Cursor candidate = cursor;
-        final Term always = new AlwaysTerm(this.imap);
-        while (!shifted.end()) {
-            candidate = shifted.shift(always);
-            shifted = this.term.shift(shifted);
-            if (shifted.compareTo(candidate) < 0) {
-                break;
-            }
-        }
-        Logger.debug(this, "#shift(%s): to %s", cursor, candidate);
-        return candidate;
+    @Test
+    public void shiftsCursorToTheFirstValue() throws Exception {
+        final IndexMap map = new DefaultIndexMap(this.temp.newFolder("foo"));
+        final String attr = "attribute name";
+        final String value = "some text-1 \u0433!";
+        final long msg = new Random().nextLong();
+        map.touch(msg);
+        map.index(attr).add(msg, value);
+        map.touch(msg - 1);
+        map.index(attr).add(msg - 1, "should be found by NOT term");
+        final Term term = new NotMatcherTerm(
+            map,
+            new MatcherTerm(map, attr, value)
+        );
+        final Cursor cursor = new MemCursor(msg, map);
+        MatcherAssert.assertThat(
+            term.shift(cursor).msg().number(),
+            Matchers.equalTo(msg - 1)
+        );
+        MatcherAssert.assertThat(
+            term.shift(term.shift(cursor)).end(),
+            Matchers.equalTo(true)
+        );
     }
 
 }

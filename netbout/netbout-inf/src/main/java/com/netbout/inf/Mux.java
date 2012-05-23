@@ -121,7 +121,8 @@ final class Mux implements Closeable {
     /**
      * When {@link #flush()} was called last time.
      */
-    private final transient AtomicLong flushed = new AtomicLong();
+    private final transient AtomicLong flushed =
+        new AtomicLong(System.currentTimeMillis());
 
     /**
      * Public ctor.

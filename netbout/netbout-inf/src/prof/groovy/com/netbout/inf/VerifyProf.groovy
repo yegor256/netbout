@@ -24,53 +24,20 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.inf;
+package com.netbout.inf
 
-import com.netbout.spi.Urn;
-import java.io.Closeable;
-import java.io.IOException;
-import java.util.Set;
+import com.jcabi.log.Logger
+import java.util.regex.Pattern
 
-/**
- * Infinity, with information about bouts and messages.
- *
- * @author Yegor Bugayenko (yegor@netbout.com)
- * @version $Id$
- */
-public interface Infinity extends Closeable {
-
-    /**
-     * How long do we need to wait before sending requests?
-     * @param who Who is asking
-     * @return Estimated number of nanoseconds
-     */
-    long eta(Urn... who);
-
-    /**
-     * Find messages for the given predicate.
-     * @param query The predicate to use
-     * @return The list of messages, ordered
-     * @throws InvalidSyntaxException If query syntax is not valid
-     */
-    Iterable<Long> messages(String query) throws InvalidSyntaxException;
-
-    /**
-     * How many messages were seen totally by this infinity?
-     * @return Maximum number of the message seen so far
-     */
-    long maximum();
-
-    /**
-     * Flush content to disc.
-     * @throws IOException If fails
-     */
-    void flush() throws IOException;
-
-    /**
-     * Send this notice to infinity.
-     * @param notice The notice to see
-     * @return Who should wait for its processing
-     */
-    Set<Urn> see(Notice notice);
-
+def file = new File(project.properties['file'])
+if (file.exists()) {
+    def pattern = Pattern.compile(
+        ' *\\d+ +\\d+\\.\\d\\d% +\\d+\\.\\d\\d% +(\\d+) +\\d+ +(com\\.netbout\\.inf\\.ray\\.\\w+Term\\.[\\w\\.\\$]+)'
+    )
+    file.text.split('\n').each {
+        def matcher = pattern.matcher(it)
+        if (matcher.matches()) {
+            Logger.info(this, '%s', it)
+        }
+    }
 }

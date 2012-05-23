@@ -215,6 +215,81 @@
                 </plugins>
             </build>
         </profile>
+        <profile>
+            <id>inf-profiling</id>
+            <activation>
+                <file><exists>${basedir}/pom.xml</exists></file>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>build-helper-maven-plugin</artifactId>
+                        <version since="2 Dec 2011">1.7</version>
+                        <executions>
+                            <execution>
+                                <id>add-prof-sources</id>
+                                <phase>validate</phase>
+                                <goals>
+                                    <goal>add-test-source</goal>
+                                </goals>
+                                <configuration>
+                                    <sources>
+                                        <source>${basedir}/src/prof/java</source>
+                                    </sources>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>exec-maven-plugin</artifactId>
+                        <version since="22 May 2012">1.2.1</version>
+                        <executions>
+                            <execution>
+                                <id>profile-infinity</id>
+                                <phase>test</phase>
+                                <goals>
+                                    <goal>exec</goal>
+                                </goals>
+                                <configuration>
+                                    <executable>java</executable>
+                                    <classpathScope>test</classpathScope>
+                                    <arguments>
+                                        <!-- <argument>-agentlib:hprof=cpu=times,file=target/java.hprof,cutoff=0,interval=100</argument> -->
+                                        <argument>-Xms512m</argument>
+                                        <argument>-Xmx4096m</argument>
+                                        <argument>-classpath</argument>
+                                        <classpath/>
+                                        <argument>com.netbout.inf.DefaultInfinityProf</argument>
+                                    </arguments>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.codehaus.gmaven</groupId>
+                        <artifactId>gmaven-plugin</artifactId>
+                        <version since="10 Nov 2011">1.3</version>
+                        <executions>
+                            <execution>
+                                <id>verify-prof</id>
+                                <phase>test</phase>
+                                <goals>
+                                    <goal>execute</goal>
+                                </goals>
+                                <configuration>
+                                    <properties>
+                                        <file>${project.build.directory}/java.hprof</file>
+                                    </properties>
+                                    <source>${basedir}/src/prof/groovy/com/netbout/inf/VerifyProf.groovy</source>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
     </profiles>
 
     <build>

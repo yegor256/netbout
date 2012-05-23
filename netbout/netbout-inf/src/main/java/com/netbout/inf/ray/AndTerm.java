@@ -26,6 +26,7 @@
  */
 package com.netbout.inf.ray;
 
+import com.jcabi.log.Logger;
 import com.netbout.inf.Cursor;
 import com.netbout.inf.Term;
 import java.util.ArrayList;
@@ -96,6 +97,7 @@ final class AndTerm implements Term {
                 slider = this.slide(slider, cache);
             }
         }
+        Logger.debug(this, "#shift(%s): to %s", cursor, slider);
         return slider;
     }
 
@@ -109,11 +111,13 @@ final class AndTerm implements Term {
         final ConcurrentMap<Term, Cursor> cache) {
         Cursor slider = cursor;
         boolean match;
+        int ops = 0;
         do {
             match = true;
             final Cursor expected = slider;
             for (Term term : this.terms) {
                 slider = this.move(term, this.above(slider), cache);
+                ++ops;
                 if (!expected.equals(slider)) {
                     match = false;
                     break;

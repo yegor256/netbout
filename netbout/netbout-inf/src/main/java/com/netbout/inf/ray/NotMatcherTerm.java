@@ -29,16 +29,18 @@ package com.netbout.inf.ray;
 import com.jcabi.log.Logger;
 import com.netbout.inf.Cursor;
 import com.netbout.inf.Term;
+import java.util.Iterator;
+import java.util.Set;
 
 /**
- * NOT term.
+ * NOT term for negating of MATCHER.
  *
  * <p>The class is immutable and thread-safe.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-final class NotTerm implements Term {
+final class NotMatcherTerm implements Term {
 
     /**
      * Index map.
@@ -46,18 +48,24 @@ final class NotTerm implements Term {
     private final transient IndexMap imap;
 
     /**
-     * Term to negate.
+     * Name of attribute.
      */
-    private final transient Term term;
+    private final transient String attr;
+
+    /**
+     * Value to match.
+     */
+    private final transient String value;
 
     /**
      * Public ctor.
      * @param map The index map
-     * @param trm The term
+     * @param term The term
      */
-    public NotTerm(final IndexMap map, final Term trm) {
+    public NotMatcherTerm(final IndexMap map, final MatcherTerm term) {
         this.imap = map;
-        this.term = trm;
+        this.attr = term.getAttr();
+        this.value = term.getValue();
     }
 
     /**
@@ -65,9 +73,7 @@ final class NotTerm implements Term {
      */
     @Override
     public String toString() {
-        final StringBuilder text = new StringBuilder();
-        text.append("(NOT ").append(this.term).append(')');
-        return text.toString();
+        return String.format("(NOT %s:%s)", this.attr, this.value);
     }
 
     /**
@@ -75,18 +81,43 @@ final class NotTerm implements Term {
      */
     @Override
     public Cursor shift(final Cursor cursor) {
-        Cursor shifted = cursor;
-        Cursor candidate = cursor;
-        final Term always = new AlwaysTerm(this.imap);
-        while (!shifted.end()) {
-            candidate = shifted.shift(always);
-            shifted = this.term.shift(shifted);
-            if (shifted.compareTo(candidate) < 0) {
+        Cursor shifted;
+        if (cursor.end()) {
+            shifted = cursor;
+        } else {
+            final long current = cursor.msg().number();
+            shifted = new MemCursor(
+                this.next(
+                    this.imap.msgs().tailSet(current).iterator(),
+                    this.imap.index(this.attr).msgs(this.value),
+                    current
+                ),
+                this.imap
+            );
+        }
+        Logger.debug(this, "#shift(%s): to %s", cursor, shifted);
+        return shifted;
+    }
+
+    /**
+     * Get next number from iterator, which is not equal to the provided one
+     * (exlude the values from the Set).
+     * @param iterator The iterator
+     * @param exclude Numbers to exclude
+     * @param ignore The number to ignore
+     * @return The number found or ZERO if nothing found
+     */
+    private long next(final Iterator<Long> iterator, final Set<Long> exclude,
+        final long ignore) {
+        long next = 0L;
+        while (iterator.hasNext()) {
+            next = iterator.next();
+            if (next != ignore && !exclude.contains(next)) {
                 break;
             }
+            next = 0L;
         }
-        Logger.debug(this, "#shift(%s): to %s", cursor, candidate);
-        return candidate;
+        return next;
     }
 
 }

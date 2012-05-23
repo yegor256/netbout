@@ -90,7 +90,7 @@ final class Files {
         return new Snapshot(
             this.dir,
             String.format(
-                "%X",
+                "%06X",
                 // @checkstyle MagicNumber (1 line)
                 UUID.randomUUID().getMostSignificantBits() & 0xFFFFFF
             )
@@ -104,6 +104,7 @@ final class Files {
      */
     @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
     public void publish(final Snapshot snapshot) throws IOException {
+        final long start = System.currentTimeMillis();
         FileUtils.writeStringToFile(
             new File(this.dir, Files.MARKER),
             snapshot.version()
@@ -113,7 +114,12 @@ final class Files {
                 FileUtils.deleteQuietly(new File(this.dir, name));
             }
         }
-        Logger.info(this, "#publish('%s'): done", snapshot);
+        Logger.info(
+            this,
+            "#publish('%s'): done in %[ms]s",
+            snapshot,
+            System.currentTimeMillis() - start
+        );
     }
 
 }

@@ -100,8 +100,9 @@ final class DefaultIndexMap implements IndexMap {
         }
         Logger.info(
             this,
-            "#DefaultIndexMap(): restored %d msg numbers from %s in %[ms]s",
+            "#DefaultIndexMap(): restored %d msgs (%[list]s) from %s in %[ms]s",
             this.all.size(),
+            this.map.keySet(),
             snapshot,
             System.currentTimeMillis() - start
         );
@@ -192,7 +193,7 @@ final class DefaultIndexMap implements IndexMap {
         final ExecutorService service = Executors.newFixedThreadPool(
             // @checkstyle MagicNumber (1 line)
             Runtime.getRuntime().availableProcessors() * 4,
-            new VerboseThreads()
+            new VerboseThreads("imap-flush")
         );
         final Snapshot snapshot = this.files.writer();
         final Collection<Callable<Void>> tasks =

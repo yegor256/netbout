@@ -85,8 +85,8 @@ public final class DefaultInfinity implements Infinity {
         StageFarm.register(this);
         Logger.info(
             this,
-            "#DefaultInfinity(%[type]s): instantiated (max=%d)",
-            this.folder,
+            "#DefaultInfinity(%s): instantiated (max=%d)",
+            this.folder.path(),
             this.maximum()
         );
     }
@@ -138,10 +138,17 @@ public final class DefaultInfinity implements Infinity {
     @Override
     public void close() throws java.io.IOException {
         this.mux.close();
-        this.ray.flush();
         this.ray.close();
         this.folder.close();
         Logger.info(this, "#close(): closed");
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void flush() throws java.io.IOException {
+        this.ray.flush();
     }
 
     /**
@@ -166,7 +173,7 @@ public final class DefaultInfinity implements Infinity {
             .parse(query)
             .term(this.ray);
         Logger.debug(this, "#messages('%[text]s'): term '%s'", query, term);
-        return new LazyMessages(this.ray.cursor(), term);
+        return new LazyMessages(this.ray, term);
     }
 
     /**

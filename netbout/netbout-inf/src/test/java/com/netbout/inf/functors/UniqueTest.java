@@ -59,7 +59,7 @@ public final class UniqueTest {
     @Test
     public void findsUniqueMessages() throws Exception {
         final Ray ray = new MemRay(new FolderMocker().mock().path());
-        final long msg = new Random().nextLong();
+        final long msg = Math.abs(new Random().nextLong());
         final Bout bout = new BoutMocker().mock();
         for (int num = 0; num < 2; ++num) {
             final long number = msg - num;
