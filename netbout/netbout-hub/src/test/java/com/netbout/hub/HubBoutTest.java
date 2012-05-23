@@ -134,7 +134,7 @@ public final class HubBoutTest {
         Mockito.doReturn(infinity).when(ihub).infinity();
         final Identity identity = new IdentityMocker().mock();
         final BoutDt data = new BoutDtMocker().mock();
-        new HubBout(ihub, identity, data).messages("(pos 0)");
+        new HubBout(ihub, identity, data).messages("(pos 1)");
         Mockito.verify(infinity).messages(
             Mockito.argThat(
                 Matchers.<String>allOf(
@@ -144,7 +144,7 @@ public final class HubBoutTest {
                             data.getNumber()
                         )
                     ),
-                    Matchers.not(Matchers.containsString("'(pos 0)'"))
+                    Matchers.not(Matchers.containsString("'(pos 1)'"))
                 )
             )
         );

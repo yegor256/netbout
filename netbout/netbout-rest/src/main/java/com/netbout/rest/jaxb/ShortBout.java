@@ -131,7 +131,8 @@ public final class ShortBout {
      */
     @XmlElement
     public Date getRecent() {
-        return NetboutUtils.dateOf(this.bout);
+        return null;
+        // return NetboutUtils.dateOf(this.bout);
     }
 
     /**
@@ -167,7 +168,8 @@ public final class ShortBout {
      */
     @XmlAttribute
     public boolean isUnseen() {
-        return NetboutUtils.isUnread(this.bout);
+        return true;
+        // return NetboutUtils.isUnread(this.bout);
     }
 
     /**
@@ -179,37 +181,38 @@ public final class ShortBout {
     @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
     public Collection<Link> getBundled() {
         final Collection<Link> links = new LinkedList<Link>();
-        final String query = String.format(
-            "(unbundled %d)",
-            this.bout.number()
-        );
-        final Iterator<Bout> bouts = this.viewer.inbox(query).iterator();
-        // @checkstyle MagicNumber (1 line)
-        int max = 5;
-        while (bouts.hasNext() && max > 0) {
-            final Bout item = bouts.next();
-            max -= 1;
-            final Link link = new Link(
-                "bout",
-                this.builder.clone().path("/../{num}").build(item.number())
-            );
-            links.add(
-                link.with(new JaxbBundle("number", item.number()))
-                    .with(new JaxbBundle("title", item.title()))
-                    .with(new JaxbBundle("unseen", NetboutUtils.isUnread(item)))
-            );
-        }
-        if (max == 0) {
-            links.add(
-                new Link(
-                    "all",
-                    this.builder.clone().path("/..")
-                        .replaceQueryParam(RestSession.QUERY_PARAM, "{query}")
-                        .build(query)
-                )
-            );
-        }
         return links;
+        // final String query = String.format(
+        //     "(unbundled %d)",
+        //     this.bout.number()
+        // );
+        // final Iterator<Bout> bouts = this.viewer.inbox(query).iterator();
+        // // @checkstyle MagicNumber (1 line)
+        // int max = 5;
+        // while (bouts.hasNext() && max > 0) {
+        //     final Bout item = bouts.next();
+        //     max -= 1;
+        //     final Link link = new Link(
+        //         "bout",
+        //         this.builder.clone().path("/../{num}").build(item.number())
+        //     );
+        //     links.add(
+        //         link.with(new JaxbBundle("number", item.number()))
+        //             .with(new JaxbBundle("title", item.title()))
+        //             .with(new JaxbBundle("unseen", NetboutUtils.isUnread(item)))
+        //     );
+        // }
+        // if (max == 0) {
+        //     links.add(
+        //         new Link(
+        //             "all",
+        //             this.builder.clone().path("/..")
+        //                 .replaceQueryParam(RestSession.QUERY_PARAM, "{query}")
+        //                 .build(query)
+        //         )
+        //     );
+        // }
+        // return links;
     }
 
 }

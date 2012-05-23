@@ -101,7 +101,8 @@ public final class NetboutUtils {
      * @return Its recent date
      */
     public static Date dateOf(final Bout bout) {
-        final Iterable<Message> msgs = bout.messages("");
+        // @checkstyle MultipleStringLiterals (1 line)
+        final Iterable<Message> msgs = bout.messages("(pos 0)");
         Date recent = bout.date();
         if (msgs.iterator().hasNext()) {
             final Message msg = msgs.iterator().next();
@@ -132,12 +133,10 @@ public final class NetboutUtils {
      *  Something like "(unseen-by ?)".
      */
     public static boolean isUnread(final Bout bout) {
+        final Iterable<Message> msgs = bout.messages("(pos 0)");
         boolean unread = false;
-        for (Message msg : bout.messages("")) {
-            if (!msg.seen()) {
-                unread = true;
-                break;
-            }
+        if (msgs.iterator().hasNext()) {
+            unread ^= msgs.iterator().next().seen();
         }
         return unread;
     }
