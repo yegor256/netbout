@@ -86,7 +86,13 @@ final class MemTermBuilder implements TermBuilder {
      */
     @Override
     public Term not(final Term term) {
-        return new NotTerm(this.imap, term);
+        Term not;
+        if (term instanceof MatcherTerm) {
+            not = new NotTerm(this.imap, MatcherTerm.class.cast(term));
+        } else {
+            not = new NotTerm(this.imap, term);
+        }
+        return not;
     }
 
     /**

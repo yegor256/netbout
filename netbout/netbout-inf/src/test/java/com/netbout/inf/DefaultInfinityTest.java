@@ -109,6 +109,7 @@ public final class DefaultInfinityTest {
         while (inf.eta(deps) != 0) {
             TimeUnit.MILLISECONDS.sleep(1);
         }
+        inf.flush();
         inf.close();
         final Infinity restored = new DefaultInfinity(folder);
         MatcherAssert.assertThat(

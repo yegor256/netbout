@@ -111,11 +111,13 @@ final class AndTerm implements Term {
         final ConcurrentMap<Term, Cursor> cache) {
         Cursor slider = cursor;
         boolean match;
+        int ops = 0;
         do {
             match = true;
             final Cursor expected = slider;
             for (Term term : this.terms) {
                 slider = this.move(term, this.above(slider), cache);
+                ++ops;
                 if (!expected.equals(slider)) {
                     match = false;
                     break;

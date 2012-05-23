@@ -24,69 +24,56 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.inf.functors;
+package com.netbout.inf.ray;
 
-import com.netbout.inf.Atom;
-import com.netbout.inf.FolderMocker;
-import com.netbout.inf.Ray;
+import com.netbout.inf.Cursor;
 import com.netbout.inf.Term;
-import com.netbout.inf.atoms.VariableAtom;
-import com.netbout.inf.notices.MessagePostedNotice;
-import com.netbout.inf.ray.MemRay;
-import com.netbout.spi.Bout;
-import com.netbout.spi.BoutMocker;
-import com.netbout.spi.Message;
-import com.netbout.spi.MessageMocker;
-import java.util.Arrays;
 import java.util.Random;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
 
 /**
- * Test case of {@link Unique}.
+ * Test case of {@link NotMatcherTerm}.
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
- * @checkstyle ClassDataAbstractionCoupling (500 lines)
  */
-@SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
-public final class UniqueTest {
+public final class NotMatcherTermTest {
 
     /**
-     * Unique can find unique messages.
+     * Temporary folder.
+     * @checkstyle VisibilityModifier (3 lines)
+     */
+    @Rule
+    public transient TemporaryFolder temp = new TemporaryFolder();
+
+    /**
+     * NotMatcherTerm can shift a cursor.
      * @throws Exception If there is some problem inside
      */
     @Test
-    public void findsUniqueMessages() throws Exception {
-        final Ray ray = new MemRay(new FolderMocker().mock().path());
-        final long msg = Math.abs(new Random().nextLong());
-        final Bout bout = new BoutMocker().mock();
-        for (int num = 0; num < 2; ++num) {
-            final long number = msg - num;
-            ray.msg(number);
-            new Equal().see(
-                ray,
-                new MessagePostedNotice() {
-                    @Override
-                    public Message message() {
-                        return new MessageMocker()
-                            .withNumber(number)
-                            .inBout(bout)
-                            .mock();
-                    }
-                }
-            );
-        }
-        final Term term = new Unique().build(
-            ray,
-            Arrays.<Atom>asList(VariableAtom.BOUT_NUMBER)
+    public void shiftsCursorToTheFirstValue() throws Exception {
+        final IndexMap map = new DefaultIndexMap(this.temp.newFolder("foo"));
+        final String attr = "attribute name";
+        final String value = "some text-1 \u0433!";
+        final long msg = new Random().nextLong();
+        map.touch(msg);
+        map.index(attr).add(msg, value);
+        map.touch(msg - 1);
+        map.index(attr).add(msg - 1, "should be found by NOT term");
+        final Term term = new NotMatcherTerm(
+            map,
+            new MatcherTerm(map, attr, value)
+        );
+        final Cursor cursor = new MemCursor(msg, map);
+        MatcherAssert.assertThat(
+            term.shift(cursor).msg().number(),
+            Matchers.equalTo(msg - 1)
         );
         MatcherAssert.assertThat(
-            ray.cursor().shift(term).msg().number(),
-            Matchers.equalTo(msg)
-        );
-        MatcherAssert.assertThat(
-            ray.cursor().shift(term).end(),
+            term.shift(term.shift(cursor)).end(),
             Matchers.equalTo(true)
         );
     }

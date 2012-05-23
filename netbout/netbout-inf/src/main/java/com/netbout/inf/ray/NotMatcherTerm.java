@@ -30,16 +30,17 @@ import com.jcabi.log.Logger;
 import com.netbout.inf.Cursor;
 import com.netbout.inf.Term;
 import java.util.Iterator;
+import java.util.Set;
 
 /**
- * Matching term.
+ * NOT term for negating of MATCHER.
  *
  * <p>The class is immutable and thread-safe.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-final class MatcherTerm implements Term {
+final class NotMatcherTerm implements Term {
 
     /**
      * Index map.
@@ -59,13 +60,12 @@ final class MatcherTerm implements Term {
     /**
      * Public ctor.
      * @param map The index map
-     * @param atr Attribute
-     * @param val Value of it
+     * @param term The term
      */
-    public MatcherTerm(final IndexMap map, final String atr, final String val) {
+    public NotMatcherTerm(final IndexMap map, final MatcherTerm term) {
         this.imap = map;
-        this.attr = atr;
-        this.value = val;
+        this.attr = term.getAttr();
+        this.value = term.getValue();
     }
 
     /**
@@ -73,7 +73,7 @@ final class MatcherTerm implements Term {
      */
     @Override
     public String toString() {
-        return String.format("(%s:%s)", this.attr, this.value);
+        return String.format("(NOT %s:%s)", this.attr, this.value);
     }
 
     /**
@@ -86,50 +86,36 @@ final class MatcherTerm implements Term {
             shifted = cursor;
         } else {
             final long current = cursor.msg().number();
-            final Iterator<Long> tail = this.imap.index(this.attr)
-                .msgs(this.value)
-                .tailSet(current)
-                .iterator();
-            shifted = new MemCursor(this.next(tail, current), this.imap);
+            shifted = new MemCursor(
+                this.next(
+                    this.imap.msgs().tailSet(current).iterator(),
+                    this.imap.index(this.attr).msgs(this.value),
+                    current
+                ),
+                this.imap
+            );
         }
         Logger.debug(this, "#shift(%s): to %s", cursor, shifted);
         return shifted;
     }
 
     /**
-     * Get attribute name (used by {@link NotTerm}).
-     * @return The name
-     */
-    public String getAttr() {
-        return this.attr;
-    }
-
-    /**
-     * Get value (used by {@link NotTerm}).
-     * @return The value
-     */
-    public String getValue() {
-        return this.value;
-    }
-
-    /**
-     * Get next number from iterator, which is not equal to the provided one.
+     * Get next number from iterator, which is not equal to the provided one
+     * (exlude the values from the Set).
      * @param iterator The iterator
+     * @param exclude Numbers to exclude
      * @param ignore The number to ignore
      * @return The number found or ZERO if nothing found
      */
-    private long next(final Iterator<Long> iterator, final long ignore) {
-        Long next = 0L;
-        if (iterator.hasNext()) {
+    private long next(final Iterator<Long> iterator, final Set<Long> exclude,
+        final long ignore) {
+        long next = 0L;
+        while (iterator.hasNext()) {
             next = iterator.next();
-            if (next == ignore) {
-                // @checkstyle NestedIfDepth (1 line)
-                if (iterator.hasNext()) {
-                    next = iterator.next();
-                } else {
-                    next = 0L;
-                }
+            if (next != ignore && !exclude.contains(next)) {
+                break;
             }
+            next = 0L;
         }
         return next;
     }

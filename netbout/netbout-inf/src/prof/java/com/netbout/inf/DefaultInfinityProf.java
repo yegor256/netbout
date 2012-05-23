@@ -26,8 +26,12 @@
  */
 package com.netbout.inf;
 
+import com.jcabi.log.Logger;
 import java.io.File;
 import java.security.SecureRandom;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Random;
 import org.apache.commons.io.FileUtils;
 import org.hamcrest.MatcherAssert;
@@ -56,14 +60,28 @@ public final class DefaultInfinityProf {
     }
 
     /**
-     * Run it.
+     * Run it (use "urn:facebook:1531296526" for the big-data test).
      * @throws Exception If there is some problem inside
      */
     private void run() throws Exception {
         final Infinity inf = this.prepare();
+        final Iterator<Long> iterator = inf.messages(
+            "(and (talks-with 'urn:test:Jeff') (bundled) (limit 10))"
+        ).iterator();
+        final List<Long> msgs = new LinkedList<Long>();
+        final long start = System.currentTimeMillis();
+        while (iterator.hasNext()) {
+            msgs.add(iterator.next());
+        }
+        Logger.debug(
+            this,
+            "#run(): %d msgs in %[ms]s",
+            msgs.size(),
+            System.currentTimeMillis() - start
+        );
         MatcherAssert.assertThat(
-            inf.messages("(talks-with 'urn:test:Jeff')"),
-            Matchers.<Long>iterableWithSize(Matchers.greaterThan(10))
+            msgs,
+            Matchers.hasSize(Matchers.greaterThan(0))
         );
         inf.close();
     }
