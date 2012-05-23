@@ -51,6 +51,8 @@ import java.util.concurrent.CopyOnWriteArrayList;
 /**
  * Bout with data.
  *
+ * <p>The class is thread-safe.
+ *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  * @checkstyle ClassDataAbstractionCoupling (500 lines)
@@ -94,6 +96,11 @@ final class BoutData implements BoutDt {
     @SuppressWarnings("PMD.UseConcurrentHashMap")
     private final transient Map<Long, MessageDt> messages =
         new ConcurrentHashMap<Long, MessageDt>();
+
+    /**
+     * Number of the latest message in the bout (NULL if still unknown).
+     */
+    private transient Long latest;
 
     /**
      * Public ctor.
@@ -342,6 +349,7 @@ final class BoutData implements BoutDt {
                 data.getNumber(),
                 this.number
             );
+            this.latest = num;
             return data;
         }
     }
@@ -369,6 +377,23 @@ final class BoutData implements BoutDt {
             }
         }
         return this.messages.get(num);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public long getLatestMessage() {
+        synchronized (this.number) {
+            if (this.latest == null) {
+                this.latest = this.hub
+                    .make("first-bout-message")
+                    .synchronously()
+                    .arg(this.number)
+                    .exec();
+            }
+        }
+        return this.latest;
     }
 
     /**

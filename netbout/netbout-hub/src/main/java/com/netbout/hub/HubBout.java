@@ -43,10 +43,9 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
-import java.util.concurrent.atomic.AtomicLong;
 
 /**
- * Bout.
+ * Bout (cheap resource, created on demand and immediately destroyed by GC).
  *
  * <p>The class is thread-safe.
  *
@@ -71,11 +70,6 @@ public final class HubBout implements Bout {
      * The data.
      */
     private final transient BoutDt data;
-
-    /**
-     * Number of first message in the bout.
-     */
-    private transient AtomicLong first;
 
     /**
      * Public ctor.
@@ -280,19 +274,11 @@ public final class HubBout implements Bout {
     public Iterable<Message> messages(final String query) {
         Iterable<Long> msgs;
         if ("(pos 0)".equals(query)) {
-            synchronized (this.data) {
-                if (this.first == null) {
-                    this.first = new AtomicLong(
-                        this.hub.make("first-bout-message")
-                            .arg(this.number())
-                            .<Long>exec()
-                    );
-                }
-            }
-            if (this.first.get() == 0) {
+            final long latest = this.data.getLatestMessage();
+            if (latest == 0) {
                 msgs = Collections.<Long>emptyList();
             } else {
-                msgs = Arrays.<Long>asList(this.first.get());
+                msgs = Arrays.<Long>asList(latest);
             }
         } else {
             try {
@@ -388,9 +374,6 @@ public final class HubBout implements Bout {
                     ex
                 );
             }
-        }
-        synchronized (this.data) {
-            this.first = new AtomicLong(message.number());
         }
         return message;
     }

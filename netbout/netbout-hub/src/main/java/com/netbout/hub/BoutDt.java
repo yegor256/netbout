@@ -109,4 +109,10 @@ public interface BoutDt {
      */
     MessageDt findMessage(Long num) throws MessageNotFoundException;
 
+    /**
+     * Get number of the latest message in the bout.
+     * @return The number or ZERO if there are no messages
+     */
+    long getLatestMessage();
+
 }
