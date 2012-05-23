@@ -96,7 +96,7 @@ final class NotMatcherTerm implements Term {
      */
     @Override
     public String toString() {
-        return String.format("(NOT %s %[list]s)", this.attr, this.values);
+        return Logger.format("(NOT %s %[list]s)", this.attr, this.values);
     }
 
     /**
