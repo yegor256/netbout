@@ -101,7 +101,7 @@ public final class NetboutUtils {
      * @return Its recent date
      */
     public static Date dateOf(final Bout bout) {
-        final Iterable<Message> msgs = bout.messages("(pos 0)");
+        final Iterable<Message> msgs = bout.messages("");
         Date recent = bout.date();
         if (msgs.iterator().hasNext()) {
             final Message msg = msgs.iterator().next();
