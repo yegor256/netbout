@@ -39,11 +39,16 @@ import com.netbout.spi.Urn;
 import com.netbout.spi.xml.DomParser;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
+import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * Bout.
+ *
+ * <p>The class is thread-safe.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
@@ -66,6 +71,11 @@ public final class HubBout implements Bout {
      * The data.
      */
     private final transient BoutDt data;
+
+    /**
+     * Number of first message in the bout.
+     */
+    private transient AtomicLong first;
 
     /**
      * Public ctor.
@@ -268,20 +278,36 @@ public final class HubBout implements Bout {
     @Override
     @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
     public Iterable<Message> messages(final String query) {
-        try {
-            return new LazyMessages(
-                this.hub.infinity().messages(
+        Iterable<Long> msgs;
+        if ("(pos 0)".equals(query)) {
+            synchronized (this.data) {
+                if (this.first == null) {
+                    this.first = new AtomicLong(
+                        this.hub.make("first-bout-message")
+                            .arg(this.number())
+                            .<Long>exec()
+                    );
+                }
+            }
+            if (this.first.get() == 0) {
+                msgs = Collections.<Long>emptyList();
+            } else {
+                msgs = Arrays.<Long>asList(this.first.get());
+            }
+        } else {
+            try {
+                msgs = this.hub.infinity().messages(
                     String.format(
                         "(and (equal $bout.number %d) %s)",
                         this.number(),
                         NetboutUtils.normalize(query)
                     )
-                ),
-                this
-            );
-        } catch (com.netbout.inf.InvalidSyntaxException ex) {
-            throw new IllegalArgumentException(ex);
+                );
+            } catch (com.netbout.inf.InvalidSyntaxException ex) {
+                throw new IllegalArgumentException(ex);
+            }
         }
+        return new LazyMessages(msgs, this);
     }
 
     /**
@@ -362,6 +388,9 @@ public final class HubBout implements Bout {
                     ex
                 );
             }
+        }
+        synchronized (this.data) {
+            this.first = new AtomicLong(message.number());
         }
         return message;
     }

@@ -88,6 +88,19 @@ public final class BoutFarm {
     }
 
     /**
+     * Get number of first bout message.
+     * @param number Number of bout
+     * @return The message number or NULL if it's absent
+     */
+    @Operation("first-bout-message")
+    public Long firstBoutMessage(final Long number) {
+        return new JdbcSession(Database.source())
+            .sql("SELECT MAX(number) FROM message WHERE bout = ?")
+            .set(number)
+            .select(new SingleHandler<Long>(Long.class, true));
+    }
+
+    /**
      * Get bout title.
      * @param number Number of bout
      * @return The title

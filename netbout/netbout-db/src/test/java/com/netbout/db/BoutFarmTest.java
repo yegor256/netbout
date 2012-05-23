@@ -131,4 +131,35 @@ public final class BoutFarmTest {
         );
     }
 
+    /**
+     * BoutFarm can get the number of first bout message.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void readsFirstMessageNumberOfBout() throws Exception {
+        final Long num = this.farm.getNextBoutNumber();
+        this.farm.startedNewBout(num);
+        new MessageRowMocker(num).mock();
+        new MessageRowMocker(num).mock();
+        final Long latest = new MessageRowMocker(num).mock();
+        MatcherAssert.assertThat(
+            this.farm.firstBoutMessage(num),
+            Matchers.equalTo(latest)
+        );
+    }
+
+    /**
+     * BoutFarm can return zero when first bout message is absent.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void returnsZeroForEmptyBout() throws Exception {
+        final Long num = this.farm.getNextBoutNumber();
+        this.farm.startedNewBout(num);
+        MatcherAssert.assertThat(
+            this.farm.firstBoutMessage(num),
+            Matchers.equalTo(0L)
+        );
+    }
+
 }
