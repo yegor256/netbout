@@ -257,8 +257,8 @@
                                     <classpathScope>test</classpathScope>
                                     <arguments>
                                         <!-- <argument>-agentlib:hprof=cpu=times,file=target/java.hprof,cutoff=0,interval=100</argument> -->
-                                        <argument>-Xms8192m</argument>
-                                        <argument>-Xmx8192m</argument>
+                                        <argument>-Xms512m</argument>
+                                        <argument>-Xmx4096m</argument>
                                         <argument>-classpath</argument>
                                         <classpath/>
                                         <argument>com.netbout.inf.DefaultInfinityProf</argument>
