@@ -134,11 +134,11 @@ public final class NetboutUtils {
      */
     public static boolean isUnread(final Bout bout) {
         final Iterable<Message> msgs = bout.messages("(pos 0)");
-        boolean unread = false;
+        boolean seen = true;
         if (msgs.iterator().hasNext()) {
-            unread ^= msgs.iterator().next().seen();
+            seen = msgs.iterator().next().seen();
         }
-        return unread;
+        return !seen;
     }
 
     /**
