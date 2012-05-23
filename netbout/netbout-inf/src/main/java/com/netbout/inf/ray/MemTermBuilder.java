@@ -83,12 +83,16 @@ final class MemTermBuilder implements TermBuilder {
 
     /**
      * {@inheritDoc}
+     *
+     * <p>This is an experimental implementation, which is going to speed up
+     * the entire search engine. The only way we can speed it up is by using
+     * a customized specifically-tailored term for NOT+MATCHER operation.
      */
     @Override
     public Term not(final Term term) {
         Term not;
         if (term instanceof MatcherTerm) {
-            not = new NotTerm(this.imap, MatcherTerm.class.cast(term));
+            not = new NotMatcherTerm(this.imap, MatcherTerm.class.cast(term));
         } else {
             not = new NotTerm(this.imap, term);
         }

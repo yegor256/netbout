@@ -65,6 +65,24 @@ final class AlwaysTerm implements Term {
      * {@inheritDoc}
      */
     @Override
+    public int hashCode() {
+        return this.imap.hashCode();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean equals(final Object term) {
+        return term == this
+            || (term instanceof AlwaysTerm
+            && term.hashCode() == this.hashCode());
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
     public Cursor shift(final Cursor cursor) {
         Cursor shifted = cursor;

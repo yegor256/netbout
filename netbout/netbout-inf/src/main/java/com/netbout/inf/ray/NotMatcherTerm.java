@@ -29,7 +29,10 @@ package com.netbout.inf.ray;
 import com.jcabi.log.Logger;
 import com.netbout.inf.Cursor;
 import com.netbout.inf.Term;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 /**
@@ -43,29 +46,49 @@ import java.util.Set;
 final class NotMatcherTerm implements Term {
 
     /**
+     * Name of attribute (also visible from {@link AndTerm}).
+     * @checkstyle VisibilityModifier (3 lines)
+     */
+    @SuppressWarnings("PMD.AvoidProtectedFieldInFinalClass")
+    protected final transient String attr;
+
+    /**
+     * Values to exclude (visible from {@link AndTerm}).
+     * @checkstyle VisibilityModifier (3 lines)
+     */
+    @SuppressWarnings("PMD.AvoidProtectedFieldInFinalClass")
+    protected final transient Set<String> values = new LinkedHashSet<String>();
+
+    /**
      * Index map.
      */
     private final transient IndexMap imap;
 
     /**
-     * Name of attribute.
+     * Public ctor.
+     * @param map The index map
+     * @param term The terms to negate
      */
-    private final transient String attr;
-
-    /**
-     * Value to match.
-     */
-    private final transient String value;
+    public NotMatcherTerm(final IndexMap map, final MatcherTerm term) {
+        this.imap = map;
+        this.attr = term.attr;
+        this.values.add(term.value);
+    }
 
     /**
      * Public ctor.
      * @param map The index map
-     * @param term The term
+     * @param name Name of attribute
+     * @param vals Values to exclude
      */
-    public NotMatcherTerm(final IndexMap map, final MatcherTerm term) {
+    public NotMatcherTerm(final IndexMap map, final String name,
+        final Collection<String> vals) {
         this.imap = map;
-        this.attr = term.getAttr();
-        this.value = term.getValue();
+        if (vals.isEmpty()) {
+            throw new IllegalArgumentException("empty list of values");
+        }
+        this.attr = name;
+        this.values.addAll(vals);
     }
 
     /**
@@ -73,7 +96,7 @@ final class NotMatcherTerm implements Term {
      */
     @Override
     public String toString() {
-        return String.format("(NOT %s:%s)", this.attr, this.value);
+        return Logger.format("(NOT %s %[list]s)", this.attr, this.values);
     }
 
     /**
@@ -89,7 +112,6 @@ final class NotMatcherTerm implements Term {
             shifted = new MemCursor(
                 this.next(
                     this.imap.msgs().tailSet(current).iterator(),
-                    this.imap.index(this.attr).msgs(this.value),
                     current
                 ),
                 this.imap
@@ -103,19 +125,33 @@ final class NotMatcherTerm implements Term {
      * Get next number from iterator, which is not equal to the provided one
      * (exlude the values from the Set).
      * @param iterator The iterator
-     * @param exclude Numbers to exclude
      * @param ignore The number to ignore
      * @return The number found or ZERO if nothing found
      */
-    private long next(final Iterator<Long> iterator, final Set<Long> exclude,
-        final long ignore) {
+    private long next(final Iterator<Long> iterator, final long ignore) {
         long next = 0L;
+        final Collection<Set<Long>> excludes = new ArrayList<Set<Long>>();
+        for (String value : this.values) {
+            excludes.add(this.imap.index(this.attr).msgs(value));
+        }
         while (iterator.hasNext()) {
             next = iterator.next();
-            if (next != ignore && !exclude.contains(next)) {
-                break;
+            if (next == ignore) {
+                next = 0L;
+                continue;
             }
-            next = 0L;
+            boolean exclude = false;
+            for (Set<Long> msgs : excludes) {
+                if (msgs.contains(next)) {
+                    exclude = true;
+                    break;
+                }
+            }
+            if (exclude) {
+                next = 0L;
+                continue;
+            }
+            break;
         }
         return next;
     }

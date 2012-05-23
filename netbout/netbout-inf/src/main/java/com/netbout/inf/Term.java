@@ -41,6 +41,10 @@ import java.lang.annotation.Target;
  */
 public interface Term {
 
+    /**
+     * Annotates a term that has to be re-calculated on every cycle (never
+     * cache its value).
+     */
     @Retention(RetentionPolicy.RUNTIME)
     @Target(ElementType.TYPE)
     @interface Volatile {

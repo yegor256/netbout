@@ -29,8 +29,10 @@ package com.netbout.inf.ray;
 import com.jcabi.log.Logger;
 import com.netbout.inf.Cursor;
 import com.netbout.inf.Term;
-import java.util.ArrayList;
 import java.util.Collection;
+import java.util.LinkedHashSet;
+import java.util.LinkedList;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
@@ -45,14 +47,16 @@ import java.util.concurrent.ConcurrentMap;
 final class AndTerm implements Term {
 
     /**
+     * Terms (also visible from {@link OrTerm}).
+     * @checkstyle VisibilityModifier (3 lines)
+     */
+    @SuppressWarnings("PMD.AvoidProtectedFieldInFinalClass")
+    protected final transient Set<Term> terms = new LinkedHashSet<Term>();
+
+    /**
      * Index map.
      */
     private final transient IndexMap imap;
-
-    /**
-     * Terms.
-     */
-    private final transient Collection<Term> terms;
 
     /**
      * Public ctor.
@@ -61,9 +65,12 @@ final class AndTerm implements Term {
      */
     public AndTerm(final IndexMap map, final Collection<Term> args) {
         this.imap = map;
-        this.terms = new ArrayList<Term>(args);
+        this.terms.addAll(AndTerm.compress(map, args));
         if (this.terms.isEmpty()) {
             this.terms.add(new AlwaysTerm(this.imap));
+        }
+        if (this.terms.size() > 1) {
+            this.terms.remove(new AlwaysTerm(this.imap));
         }
     }
 
@@ -154,6 +161,40 @@ final class AndTerm implements Term {
             cache.put(term, term.shift(from));
         }
         return cache.get(term);
+    }
+
+    /**
+     * Compress terms as much as possible.
+     * @param map Index map to use
+     * @param args Arguments (terms)
+     * @return Collection of compressed terms
+     */
+    @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
+    private static Collection<Term> compress(final IndexMap map,
+        final Collection<Term> args) {
+        final Set<Term> output = new LinkedHashSet<Term>();
+        final ConcurrentMap<String, Collection<String>> nots =
+            new ConcurrentHashMap<String, Collection<String>>();
+        for (Term arg : args) {
+            if (arg instanceof AndTerm) {
+                output.addAll(AndTerm.class.cast(arg).terms);
+            } else if (arg instanceof OrTerm
+                && OrTerm.class.cast(arg).terms.size() == 1) {
+                output.addAll(OrTerm.class.cast(arg).terms);
+            } else if (arg instanceof NotMatcherTerm) {
+                final String attr = NotMatcherTerm.class.cast(arg).attr;
+                nots.putIfAbsent(attr, new LinkedList<String>());
+                nots.get(attr).addAll(NotMatcherTerm.class.cast(arg).values);
+            } else {
+                output.add(arg);
+            }
+        }
+        if (!nots.isEmpty()) {
+            for (String attr : nots.keySet()) {
+                output.add(new NotMatcherTerm(map, attr, nots.get(attr)));
+            }
+        }
+        return output;
     }
 
 }

@@ -32,6 +32,8 @@ import com.netbout.inf.Term;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 /**
  * OR term.
@@ -44,14 +46,16 @@ import java.util.Collections;
 final class OrTerm implements Term {
 
     /**
+     * Terms (also visible from {@link AndTerm}).
+     * @checkstyle VisibilityModifier (3 lines)
+     */
+    @SuppressWarnings("PMD.AvoidProtectedFieldInFinalClass")
+    protected final transient Set<Term> terms = new LinkedHashSet<Term>();
+
+    /**
      * Index map.
      */
     private final transient IndexMap imap;
-
-    /**
-     * Terms.
-     */
-    private final transient Collection<Term> terms;
 
     /**
      * Public ctor.
@@ -60,7 +64,16 @@ final class OrTerm implements Term {
      */
     public OrTerm(final IndexMap map, final Collection<Term> args) {
         this.imap = map;
-        this.terms = new ArrayList<Term>(args);
+        for (Term arg : args) {
+            if (arg instanceof OrTerm) {
+                this.terms.addAll(OrTerm.class.cast(arg).terms);
+            } else if (arg instanceof AndTerm
+                && AndTerm.class.cast(arg).terms.size() == 1) {
+                this.terms.addAll(AndTerm.class.cast(arg).terms);
+            } else {
+                this.terms.add(arg);
+            }
+        }
         if (this.terms.isEmpty()) {
             this.terms.add(new AlwaysTerm(this.imap));
         }
