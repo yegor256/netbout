@@ -389,7 +389,9 @@ public final class HubBout implements Bout {
                 );
             }
         }
-        this.first.set(message.number());
+        synchronized (this.data) {
+            this.first = new AtomicLong(message.number());
+        }
         return message;
     }
 
