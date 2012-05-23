@@ -29,6 +29,8 @@ package com.netbout.inf.ray;
 import com.jcabi.log.Logger;
 import com.netbout.inf.Cursor;
 import com.netbout.inf.Term;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.Set;
 
@@ -53,19 +55,34 @@ final class NotMatcherTerm implements Term {
     private final transient String attr;
 
     /**
-     * Value to match.
+     * Values to exclude.
      */
-    private final transient String value;
+    private final transient Collection<String> values;
 
     /**
      * Public ctor.
      * @param map The index map
-     * @param term The term
+     * @param terms The terms to negate with AND between them
      */
-    public NotMatcherTerm(final IndexMap map, final MatcherTerm term) {
+    public NotMatcherTerm(final IndexMap map, final MatcherTerm... terms) {
         this.imap = map;
-        this.attr = term.getAttr();
-        this.value = term.getValue();
+        if (terms.length == 0) {
+            throw new IllegalArgumentException("empty list of matcher terms");
+        }
+        this.attr = terms[0].getAttr();
+        this.values = new ArrayList<String>(terms.length);
+        for (MatcherTerm term : terms) {
+            this.values.add(term.getValue());
+            if (term.getAttr() != this.attr) {
+                throw new IllegalArgumentException(
+                    String.format(
+                        "matchers use different attributes: '%s' and '%s'",
+                        this.attr,
+                        term.getAttr()
+                    )
+                );
+            }
+        }
     }
 
     /**
@@ -73,7 +90,7 @@ final class NotMatcherTerm implements Term {
      */
     @Override
     public String toString() {
-        return String.format("(NOT %s:%s)", this.attr, this.value);
+        return String.format("(NOT %s %[list]s)", this.attr, this.values);
     }
 
     /**
@@ -89,7 +106,6 @@ final class NotMatcherTerm implements Term {
             shifted = new MemCursor(
                 this.next(
                     this.imap.msgs().tailSet(current).iterator(),
-                    this.imap.index(this.attr).msgs(this.value),
                     current
                 ),
                 this.imap
@@ -103,19 +119,33 @@ final class NotMatcherTerm implements Term {
      * Get next number from iterator, which is not equal to the provided one
      * (exlude the values from the Set).
      * @param iterator The iterator
-     * @param exclude Numbers to exclude
      * @param ignore The number to ignore
      * @return The number found or ZERO if nothing found
      */
-    private long next(final Iterator<Long> iterator, final Set<Long> exclude,
-        final long ignore) {
+    private long next(final Iterator<Long> iterator, final long ignore) {
         long next = 0L;
+        final Collection<Set<Long>> excludes = new ArrayList<Set<Long>>();
+        for (String value : this.values) {
+            excludes.add(this.imap.index(this.attr).msgs(value));
+        }
         while (iterator.hasNext()) {
             next = iterator.next();
-            if (next != ignore && !exclude.contains(next)) {
-                break;
+            if (next == ignore) {
+                next = 0L;
+                continue;
             }
-            next = 0L;
+            boolean exclude = false;
+            for (Set<Long> msgs : excludes) {
+                if (msgs.contains(next)) {
+                    exclude = true;
+                    break;
+                }
+            }
+            if (exclude) {
+                next = 0L;
+                continue;
+            }
+            break;
         }
         return next;
     }
