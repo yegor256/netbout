@@ -30,8 +30,11 @@ import com.jcabi.log.Logger;
 import com.netbout.inf.Cursor;
 import com.netbout.inf.Term;
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
+import java.util.LinkedList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Set;
 
 /**
  * OR term.
@@ -49,9 +52,9 @@ final class OrTerm implements Term {
     private final transient IndexMap imap;
 
     /**
-     * Terms.
+     * Terms (also visible from {@link AndTerm}).
      */
-    private final transient Collection<Term> terms;
+    protected final transient Set<Term> terms = new LinkedHashSet<Term>();
 
     /**
      * Public ctor.
@@ -60,7 +63,16 @@ final class OrTerm implements Term {
      */
     public OrTerm(final IndexMap map, final Collection<Term> args) {
         this.imap = map;
-        this.terms = new ArrayList<Term>(args);
+        for (Term arg : args) {
+            if (arg instanceof OrTerm) {
+                this.terms.addAll(OrTerm.class.cast(arg).terms);
+            } else if (arg instanceof AndTerm
+                && AndTerm.class.cast(arg).terms.size() == 1) {
+                this.terms.addAll(AndTerm.class.cast(arg).terms);
+            } else {
+                this.terms.add(arg);
+            }
+        }
         if (this.terms.isEmpty()) {
             this.terms.add(new AlwaysTerm(this.imap));
         }
