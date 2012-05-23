@@ -32,6 +32,7 @@ import com.netbout.inf.Term;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 /**
@@ -45,44 +46,49 @@ import java.util.Set;
 final class NotMatcherTerm implements Term {
 
     /**
+     * Name of attribute (also visible from {@link AndTerm}).
+     * @checkstyle VisibilityModifier (3 lines)
+     */
+    @SuppressWarnings("PMD.AvoidProtectedFieldInFinalClass")
+    protected final transient String attr;
+
+    /**
+     * Values to exclude (visible from {@link AndTerm}).
+     * @checkstyle VisibilityModifier (3 lines)
+     */
+    @SuppressWarnings("PMD.AvoidProtectedFieldInFinalClass")
+    protected final transient Set<String> values = new LinkedHashSet<String>();
+
+    /**
      * Index map.
      */
     private final transient IndexMap imap;
 
     /**
-     * Name of attribute.
+     * Public ctor.
+     * @param map The index map
+     * @param term The terms to negate
      */
-    private final transient String attr;
-
-    /**
-     * Values to exclude.
-     */
-    private final transient Collection<String> values;
+    public NotMatcherTerm(final IndexMap map, final MatcherTerm term) {
+        this.imap = map;
+        this.attr = term.attr;
+        this.values.add(term.value);
+    }
 
     /**
      * Public ctor.
      * @param map The index map
-     * @param terms The terms to negate with AND between them
+     * @param name Name of attribute
+     * @param vals Values to exclude
      */
-    public NotMatcherTerm(final IndexMap map, final MatcherTerm... terms) {
+    public NotMatcherTerm(final IndexMap map, final String name,
+        final Collection<String> vals) {
         this.imap = map;
-        if (terms.length == 0) {
-            throw new IllegalArgumentException("empty list of matcher terms");
+        if (vals.isEmpty()) {
+            throw new IllegalArgumentException("empty list of values");
         }
-        this.attr = terms[0].getAttr();
-        this.values = new ArrayList<String>(terms.length);
-        for (MatcherTerm term : terms) {
-            this.values.add(term.getValue());
-            if (term.getAttr() != this.attr) {
-                throw new IllegalArgumentException(
-                    String.format(
-                        "matchers use different attributes: '%s' and '%s'",
-                        this.attr,
-                        term.getAttr()
-                    )
-                );
-            }
-        }
+        this.attr = name;
+        this.values.addAll(vals);
     }
 
     /**

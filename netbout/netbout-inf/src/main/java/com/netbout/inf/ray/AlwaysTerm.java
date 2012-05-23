@@ -74,8 +74,9 @@ final class AlwaysTerm implements Term {
      */
     @Override
     public boolean equals(final Object term) {
-        return term == this ||
-            (term instanceof AlwaysTerm && term.hashCode() == this.hashCode());
+        return term == this
+            || (term instanceof AlwaysTerm
+            && term.hashCode() == this.hashCode());
     }
 
     /**

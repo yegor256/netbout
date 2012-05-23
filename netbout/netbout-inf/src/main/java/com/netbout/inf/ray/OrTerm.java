@@ -30,10 +30,9 @@ import com.jcabi.log.Logger;
 import com.netbout.inf.Cursor;
 import com.netbout.inf.Term;
 import java.util.ArrayList;
-import java.util.LinkedHashSet;
-import java.util.LinkedList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 /**
@@ -47,14 +46,16 @@ import java.util.Set;
 final class OrTerm implements Term {
 
     /**
+     * Terms (also visible from {@link AndTerm}).
+     * @checkstyle VisibilityModifier (3 lines)
+     */
+    @SuppressWarnings("PMD.AvoidProtectedFieldInFinalClass")
+    protected final transient Set<Term> terms = new LinkedHashSet<Term>();
+
+    /**
      * Index map.
      */
     private final transient IndexMap imap;
-
-    /**
-     * Terms (also visible from {@link AndTerm}).
-     */
-    protected final transient Set<Term> terms = new LinkedHashSet<Term>();
 
     /**
      * Public ctor.

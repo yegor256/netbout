@@ -42,19 +42,23 @@ import java.util.Iterator;
 final class MatcherTerm implements Term {
 
     /**
+     * Name of attribute (also visible from {@link NotMatcherTerm}).
+     * @checkstyle VisibilityModifier (3 lines)
+     */
+    @SuppressWarnings("PMD.AvoidProtectedFieldInFinalClass")
+    protected final transient String attr;
+
+    /**
+     * Value to match (also visible from {@link NotMatcherTerm}).
+     * @checkstyle VisibilityModifier (3 lines)
+     */
+    @SuppressWarnings("PMD.AvoidProtectedFieldInFinalClass")
+    protected final transient String value;
+
+    /**
      * Index map.
      */
     private final transient IndexMap imap;
-
-    /**
-     * Name of attribute.
-     */
-    private final transient String attr;
-
-    /**
-     * Value to match.
-     */
-    private final transient String value;
 
     /**
      * Public ctor.
@@ -94,22 +98,6 @@ final class MatcherTerm implements Term {
         }
         Logger.debug(this, "#shift(%s): to %s", cursor, shifted);
         return shifted;
-    }
-
-    /**
-     * Get attribute name (used by {@link NotTerm}).
-     * @return The name
-     */
-    public String getAttr() {
-        return this.attr;
-    }
-
-    /**
-     * Get value (used by {@link NotTerm}).
-     * @return The value
-     */
-    public String getValue() {
-        return this.value;
     }
 
     /**
