@@ -28,7 +28,6 @@ package com.netbout.inf.ray;
 
 import com.netbout.inf.Cursor;
 import java.util.Random;
-import org.apache.commons.collections.IteratorUtils;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Rule;
@@ -63,11 +62,8 @@ public final class MemCursorTest {
         final String value = "some text \u0433!";
         cursor.add(new PickerTerm(map, msg), attr, value);
         MatcherAssert.assertThat(
-            IteratorUtils.toList(map.index(attr).values(msg)),
-            Matchers.allOf(
-                Matchers.<String>iterableWithSize(1),
-                Matchers.everyItem(Matchers.equalTo(value))
-            )
+            map.index(attr).first(msg),
+            Matchers.equalTo(value)
         );
     }
 
@@ -89,11 +85,8 @@ public final class MemCursorTest {
         cursor.replace(new PickerTerm(map, msg), attr, value);
         cursor.replace(new PickerTerm(map, msg), "some other attr", "foo");
         MatcherAssert.assertThat(
-            IteratorUtils.toList(map.index(attr).values(msg)),
-            Matchers.allOf(
-                Matchers.<String>iterableWithSize(1),
-                Matchers.everyItem(Matchers.equalTo(value))
-            )
+            map.index(attr).first(msg),
+            Matchers.equalTo(value)
         );
     }
 
