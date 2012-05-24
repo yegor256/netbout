@@ -44,6 +44,7 @@ import java.util.SortedSet;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.ConcurrentSkipListSet;
+import java.util.concurrent.TimeUnit;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.CharEncoding;
 
@@ -150,7 +151,21 @@ final class DefaultIndex implements Index {
      */
     @Override
     public String first(final long msg) {
-        final String val = this.rmap.get(msg);
+        String val = null;
+        int count = 0;
+        // @checkstyle MagicNumber (1 line)
+        while (++count < 15) {
+            val = this.rmap.get(msg);
+            if (val != null) {
+                break;
+            }
+            try {
+                TimeUnit.SECONDS.sleep(1);
+            } catch (InterruptedException ex) {
+                Thread.currentThread().interrupt();
+                throw new IllegalStateException(ex);
+            }
+        }
         if (val == null) {
             throw new IllegalArgumentException(
                 String.format("attribute not found for msg #%d", msg)
