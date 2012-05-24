@@ -39,9 +39,7 @@ import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.LinkedList;
-import java.util.Set;
 import java.util.SortedSet;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -71,14 +69,14 @@ final class DefaultIndex implements Index {
     /**
      * Reverse map.
      */
-    private final transient ConcurrentMap<Long, Set<String>> rmap;
+    private final transient ConcurrentMap<Long, String> rmap;
 
     /**
      * Public ctor.
      */
     public DefaultIndex() {
         this.map = new ConcurrentHashMap<String, SortedSet<Long>>();
-        this.rmap = new ConcurrentHashMap<Long, Set<String>>();
+        this.rmap = new ConcurrentHashMap<Long, String>();
     }
 
     /**
@@ -122,7 +120,7 @@ final class DefaultIndex implements Index {
     public void add(final long msg, final String value) {
         this.validate(msg);
         this.numbers(value).add(msg);
-        this.texts(msg).add(value);
+        this.rmap.put(msg, value);
     }
 
     /**
@@ -132,7 +130,7 @@ final class DefaultIndex implements Index {
     public void delete(final long msg, final String value) {
         this.validate(msg);
         this.numbers(value).remove(msg);
-        this.texts(msg).remove(value);
+        this.rmap.remove(msg);
     }
 
     /**
@@ -144,16 +142,21 @@ final class DefaultIndex implements Index {
         for (SortedSet<Long> set : this.map.values()) {
             set.remove(msg);
         }
-        this.texts(msg).clear();
+        this.rmap.remove(msg);
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public Iterator<String> values(final long msg) {
-        this.validate(msg);
-        return Collections.unmodifiableSet(this.texts(msg)).iterator();
+    public String first(final long msg) {
+        final String val = this.rmap.get(msg);
+        if (val == null) {
+            throw new IllegalArgumentException(
+                String.format("attribute not found for msg #%d", msg)
+            );
+        }
+        return val;
     }
 
     /**
@@ -250,18 +253,14 @@ final class DefaultIndex implements Index {
      * @param origin Original map
      * @return The reversed one
      */
-    private static ConcurrentMap<Long, Set<String>> reverse(
+    private static ConcurrentMap<Long, String> reverse(
         final ConcurrentMap<String, SortedSet<Long>> origin) {
-        final ConcurrentMap<Long, Set<String>> data =
-            new ConcurrentHashMap<Long, Set<String>>();
+        final ConcurrentMap<Long, String> data =
+            new ConcurrentHashMap<Long, String>();
         for (ConcurrentMap.Entry<String, SortedSet<Long>> entry
             : origin.entrySet()) {
             for (Long number : entry.getValue()) {
-                data.putIfAbsent(
-                    number,
-                    new ConcurrentSkipListSet<String>()
-                );
-                data.get(number).add(entry.getKey());
+                data.putIfAbsent(number, entry.getKey());
             }
         }
         return data;
@@ -279,16 +278,6 @@ final class DefaultIndex implements Index {
         if (msg == Long.MAX_VALUE) {
             throw new IllegalArgumentException("msg number can't be MAX_VALUE");
         }
-    }
-
-    /**
-     * Texts for given number.
-     * @param number The number
-     * @return Texts (link to existing structure)
-     */
-    private Set<String> texts(final long number) {
-        this.rmap.putIfAbsent(number, new ConcurrentSkipListSet<String>());
-        return this.rmap.get(number);
     }
 
     /**

@@ -27,7 +27,6 @@
 package com.netbout.inf.ray;
 
 import java.util.Random;
-import org.apache.commons.collections.IteratorUtils;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Rule;
@@ -60,11 +59,8 @@ public final class DefaultIndexMapTest {
         final String value = "some text \u0433!";
         map.index(attr).add(msg, value);
         MatcherAssert.assertThat(
-            IteratorUtils.toList(map.index(attr).values(msg)),
-            Matchers.allOf(
-                Matchers.<String>iterableWithSize(1),
-                Matchers.everyItem(Matchers.equalTo(value))
-            )
+            map.index(attr).first(msg),
+            Matchers.equalTo(value)
         );
     }
 
