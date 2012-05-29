@@ -29,7 +29,6 @@ package com.netbout.inf.ray;
 import com.jcabi.log.Logger;
 import com.netbout.inf.Cursor;
 import com.netbout.inf.Term;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
@@ -108,12 +107,8 @@ final class NotMatcherTerm implements Term {
         if (cursor.end()) {
             shifted = cursor;
         } else {
-            final long current = cursor.msg().number();
             shifted = new MemCursor(
-                this.next(
-                    this.imap.msgs().tailSet(current).iterator(),
-                    current
-                ),
+                this.next(cursor.msg().number()),
                 this.imap
             );
         }
@@ -123,35 +118,25 @@ final class NotMatcherTerm implements Term {
 
     /**
      * Get next number from iterator, which is not equal to the provided one
-     * (exlude the values from the Set).
-     * @param iterator The iterator
+     * (exlude the values).
      * @param ignore The number to ignore
      * @return The number found or ZERO if nothing found
      */
-    private long next(final Iterator<Long> iterator, final long ignore) {
+    private long next(final long ignore) {
         long next = 0L;
-        final Collection<Set<Long>> excludes = new ArrayList<Set<Long>>();
-        for (String value : this.values) {
-            excludes.add(this.imap.index(this.attr).msgs(value));
-        }
-        while (iterator.hasNext()) {
-            next = iterator.next();
-            if (next == ignore) {
-                next = 0L;
+        final Index index = this.imap.index(this.attr);
+        for (String value : index.values()) {
+            if (this.values.contains(value)) {
                 continue;
             }
-            boolean exclude = false;
-            for (Set<Long> msgs : excludes) {
-                if (msgs.contains(next)) {
-                    exclude = true;
-                    break;
-                }
+            final Iterator<Long> msgs = index.msgs(value)
+                .tailSet(ignore - 1).iterator();
+            if (msgs.hasNext()) {
+                next = Math.max(next, msgs.next());
             }
-            if (exclude) {
-                next = 0L;
-                continue;
+            if (next == ignore - 1) {
+                break;
             }
-            break;
         }
         return next;
     }
