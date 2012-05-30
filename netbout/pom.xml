@@ -323,25 +323,13 @@
                         </configuration>
                         <executions>
                             <execution>
-                                <phase>verify</phase>
+                                <!-- https://github.com/ning/maven-duplicate-finder-plugin/issues/12 -->
+                                <phase>verify-never</phase>
                                 <goals>
                                     <goal>check</goal>
                                 </goals>
                             </execution>
                         </executions>
-                        <dependencies>
-                            <!-- https://github.com/ning/maven-duplicate-finder-plugin/issues/12 -->
-                            <dependency>
-                                <groupId>com.rexsl</groupId>
-                                <artifactId>rexsl-core</artifactId>
-                                <version>${rexsl.version}</version>
-                            </dependency>
-                            <dependency>
-                                <groupId>com.netbout</groupId>
-                                <artifactId>netbout-rest</artifactId>
-                                <version>1.4</version>
-                            </dependency>
-                        </dependencies>
                     </plugin>
                 </plugins>
             </build>
