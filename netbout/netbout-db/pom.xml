@@ -102,6 +102,12 @@
             <scope>test</scope>
         </dependency>
         <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>servlet-api</artifactId>
+            <version since="26 Oct 2011">2.4</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-log4j12</artifactId>
         </dependency>
@@ -132,13 +138,6 @@
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-core</artifactId>
-        </dependency>
-        <dependency>
-            <!-- JDBC 4 -->
-            <groupId>javax</groupId>
-            <artifactId>javaee-api</artifactId>
-            <version since="11 Nov 2011">6.0</version>
-            <scope>provided</scope>
         </dependency>
     </dependencies>
 
