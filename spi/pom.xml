@@ -183,13 +183,6 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <!-- JAX-RS API -->
-            <groupId>javax.ws.rs</groupId>
-            <artifactId>jsr311-api</artifactId>
-            <version since="25 Nov 2011">1.1.1</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
             <!-- JAX-RS implementation, core library -->
             <groupId>com.sun.jersey</groupId>
             <artifactId>jersey-server</artifactId>
@@ -331,6 +324,26 @@
                         </configuration>
                         <executions>
                             <execution>
+                                <goals>
+                                    <goal>check</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>com.ning.maven.plugins</groupId>
+                        <artifactId>maven-duplicate-finder-plugin</artifactId>
+                        <version since="30 May 2012">1.0.3</version>
+                        <configuration>
+                            <failBuildInCaseOfConflict>true</failBuildInCaseOfConflict>
+                            <checkTestClasspath>false</checkTestClasspath>
+                            <ignoredResources>
+                                <ignoredResource>META-INF/.*</ignoredResource>
+                            </ignoredResources>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <phase>verify</phase>
                                 <goals>
                                     <goal>check</goal>
                                 </goals>

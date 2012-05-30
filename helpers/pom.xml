@@ -281,6 +281,26 @@
                             </execution>
                         </executions>
                     </plugin>
+                    <plugin>
+                        <groupId>com.ning.maven.plugins</groupId>
+                        <artifactId>maven-duplicate-finder-plugin</artifactId>
+                        <version since="30 May 2012">1.0.3</version>
+                        <configuration>
+                            <failBuildInCaseOfConflict>true</failBuildInCaseOfConflict>
+                            <checkTestClasspath>false</checkTestClasspath>
+                            <ignoredResources>
+                                <ignoredResource>META-INF/.*</ignoredResource>
+                            </ignoredResources>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <phase>verify</phase>
+                                <goals>
+                                    <goal>check</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
                 </plugins>
             </build>
         </profile>

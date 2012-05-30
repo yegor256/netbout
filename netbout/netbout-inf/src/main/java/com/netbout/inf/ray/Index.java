@@ -26,6 +26,7 @@
  */
 package com.netbout.inf.ray;
 
+import java.util.Set;
 import java.util.SortedSet;
 
 /**
@@ -78,5 +79,11 @@ interface Index {
      * @return Set of message numbers
      */
     SortedSet<Long> msgs(String value);
+
+    /**
+     * All values.
+     * @return The values
+     */
+    Set<String> values();
 
 }

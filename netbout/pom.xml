@@ -144,8 +144,7 @@
     <repositories>
         <!-- intentionally empty -->
         <repository>
-            <!-- until SPI is in development -->
-            <id>netbout.snapshots</id>
+            <id>rexsl.snapshots</id>
             <url>https://oss.sonatype.org/content/repositories/snapshots/</url>
         </repository>
     </repositories>
@@ -153,8 +152,8 @@
     <pluginRepositories>
         <!-- intentionally empty -->
         <pluginRepository>
-            <!-- until SPI is in development -->
-            <id>netbout.snapshots</id>
+            <!-- until REXSL is in development -->
+            <id>rexsl.snapshots</id>
             <url>https://oss.sonatype.org/content/repositories/snapshots/</url>
         </pluginRepository>
     </pluginRepositories>
@@ -305,6 +304,27 @@
                         </configuration>
                         <executions>
                             <execution>
+                                <goals>
+                                    <goal>check</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>com.ning.maven.plugins</groupId>
+                        <artifactId>maven-duplicate-finder-plugin</artifactId>
+                        <version since="30 May 2012">1.0.3</version>
+                        <configuration>
+                            <failBuildInCaseOfConflict>true</failBuildInCaseOfConflict>
+                            <checkTestClasspath>false</checkTestClasspath>
+                            <ignoredResources>
+                                <ignoredResource>META-INF/.*</ignoredResource>
+                            </ignoredResources>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <!-- https://github.com/ning/maven-duplicate-finder-plugin/issues/12 -->
+                                <phase>verify-never</phase>
                                 <goals>
                                     <goal>check</goal>
                                 </goals>

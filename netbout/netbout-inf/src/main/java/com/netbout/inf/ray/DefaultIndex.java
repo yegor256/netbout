@@ -40,6 +40,7 @@ import java.io.PrintWriter;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
+import java.util.Set;
 import java.util.SortedSet;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -180,6 +181,14 @@ final class DefaultIndex implements Index {
     @Override
     public SortedSet<Long> msgs(final String value) {
         return Collections.unmodifiableSortedSet(this.numbers(value));
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Set<String> values() {
+        return this.map.keySet();
     }
 
     /**
