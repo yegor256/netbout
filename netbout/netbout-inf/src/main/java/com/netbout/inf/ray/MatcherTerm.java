@@ -26,7 +26,6 @@
  */
 package com.netbout.inf.ray;
 
-import com.jcabi.log.Logger;
 import com.netbout.inf.Cursor;
 import com.netbout.inf.Term;
 import java.util.Iterator;
@@ -89,35 +88,24 @@ final class MatcherTerm implements Term {
         if (cursor.end()) {
             shifted = cursor;
         } else {
-            final long current = cursor.msg().number();
             final Iterator<Long> tail = this.imap.index(this.attr)
                 .msgs(this.value)
-                .tailSet(current)
+                .tailSet(cursor.msg().number() - 1)
                 .iterator();
-            shifted = new MemCursor(this.next(tail, current), this.imap);
+            shifted = new MemCursor(this.next(tail), this.imap);
         }
-        Logger.debug(this, "#shift(%s): to %s", cursor, shifted);
         return shifted;
     }
 
     /**
      * Get next number from iterator, which is not equal to the provided one.
      * @param iterator The iterator
-     * @param ignore The number to ignore
      * @return The number found or ZERO if nothing found
      */
-    private long next(final Iterator<Long> iterator, final long ignore) {
+    private long next(final Iterator<Long> iterator) {
         Long next = 0L;
         if (iterator.hasNext()) {
             next = iterator.next();
-            if (next == ignore) {
-                // @checkstyle NestedIfDepth (1 line)
-                if (iterator.hasNext()) {
-                    next = iterator.next();
-                } else {
-                    next = 0L;
-                }
-            }
         }
         return next;
     }
