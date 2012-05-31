@@ -57,8 +57,9 @@ public final class MessageFarm {
     @Operation("create-bout-message")
     public Long createBoutMessage(final Long bout) {
         return new JdbcSession(Database.source())
-            .sql("INSERT INTO message (bout) VALUES (?)")
+            .sql("INSERT INTO message (bout, date) VALUES (?, ?)")
             .set(bout)
+            .set(new Utc())
             .insert(new SingleHandler<Long>(Long.class));
     }
 
