@@ -26,47 +26,23 @@
  */
 package com.netbout.inf.ray;
 
-import java.util.SortedSet;
+import com.netbout.inf.Cursor;
+import com.netbout.inf.Term;
 
 /**
- * Index.
- *
- * <p>Implementation must be thread-safe.
+ * Cache of terms.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-interface IndexMap {
+interface Cache {
 
     /**
-     * Get one index.
-     * @param attribute Name of attribute
-     * @return The index
+     * Shift the cursor and cache results.
+     * @param term The term to use for shifting
+     * @param cursor The cursor to shift
+     * @return New cursor
      */
-    Index index(String attribute);
-
-    /**
-     * This message was used somewhere.
-     * @param number Number of it
-     */
-    void touch(long number);
-
-    /**
-     * Sorted set of all messages.
-     * @return Sorted set of them
-     */
-    SortedSet<Long> msgs();
-
-    /**
-     * Maximum number of the message here (or zero if no messages).
-     * @return The number
-     */
-    long maximum();
-
-    /**
-     * Get cache.
-     * @return The cache
-     */
-    Cache cache();
+    Cursor shift(Term term, Cursor cursor);
 
 }

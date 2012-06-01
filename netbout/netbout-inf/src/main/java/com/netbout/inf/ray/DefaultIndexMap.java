@@ -81,6 +81,11 @@ final class DefaultIndexMap implements IndexMap {
     private final transient Files files;
 
     /**
+     * Term cache.
+     */
+    private final transient Cache tcache = new DefaultCache();
+
+    /**
      * Public ctor.
      * @param dir Directory where files are kept
      * @throws IOException If some IO error
@@ -156,6 +161,14 @@ final class DefaultIndexMap implements IndexMap {
             max = this.all.first();
         }
         return max;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Cache cache() {
+        return this.tcache;
     }
 
     /**
