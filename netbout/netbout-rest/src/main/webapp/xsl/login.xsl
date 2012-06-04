@@ -60,7 +60,7 @@
                         <xsl:value-of select="/page/version/revision"/>
                     </xsl:attribute>
                 </link>
-                <title>login</title>
+                <title>Netbout.com, Conversation-Centric UI On-Demand</title>
             </head>
             <body>
                 <div id="version">
