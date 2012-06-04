@@ -48,6 +48,9 @@
             </xsl:attribute>
             <head>
                 <meta charset="UTF-8" />
+                <meta name="description" content="Netbout.com is a conversation-centric UI on demand... do you get it?" />
+                <meta name="keywords" content="Netbout, User Interface, UI, On-Demand, Cloud User Interface" />
+                <meta name="author" content="Netbout.com, Inc." />
                 <script type="text/javascript" src="http://cdn.netbout.com/jquery.js">
                     <xsl:text> </xsl:text> <!-- this is for W3C compliance -->
                 </script>
