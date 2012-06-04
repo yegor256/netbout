@@ -31,6 +31,7 @@ import com.netbout.inf.Term;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
@@ -42,7 +43,8 @@ import java.util.Set;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-final class OrTerm implements Term {
+@Cacheable
+final class OrTerm implements DependableTerm {
 
     /**
      * Terms (also visible from {@link AndTerm}).
@@ -76,6 +78,21 @@ final class OrTerm implements Term {
         if (this.terms.isEmpty()) {
             this.terms.add(new AlwaysTerm(this.imap));
         }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Set<DependableTerm.Dependency> dependencies() {
+        final Set<DependableTerm.Dependency> deps =
+            new HashSet<DependableTerm.Dependency>();
+        for (Term term : this.terms) {
+            if (term instanceof DependableTerm) {
+                deps.addAll(DependableTerm.class.cast(term).dependencies());
+            }
+        }
+        return deps;
     }
 
     /**

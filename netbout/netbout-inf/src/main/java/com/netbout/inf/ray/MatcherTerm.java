@@ -27,8 +27,9 @@
 package com.netbout.inf.ray;
 
 import com.netbout.inf.Cursor;
-import com.netbout.inf.Term;
+import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Set;
 
 /**
  * Matching term.
@@ -38,7 +39,7 @@ import java.util.Iterator;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-final class MatcherTerm implements Term {
+final class MatcherTerm implements DependableTerm {
 
     /**
      * Name of attribute (also visible from {@link NotMatcherTerm}).
@@ -69,6 +70,17 @@ final class MatcherTerm implements Term {
         this.imap = map;
         this.attr = atr;
         this.value = val;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Set<DependableTerm.Dependency> dependencies() {
+        final Set<DependableTerm.Dependency> deps =
+            new HashSet<DependableTerm.Dependency>();
+        deps.add(new DependableTerm.Dependency(this.attr, this.value));
+        return deps;
     }
 
     /**
