@@ -82,6 +82,15 @@ final class DefaultCache implements Cache {
      * {@inheritDoc}
      */
     @Override
+    public void clear() {
+        this.deps.clear();
+        this.cached.clear();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public void clear(final String attr) {
         this.clear(new DependableTerm.Dependency(attr));
     }

@@ -146,8 +146,8 @@ final class DefaultIndex implements Index {
     @Override
     public void add(final long msg, final String value) {
         this.validate(msg);
-        this.numbers(value).add(msg);
         this.invalidator.invalidate(value);
+        this.numbers(value).add(msg);
         this.rmap.put(msg, value);
     }
 
@@ -157,8 +157,8 @@ final class DefaultIndex implements Index {
     @Override
     public void delete(final long msg, final String value) {
         this.validate(msg);
-        this.numbers(value).remove(msg);
         this.invalidator.invalidate(value);
+        this.numbers(value).remove(msg);
         this.rmap.remove(msg);
     }
 
@@ -168,10 +168,10 @@ final class DefaultIndex implements Index {
     @Override
     public void clean(final long msg) {
         this.validate(msg);
+        this.invalidator.invalidate();
         for (SortedSet<Long> set : this.map.values()) {
             set.remove(msg);
         }
-        this.invalidator.invalidate();
         this.rmap.remove(msg);
     }
 
