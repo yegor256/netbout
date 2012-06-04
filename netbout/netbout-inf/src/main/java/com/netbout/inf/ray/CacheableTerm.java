@@ -26,6 +26,7 @@
  */
 package com.netbout.inf.ray;
 
+import com.netbout.inf.Term;
 import java.util.Set;
 
 /**
@@ -67,8 +68,9 @@ interface CacheableTerm extends Term {
         /**
          * Does it match the provided dep?
          * @param dep The dependency to match against
+         * @return Yes or no
          */
-        public boolean matches(final CacheableTerm.Depedency dep) {
+        public boolean matches(final CacheableTerm.Dependency dep) {
             return dep.attrib.equals(this.attrib)
                 && (dep.value.equals(this.value) || dep.value.isEmpty()
                 || this.value.isEmpty());
@@ -79,6 +81,6 @@ interface CacheableTerm extends Term {
      * Set of attribute/value pairs.
      * @return Set of them
      */
-    Set<Dependency> dependencies();
+    Set<CacheableTerm.Dependency> dependencies();
 
 }

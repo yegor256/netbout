@@ -61,7 +61,9 @@ import org.apache.commons.lang.CharEncoding;
  * @version $Id$
  * @checkstyle ClassDataAbstractionCoupling (500 lines)
  */
-@SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
+@SuppressWarnings({
+    "PMD.AvoidInstantiatingObjectsInLoops", "PMD.TooManyMethods"
+})
 final class DefaultIndexMap implements IndexMap {
 
     /**
@@ -200,6 +202,8 @@ final class DefaultIndexMap implements IndexMap {
                 )
             );
         }
+        text.append(Logger.format("%[type]s details:\n", this.tcache))
+            .append(this.tcache.toString());
         return text.toString();
     }
 

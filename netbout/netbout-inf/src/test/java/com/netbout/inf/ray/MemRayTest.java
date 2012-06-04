@@ -110,4 +110,25 @@ public final class MemRayTest {
         ray.close();
     }
 
+    /**
+     * MemRay can convert itself to string.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void convertsItselfToString() throws Exception {
+        final File dir = new FolderMocker().mock().path();
+        final Ray ray = new MemRay(dir);
+        final Long number = Math.abs(new Random().nextLong());
+        ray.msg(number);
+        ray.cursor().add(
+            ray.builder().picker(number),
+            "some-attribute-5",
+            "How are you, dude? \u0434\u0440\u0443\u0433!"
+        );
+        MatcherAssert.assertThat(
+            ray,
+            Matchers.hasToString(Matchers.notNullValue())
+        );
+    }
+
 }

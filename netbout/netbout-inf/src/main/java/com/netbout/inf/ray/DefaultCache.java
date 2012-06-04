@@ -28,9 +28,13 @@ package com.netbout.inf.ray;
 
 import com.netbout.inf.Cursor;
 import com.netbout.inf.Term;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.Set;
 import java.util.SortedSet;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.ConcurrentSkipListSet;
 
 /**
  * Cache of terms.
@@ -51,8 +55,8 @@ final class DefaultCache implements Cache {
      * Dependencies.
      * @checkstyle LineLength (2 lines)
      */
-    private final transient ConcurrentMap<Cacheable.Dependency, Set<CacheableTerm>> deps =
-        new ConcurrentHashMap<Cacheable.Dependency, Set<CacheableTerm>>();
+    private final transient ConcurrentMap<CacheableTerm.Dependency, Set<CacheableTerm>> deps =
+        new ConcurrentHashMap<CacheableTerm.Dependency, Set<CacheableTerm>>();
 
     /**
      * {@inheritDoc}
@@ -78,7 +82,7 @@ final class DefaultCache implements Cache {
      */
     @Override
     public void clear(final String attr) {
-        this.clear(new Cacheable.Dependency(attr));
+        this.clear(new CacheableTerm.Dependency(attr));
     }
 
     /**
@@ -86,15 +90,26 @@ final class DefaultCache implements Cache {
      */
     @Override
     public void clear(final String attr, final String value) {
-        this.clear(new Cacheable.Dependency(attr, value));
+        this.clear(new CacheableTerm.Dependency(attr, value));
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String toString() {
+        final StringBuilder text = new StringBuilder();
+        text.append(String.format("%d cached terms\n", this.cached.size()));
+        text.append(String.format("%d dependencies\n", this.deps.size()));
+        return text.toString();
     }
 
     /**
      * Clear all terms that match this dep.
      * @param matcher The dependency to use as matcher
      */
-    private void clear(final Cacheable.Dependency matcher) {
-        for (Cacheable.Dependency dep : this.deps.keySet()) {
+    private void clear(final CacheableTerm.Dependency matcher) {
+        for (CacheableTerm.Dependency dep : this.deps.keySet()) {
             if (dep.matches(matcher)) {
                 for (Term term : this.deps.get(dep)) {
                     this.cached.remove(term);
@@ -114,7 +129,7 @@ final class DefaultCache implements Cache {
         if (!this.cached.containsKey(term)) {
             this.cached.putIfAbsent(term, this.head(term, cursor));
         }
-        return this.fetch(this.cached.get(term), cursor);
+        return this.fetch(term, cursor);
     }
 
     /**
@@ -130,12 +145,13 @@ final class DefaultCache implements Cache {
         long msg = Long.MAX_VALUE;
         Cursor shifted = cursor;
         while (!shifted.end() && msg > cursor.msg().number()) {
-            final Cursor shifted = term.shift(shifted);
+            shifted = term.shift(shifted);
             if (shifted.end()) {
-                head.add(0);
+                msg = 0L;
             } else {
-                head.add(shifted.msg().number());
+                msg = shifted.msg().number();
             }
+            head.add(msg);
         }
         return head;
     }
