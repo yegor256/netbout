@@ -87,6 +87,23 @@ final class MatcherTerm implements DependableTerm {
      * {@inheritDoc}
      */
     @Override
+    public int hashCode() {
+        return this.imap.hashCode() + this.toString().hashCode();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean equals(final Object term) {
+        return term == this || (term instanceof MatcherTerm
+            && this.hashCode() == term.hashCode());
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public String toString() {
         return String.format("(%s:%s)", this.attr, this.value);
     }

@@ -78,6 +78,23 @@ final class AndTerm implements DependableTerm {
      * {@inheritDoc}
      */
     @Override
+    public int hashCode() {
+        return this.imap.hashCode() + this.toString().hashCode();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean equals(final Object term) {
+        return term == this || (term instanceof AndTerm
+            && this.hashCode() == term.hashCode());
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public String toString() {
         final StringBuilder text = new StringBuilder();
         text.append("(AND");

@@ -65,22 +65,15 @@ public final class DefaultInfinityProf {
      */
     private void run() throws Exception {
         final Infinity inf = this.prepare();
-        final Iterator<Long> iterator = inf.messages(
-            "(and (talks-with 'urn:test:Jeff') (bundled) (limit 10))"
-        ).iterator();
-        final List<Long> msgs = new LinkedList<Long>();
-        final long start = System.currentTimeMillis();
-        while (iterator.hasNext()) {
-            msgs.add(iterator.next());
-        }
-        Logger.debug(
-            this,
-            "#run(): %d msgs in %[ms]s",
-            msgs.size(),
-            System.currentTimeMillis() - start
+        final String query =
+            // @checkstyle LineLength (1 line)
+            "(and (or (talks-with 'urn:test:Jeff') (talks-with 'urn:facebook:1531296526')) (bundled) (limit 10))";
+        MatcherAssert.assertThat(
+            this.fetch(inf.messages(query).iterator()),
+            Matchers.hasSize(Matchers.greaterThan(0))
         );
         MatcherAssert.assertThat(
-            msgs,
+            this.fetch(inf.messages(query).iterator()),
             Matchers.hasSize(Matchers.greaterThan(0))
         );
         inf.close();
@@ -98,6 +91,26 @@ public final class DefaultInfinityProf {
             new File(folder.path(), "/ray")
         );
         return new DefaultInfinity(folder);
+    }
+
+    /**
+     * Convert iterator to list of message numbers.
+     * @param iterator The iterator
+     * @return Message numbers (as a list)
+     */
+    private List<Long> fetch(final Iterator<Long> iterator) {
+        final List<Long> msgs = new LinkedList<Long>();
+        final long start = System.currentTimeMillis();
+        while (iterator.hasNext()) {
+            msgs.add(iterator.next());
+        }
+        Logger.debug(
+            this,
+            "#fetch(): %d msgs in %[ms]s",
+            msgs.size(),
+            System.currentTimeMillis() - start
+        );
+        return msgs;
     }
 
 }

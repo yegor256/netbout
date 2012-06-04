@@ -84,6 +84,23 @@ final class OrTerm implements DependableTerm {
      * {@inheritDoc}
      */
     @Override
+    public int hashCode() {
+        return this.imap.hashCode() + this.toString().hashCode();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean equals(final Object term) {
+        return term == this || (term instanceof OrTerm
+            && this.hashCode() == term.hashCode());
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public Set<DependableTerm.Dependency> dependencies() {
         final Set<DependableTerm.Dependency> deps =
             new HashSet<DependableTerm.Dependency>();

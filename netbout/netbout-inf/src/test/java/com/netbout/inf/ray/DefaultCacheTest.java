@@ -27,77 +27,59 @@
 package com.netbout.inf.ray;
 
 import com.netbout.inf.Cursor;
-import com.netbout.inf.Term;
+import com.netbout.inf.CursorMocker;
+import java.util.HashSet;
+import java.util.Set;
+import org.hamcrest.MatcherAssert;
+import org.hamcrest.Matchers;
+import org.junit.Test;
 
 /**
- * Slider term.
- *
- * <p>The class is immutable and thread-safe.
- *
+ * Test case of {@link DefaultCache}.
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-final class PickerTerm implements Term {
+public final class DefaultCacheTest {
 
     /**
-     * Index map.
+     * DefaultCache can cache shifting calls.
+     * @throws Exception If there is some problem inside
      */
-    private final transient IndexMap imap;
-
-    /**
-     * Number of message to pick.
-     */
-    private final transient long number;
-
-    /**
-     * Public ctor.
-     * @param map The index map
-     * @param num The number
-     */
-    public PickerTerm(final IndexMap map, final long num) {
-        this.imap = map;
-        this.number = num;
+    @Test
+    public void cachesShiftCalls() throws Exception {
+        final Cache cache = new DefaultCache();
+        final CountingTerm term = new CountingTerm();
+        final Cursor cursor = new CursorMocker().mock();
+        cache.shift(term, cursor);
+        cache.shift(term, cursor);
+        MatcherAssert.assertThat(
+            term.count(),
+            Matchers.equalTo(1)
+        );
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public int hashCode() {
-        return this.imap.hashCode() + this.toString().hashCode();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public boolean equals(final Object term) {
-        return term == this || (term instanceof PickerTerm
-            && this.hashCode() == term.hashCode());
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String toString() {
-        return String.format("(PICKER %d)", this.number);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Cursor shift(final Cursor cursor) {
-        Cursor shifted;
-        if (cursor.end()) {
-            shifted = cursor;
-        } else if (cursor.msg().number() > this.number) {
-            shifted = new MemCursor(this.number, this.imap);
-        } else {
-            shifted = new MemCursor(0L, this.imap);
+    @Cacheable
+    private final class CountingTerm implements DependableTerm {
+        /**
+         * How many times shift() was called.
+         */
+        private transient int calls;
+        /**
+         * How many times shift() was called.
+         * @return Count of times
+         */
+        public int count() {
+            return this.calls;
         }
-        return shifted;
+        @Override
+        public Set<DependableTerm.Dependency> dependencies() {
+            return new HashSet<DependableTerm.Dependency>();
+        }
+        @Override
+        public Cursor shift(final Cursor cursor) {
+            ++this.calls;
+            return cursor;
+        }
     }
 
 }

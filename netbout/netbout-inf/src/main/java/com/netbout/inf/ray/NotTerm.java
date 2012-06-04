@@ -79,6 +79,23 @@ final class NotTerm implements DependableTerm {
      * {@inheritDoc}
      */
     @Override
+    public int hashCode() {
+        return this.imap.hashCode() + this.toString().hashCode();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean equals(final Object trm) {
+        return trm == this || (trm instanceof NotTerm
+            && this.hashCode() == trm.hashCode());
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public String toString() {
         final StringBuilder text = new StringBuilder();
         text.append("(NOT ").append(this.term).append(')');
