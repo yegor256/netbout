@@ -35,6 +35,7 @@ import java.util.SortedSet;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.ConcurrentSkipListSet;
+import java.util.concurrent.CopyOnWriteArraySet;
 
 /**
  * Cache of terms.
@@ -48,15 +49,15 @@ final class DefaultCache implements Cache {
      * Cached terms and their results.
      * @checkstyle LineLength (2 lines)
      */
-    private final transient ConcurrentMap<CacheableTerm, SortedSet<Long>> cached =
-        new ConcurrentHashMap<CacheableTerm, SortedSet<Long>>();
+    private final transient ConcurrentMap<Term, SortedSet<Long>> cached =
+        new ConcurrentHashMap<Term, SortedSet<Long>>();
 
     /**
      * Dependencies.
      * @checkstyle LineLength (2 lines)
      */
-    private final transient ConcurrentMap<CacheableTerm.Dependency, Set<CacheableTerm>> deps =
-        new ConcurrentHashMap<CacheableTerm.Dependency, Set<CacheableTerm>>();
+    private final transient ConcurrentMap<DependableTerm.Dependency, Set<Term>> deps =
+        new ConcurrentHashMap<DependableTerm.Dependency, Set<Term>>();
 
     /**
      * {@inheritDoc}
@@ -64,15 +65,15 @@ final class DefaultCache implements Cache {
     @Override
     public long shift(final Term term, final Cursor cursor) {
         long shifted;
-        if (term instanceof CacheableTerm) {
-            shifted = this.through(CacheableTerm.class.cast(term), cursor);
-        } else {
+        if (term.getClass().getAnnotation(Cacheable.class) == null) {
             final Cursor cur = term.shift(cursor);
             if (cur.end()) {
                 shifted = 0;
             } else {
                 shifted = cur.msg().number();
             }
+        } else {
+            shifted = this.through(term, cursor);
         }
         return shifted;
     }
@@ -82,7 +83,7 @@ final class DefaultCache implements Cache {
      */
     @Override
     public void clear(final String attr) {
-        this.clear(new CacheableTerm.Dependency(attr));
+        this.clear(new DependableTerm.Dependency(attr));
     }
 
     /**
@@ -90,7 +91,7 @@ final class DefaultCache implements Cache {
      */
     @Override
     public void clear(final String attr, final String value) {
-        this.clear(new CacheableTerm.Dependency(attr, value));
+        this.clear(new DependableTerm.Dependency(attr, value));
     }
 
     /**
@@ -108,8 +109,8 @@ final class DefaultCache implements Cache {
      * Clear all terms that match this dep.
      * @param matcher The dependency to use as matcher
      */
-    private void clear(final CacheableTerm.Dependency matcher) {
-        for (CacheableTerm.Dependency dep : this.deps.keySet()) {
+    private void clear(final DependableTerm.Dependency matcher) {
+        for (DependableTerm.Dependency dep : this.deps.keySet()) {
             if (dep.matches(matcher)) {
                 for (Term term : this.deps.get(dep)) {
                     this.cached.remove(term);
@@ -125,9 +126,20 @@ final class DefaultCache implements Cache {
      * @param cursor Cursor to use
      * @return New cursor
      */
-    private long through(final CacheableTerm term, final Cursor cursor) {
+    @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
+    private long through(final Term term, final Cursor cursor) {
         if (!this.cached.containsKey(term)) {
             this.cached.putIfAbsent(term, this.head(term, cursor));
+        }
+        if (term instanceof DependableTerm) {
+            for (DependableTerm.Dependency dep
+                : DependableTerm.class.cast(term).dependencies()) {
+                this.deps.putIfAbsent(
+                    dep,
+                    new CopyOnWriteArraySet<Term>()
+                );
+                this.deps.get(dep).add(term);
+            }
         }
         return this.fetch(term, cursor);
     }
@@ -138,8 +150,7 @@ final class DefaultCache implements Cache {
      * @param cursor Cursor to use
      * @return The head, until the point of cursor
      */
-    private SortedSet<Long> head(final CacheableTerm term,
-        final Cursor cursor) {
+    private SortedSet<Long> head(final Term term, final Cursor cursor) {
         final SortedSet<Long> head =
             new ConcurrentSkipListSet<Long>(Collections.reverseOrder());
         long msg = Long.MAX_VALUE;
@@ -162,8 +173,7 @@ final class DefaultCache implements Cache {
      * @param cursor Cursor to use
      * @return The number fetched (or ZERO if end of list)
      */
-    private long fetch(final CacheableTerm term,
-        final Cursor cursor) {
+    private long fetch(final Term term, final Cursor cursor) {
         long msg = 0;
         if (!cursor.end() && cursor.msg().number() > 1) {
             final Iterator<Long> iterator = this.cached.get(term)
@@ -184,8 +194,7 @@ final class DefaultCache implements Cache {
      * @param cursor Cursor to use, after which we need the data
      * @return The number fetched (or ZERO if end of list)
      */
-    private long tail(final CacheableTerm term,
-        final Cursor cursor) {
+    private long tail(final Term term, final Cursor cursor) {
         final Cursor shifted = term.shift(cursor);
         long msg = 0;
         if (!shifted.end()) {

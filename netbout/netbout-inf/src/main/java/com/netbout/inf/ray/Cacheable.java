@@ -26,61 +26,18 @@
  */
 package com.netbout.inf.ray;
 
-import com.netbout.inf.Term;
-import java.util.Set;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 /**
- * If a term is cacheable.
+ * Cacheable term.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-interface CacheableTerm extends Term {
-
-    /**
-     * Dependency.
-     */
-    class Dependency {
-        /**
-         * Attribute name.
-         */
-        private final transient String attrib;
-        /**
-         * The value.
-         */
-        private final transient String value;
-        /**
-         * Public ctor.
-         * @param attr The attribute
-         */
-        public Dependency(final String attr) {
-            this(attr, "");
-        }
-        /**
-         * Public ctor.
-         * @param attr The attribute
-         * @param val The value
-         */
-        public Dependency(final String attr, final String val) {
-            this.attrib = attr;
-            this.value = val;
-        }
-        /**
-         * Does it match the provided dep?
-         * @param dep The dependency to match against
-         * @return Yes or no
-         */
-        public boolean matches(final CacheableTerm.Dependency dep) {
-            return dep.attrib.equals(this.attrib)
-                && (dep.value.equals(this.value) || dep.value.isEmpty()
-                || this.value.isEmpty());
-        }
-    }
-
-    /**
-     * Set of attribute/value pairs.
-     * @return Set of them
-     */
-    Set<CacheableTerm.Dependency> dependencies();
-
+@Retention(RetentionPolicy.RUNTIME)
+@Target(ElementType.TYPE)
+@interface Cacheable {
 }

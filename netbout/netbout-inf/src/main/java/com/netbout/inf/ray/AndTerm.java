@@ -29,6 +29,7 @@ package com.netbout.inf.ray;
 import com.netbout.inf.Cursor;
 import com.netbout.inf.Term;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -42,7 +43,8 @@ import java.util.concurrent.ConcurrentMap;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-final class AndTerm implements Term {
+@Cacheable
+final class AndTerm implements DependableTerm {
 
     /**
      * Terms (also visible from {@link OrTerm}).
@@ -103,6 +105,21 @@ final class AndTerm implements Term {
             }
         }
         return slider;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Set<DependableTerm.Dependency> dependencies() {
+        final Set<DependableTerm.Dependency> deps =
+            new HashSet<DependableTerm.Dependency>();
+        for (Term term : this.terms) {
+            if (term instanceof DependableTerm) {
+                deps.addAll(DependableTerm.class.cast(term).dependencies());
+            }
+        }
+        return deps;
     }
 
     /**

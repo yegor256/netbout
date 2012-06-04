@@ -28,6 +28,8 @@ package com.netbout.inf.ray;
 
 import com.netbout.inf.Cursor;
 import com.netbout.inf.Term;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * NOT term.
@@ -37,7 +39,8 @@ import com.netbout.inf.Term;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-final class NotTerm implements Term {
+@Cacheable
+final class NotTerm implements DependableTerm {
 
     /**
      * Index map.
@@ -57,6 +60,19 @@ final class NotTerm implements Term {
     public NotTerm(final IndexMap map, final Term trm) {
         this.imap = map;
         this.term = trm;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Set<DependableTerm.Dependency> dependencies() {
+        final Set<DependableTerm.Dependency> deps =
+            new HashSet<DependableTerm.Dependency>();
+        if (this.term instanceof DependableTerm) {
+            deps.addAll(DependableTerm.class.cast(this.term).dependencies());
+        }
+        return deps;
     }
 
     /**
