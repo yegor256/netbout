@@ -74,19 +74,44 @@ final class DefaultIndex implements Index {
     private final transient ConcurrentMap<Long, String> rmap;
 
     /**
-     * Public ctor.
+     * Cache invalidator.
      */
-    public DefaultIndex() {
+    private final transient Invalidator invalidator;
+
+    /**
+     * Cache invalidator.
+     */
+    public interface Invalidator {
+        /**
+         * Invalidate cache for this attribute and all its values.
+         */
+        void invalidate();
+        /**
+         * Invalidate cache for this attribute and the given value.
+         * @param value The value
+         */
+        void invalidate(String value);
+    }
+
+    /**
+     * Public ctor.
+     * @param inv Invalidator of cache
+     */
+    public DefaultIndex(final Invalidator inv) {
+        this.invalidator = inv;
         this.map = new ConcurrentHashMap<String, SortedSet<Long>>();
         this.rmap = new ConcurrentHashMap<Long, String>();
     }
 
     /**
      * Public ctor.
+     * @param inv Invalidator of cache
      * @param file File to read from
      * @throws IOException If some IO error
      */
-    public DefaultIndex(final File file) throws IOException {
+    public DefaultIndex(final Invalidator inv, final File file)
+        throws IOException {
+        this.invalidator = inv;
         final InputStream stream = new FileInputStream(file);
         try {
             final long start = System.currentTimeMillis();
@@ -122,6 +147,7 @@ final class DefaultIndex implements Index {
     public void add(final long msg, final String value) {
         this.validate(msg);
         this.numbers(value).add(msg);
+        this.invalidator.invalidate(value);
         this.rmap.put(msg, value);
     }
 
@@ -132,6 +158,7 @@ final class DefaultIndex implements Index {
     public void delete(final long msg, final String value) {
         this.validate(msg);
         this.numbers(value).remove(msg);
+        this.invalidator.invalidate(value);
         this.rmap.remove(msg);
     }
 
@@ -144,6 +171,7 @@ final class DefaultIndex implements Index {
         for (SortedSet<Long> set : this.map.values()) {
             set.remove(msg);
         }
+        this.invalidator.invalidate();
         this.rmap.remove(msg);
     }
 

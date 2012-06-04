@@ -32,6 +32,8 @@ import com.netbout.inf.Term;
 /**
  * Cache of terms.
  *
+ * <p>Implementation must be thread-safe.
+ *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
@@ -43,6 +45,19 @@ interface Cache {
      * @param cursor The cursor to shift
      * @return New cursor
      */
-    Cursor shift(Term term, Cursor cursor);
+    long shift(Term term, Cursor cursor);
+
+    /**
+     * Clean cache for the given attribute and all values.
+     * @param attr The attribute
+     */
+    void clear(String attr);
+
+    /**
+     * Clean cache for the given attribute and value.
+     * @param attr The attribute
+     * @param value The value
+     */
+    void clear(String attr, String value);
 
 }

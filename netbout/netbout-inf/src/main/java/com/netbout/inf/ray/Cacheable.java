@@ -26,7 +26,7 @@
  */
 package com.netbout.inf.ray;
 
-import java.util.Map;
+import java.util.Set;
 
 /**
  * If a term is cacheable.
@@ -34,12 +34,51 @@ import java.util.Map;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-interface Cacheable {
+interface CacheableTerm extends Term {
+
+    /**
+     * Dependency.
+     */
+    class Dependency {
+        /**
+         * Attribute name.
+         */
+        private final transient String attrib;
+        /**
+         * The value.
+         */
+        private final transient String value;
+        /**
+         * Public ctor.
+         * @param attr The attribute
+         */
+        public Dependency(final String attr) {
+            this(attr, "");
+        }
+        /**
+         * Public ctor.
+         * @param attr The attribute
+         * @param val The value
+         */
+        public Dependency(final String attr, final String val) {
+            this.attrib = attr;
+            this.value = val;
+        }
+        /**
+         * Does it match the provided dep?
+         * @param dep The dependency to match against
+         */
+        public boolean matches(final CacheableTerm.Depedency dep) {
+            return dep.attrib.equals(this.attrib)
+                && (dep.value.equals(this.value) || dep.value.isEmpty()
+                || this.value.isEmpty());
+        }
+    }
 
     /**
      * Set of attribute/value pairs.
      * @return Set of them
      */
-    Map<String, String> dependencies();
+    Set<Dependency> dependencies();
 
 }

@@ -101,7 +101,10 @@ final class DefaultIndexMap implements IndexMap {
             IOUtils.closeQuietly(stream);
         }
         for (String name : snapshot.attrs()) {
-            this.map.put(name, new DefaultIndex(snapshot.attr(name)));
+            this.map.put(
+                name,
+                new DefaultIndex(this.invalidator(name), snapshot.attr(name))
+            );
         }
         Logger.info(
             this,
@@ -122,7 +125,10 @@ final class DefaultIndexMap implements IndexMap {
             throw new IllegalArgumentException("attribute name is empty");
         }
         if (!this.map.containsKey(attr)) {
-            this.map.putIfAbsent(attr, new DefaultIndex());
+            this.map.putIfAbsent(
+                attr,
+                new DefaultIndex(this.invalidator(attr))
+            );
         }
         return this.map.get(attr);
     }
@@ -261,6 +267,24 @@ final class DefaultIndexMap implements IndexMap {
             snapshot,
             System.currentTimeMillis() - start
         );
+    }
+
+    /**
+     * Create invalidator for the given attribute.
+     * @param attr The attribute
+     * @return The invalidator
+     */
+    private DefaultIndex.Invalidator invalidator(final String attr) {
+        return new DefaultIndex.Invalidator() {
+            @Override
+            public void invalidate() {
+                DefaultIndexMap.this.cache().clear(attr);
+            }
+            @Override
+            public void invalidate(final String value) {
+                DefaultIndexMap.this.cache().clear(attr, value);
+            }
+        };
     }
 
     /**

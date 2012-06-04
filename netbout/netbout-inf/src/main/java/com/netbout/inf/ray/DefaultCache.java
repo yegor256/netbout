@@ -28,6 +28,9 @@ package com.netbout.inf.ray;
 
 import com.netbout.inf.Cursor;
 import com.netbout.inf.Term;
+import java.util.SortedSet;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 /**
  * Cache of terms.
@@ -38,11 +41,141 @@ import com.netbout.inf.Term;
 final class DefaultCache implements Cache {
 
     /**
+     * Cached terms and their results.
+     * @checkstyle LineLength (2 lines)
+     */
+    private final transient ConcurrentMap<CacheableTerm, SortedSet<Long>> cached =
+        new ConcurrentHashMap<CacheableTerm, SortedSet<Long>>();
+
+    /**
+     * Dependencies.
+     * @checkstyle LineLength (2 lines)
+     */
+    private final transient ConcurrentMap<Cacheable.Dependency, Set<CacheableTerm>> deps =
+        new ConcurrentHashMap<Cacheable.Dependency, Set<CacheableTerm>>();
+
+    /**
      * {@inheritDoc}
      */
     @Override
-    public Cursor shift(final Term term, final Cursor cursor) {
-        return term.shift(cursor);
+    public long shift(final Term term, final Cursor cursor) {
+        long shifted;
+        if (term instanceof CacheableTerm) {
+            shifted = this.through(CacheableTerm.class.cast(term), cursor);
+        } else {
+            final Cursor cur = term.shift(cursor);
+            if (cur.end()) {
+                shifted = 0;
+            } else {
+                shifted = cur.msg().number();
+            }
+        }
+        return shifted;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void clear(final String attr) {
+        this.clear(new Cacheable.Dependency(attr));
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void clear(final String attr, final String value) {
+        this.clear(new Cacheable.Dependency(attr, value));
+    }
+
+    /**
+     * Clear all terms that match this dep.
+     * @param matcher The dependency to use as matcher
+     */
+    private void clear(final Cacheable.Dependency matcher) {
+        for (Cacheable.Dependency dep : this.deps.keySet()) {
+            if (dep.matches(matcher)) {
+                for (Term term : this.deps.get(dep)) {
+                    this.cached.remove(term);
+                }
+                this.deps.remove(dep);
+            }
+        }
+    }
+
+    /**
+     * Shift using cache.
+     * @param term The term to shift
+     * @param cursor Cursor to use
+     * @return New cursor
+     */
+    private long through(final CacheableTerm term, final Cursor cursor) {
+        if (!this.cached.containsKey(term)) {
+            this.cached.putIfAbsent(term, this.head(term, cursor));
+        }
+        return this.fetch(this.cached.get(term), cursor);
+    }
+
+    /**
+     * Create head of the row for the given term.
+     * @param term The term to shift
+     * @param cursor Cursor to use
+     * @return The head, until the point of cursor
+     */
+    private SortedSet<Long> head(final CacheableTerm term,
+        final Cursor cursor) {
+        final SortedSet<Long> head =
+            new ConcurrentSkipListSet<Long>(Collections.reverseOrder());
+        long msg = Long.MAX_VALUE;
+        Cursor shifted = cursor;
+        while (!shifted.end() && msg > cursor.msg().number()) {
+            final Cursor shifted = term.shift(shifted);
+            if (shifted.end()) {
+                head.add(0);
+            } else {
+                head.add(shifted.msg().number());
+            }
+        }
+        return head;
+    }
+
+    /**
+     * Fetch next msg number.
+     * @param term The term to shift
+     * @param cursor Cursor to use
+     * @return The number fetched (or ZERO if end of list)
+     */
+    private long fetch(final CacheableTerm term,
+        final Cursor cursor) {
+        long msg = 0;
+        if (!cursor.end() && cursor.msg().number() > 1) {
+            final Iterator<Long> iterator = this.cached.get(term)
+                .tailSet(cursor.msg().number() - 1).iterator();
+            if (iterator.hasNext()) {
+                msg = iterator.next();
+            } else {
+                msg = this.tail(term, cursor);
+                this.cached.get(term).add(msg);
+            }
+        }
+        return msg;
+    }
+
+    /**
+     * Fetch next msg number in the tail.
+     * @param term The term to shift
+     * @param cursor Cursor to use, after which we need the data
+     * @return The number fetched (or ZERO if end of list)
+     */
+    private long tail(final CacheableTerm term,
+        final Cursor cursor) {
+        final Cursor shifted = term.shift(cursor);
+        long msg = 0;
+        if (!shifted.end()) {
+            msg = shifted.msg().number();
+        }
+        return msg;
     }
 
 }
