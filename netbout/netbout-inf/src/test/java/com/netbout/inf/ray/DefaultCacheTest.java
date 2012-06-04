@@ -48,7 +48,7 @@ public final class DefaultCacheTest {
     @Test
     public void cachesShiftCalls() throws Exception {
         final Cache cache = new DefaultCache();
-        final CountingTerm term = new CountingTerm();
+        final CountingTerm term = new CountingTerm("hello");
         final Cursor cursor = new CursorMocker().mock();
         cache.shift(term, cursor);
         cache.shift(term, cursor);
@@ -58,12 +58,42 @@ public final class DefaultCacheTest {
         );
     }
 
+    /**
+     * DefaultCache can clear itself after shifting.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void clearsItselfAfterCaching() throws Exception {
+        final Cache cache = new DefaultCache();
+        final String attr = "the-attribute";
+        final CountingTerm term = new CountingTerm(attr);
+        final Cursor cursor = new CursorMocker().mock();
+        cache.shift(term, cursor);
+        cache.clear(attr);
+        cache.shift(term, cursor);
+        MatcherAssert.assertThat(
+            term.count(),
+            Matchers.equalTo(2)
+        );
+    }
+
     @Cacheable
     private final class CountingTerm implements DependableTerm {
+        /**
+         * Attribute name it depends on.
+         */
+        private final transient String attr;
         /**
          * How many times shift() was called.
          */
         private transient int calls;
+        /**
+         * Public ctor.
+         * @param txt The attribute
+         */
+        public CountingTerm(final String txt) {
+            this.attr = txt;
+        }
         /**
          * How many times shift() was called.
          * @return Count of times
@@ -73,7 +103,10 @@ public final class DefaultCacheTest {
         }
         @Override
         public Set<DependableTerm.Dependency> dependencies() {
-            return new HashSet<DependableTerm.Dependency>();
+            final Set<DependableTerm.Dependency> deps =
+                new HashSet<DependableTerm.Dependency>();
+            deps.add(new DependableTerm.Dependency(this.attr));
+            return deps;
         }
         @Override
         public Cursor shift(final Cursor cursor) {
