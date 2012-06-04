@@ -42,6 +42,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 import org.mockito.ArgumentMatcher;
+import org.mockito.Mockito;
 
 /**
  * Test case of {@link DefaultIndex}.
@@ -64,7 +65,10 @@ public final class DefaultIndexTest {
      */
     @Test
     public void replacesValues() throws Exception {
-        final Index index = new DefaultIndex(this.temp.newFile("file-1"));
+        final Index index = new DefaultIndex(
+            Mockito.mock(DefaultIndex.Invalidator.class),
+            this.temp.newFile("file-1")
+        );
         final long msg = new Random().nextLong();
         final String value = "some text \u0433!";
         index.add(msg, "first value");
@@ -86,7 +90,10 @@ public final class DefaultIndexTest {
      */
     @Test
     public void ordersNumbersProperly() throws Exception {
-        final Index index = new DefaultIndex(this.temp.newFile("file-2"));
+        final Index index = new DefaultIndex(
+            Mockito.mock(DefaultIndex.Invalidator.class),
+            this.temp.newFile("file-2")
+        );
         final long msg = new Random().nextLong();
         final String value = "text-\u0433!";
         // @checkstyle MagicNumber (1 line)
@@ -110,7 +117,10 @@ public final class DefaultIndexTest {
     @Test
     @SuppressWarnings({ "PMD.AvoidInstantiatingObjectsInLoops", "unchecked" })
     public void updatesInMultipleThreads() throws Exception {
-        final Index index = new DefaultIndex(this.temp.newFile("file-3"));
+        final Index index = new DefaultIndex(
+            Mockito.mock(DefaultIndex.Invalidator.class),
+            this.temp.newFile("file-3")
+        );
         final long msg = new Random().nextLong();
         final String value = "some value to set";
         final int total = 100;

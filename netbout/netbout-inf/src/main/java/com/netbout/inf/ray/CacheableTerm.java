@@ -26,47 +26,61 @@
  */
 package com.netbout.inf.ray;
 
-import java.util.SortedSet;
+import com.netbout.inf.Term;
+import java.util.Set;
 
 /**
- * Index.
- *
- * <p>Implementation must be thread-safe.
+ * If a term is cacheable.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-interface IndexMap {
+interface CacheableTerm extends Term {
 
     /**
-     * Get one index.
-     * @param attribute Name of attribute
-     * @return The index
+     * Dependency.
      */
-    Index index(String attribute);
+    class Dependency {
+        /**
+         * Attribute name.
+         */
+        private final transient String attrib;
+        /**
+         * The value.
+         */
+        private final transient String value;
+        /**
+         * Public ctor.
+         * @param attr The attribute
+         */
+        public Dependency(final String attr) {
+            this(attr, "");
+        }
+        /**
+         * Public ctor.
+         * @param attr The attribute
+         * @param val The value
+         */
+        public Dependency(final String attr, final String val) {
+            this.attrib = attr;
+            this.value = val;
+        }
+        /**
+         * Does it match the provided dep?
+         * @param dep The dependency to match against
+         * @return Yes or no
+         */
+        public boolean matches(final CacheableTerm.Dependency dep) {
+            return dep.attrib.equals(this.attrib)
+                && (dep.value.equals(this.value) || dep.value.isEmpty()
+                || this.value.isEmpty());
+        }
+    }
 
     /**
-     * This message was used somewhere.
-     * @param number Number of it
+     * Set of attribute/value pairs.
+     * @return Set of them
      */
-    void touch(long number);
-
-    /**
-     * Sorted set of all messages.
-     * @return Sorted set of them
-     */
-    SortedSet<Long> msgs();
-
-    /**
-     * Maximum number of the message here (or zero if no messages).
-     * @return The number
-     */
-    long maximum();
-
-    /**
-     * Get cache.
-     * @return The cache
-     */
-    Cache cache();
+    Set<CacheableTerm.Dependency> dependencies();
 
 }
