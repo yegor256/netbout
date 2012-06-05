@@ -300,7 +300,14 @@ final class DefaultCache implements Cache {
                 new DefaultCache.RealNumbers(term, cursor)
             );
         }
-        return this.cached.get(term).fetch(term, cursor);
+        final Numbers numbers = this.cached.get(term);
+        long msg;
+        if (numbers == null) {
+            msg = this.through(term, cursor);
+        } else {
+            msg = numbers.fetch(term, cursor);
+        }
+        return msg;
     }
 
 }
