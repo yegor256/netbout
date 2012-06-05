@@ -27,6 +27,7 @@
 package com.netbout.inf.ray;
 
 import com.netbout.inf.Cursor;
+import com.netbout.inf.Term;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
@@ -39,6 +40,7 @@ import java.util.Set;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
+@Term.Cheap
 final class MatcherTerm implements DependableTerm {
 
     /**
@@ -81,6 +83,23 @@ final class MatcherTerm implements DependableTerm {
             new HashSet<DependableTerm.Dependency>();
         deps.add(new DependableTerm.Dependency(this.attr, this.value));
         return deps;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public int hashCode() {
+        return this.imap.hashCode() + this.toString().hashCode();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean equals(final Object term) {
+        return term == this || (term instanceof MatcherTerm
+            && this.hashCode() == term.hashCode());
     }
 
     /**

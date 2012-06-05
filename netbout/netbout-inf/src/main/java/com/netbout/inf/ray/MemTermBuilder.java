@@ -26,7 +26,6 @@
  */
 package com.netbout.inf.ray;
 
-import com.netbout.inf.Cursor;
 import com.netbout.inf.Term;
 import com.netbout.inf.TermBuilder;
 import java.util.Collection;
@@ -68,7 +67,15 @@ final class MemTermBuilder implements TermBuilder {
      */
     @Override
     public Term and(final Collection<Term> terms) {
-        return new AndTerm(this.imap, terms);
+        Term agg;
+        if (terms.size() == 1) {
+            agg = terms.iterator().next();
+        } else if (terms.isEmpty()) {
+            agg = this.always();
+        } else {
+            agg = new AndTerm(this.imap, terms);
+        }
+        return agg;
     }
 
     /**
@@ -78,7 +85,15 @@ final class MemTermBuilder implements TermBuilder {
     @Override
     @SuppressWarnings("PMD.ShortMethodName")
     public Term or(final Collection<Term> terms) {
-        return new OrTerm(this.imap, terms);
+        Term agg;
+        if (terms.size() == 1) {
+            agg = terms.iterator().next();
+        } else if (terms.isEmpty()) {
+            agg = this.always();
+        } else {
+            agg = new OrTerm(this.imap, terms);
+        }
+        return agg;
     }
 
     /**
@@ -98,12 +113,7 @@ final class MemTermBuilder implements TermBuilder {
      */
     @Override
     public Term never() {
-        return new Term() {
-            @Override
-            public Cursor shift(final Cursor cursor) {
-                return new MemCursor(0L, MemTermBuilder.this.imap);
-            }
-        };
+        return new NeverTerm(this.imap);
     }
 
     /**

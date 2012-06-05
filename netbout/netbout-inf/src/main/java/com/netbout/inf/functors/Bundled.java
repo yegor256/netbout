@@ -65,30 +65,32 @@ final class Bundled implements Functor {
     @Override
     public Term build(final Ray ray, final List<Atom> atoms) {
         // @checkstyle AnonInnerLength (50 lines)
-        return new Term() {
-            private final transient ConcurrentMap<String, Term> terms =
-                new ConcurrentHashMap<String, Term>();
-            @Override
-            public Cursor shift(final Cursor cursor) {
-                final Cursor shifted = cursor.shift(
-                    ray.builder().and(this.terms.values())
-                );
-                if (!shifted.end()) {
-                    final String marker = shifted.msg().first(Bundled.ATTR);
-                    this.terms.put(
-                        marker,
-                        ray.builder().not(
-                            ray.builder().matcher(Bundled.ATTR, marker)
-                        )
+        return new UncacheableTerm(
+            new Term() {
+                private final transient ConcurrentMap<String, Term> terms =
+                    new ConcurrentHashMap<String, Term>();
+                @Override
+                public Cursor shift(final Cursor cursor) {
+                    final Cursor shifted = cursor.shift(
+                        ray.builder().and(this.terms.values())
                     );
+                    if (!shifted.end()) {
+                        final String marker = shifted.msg().first(Bundled.ATTR);
+                        this.terms.put(
+                            marker,
+                            ray.builder().not(
+                                ray.builder().matcher(Bundled.ATTR, marker)
+                            )
+                        );
+                    }
+                    return shifted;
                 }
-                return shifted;
+                @Override
+                public String toString() {
+                    return "(BUNDLED)";
+                }
             }
-            @Override
-            public String toString() {
-                return "(BUNDLED)";
-            }
-        };
+        );
     }
 
     /**

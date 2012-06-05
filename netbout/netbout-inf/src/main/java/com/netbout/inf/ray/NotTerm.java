@@ -39,8 +39,7 @@ import java.util.Set;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-@Cacheable
-final class NotTerm implements DependableTerm {
+final class NotTerm implements DependableTerm, Cacheable {
 
     /**
      * Index map.
@@ -66,6 +65,14 @@ final class NotTerm implements DependableTerm {
      * {@inheritDoc}
      */
     @Override
+    public boolean cacheThis() {
+        return DefaultCache.isCacheable(this.term);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public Set<DependableTerm.Dependency> dependencies() {
         final Set<DependableTerm.Dependency> deps =
             new HashSet<DependableTerm.Dependency>();
@@ -73,6 +80,23 @@ final class NotTerm implements DependableTerm {
             deps.addAll(DependableTerm.class.cast(this.term).dependencies());
         }
         return deps;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public int hashCode() {
+        return this.imap.hashCode() + this.toString().hashCode();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean equals(final Object trm) {
+        return trm == this || (trm instanceof NotTerm
+            && this.hashCode() == trm.hashCode());
     }
 
     /**

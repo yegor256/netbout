@@ -43,6 +43,13 @@ public final class CursorMocker {
     private final transient Cursor cursor = Mockito.mock(Cursor.class);
 
     /**
+     * Public ctor.
+     */
+    public CursorMocker() {
+        this.withMsg(new MsgMocker().mock());
+    }
+
+    /**
      * With this message.
      * @param msg The msg
      * @return This object

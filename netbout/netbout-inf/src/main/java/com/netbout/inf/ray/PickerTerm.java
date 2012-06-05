@@ -37,6 +37,7 @@ import com.netbout.inf.Term;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
+@Term.Cheap
 final class PickerTerm implements Term {
 
     /**
@@ -57,6 +58,23 @@ final class PickerTerm implements Term {
     public PickerTerm(final IndexMap map, final long num) {
         this.imap = map;
         this.number = num;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public int hashCode() {
+        return this.imap.hashCode() + this.toString().hashCode();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean equals(final Object term) {
+        return term == this || (term instanceof PickerTerm
+            && this.hashCode() == term.hashCode());
     }
 
     /**

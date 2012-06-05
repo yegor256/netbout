@@ -147,6 +147,7 @@ final class DefaultIndexMap implements IndexMap {
             throw new IllegalArgumentException("msg number can't be MAX_VALUE");
         }
         this.all.add(number);
+        this.tcache.clear();
     }
 
     /**

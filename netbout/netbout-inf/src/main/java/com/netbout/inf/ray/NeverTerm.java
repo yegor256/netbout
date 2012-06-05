@@ -24,54 +24,66 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.inf;
+package com.netbout.inf.ray;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import com.netbout.inf.Cursor;
+import com.netbout.inf.Term;
 
 /**
- * Term.
+ * Never term.
  *
- * <p>Implementation must be immutable and thread-safe.
+ * <p>The class is immutable and thread-safe.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public interface Term {
+@Term.Cheap
+final class NeverTerm implements Term {
 
     /**
-     * Annotates a term that has to be re-calculated on every cursor (never
-     * assume that for the same cursor it will return the same value).
+     * Index map.
      */
-    @Retention(RetentionPolicy.RUNTIME)
-    @Target(ElementType.TYPE)
-    @interface Volatile {
+    private final transient IndexMap imap;
+
+    /**
+     * Public ctor.
+     * @param map The index map
+     */
+    public NeverTerm(final IndexMap map) {
+        this.imap = map;
     }
 
     /**
-     * Annotates a term that can't be cached, ever (there is no guarantee
-     * that the same values will be returned if it's called again).
+     * {@inheritDoc}
      */
-    @Retention(RetentionPolicy.RUNTIME)
-    @Target(ElementType.TYPE)
-    @interface Uncacheable {
+    @Override
+    public int hashCode() {
+        return this.imap.hashCode() + this.toString().hashCode();
     }
 
     /**
-     * Annotates a term that can be cached, but there is no benefit in it.
+     * {@inheritDoc}
      */
-    @Retention(RetentionPolicy.RUNTIME)
-    @Target(ElementType.TYPE)
-    @interface Cheap {
+    @Override
+    public boolean equals(final Object term) {
+        return term == this || (term instanceof NeverTerm
+            && this.hashCode() == term.hashCode());
     }
 
     /**
-     * Shift this cursor to the next position.
-     * @param cursor The cursor to shift
-     * @return New cursor, shifted one
+     * {@inheritDoc}
      */
-    Cursor shift(Cursor cursor);
+    @Override
+    public String toString() {
+        return "(NEVER)";
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Cursor shift(final Cursor cursor) {
+        return new MemCursor(0L, this.imap);
+    }
 
 }

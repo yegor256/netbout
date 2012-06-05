@@ -48,6 +48,11 @@ interface Cache {
     long shift(Term term, Cursor cursor);
 
     /**
+     * Clean the entire cache.
+     */
+    void clear();
+
+    /**
      * Clean cache for the given attribute and all values.
      * @param attr The attribute
      */
