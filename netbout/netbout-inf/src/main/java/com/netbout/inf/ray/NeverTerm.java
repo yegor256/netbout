@@ -26,20 +26,19 @@
  */
 package com.netbout.inf.ray;
 
+import com.netbout.inf.Cursor;
 import com.netbout.inf.Term;
-import com.netbout.inf.TermBuilder;
-import java.util.Collection;
 
 /**
- * Default implementation of {@link TermBuilder}.
+ * Never term.
  *
  * <p>The class is immutable and thread-safe.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
- * @checkstyle ClassDataAbstractionCoupling (500 lines)
  */
-final class MemTermBuilder implements TermBuilder {
+@Term.Cheap
+final class NeverTerm implements Term {
 
     /**
      * Index map.
@@ -50,7 +49,7 @@ final class MemTermBuilder implements TermBuilder {
      * Public ctor.
      * @param map The index map
      */
-    public MemTermBuilder(final IndexMap map) {
+    public NeverTerm(final IndexMap map) {
         this.imap = map;
     }
 
@@ -58,78 +57,33 @@ final class MemTermBuilder implements TermBuilder {
      * {@inheritDoc}
      */
     @Override
-    public Term matcher(final String name, final String value) {
-        return new MatcherTerm(this.imap, name, value);
+    public int hashCode() {
+        return this.imap.hashCode() + this.toString().hashCode();
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public Term and(final Collection<Term> terms) {
-        Term agg;
-        if (terms.size() == 1) {
-            agg = terms.iterator().next();
-        } else if (terms.isEmpty()) {
-            agg = this.always();
-        } else {
-            agg = new AndTerm(this.imap, terms);
-        }
-        return agg;
-    }
-
-    /**
-     * {@inheritDoc}
-     * @checkstyle MethodName (4 lines)
-     */
-    @Override
-    @SuppressWarnings("PMD.ShortMethodName")
-    public Term or(final Collection<Term> terms) {
-        Term agg;
-        if (terms.size() == 1) {
-            agg = terms.iterator().next();
-        } else if (terms.isEmpty()) {
-            agg = this.always();
-        } else {
-            agg = new OrTerm(this.imap, terms);
-        }
-        return agg;
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * <p>This is an experimental implementation, which is going to speed up
-     * the entire search engine. The only way we can speed it up is by using
-     * a customized specifically-tailored term for NOT+MATCHER operation.
-     */
-    @Override
-    public Term not(final Term term) {
-        return new NotTerm(this.imap, term);
+    public boolean equals(final Object term) {
+        return term == this || (term instanceof NeverTerm
+            && this.hashCode() == term.hashCode());
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public Term never() {
-        return new NeverTerm(this.imap);
+    public String toString() {
+        return "(NEVER)";
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public Term always() {
-        return new AlwaysTerm(this.imap);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Term picker(final long number) {
-        return new PickerTerm(this.imap, number);
+    public Cursor shift(final Cursor cursor) {
+        return new MemCursor(0L, this.imap);
     }
 
 }
