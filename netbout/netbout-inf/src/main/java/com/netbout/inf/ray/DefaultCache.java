@@ -26,6 +26,7 @@
  */
 package com.netbout.inf.ray;
 
+import com.jcabi.log.Logger;
 import com.netbout.inf.Cursor;
 import com.netbout.inf.Term;
 import java.util.Collection;
@@ -117,9 +118,9 @@ final class DefaultCache implements Cache {
         text.append(String.format("%d cached term(s):\n", this.cached.size()));
         int total = 0;
         for (Term term : this.cached.keySet()) {
-            text.append(term).append(": ")
-                .append(this.cached.get(term))
-                .append("\n");
+            text.append(
+                Logger.format("%[text]s: %s\n", term, this.cached.get(term))
+            );
             // @checkstyle MagicNumber (1 line)
             if (++total > 20) {
                 text.append("others skipped...\n");
@@ -299,7 +300,14 @@ final class DefaultCache implements Cache {
                 new DefaultCache.RealNumbers(term, cursor)
             );
         }
-        return this.cached.get(term).fetch(term, cursor);
+        final Numbers numbers = this.cached.get(term);
+        long msg;
+        if (numbers == null) {
+            msg = this.through(term, cursor);
+        } else {
+            msg = numbers.fetch(term, cursor);
+        }
+        return msg;
     }
 
 }

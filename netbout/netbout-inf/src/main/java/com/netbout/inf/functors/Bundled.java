@@ -39,8 +39,8 @@ import com.netbout.spi.Urn;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.ConcurrentSkipListMap;
 
 /**
  * Allows only bundled messages.
@@ -68,7 +68,7 @@ final class Bundled implements Functor {
         return new UncacheableTerm(
             new Term() {
                 private final transient ConcurrentMap<String, Term> terms =
-                    new ConcurrentHashMap<String, Term>();
+                    new ConcurrentSkipListMap<String, Term>();
                 @Override
                 public Cursor shift(final Cursor cursor) {
                     final Cursor shifted = cursor.shift(
