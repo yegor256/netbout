@@ -29,6 +29,7 @@ package com.netbout.inf;
 import com.jcabi.log.Logger;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Lazy list of message numbers.
@@ -94,6 +95,12 @@ final class LazyMessages implements Iterable<Long> {
         public boolean hasNext() {
             synchronized (LazyMessages.this.ray) {
                 if (!this.shifted) {
+                    try {
+                        TimeUnit.NANOSECONDS.sleep(1);
+                    } catch (InterruptedException ex) {
+                        Thread.currentThread().interrupt();
+                        throw new IllegalStateException(ex);
+                    }
                     this.cursor = this.cursor.shift(LazyMessages.this.term);
                     this.shifted = true;
                 }
