@@ -26,18 +26,18 @@
  */
 package com.netbout.inf.ray;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
-
 /**
  * Cacheable term.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-@Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.TYPE)
-@interface Cacheable {
+interface Cacheable {
+
+    /**
+     * Should we cache this particular instance?
+     * @return Yes or no?
+     */
+    boolean cacheThis();
+
 }

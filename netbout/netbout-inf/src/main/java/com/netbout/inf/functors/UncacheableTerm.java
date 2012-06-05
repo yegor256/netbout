@@ -24,54 +24,49 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.inf;
+package com.netbout.inf.functors;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import com.netbout.inf.Cursor;
+import com.netbout.inf.Term;
 
 /**
- * Term.
+ * Uncacheable term.
  *
- * <p>Implementation must be immutable and thread-safe.
+ * <p>This class is thread-safe.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public interface Term {
+@Term.Uncacheable
+final class UncacheableTerm implements Term {
 
     /**
-     * Annotates a term that has to be re-calculated on every cursor (never
-     * assume that for the same cursor it will return the same value).
+     * Original term.
      */
-    @Retention(RetentionPolicy.RUNTIME)
-    @Target(ElementType.TYPE)
-    @interface Volatile {
+    private final transient Term origin;
+
+    /**
+     * Public ctor.
+     * @param term Original term
+     */
+    public UncacheableTerm(final Term term) {
+        this.origin = term;
     }
 
     /**
-     * Annotates a term that can't be cached, ever (there is no guarantee
-     * that the same values will be returned if it's called again).
+     * {@inheritDoc}
      */
-    @Retention(RetentionPolicy.RUNTIME)
-    @Target(ElementType.TYPE)
-    @interface Uncacheable {
+    @Override
+    public Cursor shift(final Cursor cursor) {
+        return this.origin.shift(cursor);
     }
 
     /**
-     * Annotates a term that can be cached, but there is no benefit in it.
+     * {@inheritDoc}
      */
-    @Retention(RetentionPolicy.RUNTIME)
-    @Target(ElementType.TYPE)
-    @interface Cheap {
+    @Override
+    public String toString() {
+        return String.format("(u:%s)", this.origin);
     }
-
-    /**
-     * Shift this cursor to the next position.
-     * @param cursor The cursor to shift
-     * @return New cursor, shifted one
-     */
-    Cursor shift(Cursor cursor);
 
 }

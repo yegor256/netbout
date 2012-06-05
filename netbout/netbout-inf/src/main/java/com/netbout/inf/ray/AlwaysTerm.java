@@ -38,6 +38,7 @@ import java.util.Iterator;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
+@Term.Cheap
 final class AlwaysTerm implements Term {
 
     /**

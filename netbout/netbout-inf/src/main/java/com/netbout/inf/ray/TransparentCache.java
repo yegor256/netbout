@@ -24,54 +24,56 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.inf;
+package com.netbout.inf.ray;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import com.netbout.inf.Cursor;
+import com.netbout.inf.Term;
 
 /**
- * Term.
- *
- * <p>Implementation must be immutable and thread-safe.
+ * Cache with no real caching.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public interface Term {
+final class TransparentCache implements Cache {
 
     /**
-     * Annotates a term that has to be re-calculated on every cursor (never
-     * assume that for the same cursor it will return the same value).
+     * {@inheritDoc}
      */
-    @Retention(RetentionPolicy.RUNTIME)
-    @Target(ElementType.TYPE)
-    @interface Volatile {
+    @Override
+    public long shift(final Term term, final Cursor cursor) {
+        final Cursor cur = term.shift(cursor);
+        long shifted;
+        if (cur.end()) {
+            shifted = 0;
+        } else {
+            shifted = cur.msg().number();
+        }
+        return shifted;
     }
 
     /**
-     * Annotates a term that can't be cached, ever (there is no guarantee
-     * that the same values will be returned if it's called again).
+     * {@inheritDoc}
      */
-    @Retention(RetentionPolicy.RUNTIME)
-    @Target(ElementType.TYPE)
-    @interface Uncacheable {
+    @Override
+    public void clear() {
+        // nothing to do
     }
 
     /**
-     * Annotates a term that can be cached, but there is no benefit in it.
+     * {@inheritDoc}
      */
-    @Retention(RetentionPolicy.RUNTIME)
-    @Target(ElementType.TYPE)
-    @interface Cheap {
+    @Override
+    public void clear(final String attr) {
+        // nothing to do
     }
 
     /**
-     * Shift this cursor to the next position.
-     * @param cursor The cursor to shift
-     * @return New cursor, shifted one
+     * {@inheritDoc}
      */
-    Cursor shift(Cursor cursor);
+    @Override
+    public void clear(final String attr, final String value) {
+        // nothing to do
+    }
 
 }

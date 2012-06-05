@@ -37,6 +37,7 @@ import com.netbout.inf.Term;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
+@Term.Cheap
 final class PickerTerm implements Term {
 
     /**

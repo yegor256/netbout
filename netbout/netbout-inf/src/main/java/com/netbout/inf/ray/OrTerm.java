@@ -43,8 +43,7 @@ import java.util.Set;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-@Cacheable
-final class OrTerm implements DependableTerm {
+final class OrTerm implements DependableTerm, Cacheable {
 
     /**
      * Terms (also visible from {@link AndTerm}).
@@ -95,6 +94,21 @@ final class OrTerm implements DependableTerm {
     public boolean equals(final Object term) {
         return term == this || (term instanceof OrTerm
             && this.hashCode() == term.hashCode());
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean cacheThis() {
+        boolean cache = true;
+        for (Term term : this.terms) {
+            if (!DefaultCache.isCacheable(term)) {
+                cache = false;
+                break;
+            }
+        }
+        return cache;
     }
 
     /**

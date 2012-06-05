@@ -43,8 +43,7 @@ import java.util.concurrent.ConcurrentMap;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-@Cacheable
-final class AndTerm implements DependableTerm {
+final class AndTerm implements DependableTerm, Cacheable {
 
     /**
      * Terms (also visible from {@link OrTerm}).
@@ -122,6 +121,21 @@ final class AndTerm implements DependableTerm {
             }
         }
         return slider;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean cacheThis() {
+        boolean cache = true;
+        for (Term term : this.terms) {
+            if (!DefaultCache.isCacheable(term)) {
+                cache = false;
+                break;
+            }
+        }
+        return cache;
     }
 
     /**

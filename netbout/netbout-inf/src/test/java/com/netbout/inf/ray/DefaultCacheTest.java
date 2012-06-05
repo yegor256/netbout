@@ -77,8 +77,7 @@ public final class DefaultCacheTest {
         );
     }
 
-    @Cacheable
-    private final class CountingTerm implements DependableTerm {
+    private final class CountingTerm implements DependableTerm, Cacheable {
         /**
          * Attribute name it depends on.
          */
@@ -100,6 +99,10 @@ public final class DefaultCacheTest {
          */
         public int count() {
             return this.calls;
+        }
+        @Override
+        public boolean cacheThis() {
+            return true;
         }
         @Override
         public Set<DependableTerm.Dependency> dependencies() {

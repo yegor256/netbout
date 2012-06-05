@@ -39,8 +39,7 @@ import java.util.Set;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-@Cacheable
-final class NotTerm implements DependableTerm {
+final class NotTerm implements DependableTerm, Cacheable {
 
     /**
      * Index map.
@@ -60,6 +59,14 @@ final class NotTerm implements DependableTerm {
     public NotTerm(final IndexMap map, final Term trm) {
         this.imap = map;
         this.term = trm;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean cacheThis() {
+        return DefaultCache.isCacheable(this.term);
     }
 
     /**

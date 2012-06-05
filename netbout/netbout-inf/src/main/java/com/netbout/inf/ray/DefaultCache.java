@@ -53,20 +53,33 @@ final class DefaultCache implements Cache {
         new ConcurrentHashMap<Term, DefaultCache.Numbers>();
 
     /**
+     * Term has to be cached?
+     * @param term The term to check
+     * @return Is it cacheable or not?
+     */
+    public static boolean isCacheable(final Term term) {
+        return term.getClass().getAnnotation(Term.Volatile.class) == null
+            && term.getClass().getAnnotation(Term.Uncacheable.class) == null
+            && (!(term instanceof Cacheable)
+                || Cacheable.class.cast(term).cacheThis());
+    }
+
+    /**
      * {@inheritDoc}
      */
     @Override
     public long shift(final Term term, final Cursor cursor) {
         long shifted;
-        if (term.getClass().getAnnotation(Cacheable.class) == null) {
+        if (DefaultCache.isCacheable(term)
+            && term.getClass().getAnnotation(Term.Cheap.class) == null) {
+            shifted = this.through(term, cursor);
+        } else {
             final Cursor cur = term.shift(cursor);
             if (cur.end()) {
                 shifted = 0;
             } else {
                 shifted = cur.msg().number();
             }
-        } else {
-            shifted = this.through(term, cursor);
         }
         return shifted;
     }
@@ -101,7 +114,18 @@ final class DefaultCache implements Cache {
     @Override
     public String toString() {
         final StringBuilder text = new StringBuilder();
-        text.append(String.format("%d cached term(s)\n", this.cached.size()));
+        text.append(String.format("%d cached term(s):\n", this.cached.size()));
+        int total = 0;
+        for (Term term : this.cached.keySet()) {
+            text.append(term).append(": ")
+                .append(this.cached.get(term))
+                .append("\n");
+            // @checkstyle MagicNumber (1 line)
+            if (++total > 20) {
+                text.append("others skipped...\n");
+                break;
+            }
+        }
         return text.toString();
     }
 
@@ -161,6 +185,28 @@ final class DefaultCache implements Cache {
                 );
             }
         }
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public String toString() {
+            final StringBuilder text = new StringBuilder();
+            text.append('[');
+            int total = 0;
+            for (Long msg : this.msgs) {
+                if (++total > 1) {
+                    text.append(',');
+                }
+                text.append(msg);
+                // @checkstyle MagicNumber (1 line)
+                if (total > 20) {
+                    text.append("...");
+                    break;
+                }
+            }
+            return text.append(']').toString();
+        }
+
         /**
          * {@inheritDoc}
          */
