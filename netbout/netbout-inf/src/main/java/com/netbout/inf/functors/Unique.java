@@ -33,8 +33,8 @@ import com.netbout.inf.Ray;
 import com.netbout.inf.Term;
 import com.netbout.inf.atoms.VariableAtom;
 import java.util.List;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.ConcurrentSkipListMap;
 
 /**
  * Allows only unique values of the provided variable.
@@ -57,7 +57,7 @@ final class Unique implements Functor {
         return new UncacheableTerm(
             new Term() {
                 private final transient ConcurrentMap<String, Term> terms =
-                    new ConcurrentHashMap<String, Term>();
+                    new ConcurrentSkipListMap<String, Term>();
                 @Override
                 public Cursor shift(final Cursor cursor) {
                     Cursor shifted;
