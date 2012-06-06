@@ -53,7 +53,7 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.CharEncoding;
 
 /**
- * Index map.
+ * Default implemenation of {@link IndexMap}.
  *
  * <p>This class is thread-safe.
  *
