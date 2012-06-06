@@ -85,7 +85,7 @@ final class DefaultIndexMap implements IndexMap {
     /**
      * Term cache.
      */
-    private final transient Cache tcache = new TransparentCache();
+    private final transient Cache tcache = new DefaultCache();
 
     /**
      * Public ctor.
