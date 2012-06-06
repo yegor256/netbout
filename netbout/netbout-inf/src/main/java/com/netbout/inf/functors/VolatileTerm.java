@@ -66,7 +66,7 @@ final class VolatileTerm implements Term {
      */
     @Override
     public String toString() {
-        return String.format("(v:%s)", this.origin);
+        return String.format("v:%s", this.origin);
     }
 
 }

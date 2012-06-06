@@ -66,7 +66,7 @@ final class UncacheableTerm implements Term {
      */
     @Override
     public String toString() {
-        return String.format("(u:%s)", this.origin);
+        return String.format("u:%s", this.origin);
     }
 
 }
