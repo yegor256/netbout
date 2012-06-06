@@ -29,7 +29,6 @@ package com.netbout.inf;
 import com.jcabi.log.Logger;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
-import java.util.concurrent.TimeUnit;
 
 /**
  * Lazy list of message numbers.
@@ -74,6 +73,10 @@ final class LazyMessages implements Iterable<Long> {
      */
     private final class MessagesIterator implements Iterator<Long> {
         /**
+         * When we started this iterator.
+         */
+        private final transient Long start = System.currentTimeMillis();
+        /**
          * Cursor to use.
          */
         private transient Cursor cursor;
@@ -93,15 +96,22 @@ final class LazyMessages implements Iterable<Long> {
          */
         @Override
         public boolean hasNext() {
-            synchronized (LazyMessages.this.ray) {
+            synchronized (this.start) {
                 if (!this.shifted) {
-                    try {
-                        TimeUnit.NANOSECONDS.sleep(1);
-                    } catch (InterruptedException ex) {
-                        Thread.currentThread().interrupt();
-                        throw new IllegalStateException(ex);
+                    // @checkstyle MagicNumber (1 line)
+                    if (System.currentTimeMillis() - this.start > 1000) {
+                        this.cursor = this.cursor.shift(
+                            LazyMessages.this.ray.builder().never()
+                        );
+                        Logger.warn(
+                            this,
+                            "#hasNext(): expired iterator at '%s', over %[ms]s",
+                            LazyMessages.this.term,
+                            System.currentTimeMillis() - this.start
+                        );
+                    } else {
+                        this.cursor = this.cursor.shift(LazyMessages.this.term);
                     }
-                    this.cursor = this.cursor.shift(LazyMessages.this.term);
                     this.shifted = true;
                 }
                 return !this.cursor.end();
@@ -115,10 +125,15 @@ final class LazyMessages implements Iterable<Long> {
             if (!this.hasNext()) {
                 throw new NoSuchElementException();
             }
-            synchronized (LazyMessages.this.ray) {
+            synchronized (this.start) {
                 this.shifted = false;
                 final Long number = this.cursor.msg().number();
-                Logger.debug(this, "#next(): #%d", number);
+                Logger.debug(
+                    this,
+                    "#next(): #%d, %[ms]s",
+                    number,
+                    System.currentTimeMillis() - this.start
+                );
                 return number;
             }
         }
