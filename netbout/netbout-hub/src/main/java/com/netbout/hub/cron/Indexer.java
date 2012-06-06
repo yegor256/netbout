@@ -27,12 +27,18 @@
 package com.netbout.hub.cron;
 
 import com.jcabi.log.Logger;
+import com.jcabi.log.VerboseThreads;
 import com.netbout.hub.PowerHub;
 import com.netbout.inf.notices.MessagePostedNotice;
 import com.netbout.spi.Message;
 import com.netbout.spi.Urn;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 /**
  * Indexes messages in INF.
@@ -54,8 +60,7 @@ final class Indexer extends AbstractCron {
      * {@inheritDoc}
      */
     @Override
-    @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
-    public void cron() throws Exception {
+    public Void call() throws Exception {
         final long start = System.nanoTime();
         final Long maximum = this.hub().infinity().maximum();
         final List<Long> numbers = this.hub().make("get-messages-chunk")
@@ -74,25 +79,7 @@ final class Indexer extends AbstractCron {
                 numbers.get(numbers.size() - 1),
                 maximum
             );
-            for (final Long number : numbers) {
-                try {
-                    final Message message = this.message(number);
-                    this.hub().infinity().see(
-                        new MessagePostedNotice() {
-                            @Override
-                            public Message message() {
-                                return message;
-                            }
-                        }
-                    );
-                } catch (Indexer.BrokenMessageException ex) {
-                    Logger.debug(
-                        this,
-                        "#cron(): message #%d is broken",
-                        number
-                    );
-                }
-            }
+            this.execute(numbers);
             Logger.info(
                 this,
                 "#cron(): %d messages (%d..%d) pushed to INF in %[nano]s",
@@ -102,26 +89,60 @@ final class Indexer extends AbstractCron {
                 System.nanoTime() - start
             );
         }
+        return null;
     }
 
     /**
-     * When message is broken for some reason.
+     * Execute them all in multiple threads.
+     * @param numbers Numbers of messages
+     * @throws Exception If something goes wrong
      */
-    private static final class BrokenMessageException extends Exception {
-        /**
-         * Serialization marker.
-         */
-        private static final long serialVersionUID = 0x7E29FAF89ED214F9L;
+    @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
+    private void execute(final List<Long> numbers) throws Exception {
+        final ExecutorService executor = Executors.newFixedThreadPool(
+            // @checkstyle MagicNumber (1 line)
+            Runtime.getRuntime().availableProcessors() * 4,
+            new VerboseThreads(this)
+        );
+        final Collection<Future<?>> futures =
+            new ArrayList<Future<?>>(numbers.size());
+        for (final Long number : numbers) {
+            futures.add(
+                executor.submit(
+                    new Callable<Void>() {
+                        public Void call() throws Exception {
+                            final Message message =
+                                Indexer.this.message(number);
+                            Indexer.this.hub().infinity().see(
+                                new MessagePostedNotice() {
+                                    @Override
+                                    public Message message() {
+                                        return message;
+                                    }
+                                }
+                            );
+                            return null;
+                        }
+                    }
+                )
+            );
+        }
+        try {
+            for (Future<?> future : futures) {
+                future.get();
+            }
+        } finally {
+            executor.shutdown();
+        }
     }
 
     /**
      * Create a message from its number.
      * @param number Number of message
      * @return The message itself
-     * @throws Indexer.BrokenMessageException If something wrong with this msg
+     * @throws Exception If something wrong with this msg
      */
-    private Message message(final Long number)
-        throws Indexer.BrokenMessageException {
+    private Message message(final Long number) throws Exception {
         final Long bnum = this.hub().make("get-bout-of-message")
             .synchronously()
             .arg(number)
@@ -131,17 +152,9 @@ final class Indexer extends AbstractCron {
             .arg(bnum)
             .exec();
         if (dudes.isEmpty()) {
-            throw new BrokenMessageException();
+            throw new IllegalStateException();
         }
-        try {
-            return this.hub().identity(dudes.get(0)).bout(bnum).message(number);
-        } catch (com.netbout.spi.UnreachableUrnException ex) {
-            throw new IllegalStateException(ex);
-        } catch (com.netbout.spi.BoutNotFoundException ex) {
-            throw new IllegalStateException(ex);
-        } catch (com.netbout.spi.MessageNotFoundException ex) {
-            throw new IllegalStateException(ex);
-        }
+        return this.hub().identity(dudes.get(0)).bout(bnum).message(number);
     }
 
 }

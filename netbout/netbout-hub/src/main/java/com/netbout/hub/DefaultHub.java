@@ -50,6 +50,7 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.Executors;
@@ -109,8 +110,8 @@ public final class DefaultHub implements PowerHub {
     /**
      * Cron tasks running.
      */
-    private final transient Collection<ScheduledFuture> crons =
-        new LinkedList<ScheduledFuture>();
+    private final transient Collection<ScheduledFuture<?>> crons =
+        new LinkedList<ScheduledFuture<?>>();
 
     /**
      * Public ctor.
@@ -136,7 +137,7 @@ public final class DefaultHub implements PowerHub {
         this.imanager = new DefaultBoutMgr(this);
         this.iresolver = new DefaultUrnResolver(this);
         this.promote(this.persister());
-        for (Runnable task : AbstractCron.all(this)) {
+        for (Callable<?> task : AbstractCron.all(this)) {
             this.crons.add(
                 this.service.scheduleWithFixedDelay(
                     new VerboseRunnable(task, true),

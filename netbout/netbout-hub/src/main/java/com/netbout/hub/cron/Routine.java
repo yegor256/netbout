@@ -48,10 +48,11 @@ final class Routine extends AbstractCron {
      * {@inheritDoc}
      */
     @Override
-    protected void cron() {
+    public Void call() {
         this.hub().make("routine")
             .asDefault(false)
             .exec();
+        return null;
     }
 
 }

@@ -26,10 +26,10 @@
  */
 package com.netbout.hub.cron;
 
-import com.jcabi.log.Logger;
 import com.netbout.hub.PowerHub;
 import java.util.Collection;
 import java.util.LinkedList;
+import java.util.concurrent.Callable;
 
 /**
  * One cron task.
@@ -38,7 +38,7 @@ import java.util.LinkedList;
  * @version $Id$
  */
 @SuppressWarnings("PMD.DoNotUseThreads")
-public abstract class AbstractCron implements Runnable {
+public abstract class AbstractCron implements Callable<Void> {
 
     /**
      * The hub.
@@ -54,44 +54,17 @@ public abstract class AbstractCron implements Runnable {
     }
 
     /**
-     * {@inheritDoc}
-     */
-    @Override
-    @SuppressWarnings("PMD.AvoidCatchingGenericException")
-    public final void run() {
-        final long start = System.nanoTime();
-        try {
-            this.cron();
-        // @checkstyle IllegalCatch (1 line)
-        } catch (Exception ex) {
-            Logger.error(this, "#run(): %[exception]s", ex);
-        }
-        Logger.debug(
-            this,
-            "#run(): %[type]s done in %[nano]s",
-            this,
-            System.nanoTime() - start
-        );
-    }
-
-    /**
      * Instantiate all of them.
      * @param hub The hub to use
      * @return List of them
      */
-    public static Collection<Runnable> all(final PowerHub hub) {
-        final Collection<Runnable> tasks = new LinkedList<Runnable>();
+    public static Collection<Callable<?>> all(final PowerHub hub) {
+        final Collection<Callable<?>> tasks = new LinkedList<Callable<?>>();
         tasks.add(new Reminder(hub));
         tasks.add(new Routine(hub));
         tasks.add(new Indexer(hub));
         return tasks;
     }
-
-    /**
-     * Run it.
-     * @throws Exception If any problem insde
-     */
-    protected abstract void cron() throws Exception;
 
     /**
      * Get access to incapsulated Hub.
