@@ -128,7 +128,12 @@ final class LazyMessages implements Iterable<Long> {
             synchronized (this.start) {
                 this.shifted = false;
                 final Long number = this.cursor.msg().number();
-                Logger.debug(this, "#next(): #%d", number);
+                Logger.debug(
+                    this,
+                    "#next(): #%d, %[ms]s",
+                    number,
+                    System.currentTimeMillis() - this.start
+                );
                 return number;
             }
         }
