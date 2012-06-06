@@ -26,18 +26,29 @@
  */
 package com.netbout.inf.ray;
 
+import com.jcabi.log.VerboseThreads;
 import com.netbout.inf.Cursor;
 import com.netbout.inf.CursorMocker;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.concurrent.Callable;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;
+import org.mockito.ArgumentMatcher;
 
 /**
  * Test case of {@link DefaultCache}.
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
+ * @checkstyle ClassDataAbstractionCoupling (500 lines)
  */
 public final class DefaultCacheTest {
 
@@ -74,6 +85,64 @@ public final class DefaultCacheTest {
         MatcherAssert.assertThat(
             term.count(),
             Matchers.equalTo(2)
+        );
+    }
+
+    /**
+     * DefaultCache can cache records in parallel.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    @SuppressWarnings({ "PMD.AvoidInstantiatingObjectsInLoops", "unchecked" })
+    public void cachesInMultipleThreads() throws Exception {
+        final Cache cache = new DefaultCache();
+        final String attr = "the-attribute-2";
+        final CountingTerm term = new CountingTerm(attr);
+        final Cursor cursor = new CursorMocker().mock();
+        final int total = 100;
+        final CountDownLatch start = new CountDownLatch(1);
+        final CountDownLatch done = new CountDownLatch(total);
+        final Collection<Future<Boolean>> futures =
+            new ArrayList<Future<Boolean>>(total);
+        final ExecutorService service =
+            Executors.newFixedThreadPool(total, new VerboseThreads());
+        for (int pos = 0; pos < total; ++pos) {
+            futures.add(
+                service.submit(
+                    new Callable<Boolean>() {
+                        @Override
+                        public Boolean call() throws Exception {
+                            start.await();
+                            cache.shift(term, cursor);
+                            cache.clear(attr);
+                            done.countDown();
+                            return true;
+                        }
+                    }
+                )
+            );
+        }
+        start.countDown();
+        done.await(2, TimeUnit.SECONDS);
+        MatcherAssert.assertThat(
+            futures,
+            Matchers.everyItem(
+                new ArgumentMatcher<Future<Boolean>>() {
+                    @Override
+                    public boolean matches(final Object future) {
+                        try {
+                            return Boolean.class.cast(
+                                Future.class.cast(future).get()
+                            );
+                        } catch (InterruptedException ex) {
+                            Thread.currentThread().interrupt();
+                            throw new IllegalStateException(ex);
+                        } catch (java.util.concurrent.ExecutionException ex) {
+                            throw new IllegalStateException(ex);
+                        }
+                    }
+                }
+            )
         );
     }
 
