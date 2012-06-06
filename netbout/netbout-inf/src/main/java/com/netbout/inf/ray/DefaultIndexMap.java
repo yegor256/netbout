@@ -83,7 +83,7 @@ final class DefaultIndexMap implements IndexMap {
     private final transient Files files;
 
     /**
-     * Term cache.
+     * Term cache (use {@link TransparentCache} to disable caching).
      */
     private final transient Cache tcache = new DefaultCache();
 
