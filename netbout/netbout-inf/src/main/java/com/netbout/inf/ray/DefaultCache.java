@@ -156,36 +156,12 @@ final class DefaultCache implements Cache {
         /**
          * Ordered set of cached msg numbers.
          */
-        private final transient SortedSet<Long> msgs =
-            new ConcurrentSkipListSet<Long>(Collections.reverseOrder());
+        private transient SortedSet<Long> msgs;
         /**
          * Dependencies.
          */
         private final transient Collection<DependableTerm.Dependency> deps =
             new LinkedList<DependableTerm.Dependency>();
-        /**
-         * Public ctor, that retrieves the head.
-         * @param term The term to shift
-         * @param cursor Cursor to use
-         */
-        public RealNumbers(final Term term, final Cursor cursor) {
-            long msg = Long.MAX_VALUE;
-            Cursor shifted = cursor;
-            while (!shifted.end() && msg > cursor.msg().number()) {
-                shifted = term.shift(shifted);
-                if (shifted.end()) {
-                    msg = 0L;
-                } else {
-                    msg = shifted.msg().number();
-                }
-                this.msgs.add(msg);
-            }
-            if (term instanceof DependableTerm) {
-                this.deps.addAll(
-                    DependableTerm.class.cast(term).dependencies()
-                );
-            }
-        }
         /**
          * {@inheritDoc}
          */
@@ -227,6 +203,11 @@ final class DefaultCache implements Cache {
          */
         @Override
         public long fetch(final Term term, final Cursor cursor) {
+            synchronized (this.deps) {
+                if (this.msgs == null) {
+                    this.prefetch(term, cursor);
+                }
+            }
             long msg = 0;
             if (!cursor.end() && cursor.msg().number() > 1) {
                 final Iterator<Long> iterator =
@@ -253,6 +234,32 @@ final class DefaultCache implements Cache {
             }
             this.msgs.add(msg);
             return msg;
+        }
+        /**
+         * Prefetch the head of the row.
+         * @param term The term to shift
+         * @param cursor Cursor to use
+         */
+        private void prefetch(final Term term, final Cursor cursor) {
+            this.msgs = new ConcurrentSkipListSet<Long>(
+                Collections.reverseOrder()
+            );
+            long msg = Long.MAX_VALUE;
+            Cursor shifted = cursor;
+            while (!shifted.end() && msg > cursor.msg().number()) {
+                shifted = term.shift(shifted);
+                if (shifted.end()) {
+                    msg = 0L;
+                } else {
+                    msg = shifted.msg().number();
+                }
+                this.msgs.add(msg);
+            }
+            if (term instanceof DependableTerm) {
+                this.deps.addAll(
+                    DependableTerm.class.cast(term).dependencies()
+                );
+            }
         }
     }
 
@@ -294,12 +301,10 @@ final class DefaultCache implements Cache {
      */
     @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
     private long through(final Term term, final Cursor cursor) {
-        if (!this.cached.containsKey(term)) {
-            this.cached.putIfAbsent(
-                term,
-                new DefaultCache.RealNumbers(term, cursor)
-            );
-        }
+        this.cached.putIfAbsent(
+            term,
+            new DefaultCache.RealNumbers()
+        );
         final Numbers numbers = this.cached.get(term);
         long msg;
         if (numbers == null) {
