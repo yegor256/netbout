@@ -52,7 +52,7 @@ final class Reminder extends AbstractCron {
      * {@inheritDoc}
      */
     @Override
-    public void cron() {
+    public Void call() throws Exception {
         final List<Urn> names = this.hub().make("find-silent-identities")
             .synchronously()
             .asDefault(new ArrayList<Urn>(0))
@@ -60,6 +60,7 @@ final class Reminder extends AbstractCron {
         for (Urn name : names) {
             this.remind(name);
         }
+        return null;
     }
 
     /**
