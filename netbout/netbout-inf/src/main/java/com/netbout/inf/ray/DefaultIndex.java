@@ -50,7 +50,7 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.CharEncoding;
 
 /**
- * Index.
+ * Default implemenation of {@link Index}.
  *
  * <p>This class is thread-safe.
  *

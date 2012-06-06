@@ -53,7 +53,7 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.CharEncoding;
 
 /**
- * Index map.
+ * Default implemenation of {@link IndexMap}.
  *
  * <p>This class is thread-safe.
  *
@@ -83,7 +83,7 @@ final class DefaultIndexMap implements IndexMap {
     private final transient Files files;
 
     /**
-     * Term cache.
+     * Term cache (use {@link TransparentCache} to disable caching).
      */
     private final transient Cache tcache = new DefaultCache();
 
