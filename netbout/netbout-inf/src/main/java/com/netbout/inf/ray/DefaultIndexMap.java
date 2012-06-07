@@ -110,10 +110,12 @@ final class DefaultIndexMap implements IndexMap {
         }
         Logger.info(
             this,
-            "#DefaultIndexMap(): restored %d msgs (%[list]s) from %s in %[ms]s",
+            // @checkstyle LineLength (1 line)
+            "#DefaultIndexMap(): restored %d msgs (%[list]s) from %s at %s in %[ms]s",
             this.all.size(),
             this.map.keySet(),
             snapshot,
+            dir,
             System.currentTimeMillis() - start
         );
     }

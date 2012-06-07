@@ -257,11 +257,30 @@
                                     <classpathScope>test</classpathScope>
                                     <arguments>
                                         <!-- <argument>-agentlib:hprof=cpu=times,file=target/java.hprof,cutoff=0,interval=100</argument> -->
-                                        <argument>-Xms512m</argument>
-                                        <argument>-Xmx4096m</argument>
+                                        <argument>-Xms256m</argument>
+                                        <argument>-Xmx1024m</argument>
                                         <argument>-classpath</argument>
                                         <classpath/>
                                         <argument>com.netbout.inf.DefaultInfinityProf</argument>
+                                    </arguments>
+                                </configuration>
+                            </execution>
+                            <execution>
+                                <id>profile-lazy-messages</id>
+                                <phase>test</phase>
+                                <goals>
+                                    <goal>exec</goal>
+                                </goals>
+                                <configuration>
+                                    <executable>java</executable>
+                                    <classpathScope>test</classpathScope>
+                                    <arguments>
+                                        <!-- <argument>-agentlib:hprof=cpu=times,file=target/java.hprof,cutoff=0,interval=100</argument> -->
+                                        <argument>-Xms256m</argument>
+                                        <argument>-Xmx1024m</argument>
+                                        <argument>-classpath</argument>
+                                        <classpath/>
+                                        <argument>com.netbout.inf.LazyMessagesProf</argument>
                                     </arguments>
                                 </configuration>
                             </execution>
