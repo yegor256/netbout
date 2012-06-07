@@ -105,7 +105,8 @@ final class LazyMessages implements Iterable<Long> {
                         );
                         Logger.warn(
                             this,
-                            "#hasNext(): expired iterator at '%s', over %[ms]s",
+                            // @checkstyle LineLength (1 line)
+                            "#hasNext(): expired iterator at '%[text]s', over %[ms]s",
                             LazyMessages.this.term,
                             System.currentTimeMillis() - this.start
                         );
@@ -130,7 +131,7 @@ final class LazyMessages implements Iterable<Long> {
                 final Long number = this.cursor.msg().number();
                 Logger.debug(
                     this,
-                    "#next(): #%d for %s, %[ms]s",
+                    "#next(): #%d for %[text]s, %[ms]s",
                     number,
                     LazyMessages.this.term,
                     System.currentTimeMillis() - this.start
