@@ -66,13 +66,13 @@ public final class LazyMessagesProf {
         final int total = 5 * 1000;
         new SnapshotMocker(dir)
             .withMaximum(total)
-            .withBouts(total / 50, 1000)
+            .withBouts(50, 5000)
             .withAttr("talks-with", "urn:test:", 100)
             .withAttr("bundled-marker", "marker-", 1000)
             .mock();
         final Ray ray = new MemRay(dir);
         final Term term = new ParserAdapter(new DefaultStore())
-            .parse("(and (talks-with 'urn:test:1'))")
+            .parse("(and (talks-with 'urn:test:1') (bundled) (unique $bout.number))")
             .term(ray);
         MatcherAssert.assertThat(
             this.fetch(ray, term),
@@ -89,13 +89,9 @@ public final class LazyMessagesProf {
     private List<Long> fetch(final Ray ray, final Term term) {
         final List<Long> msgs = new LinkedList<Long>();
         final long start = System.currentTimeMillis();
-        Cursor cursor = ray.cursor();
-        while (true) {
-            cursor = term.shift(cursor);
-            if (cursor.end()) {
-                break;
-            }
-            msgs.add(cursor.msg().number());
+        final Iterator<Long> iterator = new LazyMessages(ray, term).iterator();
+        while (iterator.hasNext()) {
+            msgs.add(iterator.next());
         }
         Logger.debug(
             this,

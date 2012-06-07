@@ -33,8 +33,10 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.security.SecureRandom;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.Random;
-import org.apache.commons.lang.RandomStringUtils;
 
 /**
  * Mocker of {@link Snapshot}.
@@ -61,16 +63,11 @@ public final class SnapshotMocker {
     /**
      * Total number of messages.
      */
-    private transient int maximum = 100;
-
-    /**
-     * Total number of bouts.
-     */
-    private transient int bouts = 5;
+    private transient int maximum;
 
     /**
      * Public ctor.
-     * @public dir The directory to work with
+     * @param dir The directory to work with
      * @throws IOException If something wrong inside
      */
     public SnapshotMocker(final File dir) throws IOException {
@@ -91,7 +88,7 @@ public final class SnapshotMocker {
         final PrintWriter map = new PrintWriter(
             new FileWriter(this.snapshot.map())
         );
-        for (int pos = 0; pos < this.maximum; ++pos) {
+        for (int pos = 1; pos <= this.maximum; ++pos) {
             writer.print(pos);
             writer.print('\n');
             writer.print(' ');
@@ -108,24 +105,33 @@ public final class SnapshotMocker {
 
     /**
      * Total amount of bouts to have there.
-     * @param num Total number of bouts
+     * @param bouts Total number of bouts
      * @param max Maximum number of messages per bout
      * @return This object
      * @throws IOException If something wrong inside
      */
-    public SnapshotMocker withBouts(final int num, final int max)
+    public SnapshotMocker withBouts(final int bouts, final int max)
         throws IOException {
-        this.bouts = num;
         final File file = this.snapshot.attr(
             VariableAtom.BOUT_NUMBER.attribute()
         );
         final PrintWriter writer = new PrintWriter(new FileWriter(file));
-        for (int pos = 0; pos < this.bouts; ++pos) {
+        final List<Long> msgs = new ArrayList<Long>(this.maximum);
+        for (long pos = 1; pos <= this.maximum; ++pos) {
+            msgs.add(pos);
+        }
+        Collections.shuffle(msgs);
+        for (int pos = 1; pos <= bouts; ++pos) {
             writer.print(pos);
             writer.print('\n');
-            for (int msg = 0; msg < max; ++msg) {
+            for (int msg = 1; msg <= max; ++msg) {
                 writer.print(' ');
-                writer.print(this.random.nextInt(this.maximum + 1) + 1);
+                if (msgs.isEmpty()) {
+                    writer.print(this.random.nextInt(this.maximum) + 1);
+                } else {
+                    writer.print(msgs.get(0));
+                    msgs.remove(0);
+                }
                 writer.print('\n');
             }
         }
@@ -146,14 +152,24 @@ public final class SnapshotMocker {
         final int num) throws IOException {
         final File file = this.snapshot.attr(name);
         final PrintWriter writer = new PrintWriter(new FileWriter(file));
-        for (int pos = 0; pos < num; ++pos) {
+        final List<Long> msgs = new ArrayList<Long>(this.maximum);
+        for (long pos = 1; pos <= this.maximum; ++pos) {
+            msgs.add(pos);
+        }
+        Collections.shuffle(msgs);
+        for (int pos = 1; pos <= num; ++pos) {
             writer.print(prefix);
             writer.print(pos);
             writer.print('\n');
-            for (int msg = 0;
-                msg < this.maximum / (this.random.nextInt(num) + 1); ++msg) {
+            for (int msg = 1;
+                msg <= this.maximum / (this.random.nextInt(num) + 1); ++msg) {
                 writer.print(' ');
-                writer.print(this.random.nextInt(this.maximum) + 1);
+                if (msgs.isEmpty()) {
+                    writer.print(this.random.nextInt(this.maximum) + 1);
+                } else {
+                    writer.print(msgs.get(0));
+                    msgs.remove(0);
+                }
                 writer.print('\n');
             }
         }

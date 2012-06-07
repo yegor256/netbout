@@ -260,7 +260,13 @@ final class DefaultCache implements Cache {
                     DependableTerm.class.cast(term).dependencies()
                 );
             }
-            Logger.debug(this, "#prefetch(%s, %s): done", term, cursor);
+            Logger.debug(
+                this,
+                "#prefetch(%[text]s, %s): %d msgs",
+                term,
+                cursor,
+                this.msgs.size()
+            );
         }
     }
 
