@@ -28,6 +28,8 @@ package com.netbout.inf.ray;
 
 import com.netbout.inf.Cursor;
 import com.netbout.inf.Term;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.Iterator;
 
 /**
@@ -39,7 +41,7 @@ import java.util.Iterator;
  * @version $Id$
  */
 @Term.Cheap
-final class AlwaysTerm implements Term {
+final class AlwaysTerm implements Term, Taggable {
 
     /**
      * Index map.
@@ -78,6 +80,14 @@ final class AlwaysTerm implements Term {
         return term == this
             || (term instanceof AlwaysTerm
             && term.hashCode() == this.hashCode());
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Collection<Tag> tags() {
+        return Arrays.asList(new Tag[] {Tag.ENTIRE_MAP});
     }
 
     /**

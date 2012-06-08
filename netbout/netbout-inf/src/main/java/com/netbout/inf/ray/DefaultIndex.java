@@ -83,14 +83,10 @@ final class DefaultIndex implements Index {
      */
     public interface Invalidator {
         /**
-         * Invalidate cache for this attribute and all its values.
+         * Invalidate cache for this tag.
+         * @param tag The tag
          */
-        void invalidate();
-        /**
-         * Invalidate cache for this attribute and the given value.
-         * @param value The value
-         */
-        void invalidate(String value);
+        void invalidate(Tag tag);
     }
 
     /**
@@ -146,7 +142,8 @@ final class DefaultIndex implements Index {
     @Override
     public void add(final long msg, final String value) {
         this.validate(msg);
-        this.invalidator.invalidate(value);
+        this.invalidator.invalidate(new Tag().add(Tag.Label.VALUE, value));
+        this.invalidator.invalidate(new Tag());
         this.numbers(value).add(msg);
         this.rmap.put(msg, value);
     }
@@ -157,7 +154,7 @@ final class DefaultIndex implements Index {
     @Override
     public void delete(final long msg, final String value) {
         this.validate(msg);
-        this.invalidator.invalidate(value);
+        this.invalidator.invalidate(new Tag().add(Tag.Label.VALUE, value));
         this.numbers(value).remove(msg);
         this.rmap.remove(msg);
     }
@@ -168,7 +165,7 @@ final class DefaultIndex implements Index {
     @Override
     public void clean(final long msg) {
         this.validate(msg);
-        this.invalidator.invalidate();
+        this.invalidator.invalidate(new Tag());
         for (SortedSet<Long> set : this.map.values()) {
             set.remove(msg);
         }

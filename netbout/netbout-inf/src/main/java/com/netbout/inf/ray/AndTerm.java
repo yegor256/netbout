@@ -43,7 +43,7 @@ import java.util.concurrent.ConcurrentMap;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-final class AndTerm implements DependableTerm, Cacheable {
+final class AndTerm implements Term, Cacheable {
 
     /**
      * Terms (also visible from {@link OrTerm}).
@@ -127,30 +127,8 @@ final class AndTerm implements DependableTerm, Cacheable {
      * {@inheritDoc}
      */
     @Override
-    public boolean cacheThis() {
-        boolean cache = true;
-        for (Term term : this.terms) {
-            if (!DefaultCache.isCacheable(term)) {
-                cache = false;
-                break;
-            }
-        }
-        return cache;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Set<DependableTerm.Dependency> dependencies() {
-        final Set<DependableTerm.Dependency> deps =
-            new HashSet<DependableTerm.Dependency>();
-        for (Term term : this.terms) {
-            if (term instanceof DependableTerm) {
-                deps.addAll(DependableTerm.class.cast(term).dependencies());
-            }
-        }
-        return deps;
+    public Collection<Term> children() {
+        return this.terms;
     }
 
     /**

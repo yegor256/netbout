@@ -48,21 +48,9 @@ interface Cache {
     long shift(Term term, Cursor cursor);
 
     /**
-     * Clean the entire cache.
+     * Clean cache for the given tag.
+     * @param tag The tag
      */
-    void clear();
-
-    /**
-     * Clean cache for the given attribute and all values.
-     * @param attr The attribute
-     */
-    void clear(String attr);
-
-    /**
-     * Clean cache for the given attribute and value.
-     * @param attr The attribute
-     * @param value The value
-     */
-    void clear(String attr, String value);
+    void clear(Tag tag);
 
 }

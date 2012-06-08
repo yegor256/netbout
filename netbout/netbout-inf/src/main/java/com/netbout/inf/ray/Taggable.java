@@ -24,49 +24,22 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.inf.functors;
+package com.netbout.inf.ray;
 
-import com.netbout.inf.Cursor;
-import com.netbout.inf.Term;
+import java.util.Collection;
 
 /**
- * Uncacheable term.
- *
- * <p>This class is thread-safe.
+ * Taggable term (provides some tags for caching).
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-@Term.Uncacheable
-final class UncacheableTerm implements Term {
+interface Taggable {
 
     /**
-     * Original term.
+     * List of tags for caching.
+     * @return Collection of tags
      */
-    private final transient Term origin;
-
-    /**
-     * Public ctor.
-     * @param term Original term
-     */
-    public UncacheableTerm(final Term term) {
-        this.origin = term;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Cursor shift(final Cursor cursor) {
-        return this.origin.shift(cursor);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String toString() {
-        return String.format("u:%s", this.origin);
-    }
+    Collection<Tag> tags();
 
 }

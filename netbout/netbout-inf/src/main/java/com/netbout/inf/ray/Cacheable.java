@@ -26,6 +26,9 @@
  */
 package com.netbout.inf.ray;
 
+import com.netbout.inf.Term;
+import java.util.Collection;
+
 /**
  * Cacheable term.
  *
@@ -35,9 +38,9 @@ package com.netbout.inf.ray;
 interface Cacheable {
 
     /**
-     * Should we cache this particular instance?
-     * @return Yes or no?
+     * List of terms that are inside this one, if any.
+     * @return Collection of terms.
      */
-    boolean cacheThis();
+    Collection<Term> children();
 
 }

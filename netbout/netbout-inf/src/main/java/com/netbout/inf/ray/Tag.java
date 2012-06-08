@@ -24,45 +24,75 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.inf;
+package com.netbout.inf.ray;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import java.util.Map;
+import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.ConcurrentSkipListMap;
 
 /**
- * Term.
+ * Cache tag.
  *
- * <p>Implementation must be immutable and thread-safe.
+ * <p>The class is mutable and thread-safe.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public interface Term {
+final class Tag {
 
     /**
-     * Annotates a term that has to be re-calculated on every cursor (never
-     * assume that for the same cursor it will return the same value).
+     * Supported labels.
      */
-    @Retention(RetentionPolicy.RUNTIME)
-    @Target(ElementType.TYPE)
-    @interface Volatile {
+    public enum Label {
+        /**
+         * The entire map.
+         */
+        MAP,
+        /**
+         * By specific attribute.
+         */
+        ATTR,
+        /**
+         * By specific value.
+         */
+        VALUE;
     }
 
     /**
-     * Annotates a term that can be cached, but there is no benefit in it.
+     * Tag about MAP.
      */
-    @Retention(RetentionPolicy.RUNTIME)
-    @Target(ElementType.TYPE)
-    @interface Cheap {
+    public static final Tag ENTIRE_MAP = new Tag().add(Label.MAP, "");
+
+    /**
+     * Labels and their values.
+     */
+    private final transient ConcurrentMap<Label, String> labels =
+        new ConcurrentSkipListMap<Label, String>();
+
+    /**
+     * Add new label to it.
+     * @param label The label
+     * @param value The value
+     * @return This object
+     */
+    public Tag add(final Label label, final String value) {
+        this.labels.put(label, value);
+        return this;
     }
 
     /**
-     * Shift this cursor to the next position.
-     * @param cursor The cursor to shift
-     * @return New cursor, shifted one
+     * {@inheritDoc}
      */
-    Cursor shift(Cursor cursor);
+    @Override
+    public String toString() {
+        final StringBuilder text = new StringBuilder();
+        for (Map.Entry<Label, String> entry : this.labels.entrySet()) {
+            text.append(entry.getKey())
+                .append(':')
+                .append(entry.getValue())
+                .append(' ');
+        }
+        return text.toString().trim();
+    }
 
 }

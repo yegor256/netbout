@@ -54,38 +54,36 @@ final class Unique implements Functor {
     public Term build(final Ray ray, final List<Atom> atoms) {
         final String attr = VariableAtom.class.cast(atoms.get(0)).attribute();
         // @checkstyle AnonInnerLength (50 lines)
-        return new UncacheableTerm(
-            new Term() {
-                private final transient ConcurrentMap<String, Term> terms =
-                    new ConcurrentSkipListMap<String, Term>();
-                @Override
-                public Cursor shift(final Cursor cursor) {
-                    Cursor shifted;
-                    if (cursor.end()) {
-                        shifted = cursor;
-                    } else {
-                        shifted = cursor.shift(
-                            ray.builder().and(this.terms.values())
-                        );
-                        if (!shifted.end()) {
-                            this.record(shifted);
-                        }
-                    }
-                    return shifted;
-                }
-                @Override
-                public String toString() {
-                    return String.format("(UNIQUE %s)", attr);
-                }
-                private void record(final Cursor cursor) {
-                    final String value = cursor.msg().first(attr);
-                    this.terms.put(
-                        value,
-                        ray.builder().not(ray.builder().matcher(attr, value))
+        return new Term() {
+            private final transient ConcurrentMap<String, Term> terms =
+                new ConcurrentSkipListMap<String, Term>();
+            @Override
+            public Cursor shift(final Cursor cursor) {
+                Cursor shifted;
+                if (cursor.end()) {
+                    shifted = cursor;
+                } else {
+                    shifted = cursor.shift(
+                        ray.builder().and(this.terms.values())
                     );
+                    if (!shifted.end()) {
+                        this.record(shifted);
+                    }
                 }
+                return shifted;
             }
-        );
+            @Override
+            public String toString() {
+                return String.format("(UNIQUE %s)", attr);
+            }
+            private void record(final Cursor cursor) {
+                final String value = cursor.msg().first(attr);
+                this.terms.put(
+                    value,
+                    ray.builder().not(ray.builder().matcher(attr, value))
+                );
+            }
+        };
     }
 
 }

@@ -56,23 +56,7 @@ final class TransparentCache implements Cache {
      * {@inheritDoc}
      */
     @Override
-    public void clear() {
-        // nothing to do
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void clear(final String attr) {
-        // nothing to do
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void clear(final String attr, final String value) {
+    public void clear(final Tag tag) {
         // nothing to do
     }
 

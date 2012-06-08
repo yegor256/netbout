@@ -28,6 +28,8 @@ package com.netbout.inf.ray;
 
 import com.netbout.inf.Cursor;
 import com.netbout.inf.Term;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -39,7 +41,7 @@ import java.util.Set;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-final class NotTerm implements DependableTerm, Cacheable {
+final class NotTerm implements Term, Cacheable {
 
     /**
      * Index map.
@@ -65,21 +67,8 @@ final class NotTerm implements DependableTerm, Cacheable {
      * {@inheritDoc}
      */
     @Override
-    public boolean cacheThis() {
-        return DefaultCache.isCacheable(this.term);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Set<DependableTerm.Dependency> dependencies() {
-        final Set<DependableTerm.Dependency> deps =
-            new HashSet<DependableTerm.Dependency>();
-        if (this.term instanceof DependableTerm) {
-            deps.addAll(DependableTerm.class.cast(this.term).dependencies());
-        }
-        return deps;
+    public Collection<Term> children() {
+        return Arrays.asList(new Term[] {this.term});
     }
 
     /**
