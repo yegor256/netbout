@@ -31,9 +31,8 @@ import com.netbout.inf.Cursor;
 import com.netbout.inf.CursorMocker;
 import com.netbout.inf.Term;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
@@ -173,11 +172,13 @@ public final class DefaultCacheTest {
         }
         @Override
         public Collection<Term> children() {
-            return null;
+            return Arrays.asList(new Term[0]);
         }
         @Override
         public Collection<Tag> tags() {
-            return null;
+            return Arrays.asList(
+                new Tag[] {new Tag().add(Tag.Label.ATTR, this.attr)}
+            );
         }
         @Override
         public Cursor shift(final Cursor cursor) {

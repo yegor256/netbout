@@ -61,13 +61,13 @@ final class Tag {
     /**
      * Tag about MAP.
      */
-    public static final Tag ENTIRE_MAP = new Tag().add(Label.MAP, "");
+    public static final Tag ENTIRE_MAP = new Tag().add(Tag.Label.MAP, "");
 
     /**
      * Labels and their values.
      */
-    private final transient ConcurrentMap<Label, String> labels =
-        new ConcurrentSkipListMap<Label, String>();
+    private final transient ConcurrentMap<Tag.Label, String> labels =
+        new ConcurrentSkipListMap<Tag.Label, String>();
 
     /**
      * Add new label to it.
@@ -75,7 +75,7 @@ final class Tag {
      * @param value The value
      * @return This object
      */
-    public Tag add(final Label label, final String value) {
+    public Tag add(final Tag.Label label, final String value) {
         this.labels.put(label, value);
         return this;
     }
@@ -86,7 +86,7 @@ final class Tag {
     @Override
     public String toString() {
         final StringBuilder text = new StringBuilder();
-        for (Map.Entry<Label, String> entry : this.labels.entrySet()) {
+        for (Map.Entry<Tag.Label, String> entry : this.labels.entrySet()) {
             text.append(entry.getKey())
                 .append(':')
                 .append(entry.getValue())

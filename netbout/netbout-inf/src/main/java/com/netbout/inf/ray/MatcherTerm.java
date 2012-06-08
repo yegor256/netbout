@@ -30,9 +30,7 @@ import com.netbout.inf.Cursor;
 import com.netbout.inf.Term;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.Iterator;
-import java.util.Set;
 
 /**
  * Matching term.

@@ -29,11 +29,9 @@ package com.netbout.inf.ray;
 import com.jcabi.log.Logger;
 import com.netbout.inf.Cursor;
 import com.netbout.inf.Term;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.Map;
 import java.util.Set;
 import java.util.SortedSet;
@@ -247,7 +245,18 @@ final class DefaultCache implements Cache {
      * @return Yes or no
      */
     private boolean cacheable(final Term term) {
-        return false;
+        boolean cacheable = false;
+        if (term instanceof Cacheable) {
+            cacheable = true;
+            for (Term kid : Cacheable.class.cast(term).children()) {
+                if (kid.getClass().getAnnotation(Term.Cheap.class) == null
+                    && !this.cached.containsKey(kid)) {
+                    cacheable = false;
+                    break;
+                }
+            }
+        }
+        return cacheable;
     }
 
     /**

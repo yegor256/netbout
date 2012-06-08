@@ -60,6 +60,7 @@ import org.apache.commons.lang.CharEncoding;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  * @checkstyle ClassDataAbstractionCoupling (500 lines)
+ * @checkstyle ClassFanOutComplexity (500 lines)
  */
 @SuppressWarnings({
     "PMD.AvoidInstantiatingObjectsInLoops", "PMD.TooManyMethods"
