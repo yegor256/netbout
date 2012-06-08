@@ -252,6 +252,9 @@ final class DefaultCache implements Cache {
                 break;
             }
         }
+        if (!cacheable) {
+            Logger.debug(this, "#cacheable(%[text]s): false", term);
+        }
         return cacheable;
     }
 

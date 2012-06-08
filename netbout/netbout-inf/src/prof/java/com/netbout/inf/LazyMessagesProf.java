@@ -63,21 +63,33 @@ public final class LazyMessagesProf {
      */
     private void run() throws Exception {
         final File dir = new FolderMocker().mock().path();
-        final int total = 5 * 1000;
+        final int total = 500;
         new SnapshotMocker(dir)
             .withMaximum(total)
             .withBouts(50, 5000)
-            .withAttr("talks-with", "urn:test:", 100)
-            .withAttr("bundled-marker", "marker-", 1000)
+            .withAttr("talks-with", "urn:test:", 1)
+            .withAttr("bundled-marker", "marker-", 100)
             .mock();
         final Ray ray = new MemRay(dir);
-        final Term term = new ParserAdapter(new DefaultStore())
-            .parse("(and (talks-with 'urn:test:1') (bundled) (unique $bout.number))")
-            .term(ray);
         MatcherAssert.assertThat(
-            this.fetch(ray, term),
+            this.fetch(ray, this.term(ray)),
             Matchers.hasSize(Matchers.greaterThan(0))
         );
+        MatcherAssert.assertThat(
+            this.fetch(ray, this.term(ray)),
+            Matchers.hasSize(Matchers.greaterThan(0))
+        );
+    }
+
+    /**
+     * Create term from ray.
+     * @param ray The ray to use
+     * @throws Exception If there is some problem inside
+     */
+    private Term term(final Ray ray) throws Exception {
+        return new ParserAdapter(new DefaultStore())
+            .parse("(and (talks-with 'urn:test:1') (bundled))")
+            .term(ray);
     }
 
     /**

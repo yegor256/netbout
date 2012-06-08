@@ -52,6 +52,11 @@ final class AndTerm implements CacheableTerm {
     protected final transient Set<Term> terms = new LinkedHashSet<Term>();
 
     /**
+     * Hash code, for performance reasons.
+     */
+    private final transient int hash;
+
+    /**
      * Index map.
      */
     private final transient IndexMap imap;
@@ -70,6 +75,7 @@ final class AndTerm implements CacheableTerm {
         if (this.terms.size() > 1) {
             this.terms.remove(new AlwaysTerm(this.imap));
         }
+        this.hash = this.toString().hashCode();
     }
 
     /**
@@ -77,7 +83,7 @@ final class AndTerm implements CacheableTerm {
      */
     @Override
     public int hashCode() {
-        return this.imap.hashCode() + this.toString().hashCode();
+        return this.hash;
     }
 
     /**
@@ -180,7 +186,7 @@ final class AndTerm implements CacheableTerm {
         if (!cache.containsKey(term)
             || cache.get(term).compareTo(from) >= 0
             || term.getClass().getAnnotation(Term.Volatile.class) != null) {
-            cache.put(term, term.shift(from));
+            cache.put(term, from.shift(term));
         }
         return cache.get(term);
     }

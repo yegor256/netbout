@@ -42,6 +42,11 @@ import java.util.Collection;
 final class NotTerm implements CacheableTerm {
 
     /**
+     * Hash code, for performance reasons.
+     */
+    private final transient int hash;
+
+    /**
      * Index map.
      */
     private final transient IndexMap imap;
@@ -59,6 +64,7 @@ final class NotTerm implements CacheableTerm {
     public NotTerm(final IndexMap map, final Term trm) {
         this.imap = map;
         this.term = trm;
+        this.hash = this.toString().hashCode();
     }
 
     /**
@@ -74,7 +80,7 @@ final class NotTerm implements CacheableTerm {
      */
     @Override
     public int hashCode() {
-        return this.imap.hashCode() + this.toString().hashCode();
+        return this.hash;
     }
 
     /**
@@ -106,7 +112,7 @@ final class NotTerm implements CacheableTerm {
         final Term always = new AlwaysTerm(this.imap);
         while (!shifted.end()) {
             candidate = shifted.shift(always);
-            shifted = this.term.shift(shifted);
+            shifted = shifted.shift(this.term);
             if (shifted.compareTo(candidate) < 0) {
                 break;
             }

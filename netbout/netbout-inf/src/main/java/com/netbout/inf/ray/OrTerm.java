@@ -52,6 +52,11 @@ final class OrTerm implements CacheableTerm {
     protected final transient Set<Term> terms = new LinkedHashSet<Term>();
 
     /**
+     * Hash code, for performance reasons.
+     */
+    private final transient int hash;
+
+    /**
      * Index map.
      */
     private final transient IndexMap imap;
@@ -76,6 +81,7 @@ final class OrTerm implements CacheableTerm {
         if (this.terms.isEmpty()) {
             this.terms.add(new AlwaysTerm(this.imap));
         }
+        this.hash = this.toString().hashCode();
     }
 
     /**
@@ -83,7 +89,7 @@ final class OrTerm implements CacheableTerm {
      */
     @Override
     public int hashCode() {
-        return this.imap.hashCode() + this.toString().hashCode();
+        return this.hash;
     }
 
     /**
@@ -129,7 +135,7 @@ final class OrTerm implements CacheableTerm {
             final Collection<Long> msgs =
                 new ArrayList<Long>(this.terms.size());
             for (Term term : this.terms) {
-                final Cursor shifted = term.shift(cursor);
+                final Cursor shifted = cursor.shift(term);
                 if (!shifted.end()) {
                     msgs.add(shifted.msg().number());
                 }
