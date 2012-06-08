@@ -229,10 +229,10 @@ final class DefaultCache implements Cache {
             this.tags.addAll(DefaultCache.tags(term));
             Logger.debug(
                 this,
-                "#prefetch(%[text]s, %s): %d msgs, tags: %[list]s",
+                "#prefetch(%[text]s, %s): %[list]s, tags: %[list]s",
                 term,
                 cursor,
-                this.msgs.size(),
+                this.msgs,
                 this.tags
             );
         }

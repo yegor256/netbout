@@ -95,8 +95,8 @@ public final class LazyMessagesProf {
         }
         Logger.debug(
             this,
-            "#fetch(): %d msgs in %[ms]s",
-            msgs.size(),
+            "#fetch(): %[list]s in %[ms]s",
+            msgs,
             System.currentTimeMillis() - start
         );
         return msgs;
