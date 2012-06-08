@@ -42,7 +42,7 @@ import java.util.concurrent.ConcurrentMap;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-final class AndTerm implements Term, Cacheable {
+final class AndTerm implements CacheableTerm {
 
     /**
      * Terms (also visible from {@link OrTerm}).

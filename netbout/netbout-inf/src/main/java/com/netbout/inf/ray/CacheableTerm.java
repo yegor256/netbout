@@ -35,7 +35,7 @@ import java.util.Collection;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-interface Cacheable {
+interface CacheableTerm extends Term {
 
     /**
      * List of terms that are inside this one, if any.

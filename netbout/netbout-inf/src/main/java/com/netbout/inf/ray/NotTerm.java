@@ -39,7 +39,7 @@ import java.util.Collection;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-final class NotTerm implements Term, Cacheable {
+final class NotTerm implements CacheableTerm {
 
     /**
      * Index map.

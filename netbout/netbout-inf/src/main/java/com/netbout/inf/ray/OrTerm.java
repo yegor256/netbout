@@ -42,7 +42,7 @@ import java.util.Set;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-final class OrTerm implements Term, Cacheable {
+final class OrTerm implements CacheableTerm {
 
     /**
      * Terms (also visible from {@link AndTerm}).

@@ -147,7 +147,7 @@ public final class DefaultCacheTest {
         );
     }
 
-    private final class CountingTerm implements Term, Cacheable, Taggable {
+    private final class CountingTerm implements CacheableTerm, Taggable {
         /**
          * Attribute name it depends on.
          */

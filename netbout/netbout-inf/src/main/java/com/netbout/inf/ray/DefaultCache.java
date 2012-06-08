@@ -29,6 +29,7 @@ package com.netbout.inf.ray;
 import com.jcabi.log.Logger;
 import com.netbout.inf.Cursor;
 import com.netbout.inf.Term;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -50,9 +51,10 @@ final class DefaultCache implements Cache {
 
     /**
      * Cached terms and their cached results (called Numbers).
+     * @checkstyle LineLength (3 lines)
      */
-    private final transient ConcurrentMap<Term, DefaultCache.Numbers> cached =
-        new ConcurrentHashMap<Term, DefaultCache.Numbers>();
+    private final transient ConcurrentMap<CacheableTerm, DefaultCache.Numbers> cached =
+        new ConcurrentHashMap<CacheableTerm, DefaultCache.Numbers>();
 
     /**
      * {@inheritDoc}
@@ -60,8 +62,9 @@ final class DefaultCache implements Cache {
     @Override
     public long shift(final Term term, final Cursor cursor) {
         long shifted;
-        if (this.cacheable(term)) {
-            shifted = this.through(term, cursor);
+        if (term instanceof CacheableTerm
+            && this.cacheable(CacheableTerm.class.cast(term))) {
+            shifted = this.through(CacheableTerm.class.cast(term), cursor);
         } else {
             final Cursor cur = term.shift(cursor);
             if (cur.end()) {
@@ -79,7 +82,7 @@ final class DefaultCache implements Cache {
     @Override
     public void clear(final Tag tag) {
         final String txt = tag.toString();
-        for (Map.Entry<Term, Numbers> entry : this.cached.entrySet()) {
+        for (Map.Entry<CacheableTerm, Numbers> entry : this.cached.entrySet()) {
             if (entry.getValue().dependsOn(txt)) {
                 this.cached.remove(entry.getKey());
             }
@@ -117,7 +120,7 @@ final class DefaultCache implements Cache {
          * @param cursor Cursor to use
          * @return The number fetched (or ZERO if end of list)
          */
-        long fetch(Term term, Cursor cursor);
+        long fetch(CacheableTerm term, Cursor cursor);
         /**
          * This numbers depend on the given tag?
          * @param tag The tag to check
@@ -170,7 +173,7 @@ final class DefaultCache implements Cache {
          * {@inheritDoc}
          */
         @Override
-        public long fetch(final Term term, final Cursor cursor) {
+        public long fetch(final CacheableTerm term, final Cursor cursor) {
             synchronized (this.tags) {
                 if (this.msgs == null) {
                     this.prefetch(term, cursor);
@@ -194,7 +197,7 @@ final class DefaultCache implements Cache {
          * @param cursor Cursor to use, after which we need the data
          * @return The number fetched (or ZERO if end of list)
          */
-        private long tail(final Term term, final Cursor cursor) {
+        private long tail(final CacheableTerm term, final Cursor cursor) {
             final Cursor shifted = term.shift(cursor);
             long msg = 0;
             if (!shifted.end()) {
@@ -208,7 +211,7 @@ final class DefaultCache implements Cache {
          * @param term The term to shift
          * @param cursor Cursor to use
          */
-        private void prefetch(final Term term, final Cursor cursor) {
+        private void prefetch(final CacheableTerm term, final Cursor cursor) {
             this.msgs = new ConcurrentSkipListSet<Long>(
                 Collections.reverseOrder()
             );
@@ -223,11 +226,7 @@ final class DefaultCache implements Cache {
                 }
                 this.msgs.add(msg);
             }
-            if (term instanceof Taggable) {
-                for (Tag tag : Taggable.class.cast(term).tags()) {
-                    this.tags.add(tag.toString());
-                }
-            }
+            this.tags.addAll(DefaultCache.tags(term));
             Logger.debug(
                 this,
                 "#prefetch(%[text]s, %s): %d msgs, tags: %[list]s",
@@ -244,16 +243,13 @@ final class DefaultCache implements Cache {
      * @param term The term to shift
      * @return Yes or no
      */
-    private boolean cacheable(final Term term) {
-        boolean cacheable = false;
-        if (term instanceof Cacheable) {
-            cacheable = true;
-            for (Term kid : Cacheable.class.cast(term).children()) {
-                if (kid.getClass().getAnnotation(Term.Cheap.class) == null
-                    && !this.cached.containsKey(kid)) {
-                    cacheable = false;
-                    break;
-                }
+    private boolean cacheable(final CacheableTerm term) {
+        boolean cacheable = true;
+        for (Term kid : CacheableTerm.class.cast(term).children()) {
+            if (kid.getClass().getAnnotation(Term.Cheap.class) == null
+                && !this.cached.containsKey(kid)) {
+                cacheable = false;
+                break;
             }
         }
         return cacheable;
@@ -265,7 +261,7 @@ final class DefaultCache implements Cache {
      * @param cursor Cursor to use
      * @return New cursor
      */
-    private long through(final Term term, final Cursor cursor) {
+    private long through(final CacheableTerm term, final Cursor cursor) {
         this.cached.putIfAbsent(
             term,
             new DefaultCache.RealNumbers()
@@ -278,6 +274,26 @@ final class DefaultCache implements Cache {
             msg = numbers.fetch(term, cursor);
         }
         return msg;
+    }
+
+    /**
+     * Collect tags from the term.
+     * @param term The term to collect from
+     * @return All tags found
+     */
+    private static Collection<String> tags(final Term term) {
+        final Collection<String> tags = new HashSet<String>();
+        if (term instanceof Taggable) {
+            for (Tag tag : Taggable.class.cast(term).tags()) {
+                tags.add(tag.toString());
+            }
+        }
+        if (term instanceof CacheableTerm) {
+            for (Term kid : CacheableTerm.class.cast(term).children()) {
+                tags.addAll(DefaultCache.tags(kid));
+            }
+        }
+        return tags;
     }
 
 }
