@@ -63,21 +63,23 @@ public final class LazyMessagesProf {
      */
     private void run() throws Exception {
         final File dir = new FolderMocker().mock().path();
-        final int total = 500;
+        final int total = 50000;
         new SnapshotMocker(dir)
             .withMaximum(total)
             .withBouts(50, 5000)
-            .withAttr("talks-with", "urn:test:", 1)
+            .withAttr("talks-with", "urn:test:", 5)
             .withAttr("bundled-marker", "marker-", 100)
             .mock();
         final Ray ray = new MemRay(dir);
+        final List<Long> first = this.fetch(ray, this.term(ray));
         MatcherAssert.assertThat(
-            this.fetch(ray, this.term(ray)),
+            first,
             Matchers.hasSize(Matchers.greaterThan(0))
         );
+        final List<Long> second = this.fetch(ray, this.term(ray));
         MatcherAssert.assertThat(
-            this.fetch(ray, this.term(ray)),
-            Matchers.hasSize(Matchers.greaterThan(0))
+            second,
+            Matchers.hasSize(Matchers.greaterThan(first.size()))
         );
     }
 

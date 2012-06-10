@@ -204,6 +204,14 @@ final class DefaultCache implements Cache {
                 msg = shifted.msg().number();
             }
             this.msgs.add(msg);
+            Logger.debug(
+                this,
+                "#tail(%[text]s, %s): found %d (%d in row)",
+                term,
+                cursor,
+                msg,
+                this.msgs.size()
+            );
             return msg;
         }
         /**
@@ -229,11 +237,11 @@ final class DefaultCache implements Cache {
             this.tags.addAll(DefaultCache.tags(term));
             Logger.debug(
                 this,
-                "#prefetch(%[text]s, %s): %[list]s, tags: %[list]s",
+                "#prefetch(%[text]s, %s): %[list]s, %d tag(s)",
                 term,
                 cursor,
                 this.msgs,
-                this.tags
+                this.tags.size()
             );
         }
     }

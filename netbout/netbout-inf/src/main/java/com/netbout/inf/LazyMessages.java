@@ -73,7 +73,7 @@ final class LazyMessages implements Iterable<Long> {
      */
     private final class MessagesIterator implements Iterator<Long> {
         /**
-         * When we started this iterator.
+         * When the iterator was started.
          */
         private final transient Long start = System.currentTimeMillis();
         /**
@@ -99,7 +99,7 @@ final class LazyMessages implements Iterable<Long> {
             synchronized (this.start) {
                 if (!this.shifted) {
                     // @checkstyle MagicNumber (1 line)
-                    if (System.currentTimeMillis() - this.start > 1000) {
+                    if (System.currentTimeMillis() - this.start > 10000) {
                         this.cursor = this.cursor.shift(
                             LazyMessages.this.ray.builder().never()
                         );
@@ -147,5 +147,4 @@ final class LazyMessages implements Iterable<Long> {
             throw new UnsupportedOperationException("#remove()");
         }
     }
-
 }

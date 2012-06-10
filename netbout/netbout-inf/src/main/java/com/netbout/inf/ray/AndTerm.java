@@ -113,6 +113,14 @@ final class AndTerm implements CacheableTerm {
      * {@inheritDoc}
      */
     @Override
+    public Collection<Term> children() {
+        return this.terms;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public Cursor shift(final Cursor cursor) {
         Cursor slider;
         if (cursor.end()) {
@@ -126,14 +134,6 @@ final class AndTerm implements CacheableTerm {
             }
         }
         return slider;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Collection<Term> children() {
-        return this.terms;
     }
 
     /**
