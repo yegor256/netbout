@@ -39,8 +39,7 @@ import com.netbout.spi.Urn;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
-import java.util.concurrent.ConcurrentMap;
-import java.util.concurrent.ConcurrentSkipListMap;
+import java.util.concurrent.ConcurrentSkipListSet;
 
 /**
  * Allows only bundled messages.
@@ -65,29 +64,36 @@ final class Bundled implements Functor {
     @Override
     public Term build(final Ray ray, final List<Atom> atoms) {
         // @checkstyle AnonInnerLength (50 lines)
-        return new UncacheableTerm(
+        return new VolatileTerm(
             new Term() {
-                private final transient ConcurrentMap<String, Term> terms =
-                    new ConcurrentSkipListMap<String, Term>();
+                private final transient Set<String> passed =
+                    new ConcurrentSkipListSet<String>();
                 @Override
                 public Cursor shift(final Cursor cursor) {
-                    final Cursor shifted = cursor.shift(
-                        ray.builder().and(this.terms.values())
-                    );
+                    Cursor shifted = this.next(cursor);
                     if (!shifted.end()) {
-                        final String marker = shifted.msg().first(Bundled.ATTR);
-                        this.terms.put(
-                            marker,
-                            ray.builder().not(
-                                ray.builder().matcher(Bundled.ATTR, marker)
-                            )
-                        );
+                        final String marker =
+                            shifted.msg().first(Bundled.ATTR);
+                        if (this.passed.contains(marker)) {
+                            shifted = this.next(shifted);
+                        } else {
+                            this.passed.add(marker);
+                        }
                     }
                     return shifted;
                 }
                 @Override
                 public String toString() {
                     return "(BUNDLED)";
+                }
+                private Cursor next(final Cursor cursor) {
+                    Cursor next;
+                    if (cursor.end()) {
+                        next = cursor;
+                    } else {
+                        next = cursor.shift(ray.builder().always());
+                    }
+                    return next;
                 }
             }
         );

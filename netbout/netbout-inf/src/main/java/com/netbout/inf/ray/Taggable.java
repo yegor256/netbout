@@ -26,18 +26,20 @@
  */
 package com.netbout.inf.ray;
 
+import java.util.Collection;
+
 /**
- * Cacheable term.
+ * Taggable term (provides some tags for caching).
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-interface Cacheable {
+interface Taggable {
 
     /**
-     * Should we cache this particular instance?
-     * @return Yes or no?
+     * List of tags for caching.
+     * @return Collection of tags
      */
-    boolean cacheThis();
+    Collection<Tag> tags();
 
 }

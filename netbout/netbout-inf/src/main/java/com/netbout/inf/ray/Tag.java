@@ -24,41 +24,60 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.inf.functors;
+package com.netbout.inf.ray;
 
-import com.netbout.inf.Cursor;
-import com.netbout.inf.Term;
+import java.util.Map;
+import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.ConcurrentSkipListMap;
 
 /**
- * Uncacheable term.
+ * Cache tag.
  *
- * <p>This class is thread-safe.
+ * <p>The class is mutable and thread-safe.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-@Term.Uncacheable
-final class UncacheableTerm implements Term {
+final class Tag {
 
     /**
-     * Original term.
+     * Supported labels.
      */
-    private final transient Term origin;
-
-    /**
-     * Public ctor.
-     * @param term Original term
-     */
-    public UncacheableTerm(final Term term) {
-        this.origin = term;
+    public enum Label {
+        /**
+         * The entire map.
+         */
+        MAP,
+        /**
+         * By specific attribute.
+         */
+        ATTR,
+        /**
+         * By specific value.
+         */
+        VALUE;
     }
 
     /**
-     * {@inheritDoc}
+     * Tag about MAP.
      */
-    @Override
-    public Cursor shift(final Cursor cursor) {
-        return this.origin.shift(cursor);
+    public static final Tag ENTIRE_MAP = new Tag().add(Tag.Label.MAP, "");
+
+    /**
+     * Labels and their values.
+     */
+    private final transient ConcurrentMap<Tag.Label, String> labels =
+        new ConcurrentSkipListMap<Tag.Label, String>();
+
+    /**
+     * Add new label to it.
+     * @param label The label
+     * @param value The value
+     * @return This object
+     */
+    public Tag add(final Tag.Label label, final String value) {
+        this.labels.put(label, value);
+        return this;
     }
 
     /**
@@ -66,7 +85,14 @@ final class UncacheableTerm implements Term {
      */
     @Override
     public String toString() {
-        return String.format("u:%s", this.origin);
+        final StringBuilder text = new StringBuilder();
+        for (Map.Entry<Tag.Label, String> entry : this.labels.entrySet()) {
+            text.append(entry.getKey())
+                .append(':')
+                .append(entry.getValue())
+                .append(' ');
+        }
+        return text.toString().trim();
     }
 
 }

@@ -24,45 +24,11 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.inf;
-
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
 
 /**
- * Term.
- *
- * <p>Implementation must be immutable and thread-safe.
+ * Default implementation of Ray, mockers.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public interface Term {
-
-    /**
-     * Annotates a term that has to be re-calculated on every cursor (never
-     * assume that for the same cursor it will return the same value).
-     */
-    @Retention(RetentionPolicy.RUNTIME)
-    @Target(ElementType.TYPE)
-    @interface Volatile {
-    }
-
-    /**
-     * Annotates a term that can be cached, but there is no benefit in it.
-     */
-    @Retention(RetentionPolicy.RUNTIME)
-    @Target(ElementType.TYPE)
-    @interface Cheap {
-    }
-
-    /**
-     * Shift this cursor to the next position.
-     * @param cursor The cursor to shift
-     * @return New cursor, shifted one
-     */
-    Cursor shift(Cursor cursor);
-
-}
+package com.netbout.inf.ray;

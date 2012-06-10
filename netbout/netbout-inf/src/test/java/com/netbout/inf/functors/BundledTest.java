@@ -61,7 +61,7 @@ public final class BundledTest {
         final long msg = new Random().nextLong();
         final Bout bout = new BoutMocker().mock();
         final Bundled functor = new Bundled();
-        for (int num = 0; num < 2; ++num) {
+        for (int num = 0; num < 1; ++num) {
             final long number = msg - num;
             ray.msg(number);
             functor.see(

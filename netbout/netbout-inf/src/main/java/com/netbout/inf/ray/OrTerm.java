@@ -31,7 +31,6 @@ import com.netbout.inf.Term;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
@@ -43,7 +42,7 @@ import java.util.Set;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-final class OrTerm implements DependableTerm, Cacheable {
+final class OrTerm implements CacheableTerm {
 
     /**
      * Terms (also visible from {@link AndTerm}).
@@ -51,6 +50,11 @@ final class OrTerm implements DependableTerm, Cacheable {
      */
     @SuppressWarnings("PMD.AvoidProtectedFieldInFinalClass")
     protected final transient Set<Term> terms = new LinkedHashSet<Term>();
+
+    /**
+     * Hash code, for performance reasons.
+     */
+    private final transient int hash;
 
     /**
      * Index map.
@@ -77,6 +81,7 @@ final class OrTerm implements DependableTerm, Cacheable {
         if (this.terms.isEmpty()) {
             this.terms.add(new AlwaysTerm(this.imap));
         }
+        this.hash = this.toString().hashCode();
     }
 
     /**
@@ -84,7 +89,7 @@ final class OrTerm implements DependableTerm, Cacheable {
      */
     @Override
     public int hashCode() {
-        return this.imap.hashCode() + this.toString().hashCode();
+        return this.hash;
     }
 
     /**
@@ -100,30 +105,8 @@ final class OrTerm implements DependableTerm, Cacheable {
      * {@inheritDoc}
      */
     @Override
-    public boolean cacheThis() {
-        boolean cache = true;
-        for (Term term : this.terms) {
-            if (!DefaultCache.isCacheable(term)) {
-                cache = false;
-                break;
-            }
-        }
-        return cache;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Set<DependableTerm.Dependency> dependencies() {
-        final Set<DependableTerm.Dependency> deps =
-            new HashSet<DependableTerm.Dependency>();
-        for (Term term : this.terms) {
-            if (term instanceof DependableTerm) {
-                deps.addAll(DependableTerm.class.cast(term).dependencies());
-            }
-        }
-        return deps;
+    public Collection<Term> children() {
+        return this.terms;
     }
 
     /**
@@ -152,7 +135,7 @@ final class OrTerm implements DependableTerm, Cacheable {
             final Collection<Long> msgs =
                 new ArrayList<Long>(this.terms.size());
             for (Term term : this.terms) {
-                final Cursor shifted = term.shift(cursor);
+                final Cursor shifted = cursor.shift(term);
                 if (!shifted.end()) {
                     msgs.add(shifted.msg().number());
                 }

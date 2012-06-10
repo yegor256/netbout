@@ -77,6 +77,12 @@ final class Files {
             );
         } else {
             snapshot = this.writer();
+            Logger.info(
+                this,
+                "#reader(): %s not found in %s",
+                Files.MARKER,
+                this.dir
+            );
         }
         return snapshot;
     }

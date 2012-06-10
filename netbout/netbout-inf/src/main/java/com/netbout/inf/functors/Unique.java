@@ -33,8 +33,8 @@ import com.netbout.inf.Ray;
 import com.netbout.inf.Term;
 import com.netbout.inf.atoms.VariableAtom;
 import java.util.List;
-import java.util.concurrent.ConcurrentMap;
-import java.util.concurrent.ConcurrentSkipListMap;
+import java.util.Set;
+import java.util.concurrent.ConcurrentSkipListSet;
 
 /**
  * Allows only unique values of the provided variable.
@@ -54,38 +54,37 @@ final class Unique implements Functor {
     public Term build(final Ray ray, final List<Atom> atoms) {
         final String attr = VariableAtom.class.cast(atoms.get(0)).attribute();
         // @checkstyle AnonInnerLength (50 lines)
-        return new UncacheableTerm(
-            new Term() {
-                private final transient ConcurrentMap<String, Term> terms =
-                    new ConcurrentSkipListMap<String, Term>();
-                @Override
-                public Cursor shift(final Cursor cursor) {
-                    Cursor shifted;
-                    if (cursor.end()) {
-                        shifted = cursor;
+        return new Term() {
+            private final transient Set<String> passed =
+                new ConcurrentSkipListSet<String>();
+            @Override
+            public Cursor shift(final Cursor cursor) {
+                Cursor shifted = this.next(cursor);
+                if (!shifted.end()) {
+                    final String value =
+                        shifted.msg().first(attr);
+                    if (this.passed.contains(value)) {
+                        shifted = this.next(shifted);
                     } else {
-                        shifted = cursor.shift(
-                            ray.builder().and(this.terms.values())
-                        );
-                        if (!shifted.end()) {
-                            this.record(shifted);
-                        }
+                        this.passed.add(value);
                     }
-                    return shifted;
                 }
-                @Override
-                public String toString() {
-                    return String.format("(UNIQUE %s)", attr);
-                }
-                private void record(final Cursor cursor) {
-                    final String value = cursor.msg().first(attr);
-                    this.terms.put(
-                        value,
-                        ray.builder().not(ray.builder().matcher(attr, value))
-                    );
-                }
+                return shifted;
             }
-        );
+            @Override
+            public String toString() {
+                return String.format("(UNIQUE %s)", attr);
+            }
+            private Cursor next(final Cursor cursor) {
+                Cursor next;
+                if (cursor.end()) {
+                    next = cursor;
+                } else {
+                    next = cursor.shift(ray.builder().always());
+                }
+                return next;
+            }
+        };
     }
 
 }

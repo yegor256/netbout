@@ -28,9 +28,9 @@ package com.netbout.inf.ray;
 
 import com.netbout.inf.Cursor;
 import com.netbout.inf.Term;
-import java.util.HashSet;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.Iterator;
-import java.util.Set;
 
 /**
  * Matching term.
@@ -41,21 +41,17 @@ import java.util.Set;
  * @version $Id$
  */
 @Term.Cheap
-final class MatcherTerm implements DependableTerm {
+final class MatcherTerm implements Term, Taggable {
 
     /**
-     * Name of attribute (also visible from {@link NotMatcherTerm}).
-     * @checkstyle VisibilityModifier (3 lines)
+     * Name of attribute.
      */
-    @SuppressWarnings("PMD.AvoidProtectedFieldInFinalClass")
-    protected final transient String attr;
+    private final transient String attr;
 
     /**
-     * Value to match (also visible from {@link NotMatcherTerm}).
-     * @checkstyle VisibilityModifier (3 lines)
+     * Value to match.
      */
-    @SuppressWarnings("PMD.AvoidProtectedFieldInFinalClass")
-    protected final transient String value;
+    private final transient String value;
 
     /**
      * Index map.
@@ -78,11 +74,14 @@ final class MatcherTerm implements DependableTerm {
      * {@inheritDoc}
      */
     @Override
-    public Set<DependableTerm.Dependency> dependencies() {
-        final Set<DependableTerm.Dependency> deps =
-            new HashSet<DependableTerm.Dependency>();
-        deps.add(new DependableTerm.Dependency(this.attr, this.value));
-        return deps;
+    public Collection<Tag> tags() {
+        return Arrays.asList(
+            new Tag[] {
+                new Tag().add(Tag.Label.ATTR, this.attr)
+                    .add(Tag.Label.VALUE, this.value),
+                new Tag().add(Tag.Label.ATTR, this.attr),
+            }
+        );
     }
 
     /**

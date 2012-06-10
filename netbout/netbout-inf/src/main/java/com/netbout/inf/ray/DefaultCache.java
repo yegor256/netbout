@@ -31,8 +31,10 @@ import com.netbout.inf.Cursor;
 import com.netbout.inf.Term;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Iterator;
-import java.util.LinkedList;
+import java.util.Map;
+import java.util.Set;
 import java.util.SortedSet;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -49,21 +51,10 @@ final class DefaultCache implements Cache {
 
     /**
      * Cached terms and their cached results (called Numbers).
+     * @checkstyle LineLength (3 lines)
      */
-    private final transient ConcurrentMap<Term, DefaultCache.Numbers> cached =
-        new ConcurrentHashMap<Term, DefaultCache.Numbers>();
-
-    /**
-     * Term has to be cached?
-     * @param term The term to check
-     * @return Is it cacheable or not?
-     */
-    public static boolean isCacheable(final Term term) {
-        return term.getClass().getAnnotation(Term.Volatile.class) == null
-            && term.getClass().getAnnotation(Term.Uncacheable.class) == null
-            && (!(term instanceof Cacheable)
-                || Cacheable.class.cast(term).cacheThis());
-    }
+    private final transient ConcurrentMap<CacheableTerm, DefaultCache.Numbers> cached =
+        new ConcurrentHashMap<CacheableTerm, DefaultCache.Numbers>();
 
     /**
      * {@inheritDoc}
@@ -71,9 +62,9 @@ final class DefaultCache implements Cache {
     @Override
     public long shift(final Term term, final Cursor cursor) {
         long shifted;
-        if (DefaultCache.isCacheable(term)
-            && term.getClass().getAnnotation(Term.Cheap.class) == null) {
-            shifted = this.through(term, cursor);
+        if (term instanceof CacheableTerm
+            && this.cacheable(CacheableTerm.class.cast(term))) {
+            shifted = this.through(CacheableTerm.class.cast(term), cursor);
         } else {
             final Cursor cur = term.shift(cursor);
             if (cur.end()) {
@@ -89,24 +80,13 @@ final class DefaultCache implements Cache {
      * {@inheritDoc}
      */
     @Override
-    public void clear() {
-        this.cached.clear();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void clear(final String attr) {
-        this.clear(new DependableTerm.Dependency(attr));
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void clear(final String attr, final String value) {
-        this.clear(new DependableTerm.Dependency(attr, value));
+    public void clear(final Tag tag) {
+        final String txt = tag.toString();
+        for (Map.Entry<CacheableTerm, Numbers> entry : this.cached.entrySet()) {
+            if (entry.getValue().dependsOn(txt)) {
+                this.cached.remove(entry.getKey());
+            }
+        }
     }
 
     /**
@@ -140,13 +120,13 @@ final class DefaultCache implements Cache {
          * @param cursor Cursor to use
          * @return The number fetched (or ZERO if end of list)
          */
-        long fetch(Term term, Cursor cursor);
+        long fetch(CacheableTerm term, Cursor cursor);
         /**
-         * This numbers depend on the given dependency?
-         * @param dep The dependency
+         * This numbers depend on the given tag?
+         * @param tag The tag to check
          * @return Yes or no
          */
-        boolean dependsOn(DependableTerm.Dependency dep);
+        boolean dependsOn(String tag);
     }
 
     /**
@@ -160,8 +140,7 @@ final class DefaultCache implements Cache {
         /**
          * Dependencies.
          */
-        private final transient Collection<DependableTerm.Dependency> deps =
-            new LinkedList<DependableTerm.Dependency>();
+        private final transient Set<String> tags = new HashSet<String>();
         /**
          * {@inheritDoc}
          */
@@ -183,27 +162,19 @@ final class DefaultCache implements Cache {
             }
             return text.append(']').toString();
         }
-
         /**
          * {@inheritDoc}
          */
         @Override
-        public boolean dependsOn(final DependableTerm.Dependency dep) {
-            boolean depends = false;
-            for (DependableTerm.Dependency tdep : this.deps) {
-                if (tdep.matches(dep)) {
-                    depends = true;
-                    break;
-                }
-            }
-            return depends;
+        public boolean dependsOn(final String tag) {
+            return this.tags.contains(tag);
         }
         /**
          * {@inheritDoc}
          */
         @Override
-        public long fetch(final Term term, final Cursor cursor) {
-            synchronized (this.deps) {
+        public long fetch(final CacheableTerm term, final Cursor cursor) {
+            synchronized (this.tags) {
                 if (this.msgs == null) {
                     this.prefetch(term, cursor);
                 }
@@ -226,13 +197,21 @@ final class DefaultCache implements Cache {
          * @param cursor Cursor to use, after which we need the data
          * @return The number fetched (or ZERO if end of list)
          */
-        private long tail(final Term term, final Cursor cursor) {
+        private long tail(final CacheableTerm term, final Cursor cursor) {
             final Cursor shifted = term.shift(cursor);
             long msg = 0;
             if (!shifted.end()) {
                 msg = shifted.msg().number();
             }
             this.msgs.add(msg);
+            Logger.debug(
+                this,
+                "#tail(%[text]s, %s): found %d (%d in row)",
+                term,
+                cursor,
+                msg,
+                this.msgs.size()
+            );
             return msg;
         }
         /**
@@ -240,7 +219,7 @@ final class DefaultCache implements Cache {
          * @param term The term to shift
          * @param cursor Cursor to use
          */
-        private void prefetch(final Term term, final Cursor cursor) {
+        private void prefetch(final CacheableTerm term, final Cursor cursor) {
             this.msgs = new ConcurrentSkipListSet<Long>(
                 Collections.reverseOrder()
             );
@@ -255,43 +234,36 @@ final class DefaultCache implements Cache {
                 }
                 this.msgs.add(msg);
             }
-            if (term instanceof DependableTerm) {
-                this.deps.addAll(
-                    DependableTerm.class.cast(term).dependencies()
-                );
-            }
-            Logger.debug(this, "#prefetch(%s, %s): done", term, cursor);
+            this.tags.addAll(DefaultCache.tags(term));
+            Logger.debug(
+                this,
+                "#prefetch(%[text]s, %s): %[list]s, %d tag(s)",
+                term,
+                cursor,
+                this.msgs,
+                this.tags.size()
+            );
         }
     }
 
     /**
-     * Clear all terms that depend on this dep.
-     * @param dep The dependency to use as matcher
+     * The term is cacheable?
+     * @param term The term to shift
+     * @return Yes or no
      */
-    private void clear(final DependableTerm.Dependency dep) {
-        final DefaultCache.Numbers remover = new DefaultCache.Numbers() {
-            @Override
-            public boolean equals(final Object data) {
-                return DefaultCache.Numbers.class
-                    .cast(data).dependsOn(dep);
+    private boolean cacheable(final CacheableTerm term) {
+        boolean cacheable = true;
+        for (Term kid : CacheableTerm.class.cast(term).children()) {
+            if (kid.getClass().getAnnotation(Term.Cheap.class) == null
+                && !this.cached.containsKey(kid)) {
+                cacheable = false;
+                break;
             }
-            @Override
-            public int hashCode() {
-                return super.hashCode() + 1;
-            }
-            @Override
-            public boolean dependsOn(
-                final DependableTerm.Dependency dep) {
-                throw new UnsupportedOperationException();
-            }
-            @Override
-            public long fetch(final Term term, final Cursor cursor) {
-                throw new UnsupportedOperationException();
-            }
-        };
-        for (Term term : this.cached.keySet()) {
-            this.cached.remove(term, remover);
         }
+        if (!cacheable) {
+            Logger.debug(this, "#cacheable(%[text]s): false", term);
+        }
+        return cacheable;
     }
 
     /**
@@ -300,8 +272,7 @@ final class DefaultCache implements Cache {
      * @param cursor Cursor to use
      * @return New cursor
      */
-    @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
-    private long through(final Term term, final Cursor cursor) {
+    private long through(final CacheableTerm term, final Cursor cursor) {
         this.cached.putIfAbsent(
             term,
             new DefaultCache.RealNumbers()
@@ -314,6 +285,26 @@ final class DefaultCache implements Cache {
             msg = numbers.fetch(term, cursor);
         }
         return msg;
+    }
+
+    /**
+     * Collect tags from the term.
+     * @param term The term to collect from
+     * @return All tags found
+     */
+    private static Collection<String> tags(final Term term) {
+        final Collection<String> tags = new HashSet<String>();
+        if (term instanceof Taggable) {
+            for (Tag tag : Taggable.class.cast(term).tags()) {
+                tags.add(tag.toString());
+            }
+        }
+        if (term instanceof CacheableTerm) {
+            for (Term kid : CacheableTerm.class.cast(term).children()) {
+                tags.addAll(DefaultCache.tags(kid));
+            }
+        }
+        return tags;
     }
 
 }

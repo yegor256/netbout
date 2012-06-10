@@ -28,6 +28,8 @@ package com.netbout.inf.ray;
 
 import com.netbout.inf.Cursor;
 import com.netbout.inf.Term;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.Iterator;
 
 /**
@@ -39,7 +41,7 @@ import java.util.Iterator;
  * @version $Id$
  */
 @Term.Cheap
-final class AlwaysTerm implements Term {
+final class AlwaysTerm implements Term, Taggable {
 
     /**
      * Index map.
@@ -84,12 +86,22 @@ final class AlwaysTerm implements Term {
      * {@inheritDoc}
      */
     @Override
+    public Collection<Tag> tags() {
+        return Arrays.asList(new Tag[] {Tag.ENTIRE_MAP});
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
     public Cursor shift(final Cursor cursor) {
-        Cursor shifted = cursor;
-        if (!shifted.end()) {
+        Cursor shifted;
+        if (cursor.end()) {
+            shifted = cursor;
+        } else {
             shifted = new MemCursor(
-                this.next(shifted.msg().number()),
+                this.next(cursor.msg().number()),
                 this.imap
             );
         }
@@ -102,18 +114,14 @@ final class AlwaysTerm implements Term {
      * @return Next one or zero if there is nothing else
      */
     private long next(final long number) {
-        final Iterator<Long> tail = this.imap.msgs().tailSet(number).iterator();
-        long next = 0L;
+        final Iterator<Long> tail = this.imap.msgs()
+            .tailSet(number - 1)
+            .iterator();
+        long next;
         if (tail.hasNext()) {
             next = tail.next();
-            if (next == number) {
-                // @checkstyle NestedIfDepth (4 lines)
-                if (tail.hasNext()) {
-                    next = tail.next();
-                } else {
-                    next = 0L;
-                }
-            }
+        } else {
+            next = 0L;
         }
         return next;
     }

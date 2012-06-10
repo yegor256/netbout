@@ -24,45 +24,23 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.inf;
+package com.netbout.inf.ray;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import com.netbout.inf.Term;
+import java.util.Collection;
 
 /**
- * Term.
- *
- * <p>Implementation must be immutable and thread-safe.
+ * Cacheable term.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public interface Term {
+interface CacheableTerm extends Term {
 
     /**
-     * Annotates a term that has to be re-calculated on every cursor (never
-     * assume that for the same cursor it will return the same value).
+     * List of terms that are inside this one, if any.
+     * @return Collection of terms.
      */
-    @Retention(RetentionPolicy.RUNTIME)
-    @Target(ElementType.TYPE)
-    @interface Volatile {
-    }
-
-    /**
-     * Annotates a term that can be cached, but there is no benefit in it.
-     */
-    @Retention(RetentionPolicy.RUNTIME)
-    @Target(ElementType.TYPE)
-    @interface Cheap {
-    }
-
-    /**
-     * Shift this cursor to the next position.
-     * @param cursor The cursor to shift
-     * @return New cursor, shifted one
-     */
-    Cursor shift(Cursor cursor);
+    Collection<Term> children();
 
 }

@@ -60,6 +60,7 @@ import org.apache.commons.lang.CharEncoding;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  * @checkstyle ClassDataAbstractionCoupling (500 lines)
+ * @checkstyle ClassFanOutComplexity (500 lines)
  */
 @SuppressWarnings({
     "PMD.AvoidInstantiatingObjectsInLoops", "PMD.TooManyMethods"
@@ -110,10 +111,12 @@ final class DefaultIndexMap implements IndexMap {
         }
         Logger.info(
             this,
-            "#DefaultIndexMap(): restored %d msgs (%[list]s) from %s in %[ms]s",
+            // @checkstyle LineLength (1 line)
+            "#DefaultIndexMap(): restored %d msgs (%[list]s) from %s at %s in %[ms]s",
             this.all.size(),
             this.map.keySet(),
             snapshot,
+            dir,
             System.currentTimeMillis() - start
         );
     }
@@ -147,7 +150,7 @@ final class DefaultIndexMap implements IndexMap {
             throw new IllegalArgumentException("msg number can't be MAX_VALUE");
         }
         this.all.add(number);
-        this.tcache.clear();
+        this.tcache.clear(Tag.ENTIRE_MAP);
     }
 
     /**
@@ -282,12 +285,10 @@ final class DefaultIndexMap implements IndexMap {
     private DefaultIndex.Invalidator invalidator(final String attr) {
         return new DefaultIndex.Invalidator() {
             @Override
-            public void invalidate() {
-                DefaultIndexMap.this.cache().clear(attr);
-            }
-            @Override
-            public void invalidate(final String value) {
-                DefaultIndexMap.this.cache().clear(attr, value);
+            public void invalidate(final Tag tag) {
+                DefaultIndexMap.this.cache().clear(
+                    tag.add(Tag.Label.ATTR, attr)
+                );
             }
         };
     }

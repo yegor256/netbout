@@ -29,10 +29,10 @@ package com.netbout.inf.ray;
 import com.jcabi.log.VerboseThreads;
 import com.netbout.inf.Cursor;
 import com.netbout.inf.CursorMocker;
+import com.netbout.inf.Term;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
@@ -80,7 +80,7 @@ public final class DefaultCacheTest {
         final CountingTerm term = new CountingTerm(attr);
         final Cursor cursor = new CursorMocker().mock();
         cache.shift(term, cursor);
-        cache.clear(attr);
+        cache.clear(new Tag().add(Tag.Label.ATTR, attr));
         cache.shift(term, cursor);
         MatcherAssert.assertThat(
             term.count(),
@@ -102,6 +102,7 @@ public final class DefaultCacheTest {
         final int total = 100;
         final CountDownLatch start = new CountDownLatch(1);
         final CountDownLatch done = new CountDownLatch(total);
+        final Tag tag = new Tag().add(Tag.Label.ATTR, attr);
         final Collection<Future<Boolean>> futures =
             new ArrayList<Future<Boolean>>(total);
         final ExecutorService service =
@@ -114,7 +115,7 @@ public final class DefaultCacheTest {
                         public Boolean call() throws Exception {
                             start.await();
                             cache.shift(term, cursor);
-                            cache.clear(attr);
+                            cache.clear(tag);
                             done.countDown();
                             return true;
                         }
@@ -146,7 +147,7 @@ public final class DefaultCacheTest {
         );
     }
 
-    private final class CountingTerm implements DependableTerm, Cacheable {
+    private final class CountingTerm implements CacheableTerm, Taggable {
         /**
          * Attribute name it depends on.
          */
@@ -170,15 +171,14 @@ public final class DefaultCacheTest {
             return this.calls;
         }
         @Override
-        public boolean cacheThis() {
-            return true;
+        public Collection<Term> children() {
+            return Arrays.asList(new Term[0]);
         }
         @Override
-        public Set<DependableTerm.Dependency> dependencies() {
-            final Set<DependableTerm.Dependency> deps =
-                new HashSet<DependableTerm.Dependency>();
-            deps.add(new DependableTerm.Dependency(this.attr));
-            return deps;
+        public Collection<Tag> tags() {
+            return Arrays.asList(
+                new Tag[] {new Tag().add(Tag.Label.ATTR, this.attr)}
+            );
         }
         @Override
         public Cursor shift(final Cursor cursor) {

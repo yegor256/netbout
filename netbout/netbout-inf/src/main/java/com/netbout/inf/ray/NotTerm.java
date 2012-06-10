@@ -28,8 +28,8 @@ package com.netbout.inf.ray;
 
 import com.netbout.inf.Cursor;
 import com.netbout.inf.Term;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.Arrays;
+import java.util.Collection;
 
 /**
  * NOT term.
@@ -39,7 +39,12 @@ import java.util.Set;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-final class NotTerm implements DependableTerm, Cacheable {
+final class NotTerm implements CacheableTerm {
+
+    /**
+     * Hash code, for performance reasons.
+     */
+    private final transient int hash;
 
     /**
      * Index map.
@@ -59,27 +64,15 @@ final class NotTerm implements DependableTerm, Cacheable {
     public NotTerm(final IndexMap map, final Term trm) {
         this.imap = map;
         this.term = trm;
+        this.hash = this.toString().hashCode();
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public boolean cacheThis() {
-        return DefaultCache.isCacheable(this.term);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Set<DependableTerm.Dependency> dependencies() {
-        final Set<DependableTerm.Dependency> deps =
-            new HashSet<DependableTerm.Dependency>();
-        if (this.term instanceof DependableTerm) {
-            deps.addAll(DependableTerm.class.cast(this.term).dependencies());
-        }
-        return deps;
+    public Collection<Term> children() {
+        return Arrays.asList(new Term[] {this.term});
     }
 
     /**
@@ -87,7 +80,7 @@ final class NotTerm implements DependableTerm, Cacheable {
      */
     @Override
     public int hashCode() {
-        return this.imap.hashCode() + this.toString().hashCode();
+        return this.hash;
     }
 
     /**
@@ -119,7 +112,7 @@ final class NotTerm implements DependableTerm, Cacheable {
         final Term always = new AlwaysTerm(this.imap);
         while (!shifted.end()) {
             candidate = shifted.shift(always);
-            shifted = this.term.shift(shifted);
+            shifted = shifted.shift(this.term);
             if (shifted.compareTo(candidate) < 0) {
                 break;
             }

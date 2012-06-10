@@ -56,6 +56,7 @@ public final class MemRay implements Ray {
      */
     public MemRay(final File dir) throws IOException {
         this.imap = new DefaultIndexMap(dir);
+        Logger.debug(this, "#MemRay(%s): instantiated", dir);
     }
 
     /**

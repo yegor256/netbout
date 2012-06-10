@@ -29,7 +29,6 @@ package com.netbout.inf.ray;
 import com.netbout.inf.Cursor;
 import com.netbout.inf.Term;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -43,7 +42,7 @@ import java.util.concurrent.ConcurrentMap;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-final class AndTerm implements DependableTerm, Cacheable {
+final class AndTerm implements CacheableTerm {
 
     /**
      * Terms (also visible from {@link OrTerm}).
@@ -51,6 +50,11 @@ final class AndTerm implements DependableTerm, Cacheable {
      */
     @SuppressWarnings("PMD.AvoidProtectedFieldInFinalClass")
     protected final transient Set<Term> terms = new LinkedHashSet<Term>();
+
+    /**
+     * Hash code, for performance reasons.
+     */
+    private final transient int hash;
 
     /**
      * Index map.
@@ -71,6 +75,7 @@ final class AndTerm implements DependableTerm, Cacheable {
         if (this.terms.size() > 1) {
             this.terms.remove(new AlwaysTerm(this.imap));
         }
+        this.hash = this.toString().hashCode();
     }
 
     /**
@@ -78,7 +83,7 @@ final class AndTerm implements DependableTerm, Cacheable {
      */
     @Override
     public int hashCode() {
-        return this.imap.hashCode() + this.toString().hashCode();
+        return this.hash;
     }
 
     /**
@@ -108,6 +113,14 @@ final class AndTerm implements DependableTerm, Cacheable {
      * {@inheritDoc}
      */
     @Override
+    public Collection<Term> children() {
+        return this.terms;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public Cursor shift(final Cursor cursor) {
         Cursor slider;
         if (cursor.end()) {
@@ -121,36 +134,6 @@ final class AndTerm implements DependableTerm, Cacheable {
             }
         }
         return slider;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public boolean cacheThis() {
-        boolean cache = true;
-        for (Term term : this.terms) {
-            if (!DefaultCache.isCacheable(term)) {
-                cache = false;
-                break;
-            }
-        }
-        return cache;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Set<DependableTerm.Dependency> dependencies() {
-        final Set<DependableTerm.Dependency> deps =
-            new HashSet<DependableTerm.Dependency>();
-        for (Term term : this.terms) {
-            if (term instanceof DependableTerm) {
-                deps.addAll(DependableTerm.class.cast(term).dependencies());
-            }
-        }
-        return deps;
     }
 
     /**
@@ -203,7 +186,7 @@ final class AndTerm implements DependableTerm, Cacheable {
         if (!cache.containsKey(term)
             || cache.get(term).compareTo(from) >= 0
             || term.getClass().getAnnotation(Term.Volatile.class) != null) {
-            cache.put(term, term.shift(from));
+            cache.put(term, from.shift(term));
         }
         return cache.get(term);
     }
