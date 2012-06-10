@@ -96,10 +96,12 @@ final class AlwaysTerm implements Term, Taggable {
     @Override
     @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
     public Cursor shift(final Cursor cursor) {
-        Cursor shifted = cursor;
-        if (!shifted.end()) {
+        Cursor shifted;
+        if (cursor.end()) {
+            shifted = cursor;
+        } else {
             shifted = new MemCursor(
-                this.next(shifted.msg().number()),
+                this.next(cursor.msg().number()),
                 this.imap
             );
         }
