@@ -61,7 +61,7 @@ public final class UniqueTest {
         final Ray ray = new MemRay(new FolderMocker().mock().path());
         final long msg = Math.abs(new Random().nextLong());
         final Bout bout = new BoutMocker().mock();
-        for (int num = 0; num < 2; ++num) {
+        for (int num = 0; num < 1; ++num) {
             final long number = msg - num;
             ray.msg(number);
             new Equal().see(

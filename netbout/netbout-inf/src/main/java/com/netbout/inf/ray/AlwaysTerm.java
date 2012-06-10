@@ -112,18 +112,14 @@ final class AlwaysTerm implements Term, Taggable {
      * @return Next one or zero if there is nothing else
      */
     private long next(final long number) {
-        final Iterator<Long> tail = this.imap.msgs().tailSet(number).iterator();
-        long next = 0L;
+        final Iterator<Long> tail = this.imap.msgs()
+            .tailSet(number - 1)
+            .iterator();
+        long next;
         if (tail.hasNext()) {
             next = tail.next();
-            if (next == number) {
-                // @checkstyle NestedIfDepth (4 lines)
-                if (tail.hasNext()) {
-                    next = tail.next();
-                } else {
-                    next = 0L;
-                }
-            }
+        } else {
+            next = 0L;
         }
         return next;
     }

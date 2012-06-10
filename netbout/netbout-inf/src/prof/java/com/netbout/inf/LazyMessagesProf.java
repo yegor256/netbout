@@ -79,7 +79,7 @@ public final class LazyMessagesProf {
         final List<Long> second = this.fetch(ray, this.term(ray));
         MatcherAssert.assertThat(
             second,
-            Matchers.hasSize(Matchers.greaterThan(first.size()))
+            Matchers.hasSize(Matchers.greaterThanOrEqualTo(first.size()))
         );
     }
 

@@ -33,8 +33,8 @@ import com.netbout.inf.Ray;
 import com.netbout.inf.Term;
 import com.netbout.inf.atoms.VariableAtom;
 import java.util.List;
-import java.util.concurrent.ConcurrentMap;
-import java.util.concurrent.ConcurrentSkipListMap;
+import java.util.Set;
+import java.util.concurrent.ConcurrentSkipListSet;
 
 /**
  * Allows only unique values of the provided variable.
@@ -55,19 +55,18 @@ final class Unique implements Functor {
         final String attr = VariableAtom.class.cast(atoms.get(0)).attribute();
         // @checkstyle AnonInnerLength (50 lines)
         return new Term() {
-            private final transient ConcurrentMap<String, Term> terms =
-                new ConcurrentSkipListMap<String, Term>();
+            private final transient Set<String> passed =
+                new ConcurrentSkipListSet<String>();
             @Override
             public Cursor shift(final Cursor cursor) {
-                Cursor shifted;
-                if (cursor.end()) {
-                    shifted = cursor;
-                } else {
-                    shifted = cursor.shift(
-                        ray.builder().and(this.terms.values())
-                    );
-                    if (!shifted.end()) {
-                        this.record(shifted);
+                Cursor shifted = this.next(cursor);
+                if (!shifted.end()) {
+                    final String value =
+                        shifted.msg().first(attr);
+                    if (this.passed.contains(value)) {
+                        shifted = this.next(shifted);
+                    } else {
+                        this.passed.add(value);
                     }
                 }
                 return shifted;
@@ -76,12 +75,14 @@ final class Unique implements Functor {
             public String toString() {
                 return String.format("(UNIQUE %s)", attr);
             }
-            private void record(final Cursor cursor) {
-                final String value = cursor.msg().first(attr);
-                this.terms.put(
-                    value,
-                    ray.builder().not(ray.builder().matcher(attr, value))
-                );
+            private Cursor next(final Cursor cursor) {
+                Cursor next;
+                if (cursor.end()) {
+                    next = cursor;
+                } else {
+                    next = cursor.shift(ray.builder().always());
+                }
+                return next;
             }
         };
     }
