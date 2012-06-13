@@ -170,4 +170,24 @@ public final class DefaultIndexTest {
         );
     }
 
+    /**
+     * DefaultIndex can build lattice.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void buildsLatticeProperly() throws Exception {
+        final Index index = new DefaultIndex(
+            this.temp.newFile("file-25")
+        );
+        final String value = "text-344-\u0433!";
+        // @checkstyle MagicNumber (1 line)
+        for (int msg = 1; msg < 10; ++msg) {
+            index.add(msg, value);
+        }
+        MatcherAssert.assertThat(
+            index.lattice(value),
+            Matchers.hasToString(Matchers.equalTo("{16384}"))
+        );
+    }
+
 }
