@@ -106,7 +106,15 @@ final class NotTerm implements Term {
      */
     @Override
     public Cursor shift(final Cursor cursor) {
-        Cursor shifted = this.lattice().correct(cursor);
+        Cursor shifted = this.lattice().correct(
+            cursor,
+            new Lattice.Shifter() {
+                @Override
+                public Cursor shift(final Cursor crsr, final long msg) {
+                    return crsr.shift(new PickerTerm(NotTerm.this.imap, msg));
+                }
+            }
+        );
         Cursor candidate = shifted;
         final Term always = new AlwaysTerm(this.imap);
         while (!shifted.end()) {

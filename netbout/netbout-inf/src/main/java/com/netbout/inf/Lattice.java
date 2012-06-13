@@ -27,6 +27,7 @@
 package com.netbout.inf;
 
 import java.util.Arrays;
+import java.util.BitSet;
 import java.util.Collection;
 
 /**
@@ -40,23 +41,65 @@ import java.util.Collection;
 public final class Lattice {
 
     /**
+     * Total number of bits.
+     */
+    public static final int BITS = 16384;
+
+    /**
+     * Size of one bit, in messages.
+     */
+    public static final int SIZE = 256;
+
+    /**
      * Full coverage.
      */
-    public static final Lattice ALWAYS = new Lattice(
-        Arrays.asList(new Long[] {0L, Long.MAX_VALUE})
-    );
+    public static final Lattice ALWAYS = new Lattice(Lattice.fullset());
 
     /**
      * No coverage at all.
      */
-    public static final Lattice NEVER = new Lattice(0);
+    public static final Lattice NEVER = new Lattice(new BitSet());
+
+    /**
+     * Synchronization mutex.
+     */
+    private final transient Boolean mutex = Boolean.TRUE;
+
+    /**
+     * The bitset.
+     */
+    private final transient BitSet bitset;
+
+    /**
+     * Shifter of cursor.
+     */
+    public interface Shifter {
+        /**
+         * Shift cursor to the desired message number.
+         * @param cursor The cursor to shift
+         * @param msg The message number
+         * @return New cursor
+         */
+        Cursor shift(Cursor cursor, long msg);
+    }
+
+    /**
+     * Create an new lattice.
+     * @param bset The bitset
+     */
+    private Lattice(final BitSet bset) {
+        this.bitset = bset;
+    }
 
     /**
      * Create with all these numbers in the lattice.
      * @param numbers The numbers to add
      */
     public Lattice(final Collection<Long> numbers) {
-        // todo
+        this(new BitSet());
+        for (Long num : numbers) {
+            this.bitset.set(this.bit(num));
+        }
     }
 
     /**
@@ -64,7 +107,8 @@ public final class Lattice {
      * @param number The number to add
      */
     public Lattice(final long number) {
-        // todo
+        this(new BitSet());
+        this.bitset.set(this.bit(number));
     }
 
     /**
@@ -73,7 +117,11 @@ public final class Lattice {
      * @return New lattice
      */
     public static Lattice and(final Collection<Term> terms) {
-        return Lattice.ALWAYS;
+        final Lattice lattice = Lattice.ALWAYS;
+        for (Term term : terms) {
+            lattice.and(term.lattice());
+        }
+        return lattice;
     }
 
     /**
@@ -83,7 +131,11 @@ public final class Lattice {
      * @checkstyle MethodName (3 lines)
      */
     public static Lattice or(final Collection<Term> terms) {
-        return Lattice.ALWAYS;
+        final Lattice lattice = Lattice.NEVER;
+        for (Term term : terms) {
+            lattice.or(term.lattice());
+        }
+        return lattice;
     }
 
     /**
@@ -91,6 +143,19 @@ public final class Lattice {
      * @param lattice The lattice to apply
      */
     public void and(final Lattice lattice) {
+        synchronized (this.mutex) {
+            this.bitset.and(lattice.bitset);
+        }
+    }
+
+    /**
+     * OR this lattice with a new one.
+     * @param lattice The lattice to apply
+     */
+    public void or(final Lattice lattice) {
+        synchronized (this.mutex) {
+            this.bitset.or(lattice.bitset);
+        }
     }
 
     /**
@@ -98,17 +163,60 @@ public final class Lattice {
      * @return New lattice, reversed
      */
     public Lattice reverse() {
-        return Lattice.ALWAYS;
+        final BitSet bset = BitSet.class.cast(this.bitset.clone());
+        bset.xor(Lattice.ALWAYS.bitset);
+        return new Lattice(bset);
     }
 
     /**
      * Correct this cursor and return a new one, which is more likely to
      * match one of the numbers in the lattice.
      * @param cursor The cursor to start from
+     * @param shifter The shifter to use
      * @return The new cursor
      */
-    public Cursor correct(final Cursor cursor) {
-        return cursor;
+    public Cursor correct(final Cursor cursor, final Lattice.Shifter shifter) {
+        Cursor corrected;
+        if (cursor.end()) {
+            corrected = cursor;
+        } else {
+            final int bit = this.bit(cursor.msg().number());
+            final int next = this.bitset.nextSetBit(bit);
+            if (next > bit) {
+                corrected = shifter.shift(cursor, this.msg(next));
+            } else {
+                corrected = cursor;
+            }
+        }
+        return corrected;
+    }
+
+    /**
+     * Get the number of the bit for this number.
+     * @param number The number
+     * @return The bit
+     */
+    private int bit(final long number) {
+        return Lattice.BITS - (int) number / Lattice.SIZE;
+    }
+
+    /**
+     * Get the number of the message from the bit.
+     * @param bit The bit
+     * @return The message number
+     */
+    private long msg(final int bit) {
+        return (Lattice.BITS - bit) * Lattice.SIZE;
+    }
+
+    /**
+     * Create and return a set full of ONE-s.
+     * @return The set
+     */
+    private static BitSet fullset() {
+        final BitSet bset = new BitSet();
+        bset.set(0, Lattice.BITS, true);
+        return bset;
     }
 
 }
