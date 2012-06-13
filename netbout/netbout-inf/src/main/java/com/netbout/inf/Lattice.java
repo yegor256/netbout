@@ -26,18 +26,18 @@
  */
 package com.netbout.inf;
 
-import java.util.Arrays;
 import java.util.BitSet;
 import java.util.Collection;
 
 /**
  * Lattice of bits.
  *
- * <p>The class is immutable and thread-safe.
+ * <p>The class is mutable and thread-safe.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
+@SuppressWarnings("PMD.TooManyMethods")
 public final class Lattice {
 
     /**
@@ -51,14 +51,9 @@ public final class Lattice {
     public static final int SIZE = 256;
 
     /**
-     * Full coverage.
+     * Fully filled bitset.
      */
-    public static final Lattice ALWAYS = new Lattice(Lattice.fullset());
-
-    /**
-     * No coverage at all.
-     */
-    public static final Lattice NEVER = new Lattice(new BitSet(Lattice.BITS));
+    private static final BitSet FULL = Lattice.fullset();
 
     /**
      * Synchronization mutex.
@@ -84,14 +79,6 @@ public final class Lattice {
     }
 
     /**
-     * Create an new lattice.
-     * @param bset The bitset
-     */
-    private Lattice(final BitSet bset) {
-        this.bitset = bset;
-    }
-
-    /**
      * Create with all these numbers in the lattice.
      * @param numbers The numbers to add
      */
@@ -112,6 +99,14 @@ public final class Lattice {
     }
 
     /**
+     * Create an new lattice.
+     * @param bset The bitset
+     */
+    private Lattice(final BitSet bset) {
+        this.bitset = bset;
+    }
+
+    /**
      * {@inheritDoc}
      */
     @Override
@@ -120,30 +115,58 @@ public final class Lattice {
     }
 
     /**
+     * {@inheritDoc}
+     */
+    @Override
+    public int hashCode() {
+        return this.bitset.hashCode();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean equals(final Object lattice) {
+        return this == lattice || (lattice instanceof Lattice
+            && this.hashCode() == lattice.hashCode());
+    }
+
+    /**
+     * Always TRUE.
+     * @return The lattice
+     */
+    public static Lattice always() {
+        return new Lattice(Lattice.FULL);
+    }
+
+    /**
+     * Always FALSE.
+     * @return The lattice
+     */
+    public static Lattice never() {
+        return new Lattice(new BitSet(Lattice.BITS));
+    }
+
+    /**
      * Join them all together (AND).
      * @param terms The terms to merge
-     * @return New lattice
      */
-    public static Lattice and(final Collection<Term> terms) {
-        final Lattice lattice = Lattice.ALWAYS;
+    public void and(final Collection<Term> terms) {
         for (Term term : terms) {
-            lattice.and(term.lattice());
+            this.and(term.lattice());
         }
-        return lattice;
     }
 
     /**
      * Join them all together (OR).
      * @param terms The terms to merge
-     * @return New lattice
      * @checkstyle MethodName (3 lines)
      */
-    public static Lattice or(final Collection<Term> terms) {
-        final Lattice lattice = Lattice.NEVER;
+    @SuppressWarnings("PMD.ShortMethodName")
+    public void or(final Collection<Term> terms) {
         for (Term term : terms) {
-            lattice.or(term.lattice());
+            this.or(term.lattice());
         }
-        return lattice;
     }
 
     /**
@@ -159,7 +182,9 @@ public final class Lattice {
     /**
      * OR this lattice with a new one.
      * @param lattice The lattice to apply
+     * @checkstyle MethodName (3 lines)
      */
+    @SuppressWarnings("PMD.ShortMethodName")
     public void or(final Lattice lattice) {
         synchronized (this.mutex) {
             this.bitset.or(lattice.bitset);
@@ -168,12 +193,9 @@ public final class Lattice {
 
     /**
      * Reverse this lattice.
-     * @return New lattice, reversed
      */
-    public Lattice reverse() {
-        final BitSet bset = BitSet.class.cast(this.bitset.clone());
-        bset.xor(Lattice.ALWAYS.bitset);
-        return new Lattice(bset);
+    public void reverse() {
+        this.bitset.xor(Lattice.FULL);
     }
 
     /**

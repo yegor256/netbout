@@ -79,7 +79,9 @@ final class Unique implements Functor {
             }
             @Override
             public Lattice lattice() {
-                return Lattice.and(this.terms.values());
+                final Lattice lattice = Lattice.always();
+                lattice.and(this.terms.values());
+                return lattice;
             }
             private void record(final Cursor cursor) {
                 final String value = cursor.msg().first(attr);

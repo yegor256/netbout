@@ -91,7 +91,9 @@ final class Bundled implements Functor {
             }
             @Override
             public Lattice lattice() {
-                return Lattice.and(this.terms.values());
+                final Lattice lattice = Lattice.always();
+                lattice.and(this.terms.values());
+                return lattice;
             }
             private Cursor next(final Cursor cursor) {
                 Cursor next;

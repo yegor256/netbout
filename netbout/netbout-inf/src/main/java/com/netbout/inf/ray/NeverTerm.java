@@ -84,7 +84,7 @@ final class NeverTerm implements Term {
      */
     @Override
     public Lattice lattice() {
-        return Lattice.NEVER;
+        return Lattice.never();
     }
 
     /**

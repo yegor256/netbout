@@ -41,6 +41,7 @@ public final class LatticeTest {
     /**
      * Lattice can shift a cursor to the right position.
      * @throws Exception If there is some problem inside
+     * @checkstyle MagicNumber (30 lines)
      */
     @Test
     public void shiftsCursorToTheRightPosition() throws Exception {

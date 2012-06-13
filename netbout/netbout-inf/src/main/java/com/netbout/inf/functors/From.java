@@ -123,7 +123,7 @@ final class From implements Functor {
          */
         @Override
         public Lattice lattice() {
-            return Lattice.ALWAYS;
+            return Lattice.always();
         }
     }
 

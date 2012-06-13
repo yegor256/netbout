@@ -83,7 +83,7 @@ final class Limit implements Functor {
                 }
                 @Override
                 public Lattice lattice() {
-                    return Lattice.ALWAYS;
+                    return Lattice.always();
                 }
             }
         );

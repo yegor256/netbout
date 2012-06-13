@@ -28,8 +28,8 @@ package com.netbout.inf.functors;
 
 import com.netbout.inf.Atom;
 import com.netbout.inf.FolderMocker;
-import com.netbout.inf.Ray;
 import com.netbout.inf.MsgMocker;
+import com.netbout.inf.Ray;
 import com.netbout.inf.Term;
 import com.netbout.inf.atoms.VariableAtom;
 import com.netbout.inf.notices.MessagePostedNotice;

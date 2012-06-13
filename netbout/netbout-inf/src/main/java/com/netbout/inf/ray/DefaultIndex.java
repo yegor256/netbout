@@ -146,7 +146,9 @@ final class DefaultIndex implements Index {
         this.validate(msg);
         this.numbers(value).remove(msg);
         this.rmap.remove(msg);
-        this.lattice(value).and(new Lattice(msg).reverse());
+        final Lattice lattice = new Lattice(msg);
+        lattice.reverse();
+        this.lattice(value).and(lattice);
     }
 
     /**
@@ -208,7 +210,7 @@ final class DefaultIndex implements Index {
      */
     @Override
     public Lattice lattice(final String value) {
-        this.lattices.putIfAbsent(value, Lattice.NEVER);
+        this.lattices.putIfAbsent(value, Lattice.never());
         return this.lattices.get(value);
     }
 
