@@ -27,9 +27,9 @@
 package com.netbout.inf.ray;
 
 import com.netbout.inf.Cursor;
+import com.netbout.inf.MsgMocker;
 import com.netbout.inf.Term;
 import java.util.Arrays;
-import java.util.Random;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Rule;
@@ -60,7 +60,7 @@ public final class OrTermTest {
         final String attr = "attribute name";
         final String first = "some text-1 \u0433!";
         final String second = "some text-2 \u0433!";
-        final long msg = new Random().nextLong();
+        final long msg = MsgMocker.number();
         map.index(attr).add(msg + 1, first);
         map.index(attr).add(msg, first);
         map.index(attr).add(msg, second);

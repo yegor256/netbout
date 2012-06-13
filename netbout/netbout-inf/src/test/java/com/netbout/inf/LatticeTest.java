@@ -46,10 +46,14 @@ public final class LatticeTest {
     public void shiftsCursorToTheRightPosition() throws Exception {
         final Cursor cursor = new CursorMocker().withMsg(5000L).mock();
         final Lattice lattice = new Lattice(10000L);
-        lattice.and(new Lattice(50L));
+        lattice.or(new Lattice(50L));
+        MatcherAssert.assertThat(
+            lattice,
+            Matchers.hasToString(Matchers.containsString("16384"))
+        );
         final Lattice.Shifter shifter = Mockito.mock(Lattice.Shifter.class);
         lattice.correct(cursor, shifter);
-        Mockito.verify(shifter).shift(cursor, 256L);
+        Mockito.verify(shifter).shift(cursor, 255L);
     }
 
 }

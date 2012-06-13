@@ -27,8 +27,8 @@
 package com.netbout.inf.ray;
 
 import com.netbout.inf.Cursor;
+import com.netbout.inf.MsgMocker;
 import com.netbout.inf.Term;
-import java.util.Random;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Rule;
@@ -56,7 +56,7 @@ public final class MemTermBuilderTest {
     @Test
     public void buildsNeverFindingAnythingTerm() throws Exception {
         final IndexMap map = new DefaultIndexMap(this.temp.newFolder("bar"));
-        map.index("foo").add(new Random().nextLong(), "some text-1 \u0433!");
+        map.index("foo").add(MsgMocker.number(), "txt \u0433!");
         final Term term = new MemTermBuilder(map).never();
         final Cursor cursor = new MemCursor(Long.MAX_VALUE, map);
         MatcherAssert.assertThat(

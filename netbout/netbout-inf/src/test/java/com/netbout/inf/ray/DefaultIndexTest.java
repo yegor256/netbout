@@ -27,9 +27,9 @@
 package com.netbout.inf.ray;
 
 import com.jcabi.log.VerboseThreads;
+import com.netbout.inf.MsgMocker;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Random;
 import java.util.concurrent.Callable;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
@@ -67,7 +67,7 @@ public final class DefaultIndexTest {
         final Index index = new DefaultIndex(
             this.temp.newFile("file-1")
         );
-        final long msg = new Random().nextLong();
+        final long msg = MsgMocker.number();
         final String value = "some text \u0433!";
         index.add(msg, "first value");
         index.add(msg, "second value");
@@ -91,7 +91,7 @@ public final class DefaultIndexTest {
         final Index index = new DefaultIndex(
             this.temp.newFile("file-2")
         );
-        final long msg = new Random().nextLong();
+        final long msg = MsgMocker.number();
         final String value = "text-\u0433!";
         // @checkstyle MagicNumber (1 line)
         for (int pos = 1; pos < 10; ++pos) {
@@ -117,7 +117,7 @@ public final class DefaultIndexTest {
         final Index index = new DefaultIndex(
             this.temp.newFile("file-3")
         );
-        final long msg = new Random().nextLong();
+        final long msg = MsgMocker.number();
         final String value = "some value to set";
         final int total = 100;
         final CountDownLatch start = new CountDownLatch(1);

@@ -135,7 +135,7 @@ final class DefaultIndex implements Index {
         this.validate(msg);
         this.numbers(value).add(msg);
         this.rmap.put(msg, value);
-        this.lattice(value).and(new Lattice(msg));
+        this.lattice(value).or(new Lattice(msg));
     }
 
     /**

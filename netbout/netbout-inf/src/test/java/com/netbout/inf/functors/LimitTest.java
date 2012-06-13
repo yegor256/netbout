@@ -28,12 +28,12 @@ package com.netbout.inf.functors;
 
 import com.netbout.inf.Atom;
 import com.netbout.inf.FolderMocker;
+import com.netbout.inf.MsgMocker;
 import com.netbout.inf.Ray;
 import com.netbout.inf.Term;
 import com.netbout.inf.atoms.NumberAtom;
 import com.netbout.inf.ray.MemRay;
 import java.util.Arrays;
-import java.util.Random;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;
@@ -52,7 +52,7 @@ public final class LimitTest {
     @Test
     public void findsMessageByLimit() throws Exception {
         final Ray ray = new MemRay(new FolderMocker().mock().path());
-        final long msg = new Random().nextLong();
+        final long msg = MsgMocker.number();
         ray.msg(msg + 1);
         ray.msg(msg);
         ray.msg(msg - 1);

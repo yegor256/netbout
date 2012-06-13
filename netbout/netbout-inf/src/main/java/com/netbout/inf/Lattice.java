@@ -58,7 +58,7 @@ public final class Lattice {
     /**
      * No coverage at all.
      */
-    public static final Lattice NEVER = new Lattice(new BitSet());
+    public static final Lattice NEVER = new Lattice(new BitSet(Lattice.BITS));
 
     /**
      * Synchronization mutex.
@@ -96,7 +96,7 @@ public final class Lattice {
      * @param numbers The numbers to add
      */
     public Lattice(final Collection<Long> numbers) {
-        this(new BitSet());
+        this(new BitSet(Lattice.BITS));
         for (Long num : numbers) {
             this.bitset.set(this.bit(num));
         }
@@ -107,8 +107,16 @@ public final class Lattice {
      * @param number The number to add
      */
     public Lattice(final long number) {
-        this(new BitSet());
+        this(new BitSet(Lattice.BITS));
         this.bitset.set(this.bit(number));
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String toString() {
+        return this.bitset.toString();
     }
 
     /**
@@ -206,7 +214,7 @@ public final class Lattice {
      * @return The message number
      */
     private long msg(final int bit) {
-        return (Lattice.BITS - bit) * Lattice.SIZE;
+        return (Lattice.BITS - bit + 1) * Lattice.SIZE - 1;
     }
 
     /**
@@ -214,7 +222,7 @@ public final class Lattice {
      * @return The set
      */
     private static BitSet fullset() {
-        final BitSet bset = new BitSet();
+        final BitSet bset = new BitSet(Lattice.BITS);
         bset.set(0, Lattice.BITS, true);
         return bset;
     }

@@ -28,6 +28,7 @@ package com.netbout.inf.functors;
 
 import com.netbout.inf.Atom;
 import com.netbout.inf.FolderMocker;
+import com.netbout.inf.MsgMocker;
 import com.netbout.inf.Ray;
 import com.netbout.inf.atoms.TextAtom;
 import com.netbout.inf.notices.MessagePostedNotice;
@@ -35,7 +36,6 @@ import com.netbout.inf.ray.MemRay;
 import com.netbout.spi.Message;
 import com.netbout.spi.MessageMocker;
 import java.util.Arrays;
-import java.util.Random;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;
@@ -55,7 +55,7 @@ public final class MatchesTest {
     @Test
     public void findsMessageByKeyword() throws Exception {
         final Ray ray = new MemRay(new FolderMocker().mock().path());
-        final long msg = new Random().nextLong();
+        final long msg = MsgMocker.number();
         final Matches functor = new Matches();
         functor.see(
             ray,
