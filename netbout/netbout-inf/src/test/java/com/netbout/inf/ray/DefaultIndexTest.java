@@ -42,7 +42,6 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 import org.mockito.ArgumentMatcher;
-import org.mockito.Mockito;
 
 /**
  * Test case of {@link DefaultIndex}.
@@ -66,7 +65,6 @@ public final class DefaultIndexTest {
     @Test
     public void replacesValues() throws Exception {
         final Index index = new DefaultIndex(
-            Mockito.mock(DefaultIndex.Invalidator.class),
             this.temp.newFile("file-1")
         );
         final long msg = new Random().nextLong();
@@ -91,7 +89,6 @@ public final class DefaultIndexTest {
     @Test
     public void ordersNumbersProperly() throws Exception {
         final Index index = new DefaultIndex(
-            Mockito.mock(DefaultIndex.Invalidator.class),
             this.temp.newFile("file-2")
         );
         final long msg = new Random().nextLong();
@@ -118,7 +115,6 @@ public final class DefaultIndexTest {
     @SuppressWarnings({ "PMD.AvoidInstantiatingObjectsInLoops", "unchecked" })
     public void updatesInMultipleThreads() throws Exception {
         final Index index = new DefaultIndex(
-            Mockito.mock(DefaultIndex.Invalidator.class),
             this.temp.newFile("file-3")
         );
         final long msg = new Random().nextLong();

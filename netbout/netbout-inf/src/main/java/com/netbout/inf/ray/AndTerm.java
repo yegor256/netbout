@@ -27,6 +27,7 @@
 package com.netbout.inf.ray;
 
 import com.netbout.inf.Cursor;
+import com.netbout.inf.Segments;
 import com.netbout.inf.Term;
 import java.util.Collection;
 import java.util.LinkedHashSet;
@@ -42,7 +43,7 @@ import java.util.concurrent.ConcurrentMap;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-final class AndTerm implements CacheableTerm {
+final class AndTerm implements Term {
 
     /**
      * Terms (also visible from {@link OrTerm}).
@@ -113,8 +114,8 @@ final class AndTerm implements CacheableTerm {
      * {@inheritDoc}
      */
     @Override
-    public Collection<Term> children() {
-        return this.terms;
+    public Segments segments() {
+        return new Segments();
     }
 
     /**

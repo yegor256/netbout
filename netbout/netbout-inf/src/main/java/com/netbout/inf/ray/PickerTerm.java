@@ -27,6 +27,7 @@
 package com.netbout.inf.ray;
 
 import com.netbout.inf.Cursor;
+import com.netbout.inf.Segments;
 import com.netbout.inf.Term;
 
 /**
@@ -83,6 +84,14 @@ final class PickerTerm implements Term {
     @Override
     public String toString() {
         return String.format("(PICKER %d)", this.number);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Segments segments() {
+        return new Segments();
     }
 
     /**

@@ -27,9 +27,8 @@
 package com.netbout.inf.ray;
 
 import com.netbout.inf.Cursor;
+import com.netbout.inf.Segments;
 import com.netbout.inf.Term;
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.Iterator;
 
 /**
@@ -41,7 +40,7 @@ import java.util.Iterator;
  * @version $Id$
  */
 @Term.Cheap
-final class MatcherTerm implements Term, Taggable {
+final class MatcherTerm implements Term {
 
     /**
      * Name of attribute.
@@ -74,20 +73,6 @@ final class MatcherTerm implements Term, Taggable {
      * {@inheritDoc}
      */
     @Override
-    public Collection<Tag> tags() {
-        return Arrays.asList(
-            new Tag[] {
-                new Tag().add(Tag.Label.ATTR, this.attr)
-                    .add(Tag.Label.VALUE, this.value),
-                new Tag().add(Tag.Label.ATTR, this.attr),
-            }
-        );
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
     public int hashCode() {
         return this.imap.hashCode() + this.toString().hashCode();
     }
@@ -107,6 +92,14 @@ final class MatcherTerm implements Term, Taggable {
     @Override
     public String toString() {
         return String.format("(%s:%s)", this.attr, this.value);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Segments segments() {
+        return new Segments();
     }
 
     /**

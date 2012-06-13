@@ -84,11 +84,6 @@ final class DefaultIndexMap implements IndexMap {
     private final transient Files files;
 
     /**
-     * Term cache (use {@link TransparentCache} to disable caching).
-     */
-    private final transient Cache tcache = new TransparentCache();
-
-    /**
      * Public ctor.
      * @param dir Directory where files are kept
      * @throws IOException If some IO error
@@ -106,7 +101,7 @@ final class DefaultIndexMap implements IndexMap {
         for (String name : snapshot.attrs()) {
             this.map.put(
                 name,
-                new DefaultIndex(this.invalidator(name), snapshot.attr(name))
+                new DefaultIndex(snapshot.attr(name))
             );
         }
         Logger.info(
@@ -130,10 +125,7 @@ final class DefaultIndexMap implements IndexMap {
             throw new IllegalArgumentException("attribute name is empty");
         }
         if (!this.map.containsKey(attr)) {
-            this.map.putIfAbsent(
-                attr,
-                new DefaultIndex(this.invalidator(attr))
-            );
+            this.map.putIfAbsent(attr, new DefaultIndex());
         }
         return this.map.get(attr);
     }
@@ -150,7 +142,6 @@ final class DefaultIndexMap implements IndexMap {
             throw new IllegalArgumentException("msg number can't be MAX_VALUE");
         }
         this.all.add(number);
-        this.tcache.clear(Tag.ENTIRE_MAP);
     }
 
     /**
@@ -179,14 +170,6 @@ final class DefaultIndexMap implements IndexMap {
      * {@inheritDoc}
      */
     @Override
-    public Cache cache() {
-        return this.tcache;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
     public String toString() {
         final StringBuilder text = new StringBuilder();
         text.append(String.format("%d msgs\n", this.all.size()));
@@ -206,8 +189,6 @@ final class DefaultIndexMap implements IndexMap {
                 )
             );
         }
-        text.append(Logger.format("%[type]s details:\n", this.tcache))
-            .append(this.tcache.toString());
         return text.toString();
     }
 
@@ -275,22 +256,6 @@ final class DefaultIndexMap implements IndexMap {
             snapshot,
             System.currentTimeMillis() - start
         );
-    }
-
-    /**
-     * Create invalidator for the given attribute.
-     * @param attr The attribute
-     * @return The invalidator
-     */
-    private DefaultIndex.Invalidator invalidator(final String attr) {
-        return new DefaultIndex.Invalidator() {
-            @Override
-            public void invalidate(final Tag tag) {
-                DefaultIndexMap.this.cache().clear(
-                    tag.add(Tag.Label.ATTR, attr)
-                );
-            }
-        };
     }
 
     /**

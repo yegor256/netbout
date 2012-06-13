@@ -27,9 +27,8 @@
 package com.netbout.inf.ray;
 
 import com.netbout.inf.Cursor;
+import com.netbout.inf.Segments;
 import com.netbout.inf.Term;
-import java.util.Arrays;
-import java.util.Collection;
 
 /**
  * NOT term.
@@ -39,7 +38,7 @@ import java.util.Collection;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-final class NotTerm implements CacheableTerm {
+final class NotTerm implements Term {
 
     /**
      * Hash code, for performance reasons.
@@ -71,14 +70,6 @@ final class NotTerm implements CacheableTerm {
      * {@inheritDoc}
      */
     @Override
-    public Collection<Term> children() {
-        return Arrays.asList(new Term[] {this.term});
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
     public int hashCode() {
         return this.hash;
     }
@@ -100,6 +91,14 @@ final class NotTerm implements CacheableTerm {
         final StringBuilder text = new StringBuilder();
         text.append("(NOT ").append(this.term).append(')');
         return text.toString();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Segments segments() {
+        return new Segments();
     }
 
     /**

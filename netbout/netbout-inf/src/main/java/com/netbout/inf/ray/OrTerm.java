@@ -27,6 +27,7 @@
 package com.netbout.inf.ray;
 
 import com.netbout.inf.Cursor;
+import com.netbout.inf.Segments;
 import com.netbout.inf.Term;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -42,7 +43,7 @@ import java.util.Set;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-final class OrTerm implements CacheableTerm {
+final class OrTerm implements Term {
 
     /**
      * Terms (also visible from {@link AndTerm}).
@@ -105,14 +106,6 @@ final class OrTerm implements CacheableTerm {
      * {@inheritDoc}
      */
     @Override
-    public Collection<Term> children() {
-        return this.terms;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
     public String toString() {
         final StringBuilder text = new StringBuilder();
         text.append("(OR");
@@ -121,6 +114,14 @@ final class OrTerm implements CacheableTerm {
         }
         text.append(')');
         return text.toString();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Segments segments() {
+        return new Segments();
     }
 
     /**

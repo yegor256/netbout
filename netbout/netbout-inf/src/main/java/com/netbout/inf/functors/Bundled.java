@@ -31,6 +31,7 @@ import com.netbout.inf.Atom;
 import com.netbout.inf.Cursor;
 import com.netbout.inf.Functor;
 import com.netbout.inf.Ray;
+import com.netbout.inf.Segments;
 import com.netbout.inf.Term;
 import com.netbout.inf.notices.MessagePostedNotice;
 import com.netbout.spi.Message;
@@ -85,6 +86,10 @@ final class Bundled implements Functor {
                 @Override
                 public String toString() {
                     return "(BUNDLED)";
+                }
+                @Override
+                public Segments segments() {
+                    return new Segments();
                 }
                 private Cursor next(final Cursor cursor) {
                     Cursor next;

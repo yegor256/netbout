@@ -27,6 +27,7 @@
 package com.netbout.inf.functors;
 
 import com.netbout.inf.Cursor;
+import com.netbout.inf.Segments;
 import com.netbout.inf.Term;
 
 /**
@@ -67,6 +68,14 @@ final class VolatileTerm implements Term {
     @Override
     public String toString() {
         return String.format("v:%s", this.origin);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Segments segments() {
+        return this.origin.segments();
     }
 
 }

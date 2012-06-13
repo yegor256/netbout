@@ -30,6 +30,7 @@ import com.netbout.inf.Atom;
 import com.netbout.inf.Cursor;
 import com.netbout.inf.Functor;
 import com.netbout.inf.Ray;
+import com.netbout.inf.Segments;
 import com.netbout.inf.Term;
 import com.netbout.inf.atoms.NumberAtom;
 import java.util.List;
@@ -76,12 +77,13 @@ final class Limit implements Functor {
                     }
                     return shifted;
                 }
-                /**
-                 * {@inheritDoc}
-                 */
                 @Override
                 public String toString() {
                     return String.format("(LIMIT %d)", limit);
+                }
+                @Override
+                public Segments segments() {
+                    return new Segments();
                 }
             }
         );

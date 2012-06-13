@@ -24,75 +24,53 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.inf.ray;
+package com.netbout.inf;
 
-import java.util.Map;
-import java.util.concurrent.ConcurrentMap;
-import java.util.concurrent.ConcurrentSkipListMap;
+import java.util.Iterator;
 
 /**
- * Cache tag.
+ * Segments of a term.
  *
- * <p>The class is mutable and thread-safe.
+ * <p>The class is immutable and thread-safe.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-final class Tag {
+public final class Segments {
 
     /**
-     * Supported labels.
+     * Add all these numbers to the segments.
+     * @param numbers The numbers to add
+     * @return New segments, with added numbers
      */
-    public enum Label {
-        /**
-         * The entire map.
-         */
-        MAP,
-        /**
-         * By specific attribute.
-         */
-        ATTR,
-        /**
-         * By specific value.
-         */
-        VALUE;
+    public Segments add(final Iterator<Long> numbers) {
+        return null;
     }
 
     /**
-     * Tag about MAP.
+     * Add new segments.
+     * @param segs The segments to merge
+     * @return New segments, with merged segments
      */
-    public static final Tag ENTIRE_MAP = new Tag().add(Tag.Label.MAP, "");
-
-    /**
-     * Labels and their values.
-     */
-    private final transient ConcurrentMap<Tag.Label, String> labels =
-        new ConcurrentSkipListMap<Tag.Label, String>();
-
-    /**
-     * Add new label to it.
-     * @param label The label
-     * @param value The value
-     * @return This object
-     */
-    public Tag add(final Tag.Label label, final String value) {
-        this.labels.put(label, value);
-        return this;
+    public Segments add(final Segments... segs) {
+        return null;
     }
 
     /**
-     * {@inheritDoc}
+     * Reverse this segments.
+     * @return New segments, reversed
      */
-    @Override
-    public String toString() {
-        final StringBuilder text = new StringBuilder();
-        for (Map.Entry<Tag.Label, String> entry : this.labels.entrySet()) {
-            text.append(entry.getKey())
-                .append(':')
-                .append(entry.getValue())
-                .append(' ');
-        }
-        return text.toString().trim();
+    public Segments reverse() {
+        return null;
+    }
+
+    /**
+     * Shift to the closest position.
+     * @param cursor The cursor to start from
+     * @return The new cursor
+     */
+    public Cursor shift(final Cursor cursor) {
+        return null;
     }
 
 }

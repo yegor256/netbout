@@ -30,6 +30,7 @@ import com.netbout.inf.Atom;
 import com.netbout.inf.Cursor;
 import com.netbout.inf.Functor;
 import com.netbout.inf.Ray;
+import com.netbout.inf.Segments;
 import com.netbout.inf.Term;
 import com.netbout.inf.atoms.NumberAtom;
 import java.util.List;
@@ -51,37 +52,79 @@ final class From implements Functor {
      */
     @Override
     public Term build(final Ray ray, final List<Atom> atoms) {
-        final long from = NumberAtom.class.cast(atoms.get(0)).value();
         return new VolatileTerm(
-            // @checkstyle AnonInnerLength (50 lines)
-            new Term() {
-                private final transient AtomicLong pos = new AtomicLong(0L);
-                private final transient AtomicLong recent =
-                    new AtomicLong(Long.MAX_VALUE);
-                @Override
-                public Cursor shift(final Cursor cursor) {
-                    Cursor shifted = cursor;
-                    if (!shifted.end()) {
-                        shifted = shifted.shift(ray.builder().always());
-                        if (!shifted.end()
-                            && shifted.msg().number() <= this.recent.get()
-                            && this.pos.getAndIncrement() < from) {
-                            shifted = shifted.shift(ray.builder().always());
-                        }
-                        if (shifted.end()) {
-                            this.recent.set(0);
-                        } else {
-                            this.recent.set(shifted.msg().number());
-                        }
-                    }
-                    return shifted;
+            new FromTerm(
+                ray,
+                NumberAtom.class.cast(atoms.get(0)).value()
+            )
+        );
+    }
+
+    /**
+     * The term to use.
+     */
+    private static final class FromTerm implements Term {
+        /**
+         * Ray to work with.
+         */
+        private final transient Ray ray;
+        /**
+         * Position required.
+         */
+        private final transient long from;
+        /**
+         * Current position.
+         */
+        private final transient AtomicLong pos = new AtomicLong(0L);
+        /**
+         * Most recent position passed.
+         */
+        private final transient AtomicLong recent =
+            new AtomicLong(Long.MAX_VALUE);
+        /**
+         * Public ctor.
+         * @param iray The ray to use
+         * @param msg Position to match
+         */
+        public FromTerm(final Ray iray, final long msg) {
+            this.ray = iray;
+            this.from = msg;
+        }
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public Cursor shift(final Cursor cursor) {
+            Cursor shifted = cursor;
+            if (!shifted.end()) {
+                shifted = shifted.shift(this.ray.builder().always());
+                if (!shifted.end()
+                    && shifted.msg().number() <= this.recent.get()
+                    && this.pos.getAndIncrement() < this.from) {
+                    shifted = shifted.shift(this.ray.builder().always());
                 }
-                @Override
-                public String toString() {
-                    return String.format("(FROM %d)", from);
+                if (shifted.end()) {
+                    this.recent.set(0);
+                } else {
+                    this.recent.set(shifted.msg().number());
                 }
             }
-        );
+            return shifted;
+        }
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public String toString() {
+            return String.format("(FROM %d)", this.from);
+        }
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public Segments segments() {
+            return new Segments();
+        }
     }
 
 }

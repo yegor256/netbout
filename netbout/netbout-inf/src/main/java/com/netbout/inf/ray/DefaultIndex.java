@@ -74,40 +74,19 @@ final class DefaultIndex implements Index {
     private final transient ConcurrentMap<Long, String> rmap;
 
     /**
-     * Cache invalidator.
-     */
-    private final transient Invalidator invalidator;
-
-    /**
-     * Cache invalidator.
-     */
-    public interface Invalidator {
-        /**
-         * Invalidate cache for this tag.
-         * @param tag The tag
-         */
-        void invalidate(Tag tag);
-    }
-
-    /**
      * Public ctor.
-     * @param inv Invalidator of cache
      */
-    public DefaultIndex(final Invalidator inv) {
-        this.invalidator = inv;
+    public DefaultIndex() {
         this.map = new ConcurrentHashMap<String, SortedSet<Long>>();
         this.rmap = new ConcurrentHashMap<Long, String>();
     }
 
     /**
      * Public ctor.
-     * @param inv Invalidator of cache
      * @param file File to read from
      * @throws IOException If some IO error
      */
-    public DefaultIndex(final Invalidator inv, final File file)
-        throws IOException {
-        this.invalidator = inv;
+    public DefaultIndex(final File file) throws IOException {
         final InputStream stream = new FileInputStream(file);
         try {
             final long start = System.currentTimeMillis();
@@ -142,8 +121,6 @@ final class DefaultIndex implements Index {
     @Override
     public void add(final long msg, final String value) {
         this.validate(msg);
-        this.invalidator.invalidate(new Tag().add(Tag.Label.VALUE, value));
-        this.invalidator.invalidate(new Tag());
         this.numbers(value).add(msg);
         this.rmap.put(msg, value);
     }
@@ -154,7 +131,6 @@ final class DefaultIndex implements Index {
     @Override
     public void delete(final long msg, final String value) {
         this.validate(msg);
-        this.invalidator.invalidate(new Tag().add(Tag.Label.VALUE, value));
         this.numbers(value).remove(msg);
         this.rmap.remove(msg);
     }
@@ -165,7 +141,6 @@ final class DefaultIndex implements Index {
     @Override
     public void clean(final long msg) {
         this.validate(msg);
-        this.invalidator.invalidate(new Tag());
         for (SortedSet<Long> set : this.map.values()) {
             set.remove(msg);
         }
