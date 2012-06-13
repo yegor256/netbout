@@ -98,7 +98,8 @@ final class NotTerm implements Term {
      */
     @Override
     public Lattice lattice() {
-        final Lattice lattice = this.term.lattice();
+        final Lattice lattice = Lattice.never();
+        lattice.or(this.term.lattice());
         lattice.reverse();
         return lattice;
     }

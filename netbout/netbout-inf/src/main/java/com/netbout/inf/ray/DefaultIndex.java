@@ -146,9 +146,7 @@ final class DefaultIndex implements Index {
         this.validate(msg);
         this.numbers(value).remove(msg);
         this.rmap.remove(msg);
-        final Lattice lattice = new Lattice(msg);
-        lattice.reverse();
-        this.lattice(value).and(lattice);
+        this.lattice(value).not(new Lattice(msg));
     }
 
     /**

@@ -136,7 +136,7 @@ public final class Lattice {
      * @return The lattice
      */
     public static Lattice always() {
-        return new Lattice(Lattice.FULL);
+        return new Lattice(BitSet.class.cast(Lattice.FULL.clone()));
     }
 
     /**
@@ -188,6 +188,17 @@ public final class Lattice {
     public void or(final Lattice lattice) {
         synchronized (this.mutex) {
             this.bitset.or(lattice.bitset);
+        }
+    }
+
+    /**
+     * NOT this lattice with a new one (remove all bits from the current one
+     * if they are present in the provided lattice).
+     * @param lattice The lattice to apply
+     */
+    public void not(final Lattice lattice) {
+        synchronized (this.mutex) {
+            this.bitset.andNot(lattice.bitset);
         }
     }
 
