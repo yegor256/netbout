@@ -90,7 +90,8 @@ public final class LazyMessagesProf {
      */
     private Term term(final Ray ray) throws Exception {
         return new ParserAdapter(new DefaultStore())
-            .parse("(and (talks-with 'urn:test:1') (bundled))")
+            // @checkstyle LineLength (1 line)
+            .parse("(and (talks-with 'urn:test:1') (from 0) (bundled) (unique $bout.number))")
             .term(ray);
     }
 
