@@ -29,8 +29,8 @@ package com.netbout.inf.functors;
 import com.netbout.inf.Atom;
 import com.netbout.inf.Cursor;
 import com.netbout.inf.Functor;
+import com.netbout.inf.Lattice;
 import com.netbout.inf.Ray;
-import com.netbout.inf.Segments;
 import com.netbout.inf.Term;
 import com.netbout.inf.atoms.NumberAtom;
 import java.util.List;
@@ -122,8 +122,8 @@ final class From implements Functor {
          * {@inheritDoc}
          */
         @Override
-        public Segments segments() {
-            return Segments.ALWAYS;
+        public Lattice lattice() {
+            return Lattice.ALWAYS;
         }
     }
 

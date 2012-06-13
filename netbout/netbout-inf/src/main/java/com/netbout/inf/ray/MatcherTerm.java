@@ -27,7 +27,7 @@
 package com.netbout.inf.ray;
 
 import com.netbout.inf.Cursor;
-import com.netbout.inf.Segments;
+import com.netbout.inf.Lattice;
 import com.netbout.inf.Term;
 import java.util.Iterator;
 
@@ -98,8 +98,8 @@ final class MatcherTerm implements Term {
      * {@inheritDoc}
      */
     @Override
-    public Segments segments() {
-        return this.imap.index(this.attr).segments(this.value);
+    public Lattice lattice() {
+        return this.imap.index(this.attr).lattice(this.value);
     }
 
     /**

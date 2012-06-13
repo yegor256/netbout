@@ -27,7 +27,7 @@
 package com.netbout.inf.ray;
 
 import com.jcabi.log.Logger;
-import com.netbout.inf.Segments;
+import com.netbout.inf.Lattice;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -70,6 +70,11 @@ final class DefaultIndex implements Index {
     private final transient ConcurrentMap<String, SortedSet<Long>> map;
 
     /**
+     * Lattices.
+     */
+    private final transient ConcurrentMap<String, Lattice> lattices;
+
+    /**
      * Reverse map.
      */
     private final transient ConcurrentMap<Long, String> rmap;
@@ -80,6 +85,7 @@ final class DefaultIndex implements Index {
     public DefaultIndex() {
         this.map = new ConcurrentHashMap<String, SortedSet<Long>>();
         this.rmap = new ConcurrentHashMap<Long, String>();
+        this.lattices = new ConcurrentHashMap<String, Lattice>();
     }
 
     /**
@@ -104,6 +110,11 @@ final class DefaultIndex implements Index {
             IOUtils.closeQuietly(stream);
         }
         this.rmap = DefaultIndex.reverse(this.map);
+        this.lattices = new ConcurrentHashMap<String, Lattice>();
+        for (ConcurrentMap.Entry<String, SortedSet<Long>> entry
+            : this.map.entrySet()) {
+            this.lattices.put(entry.getKey(), new Lattice(entry.getValue()));
+        }
     }
 
     /**
@@ -124,6 +135,7 @@ final class DefaultIndex implements Index {
         this.validate(msg);
         this.numbers(value).add(msg);
         this.rmap.put(msg, value);
+        this.lattice(value).and(new Lattice(msg));
     }
 
     /**
@@ -134,6 +146,7 @@ final class DefaultIndex implements Index {
         this.validate(msg);
         this.numbers(value).remove(msg);
         this.rmap.remove(msg);
+        this.lattice(value).and(new Lattice(msg).reverse());
     }
 
     /**
@@ -141,11 +154,9 @@ final class DefaultIndex implements Index {
      */
     @Override
     public void clean(final long msg) {
-        this.validate(msg);
-        for (SortedSet<Long> set : this.map.values()) {
-            set.remove(msg);
+        for (String value : this.map.keySet()) {
+            this.delete(msg, value);
         }
-        this.rmap.remove(msg);
     }
 
     /**
@@ -196,8 +207,9 @@ final class DefaultIndex implements Index {
      * {@inheritDoc}
      */
     @Override
-    public Segments segments(final String value) {
-        return Segments.ALWAYS;
+    public Lattice lattice(final String value) {
+        this.lattices.putIfAbsent(value, Lattice.NEVER);
+        return this.lattices.get(value);
     }
 
     /**

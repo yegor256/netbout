@@ -30,66 +30,80 @@ import java.util.Arrays;
 import java.util.Collection;
 
 /**
- * Segments of a term.
+ * Lattice of bits.
  *
  * <p>The class is immutable and thread-safe.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class Segments {
+public final class Lattice {
 
     /**
      * Full coverage.
      */
-    public static final Segments ALWAYS = new Segments(
+    public static final Lattice ALWAYS = new Lattice(
         Arrays.asList(new Long[] {0L, Long.MAX_VALUE})
     );
 
     /**
      * No coverage at all.
      */
-    public static final Segments NEVER = new Segments(
-        Arrays.asList(new Long[0])
-    );
+    public static final Lattice NEVER = new Lattice(0);
 
     /**
-     * Create with all these numbers in the segments.
+     * Create with all these numbers in the lattice.
      * @param numbers The numbers to add
      */
-    public Segments(final Collection<Long> numbers) {
+    public Lattice(final Collection<Long> numbers) {
+        // todo
+    }
+
+    /**
+     * Create with one number in the lattice.
+     * @param number The number to add
+     */
+    public Lattice(final long number) {
         // todo
     }
 
     /**
      * Join them all together (AND).
      * @param terms The terms to merge
-     * @return New segments
+     * @return New lattice
      */
-    public static Segments conjunction(final Collection<Term> terms) {
-        return Segments.ALWAYS;
+    public static Lattice and(final Collection<Term> terms) {
+        return Lattice.ALWAYS;
     }
 
     /**
      * Join them all together (OR).
      * @param terms The terms to merge
-     * @return New segments
+     * @return New lattice
+     * @checkstyle MethodName (3 lines)
      */
-    public static Segments disjunction(final Collection<Term> terms) {
-        return Segments.ALWAYS;
+    public static Lattice or(final Collection<Term> terms) {
+        return Lattice.ALWAYS;
     }
 
     /**
-     * Reverse this segments.
-     * @return New segments, reversed
+     * AND this lattice with a new one.
+     * @param lattice The lattice to apply
      */
-    public Segments reverse() {
-        return Segments.ALWAYS;
+    public void and(final Lattice lattice) {
+    }
+
+    /**
+     * Reverse this lattice.
+     * @return New lattice, reversed
+     */
+    public Lattice reverse() {
+        return Lattice.ALWAYS;
     }
 
     /**
      * Correct this cursor and return a new one, which is more likely to
-     * match one of the numbers in the segment.
+     * match one of the numbers in the lattice.
      * @param cursor The cursor to start from
      * @return The new cursor
      */

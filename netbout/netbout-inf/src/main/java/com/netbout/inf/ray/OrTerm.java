@@ -27,7 +27,7 @@
 package com.netbout.inf.ray;
 
 import com.netbout.inf.Cursor;
-import com.netbout.inf.Segments;
+import com.netbout.inf.Lattice;
 import com.netbout.inf.Term;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -120,8 +120,8 @@ final class OrTerm implements Term {
      * {@inheritDoc}
      */
     @Override
-    public Segments segments() {
-        return Segments.disjunction(this.terms);
+    public Lattice lattice() {
+        return Lattice.or(this.terms);
     }
 
     /**

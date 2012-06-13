@@ -27,7 +27,7 @@
 package com.netbout.inf.ray;
 
 import com.netbout.inf.Cursor;
-import com.netbout.inf.Segments;
+import com.netbout.inf.Lattice;
 import com.netbout.inf.Term;
 
 /**
@@ -83,8 +83,8 @@ final class NeverTerm implements Term {
      * {@inheritDoc}
      */
     @Override
-    public Segments segments() {
-        return Segments.NEVER;
+    public Lattice lattice() {
+        return Lattice.NEVER;
     }
 
     /**

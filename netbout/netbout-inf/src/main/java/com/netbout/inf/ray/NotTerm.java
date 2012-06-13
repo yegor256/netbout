@@ -27,7 +27,7 @@
 package com.netbout.inf.ray;
 
 import com.netbout.inf.Cursor;
-import com.netbout.inf.Segments;
+import com.netbout.inf.Lattice;
 import com.netbout.inf.Term;
 
 /**
@@ -97,8 +97,8 @@ final class NotTerm implements Term {
      * {@inheritDoc}
      */
     @Override
-    public Segments segments() {
-        return this.term.segments().reverse();
+    public Lattice lattice() {
+        return this.term.lattice().reverse();
     }
 
     /**
@@ -106,7 +106,7 @@ final class NotTerm implements Term {
      */
     @Override
     public Cursor shift(final Cursor cursor) {
-        Cursor shifted = this.segments().correct(cursor);
+        Cursor shifted = this.lattice().correct(cursor);
         Cursor candidate = shifted;
         final Term always = new AlwaysTerm(this.imap);
         while (!shifted.end()) {

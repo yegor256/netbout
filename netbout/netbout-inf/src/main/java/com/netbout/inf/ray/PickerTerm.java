@@ -27,9 +27,8 @@
 package com.netbout.inf.ray;
 
 import com.netbout.inf.Cursor;
-import com.netbout.inf.Segments;
+import com.netbout.inf.Lattice;
 import com.netbout.inf.Term;
-import java.util.Arrays;
 
 /**
  * Slider term.
@@ -91,8 +90,8 @@ final class PickerTerm implements Term {
      * {@inheritDoc}
      */
     @Override
-    public Segments segments() {
-        return new Segments(Arrays.asList(new Long[] {this.number}));
+    public Lattice lattice() {
+        return new Lattice(this.number);
     }
 
     /**

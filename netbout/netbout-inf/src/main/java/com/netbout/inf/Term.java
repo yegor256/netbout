@@ -67,8 +67,8 @@ public interface Term {
 
     /**
      * Where this term makes sense, at which segments?
-     * @return Segments to look into
+     * @return Lattice to look into
      */
-    Segments segments();
+    Lattice lattice();
 
 }

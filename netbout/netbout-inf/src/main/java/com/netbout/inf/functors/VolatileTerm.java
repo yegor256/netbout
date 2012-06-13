@@ -27,7 +27,7 @@
 package com.netbout.inf.functors;
 
 import com.netbout.inf.Cursor;
-import com.netbout.inf.Segments;
+import com.netbout.inf.Lattice;
 import com.netbout.inf.Term;
 
 /**
@@ -74,8 +74,8 @@ final class VolatileTerm implements Term {
      * {@inheritDoc}
      */
     @Override
-    public Segments segments() {
-        return this.origin.segments();
+    public Lattice lattice() {
+        return this.origin.lattice();
     }
 
 }

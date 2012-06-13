@@ -30,8 +30,8 @@ import com.jcabi.log.Logger;
 import com.netbout.inf.Atom;
 import com.netbout.inf.Cursor;
 import com.netbout.inf.Functor;
+import com.netbout.inf.Lattice;
 import com.netbout.inf.Ray;
-import com.netbout.inf.Segments;
 import com.netbout.inf.Term;
 import com.netbout.inf.notices.MessagePostedNotice;
 import com.netbout.spi.Message;
@@ -90,8 +90,8 @@ final class Bundled implements Functor {
                 return "(BUNDLED)";
             }
             @Override
-            public Segments segments() {
-                return Segments.conjunction(this.terms.values());
+            public Lattice lattice() {
+                return Lattice.and(this.terms.values());
             }
             private Cursor next(final Cursor cursor) {
                 Cursor next;

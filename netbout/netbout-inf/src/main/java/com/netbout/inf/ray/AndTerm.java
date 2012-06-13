@@ -27,7 +27,7 @@
 package com.netbout.inf.ray;
 
 import com.netbout.inf.Cursor;
-import com.netbout.inf.Segments;
+import com.netbout.inf.Lattice;
 import com.netbout.inf.Term;
 import java.util.Collection;
 import java.util.LinkedHashSet;
@@ -114,8 +114,8 @@ final class AndTerm implements Term {
      * {@inheritDoc}
      */
     @Override
-    public Segments segments() {
-        return Segments.conjunction(this.terms);
+    public Lattice lattice() {
+        return Lattice.and(this.terms);
     }
 
     /**
@@ -131,7 +131,7 @@ final class AndTerm implements Term {
                 new ConcurrentHashMap<Term, Cursor>();
             slider = this.move(
                 this.terms.iterator().next(),
-                this.segments().correct(cursor),
+                this.lattice().correct(cursor),
                 cache
             );
             if (!slider.end()) {

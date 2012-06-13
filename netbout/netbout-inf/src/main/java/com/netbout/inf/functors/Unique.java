@@ -29,8 +29,8 @@ package com.netbout.inf.functors;
 import com.netbout.inf.Atom;
 import com.netbout.inf.Cursor;
 import com.netbout.inf.Functor;
+import com.netbout.inf.Lattice;
 import com.netbout.inf.Ray;
-import com.netbout.inf.Segments;
 import com.netbout.inf.Term;
 import com.netbout.inf.atoms.VariableAtom;
 import java.util.List;
@@ -78,8 +78,8 @@ final class Unique implements Functor {
                 return String.format("(UNIQUE %s)", attr);
             }
             @Override
-            public Segments segments() {
-                return Segments.conjunction(this.terms.values());
+            public Lattice lattice() {
+                return Lattice.and(this.terms.values());
             }
             private void record(final Cursor cursor) {
                 final String value = cursor.msg().first(attr);
