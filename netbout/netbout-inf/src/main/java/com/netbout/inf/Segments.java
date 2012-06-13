@@ -26,7 +26,8 @@
  */
 package com.netbout.inf;
 
-import java.util.Iterator;
+import java.util.Arrays;
+import java.util.Collection;
 
 /**
  * Segments of a term.
@@ -39,21 +40,43 @@ import java.util.Iterator;
 public final class Segments {
 
     /**
-     * Add all these numbers to the segments.
-     * @param numbers The numbers to add
-     * @return New segments, with added numbers
+     * Full coverage.
      */
-    public Segments add(final Iterator<Long> numbers) {
-        return null;
+    public static final Segments ALWAYS = new Segments(
+        Arrays.asList(new Long[] {0L, Long.MAX_VALUE})
+    );
+
+    /**
+     * No coverage at all.
+     */
+    public static final Segments NEVER = new Segments(
+        Arrays.asList(new Long[0])
+    );
+
+    /**
+     * Create with all these numbers in the segments.
+     * @param numbers The numbers to add
+     */
+    public Segments(final Collection<Long> numbers) {
+        // todo
     }
 
     /**
-     * Add new segments.
-     * @param segs The segments to merge
-     * @return New segments, with merged segments
+     * Join them all together (AND).
+     * @param terms The terms to merge
+     * @return New segments
      */
-    public Segments add(final Segments... segs) {
-        return null;
+    public static Segments conjunction(final Collection<Term> terms) {
+        return Segments.ALWAYS;
+    }
+
+    /**
+     * Join them all together (OR).
+     * @param terms The terms to merge
+     * @return New segments
+     */
+    public static Segments disjunction(final Collection<Term> terms) {
+        return Segments.ALWAYS;
     }
 
     /**
@@ -61,16 +84,17 @@ public final class Segments {
      * @return New segments, reversed
      */
     public Segments reverse() {
-        return null;
+        return Segments.ALWAYS;
     }
 
     /**
-     * Shift to the closest position.
+     * Correct this cursor and return a new one, which is more likely to
+     * match one of the numbers in the segment.
      * @param cursor The cursor to start from
      * @return The new cursor
      */
-    public Cursor shift(final Cursor cursor) {
-        return null;
+    public Cursor correct(final Cursor cursor) {
+        return cursor;
     }
 
 }

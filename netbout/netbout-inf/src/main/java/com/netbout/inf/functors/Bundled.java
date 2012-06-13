@@ -40,7 +40,8 @@ import com.netbout.spi.Urn;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
-import java.util.concurrent.ConcurrentSkipListSet;
+import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.ConcurrentSkipListMap;
 
 /**
  * Allows only bundled messages.
@@ -65,43 +66,43 @@ final class Bundled implements Functor {
     @Override
     public Term build(final Ray ray, final List<Atom> atoms) {
         // @checkstyle AnonInnerLength (50 lines)
-        return new VolatileTerm(
-            new Term() {
-                private final transient Set<String> passed =
-                    new ConcurrentSkipListSet<String>();
-                @Override
-                public Cursor shift(final Cursor cursor) {
-                    Cursor shifted = this.next(cursor);
-                    if (!shifted.end()) {
-                        final String marker =
-                            shifted.msg().first(Bundled.ATTR);
-                        if (this.passed.contains(marker)) {
-                            shifted = this.next(shifted);
-                        } else {
-                            this.passed.add(marker);
-                        }
-                    }
-                    return shifted;
+        return new Term() {
+            private final transient ConcurrentMap<String, Term> terms =
+                new ConcurrentSkipListMap<String, Term>();
+            @Override
+            public Cursor shift(final Cursor cursor) {
+                final Cursor shifted = cursor.shift(
+                    ray.builder().and(this.terms.values())
+                );
+                if (!shifted.end()) {
+                    final String marker = shifted.msg().first(Bundled.ATTR);
+                    this.terms.put(
+                        marker,
+                        ray.builder().not(
+                            ray.builder().matcher(Bundled.ATTR, marker)
+                        )
+                    );
                 }
-                @Override
-                public String toString() {
-                    return "(BUNDLED)";
-                }
-                @Override
-                public Segments segments() {
-                    return new Segments();
-                }
-                private Cursor next(final Cursor cursor) {
-                    Cursor next;
-                    if (cursor.end()) {
-                        next = cursor;
-                    } else {
-                        next = cursor.shift(ray.builder().always());
-                    }
-                    return next;
-                }
+                return shifted;
             }
-        );
+            @Override
+            public String toString() {
+                return "(BUNDLED)";
+            }
+            @Override
+            public Segments segments() {
+                return Segments.conjunction(this.terms.values());
+            }
+            private Cursor next(final Cursor cursor) {
+                Cursor next;
+                if (cursor.end()) {
+                    next = cursor;
+                } else {
+                    next = cursor.shift(ray.builder().always());
+                }
+                return next;
+            }
+        };
     }
 
     /**

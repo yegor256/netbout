@@ -98,7 +98,7 @@ final class NotTerm implements Term {
      */
     @Override
     public Segments segments() {
-        return new Segments();
+        return this.term.segments().reverse();
     }
 
     /**
@@ -106,8 +106,8 @@ final class NotTerm implements Term {
      */
     @Override
     public Cursor shift(final Cursor cursor) {
-        Cursor shifted = cursor;
-        Cursor candidate = cursor;
+        Cursor shifted = this.segments().correct(cursor);
+        Cursor candidate = shifted;
         final Term always = new AlwaysTerm(this.imap);
         while (!shifted.end()) {
             candidate = shifted.shift(always);

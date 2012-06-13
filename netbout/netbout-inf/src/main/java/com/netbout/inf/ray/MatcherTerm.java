@@ -74,7 +74,7 @@ final class MatcherTerm implements Term {
      */
     @Override
     public int hashCode() {
-        return this.imap.hashCode() + this.toString().hashCode();
+        return this.toString().hashCode();
     }
 
     /**
@@ -99,7 +99,7 @@ final class MatcherTerm implements Term {
      */
     @Override
     public Segments segments() {
-        return new Segments();
+        return this.imap.index(this.attr).segments(this.value);
     }
 
     /**

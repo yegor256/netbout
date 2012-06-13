@@ -29,6 +29,7 @@ package com.netbout.inf.ray;
 import com.netbout.inf.Cursor;
 import com.netbout.inf.Segments;
 import com.netbout.inf.Term;
+import java.util.Arrays;
 
 /**
  * Slider term.
@@ -91,7 +92,7 @@ final class PickerTerm implements Term {
      */
     @Override
     public Segments segments() {
-        return new Segments();
+        return new Segments(Arrays.asList(new Long[] {this.number}));
     }
 
     /**

@@ -83,7 +83,7 @@ final class Limit implements Functor {
                 }
                 @Override
                 public Segments segments() {
-                    return new Segments();
+                    return Segments.ALWAYS;
                 }
             }
         );

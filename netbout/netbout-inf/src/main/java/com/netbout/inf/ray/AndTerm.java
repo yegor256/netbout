@@ -115,7 +115,7 @@ final class AndTerm implements Term {
      */
     @Override
     public Segments segments() {
-        return new Segments();
+        return Segments.conjunction(this.terms);
     }
 
     /**
@@ -129,7 +129,11 @@ final class AndTerm implements Term {
         } else {
             final ConcurrentMap<Term, Cursor> cache =
                 new ConcurrentHashMap<Term, Cursor>();
-            slider = this.move(this.terms.iterator().next(), cursor, cache);
+            slider = this.move(
+                this.terms.iterator().next(),
+                this.segments().correct(cursor),
+                cache
+            );
             if (!slider.end()) {
                 slider = this.slide(slider, cache);
             }
@@ -138,7 +142,7 @@ final class AndTerm implements Term {
     }
 
     /**
-     * Slide it down to the first match.
+     * Slide them all down to the first match.
      * @param cursor First expected point to reach
      * @param cache Cached positions of every term
      * @return Matched position (or END)
@@ -147,13 +151,11 @@ final class AndTerm implements Term {
         final ConcurrentMap<Term, Cursor> cache) {
         Cursor slider = cursor;
         boolean match;
-        int ops = 0;
         do {
             match = true;
             final Cursor expected = slider;
             for (Term term : this.terms) {
                 slider = this.move(term, this.above(slider), cache);
-                ++ops;
                 if (!expected.equals(slider)) {
                     match = false;
                     break;

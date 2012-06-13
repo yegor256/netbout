@@ -86,7 +86,7 @@ final class AlwaysTerm implements Term {
      */
     @Override
     public Segments segments() {
-        return new Segments();
+        return Segments.ALWAYS;
     }
 
     /**

@@ -121,7 +121,7 @@ final class OrTerm implements Term {
      */
     @Override
     public Segments segments() {
-        return new Segments();
+        return Segments.disjunction(this.terms);
     }
 
     /**

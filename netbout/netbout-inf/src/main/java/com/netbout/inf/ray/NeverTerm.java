@@ -84,7 +84,7 @@ final class NeverTerm implements Term {
      */
     @Override
     public Segments segments() {
-        return new Segments();
+        return Segments.NEVER;
     }
 
     /**

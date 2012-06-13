@@ -27,6 +27,7 @@
 package com.netbout.inf.ray;
 
 import com.jcabi.log.Logger;
+import com.netbout.inf.Segments;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -189,6 +190,14 @@ final class DefaultIndex implements Index {
     @Override
     public Set<String> values() {
         return this.map.keySet();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Segments segments(final String value) {
+        return Segments.ALWAYS;
     }
 
     /**
