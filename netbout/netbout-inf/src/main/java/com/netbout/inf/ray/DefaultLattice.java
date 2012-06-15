@@ -68,8 +68,13 @@ final class DefaultLattice implements Lattice {
      * @param numbers The numbers to add
      */
     public DefaultLattice(final SortedSet<Long> numbers) {
+        long previous = Long.MAX_VALUE;
         for (Long num : numbers) {
-            this.main.set(this.bit(num));
+            if (previous - num < Lattice.SIZE) {
+                continue;
+            }
+            previous = num;
+            this.main.set(DefaultLattice.bit(num));
         }
     }
 
@@ -164,10 +169,10 @@ final class DefaultLattice implements Lattice {
         if (cursor.end()) {
             corrected = cursor;
         } else {
-            final int bit = this.bit(cursor.msg().number());
+            final int bit = DefaultLattice.bit(cursor.msg().number());
             final int next = this.main.nextSetBit(bit);
             if (next != -1 && next > bit) {
-                corrected = shifter.shift(cursor, this.msg(next));
+                corrected = shifter.shift(cursor, DefaultLattice.msg(next));
                 Logger.debug(
                     this,
                     "#correct(%s, ..): moved to %s",
@@ -187,7 +192,7 @@ final class DefaultLattice implements Lattice {
     @Override
     public void set(final long number, final boolean bit, final boolean rev) {
         synchronized (this.main) {
-            final int num = this.bit(number);
+            final int num = DefaultLattice.bit(number);
             if (bit) {
                 this.main.set(num);
             }
@@ -201,8 +206,9 @@ final class DefaultLattice implements Lattice {
      * Get the number of the bit for this number.
      * @param number The number
      * @return The bit
+     * @see DefaultIndex#emptyBit(String,long)
      */
-    private int bit(final long number) {
+    protected static int bit(final long number) {
         return Lattice.BITS - (int) number / Lattice.SIZE;
     }
 
@@ -210,8 +216,9 @@ final class DefaultLattice implements Lattice {
      * Get the number of the message from the bit.
      * @param bit The bit
      * @return The message number
+     * @see DefaultIndex#emptyBit(String,long)
      */
-    private long msg(final int bit) {
+    protected static long msg(final int bit) {
         return (Lattice.BITS - bit + 1) * Lattice.SIZE - 1;
     }
 
