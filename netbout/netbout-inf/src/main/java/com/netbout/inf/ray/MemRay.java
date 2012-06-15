@@ -28,6 +28,7 @@ package com.netbout.inf.ray;
 
 import com.jcabi.log.Logger;
 import com.netbout.inf.Cursor;
+import com.netbout.inf.Lattice;
 import com.netbout.inf.Msg;
 import com.netbout.inf.Ray;
 import com.netbout.inf.TermBuilder;
@@ -106,6 +107,14 @@ public final class MemRay implements Ray {
     @Override
     public TermBuilder builder() {
         return new MemTermBuilder(this.imap);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Lattice lattice() {
+        return new DefaultLattice();
     }
 
     /**

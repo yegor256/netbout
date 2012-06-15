@@ -26,49 +26,32 @@
  */
 package com.netbout.inf;
 
-import java.util.BitSet;
 import java.util.Collection;
 
 /**
  * Lattice of bits.
  *
- * <p>The class is mutable and thread-safe.
+ * <p>Implementation has to be mutable and thread-safe.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-@SuppressWarnings("PMD.TooManyMethods")
-public final class Lattice {
+public interface Lattice {
 
     /**
      * Total number of bits.
      */
-    public static final int BITS = 16384;
+    int BITS = 16384;
 
     /**
      * Size of one bit, in messages.
      */
-    public static final int SIZE = 256;
-
-    /**
-     * Fully filled bitset.
-     */
-    private static final BitSet FULL = Lattice.fullset();
-
-    /**
-     * Synchronization mutex.
-     */
-    private final transient Boolean mutex = Boolean.TRUE;
-
-    /**
-     * The bitset.
-     */
-    private final transient BitSet bitset;
+    int SIZE = 64;
 
     /**
      * Shifter of cursor.
      */
-    public interface Shifter {
+    interface Shifter {
         /**
          * Shift cursor to the desired message number.
          * @param cursor The cursor to shift
@@ -79,83 +62,15 @@ public final class Lattice {
     }
 
     /**
-     * Create with all these numbers in the lattice.
-     * @param numbers The numbers to add
+     * Always TRUE (set all bits to TRUE).
      */
-    public Lattice(final Collection<Long> numbers) {
-        this(new BitSet(Lattice.BITS));
-        for (Long num : numbers) {
-            this.bitset.set(this.bit(num));
-        }
-    }
-
-    /**
-     * Create with one number in the lattice.
-     * @param number The number to add
-     */
-    public Lattice(final long number) {
-        this(new BitSet(Lattice.BITS));
-        this.bitset.set(this.bit(number));
-    }
-
-    /**
-     * Create an new lattice.
-     * @param bset The bitset
-     */
-    private Lattice(final BitSet bset) {
-        this.bitset = bset;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String toString() {
-        return this.bitset.toString();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public int hashCode() {
-        return this.bitset.hashCode();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public boolean equals(final Object lattice) {
-        return this == lattice || (lattice instanceof Lattice
-            && this.hashCode() == lattice.hashCode());
-    }
-
-    /**
-     * Always TRUE.
-     * @return The lattice
-     */
-    public static Lattice always() {
-        return new Lattice(BitSet.class.cast(Lattice.FULL.clone()));
-    }
-
-    /**
-     * Always FALSE.
-     * @return The lattice
-     */
-    public static Lattice never() {
-        return new Lattice(new BitSet(Lattice.BITS));
-    }
+    void always();
 
     /**
      * Join them all together (AND).
      * @param terms The terms to merge
      */
-    public void and(final Collection<Term> terms) {
-        for (Term term : terms) {
-            this.and(term.lattice());
-        }
-    }
+    void and(Collection<Term> terms);
 
     /**
      * Join them all together (OR).
@@ -163,21 +78,13 @@ public final class Lattice {
      * @checkstyle MethodName (3 lines)
      */
     @SuppressWarnings("PMD.ShortMethodName")
-    public void or(final Collection<Term> terms) {
-        for (Term term : terms) {
-            this.or(term.lattice());
-        }
-    }
+    void or(Collection<Term> terms);
 
     /**
      * AND this lattice with a new one.
      * @param lattice The lattice to apply
      */
-    public void and(final Lattice lattice) {
-        synchronized (this.mutex) {
-            this.bitset.and(lattice.bitset);
-        }
-    }
+    void and(Lattice lattice);
 
     /**
      * OR this lattice with a new one.
@@ -185,29 +92,12 @@ public final class Lattice {
      * @checkstyle MethodName (3 lines)
      */
     @SuppressWarnings("PMD.ShortMethodName")
-    public void or(final Lattice lattice) {
-        synchronized (this.mutex) {
-            this.bitset.or(lattice.bitset);
-        }
-    }
+    void or(Lattice lattice);
 
     /**
-     * NOT this lattice with a new one (remove all bits from the current one
-     * if they are present in the provided lattice).
-     * @param lattice The lattice to apply
+     * Revert it.
      */
-    public void not(final Lattice lattice) {
-        synchronized (this.mutex) {
-            this.bitset.andNot(lattice.bitset);
-        }
-    }
-
-    /**
-     * Reverse this lattice.
-     */
-    public void reverse() {
-        this.bitset.xor(Lattice.FULL);
-    }
+    void revert();
 
     /**
      * Correct this cursor and return a new one, which is more likely to
@@ -216,48 +106,6 @@ public final class Lattice {
      * @param shifter The shifter to use
      * @return The new cursor
      */
-    public Cursor correct(final Cursor cursor, final Lattice.Shifter shifter) {
-        Cursor corrected;
-        if (cursor.end()) {
-            corrected = cursor;
-        } else {
-            final int bit = this.bit(cursor.msg().number());
-            final int next = this.bitset.nextSetBit(bit);
-            if (next > bit) {
-                corrected = shifter.shift(cursor, this.msg(next));
-            } else {
-                corrected = cursor;
-            }
-        }
-        return corrected;
-    }
-
-    /**
-     * Get the number of the bit for this number.
-     * @param number The number
-     * @return The bit
-     */
-    private int bit(final long number) {
-        return Lattice.BITS - (int) number / Lattice.SIZE;
-    }
-
-    /**
-     * Get the number of the message from the bit.
-     * @param bit The bit
-     * @return The message number
-     */
-    private long msg(final int bit) {
-        return (Lattice.BITS - bit + 1) * Lattice.SIZE - 1;
-    }
-
-    /**
-     * Create and return a set full of ONE-s.
-     * @return The set
-     */
-    private static BitSet fullset() {
-        final BitSet bset = new BitSet(Lattice.BITS);
-        bset.set(0, Lattice.BITS, true);
-        return bset;
-    }
+    Cursor correct(Cursor cursor, Lattice.Shifter shifter);
 
 }

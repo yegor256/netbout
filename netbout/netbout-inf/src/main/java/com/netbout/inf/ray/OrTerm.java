@@ -121,7 +121,7 @@ final class OrTerm implements Term {
      */
     @Override
     public Lattice lattice() {
-        final Lattice lattice = Lattice.never();
+        final Lattice lattice = new DefaultLattice();
         lattice.or(this.terms);
         return lattice;
     }

@@ -72,7 +72,7 @@ final class DefaultIndex implements Index {
     /**
      * Lattices.
      */
-    private final transient ConcurrentMap<String, Lattice> lattices;
+    private final transient ConcurrentMap<String, DefaultLattice> lattices;
 
     /**
      * Reverse map.
@@ -85,7 +85,7 @@ final class DefaultIndex implements Index {
     public DefaultIndex() {
         this.map = new ConcurrentHashMap<String, SortedSet<Long>>();
         this.rmap = new ConcurrentHashMap<Long, String>();
-        this.lattices = new ConcurrentHashMap<String, Lattice>();
+        this.lattices = new ConcurrentHashMap<String, DefaultLattice>();
     }
 
     /**
@@ -110,10 +110,13 @@ final class DefaultIndex implements Index {
             IOUtils.closeQuietly(stream);
         }
         this.rmap = DefaultIndex.reverse(this.map);
-        this.lattices = new ConcurrentHashMap<String, Lattice>();
+        this.lattices = new ConcurrentHashMap<String, DefaultLattice>();
         for (ConcurrentMap.Entry<String, SortedSet<Long>> entry
             : this.map.entrySet()) {
-            this.lattices.put(entry.getKey(), new Lattice(entry.getValue()));
+            this.lattices.put(
+                entry.getKey(),
+                new DefaultLattice(entry.getValue())
+            );
         }
     }
 
@@ -135,7 +138,7 @@ final class DefaultIndex implements Index {
         this.validate(msg);
         this.numbers(value).add(msg);
         this.rmap.put(msg, value);
-        this.lattice(value).or(new Lattice(msg));
+        this.lattice(value).set(msg, true, false);
     }
 
     /**
@@ -146,7 +149,7 @@ final class DefaultIndex implements Index {
         this.validate(msg);
         this.numbers(value).remove(msg);
         this.rmap.remove(msg);
-        this.lattice(value).not(new Lattice(msg));
+        this.lattice(value).set(msg, false, true);
     }
 
     /**
@@ -207,8 +210,8 @@ final class DefaultIndex implements Index {
      * {@inheritDoc}
      */
     @Override
-    public Lattice lattice(final String value) {
-        this.lattices.putIfAbsent(value, Lattice.never());
+    public DefaultLattice lattice(final String value) {
+        this.lattices.putIfAbsent(value, new DefaultLattice());
         return this.lattices.get(value);
     }
 

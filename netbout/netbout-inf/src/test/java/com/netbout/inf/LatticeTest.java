@@ -56,7 +56,7 @@ public final class LatticeTest {
         );
         final Lattice.Shifter shifter = Mockito.mock(Lattice.Shifter.class);
         lattice.correct(cursor, shifter);
-        Mockito.verify(shifter).shift(cursor, 511L);
+        Mockito.verify(shifter).shift(cursor, 383L);
     }
 
 }

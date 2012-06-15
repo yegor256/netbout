@@ -123,7 +123,9 @@ final class From implements Functor {
          */
         @Override
         public Lattice lattice() {
-            return Lattice.always();
+            final Lattice lattice = this.ray.lattice();
+            lattice.always();
+            return lattice;
         }
     }
 

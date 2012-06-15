@@ -91,7 +91,7 @@ final class PickerTerm implements Term {
      */
     @Override
     public Lattice lattice() {
-        return new Lattice(this.number);
+        return new DefaultLattice(this.number);
     }
 
     /**

@@ -83,7 +83,9 @@ final class Limit implements Functor {
                 }
                 @Override
                 public Lattice lattice() {
-                    return Lattice.always();
+                    final Lattice lattice = ray.lattice();
+                    lattice.always();
+                    return lattice;
                 }
             }
         );

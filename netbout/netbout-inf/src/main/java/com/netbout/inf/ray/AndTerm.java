@@ -53,6 +53,16 @@ final class AndTerm implements Term {
     protected final transient Set<Term> terms = new LinkedHashSet<Term>();
 
     /**
+     * Shifter for lattice.
+     */
+    private final transient Lattice.Shifter shifter = new Lattice.Shifter() {
+        @Override
+        public Cursor shift(final Cursor crsr, final long msg) {
+            return crsr.shift(new PickerTerm(AndTerm.this.imap, msg));
+        }
+    };
+
+    /**
      * Hash code, for performance reasons.
      */
     private final transient int hash;
@@ -115,7 +125,8 @@ final class AndTerm implements Term {
      */
     @Override
     public Lattice lattice() {
-        final Lattice lattice = Lattice.always();
+        final Lattice lattice = new DefaultLattice();
+        lattice.always();
         lattice.and(this.terms);
         return lattice;
     }
@@ -125,15 +136,8 @@ final class AndTerm implements Term {
      */
     @Override
     public Cursor shift(final Cursor cursor) {
-        Cursor slider = this.lattice().correct(
-            cursor,
-            new Lattice.Shifter() {
-                @Override
-                public Cursor shift(final Cursor crsr, final long msg) {
-                    return crsr.shift(new PickerTerm(AndTerm.this.imap, msg));
-                }
-            }
-        );
+        final Lattice lattice = this.lattice();
+        Cursor slider = lattice.correct(cursor, this.shifter);
         if (!slider.end()) {
             final ConcurrentMap<Term, Cursor> cache =
                 new ConcurrentHashMap<Term, Cursor>();
@@ -143,27 +147,49 @@ final class AndTerm implements Term {
                 cache
             );
             if (!slider.end()) {
-                slider = this.slide(slider, cache);
+                slider = this.slide(slider, cache, lattice);
             }
         }
         return slider;
     }
 
     /**
-     * Slide them all down to the first match.
-     * @param cursor First expected point to reach
+     * Move term one step next.
+     * @param term The term to use for movement
+     * @param from Where to start
      * @param cache Cached positions of every term
      * @return Matched position (or END)
      */
-    private Cursor slide(final Cursor cursor,
+    private Cursor move(final Term term, final Cursor from,
         final ConcurrentMap<Term, Cursor> cache) {
+        if (!cache.containsKey(term)
+            || cache.get(term).compareTo(from) >= 0
+            || term.getClass().getAnnotation(Term.Volatile.class) != null) {
+            cache.put(term, from.shift(term));
+        }
+        return cache.get(term);
+    }
+
+    /**
+     * Slide them all down to the first match.
+     * @param cursor First expected point to reach
+     * @param cache Cached positions of every term
+     * @param lattice The lattice to use for corrections
+     * @return Matched position (or END)
+     */
+    private Cursor slide(final Cursor cursor,
+        final ConcurrentMap<Term, Cursor> cache, final Lattice lattice) {
         Cursor slider = cursor;
         boolean match;
         do {
             match = true;
             final Cursor expected = slider;
             for (Term term : this.terms) {
-                slider = this.move(term, this.above(slider), cache);
+                slider = this.move(
+                    term,
+                    this.above(lattice.correct(slider, this.shifter)),
+                    cache
+                );
                 if (!expected.equals(slider)) {
                     match = false;
                     break;
@@ -183,23 +209,6 @@ final class AndTerm implements Term {
             throw new IllegalArgumentException("can't use above()");
         }
         return new MemCursor(cursor.msg().number() + 1, this.imap);
-    }
-
-    /**
-     * Move term one step next.
-     * @param term The term to use for movement
-     * @param from Where to start
-     * @param cache Cached positions of every term
-     * @return Matched position (or END)
-     */
-    private Cursor move(final Term term, final Cursor from,
-        final ConcurrentMap<Term, Cursor> cache) {
-        if (!cache.containsKey(term)
-            || cache.get(term).compareTo(from) >= 0
-            || term.getClass().getAnnotation(Term.Volatile.class) != null) {
-            cache.put(term, from.shift(term));
-        }
-        return cache.get(term);
     }
 
     /**

@@ -86,7 +86,9 @@ final class AlwaysTerm implements Term {
      */
     @Override
     public Lattice lattice() {
-        return Lattice.always();
+        final Lattice lattice = new DefaultLattice();
+        lattice.always();
+        return lattice;
     }
 
     /**

@@ -43,13 +43,16 @@ import java.util.Iterator;
 final class MatcherTerm implements Term {
 
     /**
-     * Name of attribute.
+     * Name of attribute (also visible from {@link NotTerm}).
+     * @checkstyle VisibilityModifier (3 lines)
      */
+    @SuppressWarnings("PMD.AvoidProtectedFieldInFinalClass")
     private final transient String attr;
 
     /**
-     * Value to match.
+     * Value to match (also visible from {@link NotTerm}).
      */
+    @SuppressWarnings("PMD.AvoidProtectedFieldInFinalClass")
     private final transient String value;
 
     /**
