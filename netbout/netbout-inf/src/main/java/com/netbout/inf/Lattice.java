@@ -81,18 +81,12 @@ public interface Lattice {
     void or(Collection<Term> terms);
 
     /**
-     * AND this lattice with a new one.
-     * @param lattice The lattice to apply
+     * Set main and reverse bit for this message.
+     * @param number The number of message
+     * @param bit Main bit to set to
+     * @param rev Value of reverse bit to set to
      */
-    void and(Lattice lattice);
-
-    /**
-     * OR this lattice with a new one.
-     * @param lattice The lattice to apply
-     * @checkstyle MethodName (3 lines)
-     */
-    @SuppressWarnings("PMD.ShortMethodName")
-    void or(Lattice lattice);
+    void set(long number, boolean bit, boolean rev);
 
     /**
      * Revert it.

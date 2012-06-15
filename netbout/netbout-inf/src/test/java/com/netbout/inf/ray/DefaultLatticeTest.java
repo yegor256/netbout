@@ -24,8 +24,10 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.inf;
+package com.netbout.inf.ray;
 
+import com.netbout.inf.Cursor;
+import com.netbout.inf.CursorMocker;
 import com.netbout.inf.Lattice;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
@@ -47,10 +49,11 @@ public final class DefaultLatticeTest {
     @Test
     public void shiftsCursorToTheRightPosition() throws Exception {
         final Cursor cursor = new CursorMocker().withMsg(5000L).mock();
-        final Lattice lattice = new DefaultLattice(10000L);
-        lattice.or(new Lattice(350L));
-        lattice.or(new Lattice(150L));
-        lattice.or(new Lattice(50L));
+        final Lattice lattice = new DefaultLattice();
+        lattice.set(10000L, true, false);
+        lattice.set(350L, true, false);
+        lattice.set(150L, true, false);
+        lattice.set(50L, true, false);
         MatcherAssert.assertThat(
             lattice,
             Matchers.hasToString(Matchers.containsString("16384"))

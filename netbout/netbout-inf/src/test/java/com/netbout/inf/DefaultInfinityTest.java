@@ -97,6 +97,7 @@ public final class DefaultInfinityTest {
             .mock();
         final Message msg = new MessageMocker()
             .withText("Jeffrey Lebowski, \u0433!")
+            .withNumber(MsgMocker.number())
             .inBout(bout)
             .mock();
         final Urn[] deps = inf.see(

@@ -32,6 +32,8 @@ import com.netbout.inf.Lattice;
 import com.netbout.inf.Term;
 import java.util.BitSet;
 import java.util.Collection;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 /**
  * Lattice of bits.
@@ -58,25 +60,17 @@ final class DefaultLattice implements Lattice {
      * Create NEVER lattice.
      */
     public DefaultLattice() {
-        // empty
+        this(new TreeSet<Long>());
     }
 
     /**
      * Create with all these numbers in the lattice.
      * @param numbers The numbers to add
      */
-    public DefaultLattice(final Collection<Long> numbers) {
+    public DefaultLattice(final SortedSet<Long> numbers) {
         for (Long num : numbers) {
             this.main.set(this.bit(num));
         }
-    }
-
-    /**
-     * Create with one number in the lattice.
-     * @param number The number to add
-     */
-    public DefaultLattice(final long number) {
-        this.main.set(this.bit(number));
     }
 
     /**
@@ -121,7 +115,12 @@ final class DefaultLattice implements Lattice {
     public void and(final Collection<Term> terms) {
         synchronized (this.main) {
             for (Term term : terms) {
-                this.and(term.lattice());
+                this.main.and(
+                    DefaultLattice.class.cast(term.lattice()).main
+                );
+                this.reverse.or(
+                    DefaultLattice.class.cast(term.lattice()).reverse
+                );
             }
         }
     }
@@ -134,31 +133,13 @@ final class DefaultLattice implements Lattice {
     public void or(final Collection<Term> terms) {
         synchronized (this.main) {
             for (Term term : terms) {
-                this.or(term.lattice());
+                this.main.or(
+                    DefaultLattice.class.cast(term.lattice()).main
+                );
+                this.reverse.and(
+                    DefaultLattice.class.cast(term.lattice()).reverse
+                );
             }
-        }
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void and(final Lattice lattice) {
-        synchronized (this.main) {
-            this.main.and(DefaultLattice.class.cast(lattice).main);
-            this.reverse.or(DefaultLattice.class.cast(lattice).reverse);
-        }
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    @SuppressWarnings("PMD.ShortMethodName")
-    public void or(final Lattice lattice) {
-        synchronized (this.main) {
-            this.main.or(DefaultLattice.class.cast(lattice).main);
-            this.reverse.and(DefaultLattice.class.cast(lattice).reverse);
         }
     }
 
@@ -201,12 +182,19 @@ final class DefaultLattice implements Lattice {
     }
 
     /**
-     * Set main and reverse bit for this message.
-     * @param number The number of message
-     * @param bit Main bit to set to
-     * @param rev Value of reverse bit to set to
+     * {@inheritDoc}
      */
+    @Override
     public void set(final long number, final boolean bit, final boolean rev) {
+        synchronized (this.main) {
+            final int num = this.bit(number);
+            if (bit) {
+                this.main.set(num);
+            }
+            if (rev) {
+                this.reverse.set(num);
+            }
+        }
     }
 
     /**
