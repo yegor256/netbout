@@ -138,7 +138,11 @@ final class DefaultIndex implements Index {
         this.validate(msg);
         this.numbers(value).add(msg);
         this.rmap.put(msg, value);
-        this.lattice(value).set(msg, true, this.emptyBit(value, msg));
+        this.lattice(value).set(
+            msg,
+            true,
+            DefaultLattice.emptyBit(this.map.get(value), msg)
+        );
     }
 
     /**
@@ -149,7 +153,11 @@ final class DefaultIndex implements Index {
         this.validate(msg);
         this.numbers(value).remove(msg);
         this.rmap.remove(msg);
-        this.lattice(value).set(msg, false, this.emptyBit(value, msg));
+        this.lattice(value).set(
+            msg,
+            false,
+            DefaultLattice.emptyBit(this.map.get(value), msg)
+        );
     }
 
     /**
@@ -339,23 +347,6 @@ final class DefaultIndex implements Index {
             new ConcurrentSkipListSet<Long>(Collections.reverseOrder())
         );
         return this.map.get(text);
-    }
-
-    /**
-     * Do we have an empty bit for this message.
-     * @param value The value
-     * @param msg The message number
-     * @return TRUE if we have no messages around this one
-     */
-    private boolean emptyBit(final String value, final long msg) {
-        final int bit = DefaultLattice.bit(msg);
-        final SortedSet<Long> numbers = this.map.get(value);
-        synchronized (numbers) {
-            final SortedSet<Long> tail = numbers.tailSet(
-                DefaultLattice.msg(bit)
-            );
-            return tail.isEmpty() || tail.first() < DefaultLattice.msg(bit + 1);
-        }
     }
 
 }

@@ -183,7 +183,7 @@
         </see>
         <query>
             <predicate>
-                (and (talks-with 'urn:test:billy') (unique $bout.number))
+                (and (talks-with 'urn:test:billy') (bundled) (unique $bout.number))
             </predicate>
             <messages>59000, 58985, 56999, 4</messages>
         </query>

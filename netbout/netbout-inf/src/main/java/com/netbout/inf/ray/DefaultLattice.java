@@ -70,11 +70,15 @@ final class DefaultLattice implements Lattice {
     public DefaultLattice(final SortedSet<Long> numbers) {
         long previous = Long.MAX_VALUE;
         for (Long num : numbers) {
-            if (previous - num < Lattice.SIZE) {
+            if (previous - num < Lattice.SIZE / 2) {
                 continue;
             }
             previous = num;
-            this.main.set(DefaultLattice.bit(num));
+            final int bit = DefaultLattice.bit(num);
+            this.main.set(bit);
+            if (DefaultLattice.emptyBit(numbers, num)) {
+                this.reverse.set(bit);
+            }
         }
     }
 
@@ -203,12 +207,28 @@ final class DefaultLattice implements Lattice {
     }
 
     /**
+     * Do we have an empty bit for this message.
+     * @param numbers The numbers
+     * @param msg The message number
+     * @return TRUE if we have no messages around this one
+     */
+    public static boolean emptyBit(final SortedSet<Long> numbers,
+        final long msg) {
+        final int bit = DefaultLattice.bit(msg);
+        synchronized (numbers) {
+            final SortedSet<Long> tail = numbers.tailSet(
+                DefaultLattice.msg(bit)
+            );
+            return tail.isEmpty() || tail.first() < DefaultLattice.msg(bit + 1);
+        }
+    }
+
+    /**
      * Get the number of the bit for this number.
      * @param number The number
      * @return The bit
-     * @see DefaultIndex#emptyBit(String,long)
      */
-    protected static int bit(final long number) {
+    private static int bit(final long number) {
         return Lattice.BITS - (int) number / Lattice.SIZE;
     }
 
@@ -218,7 +238,7 @@ final class DefaultLattice implements Lattice {
      * @return The message number
      * @see DefaultIndex#emptyBit(String,long)
      */
-    protected static long msg(final int bit) {
+    private static long msg(final int bit) {
         return (Lattice.BITS - bit + 1) * Lattice.SIZE - 1;
     }
 
