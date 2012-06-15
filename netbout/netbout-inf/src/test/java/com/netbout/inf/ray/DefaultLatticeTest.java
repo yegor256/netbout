@@ -26,27 +26,28 @@
  */
 package com.netbout.inf;
 
+import com.netbout.inf.Lattice;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;
 import org.mockito.Mockito;
 
 /**
- * Test case of {@link Lattice}.
+ * Test case of {@link DefaultLattice}.
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class LatticeTest {
+public final class DefaultLatticeTest {
 
     /**
-     * Lattice can shift a cursor to the right position.
+     * DefaultLattice can shift a cursor to the right position.
      * @throws Exception If there is some problem inside
      * @checkstyle MagicNumber (30 lines)
      */
     @Test
     public void shiftsCursorToTheRightPosition() throws Exception {
         final Cursor cursor = new CursorMocker().withMsg(5000L).mock();
-        final Lattice lattice = new Lattice(10000L);
+        final Lattice lattice = new DefaultLattice(10000L);
         lattice.or(new Lattice(350L));
         lattice.or(new Lattice(150L));
         lattice.or(new Lattice(50L));
