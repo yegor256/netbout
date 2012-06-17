@@ -24,75 +24,78 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.inf.ray;
+package com.netbout.inf;
 
-import java.util.Map;
-import java.util.concurrent.ConcurrentMap;
-import java.util.concurrent.ConcurrentSkipListMap;
+import java.util.Collection;
 
 /**
- * Cache tag.
+ * Lattice of bits.
  *
- * <p>The class is mutable and thread-safe.
+ * <p>Implementation has to be mutable and thread-safe.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-final class Tag {
+public interface Lattice {
 
     /**
-     * Supported labels.
+     * Shifter of cursor.
      */
-    public enum Label {
+    interface Shifter {
         /**
-         * The entire map.
+         * Shift cursor to the desired message number.
+         * @param cursor The cursor to shift
+         * @param msg The message number
+         * @return New cursor
          */
-        MAP,
-        /**
-         * By specific attribute.
-         */
-        ATTR,
-        /**
-         * By specific value.
-         */
-        VALUE;
+        Cursor shift(Cursor cursor, long msg);
     }
 
     /**
-     * Tag about MAP.
+     * Create a copy of this object.
+     * @return The same lattice, but as a new object
      */
-    public static final Tag ENTIRE_MAP = new Tag().add(Tag.Label.MAP, "");
+    Lattice copy();
 
     /**
-     * Labels and their values.
+     * Always TRUE (set all bits to TRUE).
      */
-    private final transient ConcurrentMap<Tag.Label, String> labels =
-        new ConcurrentSkipListMap<Tag.Label, String>();
+    void always();
 
     /**
-     * Add new label to it.
-     * @param label The label
-     * @param value The value
-     * @return This object
+     * Join them all together (AND).
+     * @param terms The terms to merge
      */
-    public Tag add(final Tag.Label label, final String value) {
-        this.labels.put(label, value);
-        return this;
-    }
+    void and(Collection<Term> terms);
 
     /**
-     * {@inheritDoc}
+     * Join them all together (OR).
+     * @param terms The terms to merge
+     * @checkstyle MethodName (3 lines)
      */
-    @Override
-    public String toString() {
-        final StringBuilder text = new StringBuilder();
-        for (Map.Entry<Tag.Label, String> entry : this.labels.entrySet()) {
-            text.append(entry.getKey())
-                .append(':')
-                .append(entry.getValue())
-                .append(' ');
-        }
-        return text.toString().trim();
-    }
+    @SuppressWarnings("PMD.ShortMethodName")
+    void or(Collection<Term> terms);
+
+    /**
+     * Set main and reverse bit for this message.
+     * @param number The number of message
+     * @param bit Main bit to set to
+     * @param rev Value of reverse bit to set to
+     */
+    void set(long number, boolean bit, boolean rev);
+
+    /**
+     * Revert it.
+     */
+    void revert();
+
+    /**
+     * Correct this cursor and return a new one, which is more likely to
+     * match one of the numbers in the lattice.
+     * @param cursor The cursor to start from
+     * @param shifter The shifter to use
+     * @return The new cursor
+     */
+    Cursor correct(Cursor cursor, Lattice.Shifter shifter);
 
 }

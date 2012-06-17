@@ -26,6 +26,8 @@
  */
 package com.netbout.inf;
 
+import java.security.SecureRandom;
+import java.util.Random;
 import org.mockito.Mockito;
 
 /**
@@ -36,9 +38,23 @@ import org.mockito.Mockito;
 public final class MsgMocker {
 
     /**
+     * Random.
+     */
+    private static final Random RANDOM = new SecureRandom();
+
+    /**
      * The object.
      */
     private final transient Msg msg = Mockito.mock(Msg.class);
+
+    /**
+     * Random number of a message.
+     * @return The number
+     */
+    public static long number() {
+        // @checkstyle MagicNumber (1 line)
+        return MsgMocker.RANDOM.nextInt(1024) + 128L;
+    }
 
     /**
      * With this number.

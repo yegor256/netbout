@@ -183,7 +183,7 @@ final class MemCursor implements Cursor {
      */
     @Override
     public Cursor shift(final Term term) {
-        return new MemCursor(this.imap.cache().shift(term, this), this.imap);
+        return term.shift(this);
     }
 
     /**

@@ -69,49 +69,43 @@ final class DefaultIndex implements Index {
     private final transient ConcurrentMap<String, SortedSet<Long>> map;
 
     /**
+     * Lattices.
+     */
+    private final transient ConcurrentMap<String, DefaultLattice> lattices;
+
+    /**
      * Reverse map.
      */
     private final transient ConcurrentMap<Long, String> rmap;
 
     /**
-     * Cache invalidator.
-     */
-    private final transient Invalidator invalidator;
-
-    /**
-     * Cache invalidator.
-     */
-    public interface Invalidator {
-        /**
-         * Invalidate cache for this tag.
-         * @param tag The tag
-         */
-        void invalidate(Tag tag);
-    }
-
-    /**
      * Public ctor.
-     * @param inv Invalidator of cache
      */
-    public DefaultIndex(final Invalidator inv) {
-        this.invalidator = inv;
+    public DefaultIndex() {
         this.map = new ConcurrentHashMap<String, SortedSet<Long>>();
         this.rmap = new ConcurrentHashMap<Long, String>();
+        this.lattices = new ConcurrentHashMap<String, DefaultLattice>();
     }
 
     /**
      * Public ctor.
-     * @param inv Invalidator of cache
      * @param file File to read from
      * @throws IOException If some IO error
      */
-    public DefaultIndex(final Invalidator inv, final File file)
-        throws IOException {
-        this.invalidator = inv;
+    public DefaultIndex(final File file) throws IOException {
         final InputStream stream = new FileInputStream(file);
         try {
             final long start = System.currentTimeMillis();
             this.map = DefaultIndex.restore(stream);
+            this.rmap = DefaultIndex.reverse(this.map);
+            this.lattices = new ConcurrentHashMap<String, DefaultLattice>();
+            for (ConcurrentMap.Entry<String, SortedSet<Long>> entry
+                : this.map.entrySet()) {
+                this.lattices.put(
+                    entry.getKey(),
+                    new DefaultLattice(entry.getValue())
+                );
+            }
             Logger.debug(
                 DefaultIndex.class,
                 "#DefaultIndex(%s): restored %d values from %d bytes in %[ms]s",
@@ -123,7 +117,6 @@ final class DefaultIndex implements Index {
         } finally {
             IOUtils.closeQuietly(stream);
         }
-        this.rmap = DefaultIndex.reverse(this.map);
     }
 
     /**
@@ -142,10 +135,13 @@ final class DefaultIndex implements Index {
     @Override
     public void add(final long msg, final String value) {
         this.validate(msg);
-        this.invalidator.invalidate(new Tag().add(Tag.Label.VALUE, value));
-        this.invalidator.invalidate(new Tag());
         this.numbers(value).add(msg);
         this.rmap.put(msg, value);
+        this.lattice(value).set(
+            msg,
+            true,
+            DefaultLattice.emptyBit(this.map.get(value), msg)
+        );
     }
 
     /**
@@ -154,9 +150,13 @@ final class DefaultIndex implements Index {
     @Override
     public void delete(final long msg, final String value) {
         this.validate(msg);
-        this.invalidator.invalidate(new Tag().add(Tag.Label.VALUE, value));
         this.numbers(value).remove(msg);
         this.rmap.remove(msg);
+        this.lattice(value).set(
+            msg,
+            false,
+            DefaultLattice.emptyBit(this.map.get(value), msg)
+        );
     }
 
     /**
@@ -164,12 +164,9 @@ final class DefaultIndex implements Index {
      */
     @Override
     public void clean(final long msg) {
-        this.validate(msg);
-        this.invalidator.invalidate(new Tag());
-        for (SortedSet<Long> set : this.map.values()) {
-            set.remove(msg);
+        for (String value : this.map.keySet()) {
+            this.delete(msg, value);
         }
-        this.rmap.remove(msg);
     }
 
     /**
@@ -214,6 +211,15 @@ final class DefaultIndex implements Index {
     @Override
     public Set<String> values() {
         return this.map.keySet();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public DefaultLattice lattice(final String value) {
+        this.lattices.putIfAbsent(value, new DefaultLattice());
+        return this.lattices.get(value);
     }
 
     /**

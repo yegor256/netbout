@@ -27,9 +27,8 @@
 package com.netbout.inf.ray;
 
 import com.netbout.inf.Cursor;
+import com.netbout.inf.Lattice;
 import com.netbout.inf.Term;
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.Iterator;
 
 /**
@@ -41,7 +40,7 @@ import java.util.Iterator;
  * @version $Id$
  */
 @Term.Cheap
-final class AlwaysTerm implements Term, Taggable {
+final class AlwaysTerm implements Term {
 
     /**
      * Index map.
@@ -86,8 +85,10 @@ final class AlwaysTerm implements Term, Taggable {
      * {@inheritDoc}
      */
     @Override
-    public Collection<Tag> tags() {
-        return Arrays.asList(new Tag[] {Tag.ENTIRE_MAP});
+    public Lattice lattice() {
+        final Lattice lattice = new DefaultLattice();
+        lattice.always();
+        return lattice;
     }
 
     /**

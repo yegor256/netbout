@@ -27,7 +27,7 @@
 package com.netbout.inf.ray;
 
 import com.netbout.inf.Cursor;
-import java.util.Random;
+import com.netbout.inf.MsgMocker;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Rule;
@@ -55,7 +55,7 @@ public final class MemCursorTest {
     @Test
     public void addsValuesToSelectedMessages() throws Exception {
         final IndexMap map = new DefaultIndexMap(this.temp.newFolder("foo1"));
-        final Long msg = new Random().nextLong();
+        final Long msg = MsgMocker.number();
         map.touch(msg);
         final Cursor cursor = new MemCursor(Long.MAX_VALUE, map);
         final String attr = "attribute name";
@@ -74,7 +74,7 @@ public final class MemCursorTest {
     @Test
     public void replacesValuesForSelectedMessages() throws Exception {
         final IndexMap map = new DefaultIndexMap(this.temp.newFolder("foo2"));
-        final Long msg = new Random().nextLong();
+        final Long msg = MsgMocker.number();
         map.touch(msg);
         final Cursor cursor = new MemCursor(Long.MAX_VALUE, map);
         final String attr = "attribute-1";
@@ -97,7 +97,7 @@ public final class MemCursorTest {
     @Test
     public void isComparableToCursor() throws Exception {
         final IndexMap map = new DefaultIndexMap(this.temp.newFolder("foo3"));
-        final Long msg = new Random().nextLong();
+        final Long msg = MsgMocker.number();
         MatcherAssert.assertThat(
             new MemCursor(msg, map),
             Matchers.lessThan(Cursor.class.cast(new MemCursor(msg + 1, map)))

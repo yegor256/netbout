@@ -27,6 +27,7 @@
 package com.netbout.inf.ray;
 
 import com.netbout.inf.Cursor;
+import com.netbout.inf.Lattice;
 import com.netbout.inf.Term;
 
 /**
@@ -83,6 +84,16 @@ final class PickerTerm implements Term {
     @Override
     public String toString() {
         return String.format("(PICKER %d)", this.number);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Lattice lattice() {
+        final Lattice lattice = new DefaultLattice();
+        lattice.set(this.number, true, false);
+        return lattice;
     }
 
     /**

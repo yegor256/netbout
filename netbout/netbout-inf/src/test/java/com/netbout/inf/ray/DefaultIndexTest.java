@@ -27,9 +27,9 @@
 package com.netbout.inf.ray;
 
 import com.jcabi.log.VerboseThreads;
+import com.netbout.inf.MsgMocker;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Random;
 import java.util.concurrent.Callable;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
@@ -42,7 +42,6 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 import org.mockito.ArgumentMatcher;
-import org.mockito.Mockito;
 
 /**
  * Test case of {@link DefaultIndex}.
@@ -66,10 +65,9 @@ public final class DefaultIndexTest {
     @Test
     public void replacesValues() throws Exception {
         final Index index = new DefaultIndex(
-            Mockito.mock(DefaultIndex.Invalidator.class),
             this.temp.newFile("file-1")
         );
-        final long msg = new Random().nextLong();
+        final long msg = MsgMocker.number();
         final String value = "some text \u0433!";
         index.add(msg, "first value");
         index.add(msg, "second value");
@@ -91,10 +89,9 @@ public final class DefaultIndexTest {
     @Test
     public void ordersNumbersProperly() throws Exception {
         final Index index = new DefaultIndex(
-            Mockito.mock(DefaultIndex.Invalidator.class),
             this.temp.newFile("file-2")
         );
-        final long msg = new Random().nextLong();
+        final long msg = MsgMocker.number();
         final String value = "text-\u0433!";
         // @checkstyle MagicNumber (1 line)
         for (int pos = 1; pos < 10; ++pos) {
@@ -118,10 +115,9 @@ public final class DefaultIndexTest {
     @SuppressWarnings({ "PMD.AvoidInstantiatingObjectsInLoops", "unchecked" })
     public void updatesInMultipleThreads() throws Exception {
         final Index index = new DefaultIndex(
-            Mockito.mock(DefaultIndex.Invalidator.class),
             this.temp.newFile("file-3")
         );
-        final long msg = new Random().nextLong();
+        final long msg = MsgMocker.number();
         final String value = "some value to set";
         final int total = 100;
         final CountDownLatch start = new CountDownLatch(1);
@@ -171,6 +167,26 @@ public final class DefaultIndexTest {
         MatcherAssert.assertThat(
             index.first(msg),
             Matchers.equalTo(value)
+        );
+    }
+
+    /**
+     * DefaultIndex can build lattice.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void buildsLatticeProperly() throws Exception {
+        final Index index = new DefaultIndex(
+            this.temp.newFile("file-25")
+        );
+        final String value = "text-344-\u0433!";
+        // @checkstyle MagicNumber (1 line)
+        for (int msg = 1; msg < 10; ++msg) {
+            index.add(msg, value);
+        }
+        MatcherAssert.assertThat(
+            index.lattice(value),
+            Matchers.hasToString(Matchers.equalTo("{16384}"))
         );
     }
 

@@ -26,7 +26,7 @@
  */
 package com.netbout.inf.ray;
 
-import java.util.Random;
+import com.netbout.inf.MsgMocker;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Rule;
@@ -55,7 +55,7 @@ public final class DefaultIndexMapTest {
     public void findsAndReturnsIndex() throws Exception {
         final IndexMap map = new DefaultIndexMap(this.temp.newFolder("foo"));
         final String attr = "attribute name";
-        final long msg = new Random().nextLong();
+        final long msg = MsgMocker.number();
         final String value = "some text \u0433!";
         map.index(attr).add(msg, value);
         MatcherAssert.assertThat(

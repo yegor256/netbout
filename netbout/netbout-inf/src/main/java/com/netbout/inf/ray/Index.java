@@ -26,6 +26,7 @@
  */
 package com.netbout.inf.ray;
 
+import com.netbout.inf.Lattice;
 import java.util.Set;
 import java.util.SortedSet;
 
@@ -85,5 +86,12 @@ interface Index {
      * @return The values
      */
     Set<String> values();
+
+    /**
+     * Lattice for the given value.
+     * @param value The value
+     * @return Lattice
+     */
+    Lattice lattice(String value);
 
 }

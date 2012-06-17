@@ -26,20 +26,41 @@
  */
 package com.netbout.inf.ray;
 
-import java.util.Collection;
+import com.netbout.inf.Cursor;
+import com.netbout.inf.CursorMocker;
+import com.netbout.inf.Lattice;
+import org.hamcrest.MatcherAssert;
+import org.hamcrest.Matchers;
+import org.junit.Test;
+import org.mockito.Mockito;
 
 /**
- * Taggable term (provides some tags for caching).
- *
+ * Test case of {@link DefaultLattice}.
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-interface Taggable {
+public final class DefaultLatticeTest {
 
     /**
-     * List of tags for caching.
-     * @return Collection of tags
+     * DefaultLattice can shift a cursor to the right position.
+     * @throws Exception If there is some problem inside
+     * @checkstyle MagicNumber (30 lines)
      */
-    Collection<Tag> tags();
+    @Test
+    public void shiftsCursorToTheRightPosition() throws Exception {
+        final Cursor cursor = new CursorMocker().withMsg(5000L).mock();
+        final Lattice lattice = new DefaultLattice();
+        lattice.set(10000L, true, false);
+        lattice.set(350L, true, false);
+        lattice.set(150L, true, false);
+        lattice.set(50L, true, false);
+        MatcherAssert.assertThat(
+            lattice,
+            Matchers.hasToString(Matchers.containsString("16384"))
+        );
+        final Lattice.Shifter shifter = Mockito.mock(Lattice.Shifter.class);
+        lattice.correct(cursor, shifter);
+        Mockito.verify(shifter).shift(cursor, 383L);
+    }
 
 }

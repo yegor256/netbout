@@ -65,4 +65,10 @@ public interface Term {
      */
     Cursor shift(Cursor cursor);
 
+    /**
+     * Where this term makes sense, at which segments?
+     * @return Lattice to look into
+     */
+    Lattice lattice();
+
 }

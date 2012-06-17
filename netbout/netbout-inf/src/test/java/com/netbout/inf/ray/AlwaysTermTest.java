@@ -27,8 +27,8 @@
 package com.netbout.inf.ray;
 
 import com.netbout.inf.Cursor;
+import com.netbout.inf.MsgMocker;
 import com.netbout.inf.Term;
-import java.util.Random;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Rule;
@@ -56,7 +56,7 @@ public final class AlwaysTermTest {
     @Test
     public void shiftsCursorToTheFirstValue() throws Exception {
         final IndexMap map = new DefaultIndexMap(this.temp.newFolder("foo"));
-        final long msg = new Random().nextLong();
+        final long msg = MsgMocker.number();
         map.touch(msg);
         final Term term = new AlwaysTerm(map);
         final Cursor cursor = new MemCursor(Long.MAX_VALUE, map);

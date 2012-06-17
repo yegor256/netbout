@@ -63,10 +63,4 @@ interface IndexMap {
      */
     long maximum();
 
-    /**
-     * Get cache.
-     * @return The cache
-     */
-    Cache cache();
-
 }

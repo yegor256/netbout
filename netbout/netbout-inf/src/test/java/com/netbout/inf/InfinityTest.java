@@ -70,13 +70,14 @@ public final class InfinityTest {
         for (XmlDocument scene : xml.nodes("/scenario/scene")) {
             final Infinity inf = this.prepare(scene);
             for (XmlDocument query : scene.nodes("query")) {
+                final String nums = query.xpath("messages/text()").get(0);
                 MatcherAssert.assertThat(
                     inf.messages(query.xpath("predicate/text()").get(0)),
-                    Matchers.contains(
-                        InfinityTest.numbers(
-                            query.xpath("messages/text()").get(0)
-                        )
-                    )
+                    Matchers.contains(InfinityTest.numbers(nums))
+                );
+                MatcherAssert.assertThat(
+                    inf.messages(query.xpath("predicate/text() ").get(0)),
+                    Matchers.contains(InfinityTest.numbers(nums))
                 );
             }
             inf.close();

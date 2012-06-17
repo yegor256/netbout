@@ -27,8 +27,8 @@
 package com.netbout.inf.ray;
 
 import com.netbout.inf.Cursor;
+import com.netbout.inf.MsgMocker;
 import com.netbout.inf.Term;
-import java.util.Random;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Rule;
@@ -58,7 +58,7 @@ public final class NotTermTest {
         final IndexMap map = new DefaultIndexMap(this.temp.newFolder("foo"));
         final String attr = "attribute name";
         final String value = "some text-1 \u0433!";
-        final long msg = new Random().nextLong();
+        final long msg = MsgMocker.number();
         map.touch(msg);
         map.index(attr).add(msg, value);
         map.touch(msg - 1);

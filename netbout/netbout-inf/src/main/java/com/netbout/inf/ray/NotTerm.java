@@ -27,9 +27,8 @@
 package com.netbout.inf.ray;
 
 import com.netbout.inf.Cursor;
+import com.netbout.inf.Lattice;
 import com.netbout.inf.Term;
-import java.util.Arrays;
-import java.util.Collection;
 
 /**
  * NOT term.
@@ -39,7 +38,7 @@ import java.util.Collection;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-final class NotTerm implements CacheableTerm {
+final class NotTerm implements Term {
 
     /**
      * Hash code, for performance reasons.
@@ -65,14 +64,6 @@ final class NotTerm implements CacheableTerm {
         this.imap = map;
         this.term = trm;
         this.hash = this.toString().hashCode();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Collection<Term> children() {
-        return Arrays.asList(new Term[] {this.term});
     }
 
     /**
@@ -106,9 +97,19 @@ final class NotTerm implements CacheableTerm {
      * {@inheritDoc}
      */
     @Override
+    public Lattice lattice() {
+        final Lattice lattice = this.term.lattice().copy();
+        lattice.revert();
+        return lattice;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public Cursor shift(final Cursor cursor) {
         Cursor shifted = cursor;
-        Cursor candidate = cursor;
+        Cursor candidate = shifted;
         final Term always = new AlwaysTerm(this.imap);
         while (!shifted.end()) {
             candidate = shifted.shift(always);

@@ -27,9 +27,8 @@
 package com.netbout.inf.ray;
 
 import com.netbout.inf.Cursor;
+import com.netbout.inf.Lattice;
 import com.netbout.inf.Term;
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.Iterator;
 
 /**
@@ -41,16 +40,19 @@ import java.util.Iterator;
  * @version $Id$
  */
 @Term.Cheap
-final class MatcherTerm implements Term, Taggable {
+final class MatcherTerm implements Term {
 
     /**
-     * Name of attribute.
+     * Name of attribute (also visible from {@link NotTerm}).
+     * @checkstyle VisibilityModifier (3 lines)
      */
+    @SuppressWarnings("PMD.AvoidProtectedFieldInFinalClass")
     private final transient String attr;
 
     /**
-     * Value to match.
+     * Value to match (also visible from {@link NotTerm}).
      */
+    @SuppressWarnings("PMD.AvoidProtectedFieldInFinalClass")
     private final transient String value;
 
     /**
@@ -74,22 +76,8 @@ final class MatcherTerm implements Term, Taggable {
      * {@inheritDoc}
      */
     @Override
-    public Collection<Tag> tags() {
-        return Arrays.asList(
-            new Tag[] {
-                new Tag().add(Tag.Label.ATTR, this.attr)
-                    .add(Tag.Label.VALUE, this.value),
-                new Tag().add(Tag.Label.ATTR, this.attr),
-            }
-        );
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
     public int hashCode() {
-        return this.imap.hashCode() + this.toString().hashCode();
+        return this.toString().hashCode();
     }
 
     /**
@@ -107,6 +95,14 @@ final class MatcherTerm implements Term, Taggable {
     @Override
     public String toString() {
         return String.format("(%s:%s)", this.attr, this.value);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Lattice lattice() {
+        return this.imap.index(this.attr).lattice(this.value);
     }
 
     /**

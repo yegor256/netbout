@@ -1,4 +1,5 @@
 <?xml version="1.0"?>
+<!-- this file is used in InifityTest -->
 <scenario>
     <scene>
         <see notice="com.netbout.inf.notices.MessagePostedNotice">
@@ -132,6 +133,59 @@
                 )
             </predicate>
             <messages>992, 991</messages>
+        </query>
+    </scene>
+    <scene>
+        <see notice="com.netbout.inf.notices.MessagePostedNotice">
+            <message.number>59000</message.number>
+            <bout.participants>urn:test:billy, urn:test:somebody-1</bout.participants>
+            <bout.number>4009</bout.number>
+        </see>
+        <see notice="com.netbout.inf.notices.MessagePostedNotice">
+            <message.number>58990</message.number>
+            <bout.participants>urn:test:billy, urn:test:somebody-1</bout.participants>
+            <bout.number>4009</bout.number>
+        </see>
+        <see notice="com.netbout.inf.notices.MessagePostedNotice">
+            <message.number>58985</message.number>
+            <bout.participants>urn:test:billy, urn:test:somebody-55</bout.participants>
+            <bout.number>4008</bout.number>
+        </see>
+        <see notice="com.netbout.inf.notices.MessagePostedNotice">
+            <message.number>58980</message.number>
+            <bout.participants>urn:test:billy, urn:test:somebody-1</bout.participants>
+            <bout.number>4009</bout.number>
+        </see>
+        <see notice="com.netbout.inf.notices.MessagePostedNotice">
+            <message.number>58000</message.number>
+            <bout.participants>urn:test:billy, urn:test:somebody-1</bout.participants>
+            <bout.number>4007</bout.number>
+        </see>
+        <see notice="com.netbout.inf.notices.MessagePostedNotice">
+            <message.number>57000</message.number>
+            <bout.participants>urn:test:billy, urn:test:somebody-1</bout.participants>
+            <bout.number>4006</bout.number>
+        </see>
+        <see notice="com.netbout.inf.notices.MessagePostedNotice">
+            <message.number>56999</message.number>
+            <bout.participants>urn:test:billy, urn:test:somebody-2</bout.participants>
+            <bout.number>4005</bout.number>
+        </see>
+        <see notice="com.netbout.inf.notices.MessagePostedNotice">
+            <message.number>4</message.number>
+            <bout.participants>urn:test:billy, urn:test:somebody-3</bout.participants>
+            <bout.number>4001</bout.number>
+        </see>
+        <see notice="com.netbout.inf.notices.MessagePostedNotice">
+            <message.number>1</message.number>
+            <bout.participants>urn:test:billy, urn:test:somebody-3</bout.participants>
+            <bout.number>4001</bout.number>
+        </see>
+        <query>
+            <predicate>
+                (and (talks-with 'urn:test:billy') (bundled) (unique $bout.number))
+            </predicate>
+            <messages>59000, 58985, 56999, 4</messages>
         </query>
     </scene>
 </scenario>
