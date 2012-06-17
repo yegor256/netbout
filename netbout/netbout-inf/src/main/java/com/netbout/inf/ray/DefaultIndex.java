@@ -27,7 +27,6 @@
 package com.netbout.inf.ray;
 
 import com.jcabi.log.Logger;
-import com.netbout.inf.Lattice;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;

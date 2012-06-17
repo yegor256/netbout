@@ -63,7 +63,7 @@ public final class LazyMessagesProf {
      */
     private void run() throws Exception {
         final File dir = new FolderMocker().mock().path();
-        final int total = 150000;
+        final int total = 50000;
         new SnapshotMocker(dir)
             .withMaximum(total)
             .withBouts(50, 5000)

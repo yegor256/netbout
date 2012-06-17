@@ -52,6 +52,12 @@ public interface Lattice {
     }
 
     /**
+     * Create a copy of this object.
+     * @return The same lattice, but as a new object
+     */
+    Lattice copy();
+
+    /**
      * Always TRUE (set all bits to TRUE).
      */
     void always();

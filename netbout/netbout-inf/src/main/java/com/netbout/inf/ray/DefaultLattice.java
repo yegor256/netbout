@@ -34,7 +34,6 @@ import java.util.BitSet;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.SortedSet;
-import java.util.TreeSet;
 
 /**
  * Lattice of bits.
@@ -56,6 +55,11 @@ final class DefaultLattice implements Lattice {
      * Window size of every bit, in messages.
      */
     private static final int SIZE = 64;
+
+    /**
+     * Synchronization mutex.
+     */
+    private final transient Integer mutex = new Integer(0);
 
     /**
      * The main bitset.
@@ -91,7 +95,6 @@ final class DefaultLattice implements Lattice {
         final Iterator<Long> iterator = numbers.iterator();
         Long next = Long.MAX_VALUE;
         for (int bit = 0; bit < DefaultLattice.BITS; ++bit) {
-            final long msg = this.msg(bit);
             final long window = this.msg(bit + 1);
             boolean seen = false;
             while (next > window && iterator.hasNext()) {
@@ -133,8 +136,19 @@ final class DefaultLattice implements Lattice {
      * {@inheritDoc}
      */
     @Override
+    public Lattice copy() {
+        final DefaultLattice lattice = new DefaultLattice();
+        lattice.main = this.main;
+        lattice.reverse = this.reverse;
+        return lattice;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public void always() {
-        synchronized (this.main) {
+        synchronized (this.mutex) {
             this.main.set(0, DefaultLattice.BITS, true);
         }
     }
@@ -144,32 +158,29 @@ final class DefaultLattice implements Lattice {
      */
     @Override
     public void and(final Collection<Term> terms) {
-        synchronized (this.main) {
+        synchronized (this.mutex) {
             for (Term term : terms) {
-                this.main.and(
-                    DefaultLattice.class.cast(term.lattice()).main
-                );
-                this.reverse.or(
-                    DefaultLattice.class.cast(term.lattice()).reverse
-                );
+                final DefaultLattice lattice =
+                    DefaultLattice.class.cast(term.lattice());
+                this.main.and(lattice.main);
+                this.reverse.or(lattice.reverse);
             }
         }
     }
 
     /**
      * {@inheritDoc}
+     * @checkstyle MethodName (4 lines)
      */
     @Override
     @SuppressWarnings("PMD.ShortMethodName")
     public void or(final Collection<Term> terms) {
-        synchronized (this.main) {
+        synchronized (this.mutex) {
             for (Term term : terms) {
-                this.main.or(
-                    DefaultLattice.class.cast(term.lattice()).main
-                );
-                this.reverse.and(
-                    DefaultLattice.class.cast(term.lattice()).reverse
-                );
+                final DefaultLattice lattice =
+                    DefaultLattice.class.cast(term.lattice());
+                this.main.or(lattice.main);
+                this.reverse.and(lattice.reverse);
             }
         }
     }
@@ -179,7 +190,7 @@ final class DefaultLattice implements Lattice {
      */
     @Override
     public void revert() {
-        synchronized (this.main) {
+        synchronized (this.mutex) {
             final BitSet temp = this.main;
             this.main = this.reverse;
             this.reverse = temp;

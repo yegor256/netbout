@@ -42,6 +42,7 @@ import java.util.concurrent.ConcurrentMap;
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
+ * @checkstyle ClassDataAbstractionCoupling (500 lines)
  */
 final class AndTerm implements Term {
 
