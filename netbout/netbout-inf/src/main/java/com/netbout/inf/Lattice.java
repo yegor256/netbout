@@ -39,16 +39,6 @@ import java.util.Collection;
 public interface Lattice {
 
     /**
-     * Total number of bits.
-     */
-    int BITS = 16384;
-
-    /**
-     * Size of one bit, in messages.
-     */
-    int SIZE = 64;
-
-    /**
      * Shifter of cursor.
      */
     interface Shifter {

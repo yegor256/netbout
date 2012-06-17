@@ -98,6 +98,15 @@ final class DefaultIndex implements Index {
         try {
             final long start = System.currentTimeMillis();
             this.map = DefaultIndex.restore(stream);
+            this.rmap = DefaultIndex.reverse(this.map);
+            this.lattices = new ConcurrentHashMap<String, DefaultLattice>();
+            for (ConcurrentMap.Entry<String, SortedSet<Long>> entry
+                : this.map.entrySet()) {
+                this.lattices.put(
+                    entry.getKey(),
+                    new DefaultLattice(entry.getValue())
+                );
+            }
             Logger.debug(
                 DefaultIndex.class,
                 "#DefaultIndex(%s): restored %d values from %d bytes in %[ms]s",
@@ -108,15 +117,6 @@ final class DefaultIndex implements Index {
             );
         } finally {
             IOUtils.closeQuietly(stream);
-        }
-        this.rmap = DefaultIndex.reverse(this.map);
-        this.lattices = new ConcurrentHashMap<String, DefaultLattice>();
-        for (ConcurrentMap.Entry<String, SortedSet<Long>> entry
-            : this.map.entrySet()) {
-            this.lattices.put(
-                entry.getKey(),
-                new DefaultLattice(entry.getValue())
-            );
         }
     }
 

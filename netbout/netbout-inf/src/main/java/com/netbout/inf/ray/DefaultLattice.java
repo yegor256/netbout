@@ -32,6 +32,7 @@ import com.netbout.inf.Lattice;
 import com.netbout.inf.Term;
 import java.util.BitSet;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
@@ -47,20 +48,30 @@ import java.util.TreeSet;
 final class DefaultLattice implements Lattice {
 
     /**
+     * Total maximum number of bits in the lattice.
+     */
+    private static final int BITS = 16384;
+
+    /**
+     * Window size of every bit, in messages.
+     */
+    private static final int SIZE = 64;
+
+    /**
      * The main bitset.
      */
-    private transient BitSet main = new BitSet(Lattice.BITS);
+    private transient BitSet main = new BitSet(DefaultLattice.BITS);
 
     /**
      * The reverse bitset.
      */
-    private transient BitSet reverse = new BitSet(Lattice.BITS);
+    private transient BitSet reverse = new BitSet(DefaultLattice.BITS);
 
     /**
      * Create NEVER lattice.
      */
     public DefaultLattice() {
-        this(new TreeSet<Long>());
+        this.reverse.set(0, DefaultLattice.BITS, true);
     }
 
     /**
@@ -70,13 +81,24 @@ final class DefaultLattice implements Lattice {
     public DefaultLattice(final SortedSet<Long> numbers) {
         long previous = Long.MAX_VALUE;
         for (Long num : numbers) {
-            if (previous - num < Lattice.SIZE / 2) {
+            if (previous - num < DefaultLattice.SIZE / 2) {
                 continue;
             }
             previous = num;
             final int bit = DefaultLattice.bit(num);
             this.main.set(bit);
-            if (DefaultLattice.emptyBit(numbers, num)) {
+        }
+        final Iterator<Long> iterator = numbers.iterator();
+        Long next = Long.MAX_VALUE;
+        for (int bit = 0; bit < DefaultLattice.BITS; ++bit) {
+            final long msg = this.msg(bit);
+            final long window = this.msg(bit + 1);
+            boolean seen = false;
+            while (next > window && iterator.hasNext()) {
+                seen = true;
+                next = iterator.next();
+            }
+            if (!seen) {
                 this.reverse.set(bit);
             }
         }
@@ -113,7 +135,7 @@ final class DefaultLattice implements Lattice {
     @Override
     public void always() {
         synchronized (this.main) {
-            this.main.set(0, Lattice.BITS, true);
+            this.main.set(0, DefaultLattice.BITS, true);
         }
     }
 
@@ -208,19 +230,29 @@ final class DefaultLattice implements Lattice {
 
     /**
      * Do we have an empty bit for this message.
-     * @param numbers The numbers
+     *
+     * <p>The method checks all message around the provided one inside the
+     * the provided set and returns TRUE only if nothing is found near by. The
+     * distance boundaries around the message are defined by the size of
+     * the window of this lattice.
+     *
+     * @param numbers The numbers to work with
      * @param msg The message number
      * @return TRUE if we have no messages around this one
      */
     public static boolean emptyBit(final SortedSet<Long> numbers,
         final long msg) {
         final int bit = DefaultLattice.bit(msg);
-        synchronized (numbers) {
-            final SortedSet<Long> tail = numbers.tailSet(
-                DefaultLattice.msg(bit)
-            );
-            return tail.isEmpty() || tail.first() < DefaultLattice.msg(bit + 1);
+        final SortedSet<Long> tail = numbers.tailSet(
+            DefaultLattice.msg(bit)
+        );
+        boolean empty = tail.isEmpty();
+        try {
+            empty |= tail.first() < DefaultLattice.msg(bit + 1);
+        } catch (java.util.NoSuchElementException ex) {
+            empty = true;
         }
+        return empty;
     }
 
     /**
@@ -229,7 +261,7 @@ final class DefaultLattice implements Lattice {
      * @return The bit
      */
     private static int bit(final long number) {
-        return Lattice.BITS - (int) number / Lattice.SIZE;
+        return DefaultLattice.BITS - (int) number / DefaultLattice.SIZE;
     }
 
     /**
@@ -239,7 +271,7 @@ final class DefaultLattice implements Lattice {
      * @see DefaultIndex#emptyBit(String,long)
      */
     private static long msg(final int bit) {
-        return (Lattice.BITS - bit + 1) * Lattice.SIZE - 1;
+        return (DefaultLattice.BITS - bit + 1) * DefaultLattice.SIZE - 1;
     }
 
 }
