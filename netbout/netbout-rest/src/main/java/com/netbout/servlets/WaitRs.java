@@ -26,6 +26,7 @@
  */
 package com.netbout.servlets;
 
+import com.netbout.rest.BaseRs;
 import com.netbout.rest.NbPage;
 import com.rexsl.page.PageBuilder;
 import javax.ws.rs.GET;
@@ -39,7 +40,7 @@ import javax.ws.rs.core.Response;
  * @version $Id$
  */
 @Path("/wait")
-public final class WaitRs {
+public final class WaitRs extends BaseRs {
 
     /**
      * Render the page.
@@ -50,6 +51,8 @@ public final class WaitRs {
         return new PageBuilder()
             .stylesheet("/xsl/wait.xsl")
             .build(NbPage.class)
+            .init(this)
+            .render()
             .preserved()
             .build();
     }
