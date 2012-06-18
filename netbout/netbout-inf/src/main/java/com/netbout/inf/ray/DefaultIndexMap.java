@@ -199,8 +199,7 @@ final class DefaultIndexMap implements IndexMap {
     public void flush() throws IOException {
         final long start = System.currentTimeMillis();
         final ExecutorService service = Executors.newFixedThreadPool(
-            // @checkstyle MagicNumber (1 line)
-            Runtime.getRuntime().availableProcessors() * 4,
+            Runtime.getRuntime().availableProcessors(),
             new VerboseThreads("imap-flush")
         );
         final Snapshot snapshot = this.files.writer();

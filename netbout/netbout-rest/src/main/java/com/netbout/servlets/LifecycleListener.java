@@ -27,7 +27,6 @@
 package com.netbout.servlets;
 
 import com.jcabi.log.Logger;
-import com.netbout.hub.DefaultHub;
 import com.netbout.hub.Hub;
 import com.netbout.notifiers.email.EmailFarm;
 import com.rexsl.core.Manifests;
@@ -64,7 +63,7 @@ public final class LifecycleListener implements ServletContextListener {
         final long start = System.nanoTime();
         try {
             Manifests.append(event.getServletContext());
-            this.hub = new DefaultHub();
+            this.hub = new HubBuilder().build();
         } catch (java.io.IOException ex) {
             Logger.error(
                 this,
