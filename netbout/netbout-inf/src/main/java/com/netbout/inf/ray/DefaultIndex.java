@@ -27,6 +27,7 @@
 package com.netbout.inf.ray;
 
 import com.jcabi.log.Logger;
+import com.netbout.inf.Lattice;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -37,9 +38,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
-import java.util.Collection;
 import java.util.Collections;
-import java.util.LinkedList;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.concurrent.ConcurrentHashMap;
@@ -61,7 +60,7 @@ import org.apache.commons.lang.CharEncoding;
 @SuppressWarnings({
     "PMD.TooManyMethods", "PMD.AvoidInstantiatingObjectsInLoops"
 })
-final class DefaultIndex implements Index {
+final class DefaultIndex implements FlushableIndex {
 
     /**
      * Main map.
@@ -217,32 +216,15 @@ final class DefaultIndex implements Index {
      * {@inheritDoc}
      */
     @Override
-    public DefaultLattice lattice(final String value) {
+    public Lattice lattice(final String value) {
         this.lattices.putIfAbsent(value, new DefaultLattice());
         return this.lattices.get(value);
     }
 
     /**
-     * Find lost messages.
-     * @param msgs Numbers to look for
-     * @return Collection of numbers, which are not found
+     * {@inheritDoc}
      */
-    public Collection<Long> lost(final Collection<Long> msgs) {
-        final Collection<Long> lost = new LinkedList<Long>();
-        for (Long number : msgs) {
-            if (!this.rmap.containsKey(number)
-                || this.rmap.get(number).isEmpty()) {
-                lost.add(number);
-            }
-        }
-        return lost;
-    }
-
-    /**
-     * Flush this map to file.
-     * @param file Where to write
-     * @throws IOException If some problem
-     */
+    @Override
     public void flush(final File file) throws IOException {
         final long start = System.currentTimeMillis();
         final OutputStream stream = new FileOutputStream(file);
