@@ -36,8 +36,3 @@ RestTester.start(UriBuilder.fromUri(rexsl.home).path('/exception').queryParam('t
     .get('initiate exception')
     .assertStatus(HttpURLConnection.HTTP_INTERNAL_ERROR)
     .assertXPath('//xhtml:title[contains(.,"error")]')
-
-RestTester.start(UriBuilder.fromUri(rexsl.home).path('/exception/wait'))
-    .get('initiate "Loading In Progress" exception')
-    .assertStatus(HttpURLConnection.HTTP_OK)
-    .assertXPath('//xhtml:title[contains(.,"wait")]')

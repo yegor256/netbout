@@ -35,8 +35,11 @@ import com.netbout.spi.Identity;
 import com.netbout.spi.UnreachableUrnException;
 import com.netbout.spi.Urn;
 import java.io.IOException;
+import java.net.URI;
 import java.net.URL;
 import java.util.concurrent.atomic.AtomicReference;
+import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.Response;
 
 /**
  * Lazy HUB.
@@ -119,11 +122,13 @@ final class LazyHub implements Hub {
      */
     private Hub origin() {
         if (this.ref.get() == null) {
-            throw new LoadingInProgressException(
-                Logger.format(
-                    "HUB is not ready yet, %[ms]s",
-                    System.currentTimeMillis() - this.started
-                )
+            throw new WebApplicationException(
+                Response.status(Response.Status.TEMPORARY_REDIRECT).entity(
+                    Logger.format(
+                        "HUB is not ready yet, %[ms]s",
+                        System.currentTimeMillis() - this.started
+                    )
+                ).location(URI.create("/wait")).build()
             );
         }
         return this.ref.get();

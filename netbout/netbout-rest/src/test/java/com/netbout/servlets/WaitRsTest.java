@@ -26,25 +26,32 @@
  */
 package com.netbout.servlets;
 
+import com.netbout.rest.NbPage;
+import com.netbout.rest.NbResourceMocker;
+import com.rexsl.test.XhtmlMatchers;
+import javax.ws.rs.core.Response;
+import org.hamcrest.MatcherAssert;
+import org.junit.Test;
+
 /**
- * When we're still loading resources.
- *
+ * Test case for {@link WaitRs}.
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class LoadingInProgressException extends RuntimeException {
+public final class WaitRsTest {
 
     /**
-     * Serialization marker.
+     * WaitRs can render front page.
+     * @throws Exception If there is some problem inside
      */
-    private static final long serialVersionUID = 0x7129FA189ECF1879L;
-
-    /**
-     * Public ctor.
-     * @param cause Cause of it
-     */
-    public LoadingInProgressException(final String cause) {
-        super(cause);
+    @Test
+    public void rendersFrontPage() throws Exception {
+        final WaitRs rest = new NbResourceMocker().mock(WaitRs.class);
+        final Response response = rest.get();
+        MatcherAssert.assertThat(
+            NbResourceMocker.the((NbPage) response.getEntity(), rest),
+            XhtmlMatchers.hasXPath("/page")
+        );
     }
 
 }

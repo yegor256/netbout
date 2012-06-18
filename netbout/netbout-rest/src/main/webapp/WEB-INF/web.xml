@@ -96,10 +96,6 @@
         <exception-type>java.lang.Throwable</exception-type>
         <location>/trap</location>
     </error-page>
-    <error-page>
-        <exception-type>com.netbout.servlets.LoadingInProgressException</exception-type>
-        <location>/wait</location>
-    </error-page>
 
     <filter>
         <filter-name>XsltFilter</filter-name>
