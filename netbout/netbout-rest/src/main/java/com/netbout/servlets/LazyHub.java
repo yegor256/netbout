@@ -27,6 +27,7 @@
 package com.netbout.servlets;
 
 import com.jcabi.log.Logger;
+import com.jcabi.velocity.VelocityPage;
 import com.netbout.bus.TxBuilder;
 import com.netbout.hub.Hub;
 import com.netbout.hub.UrnResolver;
@@ -35,7 +36,6 @@ import com.netbout.spi.Identity;
 import com.netbout.spi.UnreachableUrnException;
 import com.netbout.spi.Urn;
 import java.io.IOException;
-import java.net.URI;
 import java.net.URL;
 import java.util.concurrent.atomic.AtomicReference;
 import javax.ws.rs.WebApplicationException;
@@ -123,12 +123,15 @@ final class LazyHub implements Hub {
     private Hub origin() {
         if (this.ref.get() == null) {
             throw new WebApplicationException(
-                Response.status(Response.Status.TEMPORARY_REDIRECT).entity(
-                    Logger.format(
-                        "HUB is not ready yet, %[ms]s",
-                        System.currentTimeMillis() - this.started
+                Response.ok().entity(
+                    new VelocityPage("com/netbout/servlets/wait.html.vm").set(
+                        "message",
+                        Logger.format(
+                            "HUB is not ready yet, %[ms]s",
+                            System.currentTimeMillis() - this.started
+                        )
                     )
-                ).location(URI.create("/wait")).build()
+                ).build()
             );
         }
         return this.ref.get();

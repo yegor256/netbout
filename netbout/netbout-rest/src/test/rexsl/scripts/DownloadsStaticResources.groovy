@@ -38,7 +38,6 @@ import javax.ws.rs.core.UriBuilder
 // should be available
 
 [
-    '/wait',
     '/robots.txt',
     '/css/global.css',
     '/js/bout.js',
