@@ -26,6 +26,7 @@
  */
 package com.netbout.servlets;
 
+import com.jcabi.log.Logger;
 import com.jcabi.log.VerboseRunnable;
 import com.netbout.hub.DefaultHub;
 import com.netbout.hub.Hub;
@@ -43,7 +44,8 @@ final class HubBuilder {
     /**
      * Reference to the hub.
      */
-    private transient AtomicReference<Hub> ref;
+    private final transient AtomicReference<Hub> ref =
+        new AtomicReference<Hub>();
 
     /**
      * Build it and return.
@@ -61,7 +63,11 @@ final class HubBuilder {
                         } catch (java.io.IOException ex) {
                             throw new IllegalStateException(ex);
                         }
-                        Logger.info(this, "#run(): HUB built in %[ms]s");
+                        Logger.info(
+                            this,
+                            "#run(): HUB built in %[ms]s",
+                            System.currentTimeMillis() - started
+                        );
                     }
                 }
             )
