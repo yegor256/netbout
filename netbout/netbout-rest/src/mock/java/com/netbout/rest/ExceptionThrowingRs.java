@@ -26,6 +26,7 @@
  */
 package com.netbout.rest;
 
+import com.netbout.servlets.LoadingInProgressException;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.QueryParam;
@@ -46,6 +47,16 @@ public final class ExceptionThrowingRs {
     @GET
     public String throwIt(@QueryParam("text") final String text) {
         throw new IllegalStateException(text);
+    }
+
+    /**
+     * Throw this specific loading exception.
+     * @return The JAX-RS response
+     */
+    @GET
+    @Path("/wait")
+    public String loadingInProgress() {
+        throw new LoadingInProgressException("boom");
     }
 
 }
