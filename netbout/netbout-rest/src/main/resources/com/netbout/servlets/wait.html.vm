@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml">
     <head>
-        <title>Internal application error</title>
+        <title>wait...</title>
         <link href="/css/global.css?${build.number}"
             rel="stylesheet" type="text/css"></link>
         <link rel="icon" type="image/gif"
@@ -14,16 +14,7 @@
             </a>
         </p>
         <p>
-            <b style="color: red;">
-                Internal application error (r.${build.number}).
-            </b>
+            Please wait, we're loading data...
         </p>
-        <p>
-            Netbout team already received a notification about this
-            problem and will work with it as soon as possible. In the
-            mean time click "Back" button in your browser and try
-            to do something else.
-        </p>
-        <pre style="display:none;">${text}</pre>
     </body>
 </html>

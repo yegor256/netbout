@@ -28,6 +28,7 @@ package com.netbout.inf.ray;
 
 import com.jcabi.log.Logger;
 import com.jcabi.log.VerboseThreads;
+import com.netbout.inf.atoms.VariableAtom;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -70,8 +71,8 @@ final class DefaultIndexMap implements IndexMap {
     /**
      * The map.
      */
-    private final transient ConcurrentMap<String, DefaultIndex> map =
-        new ConcurrentHashMap<String, DefaultIndex>();
+    private final transient ConcurrentMap<String, FlushableIndex> map =
+        new ConcurrentHashMap<String, FlushableIndex>();
 
     /**
      * All message numbers.
@@ -99,10 +100,13 @@ final class DefaultIndexMap implements IndexMap {
             IOUtils.closeQuietly(stream);
         }
         for (String name : snapshot.attrs()) {
-            this.map.put(
-                name,
-                new DefaultIndex(snapshot.attr(name))
-            );
+            FlushableIndex idx;
+            if (name.equals(VariableAtom.NUMBER.attribute())) {
+                idx = new NumbersIndex(snapshot.attr(name));
+            } else {
+                idx = new DefaultIndex(snapshot.attr(name));
+            }
+            this.map.put(name, idx);
         }
         Logger.info(
             this,
@@ -180,15 +184,6 @@ final class DefaultIndexMap implements IndexMap {
             "talks-with",
             "bundled-marker",
         };
-        for (String attr : attrs) {
-            text.append(
-                Logger.format(
-                    "'%s' lost: %[list]s\n",
-                    attr,
-                    DefaultIndex.class.cast(this.index(attr)).lost(this.all)
-                )
-            );
-        }
         return text.toString();
     }
 

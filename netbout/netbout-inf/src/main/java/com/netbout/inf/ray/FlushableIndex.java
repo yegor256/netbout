@@ -24,37 +24,26 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.servlets;
+package com.netbout.inf.ray;
 
-import com.netbout.rest.BaseRs;
-import com.netbout.rest.NbPage;
-import com.rexsl.page.PageBuilder;
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.core.Response;
+import java.io.File;
+import java.io.IOException;
 
 /**
- * Waiting page, while we're loading.
+ * Index that can be flushed.
+ *
+ * <p>Implementation must be thread-safe.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-@Path("/wait")
-public final class WaitRs extends BaseRs {
+interface FlushableIndex extends Index {
 
     /**
-     * Render the page.
-     * @return Raw HTTP response body
+     * Flush this map to file.
+     * @param file Where to write
+     * @throws IOException If some problem
      */
-    @GET
-    public Response get() {
-        return new PageBuilder()
-            .stylesheet("/xsl/wait.xsl")
-            .build(NbPage.class)
-            .init(this)
-            .render()
-            .preserved()
-            .build();
-    }
+    void flush(File file) throws IOException;
 
 }
