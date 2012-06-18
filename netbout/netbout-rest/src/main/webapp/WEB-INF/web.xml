@@ -96,6 +96,10 @@
         <exception-type>java.lang.Throwable</exception-type>
         <location>/trap</location>
     </error-page>
+    <error-page>
+        <exception-type>com.netbout.servlets.LoadingInProgressException</exception-type>
+        <location>/wait</location>
+    </error-page>
 
     <filter>
         <filter-name>XsltFilter</filter-name>
@@ -114,10 +118,11 @@
         <init-param>
             <param-name>com.rexsl.PACKAGES</param-name>
             <param-value>
+                com.netbout.notifiers.email,
+                com.netbout.notifiers.facebook,
                 com.netbout.rest,
                 com.netbout.rest.auth,
-                com.netbout.notifiers.email,
-                com.netbout.notifiers.facebook
+                com.netbout.servlets
             </param-value>
         </init-param>
     </servlet>
