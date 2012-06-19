@@ -79,30 +79,32 @@ final class DefaultLattice implements Lattice {
     }
 
     /**
-     * Create with all these numbers in the lattice.
-     * @param numbers The numbers to add
+     * {@inheritDoc}
      */
-    public DefaultLattice(final SortedSet<Long> numbers) {
-        long previous = Long.MAX_VALUE;
-        for (Long num : numbers) {
-            if (previous - num < DefaultLattice.SIZE / 2) {
-                continue;
+    @Override
+    public void fill(final SortedSet<Long> numbers) {
+        synchronized (this.mutex) {
+            long previous = Long.MAX_VALUE;
+            for (Long num : numbers) {
+                if (previous - num < DefaultLattice.SIZE / 2) {
+                    continue;
+                }
+                previous = num;
+                final int bit = DefaultLattice.bit(num);
+                this.main.set(bit);
             }
-            previous = num;
-            final int bit = DefaultLattice.bit(num);
-            this.main.set(bit);
-        }
-        final Iterator<Long> iterator = numbers.iterator();
-        Long next = Long.MAX_VALUE;
-        for (int bit = 0; bit < DefaultLattice.BITS; ++bit) {
-            final long window = this.msg(bit + 1);
-            boolean seen = false;
-            while (next > window && iterator.hasNext()) {
-                seen = true;
-                next = iterator.next();
-            }
-            if (!seen) {
-                this.reverse.set(bit);
+            final Iterator<Long> iterator = numbers.iterator();
+            Long next = Long.MAX_VALUE;
+            for (int bit = 0; bit < DefaultLattice.BITS; ++bit) {
+                final long window = this.msg(bit + 1);
+                boolean seen = false;
+                while (next > window && iterator.hasNext()) {
+                    seen = true;
+                    next = iterator.next();
+                }
+                if (!seen) {
+                    this.reverse.set(bit);
+                }
             }
         }
     }
@@ -240,18 +242,10 @@ final class DefaultLattice implements Lattice {
     }
 
     /**
-     * Do we have an empty bit for this message.
-     *
-     * <p>The method checks all message around the provided one inside the
-     * the provided set and returns TRUE only if nothing is found near by. The
-     * distance boundaries around the message are defined by the size of
-     * the window of this lattice.
-     *
-     * @param numbers The numbers to work with
-     * @param msg The message number
-     * @return TRUE if we have no messages around this one
+     * {@inheritDoc}
      */
-    public static boolean emptyBit(final SortedSet<Long> numbers,
+    @Override
+    public boolean emptyBit(final SortedSet<Long> numbers,
         final long msg) {
         final int bit = DefaultLattice.bit(msg);
         final SortedSet<Long> tail = numbers.tailSet(

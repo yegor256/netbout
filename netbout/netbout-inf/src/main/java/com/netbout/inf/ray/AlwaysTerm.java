@@ -28,6 +28,7 @@ package com.netbout.inf.ray;
 
 import com.netbout.inf.Cursor;
 import com.netbout.inf.Lattice;
+import com.netbout.inf.Ray;
 import com.netbout.inf.Term;
 import java.util.Iterator;
 
@@ -43,15 +44,22 @@ import java.util.Iterator;
 final class AlwaysTerm implements Term {
 
     /**
+     * The ray we're working with.
+     */
+    private final transient Ray ray;
+
+    /**
      * Index map.
      */
     private final transient IndexMap imap;
 
     /**
      * Public ctor.
+     * @param iray The ray to work with
      * @param map The index map
      */
-    public AlwaysTerm(final IndexMap map) {
+    public AlwaysTerm(final Ray iray, final IndexMap map) {
+        this.ray = iray;
         this.imap = map;
     }
 
@@ -86,7 +94,7 @@ final class AlwaysTerm implements Term {
      */
     @Override
     public Lattice lattice() {
-        final Lattice lattice = new DefaultLattice();
+        final Lattice lattice = this.ray.lattice();
         lattice.always();
         return lattice;
     }

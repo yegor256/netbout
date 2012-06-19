@@ -26,6 +26,7 @@
  */
 package com.netbout.inf.ray;
 
+import com.netbout.inf.Ray;
 import com.netbout.inf.Term;
 import com.netbout.inf.TermBuilder;
 import java.util.Collection;
@@ -42,15 +43,22 @@ import java.util.Collection;
 final class MemTermBuilder implements TermBuilder {
 
     /**
+     * The ray we're working with.
+     */
+    private final transient Ray ray;
+
+    /**
      * Index map.
      */
     private final transient IndexMap imap;
 
     /**
      * Public ctor.
+     * @param iray The ray, creator of this builder
      * @param map The index map
      */
-    public MemTermBuilder(final IndexMap map) {
+    public MemTermBuilder(final Ray iray, final IndexMap map) {
+        this.ray = iray;
         this.imap = map;
     }
 
@@ -73,7 +81,7 @@ final class MemTermBuilder implements TermBuilder {
         } else if (terms.isEmpty()) {
             agg = this.always();
         } else {
-            agg = new AndTerm(this.imap, terms);
+            agg = new AndTerm(this.ray, this.imap, terms);
         }
         return agg;
     }
@@ -91,7 +99,7 @@ final class MemTermBuilder implements TermBuilder {
         } else if (terms.isEmpty()) {
             agg = this.always();
         } else {
-            agg = new OrTerm(this.imap, terms);
+            agg = new OrTerm(this.ray, this.imap, terms);
         }
         return agg;
     }
@@ -105,7 +113,7 @@ final class MemTermBuilder implements TermBuilder {
      */
     @Override
     public Term not(final Term term) {
-        return new NotTerm(this.imap, term);
+        return new NotTerm(this.ray, this.imap, term);
     }
 
     /**
@@ -113,7 +121,7 @@ final class MemTermBuilder implements TermBuilder {
      */
     @Override
     public Term never() {
-        return new NeverTerm(this.imap);
+        return new NeverTerm(this.ray, this.imap);
     }
 
     /**
@@ -121,7 +129,7 @@ final class MemTermBuilder implements TermBuilder {
      */
     @Override
     public Term always() {
-        return new AlwaysTerm(this.imap);
+        return new AlwaysTerm(this.ray, this.imap);
     }
 
     /**
@@ -129,7 +137,7 @@ final class MemTermBuilder implements TermBuilder {
      */
     @Override
     public Term picker(final long number) {
-        return new PickerTerm(this.imap, number);
+        return new PickerTerm(this.ray, this.imap, number);
     }
 
 }

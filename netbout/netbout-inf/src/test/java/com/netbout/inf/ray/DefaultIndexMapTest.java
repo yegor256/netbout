@@ -27,6 +27,7 @@
 package com.netbout.inf.ray;
 
 import com.netbout.inf.MsgMocker;
+import com.netbout.inf.RayMocker;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Rule;
@@ -53,7 +54,10 @@ public final class DefaultIndexMapTest {
      */
     @Test
     public void findsAndReturnsIndex() throws Exception {
-        final IndexMap map = new DefaultIndexMap(this.temp.newFolder("foo"));
+        final IndexMap map = new DefaultIndexMap(
+            new RayMocker().mock(),
+            this.temp.newFolder("foo")
+        );
         final String attr = "attribute name";
         final long msg = MsgMocker.number();
         final String value = "some text \u0433!";
@@ -70,7 +74,10 @@ public final class DefaultIndexMapTest {
      */
     @Test
     public void convertsItselfToString() throws Exception {
-        final IndexMap map = new DefaultIndexMap(this.temp.newFolder("bar"));
+        final IndexMap map = new DefaultIndexMap(
+            new RayMocker().mock(),
+            this.temp.newFolder("bar")
+        );
         map.index("attr-1").add(1L, "some value");
         MatcherAssert.assertThat(
             map,

@@ -27,6 +27,7 @@
 package com.netbout.inf.ray;
 
 import com.netbout.inf.Lattice;
+import com.netbout.inf.Ray;
 import java.io.File;
 import java.util.Arrays;
 import java.util.Set;
@@ -43,6 +44,19 @@ import java.util.TreeSet;
  * @checkstyle ClassDataAbstractionCoupling (500 lines)
  */
 final class ShallowIndex implements FlushableIndex {
+
+    /**
+     * Ray we're using.
+     */
+    private final transient Ray ray;
+
+    /**
+     * Public ctor.
+     * @param iray The ray to use
+     */
+    public ShallowIndex(final Ray iray) {
+        this.ray = iray;
+    }
 
     /**
      * {@inheritDoc}
@@ -105,7 +119,9 @@ final class ShallowIndex implements FlushableIndex {
      */
     @Override
     public Lattice lattice(final String value) {
-        return new DefaultLattice(this.msgs(value));
+        final Lattice lattice = this.ray.lattice();
+        lattice.set(Long.valueOf(value), true, false);
+        return lattice;
     }
 
     /**
