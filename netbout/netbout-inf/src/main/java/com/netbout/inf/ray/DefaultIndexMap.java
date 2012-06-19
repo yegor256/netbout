@@ -110,7 +110,7 @@ final class DefaultIndexMap implements IndexMap {
         for (String name : snapshot.attrs()) {
             FlushableIndex idx;
             if (name.equals(VariableAtom.NUMBER.attribute())) {
-                idx = new ShallowIndex(this.ray);
+                idx = new ShallowIndex(this.ray, this.all);
             } else {
                 idx = new DefaultIndex(this.ray, snapshot.attr(name));
             }
@@ -139,7 +139,7 @@ final class DefaultIndexMap implements IndexMap {
         if (!this.map.containsKey(attr)) {
             FlushableIndex idx;
             if (attr.equals(VariableAtom.NUMBER.attribute())) {
-                idx = new ShallowIndex(this.ray);
+                idx = new ShallowIndex(this.ray, this.all);
             } else {
                 idx = new DefaultIndex(this.ray);
             }

@@ -26,10 +26,11 @@
  */
 package com.netbout.inf.ray;
 
+import com.jcabi.log.Logger;
 import com.netbout.inf.Lattice;
 import com.netbout.inf.Ray;
 import java.io.File;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
@@ -51,11 +52,23 @@ final class ShallowIndex implements FlushableIndex {
     private final transient Ray ray;
 
     /**
+     * Numbers to use.
+     */
+    private final transient SortedSet<Long> numbers;
+
+    /**
      * Public ctor.
      * @param iray The ray to use
+     * @param nums Numbers
      */
-    public ShallowIndex(final Ray iray) {
+    public ShallowIndex(final Ray iray, final SortedSet<Long> nums) {
         this.ray = iray;
+        this.numbers = nums;
+        Logger.debug(
+            ShallowIndex.class,
+            "#ShallowIndex(.., %d nums): instantiated",
+            nums.size()
+        );
     }
 
     /**
@@ -95,6 +108,11 @@ final class ShallowIndex implements FlushableIndex {
      */
     @Override
     public String first(final long msg) {
+        if (!this.numbers.contains(msg)) {
+            throw new IllegalArgumentException(
+                String.format("no message with number #%d", msg)
+            );
+        }
         return Long.toString(msg);
     }
 
@@ -103,7 +121,13 @@ final class ShallowIndex implements FlushableIndex {
      */
     @Override
     public SortedSet<Long> msgs(final String value) {
-        return new TreeSet<Long>(Arrays.asList(Long.valueOf(value)));
+        final Long msg = Long.valueOf(value);
+        final SortedSet<Long> msgs =
+            new TreeSet<Long>(Collections.reverseOrder());
+        if (this.numbers.contains(msg)) {
+            msgs.add(msg);
+        }
+        return Collections.unmodifiableSortedSet(msgs);
     }
 
     /**
