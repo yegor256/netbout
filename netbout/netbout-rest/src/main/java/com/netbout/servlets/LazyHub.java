@@ -130,7 +130,7 @@ final class LazyHub implements Hub {
                             "HUB is not ready yet, %[ms]s",
                             System.currentTimeMillis() - this.started
                         )
-                    )
+                    ).toString()
                 ).build()
             );
         }
