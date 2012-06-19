@@ -28,6 +28,7 @@ package com.netbout.inf.ray;
 
 import com.jcabi.log.Logger;
 import com.netbout.inf.Lattice;
+import com.netbout.inf.Ray;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -63,6 +64,11 @@ import org.apache.commons.lang.CharEncoding;
 final class DefaultIndex implements FlushableIndex {
 
     /**
+     * Ray we're using.
+     */
+    private final transient Ray ray;
+
+    /**
      * Main map.
      */
     private final transient ConcurrentMap<String, SortedSet<Long>> map;
@@ -70,7 +76,7 @@ final class DefaultIndex implements FlushableIndex {
     /**
      * Lattices.
      */
-    private final transient ConcurrentMap<String, DefaultLattice> lattices;
+    private final transient ConcurrentMap<String, Lattice> lattices;
 
     /**
      * Reverse map.
@@ -79,31 +85,34 @@ final class DefaultIndex implements FlushableIndex {
 
     /**
      * Public ctor.
+     * @param iray The ray to use
      */
-    public DefaultIndex() {
+    public DefaultIndex(final Ray iray) {
+        this.ray = iray;
         this.map = new ConcurrentHashMap<String, SortedSet<Long>>();
         this.rmap = new ConcurrentHashMap<Long, String>();
-        this.lattices = new ConcurrentHashMap<String, DefaultLattice>();
+        this.lattices = new ConcurrentHashMap<String, Lattice>();
     }
 
     /**
      * Public ctor.
+     * @param iray The ray to use
      * @param file File to read from
      * @throws IOException If some IO error
      */
-    public DefaultIndex(final File file) throws IOException {
+    public DefaultIndex(final Ray iray, final File file) throws IOException {
+        this.ray = iray;
         final InputStream stream = new FileInputStream(file);
         try {
             final long start = System.currentTimeMillis();
             this.map = DefaultIndex.restore(stream);
             this.rmap = DefaultIndex.reverse(this.map);
-            this.lattices = new ConcurrentHashMap<String, DefaultLattice>();
+            this.lattices = new ConcurrentHashMap<String, Lattice>();
             for (ConcurrentMap.Entry<String, SortedSet<Long>> entry
                 : this.map.entrySet()) {
-                this.lattices.put(
-                    entry.getKey(),
-                    new DefaultLattice(entry.getValue())
-                );
+                final Lattice lattice = this.ray.lattice();
+                lattice.fill(entry.getValue());
+                this.lattices.put(entry.getKey(), lattice);
             }
             Logger.debug(
                 DefaultIndex.class,
@@ -136,10 +145,11 @@ final class DefaultIndex implements FlushableIndex {
         this.validate(msg);
         this.numbers(value).add(msg);
         this.rmap.put(msg, value);
-        this.lattice(value).set(
+        final Lattice lattice = this.lattice(value);
+        lattice.set(
             msg,
             true,
-            DefaultLattice.emptyBit(this.map.get(value), msg)
+            lattice.emptyBit(this.map.get(value), msg)
         );
     }
 
@@ -151,10 +161,11 @@ final class DefaultIndex implements FlushableIndex {
         this.validate(msg);
         this.numbers(value).remove(msg);
         this.rmap.remove(msg);
-        this.lattice(value).set(
+        final Lattice lattice = this.lattice(value);
+        lattice.set(
             msg,
             false,
-            DefaultLattice.emptyBit(this.map.get(value), msg)
+            lattice.emptyBit(this.map.get(value), msg)
         );
     }
 
@@ -217,7 +228,7 @@ final class DefaultIndex implements FlushableIndex {
      */
     @Override
     public Lattice lattice(final String value) {
-        this.lattices.putIfAbsent(value, new DefaultLattice());
+        this.lattices.putIfAbsent(value, this.ray.lattice());
         return this.lattices.get(value);
     }
 

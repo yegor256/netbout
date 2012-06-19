@@ -127,10 +127,10 @@ final class LazyHub implements Hub {
                     new VelocityPage("com/netbout/servlets/wait.html.vm").set(
                         "message",
                         Logger.format(
-                            "HUB is not ready yet, %[ms]s",
+                            "HUB is not ready yet, started to load %[ms]s ago",
                             System.currentTimeMillis() - this.started
                         )
-                    )
+                    ).toString()
                 ).build()
             );
         }

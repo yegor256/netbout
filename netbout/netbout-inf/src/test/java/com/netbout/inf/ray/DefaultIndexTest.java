@@ -27,7 +27,9 @@
 package com.netbout.inf.ray;
 
 import com.jcabi.log.VerboseThreads;
+import com.netbout.inf.Lattice;
 import com.netbout.inf.MsgMocker;
+import com.netbout.inf.RayMocker;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.concurrent.Callable;
@@ -42,6 +44,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 import org.mockito.ArgumentMatcher;
+import org.mockito.Mockito;
 
 /**
  * Test case of {@link DefaultIndex}.
@@ -65,6 +68,7 @@ public final class DefaultIndexTest {
     @Test
     public void replacesValues() throws Exception {
         final Index index = new DefaultIndex(
+            new RayMocker().mock(),
             this.temp.newFile("file-1")
         );
         final long msg = MsgMocker.number();
@@ -89,6 +93,7 @@ public final class DefaultIndexTest {
     @Test
     public void ordersNumbersProperly() throws Exception {
         final Index index = new DefaultIndex(
+            new RayMocker().mock(),
             this.temp.newFile("file-2")
         );
         final long msg = MsgMocker.number();
@@ -115,6 +120,7 @@ public final class DefaultIndexTest {
     @SuppressWarnings({ "PMD.AvoidInstantiatingObjectsInLoops", "unchecked" })
     public void updatesInMultipleThreads() throws Exception {
         final Index index = new DefaultIndex(
+            new RayMocker().mock(),
             this.temp.newFile("file-3")
         );
         final long msg = MsgMocker.number();
@@ -176,7 +182,9 @@ public final class DefaultIndexTest {
      */
     @Test
     public void buildsLatticeProperly() throws Exception {
+        final Lattice lattice = Mockito.mock(Lattice.class);
         final Index index = new DefaultIndex(
+            new RayMocker().withLattice(lattice).mock(),
             this.temp.newFile("file-25")
         );
         final String value = "text-344-\u0433!";
@@ -184,10 +192,7 @@ public final class DefaultIndexTest {
         for (int msg = 1; msg < 10; ++msg) {
             index.add(msg, value);
         }
-        MatcherAssert.assertThat(
-            index.lattice(value),
-            Matchers.hasToString(Matchers.equalTo("{16384}"))
-        );
+        Mockito.verify(index.lattice(value)).set(1, true, false);
     }
 
 }

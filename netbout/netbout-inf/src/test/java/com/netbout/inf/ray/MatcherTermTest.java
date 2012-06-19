@@ -28,6 +28,7 @@ package com.netbout.inf.ray;
 
 import com.netbout.inf.Cursor;
 import com.netbout.inf.MsgMocker;
+import com.netbout.inf.RayMocker;
 import com.netbout.inf.Term;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
@@ -55,7 +56,10 @@ public final class MatcherTermTest {
      */
     @Test
     public void shiftsCursorToTheFirstValue() throws Exception {
-        final IndexMap map = new DefaultIndexMap(this.temp.newFolder("foo"));
+        final IndexMap map = new DefaultIndexMap(
+            new RayMocker().mock(),
+            this.temp.newFolder("foo")
+        );
         final String attr = "attribute name";
         final String value = "some text \u0433!";
         final long msg = MsgMocker.number();

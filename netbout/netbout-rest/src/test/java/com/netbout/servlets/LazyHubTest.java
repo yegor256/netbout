@@ -24,58 +24,36 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.inf.ray;
+package com.netbout.servlets;
 
-import com.netbout.inf.Cursor;
-import com.netbout.inf.MsgMocker;
-import com.netbout.inf.Ray;
-import com.netbout.inf.RayMocker;
-import com.netbout.inf.Term;
+import com.netbout.hub.Hub;
+import com.rexsl.test.XhtmlMatchers;
+import java.util.concurrent.atomic.AtomicReference;
 import org.hamcrest.MatcherAssert;
-import org.hamcrest.Matchers;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
 
 /**
- * Test case of {@link PickerTerm}.
+ * Test case for {@link LazyHub}.
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class PickerTermTest {
+public final class LazyHubTest {
 
     /**
-     * Temporary folder.
-     * @checkstyle VisibilityModifier (3 lines)
-     */
-    @Rule
-    public transient TemporaryFolder temp = new TemporaryFolder();
-
-    /**
-     * PickerTerm can pick one message by number.
+     * LazyHub can render waiting page.
      * @throws Exception If there is some problem inside
      */
     @Test
-    public void shiftsCursorToTheFirstValue() throws Exception {
-        final Ray ray = new RayMocker().mock();
-        final IndexMap map = new DefaultIndexMap(
-            ray,
-            this.temp.newFolder("foo")
-        );
-        final long msg = MsgMocker.number();
-        map.touch(msg + 1);
-        map.touch(msg);
-        map.touch(msg - 1);
-        final Term term = new PickerTerm(ray, map, msg);
-        final Cursor cursor = new MemCursor(Long.MAX_VALUE, map);
-        MatcherAssert.assertThat(
-            term.shift(cursor).msg().number(),
-            Matchers.equalTo(msg)
-        );
-        MatcherAssert.assertThat(
-            term.shift(term.shift(cursor)).end(),
-            Matchers.equalTo(true)
-        );
+    public void rendersWaitingPage() throws Exception {
+        final Hub hub = new LazyHub(new AtomicReference<Hub>());
+        try {
+            hub.make("test");
+        } catch (javax.ws.rs.WebApplicationException ex) {
+            MatcherAssert.assertThat(
+                ex.getResponse().getEntity(),
+                XhtmlMatchers.hasXPath("/xhtml:html/xhtml:body")
+            );
+        }
     }
 
 }

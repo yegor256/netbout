@@ -28,6 +28,7 @@ package com.netbout.inf.ray;
 
 import com.netbout.inf.Cursor;
 import com.netbout.inf.Lattice;
+import com.netbout.inf.Ray;
 import com.netbout.inf.Term;
 import java.util.Collection;
 import java.util.LinkedHashSet;
@@ -54,12 +55,23 @@ final class AndTerm implements Term {
     protected final transient Set<Term> terms = new LinkedHashSet<Term>();
 
     /**
+     * The ray we're working with.
+     */
+    private final transient Ray ray;
+
+    /**
      * Shifter for lattice.
      */
     private final transient Lattice.Shifter shifter = new Lattice.Shifter() {
         @Override
         public Cursor shift(final Cursor crsr, final long msg) {
-            return crsr.shift(new PickerTerm(AndTerm.this.imap, msg));
+            return crsr.shift(
+                new PickerTerm(
+                    AndTerm.this.ray,
+                    AndTerm.this.imap,
+                    msg
+                )
+            );
         }
     };
 
@@ -75,17 +87,20 @@ final class AndTerm implements Term {
 
     /**
      * Public ctor.
+     * @param iray The ray to work with
      * @param map The index map
      * @param args Arguments (terms)
      */
-    public AndTerm(final IndexMap map, final Collection<Term> args) {
+    public AndTerm(final Ray iray, final IndexMap map,
+        final Collection<Term> args) {
+        this.ray = iray;
         this.imap = map;
         this.terms.addAll(AndTerm.compress(args));
         if (this.terms.isEmpty()) {
-            this.terms.add(new AlwaysTerm(this.imap));
+            this.terms.add(new AlwaysTerm(this.ray, this.imap));
         }
         if (this.terms.size() > 1) {
-            this.terms.remove(new AlwaysTerm(this.imap));
+            this.terms.remove(new AlwaysTerm(this.ray, this.imap));
         }
         this.hash = this.toString().hashCode();
     }
@@ -126,7 +141,7 @@ final class AndTerm implements Term {
      */
     @Override
     public Lattice lattice() {
-        final Lattice lattice = new DefaultLattice();
+        final Lattice lattice = this.ray.lattice();
         lattice.always();
         lattice.and(this.terms);
         return lattice;

@@ -28,6 +28,7 @@ package com.netbout.inf.ray;
 
 import com.netbout.inf.Cursor;
 import com.netbout.inf.Lattice;
+import com.netbout.inf.Ray;
 import com.netbout.inf.Term;
 
 /**
@@ -42,15 +43,22 @@ import com.netbout.inf.Term;
 final class NeverTerm implements Term {
 
     /**
+     * The ray we're working with.
+     */
+    private final transient Ray ray;
+
+    /**
      * Index map.
      */
     private final transient IndexMap imap;
 
     /**
      * Public ctor.
+     * @param iray The ray to use
      * @param map The index map
      */
-    public NeverTerm(final IndexMap map) {
+    public NeverTerm(final Ray iray, final IndexMap map) {
+        this.ray = iray;
         this.imap = map;
     }
 
@@ -84,7 +92,7 @@ final class NeverTerm implements Term {
      */
     @Override
     public Lattice lattice() {
-        return new DefaultLattice();
+        return this.ray.lattice();
     }
 
     /**

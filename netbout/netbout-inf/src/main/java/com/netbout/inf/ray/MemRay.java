@@ -56,7 +56,7 @@ public final class MemRay implements Ray {
      * @throws IOException If some I/O problem
      */
     public MemRay(final File dir) throws IOException {
-        this.imap = new DefaultIndexMap(dir);
+        this.imap = new DefaultIndexMap(this, dir);
         Logger.debug(this, "#MemRay(%s): instantiated", dir);
     }
 
@@ -106,7 +106,7 @@ public final class MemRay implements Ray {
      */
     @Override
     public TermBuilder builder() {
-        return new MemTermBuilder(this.imap);
+        return new MemTermBuilder(this, this.imap);
     }
 
     /**

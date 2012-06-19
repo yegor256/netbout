@@ -27,6 +27,7 @@
 package com.netbout.inf;
 
 import java.util.Collection;
+import java.util.SortedSet;
 
 /**
  * Lattice of bits.
@@ -50,6 +51,13 @@ public interface Lattice {
          */
         Cursor shift(Cursor cursor, long msg);
     }
+
+    /**
+     * Fill lattice with these numbers (normally the lattice has to be empty
+     * before this operation).
+     * @param numbers The numbers to add
+     */
+    void fill(SortedSet<Long> numbers);
 
     /**
      * Create a copy of this object.
@@ -97,5 +105,19 @@ public interface Lattice {
      * @return The new cursor
      */
     Cursor correct(Cursor cursor, Lattice.Shifter shifter);
+
+    /**
+     * Do we have an empty bit for this message.
+     *
+     * <p>The method checks all message around the provided one inside the
+     * the provided set and returns TRUE only if nothing is found near by. The
+     * distance boundaries around the message are defined by the size of
+     * the window of this lattice.
+     *
+     * @param numbers The numbers to work with
+     * @param msg The message number
+     * @return TRUE if we have no messages around this one
+     */
+    boolean emptyBit(SortedSet<Long> numbers, long msg);
 
 }

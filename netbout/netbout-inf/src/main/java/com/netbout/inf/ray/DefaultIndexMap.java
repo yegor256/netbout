@@ -28,6 +28,7 @@ package com.netbout.inf.ray;
 
 import com.jcabi.log.Logger;
 import com.jcabi.log.VerboseThreads;
+import com.netbout.inf.Ray;
 import com.netbout.inf.atoms.VariableAtom;
 import java.io.BufferedReader;
 import java.io.File;
@@ -69,6 +70,11 @@ import org.apache.commons.lang.CharEncoding;
 final class DefaultIndexMap implements IndexMap {
 
     /**
+     * Ray we're using.
+     */
+    private final transient Ray ray;
+
+    /**
      * The map.
      */
     private final transient ConcurrentMap<String, FlushableIndex> map =
@@ -86,11 +92,13 @@ final class DefaultIndexMap implements IndexMap {
 
     /**
      * Public ctor.
+     * @param iray The ray we're working with
      * @param dir Directory where files are kept
      * @throws IOException If some IO error
      */
-    public DefaultIndexMap(final File dir) throws IOException {
+    public DefaultIndexMap(final Ray iray, final File dir) throws IOException {
         final long start = System.currentTimeMillis();
+        this.ray = iray;
         this.files = new Files(dir);
         final Snapshot snapshot = this.files.reader();
         final InputStream stream = new FileInputStream(snapshot.map());
@@ -102,9 +110,9 @@ final class DefaultIndexMap implements IndexMap {
         for (String name : snapshot.attrs()) {
             FlushableIndex idx;
             if (name.equals(VariableAtom.NUMBER.attribute())) {
-                idx = new NumbersIndex(snapshot.attr(name));
+                idx = new ShallowIndex(this.ray, this.all);
             } else {
-                idx = new DefaultIndex(snapshot.attr(name));
+                idx = new DefaultIndex(this.ray, snapshot.attr(name));
             }
             this.map.put(name, idx);
         }
@@ -129,7 +137,13 @@ final class DefaultIndexMap implements IndexMap {
             throw new IllegalArgumentException("attribute name is empty");
         }
         if (!this.map.containsKey(attr)) {
-            this.map.putIfAbsent(attr, new DefaultIndex());
+            FlushableIndex idx;
+            if (attr.equals(VariableAtom.NUMBER.attribute())) {
+                idx = new ShallowIndex(this.ray, this.all);
+            } else {
+                idx = new DefaultIndex(this.ray);
+            }
+            this.map.putIfAbsent(attr, idx);
         }
         return this.map.get(attr);
     }

@@ -24,58 +24,42 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.inf.ray;
+package com.netbout.inf;
 
-import com.netbout.inf.Cursor;
-import com.netbout.inf.MsgMocker;
-import com.netbout.inf.Ray;
-import com.netbout.inf.RayMocker;
-import com.netbout.inf.Term;
-import org.hamcrest.MatcherAssert;
-import org.hamcrest.Matchers;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
+import org.mockito.Mockito;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
 
 /**
- * Test case of {@link PickerTerm}.
+ * Mocker of {@link Lattice}.
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class PickerTermTest {
+public final class LatticeMocker {
 
     /**
-     * Temporary folder.
-     * @checkstyle VisibilityModifier (3 lines)
+     * The object.
      */
-    @Rule
-    public transient TemporaryFolder temp = new TemporaryFolder();
+    private final transient Lattice lattice = Mockito.mock(Lattice.class);
 
     /**
-     * PickerTerm can pick one message by number.
-     * @throws Exception If there is some problem inside
+     * Build it.
+     * @return The lattice
      */
-    @Test
-    public void shiftsCursorToTheFirstValue() throws Exception {
-        final Ray ray = new RayMocker().mock();
-        final IndexMap map = new DefaultIndexMap(
-            ray,
-            this.temp.newFolder("foo")
-        );
-        final long msg = MsgMocker.number();
-        map.touch(msg + 1);
-        map.touch(msg);
-        map.touch(msg - 1);
-        final Term term = new PickerTerm(ray, map, msg);
-        final Cursor cursor = new MemCursor(Long.MAX_VALUE, map);
-        MatcherAssert.assertThat(
-            term.shift(cursor).msg().number(),
-            Matchers.equalTo(msg)
-        );
-        MatcherAssert.assertThat(
-            term.shift(term.shift(cursor)).end(),
-            Matchers.equalTo(true)
-        );
+    public Lattice mock() {
+        Mockito.doAnswer(
+            new Answer() {
+                public Object answer(final InvocationOnMock invocation) {
+                    return invocation.getArguments()[0];
+                }
+            }
+        )
+            .when(this.lattice)
+            .correct(
+                Mockito.any(Cursor.class),
+                Mockito.any(Lattice.Shifter.class)
+            );
+        return this.lattice;
     }
 
 }
