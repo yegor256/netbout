@@ -102,7 +102,7 @@ final class DefaultIndexMap implements IndexMap {
         for (String name : snapshot.attrs()) {
             FlushableIndex idx;
             if (name.equals(VariableAtom.NUMBER.attribute())) {
-                idx = new NumbersIndex(snapshot.attr(name));
+                idx = new ShallowIndex();
             } else {
                 idx = new DefaultIndex(snapshot.attr(name));
             }
@@ -129,7 +129,13 @@ final class DefaultIndexMap implements IndexMap {
             throw new IllegalArgumentException("attribute name is empty");
         }
         if (!this.map.containsKey(attr)) {
-            this.map.putIfAbsent(attr, new DefaultIndex());
+            FlushableIndex idx;
+            if (attr.equals(VariableAtom.NUMBER.attribute())) {
+                idx = new ShallowIndex();
+            } else {
+                idx = new DefaultIndex();
+            }
+            this.map.putIfAbsent(attr, idx);
         }
         return this.map.get(attr);
     }

@@ -26,29 +26,15 @@
  */
 package com.netbout.inf.ray;
 
-import com.jcabi.log.Logger;
 import com.netbout.inf.Lattice;
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
-import java.util.concurrent.ConcurrentSkipListSet;
-import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang.CharEncoding;
 
 /**
- * One-to-one {@link Index}.
+ * Index with no data inside.
  *
  * <p>This class is thread-safe.
  *
@@ -56,54 +42,14 @@ import org.apache.commons.lang.CharEncoding;
  * @version $Id$
  * @checkstyle ClassDataAbstractionCoupling (500 lines)
  */
-final class NumbersIndex implements FlushableIndex {
-
-    /**
-     * Main map.
-     */
-    private final transient SortedSet<Long> numbers =
-        new ConcurrentSkipListSet<Long>(Collections.reverseOrder());
-
-    /**
-     * Public ctor.
-     * @param file File to read from
-     * @throws IOException If some IO error
-     */
-    public NumbersIndex(final File file) throws IOException {
-        final InputStream stream = new FileInputStream(file);
-        try {
-            final long start = System.currentTimeMillis();
-            final BufferedReader reader = new BufferedReader(
-                new InputStreamReader(stream, CharEncoding.UTF_8)
-            );
-            while (true) {
-                final String line = reader.readLine();
-                if (line == null || line.isEmpty()) {
-                    break;
-                }
-                if (line.charAt(0) != ' ') {
-                    this.numbers.add(Long.valueOf(line));
-                }
-            }
-            Logger.debug(
-                DefaultIndex.class,
-                "#NumbersIndex(%s): restored %d nums from %d bytes in %[ms]s",
-                file.getName(),
-                this.numbers.size(),
-                file.length(),
-                System.currentTimeMillis() - start
-            );
-        } finally {
-            IOUtils.closeQuietly(stream);
-        }
-    }
+final class ShallowIndex implements FlushableIndex {
 
     /**
      * {@inheritDoc}
      */
     @Override
     public void replace(final long msg, final String value) {
-        throw new UnsupportedOperationException("#replace()");
+        // ignore
     }
 
     /**
@@ -111,7 +57,7 @@ final class NumbersIndex implements FlushableIndex {
      */
     @Override
     public void add(final long msg, final String value) {
-        this.numbers.add(msg);
+        // ignore
     }
 
     /**
@@ -159,38 +105,15 @@ final class NumbersIndex implements FlushableIndex {
      */
     @Override
     public Lattice lattice(final String value) {
-        throw new UnsupportedOperationException("#lattice()");
+        return new DefaultLattice(this.msgs(value));
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public void flush(final File file) throws IOException {
-        final long start = System.currentTimeMillis();
-        final OutputStream stream = new FileOutputStream(file);
-        try {
-            final PrintWriter writer = new PrintWriter(
-                new OutputStreamWriter(stream, CharEncoding.UTF_8)
-            );
-            for (Long num : this.numbers) {
-                writer.println(num);
-                writer.print("\n ");
-                writer.println(num.toString());
-                writer.print('\n');
-            }
-            writer.flush();
-        } finally {
-            IOUtils.closeQuietly(stream);
-        }
-        Logger.debug(
-            this,
-            "#flush(): saved %d numbers to %s (%d bytes) in %[ms]s",
-            this.numbers.size(),
-            file.getName(),
-            file.length(),
-            System.currentTimeMillis() - start
-        );
+    public void flush(final File file) {
+        // nothing to do here
     }
 
 }
