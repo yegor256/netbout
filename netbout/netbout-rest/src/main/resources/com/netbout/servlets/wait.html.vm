@@ -16,5 +16,8 @@
         <p>
             Please wait, we're loading data...
         </p>
+        <p>
+            ${message}
+        </p>
     </body>
 </html>
