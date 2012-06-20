@@ -57,6 +57,11 @@ final class DefaultLattice implements Lattice {
     private static final int SIZE = 64;
 
     /**
+     * Full set.
+     */
+    private static final BitSet FULLSET = DefaultLattice.full();
+
+    /**
      * Synchronization mutex.
      */
     private final transient Integer mutex = new Integer(0);
@@ -69,13 +74,13 @@ final class DefaultLattice implements Lattice {
     /**
      * The reverse bitset.
      */
-    private transient BitSet reverse = new BitSet(DefaultLattice.BITS);
+    private transient BitSet reverse;
 
     /**
      * Create NEVER lattice.
      */
     public DefaultLattice() {
-        this.reverse.set(0, DefaultLattice.BITS, true);
+        this.reverse = BitSet.class.cast(DefaultLattice.FULLSET.clone());
     }
 
     /**
@@ -277,6 +282,16 @@ final class DefaultLattice implements Lattice {
      */
     private static long msg(final int bit) {
         return (DefaultLattice.BITS - bit + 1) * DefaultLattice.SIZE - 1;
+    }
+
+    /**
+     * Create a full set of bits.
+     * @return The set
+     */
+    private static BitSet full() {
+        final BitSet bset = new BitSet(DefaultLattice.BITS);
+        bset.set(0, DefaultLattice.BITS, true);
+        return bset;
     }
 
 }
