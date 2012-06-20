@@ -3,7 +3,7 @@
 <scenario>
     <scene>
         <see notice="com.netbout.inf.notices.MessagePostedNotice">
-            <message.number>777</message.number>
+            <message.number>63</message.number>
             <message.text>How are you doing, dude?</message.text>
             <message.author>urn:test:Somebody</message.author>
             <bout.participants>urn:test:Somebody</bout.participants>
@@ -20,44 +20,44 @@
                     (limit 1)
                 )
             </predicate>
-            <messages>777</messages>
+            <messages>63</messages>
         </query>
     </scene>
     <scene>
         <see notice="com.netbout.inf.notices.MessagePostedNotice">
-            <message.number>6767</message.number>
+            <message.number>257</message.number>
             <message.text>First message</message.text>
             <bout.participants>urn:test:Somebody</bout.participants>
         </see>
         <see notice="com.netbout.inf.notices.MessagePostedNotice">
-            <message.number>6565</message.number>
+            <message.number>255</message.number>
             <message.text>Second message</message.text>
             <bout.participants>urn:test:Somebody</bout.participants>
         </see>
         <query>
             <predicate>(and (or (matches 'first') (matches 'second')) (pos 1))</predicate>
-            <messages>6565</messages>
+            <messages>255</messages>
         </query>
     </scene>
     <scene>
         <see notice="com.netbout.inf.notices.MessagePostedNotice">
-            <bout.number>5655</bout.number>
+            <bout.number>1023</bout.number>
             <bout.participants>urn:test:Somebody</bout.participants>
         </see>
         <see notice="com.netbout.inf.notices.MessagePostedNotice">
-            <bout.number>5657</bout.number>
+            <bout.number>1022</bout.number>
             <bout.participants>urn:test:Somebody</bout.participants>
         </see>
         <see notice="com.netbout.inf.notices.MessagePostedNotice">
-            <message.number>123</message.number>
+            <message.number>65</message.number>
             <message.text>How are you doing, dude?</message.text>
             <message.author>urn:test:Somebody</message.author>
             <bout.number>5656</bout.number>
             <bout.participants>urn:test:Somebody</bout.participants>
         </see>
         <query>
-            <predicate>(and (equal $bout.number 5656) (equal $number 123) (pos 0))</predicate>
-            <messages>123</messages>
+            <predicate>(and (equal $bout.number 5656) (equal $number 65) (pos 0))</predicate>
+            <messages>65</messages>
         </query>
     </scene>
     <scene>

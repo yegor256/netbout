@@ -65,6 +65,9 @@ final class AndTerm implements Term {
     private final transient Lattice.Shifter shifter = new Lattice.Shifter() {
         @Override
         public Cursor shift(final Cursor crsr, final long msg) {
+            if (msg >= crsr.msg().number()) {
+                throw new IllegalArgumentException("shift back is prohibited");
+            }
             return crsr.shift(
                 new PickerTerm(
                     AndTerm.this.ray,
@@ -201,14 +204,27 @@ final class AndTerm implements Term {
             match = true;
             final Cursor expected = slider;
             for (Term term : this.terms) {
-                slider = this.move(
-                    term,
-                    this.above(lattice.correct(slider, this.shifter)),
-                    cache
-                );
+                final Cursor above =
+                    this.above(lattice.correct(slider, this.shifter));
+                slider = this.move(term, above, cache);
                 if (!expected.equals(slider)) {
                     match = false;
                     break;
+                }
+                if (slider.compareTo(above) == 0) {
+                    throw new IllegalStateException(
+                        String.format("term %s didn't shift %s", term, above)
+                    );
+                }
+                if (slider.compareTo(above) > 0) {
+                    throw new IllegalStateException(
+                        String.format(
+                            "term %s shifted %s up to %s",
+                            term,
+                            above,
+                            cursor
+                        )
+                    );
                 }
             }
         } while (!match && !slider.end());
