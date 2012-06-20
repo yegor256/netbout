@@ -105,12 +105,12 @@
     </scene>
     <scene>
         <see notice="com.netbout.inf.notices.MessagePostedNotice">
-            <message.number>991</message.number>
+            <message.number>65536</message.number>
             <bout.participants>urn:test:dude</bout.participants>
             <bout.number>550</bout.number>
         </see>
         <see notice="com.netbout.inf.notices.MessagePostedNotice">
-            <message.number>992</message.number>
+            <message.number>1</message.number>
             <bout.participants>urn:test:dude, urn:test:jeffrey</bout.participants>
             <bout.number>551</bout.number>
         </see>
@@ -132,7 +132,7 @@
                     (unique $bout.number)
                 )
             </predicate>
-            <messages>992, 991</messages>
+            <messages>65535, 1</messages>
         </query>
     </scene>
     <scene>
