@@ -62,45 +62,45 @@
     </scene>
     <scene>
         <see notice="com.netbout.inf.notices.MessagePostedNotice">
-            <message.number>771</message.number>
+            <message.number>257</message.number>
             <bout.participants>urn:test:Somebody</bout.participants>
             <bout.number>8881</bout.number>
         </see>
         <see notice="com.netbout.inf.notices.MessagePostedNotice">
-            <message.number>772</message.number>
+            <message.number>256</message.number>
             <bout.participants>urn:test:Somebody</bout.participants>
             <bout.number>8881</bout.number>
         </see>
         <see notice="com.netbout.inf.notices.MessagePostedNotice">
-            <message.number>773</message.number>
+            <message.number>255</message.number>
             <bout.participants>urn:test:Somebody</bout.participants>
             <bout.number>8881</bout.number>
         </see>
         <query>
             <predicate>(and (talks-with 'urn:test:Somebody') (limit 2) (unique $bout.number))</predicate>
-            <messages>773</messages>
+            <messages>257</messages>
         </query>
     </scene>
     <scene>
         <see notice="com.netbout.inf.notices.MessagePostedNotice">
-            <message.number>9991</message.number>
+            <message.number>1025</message.number>
             <bout.participants>urn:test:william</bout.participants>
         </see>
         <see notice="com.netbout.inf.notices.MessagePostedNotice">
-            <message.number>9992</message.number>
+            <message.number>1024</message.number>
             <bout.participants>urn:test:william</bout.participants>
         </see>
         <see notice="com.netbout.inf.notices.MessagePostedNotice">
-            <message.number>9993</message.number>
+            <message.number>63</message.number>
             <bout.participants>urn:test:william</bout.participants>
         </see>
         <see notice="com.netbout.inf.notices.MessagePostedNotice">
-            <message.number>9994</message.number>
+            <message.number>62</message.number>
             <bout.participants>urn:test:william</bout.participants>
         </see>
         <query>
             <predicate>(and (talks-with 'urn:test:william') (from 2) (limit 1))</predicate>
-            <messages>9992</messages>
+            <messages>63</messages>
         </query>
     </scene>
     <scene>
