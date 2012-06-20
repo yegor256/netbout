@@ -41,6 +41,11 @@ import java.util.NoSuchElementException;
 final class LazyMessages implements Iterable<Long> {
 
     /**
+     * Time out interval in milliseconds.
+     */
+    private static final long TIMEOUT = 1000;
+
+    /**
      * The ray.
      */
     private final transient Ray ray;
@@ -100,7 +105,8 @@ final class LazyMessages implements Iterable<Long> {
                 if (!this.shifted) {
                     Cursor next;
                     // @checkstyle MagicNumber (1 line)
-                    if (System.currentTimeMillis() - this.start > 10000) {
+                    if (System.currentTimeMillis() - this.start
+                        > LazyMessages.TIMEOUT) {
                         next = this.cursor.shift(
                             LazyMessages.this.ray.builder().never()
                         );
@@ -125,6 +131,15 @@ final class LazyMessages implements Iterable<Long> {
                     }
                     this.cursor = next;
                     this.shifted = true;
+                }
+                if (System.currentTimeMillis() - this.start
+                    > LazyMessages.TIMEOUT) {
+                    Logger.warn(
+                        this,
+                        "#hasNext(): slow iterator at '%[text]s', over %[ms]s",
+                        LazyMessages.this.term,
+                        System.currentTimeMillis() - this.start
+                    );
                 }
                 return !this.cursor.end();
             }
