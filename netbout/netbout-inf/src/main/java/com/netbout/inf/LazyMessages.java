@@ -98,9 +98,10 @@ final class LazyMessages implements Iterable<Long> {
         public boolean hasNext() {
             synchronized (this.start) {
                 if (!this.shifted) {
+                    Cursor next;
                     // @checkstyle MagicNumber (1 line)
                     if (System.currentTimeMillis() - this.start > 10000) {
-                        this.cursor = this.cursor.shift(
+                        next = this.cursor.shift(
                             LazyMessages.this.ray.builder().never()
                         );
                         Logger.warn(
@@ -111,8 +112,18 @@ final class LazyMessages implements Iterable<Long> {
                             System.currentTimeMillis() - this.start
                         );
                     } else {
-                        this.cursor = this.cursor.shift(LazyMessages.this.term);
+                        next = this.cursor.shift(LazyMessages.this.term);
                     }
+                    if (next.compareTo(this.cursor) >= 0) {
+                        throw new IllegalStateException(
+                            String.format(
+                                "%s shifted to %s, wrong way",
+                                this.cursor,
+                                next
+                            )
+                        );
+                    }
+                    this.cursor = next;
                     this.shifted = true;
                 }
                 return !this.cursor.end();
