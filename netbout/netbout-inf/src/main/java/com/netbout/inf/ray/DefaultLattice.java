@@ -74,14 +74,8 @@ final class DefaultLattice implements Lattice {
     /**
      * The reverse bitset.
      */
-    private transient BitSet reverse;
-
-    /**
-     * Create NEVER lattice.
-     */
-    public DefaultLattice() {
-        this.reverse = BitSet.class.cast(DefaultLattice.FULLSET.clone());
-    }
+    private transient BitSet reverse =
+        BitSet.class.cast(DefaultLattice.FULLSET.clone());
 
     /**
      * {@inheritDoc}
