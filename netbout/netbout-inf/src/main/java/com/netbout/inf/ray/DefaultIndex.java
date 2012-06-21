@@ -228,7 +228,9 @@ final class DefaultIndex implements FlushableIndex {
      */
     @Override
     public Lattice lattice(final String value) {
-        this.lattices.putIfAbsent(value, this.ray.lattice());
+        if (!this.lattices.containsKey(value)) {
+            this.lattices.putIfAbsent(value, this.ray.lattice());
+        }
         return this.lattices.get(value);
     }
 
