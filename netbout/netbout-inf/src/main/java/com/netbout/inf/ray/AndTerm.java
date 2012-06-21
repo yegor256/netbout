@@ -156,7 +156,7 @@ final class AndTerm implements Term {
     @Override
     public Cursor shift(final Cursor cursor) {
         final Lattice lattice = this.lattice();
-        Cursor slider = cursor;
+        Cursor slider = lattice.correct(cursor, this.shifter);
         if (!slider.end()) {
             final ConcurrentMap<Term, Cursor> cache =
                 new ConcurrentHashMap<Term, Cursor>();
@@ -166,7 +166,7 @@ final class AndTerm implements Term {
                 cache
             );
             if (!slider.end()) {
-                slider = this.slide(slider, cache, lattice);
+                slider = this.slide(slider, cache);
             }
         }
         return slider;
@@ -193,19 +193,17 @@ final class AndTerm implements Term {
      * Slide them all down to the first match.
      * @param cursor First expected point to reach
      * @param cache Cached positions of every term
-     * @param lattice The lattice to use for corrections
      * @return Matched position (or END)
      */
     private Cursor slide(final Cursor cursor,
-        final ConcurrentMap<Term, Cursor> cache, final Lattice lattice) {
+        final ConcurrentMap<Term, Cursor> cache) {
         Cursor slider = cursor;
         boolean match;
         do {
             match = true;
             final Cursor expected = slider;
             for (Term term : this.terms) {
-                final Cursor above =
-                    this.above(lattice.correct(slider, this.shifter));
+                final Cursor above = this.above(slider);
                 slider = this.move(term, above, cache);
                 if (!expected.equals(slider)) {
                     match = false;
