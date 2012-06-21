@@ -45,9 +45,9 @@
 
     <!-- top menu -->
     <About>Про нас</About>
-    <Start>Начати</Start>
-    <Start.later>Начати (потім)</Start.later>
-    <start.new.bout>начати нову бесіду</start.new.bout>
+    <Start>Почати</Start>
+    <Start.later>Почати (потім)</Start.later>
+    <start.new.bout>почати нову бесіду</start.new.bout>
     <back.to.inbox>повернутись до бесід які були останіми</back.to.inbox>
     <Logout>Вийти</Logout>
     <leave.right.now>вийти із системи</leave.right.now>
