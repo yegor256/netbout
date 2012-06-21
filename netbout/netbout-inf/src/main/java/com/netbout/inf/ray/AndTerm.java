@@ -156,7 +156,7 @@ final class AndTerm implements Term {
     @Override
     public Cursor shift(final Cursor cursor) {
         final Lattice lattice = this.lattice();
-        Cursor slider = lattice.correct(cursor, this.shifter);
+        Cursor slider = cursor;
         if (!slider.end()) {
             final ConcurrentMap<Term, Cursor> cache =
                 new ConcurrentHashMap<Term, Cursor>();
