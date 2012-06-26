@@ -62,9 +62,9 @@ public final class PickerTermTest {
             this.temp.newFolder("foo")
         );
         final long msg = MsgMocker.number();
-        // map.touch(msg + 1);
-        // map.touch(msg);
-        // map.touch(msg - 1);
+        map.touch(msg + 1);
+        map.touch(msg);
+        map.touch(msg - 1);
         final Term term = new PickerTerm(map, msg);
         final Cursor cursor = new MemCursor(Long.MAX_VALUE, map);
         MatcherAssert.assertThat(

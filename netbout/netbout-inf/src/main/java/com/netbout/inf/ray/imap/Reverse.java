@@ -26,59 +26,53 @@
  */
 package com.netbout.inf.ray.imap;
 
-import com.netbout.inf.Attribute;
-import java.io.Closeable;
+import com.netbout.inf.Lattice;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 
 /**
- * Directory with files.
+ * Map of values and message numbers.
  *
- * <p>Implementation must be thread-safe.
+ * <p>Implementation must be mutable and thread-safe.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-interface Directory extends Closeable {
+interface Reverse {
 
     /**
-     * Save numbers for the given attribute.
-     * @param attr The attribute
-     * @param value The value to set them to
-     * @param nums The numbers to save from
-     * @throws IOException If some I/O problem inside
+     * Get number by value (throws runtime exception if value is not found).
+     * @param value The value
+     * @return The number of message
      */
-    void save(Attribute attr, String value, Numbers nums) throws IOException;
+    String get(long msg);
 
     /**
-     * Load numbers for the given attribute.
-     * @param attr The attribute
-     * @param value The value to set them to
-     * @param nums The numbers to load into
-     * @throws IOException If some I/O problem inside
+     * Put value and number.
+     * @param number The number to add
+     * @param value The value
      */
-    void load(Attribute attr, String value, Numbers nums) throws IOException;
+    void put(long number, String value);
 
     /**
-     * Save reverse for the given attribute.
-     * @param attr The attribute
-     * @param reverse The reverse to save from
-     * @throws IOException If some I/O problem inside
+     * Remove this message.
+     * @param number The message to delete
      */
-    void save(Attribute attr, Reverse reverse) throws IOException;
+    void remove(long number);
 
     /**
-     * Load reverse for the given attribute.
-     * @param attr The attribute
-     * @param reverse The reverse to load to
+     * Save them all to the output stream.
+     * @param stream The stream to save to
      * @throws IOException If some I/O problem inside
      */
-    void load(Attribute attr, Reverse reverse) throws IOException;
+    void save(OutputStream stream) throws IOException;
 
     /**
-     * Baseline existing version (if we loose power right after this operation
-     * this version will be loaded after reboot).
+     * Load from the input stream and add here.
+     * @param stream The stream to load from
      * @throws IOException If some I/O problem inside
      */
-    void baseline() throws IOException;
+    void load(InputStream stream) throws IOException;
 
 }

@@ -50,6 +50,12 @@ public interface IndexMap extends Closeable {
     Index index(Attribute attribute) throws IOException;
 
     /**
+     * Make sure this message exists.
+     * @param msg Number of the message
+     */
+    void touch(long msg);
+
+    /**
      * Flush it to disc.
      * @throws IOException If IO problem insde
      */

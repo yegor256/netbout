@@ -26,59 +26,72 @@
  */
 package com.netbout.inf.ray.imap;
 
-import com.netbout.inf.Attribute;
-import java.io.Closeable;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 /**
- * Directory with files.
+ * Simple implementation of {@link Reverse}.
  *
- * <p>Implementation must be thread-safe.
+ * <p>Implementation must be mutable and thread-safe.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-interface Directory extends Closeable {
+final class SimpleReverse implements Reverse {
 
     /**
-     * Save numbers for the given attribute.
-     * @param attr The attribute
-     * @param value The value to set them to
-     * @param nums The numbers to save from
-     * @throws IOException If some I/O problem inside
+     * Map of values and message numbers.
      */
-    void save(Attribute attr, String value, Numbers nums) throws IOException;
+    private final transient ConcurrentMap<Long, String> map =
+        new ConcurrentHashMap<Long, String>();
 
     /**
-     * Load numbers for the given attribute.
-     * @param attr The attribute
-     * @param value The value to set them to
-     * @param nums The numbers to load into
-     * @throws IOException If some I/O problem inside
+     * {@inheritDoc}
      */
-    void load(Attribute attr, String value, Numbers nums) throws IOException;
+    @Override
+    public String get(final long msg) {
+        final String value = this.map.get(msg);
+        if (value == null) {
+            throw new IllegalArgumentException(
+                String.format("value not found for msg #%d", msg)
+            );
+        }
+        return value;
+    }
 
     /**
-     * Save reverse for the given attribute.
-     * @param attr The attribute
-     * @param reverse The reverse to save from
-     * @throws IOException If some I/O problem inside
+     * {@inheritDoc}
      */
-    void save(Attribute attr, Reverse reverse) throws IOException;
+    @Override
+    public void put(final long number, final String value) {
+        this.map.put(number, value);
+    }
 
     /**
-     * Load reverse for the given attribute.
-     * @param attr The attribute
-     * @param reverse The reverse to load to
-     * @throws IOException If some I/O problem inside
+     * {@inheritDoc}
      */
-    void load(Attribute attr, Reverse reverse) throws IOException;
+    @Override
+    public void remove(final long msg) {
+        this.map.remove(msg);
+    }
 
     /**
-     * Baseline existing version (if we loose power right after this operation
-     * this version will be loaded after reboot).
-     * @throws IOException If some I/O problem inside
+     * {@inheritDoc}
      */
-    void baseline() throws IOException;
+    @Override
+    public void save(final OutputStream stream) throws IOException {
+        // todo...
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void load(final InputStream stream) throws IOException {
+        // todo...
+    }
 
 }

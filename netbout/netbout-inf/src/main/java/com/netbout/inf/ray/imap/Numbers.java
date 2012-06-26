@@ -39,7 +39,7 @@ import java.io.OutputStream;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public interface Numbers {
+interface Numbers {
 
     /**
      * Get lattice for this collection of numbers.

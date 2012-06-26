@@ -124,6 +124,18 @@ public final class DefaultIndexMap implements IndexMap {
      * {@inheritDoc}
      */
     @Override
+    public void touch(final long msg) {
+        try {
+            this.index(VariableAtom.NUMBER.attribute()).add(msg, "");
+        } catch (java.io.IOException ex) {
+            throw new IllegalStateException(ex);
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public void flush() throws IOException {
         final long start = System.currentTimeMillis();
         final ExecutorService service = Executors.newFixedThreadPool(

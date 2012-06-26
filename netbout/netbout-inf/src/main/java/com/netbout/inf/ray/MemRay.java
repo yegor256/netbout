@@ -100,12 +100,7 @@ public final class MemRay implements Ray {
      */
     @Override
     public Msg msg(final long number) {
-        try {
-            this.imap.index(VariableAtom.NUMBER.attribute())
-                .add(number, Long.toString(number));
-        } catch (java.io.IOException ex) {
-            throw new IllegalStateException(ex);
-        }
+        this.imap.touch(number);
         return this.cursor().shift(this.builder().picker(number)).msg();
     }
 

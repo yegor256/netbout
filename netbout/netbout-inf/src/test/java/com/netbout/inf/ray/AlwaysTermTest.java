@@ -62,7 +62,7 @@ public final class AlwaysTermTest {
             this.temp.newFolder("foo")
         );
         final long msg = MsgMocker.number();
-        // map.touch(msg);
+        map.touch(msg);
         final Term term = new AlwaysTerm(map);
         final Cursor cursor = new MemCursor(Long.MAX_VALUE, map);
         MatcherAssert.assertThat(

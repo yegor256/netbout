@@ -84,6 +84,7 @@ final class NumbersIndex implements FlushableIndex {
      */
     @Override
     public void replace(final long msg, final String value) {
+        assert value.isEmpty();
         this.numbers.add(msg);
     }
 
@@ -92,6 +93,7 @@ final class NumbersIndex implements FlushableIndex {
      */
     @Override
     public void add(final long msg, final String value) {
+        assert value.isEmpty();
         this.numbers.add(msg);
     }
 
@@ -129,6 +131,7 @@ final class NumbersIndex implements FlushableIndex {
      */
     @Override
     public Lattice lattice(final String value) {
+        assert value.isEmpty();
         return this.numbers.lattice();
     }
 
@@ -137,6 +140,7 @@ final class NumbersIndex implements FlushableIndex {
      */
     @Override
     public long next(final String value, final long msg) {
+        assert value.isEmpty();
         return this.numbers.next(msg);
     }
 

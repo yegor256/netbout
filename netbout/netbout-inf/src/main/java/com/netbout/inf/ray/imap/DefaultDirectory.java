@@ -71,6 +71,24 @@ final class DefaultDirectory implements Directory {
      * {@inheritDoc}
      */
     @Override
+    public void save(final Attribute attr,
+        final Reverse reverse) throws IOException {
+        // todo
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void load(final Attribute attr,
+        final Reverse reverse) throws IOException {
+        // todo
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public void baseline() throws IOException {
         // todo
     }

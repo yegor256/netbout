@@ -60,12 +60,27 @@ import org.apache.commons.lang.CharEncoding;
  * @version $Id$
  * @checkstyle ClassDataAbstractionCoupling (500 lines)
  */
-class ReversiveIndex extends BaseIndex {
+class ReversiveIndex implements FlushableIndex {
 
     /**
-     * Reverse index.
+     * The attribute.
      */
-    private final transient FlushableIndex reverse;
+    private final transient Attribute attribute;
+
+    /**
+     * Straight index.
+     */
+    private final transient FlushableIndex straight;
+
+    /**
+     * Reverse.
+     */
+    private final transient Reverse reverse;
+
+    /**
+     * Directory to work with.
+     */
+    private final transient Directory directory;
 
     /**
      * Public ctor.
@@ -75,11 +90,11 @@ class ReversiveIndex extends BaseIndex {
      */
     public ReversiveIndex(final Attribute attr,
         final Directory dir) throws IOException {
-        super(attr, dir);
-        this.reverse = new BaseIndex(
-            new Attribute(String.format("%s-reverse", attr)),
-            dir
-        );
+        this.attribute = attr;
+        this.directory = dir;
+        this.straight = new BaseIndex(this.attribute, this.directory);
+        this.reverse = new SimpleReverse();
+        this.directory.load(this.attribute, this.reverse);
     }
 
     /**
@@ -87,7 +102,8 @@ class ReversiveIndex extends BaseIndex {
      */
     @Override
     public void replace(final long msg, final String value) {
-        super.replace(msg, value);
+        this.straight.replace(msg, value);
+        this.reverse.put(msg, value);
     }
 
     /**
@@ -95,7 +111,8 @@ class ReversiveIndex extends BaseIndex {
      */
     @Override
     public void add(final long msg, final String value) {
-        super.add(msg, value);
+        this.straight.add(msg, value);
+        this.reverse.put(msg, value);
     }
 
     /**
@@ -103,7 +120,8 @@ class ReversiveIndex extends BaseIndex {
      */
     @Override
     public void delete(final long msg, final String value) {
-        super.delete(msg, value);
+        this.straight.delete(msg, value);
+        this.reverse.remove(msg);
     }
 
     /**
@@ -111,7 +129,8 @@ class ReversiveIndex extends BaseIndex {
      */
     @Override
     public void clean(final long msg) {
-        super.clean(msg);
+        this.straight.clean(msg);
+        this.reverse.remove(msg);
     }
 
     /**
@@ -119,7 +138,7 @@ class ReversiveIndex extends BaseIndex {
      */
     @Override
     public Lattice lattice(final String value) {
-        return super.lattice(value);
+        return this.straight.lattice(value);
     }
 
     /**
@@ -127,7 +146,15 @@ class ReversiveIndex extends BaseIndex {
      */
     @Override
     public long next(final String value, final long msg) {
-        return super.next(value, msg);
+        return this.straight.next(value, msg);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String attr(final long msg) {
+        return this.reverse.get(msg);
     }
 
     /**
@@ -135,8 +162,8 @@ class ReversiveIndex extends BaseIndex {
      */
     @Override
     public void flush() throws IOException {
-        super.flush();
-        this.reverse.flush();
+        this.straight.flush();
+        this.directory.save(this.attribute, reverse);
     }
 
 }
