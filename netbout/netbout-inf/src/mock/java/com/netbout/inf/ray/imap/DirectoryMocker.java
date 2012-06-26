@@ -24,7 +24,7 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.inf.ray;
+package com.netbout.inf.ray.imap;
 
 import com.jcabi.log.Logger;
 import com.netbout.inf.atoms.VariableAtom;
@@ -39,11 +39,11 @@ import java.util.List;
 import java.util.Random;
 
 /**
- * Mocker of {@link Snapshot}.
+ * Mocker of {@link Directory}.
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class SnapshotMocker {
+public final class DirectoryMocker {
 
     /**
      * The randomizer.
@@ -51,14 +51,9 @@ public final class SnapshotMocker {
     private final transient Random random = new SecureRandom();
 
     /**
-     * The directory.
-     */
-    private final transient File directory;
-
-    /**
      * The object.
      */
-    private final transient Snapshot snapshot;
+    private final transient Directory directory;
 
     /**
      * Total number of messages.
@@ -70,9 +65,8 @@ public final class SnapshotMocker {
      * @param dir The directory to work with
      * @throws IOException If something wrong inside
      */
-    public SnapshotMocker(final File dir) throws IOException {
-        this.snapshot = new Snapshot(dir, "A1B2C3");
-        this.directory = dir;
+    public DirectoryMocker(final File dir) throws IOException {
+        this.directory = new DefaultDirectory(dir);
     }
 
     /**
@@ -81,12 +75,12 @@ public final class SnapshotMocker {
      * @return This object
      * @throws IOException If something wrong inside
      */
-    public SnapshotMocker withMaximum(final int max) throws IOException {
+    public DirectoryMocker withMaximum(final int max) throws IOException {
         this.maximum = max;
-        final File file = this.snapshot.attr(VariableAtom.NUMBER.attribute());
+        final File file = this.directory.attr(VariableAtom.NUMBER.attribute());
         final PrintWriter writer = new PrintWriter(new FileWriter(file));
         final PrintWriter map = new PrintWriter(
-            new FileWriter(this.snapshot.map())
+            new FileWriter(this.directory.map())
         );
         for (int pos = 1; pos <= this.maximum; ++pos) {
             writer.print(pos);
@@ -110,9 +104,9 @@ public final class SnapshotMocker {
      * @return This object
      * @throws IOException If something wrong inside
      */
-    public SnapshotMocker withBouts(final int bouts, final int max)
+    public DirectoryMocker withBouts(final int bouts, final int max)
         throws IOException {
-        final File file = this.snapshot.attr(
+        final File file = this.directory.attr(
             VariableAtom.BOUT_NUMBER.attribute()
         );
         final PrintWriter writer = new PrintWriter(new FileWriter(file));
@@ -148,9 +142,9 @@ public final class SnapshotMocker {
      * @return This object
      * @throws IOException If something wrong inside
      */
-    public SnapshotMocker withAttr(final String name, final String prefix,
+    public DirectoryMocker withAttr(final String name, final String prefix,
         final int num) throws IOException {
-        final File file = this.snapshot.attr(name);
+        final File file = this.directory.attr(name);
         final PrintWriter writer = new PrintWriter(new FileWriter(file));
         final List<Long> msgs = new ArrayList<Long>(this.maximum);
         for (long pos = 1; pos <= this.maximum; ++pos) {
@@ -186,12 +180,12 @@ public final class SnapshotMocker {
 
     /**
      * Build it.
-     * @return The snapshot
+     * @return The directory
      * @throws IOException If something wrong inside
      */
-    public Snapshot mock() throws IOException {
-        new Files(this.directory).publish(this.snapshot);
-        return this.snapshot;
+    public Directory mock() throws IOException {
+        this.directory.baseline();
+        return this.directory;
     }
 
 }

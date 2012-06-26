@@ -26,11 +26,13 @@
  */
 package com.netbout.inf.ray;
 
+import com.netbout.inf.Attribute;
 import com.netbout.inf.Cursor;
 import com.netbout.inf.MsgMocker;
 import com.netbout.inf.Ray;
 import com.netbout.inf.RayMocker;
 import com.netbout.inf.Term;
+import com.netbout.inf.ray.imap.DefaultIndexMap;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Rule;
@@ -59,11 +61,10 @@ public final class MemTermBuilderTest {
     public void buildsNeverFindingAnythingTerm() throws Exception {
         final Ray ray = new RayMocker().mock();
         final IndexMap map = new DefaultIndexMap(
-            ray,
             this.temp.newFolder("bar")
         );
-        map.index("foo").add(MsgMocker.number(), "txt \u0433!");
-        final Term term = new MemTermBuilder(ray, map).never();
+        map.index(new Attribute("foo")).add(MsgMocker.number(), "txt \u0433!");
+        final Term term = new MemTermBuilder(map).never();
         final Cursor cursor = new MemCursor(Long.MAX_VALUE, map);
         MatcherAssert.assertThat(
             term.shift(cursor).end(),

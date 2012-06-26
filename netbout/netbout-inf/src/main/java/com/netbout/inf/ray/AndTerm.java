@@ -30,6 +30,7 @@ import com.netbout.inf.Cursor;
 import com.netbout.inf.Lattice;
 import com.netbout.inf.Ray;
 import com.netbout.inf.Term;
+import com.netbout.inf.lattice.LatticeBuilder;
 import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -55,11 +56,6 @@ final class AndTerm implements Term {
     protected final transient Set<Term> terms = new LinkedHashSet<Term>();
 
     /**
-     * The ray we're working with.
-     */
-    private final transient Ray ray;
-
-    /**
      * Shifter for lattice.
      */
     private final transient Lattice.Shifter shifter = new Lattice.Shifter() {
@@ -68,13 +64,7 @@ final class AndTerm implements Term {
             if (msg >= crsr.msg().number()) {
                 throw new IllegalArgumentException("shift back is prohibited");
             }
-            return crsr.shift(
-                new PickerTerm(
-                    AndTerm.this.ray,
-                    AndTerm.this.imap,
-                    msg
-                )
-            );
+            return crsr.shift(new PickerTerm(AndTerm.this.imap, msg));
         }
     };
 
@@ -90,20 +80,17 @@ final class AndTerm implements Term {
 
     /**
      * Public ctor.
-     * @param iray The ray to work with
      * @param map The index map
      * @param args Arguments (terms)
      */
-    public AndTerm(final Ray iray, final IndexMap map,
-        final Collection<Term> args) {
-        this.ray = iray;
+    public AndTerm(final IndexMap map, final Collection<Term> args) {
         this.imap = map;
         this.terms.addAll(AndTerm.compress(args));
         if (this.terms.isEmpty()) {
-            this.terms.add(new AlwaysTerm(this.ray, this.imap));
+            this.terms.add(new AlwaysTerm(this.imap));
         }
         if (this.terms.size() > 1) {
-            this.terms.remove(new AlwaysTerm(this.ray, this.imap));
+            this.terms.remove(new AlwaysTerm(this.imap));
         }
         this.hash = this.toString().hashCode();
     }
@@ -144,10 +131,7 @@ final class AndTerm implements Term {
      */
     @Override
     public Lattice lattice() {
-        final Lattice lattice = this.ray.lattice();
-        lattice.always();
-        lattice.and(this.terms);
-        return lattice;
+        return new LatticeBuilder().always().and(this.terms).build();
     }
 
     /**

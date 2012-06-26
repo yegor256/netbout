@@ -43,11 +43,11 @@ public interface Msg {
     long number();
 
     /**
-     * Get value of certain attribute.
+     * Get value of certain attribute (the first one available).
      * @param name The name of attribute to get
      * @return First available value of the attribute (runtime exception if
      *  there is no value)
      */
-    String first(String name);
+    String attr(Attribute name);
 
 }

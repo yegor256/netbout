@@ -24,55 +24,63 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.inf.ray;
+package com.netbout.inf.ray.imap;
 
-import com.netbout.inf.Cursor;
-import com.netbout.inf.MsgMocker;
-import com.netbout.inf.Ray;
-import com.netbout.inf.RayMocker;
-import com.netbout.inf.Term;
-import com.netbout.inf.ray.imap.DefaultIndexMap;
-import org.hamcrest.MatcherAssert;
-import org.hamcrest.Matchers;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
+import com.netbout.inf.Attribute;
+import java.io.Closeable;
+import java.io.File;
+import java.io.IOException;
 
 /**
- * Test case of {@link AlwaysTerm}.
+ * Default implementation of {@link Directory}.
+ *
+ * <p>Class is thread-safe.
+ *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class AlwaysTermTest {
+final class DefaultDirectory implements Directory {
 
     /**
-     * Temporary folder.
-     * @checkstyle VisibilityModifier (3 lines)
+     * Public ctor.
+     * @param dir The directory
      */
-    @Rule
-    public transient TemporaryFolder temp = new TemporaryFolder();
+    public DefaultDirectory(final File dir) throws IOException {
+        // todo
+    }
 
     /**
-     * AlwaysTerm can pick one message by number.
-     * @throws Exception If there is some problem inside
+     * {@inheritDoc}
      */
-    @Test
-    public void shiftsCursorToTheFirstValue() throws Exception {
-        final IndexMap map = new DefaultIndexMap(
-            this.temp.newFolder("foo")
-        );
-        final long msg = MsgMocker.number();
-        // map.touch(msg);
-        final Term term = new AlwaysTerm(map);
-        final Cursor cursor = new MemCursor(Long.MAX_VALUE, map);
-        MatcherAssert.assertThat(
-            term.shift(cursor).msg().number(),
-            Matchers.equalTo(msg)
-        );
-        MatcherAssert.assertThat(
-            term.shift(term.shift(cursor)).end(),
-            Matchers.equalTo(true)
-        );
+    @Override
+    public void save(final Attribute attr, final String value,
+        final Numbers nums) throws IOException {
+        // todo
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void load(final Attribute attr, final String value,
+        final Numbers nums) throws IOException {
+        // todo
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void baseline() throws IOException {
+        // todo
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void close() throws IOException {
+        // todo
     }
 
 }

@@ -29,7 +29,7 @@ package com.netbout.inf;
 import com.jcabi.log.Logger;
 import com.netbout.inf.functors.DefaultStore;
 import com.netbout.inf.ray.MemRay;
-import com.netbout.inf.ray.SnapshotMocker;
+import com.netbout.inf.ray.imap.DirectoryMocker;
 import java.io.File;
 import java.security.SecureRandom;
 import java.util.Iterator;
@@ -64,7 +64,7 @@ public final class LazyMessagesProf {
     private void run() throws Exception {
         final File dir = new FolderMocker().mock().path();
         final int total = 50000;
-        new SnapshotMocker(dir)
+        new DirectoryMocker(dir)
             .withMaximum(total)
             .withBouts(50, 5000)
             .withAttr("talks-with", "urn:test:", 5)

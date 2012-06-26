@@ -87,7 +87,7 @@ public final class DefaultInfinityProf {
     private Infinity prepare() throws Exception {
         final Folder folder = new FolderMocker().mock();
         FileUtils.copyDirectory(
-            new File("./src/prof/resources/com/netbout/inf/ray"),
+            new File("./src/prof/resources/com/netbout/inf/ray-330k"),
             new File(folder.path(), "/ray")
         );
         return new DefaultInfinity(folder);

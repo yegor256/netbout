@@ -24,10 +24,12 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.inf.ray;
+package com.netbout.inf.ray.imap;
 
+import com.netbout.inf.Attribute;
 import com.netbout.inf.MsgMocker;
 import com.netbout.inf.RayMocker;
+import com.netbout.inf.ray.IndexMap;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Rule;
@@ -55,15 +57,14 @@ public final class DefaultIndexMapTest {
     @Test
     public void findsAndReturnsIndex() throws Exception {
         final IndexMap map = new DefaultIndexMap(
-            new RayMocker().mock(),
             this.temp.newFolder("foo")
         );
-        final String attr = "attribute name";
+        final Attribute attr = new Attribute("attribute name");
         final long msg = MsgMocker.number();
         final String value = "some text \u0433!";
         map.index(attr).add(msg, value);
         MatcherAssert.assertThat(
-            map.index(attr).first(msg),
+            map.index(attr).attr(msg),
             Matchers.equalTo(value)
         );
     }
@@ -75,10 +76,9 @@ public final class DefaultIndexMapTest {
     @Test
     public void convertsItselfToString() throws Exception {
         final IndexMap map = new DefaultIndexMap(
-            new RayMocker().mock(),
             this.temp.newFolder("bar")
         );
-        map.index("attr-1").add(1L, "some value");
+        map.index(new Attribute("attr-1")).add(1L, "some value");
         MatcherAssert.assertThat(
             map,
             Matchers.hasToString(Matchers.notNullValue())

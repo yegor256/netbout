@@ -27,6 +27,7 @@
 package com.netbout.inf.functors;
 
 import com.netbout.inf.Atom;
+import com.netbout.inf.Attribute;
 import com.netbout.inf.Functor;
 import com.netbout.inf.Ray;
 import com.netbout.inf.Term;
@@ -52,7 +53,7 @@ final class TalksWith implements Functor {
     /**
      * The attribute to use.
      */
-    private static final String ATTR = "talks-with";
+    private static final Attribute ATTR = new Attribute("talks");
 
     /**
      * {@inheritDoc}

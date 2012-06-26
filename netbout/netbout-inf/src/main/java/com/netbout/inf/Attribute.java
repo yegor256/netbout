@@ -24,55 +24,75 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.inf.ray;
+package com.netbout.inf;
 
-import com.netbout.inf.Cursor;
-import com.netbout.inf.MsgMocker;
-import com.netbout.inf.Ray;
-import com.netbout.inf.RayMocker;
-import com.netbout.inf.Term;
-import com.netbout.inf.ray.imap.DefaultIndexMap;
-import org.hamcrest.MatcherAssert;
-import org.hamcrest.Matchers;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 /**
- * Test case of {@link AlwaysTerm}.
+ * Attribute.
+ *
+ * <p>This class is immutable and thread-safe.
+ *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class AlwaysTermTest {
+public class Attribute {
 
     /**
-     * Temporary folder.
-     * @checkstyle VisibilityModifier (3 lines)
+     * The name of it.
      */
-    @Rule
-    public transient TemporaryFolder temp = new TemporaryFolder();
+    private final transient String name;
 
     /**
-     * AlwaysTerm can pick one message by number.
-     * @throws Exception If there is some problem inside
+     * We may request values of this attribute from a message.
      */
-    @Test
-    public void shiftsCursorToTheFirstValue() throws Exception {
-        final IndexMap map = new DefaultIndexMap(
-            this.temp.newFolder("foo")
-        );
-        final long msg = MsgMocker.number();
-        // map.touch(msg);
-        final Term term = new AlwaysTerm(map);
-        final Cursor cursor = new MemCursor(Long.MAX_VALUE, map);
-        MatcherAssert.assertThat(
-            term.shift(cursor).msg().number(),
-            Matchers.equalTo(msg)
-        );
-        MatcherAssert.assertThat(
-            term.shift(term.shift(cursor)).end(),
-            Matchers.equalTo(true)
-        );
+    @Retention(RetentionPolicy.RUNTIME)
+    @Target(ElementType.TYPE)
+    public @interface Reversive {
+    }
+
+    /**
+     * Numbers mirror itself in values (only for message numbers).
+     */
+    @Retention(RetentionPolicy.RUNTIME)
+    @Target(ElementType.TYPE)
+    public @interface Mirroring {
+    }
+
+    /**
+     * Public ctor.
+     * @param txt Name of it
+     */
+    public Attribute(final String txt) {
+        this.name = txt;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public final int hashCode() {
+        return this.name.hashCode();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public final boolean equals(final Object obj) {
+        return this == obj || (obj instanceof Attribute
+            && obj.hashCode() == this.hashCode());
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public final String toString() {
+        return this.name;
     }
 
 }

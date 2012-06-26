@@ -31,6 +31,7 @@ import com.netbout.inf.MsgMocker;
 import com.netbout.inf.Ray;
 import com.netbout.inf.RayMocker;
 import com.netbout.inf.Term;
+import com.netbout.inf.ray.imap.DefaultIndexMap;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Rule;
@@ -57,16 +58,14 @@ public final class PickerTermTest {
      */
     @Test
     public void shiftsCursorToTheFirstValue() throws Exception {
-        final Ray ray = new RayMocker().mock();
         final IndexMap map = new DefaultIndexMap(
-            ray,
             this.temp.newFolder("foo")
         );
         final long msg = MsgMocker.number();
-        map.touch(msg + 1);
-        map.touch(msg);
-        map.touch(msg - 1);
-        final Term term = new PickerTerm(ray, map, msg);
+        // map.touch(msg + 1);
+        // map.touch(msg);
+        // map.touch(msg - 1);
+        final Term term = new PickerTerm(map, msg);
         final Cursor cursor = new MemCursor(Long.MAX_VALUE, map);
         MatcherAssert.assertThat(
             term.shift(cursor).msg().number(),

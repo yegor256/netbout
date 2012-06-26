@@ -24,55 +24,61 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.inf.ray;
+package com.netbout.inf.ray.imap;
 
-import com.netbout.inf.Cursor;
-import com.netbout.inf.MsgMocker;
-import com.netbout.inf.Ray;
-import com.netbout.inf.RayMocker;
-import com.netbout.inf.Term;
-import com.netbout.inf.ray.imap.DefaultIndexMap;
-import org.hamcrest.MatcherAssert;
-import org.hamcrest.Matchers;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
+import com.netbout.inf.Lattice;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 
 /**
- * Test case of {@link AlwaysTerm}.
+ * Sorted set of message numbers.
+ *
+ * <p>Implementation must be mutable and thread-safe.
+ *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class AlwaysTermTest {
+public interface Numbers {
 
     /**
-     * Temporary folder.
-     * @checkstyle VisibilityModifier (3 lines)
+     * Get lattice for this collection of numbers.
+     * @return The lattice
      */
-    @Rule
-    public transient TemporaryFolder temp = new TemporaryFolder();
+    Lattice lattice();
 
     /**
-     * AlwaysTerm can pick one message by number.
-     * @throws Exception If there is some problem inside
+     * Get next number after the provided one, or ZERO.
+     * @param number The number to start searching from
+     * @return The number, next to this one (or ZERO if nothing found)
      */
-    @Test
-    public void shiftsCursorToTheFirstValue() throws Exception {
-        final IndexMap map = new DefaultIndexMap(
-            this.temp.newFolder("foo")
-        );
-        final long msg = MsgMocker.number();
-        // map.touch(msg);
-        final Term term = new AlwaysTerm(map);
-        final Cursor cursor = new MemCursor(Long.MAX_VALUE, map);
-        MatcherAssert.assertThat(
-            term.shift(cursor).msg().number(),
-            Matchers.equalTo(msg)
-        );
-        MatcherAssert.assertThat(
-            term.shift(term.shift(cursor)).end(),
-            Matchers.equalTo(true)
-        );
-    }
+    long next(long number);
+
+    /**
+     * Add new number (or replace the existing one, silently).
+     * @param number The number to add
+     */
+    void add(long number);
+
+    /**
+     * Remove this number (or ignore the operation if it doesn't exist,
+     * silently).
+     * @param number The number to remove
+     */
+    void remove(long number);
+
+    /**
+     * Save them all to the output stream.
+     * @param stream The stream to save to
+     * @throws IOException If some I/O problem inside
+     */
+    void save(OutputStream stream) throws IOException;
+
+    /**
+     * Load from the input stream and add here.
+     * @param stream The stream to load from
+     * @throws IOException If some I/O problem inside
+     */
+    void load(InputStream stream) throws IOException;
 
 }

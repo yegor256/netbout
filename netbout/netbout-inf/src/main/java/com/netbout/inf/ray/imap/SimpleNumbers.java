@@ -24,63 +24,45 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.inf.ray;
+package com.netbout.inf.ray.imap;
 
-import com.netbout.inf.Cursor;
 import com.netbout.inf.Lattice;
-import com.netbout.inf.Ray;
-import com.netbout.inf.Term;
-import com.netbout.inf.atoms.VariableAtom;
 import com.netbout.inf.lattice.LatticeBuilder;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.Iterator;
+import java.util.SortedSet;
+import java.util.concurrent.ConcurrentSkipListSet;
 
 /**
- * Always term.
+ * Simple implemenation of {@link Numbers}.
  *
- * <p>The class is immutable and thread-safe.
+ * <p>This class is mutable and thread-safe.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-final class AlwaysTerm implements Term {
+final class SimpleNumbers implements Numbers {
 
     /**
-     * Index map.
+     * Set of numbers.
      */
-    private final transient IndexMap imap;
+    private final transient SortedSet<Long> nums =
+        new ConcurrentSkipListSet<Long>(Collections.reverseOrder());
 
     /**
-     * Public ctor.
-     * @param map The index map
+     * Lattice.
      */
-    public AlwaysTerm(final IndexMap map) {
-        this.imap = map;
-    }
+    private transient Lattice lat;
 
     /**
-     * {@inheritDoc}
+     * Default ctor.
      */
-    @Override
-    public String toString() {
-        return "(ALWAYS)";
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public int hashCode() {
-        return this.imap.hashCode();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public boolean equals(final Object term) {
-        return term == this
-            || (term instanceof AlwaysTerm
-            && term.hashCode() == this.hashCode());
+    public SimpleNumbers() {
+        this.lat = new LatticeBuilder().never().build();
     }
 
     /**
@@ -88,40 +70,60 @@ final class AlwaysTerm implements Term {
      */
     @Override
     public Lattice lattice() {
-        return new LatticeBuilder().always().build();
+        return this.lat;
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
-    public Cursor shift(final Cursor cursor) {
-        Cursor shifted;
-        if (cursor.end()) {
-            shifted = cursor;
-        } else {
-            shifted = new MemCursor(
-                this.next(cursor.msg().number()),
-                this.imap
-            );
-        }
-        return shifted;
+    public void add(final long number) {
+        this.nums.add(number);
+        this.lat = new LatticeBuilder()
+            .copy(this.lat)
+            .set(number, true, this.nums)
+            .build();
     }
 
     /**
-     * Get next message number after this one.
-     * @param number The number to use
-     * @return Next one or zero if there is nothing else
+     * {@inheritDoc}
      */
-    private long next(final long number) {
-        try {
-            return this.imap
-                .index(VariableAtom.NUMBER.attribute())
-                .next("", number);
-        } catch (java.io.IOException ex) {
-            throw new IllegalStateException(ex);
+    @Override
+    public void remove(final long number) {
+        this.nums.remove(number);
+        this.lat = new LatticeBuilder()
+            .copy(this.lat)
+            .set(number, false, this.nums)
+            .build();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public long next(final long number) {
+        long next = 0L;
+        final Iterator<Long> tail = this.nums.tailSet(number - 1).iterator();
+        if (tail.hasNext()) {
+            next = tail.next();
         }
+        return next;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void save(final OutputStream stream) throws IOException {
+        // todo
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void load(final InputStream stream) throws IOException {
+        // todo
     }
 
 }

@@ -44,17 +44,6 @@ public final class RayMocker {
      * Public ctor.
      */
     public RayMocker() {
-        this.withLattice(new LatticeMocker().mock());
-    }
-
-    /**
-     * With this lattice.
-     * @param lattice The lattice
-     * @return This object
-     */
-    public RayMocker withLattice(final Lattice lattice) {
-        Mockito.doReturn(lattice).when(this.ray).lattice();
-        return this;
     }
 
     /**

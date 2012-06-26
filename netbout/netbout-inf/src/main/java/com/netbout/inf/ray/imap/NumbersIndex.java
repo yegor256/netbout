@@ -24,50 +24,58 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.inf.ray;
+package com.netbout.inf.ray.imap;
 
 import com.jcabi.log.Logger;
+import com.netbout.inf.Attribute;
 import com.netbout.inf.Lattice;
-import com.netbout.inf.Ray;
-import java.io.File;
+import com.netbout.inf.ray.IndexMap;
+import java.io.IOException;
 import java.util.Collections;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
 /**
- * Index with no data inside.
+ * Index of message numbers.
  *
- * <p>This class is thread-safe.
+ * <p>This class is immutable and thread-safe.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  * @checkstyle ClassDataAbstractionCoupling (500 lines)
  */
-final class ShallowIndex implements FlushableIndex {
+final class NumbersIndex implements FlushableIndex {
 
     /**
-     * Ray we're using.
+     * Attribute we use.
      */
-    private final transient Ray ray;
+    private final transient Attribute attribute;
 
     /**
-     * Numbers to use.
+     * Directory to work with.
      */
-    private final transient SortedSet<Long> numbers;
+    private final transient Directory directory;
+
+    /**
+     * All numbers.
+     */
+    private final transient Numbers numbers = new SimpleNumbers();
 
     /**
      * Public ctor.
-     * @param iray The ray to use
-     * @param nums Numbers
+     * @param attr The attribute
+     * @param imp The index map we belong to
+     * @throws IOException If some IO error
      */
-    public ShallowIndex(final Ray iray, final SortedSet<Long> nums) {
-        this.ray = iray;
-        this.numbers = nums;
-        Logger.debug(
-            ShallowIndex.class,
-            "#ShallowIndex(.., %d nums): instantiated",
-            nums.size()
+    public NumbersIndex(final Attribute attr, final Directory dir)
+        throws IOException {
+        this.attribute = attr;
+        this.directory = dir;
+        this.directory.load(
+            this.attribute,
+            this.attribute.toString(),
+            this.numbers
         );
     }
 
@@ -76,7 +84,7 @@ final class ShallowIndex implements FlushableIndex {
      */
     @Override
     public void replace(final long msg, final String value) {
-        // ignore
+        this.numbers.add(msg);
     }
 
     /**
@@ -84,7 +92,7 @@ final class ShallowIndex implements FlushableIndex {
      */
     @Override
     public void add(final long msg, final String value) {
-        // ignore
+        this.numbers.add(msg);
     }
 
     /**
@@ -107,8 +115,8 @@ final class ShallowIndex implements FlushableIndex {
      * {@inheritDoc}
      */
     @Override
-    public String first(final long msg) {
-        if (!this.numbers.contains(msg)) {
+    public String attr(final long msg) {
+        if (this.numbers.next(msg + 1) != msg) {
             throw new IllegalArgumentException(
                 String.format("no message with number #%d", msg)
             );
@@ -120,40 +128,28 @@ final class ShallowIndex implements FlushableIndex {
      * {@inheritDoc}
      */
     @Override
-    public SortedSet<Long> msgs(final String value) {
-        final Long msg = Long.valueOf(value);
-        final SortedSet<Long> msgs =
-            new TreeSet<Long>(Collections.reverseOrder());
-        if (this.numbers.contains(msg)) {
-            msgs.add(msg);
-        }
-        return Collections.unmodifiableSortedSet(msgs);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Set<String> values() {
-        throw new UnsupportedOperationException("#values()");
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
     public Lattice lattice(final String value) {
-        final Lattice lattice = this.ray.lattice();
-        lattice.set(Long.valueOf(value), true, false);
-        return lattice;
+        return this.numbers.lattice();
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public void flush(final File file) {
-        // nothing to do here
+    public long next(final String value, final long msg) {
+        return this.numbers.next(msg);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void flush() throws IOException {
+        this.directory.save(
+            this.attribute,
+            this.attribute.toString(),
+            this.numbers
+        );
     }
 
 }

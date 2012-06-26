@@ -30,6 +30,7 @@ import com.netbout.inf.Cursor;
 import com.netbout.inf.Lattice;
 import com.netbout.inf.Ray;
 import com.netbout.inf.Term;
+import com.netbout.inf.lattice.LatticeBuilder;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -54,11 +55,6 @@ final class OrTerm implements Term {
     protected final transient Set<Term> terms = new LinkedHashSet<Term>();
 
     /**
-     * The ray we're working with.
-     */
-    private final transient Ray ray;
-
-    /**
      * Hash code, for performance reasons.
      */
     private final transient int hash;
@@ -70,13 +66,10 @@ final class OrTerm implements Term {
 
     /**
      * Public ctor.
-     * @param iray The ray to work with
      * @param map The index map
      * @param args Arguments (terms)
      */
-    public OrTerm(final Ray iray, final IndexMap map,
-        final Collection<Term> args) {
-        this.ray = iray;
+    public OrTerm(final IndexMap map, final Collection<Term> args) {
         this.imap = map;
         for (Term arg : args) {
             if (arg instanceof OrTerm) {
@@ -89,7 +82,7 @@ final class OrTerm implements Term {
             }
         }
         if (this.terms.isEmpty()) {
-            this.terms.add(new AlwaysTerm(this.ray, this.imap));
+            this.terms.add(new AlwaysTerm(this.imap));
         }
         this.hash = this.toString().hashCode();
     }
@@ -130,9 +123,7 @@ final class OrTerm implements Term {
      */
     @Override
     public Lattice lattice() {
-        final Lattice lattice = this.ray.lattice();
-        lattice.or(this.terms);
-        return lattice;
+        return new LatticeBuilder().never().or(this.terms).build();
     }
 
     /**

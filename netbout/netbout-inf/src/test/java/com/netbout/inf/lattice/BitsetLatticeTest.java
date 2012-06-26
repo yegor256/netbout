@@ -24,26 +24,43 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.inf.ray;
+package com.netbout.inf.lattice;
 
-import java.io.File;
-import java.io.IOException;
+import com.netbout.inf.Cursor;
+import com.netbout.inf.CursorMocker;
+import com.netbout.inf.Lattice;
+import java.util.Arrays;
+import java.util.TreeSet;
+import org.hamcrest.MatcherAssert;
+import org.hamcrest.Matchers;
+import org.junit.Test;
+import org.mockito.Mockito;
 
 /**
- * Index that can be flushed.
- *
- * <p>Implementation must be thread-safe.
- *
+ * Test case of {@link BitsetLattice}.
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-interface FlushableIndex extends Index {
+public final class BitsetLatticeTest {
 
     /**
-     * Flush this map to file.
-     * @param file Where to write
-     * @throws IOException If some problem
+     * BitsetLattice can shift a cursor to the right position.
+     * @throws Exception If there is some problem inside
+     * @checkstyle MagicNumber (30 lines)
      */
-    void flush(File file) throws IOException;
+    @Test
+    public void shiftsCursorToTheRightPosition() throws Exception {
+        final Cursor cursor = new CursorMocker().withMsg(5000L).mock();
+        final Lattice lattice = new LatticeBuilder()
+            .fill(new TreeSet<Long>(Arrays.asList(10000L, 350L, 150L, 50L)))
+            .build();
+        MatcherAssert.assertThat(
+            lattice,
+            Matchers.hasToString(Matchers.containsString("16384"))
+        );
+        final Lattice.Shifter shifter = Mockito.mock(Lattice.Shifter.class);
+        lattice.correct(cursor, shifter);
+        Mockito.verify(shifter).shift(cursor, 383L);
+    }
 
 }

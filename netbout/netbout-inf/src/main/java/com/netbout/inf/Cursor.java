@@ -43,7 +43,7 @@ public interface Cursor extends Comparable<Cursor> {
      * @param attr The attr of attribute to set
      * @param value The value to set
      */
-    void add(Term term, String attr, String value);
+    void add(Term term, Attribute attr, String value);
 
     /**
      * Replace attribute to every msg including this one, which satisfy the
@@ -52,7 +52,7 @@ public interface Cursor extends Comparable<Cursor> {
      * @param attr The attr of attribute to set
      * @param value The value to set
      */
-    void replace(Term term, String attr, String value);
+    void replace(Term term, Attribute attr, String value);
 
     /**
      * Delete attribute from every msg including this one, which satisfy the
@@ -60,7 +60,7 @@ public interface Cursor extends Comparable<Cursor> {
      * @param term The term to satisfy
      * @param attr The attr of attribute to delete
      */
-    void delete(Term term, String attr);
+    void delete(Term term, Attribute attr);
 
     /**
      * Delete attribute from every msg including this one, which satisfy the
@@ -69,7 +69,7 @@ public interface Cursor extends Comparable<Cursor> {
      * @param attr The attr of attribute to delete
      * @param value The value to delete
      */
-    void delete(Term term, String attr, String value);
+    void delete(Term term, Attribute attr, String value);
 
     /**
      * Shift cursor to the next message, which satisfies the term.

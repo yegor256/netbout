@@ -30,6 +30,7 @@ import com.netbout.inf.Cursor;
 import com.netbout.inf.Lattice;
 import com.netbout.inf.Ray;
 import com.netbout.inf.Term;
+import com.netbout.inf.lattice.LatticeBuilder;
 
 /**
  * NOT term.
@@ -40,11 +41,6 @@ import com.netbout.inf.Term;
  * @version $Id$
  */
 final class NotTerm implements Term {
-
-    /**
-     * The ray we're working with.
-     */
-    private final transient Ray ray;
 
     /**
      * Hash code, for performance reasons.
@@ -63,12 +59,10 @@ final class NotTerm implements Term {
 
     /**
      * Public ctor.
-     * @param iray The ray to work with
      * @param map The index map
      * @param trm The term
      */
-    public NotTerm(final Ray iray, final IndexMap map, final Term trm) {
-        this.ray = iray;
+    public NotTerm(final IndexMap map, final Term trm) {
         this.imap = map;
         this.term = trm;
         this.hash = this.toString().hashCode();
@@ -106,9 +100,10 @@ final class NotTerm implements Term {
      */
     @Override
     public Lattice lattice() {
-        final Lattice lattice = this.term.lattice().copy();
-        lattice.revert();
-        return lattice;
+        return new LatticeBuilder()
+            .copy(this.term.lattice())
+            .revert()
+            .build();
     }
 
     /**
@@ -118,7 +113,7 @@ final class NotTerm implements Term {
     public Cursor shift(final Cursor cursor) {
         Cursor shifted = cursor;
         Cursor candidate = shifted;
-        final Term always = new AlwaysTerm(this.ray, this.imap);
+        final Term always = new AlwaysTerm(this.imap);
         while (!shifted.end()) {
             candidate = shifted.shift(always);
             shifted = shifted.shift(this.term);

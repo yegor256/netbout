@@ -33,6 +33,7 @@ import com.netbout.inf.Functor;
 import com.netbout.inf.Lattice;
 import com.netbout.inf.Ray;
 import com.netbout.inf.Term;
+import com.netbout.inf.lattice.LatticeBuilder;
 import com.netbout.inf.notices.MessagePostedNotice;
 import com.netbout.spi.Message;
 import com.netbout.spi.Participant;
@@ -55,12 +56,6 @@ import java.util.concurrent.ConcurrentSkipListMap;
 final class Bundled implements Functor {
 
     /**
-     * The attribute to use (also used by {@link Unbundled}).
-     */
-    @SuppressWarnings("PMD.DefaultPackage")
-    static final String ATTR = "bundled-marker";
-
-    /**
      * {@inheritDoc}
      */
     @Override
@@ -75,11 +70,16 @@ final class Bundled implements Functor {
                     ray.builder().and(this.terms.values())
                 );
                 if (!shifted.end()) {
-                    final String marker = shifted.msg().first(Bundled.ATTR);
+                    final String marker = shifted.msg().attr(
+                        BundledAttribute.VALUE
+                    );
                     this.terms.put(
                         marker,
                         ray.builder().not(
-                            ray.builder().matcher(Bundled.ATTR, marker)
+                            ray.builder().matcher(
+                                BundledAttribute.VALUE,
+                                marker
+                            )
                         )
                     );
                 }
@@ -91,10 +91,10 @@ final class Bundled implements Functor {
             }
             @Override
             public Lattice lattice() {
-                final Lattice lattice = ray.lattice();
-                lattice.always();
-                lattice.and(this.terms.values());
-                return lattice;
+                return new LatticeBuilder()
+                    .always()
+                    .and(this.terms.values())
+                    .build();
             }
             private Cursor next(final Cursor cursor) {
                 Cursor next;
@@ -117,7 +117,7 @@ final class Bundled implements Functor {
     public void see(final Ray ray, final MessagePostedNotice notice) {
         ray.cursor().replace(
             ray.builder().picker(notice.message().number()),
-            Bundled.ATTR,
+            BundledAttribute.VALUE,
             Bundled.marker(notice.message())
         );
     }

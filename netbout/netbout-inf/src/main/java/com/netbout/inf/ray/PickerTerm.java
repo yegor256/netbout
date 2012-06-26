@@ -30,6 +30,9 @@ import com.netbout.inf.Cursor;
 import com.netbout.inf.Lattice;
 import com.netbout.inf.Ray;
 import com.netbout.inf.Term;
+import com.netbout.inf.lattice.LatticeBuilder;
+import java.util.Arrays;
+import java.util.TreeSet;
 
 /**
  * Slider term.
@@ -39,13 +42,7 @@ import com.netbout.inf.Term;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-@Term.Cheap
 final class PickerTerm implements Term {
-
-    /**
-     * The ray we're working with.
-     */
-    private final transient Ray ray;
 
     /**
      * Index map.
@@ -59,12 +56,10 @@ final class PickerTerm implements Term {
 
     /**
      * Public ctor.
-     * @param iray The ray to work with
      * @param map The index map
      * @param num The number
      */
-    public PickerTerm(final Ray iray, final IndexMap map, final long num) {
-        this.ray = iray;
+    public PickerTerm(final IndexMap map, final long num) {
         this.imap = map;
         this.number = num;
     }
@@ -99,9 +94,9 @@ final class PickerTerm implements Term {
      */
     @Override
     public Lattice lattice() {
-        final Lattice lattice = this.ray.lattice();
-        lattice.set(this.number, true, false);
-        return lattice;
+        return new LatticeBuilder()
+            .fill(new TreeSet<Long>(Arrays.asList(this.number)))
+            .build();
     }
 
     /**

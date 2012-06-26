@@ -24,59 +24,110 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.inf.ray;
+package com.netbout.inf.ray.imap;
 
 import com.jcabi.log.Logger;
-import com.netbout.inf.Cursor;
+import com.netbout.inf.Attribute;
 import com.netbout.inf.Lattice;
-import com.netbout.inf.Msg;
-import com.netbout.inf.Ray;
-import com.netbout.inf.TermBuilder;
-import com.netbout.inf.atoms.VariableAtom;
-import com.netbout.inf.ray.imap.DefaultIndexMap;
+import com.netbout.inf.ray.Index;
+import com.netbout.inf.ray.IndexMap;
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
+import java.util.Collections;
+import java.util.Set;
+import java.util.SortedSet;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.ConcurrentSkipListSet;
+import java.util.concurrent.TimeUnit;
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.CharEncoding;
 
 /**
- * In-memory implementation of {@link Ray}.
+ * Reversive implemenation of {@link Index}.
  *
- * <p>The class is thread-safe.
+ * <p>This class is immutable and thread-safe.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
+ * @checkstyle ClassDataAbstractionCoupling (500 lines)
  */
-public final class MemRay implements Ray {
+class ReversiveIndex extends BaseIndex {
 
     /**
-     * Index map.
+     * Reverse index.
      */
-    private final transient IndexMap imap;
+    private final transient FlushableIndex reverse;
 
     /**
      * Public ctor.
-     * @param dir The directory to work with
-     * @throws IOException If some I/O problem
+     * @param attr The attribute
+     * @param dir The directory
+     * @throws IOException If some IO error
      */
-    public MemRay(final File dir) throws IOException {
-        this.imap = new DefaultIndexMap(dir);
-        Logger.debug(this, "#MemRay(%s): instantiated", dir);
+    public ReversiveIndex(final Attribute attr,
+        final Directory dir) throws IOException {
+        super(attr, dir);
+        this.reverse = new BaseIndex(
+            new Attribute(String.format("%s-reverse", attr)),
+            dir
+        );
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public String toString() {
-        return this.imap.toString();
+    public void replace(final long msg, final String value) {
+        super.replace(msg, value);
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public void close() throws IOException {
-        this.imap.close();
-        Logger.debug(this, "#close(): closed");
+    public void add(final long msg, final String value) {
+        super.add(msg, value);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void delete(final long msg, final String value) {
+        super.delete(msg, value);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void clean(final long msg) {
+        super.clean(msg);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Lattice lattice(final String value) {
+        return super.lattice(value);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public long next(final String value, final long msg) {
+        return super.next(value, msg);
     }
 
     /**
@@ -84,50 +135,8 @@ public final class MemRay implements Ray {
      */
     @Override
     public void flush() throws IOException {
-        this.imap.flush();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Cursor cursor() {
-        return new MemCursor(Long.MAX_VALUE, this.imap);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Msg msg(final long number) {
-        try {
-            this.imap.index(VariableAtom.NUMBER.attribute())
-                .add(number, Long.toString(number));
-        } catch (java.io.IOException ex) {
-            throw new IllegalStateException(ex);
-        }
-        return this.cursor().shift(this.builder().picker(number)).msg();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public TermBuilder builder() {
-        return new MemTermBuilder(this.imap);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public long maximum() {
-        try {
-            return this.imap.index(VariableAtom.NUMBER.attribute())
-                .next("", Long.MAX_VALUE);
-        } catch (java.io.IOException ex) {
-            throw new IllegalStateException(ex);
-        }
+        super.flush();
+        this.reverse.flush();
     }
 
 }

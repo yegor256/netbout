@@ -24,12 +24,14 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.inf.ray;
+package com.netbout.inf.ray.imap;
 
 import com.jcabi.log.VerboseThreads;
+import com.netbout.inf.Attribute;
 import com.netbout.inf.Lattice;
 import com.netbout.inf.MsgMocker;
 import com.netbout.inf.RayMocker;
+import com.netbout.inf.ray.Index;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.concurrent.Callable;
@@ -47,12 +49,12 @@ import org.mockito.ArgumentMatcher;
 import org.mockito.Mockito;
 
 /**
- * Test case of {@link DefaultIndex}.
+ * Test case of {@link BaseIndex}.
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  * @checkstyle ClassDataAbstractionCoupling (500 lines)
  */
-public final class DefaultIndexTest {
+public final class BaseIndexTest {
 
     /**
      * Temporary folder.
@@ -67,9 +69,9 @@ public final class DefaultIndexTest {
      */
     @Test
     public void replacesValues() throws Exception {
-        final Index index = new DefaultIndex(
-            new RayMocker().mock(),
-            this.temp.newFile("file-1")
+        final Index index = new BaseIndex(
+            new Attribute("some attr"),
+            new DefaultDirectory(this.temp.newFile("file-1"))
         );
         final long msg = MsgMocker.number();
         final String value = "some text \u0433!";
@@ -77,12 +79,12 @@ public final class DefaultIndexTest {
         index.add(msg, "second value");
         index.replace(msg, value);
         MatcherAssert.assertThat(
-            index.first(msg),
+            index.attr(msg),
             Matchers.equalTo(value)
         );
         MatcherAssert.assertThat(
-            index.msgs(value),
-            Matchers.hasItem(msg)
+            index.next(value, msg + 1),
+            Matchers.equalTo(msg)
         );
     }
 
@@ -92,23 +94,21 @@ public final class DefaultIndexTest {
      */
     @Test
     public void ordersNumbersProperly() throws Exception {
-        final Index index = new DefaultIndex(
-            new RayMocker().mock(),
-            this.temp.newFile("file-2")
+        final Index index = new BaseIndex(
+            new Attribute("some attr 2"),
+            new DefaultDirectory(this.temp.newFile("file-2"))
         );
         final long msg = MsgMocker.number();
         final String value = "text-\u0433!";
-        // @checkstyle MagicNumber (1 line)
-        for (int pos = 1; pos < 10; ++pos) {
+        final int total = 10;
+        for (int pos = 1; pos < total; ++pos) {
             index.add(msg - pos, value);
         }
-        long before = msg;
-        for (Long num : index.msgs(value)) {
+        for (int pos = 1; pos < total; ++pos) {
             MatcherAssert.assertThat(
-                num,
-                Matchers.lessThan(before)
+                index.next(value, msg),
+                Matchers.equalTo(msg - pos)
             );
-            before = num;
         }
     }
 
@@ -119,9 +119,9 @@ public final class DefaultIndexTest {
     @Test
     @SuppressWarnings({ "PMD.AvoidInstantiatingObjectsInLoops", "unchecked" })
     public void updatesInMultipleThreads() throws Exception {
-        final Index index = new DefaultIndex(
-            new RayMocker().mock(),
-            this.temp.newFile("file-3")
+        final Index index = new BaseIndex(
+            new Attribute("some attr 3"),
+            new DefaultDirectory(this.temp.newFile("file-3"))
         );
         final long msg = MsgMocker.number();
         final String value = "some value to set";
@@ -171,28 +171,9 @@ public final class DefaultIndexTest {
             )
         );
         MatcherAssert.assertThat(
-            index.first(msg),
+            index.attr(msg),
             Matchers.equalTo(value)
         );
-    }
-
-    /**
-     * DefaultIndex can build lattice.
-     * @throws Exception If there is some problem inside
-     */
-    @Test
-    public void buildsLatticeProperly() throws Exception {
-        final Lattice lattice = Mockito.mock(Lattice.class);
-        final Index index = new DefaultIndex(
-            new RayMocker().withLattice(lattice).mock(),
-            this.temp.newFile("file-25")
-        );
-        final String value = "text-344-\u0433!";
-        // @checkstyle MagicNumber (1 line)
-        for (int msg = 1; msg < 10; ++msg) {
-            index.add(msg, value);
-        }
-        Mockito.verify(index.lattice(value)).set(1, true, false);
     }
 
 }

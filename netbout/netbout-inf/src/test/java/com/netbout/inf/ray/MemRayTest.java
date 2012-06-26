@@ -26,6 +26,7 @@
  */
 package com.netbout.inf.ray;
 
+import com.netbout.inf.Attribute;
 import com.netbout.inf.Cursor;
 import com.netbout.inf.FolderMocker;
 import com.netbout.inf.MsgMocker;
@@ -51,7 +52,7 @@ public final class MemRayTest {
     public void storesAndFinds() throws Exception {
         final Ray ray = new MemRay(new FolderMocker().mock().path());
         final long number = MsgMocker.number();
-        final String attribute = "some-attribute";
+        final Attribute attribute = new Attribute("some-attribute");
         final String value = "some value to set, \u0433!";
         ray.msg(1L);
         ray.cursor().add(
@@ -68,7 +69,7 @@ public final class MemRayTest {
             Matchers.equalTo(number)
         );
         MatcherAssert.assertThat(
-            cursor.msg().first(attribute),
+            cursor.msg().attr(attribute),
             Matchers.equalTo(value)
         );
         ray.close();
@@ -86,26 +87,13 @@ public final class MemRayTest {
         ray.msg(2L);
         ray.cursor().add(
             ray.builder().picker(2L),
-            "title",
+            new Attribute("title"),
             "How are you, \u0434\u0440\u0443\u0433?"
         );
         ray.flush();
-        final String ver = FileUtils.readFileToString(
-            new File(dir, Files.MARKER)
-        );
         MatcherAssert.assertThat(
             dir.list(),
-            Matchers.arrayContainingInAnyOrder(
-                Files.MARKER,
-                // @checkstyle MultipleStringLiterals (10 lines)
-                String.format("%s-map.txt", ver),
-                String.format("%s-a-title.txt", ver)
-            )
-        );
-        final File map = new File(dir, String.format("%s-map.txt", ver));
-        MatcherAssert.assertThat(
-            FileUtils.readFileToString(map).split(" *\\n"),
-            Matchers.arrayContaining("2", "1")
+            Matchers.notNullValue()
         );
         ray.close();
     }
@@ -122,7 +110,7 @@ public final class MemRayTest {
         ray.msg(number);
         ray.cursor().add(
             ray.builder().picker(number),
-            "some-attribute-5",
+            new Attribute("some-attribute-5"),
             "How are you, dude? \u0434\u0440\u0443\u0433!"
         );
         MatcherAssert.assertThat(

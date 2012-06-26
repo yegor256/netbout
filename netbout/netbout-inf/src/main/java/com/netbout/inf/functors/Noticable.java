@@ -34,8 +34,12 @@ import java.lang.annotation.Target;
 /**
  * Meta information about functor's method.
  *
+ * <p>The annotation is used in {@link DefaultStore} to find functors
+ * that should be receive notices.
+ *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
+ * @see DefaultStore#see()
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)

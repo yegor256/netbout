@@ -24,55 +24,45 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.inf.ray;
+package com.netbout.inf.ray.imap;
 
-import com.netbout.inf.Cursor;
-import com.netbout.inf.MsgMocker;
-import com.netbout.inf.Ray;
-import com.netbout.inf.RayMocker;
-import com.netbout.inf.Term;
-import com.netbout.inf.ray.imap.DefaultIndexMap;
-import org.hamcrest.MatcherAssert;
-import org.hamcrest.Matchers;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
+import com.netbout.inf.Attribute;
+import java.io.Closeable;
+import java.io.IOException;
 
 /**
- * Test case of {@link AlwaysTerm}.
+ * Directory with files.
+ *
+ * <p>Implementation must be thread-safe.
+ *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class AlwaysTermTest {
+interface Directory extends Closeable {
 
     /**
-     * Temporary folder.
-     * @checkstyle VisibilityModifier (3 lines)
+     * Save numbers for the given attribute.
+     * @param attr The attribute
+     * @param value The value to set them to
+     * @param nums The numbers to save from
+     * @throws IOException If some I/O problem inside
      */
-    @Rule
-    public transient TemporaryFolder temp = new TemporaryFolder();
+    void save(Attribute attr, String value, Numbers nums) throws IOException;
 
     /**
-     * AlwaysTerm can pick one message by number.
-     * @throws Exception If there is some problem inside
+     * Load numbers for the given attribute.
+     * @param attr The attribute
+     * @param value The value to set them to
+     * @param nums The numbers to load into
+     * @throws IOException If some I/O problem inside
      */
-    @Test
-    public void shiftsCursorToTheFirstValue() throws Exception {
-        final IndexMap map = new DefaultIndexMap(
-            this.temp.newFolder("foo")
-        );
-        final long msg = MsgMocker.number();
-        // map.touch(msg);
-        final Term term = new AlwaysTerm(map);
-        final Cursor cursor = new MemCursor(Long.MAX_VALUE, map);
-        MatcherAssert.assertThat(
-            term.shift(cursor).msg().number(),
-            Matchers.equalTo(msg)
-        );
-        MatcherAssert.assertThat(
-            term.shift(term.shift(cursor)).end(),
-            Matchers.equalTo(true)
-        );
-    }
+    void load(Attribute attr, String value, Numbers nums) throws IOException;
+
+    /**
+     * Baseline existing version (if we loose power right after this operation
+     * this version will be loaded after reboot).
+     * @throws IOException If some I/O problem inside
+     */
+    void baseline() throws IOException;
 
 }

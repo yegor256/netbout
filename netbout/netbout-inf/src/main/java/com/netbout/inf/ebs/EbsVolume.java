@@ -113,7 +113,7 @@ public final class EbsVolume implements Folder {
      * {@inheritDoc}
      */
     @Override
-    public String statistics() {
+    public String toString() {
         final StringBuilder text = new StringBuilder();
         text.append(String.format("instance: %s\n", this.instance));
         text.append(this.directory.statistics());

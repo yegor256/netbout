@@ -27,6 +27,7 @@
 package com.netbout.inf.atoms;
 
 import com.netbout.inf.Atom;
+import com.netbout.inf.Attribute;
 
 /**
  * Variable atom.
@@ -74,11 +75,23 @@ public enum VariableAtom implements Atom<String> {
     private final transient String name;
 
     /**
+     * Attribute.
+     */
+    private final transient Attribute attr;
+
+    /**
      * Public ctor.
      * @param value The value of it
      */
     VariableAtom(final String value) {
         this.name = value;
+        if (value.equals("number")) {
+            this.attr = new VariableAtom.NumberAttribute();
+        } else if (value.equals("bout.number")) {
+            this.attr = new VariableAtom.BoutNumberAttribute();
+        } else {
+            this.attr = new Attribute(String.format("var-%s", this.name));
+        }
     }
 
     /**
@@ -101,8 +114,8 @@ public enum VariableAtom implements Atom<String> {
      * Name of attribute for Msg.
      * @return The name
      */
-    public String attribute() {
-        return String.format("var-%s", this.name);
+    public Attribute attribute() {
+        return this.attr;
     }
 
     /**
@@ -130,6 +143,32 @@ public enum VariableAtom implements Atom<String> {
             );
         }
         return atom;
+    }
+
+    /**
+     * Attribute for message number.
+     */
+    @Attribute.Mirroring
+    private static final class NumberAttribute extends Attribute {
+        /**
+         * Public ctor.
+         */
+        public NumberAttribute() {
+            super("number");
+        }
+    }
+
+    /**
+     * Attribute for bout number.
+     */
+    @Attribute.Reversive
+    private static final class BoutNumberAttribute extends Attribute {
+        /**
+         * Public ctor.
+         */
+        public BoutNumberAttribute() {
+            super("bout-number");
+        }
     }
 
 }
