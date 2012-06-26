@@ -29,6 +29,8 @@ package com.netbout.inf.ray.imap;
 import com.netbout.inf.Attribute;
 import java.io.Closeable;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStream;
 import java.io.IOException;
 
 /**
@@ -69,7 +71,7 @@ final class DefaultDirectory implements Directory {
     @Override
     public void load(final Attribute attr, final String value,
         final Numbers nums) throws IOException {
-        // todo
+        //..
     }
 
     /**
@@ -78,7 +80,6 @@ final class DefaultDirectory implements Directory {
     @Override
     public void save(final Attribute attr,
         final Reverse reverse) throws IOException {
-        // todo
     }
 
     /**
@@ -87,7 +88,6 @@ final class DefaultDirectory implements Directory {
     @Override
     public void load(final Attribute attr,
         final Reverse reverse) throws IOException {
-        // todo
     }
 
     /**
