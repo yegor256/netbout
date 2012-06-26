@@ -146,7 +146,9 @@ class BaseIndex implements FlushableIndex {
      */
     @Override
     public String attr(final long msg) {
-        throw new UnsupportedOperationException("use ReversiveIndex instead");
+        throw new UnsupportedOperationException(
+            String.format("use ReversiveIndex for '%s'", this.attribute)
+        );
     }
 
     /**

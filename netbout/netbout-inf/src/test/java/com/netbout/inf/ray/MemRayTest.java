@@ -27,6 +27,7 @@
 package com.netbout.inf.ray;
 
 import com.netbout.inf.Attribute;
+import com.netbout.inf.AttributeMocker;
 import com.netbout.inf.Cursor;
 import com.netbout.inf.FolderMocker;
 import com.netbout.inf.MsgMocker;
@@ -52,7 +53,7 @@ public final class MemRayTest {
     public void storesAndFinds() throws Exception {
         final Ray ray = new MemRay(new FolderMocker().mock().path());
         final long number = MsgMocker.number();
-        final Attribute attribute = new Attribute("some-attribute");
+        final Attribute attribute = AttributeMocker.reversive();
         final String value = "some value to set, \u0433!";
         ray.msg(1L);
         ray.cursor().add(

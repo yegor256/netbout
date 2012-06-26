@@ -27,6 +27,7 @@
 package com.netbout.inf.ray.imap;
 
 import com.netbout.inf.Attribute;
+import com.netbout.inf.AttributeMocker;
 import com.netbout.inf.MsgMocker;
 import com.netbout.inf.RayMocker;
 import com.netbout.inf.ray.IndexMap;
@@ -59,7 +60,7 @@ public final class DefaultIndexMapTest {
         final IndexMap map = new DefaultIndexMap(
             this.temp.newFolder("foo")
         );
-        final Attribute attr = new Attribute("attribute name");
+        final Attribute attr = AttributeMocker.reversive();
         final long msg = MsgMocker.number();
         final String value = "some text \u0433!";
         map.index(attr).add(msg, value);

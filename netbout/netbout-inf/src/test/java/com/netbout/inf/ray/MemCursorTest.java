@@ -27,6 +27,7 @@
 package com.netbout.inf.ray;
 
 import com.netbout.inf.Attribute;
+import com.netbout.inf.AttributeMocker;
 import com.netbout.inf.Cursor;
 import com.netbout.inf.MsgMocker;
 import com.netbout.inf.Ray;
@@ -62,9 +63,9 @@ public final class MemCursorTest {
             this.temp.newFolder("foo1")
         );
         final Long msg = MsgMocker.number();
-        // map.touch(msg);
+        map.touch(msg);
         final Cursor cursor = new MemCursor(Long.MAX_VALUE, map);
-        final Attribute attr = new Attribute("attribute name");
+        final Attribute attr = AttributeMocker.reversive();
         final String value = "some text \u0433!";
         cursor.add(new PickerTerm(map, msg), attr, value);
         MatcherAssert.assertThat(
@@ -84,9 +85,9 @@ public final class MemCursorTest {
             this.temp.newFolder("foo2")
         );
         final Long msg = MsgMocker.number();
-        // map.touch(msg);
+        map.touch(msg);
         final Cursor cursor = new MemCursor(Long.MAX_VALUE, map);
-        final Attribute attr = new Attribute("attribute name 2");
+        final Attribute attr = AttributeMocker.reversive();
         final String value = "text to save";
         cursor.add(new PickerTerm(map, msg), attr, "previous value");
         cursor.add(new PickerTerm(map, msg), attr, "previous value 2");

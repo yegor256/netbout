@@ -84,7 +84,6 @@ final class NumbersIndex implements FlushableIndex {
      */
     @Override
     public void replace(final long msg, final String value) {
-        assert value.isEmpty();
         this.numbers.add(msg);
     }
 
@@ -93,7 +92,6 @@ final class NumbersIndex implements FlushableIndex {
      */
     @Override
     public void add(final long msg, final String value) {
-        assert value.isEmpty();
         this.numbers.add(msg);
     }
 
