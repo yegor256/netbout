@@ -69,9 +69,14 @@ public final class DefaultInfinityTest {
                 }
             }
         ).toArray(new Urn[0]);
+        int total = 0;
         while (inf.eta(deps) != 0) {
             TimeUnit.MILLISECONDS.sleep(1);
             Logger.debug(this, "eta=%[nano]s", inf.eta(deps));
+            // @checkstyle MagicNumber (1 line)
+            if (++total > 1000) {
+                throw new IllegalStateException("time out");
+            }
         }
         final String query = String.format(
             "(pos 0)",
@@ -108,8 +113,13 @@ public final class DefaultInfinityTest {
                 }
             }
         ).toArray(new Urn[0]);
+        int total = 0;
         while (inf.eta(deps) != 0) {
             TimeUnit.MILLISECONDS.sleep(1);
+            // @checkstyle MagicNumber (1 line)
+            if (++total > 1000) {
+                throw new IllegalStateException("time out 2");
+            }
         }
         inf.flush();
         inf.close();

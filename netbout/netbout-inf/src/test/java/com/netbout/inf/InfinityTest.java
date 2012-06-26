@@ -95,8 +95,13 @@ public final class InfinityTest {
         final Urn[] array = new Urn[0];
         for (XmlDocument see : xml.nodes("see")) {
             final Urn[] deps = inf.see(this.notice(see)).toArray(array);
+            int total = 0;
             while (inf.eta(deps) != 0) {
                 TimeUnit.MILLISECONDS.sleep(1);
+                // @checkstyle MagicNumber (1 line)
+                if (++total > 1000) {
+                    throw new IllegalStateException("time out 2");
+                }
             }
         }
         return inf;

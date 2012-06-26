@@ -64,31 +64,6 @@ public final class BaseIndexTest {
     public transient TemporaryFolder temp = new TemporaryFolder();
 
     /**
-     * DefaultIndex can replace values.
-     * @throws Exception If there is some problem inside
-     */
-    @Test
-    public void replacesValues() throws Exception {
-        final Index index = new BaseIndex(
-            new Attribute("some attr"),
-            new DefaultDirectory(this.temp.newFile("file-1"))
-        );
-        final long msg = MsgMocker.number();
-        final String value = "some text \u0433!";
-        index.add(msg, "first value");
-        index.add(msg, "second value");
-        index.replace(msg, value);
-        MatcherAssert.assertThat(
-            index.attr(msg),
-            Matchers.equalTo(value)
-        );
-        MatcherAssert.assertThat(
-            index.next(value, msg + 1),
-            Matchers.equalTo(msg)
-        );
-    }
-
-    /**
      * DefaultIndex can order message numbers propertly.
      * @throws Exception If there is some problem inside
      */
@@ -106,74 +81,10 @@ public final class BaseIndexTest {
         }
         for (int pos = 1; pos < total; ++pos) {
             MatcherAssert.assertThat(
-                index.next(value, msg),
+                index.next(value, msg - pos + 1),
                 Matchers.equalTo(msg - pos)
             );
         }
-    }
-
-    /**
-     * DefaultIndex can update records in parallel.
-     * @throws Exception If there is some problem inside
-     */
-    @Test
-    @SuppressWarnings({ "PMD.AvoidInstantiatingObjectsInLoops", "unchecked" })
-    public void updatesInMultipleThreads() throws Exception {
-        final Index index = new BaseIndex(
-            new Attribute("some attr 3"),
-            new DefaultDirectory(this.temp.newFile("file-3"))
-        );
-        final long msg = MsgMocker.number();
-        final String value = "some value to set";
-        final int total = 100;
-        final CountDownLatch start = new CountDownLatch(1);
-        final CountDownLatch done = new CountDownLatch(total);
-        final Collection<Future<Boolean>> futures =
-            new ArrayList<Future<Boolean>>(total);
-        final ExecutorService service =
-            Executors.newFixedThreadPool(total, new VerboseThreads());
-        for (int pos = 0; pos < total; ++pos) {
-            futures.add(
-                service.submit(
-                    new Callable<Boolean>() {
-                        @Override
-                        public Boolean call() throws Exception {
-                            start.await();
-                            index.delete(msg, value);
-                            index.replace(msg, value);
-                            done.countDown();
-                            return true;
-                        }
-                    }
-                )
-            );
-        }
-        start.countDown();
-        done.await(2, TimeUnit.SECONDS);
-        MatcherAssert.assertThat(
-            futures,
-            Matchers.everyItem(
-                new ArgumentMatcher<Future<Boolean>>() {
-                    @Override
-                    public boolean matches(final Object future) {
-                        try {
-                            return Boolean.class.cast(
-                                Future.class.cast(future).get()
-                            );
-                        } catch (InterruptedException ex) {
-                            Thread.currentThread().interrupt();
-                            throw new IllegalStateException(ex);
-                        } catch (java.util.concurrent.ExecutionException ex) {
-                            throw new IllegalStateException(ex);
-                        }
-                    }
-                }
-            )
-        );
-        MatcherAssert.assertThat(
-            index.attr(msg),
-            Matchers.equalTo(value)
-        );
     }
 
 }
