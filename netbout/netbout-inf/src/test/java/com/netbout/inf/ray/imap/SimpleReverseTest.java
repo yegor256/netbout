@@ -26,60 +26,39 @@
  */
 package com.netbout.inf.ray.imap;
 
-import com.netbout.inf.Lattice;
-import java.io.IOException;
+import com.netbout.inf.MsgMocker;
+import java.io.ByteArrayOutputStream;
+import java.io.ByteArrayInputStream;
 import java.io.InputStream;
-import java.io.OutputStream;
+import org.hamcrest.MatcherAssert;
+import org.hamcrest.Matchers;
+import org.junit.Test;
 
 /**
- * Sorted set of message numbers.
- *
- * <p>Implementation must be thread-safe, except {@link #load(InputStream)}
- * and {@link #save(OutputStream)} methods.
- *
+ * Test case of {@link SimpleReverse}.
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-interface Numbers {
+public final class SimpleReverseTest {
 
     /**
-     * Get lattice for this collection of numbers.
-     * @return The lattice
+     * SimpleReverse can save to stream and restore.
+     * @throws Exception If there is some problem inside
      */
-    Lattice lattice();
-
-    /**
-     * Get next number after the provided one, or ZERO.
-     * @param number The number to start searching from
-     * @return The number, next to this one (or ZERO if nothing found)
-     */
-    long next(long number);
-
-    /**
-     * Add new number (or replace the existing one, silently).
-     * @param number The number to add
-     */
-    void add(long number);
-
-    /**
-     * Remove this number (or ignore the operation if it doesn't exist,
-     * silently).
-     * @param number The number to remove
-     */
-    void remove(long number);
-
-    /**
-     * Save them all to the output stream.
-     * @param stream The stream to save to
-     * @throws IOException If some I/O problem inside
-     */
-    void save(OutputStream stream) throws IOException;
-
-    /**
-     * Load from the input stream and add here.
-     * @param stream The stream to load from
-     * @throws IOException If some I/O problem inside
-     */
-    void load(InputStream stream) throws IOException;
+    @Test
+    public void savesAndRestores() throws Exception {
+        final Reverse reverse = new SimpleReverse();
+        final long msg = MsgMocker.number();
+        final String value = "some value, \u0433";
+        reverse.put(msg, value);
+        MatcherAssert.assertThat(reverse.get(msg), Matchers.equalTo(value));
+        final ByteArrayOutputStream ostream = new ByteArrayOutputStream();
+        reverse.save(ostream);
+        final byte[] data = ostream.toByteArray();
+        final Reverse restored = new SimpleReverse();
+        final InputStream istream = new ByteArrayInputStream(data);
+        restored.load(istream);
+        MatcherAssert.assertThat(restored.get(msg), Matchers.equalTo(value));
+    }
 
 }

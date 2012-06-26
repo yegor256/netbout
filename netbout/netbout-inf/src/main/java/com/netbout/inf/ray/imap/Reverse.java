@@ -34,7 +34,8 @@ import java.io.OutputStream;
 /**
  * Map of values and message numbers.
  *
- * <p>Implementation must be mutable and thread-safe.
+ * <p>Implementation must be thread-safe, except {@link #load(InputStream)}
+ * and {@link #save(OutputStream)} methods.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$

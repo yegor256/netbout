@@ -42,11 +42,16 @@ import java.io.IOException;
 final class DefaultDirectory implements Directory {
 
     /**
-     * Public ctor.
-     * @param dir The directory
+     * Directory.
      */
-    public DefaultDirectory(final File dir) throws IOException {
-        // todo
+    private final transient File dir;
+
+    /**
+     * Public ctor.
+     * @param file The directory
+     */
+    public DefaultDirectory(final File file) throws IOException {
+        this.dir = file;
     }
 
     /**

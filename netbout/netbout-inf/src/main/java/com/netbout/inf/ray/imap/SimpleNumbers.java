@@ -28,6 +28,8 @@ package com.netbout.inf.ray.imap;
 
 import com.netbout.inf.Lattice;
 import com.netbout.inf.lattice.LatticeBuilder;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -40,7 +42,8 @@ import java.util.concurrent.ConcurrentSkipListSet;
 /**
  * Simple implemenation of {@link Numbers}.
  *
- * <p>This class is mutable and thread-safe.
+ * <p>The class is thread-safe, except {@link #load(InputStream)}
+ * and {@link #save(OutputStream)} methods.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
@@ -115,7 +118,12 @@ final class SimpleNumbers implements Numbers {
      */
     @Override
     public void save(final OutputStream stream) throws IOException {
-        // todo
+        final DataOutputStream data = new DataOutputStream(stream);
+        for (Long number : this.nums) {
+            data.writeLong(number);
+        }
+        data.writeLong(0L);
+        data.flush();
     }
 
     /**
@@ -123,7 +131,15 @@ final class SimpleNumbers implements Numbers {
      */
     @Override
     public void load(final InputStream stream) throws IOException {
-        // todo
+        this.nums.clear();
+        final DataInputStream data = new DataInputStream(stream);
+        while (true) {
+            final long next = data.readLong();
+            if (next == 0) {
+                break;
+            }
+            this.nums.add(next);
+        }
     }
 
 }

@@ -26,16 +26,20 @@
  */
 package com.netbout.inf.ray.imap;
 
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
 /**
  * Simple implementation of {@link Reverse}.
  *
- * <p>Implementation must be mutable and thread-safe.
+ * <p>The class is thread-safe, except {@link #load(InputStream)}
+ * and {@link #save(OutputStream)} methods.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
@@ -83,7 +87,13 @@ final class SimpleReverse implements Reverse {
      */
     @Override
     public void save(final OutputStream stream) throws IOException {
-        // todo...
+        final DataOutputStream data = new DataOutputStream(stream);
+        for (Map.Entry<Long, String> entry : this.map.entrySet()) {
+            data.writeLong(entry.getKey());
+            data.writeUTF(entry.getValue());
+        }
+        data.writeLong(0L);
+        data.flush();
     }
 
     /**
@@ -91,7 +101,15 @@ final class SimpleReverse implements Reverse {
      */
     @Override
     public void load(final InputStream stream) throws IOException {
-        // todo...
+        this.map.clear();
+        final DataInputStream data = new DataInputStream(stream);
+        while (true) {
+            final long msg = data.readLong();
+            if (msg == 0) {
+                break;
+            }
+            this.map.put(msg, data.readUTF());
+        }
     }
 
 }

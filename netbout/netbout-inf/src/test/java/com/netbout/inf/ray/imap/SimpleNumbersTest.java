@@ -26,60 +26,40 @@
  */
 package com.netbout.inf.ray.imap;
 
-import com.netbout.inf.Lattice;
-import java.io.IOException;
+import com.netbout.inf.MsgMocker;
+import java.io.ByteArrayOutputStream;
+import java.io.ByteArrayInputStream;
 import java.io.InputStream;
-import java.io.OutputStream;
+import org.hamcrest.MatcherAssert;
+import org.hamcrest.Matchers;
+import org.junit.Test;
 
 /**
- * Sorted set of message numbers.
- *
- * <p>Implementation must be thread-safe, except {@link #load(InputStream)}
- * and {@link #save(OutputStream)} methods.
- *
+ * Test case of {@link SimpleNumbers}.
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-interface Numbers {
+public final class SimpleNumbersTest {
 
     /**
-     * Get lattice for this collection of numbers.
-     * @return The lattice
+     * SimpleNumbers can save to stream and restore.
+     * @throws Exception If there is some problem inside
      */
-    Lattice lattice();
-
-    /**
-     * Get next number after the provided one, or ZERO.
-     * @param number The number to start searching from
-     * @return The number, next to this one (or ZERO if nothing found)
-     */
-    long next(long number);
-
-    /**
-     * Add new number (or replace the existing one, silently).
-     * @param number The number to add
-     */
-    void add(long number);
-
-    /**
-     * Remove this number (or ignore the operation if it doesn't exist,
-     * silently).
-     * @param number The number to remove
-     */
-    void remove(long number);
-
-    /**
-     * Save them all to the output stream.
-     * @param stream The stream to save to
-     * @throws IOException If some I/O problem inside
-     */
-    void save(OutputStream stream) throws IOException;
-
-    /**
-     * Load from the input stream and add here.
-     * @param stream The stream to load from
-     * @throws IOException If some I/O problem inside
-     */
-    void load(InputStream stream) throws IOException;
+    @Test
+    public void savesAndRestores() throws Exception {
+        final Numbers numbers = new SimpleNumbers();
+        final long msg = MsgMocker.number();
+        numbers.add(msg);
+        numbers.add(msg - 1);
+        MatcherAssert.assertThat(numbers.next(msg), Matchers.equalTo(msg - 1));
+        final ByteArrayOutputStream ostream = new ByteArrayOutputStream();
+        numbers.save(ostream);
+        final byte[] data = ostream.toByteArray();
+        final Numbers restored = new SimpleNumbers();
+        final InputStream istream = new ByteArrayInputStream(data);
+        restored.load(istream);
+        MatcherAssert.assertThat(restored.next(msg), Matchers.equalTo(msg - 1));
+        MatcherAssert.assertThat(restored.next(msg - 1), Matchers.equalTo(0L));
+    }
 
 }
