@@ -116,8 +116,9 @@ final class BitsetLattice implements Lattice {
                 corrected = shifter.shift(cursor, BitsetLattice.msg(next));
                 Logger.debug(
                     this,
-                    "#correct(%s, ..): moved to %s",
+                    "#correct(%s, %[type]s): moved to %s",
                     cursor,
+                    shifter,
                     corrected
                 );
             } else {

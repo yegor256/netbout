@@ -30,6 +30,8 @@ import com.netbout.inf.Cursor;
 import com.netbout.inf.CursorMocker;
 import com.netbout.inf.Lattice;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.SortedSet;
 import java.util.TreeSet;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
@@ -50,15 +52,14 @@ public final class BitsetLatticeTest {
      */
     @Test
     public void shiftsCursorToTheRightPosition() throws Exception {
-        final Cursor cursor = new CursorMocker().withMsg(5000L).mock();
+        final SortedSet<Long> numbers =
+            new TreeSet<Long>(Collections.reverseOrder());
+        numbers.addAll(Arrays.asList(10000L, 350L, 150L, 50L));
         final Lattice lattice = new LatticeBuilder()
-            .fill(new TreeSet<Long>(Arrays.asList(10000L, 350L, 150L, 50L)))
+            .fill(numbers)
             .build();
-        MatcherAssert.assertThat(
-            lattice,
-            Matchers.hasToString(Matchers.containsString("16384"))
-        );
         final Lattice.Shifter shifter = Mockito.mock(Lattice.Shifter.class);
+        final Cursor cursor = new CursorMocker().withMsg(5000L).mock();
         lattice.correct(cursor, shifter);
         Mockito.verify(shifter).shift(cursor, 383L);
     }

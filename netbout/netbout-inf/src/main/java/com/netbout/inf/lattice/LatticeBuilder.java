@@ -67,8 +67,14 @@ public final class LatticeBuilder {
      * @return This object
      */
     public LatticeBuilder fill(final SortedSet<Long> numbers) {
+        this.main.clear(0, BitsetLattice.BITS);
         long previous = Long.MAX_VALUE;
         for (Long num : numbers) {
+            if (num > previous) {
+                throw new IllegalArgumentException(
+                    "numbers should be reverse-ordered"
+                );
+            }
             if (previous - num < BitsetLattice.SIZE / 2) {
                 continue;
             }
@@ -76,7 +82,7 @@ public final class LatticeBuilder {
             final int bit = BitsetLattice.bit(num);
             this.main.set(bit);
         }
-        this.reverse.set(0, BitsetLattice.BITS, false);
+        this.reverse.set(0, BitsetLattice.BITS, true);
         final Iterator<Long> iterator = numbers.iterator();
         Long next = Long.MAX_VALUE;
         for (int bit = 0; bit < BitsetLattice.BITS; ++bit) {
@@ -86,8 +92,8 @@ public final class LatticeBuilder {
                 seen = true;
                 next = iterator.next();
             }
-            if (!seen) {
-                this.reverse.set(bit);
+            if (seen) {
+                this.reverse.clear(bit);
             }
         }
         return this;
