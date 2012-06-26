@@ -70,7 +70,7 @@ public final class BaseIndexTest {
     @Test
     public void ordersNumbersProperly() throws Exception {
         final Index index = new BaseIndex(
-            new Attribute("some attr 2"),
+            new Attribute("some-attr-2"),
             new DefaultDirectory(this.temp.newFile("file-2"))
         );
         final long msg = MsgMocker.number();

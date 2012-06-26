@@ -62,7 +62,7 @@ public final class NotTermTest {
         final IndexMap map = new DefaultIndexMap(
             this.temp.newFolder("foo")
         );
-        final Attribute attr = new Attribute("attribute name");
+        final Attribute attr = new Attribute("attribute-name");
         final String value = "some text-1 \u0433!";
         final long msg = MsgMocker.number();
         map.touch(msg);

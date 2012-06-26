@@ -67,6 +67,11 @@ public class Attribute {
      * @param txt Name of it
      */
     public Attribute(final String txt) {
+        if (!txt.matches("[a-z0-9\\-]+")) {
+            throw new IllegalArgumentException(
+                String.format("illegal attribute name '%s'", txt)
+            );
+        }
         this.name = txt;
     }
 

@@ -61,7 +61,7 @@ public final class MatcherTermTest {
         final IndexMap map = new DefaultIndexMap(
             this.temp.newFolder("foo")
         );
-        final Attribute attr = new Attribute("attribute name");
+        final Attribute attr = new Attribute("attribute-name");
         final String value = "some text \u0433!";
         final long msg = MsgMocker.number();
         map.index(attr).add(msg, value);

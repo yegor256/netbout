@@ -90,7 +90,9 @@ public enum VariableAtom implements Atom<String> {
         } else if (value.equals("bout.number")) {
             this.attr = new VariableAtom.BoutNumberAttribute();
         } else {
-            this.attr = new Attribute(String.format("var-%s", this.name));
+            this.attr = new Attribute(
+                String.format("var-%s", this.name.replace(".", "-"))
+            );
         }
     }
 

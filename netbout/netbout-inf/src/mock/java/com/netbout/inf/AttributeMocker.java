@@ -50,7 +50,7 @@ public final class AttributeMocker {
          * Public ctor.
          */
         public ReversiveAttribute() {
-            super("reversive attr");
+            super("reversive-attr");
         }
     }
 

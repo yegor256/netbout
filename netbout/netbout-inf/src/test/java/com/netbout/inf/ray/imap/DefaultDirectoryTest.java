@@ -61,7 +61,7 @@ public final class DefaultDirectoryTest {
         final long msg = MsgMocker.number();
         numbers.add(msg);
         numbers.add(msg - 1);
-        final Attribute attr = new Attribute("some attr");
+        final Attribute attr = new Attribute("some-attr");
         final String value = "some value to use";
         dir.save(attr, value, numbers);
         dir.baseline();
@@ -83,7 +83,7 @@ public final class DefaultDirectoryTest {
         final long msg = MsgMocker.number();
         final String value = "some value 2, \u0433";
         reverse.put(msg, value);
-        final Attribute attr = new Attribute("some attr 2");
+        final Attribute attr = new Attribute("some-attr-2");
         dir.save(attr, reverse);
         dir.baseline();
         final Reverse restored = new SimpleReverse();
