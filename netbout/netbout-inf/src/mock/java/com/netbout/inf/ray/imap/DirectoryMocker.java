@@ -77,23 +77,7 @@ public final class DirectoryMocker {
      */
     public DirectoryMocker withMaximum(final int max) throws IOException {
         this.maximum = max;
-        final File file = this.directory.attr(VariableAtom.NUMBER.attribute());
-        final PrintWriter writer = new PrintWriter(new FileWriter(file));
-        final PrintWriter map = new PrintWriter(
-            new FileWriter(this.directory.map())
-        );
-        for (int pos = 1; pos <= this.maximum; ++pos) {
-            writer.print(pos);
-            writer.print('\n');
-            writer.print(' ');
-            writer.print(pos);
-            writer.print('\n');
-            map.print(pos);
-            map.print('\n');
-        }
-        writer.close();
-        map.close();
-        Logger.info(this, "#withMaximum(): %s (%d bytes)", file, file.length());
+        // todo
         return this;
     }
 
@@ -106,31 +90,7 @@ public final class DirectoryMocker {
      */
     public DirectoryMocker withBouts(final int bouts, final int max)
         throws IOException {
-        final File file = this.directory.attr(
-            VariableAtom.BOUT_NUMBER.attribute()
-        );
-        final PrintWriter writer = new PrintWriter(new FileWriter(file));
-        final List<Long> msgs = new ArrayList<Long>(this.maximum);
-        for (long pos = 1; pos <= this.maximum; ++pos) {
-            msgs.add(pos);
-        }
-        Collections.shuffle(msgs);
-        for (int pos = 1; pos <= bouts; ++pos) {
-            writer.print(pos);
-            writer.print('\n');
-            for (int msg = 1; msg <= max; ++msg) {
-                writer.print(' ');
-                if (msgs.isEmpty()) {
-                    writer.print(this.random.nextInt(this.maximum) + 1);
-                } else {
-                    writer.print(msgs.get(0));
-                    msgs.remove(0);
-                }
-                writer.print('\n');
-            }
-        }
-        writer.close();
-        Logger.info(this, "#withBouts(): %s (%d bytes)", file, file.length());
+        // todo
         return this;
     }
 
@@ -144,37 +104,7 @@ public final class DirectoryMocker {
      */
     public DirectoryMocker withAttr(final String name, final String prefix,
         final int num) throws IOException {
-        final File file = this.directory.attr(name);
-        final PrintWriter writer = new PrintWriter(new FileWriter(file));
-        final List<Long> msgs = new ArrayList<Long>(this.maximum);
-        for (long pos = 1; pos <= this.maximum; ++pos) {
-            msgs.add(pos);
-        }
-        Collections.shuffle(msgs);
-        for (int pos = 1; pos <= num; ++pos) {
-            writer.print(prefix);
-            writer.print(pos);
-            writer.print('\n');
-            for (int msg = 1;
-                msg <= this.maximum / (this.random.nextInt(num) + 1); ++msg) {
-                writer.print(' ');
-                if (msgs.isEmpty()) {
-                    writer.print(this.random.nextInt(this.maximum) + 1);
-                } else {
-                    writer.print(msgs.get(0));
-                    msgs.remove(0);
-                }
-                writer.print('\n');
-            }
-        }
-        writer.close();
-        Logger.info(
-            this,
-            "#withAttr(%s): %s (%d bytes)",
-            name,
-            file,
-            file.length()
-        );
+        // todo
         return this;
     }
 
