@@ -36,6 +36,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.RandomAccessFile;
 import java.nio.channels.Channels;
+import org.apache.commons.io.FilenameUtils;
 
 /**
  * Default implementation of {@link Directory}.
@@ -85,7 +86,12 @@ final class DefaultDirectory implements Directory {
         } finally {
             stream.close();
         }
-        this.draft.backlog(attr).register(value, file);
+        this.draft.backlog(attr).add(
+            new Backlog.Item(
+                value,
+                FilenameUtils.getName(file.getPath())
+            )
+        );
     }
 
     /**

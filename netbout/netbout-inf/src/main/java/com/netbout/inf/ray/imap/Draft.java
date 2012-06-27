@@ -34,6 +34,8 @@ import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.io.FileUtils;
 
 /**
  * Sub-directory with draft documents.
@@ -53,14 +55,16 @@ final class Draft implements Closeable {
     /**
      * Version to work with.
      */
-    private final transient String version = "1";
+    private final transient String version;
 
     /**
      * Public ctor.
      * @param file The directory
+     * @throws IOException If some I/O problem inside
      */
     public Draft(final File file) throws IOException {
         this.dir = file;
+        this.version = new VersionBuilder(this.dir).draft();
     }
 
     /**
@@ -68,36 +72,64 @@ final class Draft implements Closeable {
      * @param attr Attribute
      * @param value The value
      * @return File name
+     * @throws IOException If some I/O problem inside
      */
     public File numbers(final Attribute attr,
         final String value) throws IOException {
-        return null;
+        return new File(
+            this.dir,
+            String.format(
+                "/%s/%s/numbers-%d.inf",
+                this.version,
+                attr,
+                value.hashCode()
+            )
+        );
     }
 
     /**
      * Get name of reverse file.
      * @param attr Attribute
      * @return File name
+     * @throws IOException If some I/O problem inside
      */
     public File reverse(final Attribute attr) throws IOException {
-        return null;
+        return new File(
+            this.dir,
+            String.format("/%s/%s/reverse.inf", this.version, attr)
+        );
     }
 
     /**
      * Get backlog.
      * @param attr Attribute
      * @return The catalog
+     * @throws IOException If some I/O problem inside
      */
-    public Draft.Backlog backlog(final Attribute attr) throws IOException {
-        return null;
+    public Backlog backlog(final Attribute attr) throws IOException {
+        return new Backlog(
+            new File(
+                this.dir,
+                String.format("/%s/%s/backlog.inf", this.version, attr)
+            )
+        );
     }
 
     /**
      * Baseline to the given place.
      * @param base Baseline to baseline to
+     * @throws IOException If some I/O problem inside
      */
     public void baseline(final Baseline base) throws IOException {
-        // todo
+        for (File file : this.dir.listFiles()) {
+            if (!file.isDirectory()) {
+                continue;
+            }
+            final Attribute attr = new Attribute(
+                FilenameUtils.getName(file.getPath())
+            );
+            this.baseline(base, attr);
+        }
     }
 
     /**
@@ -109,19 +141,16 @@ final class Draft implements Closeable {
     }
 
     /**
-     * Backlog.
-     *
-     * <p>Class is thread-safe.
+     * Baseline to the given place, for the given attribute.
+     * @param base Baseline to baseline to
+     * @param attr Attribute
+     * @throws IOException If some I/O problem inside
      */
-    public final class Backlog {
-        /**
-         * Register new file for the value.
-         * @param value The value
-         * @param file File with numbers
-         */
-        public void register(final String value,
-            final File file) throws IOException {
-            // todo
+    private void baseline(final Baseline base,
+        final Attribute attr) throws IOException {
+        final File reverse = this.reverse(attr);
+        if (reverse.exists()) {
+            FileUtils.copyFile(reverse, base.reverse(attr));
         }
     }
 

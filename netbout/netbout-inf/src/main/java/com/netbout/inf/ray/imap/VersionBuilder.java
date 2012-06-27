@@ -34,16 +34,18 @@ import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.UUID;
+import org.apache.commons.io.FileUtils;
 
 /**
- * Sub-directory with baselined documents.
+ * Builder of version.
  *
  * <p>Class is thread-safe.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-final class Baseline implements Closeable {
+final class VersionBuilder {
 
     /**
      * Directory.
@@ -51,75 +53,54 @@ final class Baseline implements Closeable {
     private final transient File dir;
 
     /**
-     * Version to work with.
-     */
-    private final transient String version;
-
-    /**
      * Public ctor.
      * @param file The directory
      * @throws IOException If some I/O problem inside
      */
-    public Baseline(final File file) throws IOException {
+    public VersionBuilder(final File file) throws IOException {
         this.dir = file;
-        this.version = new VersionBuilder(this.dir).baselined();
     }
 
     /**
-     * Get name of data file.
-     * @param attr Attribute
-     * @return File name
+     * Get currently baselined version (or create one if it doesn't exist).
+     * @return Version
      * @throws IOException If some I/O problem inside
      */
-    public File data(final Attribute attr) throws IOException {
-        return new File(
-            this.dir,
-            String.format("/%s/%s/data.inf", this.version, attr)
-        );
+    public String baselined() throws IOException {
+        final File marker = new File(this.dir, "version.txt");
+        if (!marker.exists()) {
+            FileUtils.writeStringToFile(marker, this.ver());
+        }
+        return FileUtils.readFileToString(marker);
     }
 
     /**
-     * Get name of reverse file.
-     * @param attr Attribute
-     * @return File name
+     * Generate draft version.
+     * @return Version
      * @throws IOException If some I/O problem inside
      */
-    public File reverse(final Attribute attr) throws IOException {
-        return new File(
-            this.dir,
-            String.format("/%s/%s/reverse.inf", this.version, attr)
-        );
+    public String draft() throws IOException {
+        final File marker = new File(this.dir, "draft.txt");
+        if (!marker.exists()) {
+            FileUtils.writeStringToFile(marker, this.ver());
+        }
+        return FileUtils.readFileToString(marker);
     }
 
     /**
-     * Get catalog.
-     * @param attr Attribute
-     * @return The catalog
+     * Generate version.
+     * @return Version
      */
-    public Catalog catalog(final Attribute attr) throws IOException {
-        return new Catalog(
-            new File(
-                this.dir,
-                String.format("/%s/%s/catalog.inf", this.version, attr)
-            )
-        );
-    }
-
-    /**
-     * Rebase to the new set of files.
-     * @param base Baseline to rebase to
-     * @throws IOException If some I/O problem inside
-     */
-    public void rebase(final Baseline base) throws IOException {
-        // todo
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void close() throws IOException {
-        // nothing
+    private String ver() {
+        String ver;
+        do {
+            ver = String.format(
+                "%06X",
+                // @checkstyle MagicNumber (1 line)
+                UUID.randomUUID().getMostSignificantBits() & 0xFFFFFF
+            );
+        } while (new File(this.dir, ver).exists());
+        return ver;
     }
 
 }
