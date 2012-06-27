@@ -34,6 +34,7 @@ import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * Sub-directory with baselined documents.
@@ -53,7 +54,8 @@ final class Baseline implements Closeable {
     /**
      * Version to work with.
      */
-    private final transient String version;
+    private final transient AtomicReference<String> version =
+        new AtomicReference<String>();
 
     /**
      * Public ctor.
@@ -62,7 +64,7 @@ final class Baseline implements Closeable {
      */
     public Baseline(final File file) throws IOException {
         this.dir = file;
-        this.version = new VersionBuilder(this.dir).baselined();
+        this.version.set(new VersionBuilder(this.dir).baselined());
     }
 
     /**
@@ -74,7 +76,7 @@ final class Baseline implements Closeable {
     public File data(final Attribute attr) throws IOException {
         return new File(
             this.dir,
-            String.format("/%s/%s/data.inf", this.version, attr)
+            String.format("/%s/%s/data.inf", this.version.get(), attr)
         );
     }
 
@@ -87,7 +89,7 @@ final class Baseline implements Closeable {
     public File reverse(final Attribute attr) throws IOException {
         return new File(
             this.dir,
-            String.format("/%s/%s/reverse.inf", this.version, attr)
+            String.format("/%s/%s/reverse.inf", this.version.get(), attr)
         );
     }
 
@@ -100,7 +102,7 @@ final class Baseline implements Closeable {
         return new Catalog(
             new File(
                 this.dir,
-                String.format("/%s/%s/catalog.inf", this.version, attr)
+                String.format("/%s/%s/catalog.inf", this.version.get(), attr)
             )
         );
     }
@@ -111,7 +113,7 @@ final class Baseline implements Closeable {
      * @throws IOException If some I/O problem inside
      */
     public void rebase(final Baseline base) throws IOException {
-        // todo
+        this.version.set(base.version.get());
     }
 
     /**
@@ -119,7 +121,7 @@ final class Baseline implements Closeable {
      */
     @Override
     public void close() throws IOException {
-        // nothing
+        // nothing to do
     }
 
 }

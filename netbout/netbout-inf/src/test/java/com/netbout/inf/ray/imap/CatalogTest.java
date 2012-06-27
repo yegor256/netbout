@@ -27,8 +27,8 @@
 package com.netbout.inf.ray.imap;
 
 import java.util.Collection;
-import java.util.LinkedList;
 import java.util.Random;
+import java.util.TreeSet;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Rule;
@@ -60,11 +60,13 @@ public final class CatalogTest {
         );
         final String value = "some value to use, \u0433";
         final long pos = Math.max(Math.abs(new Random().nextLong()), 1L);
-        final Collection<Catalog.Item> items = new LinkedList<Catalog.Item>();
+        final Collection<Catalog.Item> items = new TreeSet<Catalog.Item>();
         items.add(new Catalog.Item(value, pos));
+        items.add(new Catalog.Item("boom", 1));
+        items.add(new Catalog.Item("foo", 1));
         catalog.create(items.iterator());
         MatcherAssert.assertThat(catalog.seek(value), Matchers.equalTo(pos));
-        MatcherAssert.assertThat(catalog.seek("boom"), Matchers.equalTo(0L));
+        MatcherAssert.assertThat(catalog.seek("boom"), Matchers.equalTo(1L));
     }
 
 }

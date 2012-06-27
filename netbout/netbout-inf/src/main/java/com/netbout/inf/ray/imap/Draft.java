@@ -137,7 +137,7 @@ final class Draft implements Closeable {
      */
     @Override
     public void close() throws IOException {
-        // todo
+        // nothing to do
     }
 
     /**

@@ -43,7 +43,8 @@ import org.apache.commons.io.IOUtils;
 /**
  * Backlog in a directory.
  *
- * <p>Class is thread-safe.
+ * <p>Class is thread-safe for reading and NOT thread-safe for writing
+ * operations.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
@@ -105,6 +106,9 @@ final class Backlog {
 
     /**
      * Register new reference in the backlog.
+     *
+     * <p>The method is NOT thread-safe.
+     *
      * @param item The item to add
      * @throws IOException If some I/O problem inside
      */
@@ -122,6 +126,9 @@ final class Backlog {
 
     /**
      * Get them all.
+     *
+     * <p>The method is thread-safe.
+     *
      * @return The items in iterator
      * @throws IOException If some I/O problem inside
      */

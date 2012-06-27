@@ -59,6 +59,7 @@ public final class BacklogTest {
         final String value = "some value to use, \u0433";
         final String ref = "some reference to use, \u0433";
         backlog.add(new Backlog.Item(value, ref));
+        backlog.add(new Backlog.Item("abc", ref));
         MatcherAssert.assertThat(
             backlog.iterator().next().value(),
             Matchers.equalTo(value)
