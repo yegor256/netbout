@@ -62,6 +62,18 @@ final class VersionBuilder {
     }
 
     /**
+     * Set new baselined version.
+     * @param version New version
+     * @throws IOException If some I/O problem inside
+     */
+    public void rebase(final String version) throws IOException {
+        FileUtils.writeStringToFile(
+            new File(this.dir, "version.txt"),
+            version
+        );
+    }
+
+    /**
      * Get currently baselined version (or create one if it doesn't exist).
      * @return Version
      * @throws IOException If some I/O problem inside

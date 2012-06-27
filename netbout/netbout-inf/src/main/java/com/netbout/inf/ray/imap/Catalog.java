@@ -26,6 +26,7 @@
  */
 package com.netbout.inf.ray.imap;
 
+import com.jcabi.log.Logger;
 import com.netbout.inf.Attribute;
 import java.io.Closeable;
 import java.io.DataOutputStream;
@@ -132,20 +133,20 @@ final class Catalog {
     }
 
     /**
-     * Get position of numbers in data file, for the given value, or ZERO
+     * Get position of numbers in data file, for the given value, or -1
      * if such a value is not found in catalog.
      *
      * <p>The method is thread-safe.
      *
      * @param value The value
-     * @return Position in data file
+     * @return Position in data file or -1 if not found
      */
     public long seek(final String value) throws IOException {
         final int target = value.hashCode();
         final RandomAccessFile data = new RandomAccessFile(this.file, "r");
         long left = 0;
         long right = data.length() / Item.SIZE;
-        long found = 0;
+        long found = -1;
         while (left < right) {
             final long pos = left + (right - left) / 2;
             data.seek(pos * Item.SIZE);
@@ -176,7 +177,7 @@ final class Catalog {
         final OutputStream stream = new FileOutputStream(this.file);
         try {
             final DataOutputStream data = new DataOutputStream(stream);
-            int previous = 0;
+            int previous = Integer.MIN_VALUE;
             while (items.hasNext()) {
                 final Item item = items.next();
                 final int hash = item.value().hashCode();
@@ -194,6 +195,12 @@ final class Catalog {
         } finally {
             stream.close();
         }
+        Logger.debug(
+            this,
+            "#create(): saved to %s (%d bytes)",
+            this.file,
+            this.file.length()
+        );
     }
 
 }

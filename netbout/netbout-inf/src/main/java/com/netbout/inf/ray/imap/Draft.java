@@ -111,11 +111,15 @@ final class Draft implements Closeable {
     }
 
     /**
-     * Baseline to the given place.
-     * @param base Baseline to baseline to
+     * Baseline it to a new place.
+     * @param src Original baseline
+     * @param dest Where to save baseline
+     * @return The baseline created
      * @throws IOException If some I/O problem inside
      */
-    public void baseline(final Baseline base) throws IOException {
+    public Baseline baseline(final Baseline src,
+        final File dest) throws IOException {
+        final Baseline baseline = new Baseline(dest);
         for (File file : this.dir.listFiles()) {
             if (!file.isDirectory()) {
                 continue;
@@ -123,8 +127,9 @@ final class Draft implements Closeable {
             final Attribute attr = new Attribute(
                 FilenameUtils.getName(file.getPath())
             );
-            this.baseline(base, attr);
+            this.baseline(src, baseline, attr);
         }
+        return baseline;
     }
 
     /**
@@ -137,13 +142,17 @@ final class Draft implements Closeable {
 
     /**
      * Baseline to the given place, for the given attribute.
+     * @param src Original baseline
      * @param base Baseline to baseline to
      * @param attr Attribute
      * @throws IOException If some I/O problem inside
      */
-    private void baseline(final Baseline base,
+    private void baseline(final Baseline src, final Baseline base,
         final Attribute attr) throws IOException {
-        final File reverse = this.reverse(attr);
+        File reverse = this.reverse(attr);
+        if (!reverse.exists()) {
+            reverse = src.reverse(attr);
+        }
         if (reverse.exists()) {
             FileUtils.copyFile(reverse, base.reverse(attr));
         }

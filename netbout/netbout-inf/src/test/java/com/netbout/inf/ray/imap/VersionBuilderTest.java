@@ -28,6 +28,7 @@ package com.netbout.inf.ray.imap;
 
 import com.netbout.inf.Attribute;
 import com.netbout.inf.MsgMocker;
+import java.io.File;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Rule;
@@ -55,7 +56,7 @@ public final class VersionBuilderTest {
     @Test
     public void createsVersionOfBaseline() throws Exception {
         final VersionBuilder builder = new VersionBuilder(
-            this.temp.newFolder("foo")
+            new File(this.temp.newFolder("foo"), "/some/folder/to/create")
         );
         final String ver = builder.baselined();
         MatcherAssert.assertThat(builder.baselined(), Matchers.equalTo(ver));
@@ -72,7 +73,7 @@ public final class VersionBuilderTest {
     @Test
     public void createsVersionOfDraft() throws Exception {
         final VersionBuilder builder = new VersionBuilder(
-            this.temp.newFolder("foo")
+            new File(this.temp.newFolder("foo-1"), "/some/folder/to/create-2")
         );
         final String ver = builder.draft();
         MatcherAssert.assertThat(builder.draft(), Matchers.equalTo(ver));

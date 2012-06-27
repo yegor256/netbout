@@ -62,11 +62,12 @@ public final class CatalogTest {
         final long pos = Math.max(Math.abs(new Random().nextLong()), 1L);
         final Collection<Catalog.Item> items = new TreeSet<Catalog.Item>();
         items.add(new Catalog.Item(value, pos));
-        items.add(new Catalog.Item("boom", 1));
-        items.add(new Catalog.Item("foo", 1));
+        for (int num = 0; num < 10000; ++num) {
+            items.add(new Catalog.Item(String.format("foo-%s", num), num));
+        }
         catalog.create(items.iterator());
         MatcherAssert.assertThat(catalog.seek(value), Matchers.equalTo(pos));
-        MatcherAssert.assertThat(catalog.seek("boom"), Matchers.equalTo(1L));
+        MatcherAssert.assertThat(catalog.seek("absent"), Matchers.equalTo(-1L));
     }
 
 }

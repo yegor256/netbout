@@ -26,6 +26,7 @@
  */
 package com.netbout.inf.ray.imap;
 
+import com.jcabi.log.Logger;
 import com.netbout.inf.Attribute;
 import java.io.Closeable;
 import java.io.DataInputStream;
@@ -124,6 +125,12 @@ final class Backlog {
         } finally {
             stream.close();
         }
+        Logger.debug(
+            this,
+            "#add(%[text]s, %[text]s): added",
+            item.value(),
+            item.reference()
+        );
     }
 
     /**

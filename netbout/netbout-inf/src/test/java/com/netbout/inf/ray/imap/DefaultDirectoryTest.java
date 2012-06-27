@@ -28,6 +28,7 @@ package com.netbout.inf.ray.imap;
 
 import com.netbout.inf.Attribute;
 import com.netbout.inf.MsgMocker;
+import java.io.File;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Rule;
@@ -55,7 +56,7 @@ public final class DefaultDirectoryTest {
     @Test
     public void savesAndRestoresNumbers() throws Exception {
         final Directory dir = new DefaultDirectory(
-            this.temp.newFolder("foo")
+            new File(this.temp.newFolder("foo"), "/some/directory")
         );
         final Numbers numbers = new SimpleNumbers();
         final long msg = MsgMocker.number();

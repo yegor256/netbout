@@ -101,18 +101,23 @@ final class DefaultDirectory implements Directory {
     public void load(final Attribute attr, final String value,
         final Numbers nums) throws IOException {
         final File file = this.base.data(attr);
-        final RandomAccessFile data = new RandomAccessFile(file, "r");
-        try {
-            data.seek(this.base.catalog(attr).seek(value));
-            final InputStream istream =
-                Channels.newInputStream(data.getChannel());
+        if (file.length() > 0) {
+            final RandomAccessFile data = new RandomAccessFile(file, "r");
             try {
-                nums.load(istream);
+                final long pos = this.base.catalog(attr).seek(value);
+                if (pos >= 0) {
+                    data.seek(pos);
+                    final InputStream istream =
+                        Channels.newInputStream(data.getChannel());
+                    try {
+                        nums.load(istream);
+                    } finally {
+                        istream.close();
+                    }
+                }
             } finally {
-                istream.close();
+                data.close();
             }
-        } finally {
-            data.close();
         }
     }
 
@@ -138,11 +143,13 @@ final class DefaultDirectory implements Directory {
     public void load(final Attribute attr,
         final Reverse reverse) throws IOException {
         final File file = this.base.reverse(attr);
-        final InputStream stream = new FileInputStream(file);
-        try {
-            reverse.load(stream);
-        } finally {
-            stream.close();
+        if (file.length() > 0) {
+            final InputStream stream = new FileInputStream(file);
+            try {
+                reverse.load(stream);
+            } finally {
+                stream.close();
+            }
         }
     }
 
@@ -151,8 +158,7 @@ final class DefaultDirectory implements Directory {
      */
     @Override
     public void baseline() throws IOException {
-        final Baseline candidate = new Baseline(this.dir);
-        this.draft.baseline(candidate);
+        final Baseline candidate = this.draft.baseline(this.base, this.dir);
         this.base.rebase(candidate);
         candidate.close();
     }

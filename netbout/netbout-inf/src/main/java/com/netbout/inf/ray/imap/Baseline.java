@@ -26,6 +26,7 @@
  */
 package com.netbout.inf.ray.imap;
 
+import com.jcabi.log.Logger;
 import com.netbout.inf.Attribute;
 import java.io.Closeable;
 import java.io.File;
@@ -118,7 +119,14 @@ final class Baseline implements Closeable {
      * @throws IOException If some I/O problem inside
      */
     public void rebase(final Baseline base) throws IOException {
+        Logger.debug(
+            this,
+            "#rebase(..): %s switching to %s...",
+            this.version.get(),
+            base.version.get()
+        );
         this.version.set(base.version.get());
+        new VersionBuilder(this.dir).rebase(this.version.get());
     }
 
     /**

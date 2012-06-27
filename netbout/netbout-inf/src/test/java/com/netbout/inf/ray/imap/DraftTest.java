@@ -27,6 +27,7 @@
 package com.netbout.inf.ray.imap;
 
 import com.netbout.inf.Attribute;
+import java.io.File;
 import java.util.Collection;
 import java.util.Random;
 import java.util.TreeSet;
@@ -56,7 +57,9 @@ public final class DraftTest {
      */
     @Test
     public void createsFileNames() throws Exception {
-        final Draft draft = new Draft(this.temp.newFolder("foo"));
+        final Draft draft = new Draft(
+            new File(this.temp.newFolder("foo"), "/some/folder")
+        );
         final Attribute attr = new Attribute("some-name");
         MatcherAssert.assertThat(
             draft.numbers(attr, "some value, \u0433"),
