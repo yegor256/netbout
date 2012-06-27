@@ -30,8 +30,12 @@ import com.netbout.inf.Attribute;
 import java.io.Closeable;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.IOException;
+import java.io.OutputStream;
+import java.io.RandomAccessFile;
+import java.nio.channels.Channels;
 
 /**
  * Default implementation of {@link Directory}.
@@ -49,11 +53,23 @@ final class DefaultDirectory implements Directory {
     private final transient File dir;
 
     /**
+     * Directory with baselined files.
+     */
+    private final transient Baseline base;
+
+    /**
+     * Directory with draft.
+     */
+    private final transient Draft draft;
+
+    /**
      * Public ctor.
      * @param file The directory
      */
     public DefaultDirectory(final File file) throws IOException {
         this.dir = file;
+        this.base = new Baseline(file);
+        this.draft = new Draft(file);
     }
 
     /**
@@ -62,7 +78,14 @@ final class DefaultDirectory implements Directory {
     @Override
     public void save(final Attribute attr, final String value,
         final Numbers nums) throws IOException {
-        // todo
+        final File file = this.draft.numbers(attr, value);
+        final OutputStream stream = new FileOutputStream(file);
+        try {
+            nums.save(stream);
+        } finally {
+            stream.close();
+        }
+        this.draft.backlog(attr).register(value, file);
     }
 
     /**
@@ -71,7 +94,20 @@ final class DefaultDirectory implements Directory {
     @Override
     public void load(final Attribute attr, final String value,
         final Numbers nums) throws IOException {
-        //..
+        final File file = this.base.data(attr);
+        final RandomAccessFile data = new RandomAccessFile(file, "r");
+        try {
+            data.seek(this.base.catalog(attr).seek(value));
+            final InputStream istream =
+                Channels.newInputStream(data.getChannel());
+            try {
+                nums.load(istream);
+            } finally {
+                istream.close();
+            }
+        } finally {
+            data.close();
+        }
     }
 
     /**
@@ -80,6 +116,13 @@ final class DefaultDirectory implements Directory {
     @Override
     public void save(final Attribute attr,
         final Reverse reverse) throws IOException {
+        final File file = this.draft.reverse(attr);
+        final OutputStream stream = new FileOutputStream(file);
+        try {
+            reverse.save(stream);
+        } finally {
+            stream.close();
+        }
     }
 
     /**
@@ -88,6 +131,13 @@ final class DefaultDirectory implements Directory {
     @Override
     public void load(final Attribute attr,
         final Reverse reverse) throws IOException {
+        final File file = this.base.reverse(attr);
+        final InputStream stream = new FileInputStream(file);
+        try {
+            reverse.load(stream);
+        } finally {
+            stream.close();
+        }
     }
 
     /**
@@ -95,7 +145,10 @@ final class DefaultDirectory implements Directory {
      */
     @Override
     public void baseline() throws IOException {
-        // todo
+        final Baseline candidate = new Baseline(this.dir);
+        this.draft.baseline(candidate);
+        this.base.rebase(candidate);
+        candidate.close();
     }
 
     /**
@@ -103,7 +156,8 @@ final class DefaultDirectory implements Directory {
      */
     @Override
     public void close() throws IOException {
-        // todo
+        this.base.close();
+        this.draft.close();
     }
 
 }
