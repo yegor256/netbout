@@ -53,18 +53,13 @@ final class Draft implements Closeable {
     private final transient File dir;
 
     /**
-     * Version to work with.
-     */
-    private final transient String version;
-
-    /**
      * Public ctor.
      * @param file The directory
      * @throws IOException If some I/O problem inside
      */
     public Draft(final File file) throws IOException {
-        this.dir = file;
-        this.version = new VersionBuilder(this.dir).draft();
+        final String version = new VersionBuilder(file).draft();
+        this.dir = new File(file, String.format("/%s-draft", version));
     }
 
     /**
@@ -76,14 +71,12 @@ final class Draft implements Closeable {
      */
     public File numbers(final Attribute attr,
         final String value) throws IOException {
-        return new File(
-            this.dir,
-            String.format(
-                "/%s/%s/numbers-%d.inf",
-                this.version,
-                attr,
-                value.hashCode()
-            )
+        final File folder = new File(this.dir, attr.toString());
+        folder.mkdirs();
+        return File.createTempFile(
+            "numbers-",
+            ".inf",
+            folder
         );
     }
 
@@ -94,10 +87,12 @@ final class Draft implements Closeable {
      * @throws IOException If some I/O problem inside
      */
     public File reverse(final Attribute attr) throws IOException {
-        return new File(
+        final File file = new File(
             this.dir,
-            String.format("/%s/%s/reverse.inf", this.version, attr)
+            String.format("/%s/reverse.inf", attr)
         );
+        FileUtils.touch(file);
+        return file;
     }
 
     /**
@@ -110,7 +105,7 @@ final class Draft implements Closeable {
         return new Backlog(
             new File(
                 this.dir,
-                String.format("/%s/%s/backlog.inf", this.version, attr)
+                String.format("/%s/backlog.inf", attr)
             )
         );
     }
@@ -152,6 +147,7 @@ final class Draft implements Closeable {
         if (reverse.exists()) {
             FileUtils.copyFile(reverse, base.reverse(attr));
         }
+        // todo...
     }
 
 }

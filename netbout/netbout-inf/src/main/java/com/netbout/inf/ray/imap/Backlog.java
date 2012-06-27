@@ -38,6 +38,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Iterator;
 import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 
 /**
@@ -63,6 +64,7 @@ final class Backlog {
      */
     public Backlog(final File bck) throws IOException {
         this.file = bck;
+        FileUtils.touch(this.file);
     }
 
     /**

@@ -35,6 +35,7 @@ import java.io.InputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.concurrent.atomic.AtomicReference;
+import org.apache.commons.io.FileUtils;
 
 /**
  * Sub-directory with baselined documents.
@@ -74,10 +75,12 @@ final class Baseline implements Closeable {
      * @throws IOException If some I/O problem inside
      */
     public File data(final Attribute attr) throws IOException {
-        return new File(
+        final File file = new File(
             this.dir,
             String.format("/%s/%s/data.inf", this.version.get(), attr)
         );
+        FileUtils.touch(file);
+        return file;
     }
 
     /**
@@ -87,10 +90,12 @@ final class Baseline implements Closeable {
      * @throws IOException If some I/O problem inside
      */
     public File reverse(final Attribute attr) throws IOException {
-        return new File(
+        final File file = new File(
             this.dir,
             String.format("/%s/%s/reverse.inf", this.version.get(), attr)
         );
+        FileUtils.touch(file);
+        return file;
     }
 
     /**

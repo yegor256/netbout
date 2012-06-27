@@ -38,6 +38,7 @@ import java.io.OutputStream;
 import java.io.RandomAccessFile;
 import java.util.Iterator;
 import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.io.FileUtils;
 
 /**
  * Catalog in a directory.
@@ -67,6 +68,7 @@ final class Catalog {
      */
     public Catalog(final File ctlg) throws IOException {
         this.file = ctlg;
+        FileUtils.touch(this.file);
         this.dups = new File(
             this.file.getParentFile(),
             String.format(
@@ -75,6 +77,7 @@ final class Catalog {
                 FilenameUtils.getExtension(this.file.getPath())
             )
         );
+        FileUtils.touch(this.dups);
     }
 
     /**
@@ -179,6 +182,9 @@ final class Catalog {
                 final int hash = item.value().hashCode();
                 if (hash < previous) {
                     throw new IllegalArgumentException("items are not ordered");
+                }
+                if (hash == previous) {
+                    throw new IllegalArgumentException("duplicate!");
                 }
                 data.writeInt(hash);
                 data.writeLong(item.position());
