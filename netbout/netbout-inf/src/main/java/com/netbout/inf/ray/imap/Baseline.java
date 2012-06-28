@@ -54,6 +54,11 @@ final class Baseline implements Closeable {
     private final transient File dir;
 
     /**
+     * Lock on the directory.
+     */
+    private final transient Lock lock;
+
+    /**
      * Version to work with.
      */
     private final transient AtomicReference<String> version =
@@ -77,6 +82,7 @@ final class Baseline implements Closeable {
     public Baseline(final File file, final String ver) throws IOException {
         this.dir = file;
         this.version.set(ver);
+        this.lock = new Lock(this.folder());
     }
 
     /**
@@ -106,8 +112,8 @@ final class Baseline implements Closeable {
      */
     public File data(final Attribute attr) throws IOException {
         final File file = new File(
-            this.dir,
-            String.format("/%s/%s/data.inf", this.version.get(), attr)
+            this.folder(),
+            String.format("/%s/data.inf", attr)
         );
         FileUtils.touch(file);
         return file;
@@ -121,8 +127,8 @@ final class Baseline implements Closeable {
      */
     public File reverse(final Attribute attr) throws IOException {
         final File file = new File(
-            this.dir,
-            String.format("/%s/%s/reverse.inf", this.version.get(), attr)
+            this.folder(),
+            String.format("/%s/reverse.inf", attr)
         );
         FileUtils.touch(file);
         return file;
@@ -136,8 +142,8 @@ final class Baseline implements Closeable {
     public Catalog catalog(final Attribute attr) throws IOException {
         return new Catalog(
             new File(
-                this.dir,
-                String.format("/%s/%s/catalog.inf", this.version.get(), attr)
+                this.folder(),
+                String.format("/%s/catalog.inf", attr)
             )
         );
     }
@@ -169,6 +175,17 @@ final class Baseline implements Closeable {
     @Override
     public void close() throws IOException {
         // nothing to do
+    }
+
+    /**
+     * Get folder we work in.
+     * @return File name
+     * @throws IOException If some I/O problem inside
+     */
+    private File folder() throws IOException {
+        final File file = new File(this.dir, this.version.get());
+        FileUtils.touch(file);
+        return file;
     }
 
 }

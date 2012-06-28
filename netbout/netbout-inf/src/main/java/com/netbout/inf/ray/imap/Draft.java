@@ -53,6 +53,11 @@ final class Draft implements Closeable {
     private final transient File dir;
 
     /**
+     * Lock on the directory.
+     */
+    private final transient Lock lock;
+
+    /**
      * Public ctor.
      * @param file The directory
      * @throws IOException If some I/O problem inside
@@ -60,6 +65,7 @@ final class Draft implements Closeable {
     public Draft(final File file) throws IOException {
         final String version = new VersionBuilder(file).draft();
         this.dir = new File(file, String.format("/%s", version));
+        this.lock = new Lock(this.dir);
     }
 
     /**
