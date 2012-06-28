@@ -59,25 +59,19 @@ final class Draft implements Closeable {
      */
     public Draft(final File file) throws IOException {
         final String version = new VersionBuilder(file).draft();
-        this.dir = new File(file, String.format("/%s-draft", version));
+        this.dir = new File(file, String.format("/%s", version));
     }
 
     /**
-     * Get name of numbers file.
+     * Create new temp file for numbers.
      * @param attr Attribute
-     * @param value The value
      * @return File name
      * @throws IOException If some I/O problem inside
      */
-    public File numbers(final Attribute attr,
-        final String value) throws IOException {
+    public File numbers(final Attribute attr) throws IOException {
         final File folder = new File(this.dir, attr.toString());
         folder.mkdirs();
-        return File.createTempFile(
-            "numbers-",
-            ".inf",
-            folder
-        );
+        return File.createTempFile("numbers-", ".inf", folder);
     }
 
     /**
@@ -119,7 +113,10 @@ final class Draft implements Closeable {
      */
     public Baseline baseline(final Baseline src,
         final File dest) throws IOException {
-        final Baseline baseline = new Baseline(dest);
+        final Baseline baseline = new Baseline(
+            dest,
+            new VersionBuilder(dest).draft()
+        );
         for (File file : this.dir.listFiles()) {
             if (!file.isDirectory()) {
                 continue;

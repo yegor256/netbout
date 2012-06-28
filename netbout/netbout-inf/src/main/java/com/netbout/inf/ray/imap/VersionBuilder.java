@@ -92,11 +92,7 @@ final class VersionBuilder {
      * @throws IOException If some I/O problem inside
      */
     public String draft() throws IOException {
-        final File marker = new File(this.dir, "draft.txt");
-        if (!marker.exists()) {
-            FileUtils.writeStringToFile(marker, this.ver());
-        }
-        return FileUtils.readFileToString(marker);
+        return this.ver();
     }
 
     /**

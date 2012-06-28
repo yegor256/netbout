@@ -133,7 +133,7 @@ final class SimpleNumbers implements Numbers {
     public void load(final InputStream stream) throws IOException {
         this.nums.clear();
         final DataInputStream data = new DataInputStream(stream);
-        while (true) {
+        while (data.available() > 0) {
             final long next = data.readLong();
             if (next == 0) {
                 break;

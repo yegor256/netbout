@@ -61,10 +61,7 @@ public final class DraftTest {
             new File(this.temp.newFolder("foo"), "/some/folder")
         );
         final Attribute attr = new Attribute("some-name");
-        MatcherAssert.assertThat(
-            draft.numbers(attr, "some value, \u0433"),
-            Matchers.notNullValue()
-        );
+        MatcherAssert.assertThat(draft.numbers(attr), Matchers.notNullValue());
         MatcherAssert.assertThat(draft.reverse(attr), Matchers.notNullValue());
     }
 

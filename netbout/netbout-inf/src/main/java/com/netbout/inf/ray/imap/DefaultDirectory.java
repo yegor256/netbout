@@ -27,6 +27,7 @@
 package com.netbout.inf.ray.imap;
 
 import com.netbout.inf.Attribute;
+import java.io.ByteArrayInputStream;
 import java.io.Closeable;
 import java.io.File;
 import java.io.FileInputStream;
@@ -79,7 +80,7 @@ final class DefaultDirectory implements Directory {
     @Override
     public void save(final Attribute attr, final String value,
         final Numbers nums) throws IOException {
-        final File file = this.draft.numbers(attr, value);
+        final File file = this.draft.numbers(attr);
         final OutputStream stream = new FileOutputStream(file);
         try {
             nums.save(stream);
@@ -101,23 +102,23 @@ final class DefaultDirectory implements Directory {
     public void load(final Attribute attr, final String value,
         final Numbers nums) throws IOException {
         final File file = this.base.data(attr);
-        if (file.length() > 0) {
-            final RandomAccessFile data = new RandomAccessFile(file, "r");
-            try {
-                final long pos = this.base.catalog(attr).seek(value);
-                if (pos >= 0) {
-                    data.seek(pos);
-                    final InputStream istream =
-                        Channels.newInputStream(data.getChannel());
-                    try {
-                        nums.load(istream);
-                    } finally {
-                        istream.close();
-                    }
+        final RandomAccessFile data = new RandomAccessFile(file, "r");
+        try {
+            final long pos = this.base.catalog(attr).seek(value);
+            if (pos >= 0) {
+                data.seek(pos);
+                final InputStream istream =
+                    Channels.newInputStream(data.getChannel());
+                try {
+                    nums.load(istream);
+                } finally {
+                    istream.close();
                 }
-            } finally {
-                data.close();
+            } else {
+                nums.load(new ByteArrayInputStream(new byte[0]));
             }
+        } finally {
+            data.close();
         }
     }
 
@@ -143,13 +144,11 @@ final class DefaultDirectory implements Directory {
     public void load(final Attribute attr,
         final Reverse reverse) throws IOException {
         final File file = this.base.reverse(attr);
-        if (file.length() > 0) {
-            final InputStream stream = new FileInputStream(file);
-            try {
-                reverse.load(stream);
-            } finally {
-                stream.close();
-            }
+        final InputStream stream = new FileInputStream(file);
+        try {
+            reverse.load(stream);
+        } finally {
+            stream.close();
         }
     }
 

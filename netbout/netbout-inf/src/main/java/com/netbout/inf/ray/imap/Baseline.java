@@ -70,6 +70,36 @@ final class Baseline implements Closeable {
     }
 
     /**
+     * Public ctor.
+     * @param file The directory
+     * @param ver The version to use
+     * @throws IOException If some I/O problem inside
+     */
+    public Baseline(final File file, final String ver) throws IOException {
+        this.dir = file;
+        this.version.set(ver);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public int hashCode() {
+        return this.dir.hashCode() + this.version.get().hashCode();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean equals(final Object base) {
+        return this == base || (base instanceof Baseline
+            && Baseline.class.cast(base).dir.equals(this.dir)
+            && Baseline.class.cast(base).version.get()
+                .equals(this.version.get()));
+    }
+
+    /**
      * Get name of data file.
      * @param attr Attribute
      * @return File name
@@ -119,6 +149,11 @@ final class Baseline implements Closeable {
      * @throws IOException If some I/O problem inside
      */
     public void rebase(final Baseline base) throws IOException {
+        if (this.equals(base)) {
+            throw new IllegalArgumentException(
+                String.format("can't rebase %s to itself", this.version)
+            );
+        }
         Logger.debug(
             this,
             "#rebase(..): %s switching to %s...",
