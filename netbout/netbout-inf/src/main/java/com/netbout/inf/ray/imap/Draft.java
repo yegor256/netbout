@@ -172,7 +172,13 @@ final class Draft implements Closeable {
         if (reverse.exists()) {
             FileUtils.copyFile(reverse, dest.reverse(attr));
         }
-        // todo...
+        // final Iterator<Backlog.Item> backlog = this.backlog(attr).iterator();
+        // final
+        // while (backlog.hasNext()) {
+        //     final Backlog.Item item = backlog.next();
+        // }
+        // final Iterator<Catalog.Item> catalog = src.catalog(attr).iterator();
+
     }
 
 }

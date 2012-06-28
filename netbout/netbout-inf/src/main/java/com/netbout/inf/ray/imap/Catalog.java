@@ -29,6 +29,7 @@ package com.netbout.inf.ray.imap;
 import com.jcabi.log.Logger;
 import com.netbout.inf.Attribute;
 import java.io.Closeable;
+import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -40,6 +41,7 @@ import java.io.RandomAccessFile;
 import java.util.Iterator;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 
 /**
  * Catalog in a directory.
@@ -92,9 +94,9 @@ final class Catalog {
          */
         public static final int SIZE = 4 + 8;
         /**
-         * Value.
+         * Hash code.
          */
-        private final transient String val;
+        private final transient int code;
         /**
          * Position.
          */
@@ -105,23 +107,45 @@ final class Catalog {
          * @param postn The position
          */
         public Item(final String value, final long postn) {
-            this.val = value;
+            this(value.hashCode(), postn);
+        }
+        /**
+         * Public ctor.
+         * @param hash The hash value
+         * @param postn The position
+         */
+        public Item(final int hash, final long postn) {
+            this.code = hash;
             this.pos = postn;
         }
         /**
          * {@inheritDoc}
          */
         @Override
-        public int compareTo(final Item item) {
-            return new Integer(this.value().hashCode())
-                .compareTo(new Integer(item.value().hashCode()));
+        public int hashCode() {
+            return this.code;
         }
         /**
-         * Get value.
+         * {@inheritDoc}
+         */
+        @Override
+        public boolean equals(final Object item) {
+            return this == item || (item instanceof Item
+                && Item.class.cast(item).code == this.code);
+        }
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public int compareTo(final Item item) {
+            return new Integer(this.code).compareTo(new Integer(item.code));
+        }
+        /**
+         * Get hash code.
          * @return The value
          */
-        public String value() {
-            return this.val;
+        public int hash() {
+            return this.code;
         }
         /**
          * Get position.
@@ -180,7 +204,7 @@ final class Catalog {
             int previous = Integer.MIN_VALUE;
             while (items.hasNext()) {
                 final Item item = items.next();
-                final int hash = item.value().hashCode();
+                final int hash = item.hash();
                 if (hash < previous) {
                     throw new IllegalArgumentException("items are not ordered");
                 }
@@ -201,6 +225,43 @@ final class Catalog {
             this.file,
             this.file.length()
         );
+    }
+
+    /**
+     * Get an iterator of them items.
+     * @return The iterator
+     * @throws IOException If some I/O problem inside
+     */
+    public Iterator<Item> iterator() throws IOException {
+        final InputStream stream = new FileInputStream(this.file);
+        final DataInputStream data = new DataInputStream(stream);
+        return new Iterator<Item>() {
+            @Override
+            public boolean hasNext() {
+                boolean has;
+                try {
+                    has = data.available() > 0;
+                } catch (java.io.IOException ex) {
+                    throw new IllegalStateException(ex);
+                }
+                if (!has) {
+                    IOUtils.closeQuietly(stream);
+                }
+                return has;
+            }
+            @Override
+            public Item next() {
+                try {
+                    return new Item(data.readInt(), data.readLong());
+                } catch (java.io.IOException ex) {
+                    throw new IllegalStateException(ex);
+                }
+            }
+            @Override
+            public void remove() {
+                throw new UnsupportedOperationException("#remove");
+            }
+        };
     }
 
 }

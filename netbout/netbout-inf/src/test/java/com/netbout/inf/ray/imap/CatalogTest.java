@@ -29,6 +29,7 @@ package com.netbout.inf.ray.imap;
 import java.util.Collection;
 import java.util.Random;
 import java.util.TreeSet;
+import org.apache.commons.collections.IteratorUtils;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Rule;
@@ -55,19 +56,41 @@ public final class CatalogTest {
      */
     @Test
     public void registersValueAndFindsItThen() throws Exception {
-        final Catalog catalog = new Catalog(
-            this.temp.newFile("catalog.txt")
-        );
+        final Catalog catalog = new Catalog(this.temp.newFile("catalog.txt"));
         final String value = "some value to use, \u0433";
         final long pos = Math.max(Math.abs(new Random().nextLong()), 1L);
         final Collection<Catalog.Item> items = new TreeSet<Catalog.Item>();
         items.add(new Catalog.Item(value, pos));
-        for (int num = 0; num < 10000; ++num) {
+        // @checkstyle MagicNumber (1 line)
+        for (int num = 0; num < 1000; ++num) {
             items.add(new Catalog.Item(String.format("foo-%s", num), num));
         }
         catalog.create(items.iterator());
         MatcherAssert.assertThat(catalog.seek(value), Matchers.equalTo(pos));
         MatcherAssert.assertThat(catalog.seek("absent"), Matchers.equalTo(-1L));
+    }
+
+    /**
+     * Catalog can register value and find it in the iterator.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void registersValueAndFindsItInIterator() throws Exception {
+        final Catalog catalog = new Catalog(this.temp.newFile("catalog-2.txt"));
+        final String value = "some value to use, \u0433";
+        final long pos = Math.max(Math.abs(new Random().nextLong()), 1L);
+        final Collection<Catalog.Item> items = new TreeSet<Catalog.Item>();
+        final Catalog.Item item = new Catalog.Item(value, pos);
+        items.add(item);
+        // @checkstyle MagicNumber (1 line)
+        for (int num = 0; num < 100; ++num) {
+            items.add(new Catalog.Item(String.format("foo-%s", num), num));
+        }
+        catalog.create(items.iterator());
+        MatcherAssert.assertThat(
+            IteratorUtils.toArray(catalog.iterator()),
+            Matchers.<Object>hasItemInArray(item)
+        );
     }
 
 }
