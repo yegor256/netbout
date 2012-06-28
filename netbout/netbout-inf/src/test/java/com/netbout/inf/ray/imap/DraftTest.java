@@ -65,4 +65,15 @@ public final class DraftTest {
         MatcherAssert.assertThat(draft.reverse(attr), Matchers.notNullValue());
     }
 
+    /**
+     * Draft can prevent against duplicate instances for the same folder.
+     * @throws Exception If there is some problem inside
+     */
+    @Test(expected = IllegalArgumentException.class)
+    public void preventsDuplicateInstances() throws Exception {
+        final File dir = this.temp.newFolder("foo-2");
+        final Draft draft = new Draft(dir);
+        new Draft(dir);
+    }
+
 }
