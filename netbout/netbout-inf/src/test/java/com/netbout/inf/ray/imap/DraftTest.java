@@ -31,6 +31,7 @@ import java.io.File;
 import java.util.Collection;
 import java.util.Random;
 import java.util.TreeSet;
+import org.apache.commons.io.FileUtils;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Rule;
@@ -76,6 +77,28 @@ public final class DraftTest {
         MatcherAssert.assertThat(
             new Draft(dir),
             Matchers.not(Matchers.equalTo(draft))
+        );
+    }
+
+    /**
+     * Draft can baseline itself to a baseline.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void baselinesItselfToBaseline() throws Exception {
+        final File dir = this.temp.newFolder("foo-3");
+        final Attribute attr = new Attribute("boom");
+        final Draft draft = new Draft(dir);
+        FileUtils.writeStringToFile(draft.reverse(attr), "reverse-hi!");
+        final Baseline src = new Baseline(dir);
+        final Baseline dest = new Baseline(
+            dir,
+            new VersionBuilder(dir).draft()
+        );
+        draft.baseline(dest, src);
+        MatcherAssert.assertThat(
+            FileUtils.readFileToString(dest.reverse(attr)),
+            Matchers.endsWith("-hi!")
         );
     }
 

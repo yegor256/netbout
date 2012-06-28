@@ -35,6 +35,7 @@ import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.Iterator;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.FileUtils;
 
@@ -177,8 +178,23 @@ final class Draft implements Closeable {
         // while (backlog.hasNext()) {
         //     final Backlog.Item item = backlog.next();
         // }
-        // final Iterator<Catalog.Item> catalog = src.catalog(attr).iterator();
-
+        // final Iterator<Catalog.Item> items = src.backlog(attr).iterator();
+        // dest.catalog(attr).create(
+        //     new Iterator<Catalog.Item>() {
+        //         @Override
+        //         public boolean hasNext() {
+        //             return items.hasNext();
+        //         }
+        //         @Override
+        //         public Item next() {
+        //             return items.next();
+        //         }
+        //         @Override
+        //         public void remove() {
+        //             throw new UnsupportedOperationException("#remove");
+        //         }
+        //     }
+        // );
     }
 
 }

@@ -93,4 +93,25 @@ public final class CatalogTest {
         );
     }
 
+    /**
+     * Catalog can work correctly with duplicates.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void handlesDuplicastesCorrectly() throws Exception {
+        final Catalog catalog = new Catalog(this.temp.newFile("catalog-3.txt"));
+        final String first = "TlYhv";
+        final String second = "UMYhv";
+        MatcherAssert.assertThat(
+            first.hashCode(),
+            Matchers.equalTo(second.hashCode())
+        );
+        final Collection<Catalog.Item> items = new TreeSet<Catalog.Item>();
+        items.add(new Catalog.Item(first, 1));
+        items.add(new Catalog.Item(second, 2));
+        catalog.create(items.iterator());
+        MatcherAssert.assertThat(catalog.seek(first), Matchers.equalTo(1L));
+        MatcherAssert.assertThat(catalog.seek(second), Matchers.equalTo(2L));
+    }
+
 }
