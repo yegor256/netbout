@@ -32,7 +32,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.channels.FileChannel;
 import java.nio.channels.FileLock;
-import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.FilenameUtils;
 
 /**
  * Lock of the directory.
@@ -43,6 +43,11 @@ import org.apache.commons.io.FileUtils;
  * @version $Id$
  */
 final class Lock implements Closeable {
+
+    /**
+     * The directory itself.
+     */
+    private final transient File directory;
 
     /**
      * Lock.
@@ -66,15 +71,47 @@ final class Lock implements Closeable {
      *  already locked by another thread/class
      */
     public Lock(final File dir) throws IOException {
-        final File lock = new File(dir, "lock.txt");
-        FileUtils.touch(lock);
+        this.directory = dir;
+        final File lock = new File(this.directory, "lock.txt");
+        lock.getParentFile().mkdirs();
         this.stream = new FileOutputStream(lock);
         this.channel = this.stream.getChannel();
+        FileLock lck = null;
         try {
-            this.lock = this.channel.lock();
+            lck = this.channel.lock();
         } catch (java.nio.channels.OverlappingFileLockException ex) {
             throw new IOException(ex);
+        } finally {
+            this.lock = lck;
         }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public int hashCode() {
+        return this.directory.hashCode();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean equals(final Object lck) {
+        return this == lck || (lck instanceof Lock
+            && Lock.class.cast(lck).directory.equals(this.directory));
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String toString() {
+        return String.format(
+            "lock:/%s",
+            FilenameUtils.getName(this.directory.getPath())
+        );
     }
 
     /**
@@ -85,6 +122,18 @@ final class Lock implements Closeable {
         this.lock.release();
         this.channel.close();
         this.stream.close();
+    }
+
+    /**
+     * Get directory or throw exception if it's not locked.
+     * @return The directory
+     * @throws IOException If some I/O problem of the directory is not locked
+     */
+    public File dir() throws IOException {
+        if (!this.lock.isValid()) {
+            throw new IOException("closed lock");
+        }
+        return this.directory;
     }
 
 }

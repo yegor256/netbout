@@ -57,7 +57,7 @@ public final class LockTest {
      */
     @Test
     public void locksDirectoryAndReleases() throws Exception {
-        final File dir = this.temp.newFolder("foo");
+        final File dir = new File(this.temp.newFolder("foo"), "/boom/a");
         Lock lock = new Lock(dir);
         lock.close();
         lock = new Lock(dir);
@@ -70,7 +70,7 @@ public final class LockTest {
      */
     @Test(expected = java.io.IOException.class)
     public void preventsDuplicateInstances() throws Exception {
-        final File dir = this.temp.newFolder("foo");
+        final File dir = new File(this.temp.newFolder("foo"), "/boom/x");
         final Lock lock = new Lock(dir);
         new Lock(dir);
     }

@@ -66,14 +66,17 @@ public final class DraftTest {
     }
 
     /**
-     * Draft can prevent against duplicate instances for the same folder.
+     * Draft can create a new clean disc for every object.
      * @throws Exception If there is some problem inside
      */
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void preventsDuplicateInstances() throws Exception {
         final File dir = this.temp.newFolder("foo-2");
         final Draft draft = new Draft(dir);
-        new Draft(dir);
+        MatcherAssert.assertThat(
+            new Draft(dir),
+            Matchers.not(Matchers.equalTo(draft))
+        );
     }
 
 }

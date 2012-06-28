@@ -35,13 +35,12 @@ import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.concurrent.atomic.AtomicReference;
 import org.apache.commons.io.FileUtils;
 
 /**
  * Sub-directory with baselined documents.
  *
- * <p>Class is thread-safe.
+ * <p>Class is immutable and thread-safe.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
@@ -49,20 +48,9 @@ import org.apache.commons.io.FileUtils;
 final class Baseline implements Closeable {
 
     /**
-     * Directory.
-     */
-    private final transient File dir;
-
-    /**
      * Lock on the directory.
      */
     private final transient Lock lock;
-
-    /**
-     * Version to work with.
-     */
-    private final transient AtomicReference<String> version =
-        new AtomicReference<String>();
 
     /**
      * Public ctor.
@@ -80,9 +68,8 @@ final class Baseline implements Closeable {
      * @throws IOException If some I/O problem inside
      */
     public Baseline(final File file, final String ver) throws IOException {
-        this.dir = file;
-        this.version.set(ver);
-        this.lock = new Lock(this.folder());
+        this.lock = new Lock(new File(file, ver));
+        Logger.debug(this, "#Baseline(%s, %s): started", file, ver);
     }
 
     /**
@@ -90,7 +77,7 @@ final class Baseline implements Closeable {
      */
     @Override
     public int hashCode() {
-        return this.dir.hashCode() + this.version.get().hashCode();
+        return this.lock.hashCode();
     }
 
     /**
@@ -99,9 +86,7 @@ final class Baseline implements Closeable {
     @Override
     public boolean equals(final Object base) {
         return this == base || (base instanceof Baseline
-            && Baseline.class.cast(base).dir.equals(this.dir)
-            && Baseline.class.cast(base).version.get()
-                .equals(this.version.get()));
+            && Baseline.class.cast(base).lock.equals(this.lock));
     }
 
     /**
@@ -112,7 +97,7 @@ final class Baseline implements Closeable {
      */
     public File data(final Attribute attr) throws IOException {
         final File file = new File(
-            this.folder(),
+            this.lock.dir(),
             String.format("/%s/data.inf", attr)
         );
         FileUtils.touch(file);
@@ -127,7 +112,7 @@ final class Baseline implements Closeable {
      */
     public File reverse(final Attribute attr) throws IOException {
         final File file = new File(
-            this.folder(),
+            this.lock.dir(),
             String.format("/%s/reverse.inf", attr)
         );
         FileUtils.touch(file);
@@ -142,31 +127,10 @@ final class Baseline implements Closeable {
     public Catalog catalog(final Attribute attr) throws IOException {
         return new Catalog(
             new File(
-                this.folder(),
+                this.lock.dir(),
                 String.format("/%s/catalog.inf", attr)
             )
         );
-    }
-
-    /**
-     * Rebase to the new set of files.
-     * @param base Baseline to rebase to
-     * @throws IOException If some I/O problem inside
-     */
-    public void rebase(final Baseline base) throws IOException {
-        if (this.equals(base)) {
-            throw new IllegalArgumentException(
-                String.format("can't rebase %s to itself", this.version)
-            );
-        }
-        Logger.debug(
-            this,
-            "#rebase(..): %s switching to %s...",
-            this.version.get(),
-            base.version.get()
-        );
-        this.version.set(base.version.get());
-        new VersionBuilder(this.dir).rebase(this.version.get());
     }
 
     /**
@@ -174,18 +138,8 @@ final class Baseline implements Closeable {
      */
     @Override
     public void close() throws IOException {
-        // nothing to do
-    }
-
-    /**
-     * Get folder we work in.
-     * @return File name
-     * @throws IOException If some I/O problem inside
-     */
-    private File folder() throws IOException {
-        final File file = new File(this.dir, this.version.get());
-        FileUtils.touch(file);
-        return file;
+        this.lock.close();
+        Logger.debug(this, "#close(): closed");
     }
 
 }

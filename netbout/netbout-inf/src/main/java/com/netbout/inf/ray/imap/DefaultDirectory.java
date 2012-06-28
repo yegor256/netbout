@@ -37,12 +37,13 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.RandomAccessFile;
 import java.nio.channels.Channels;
+import java.util.concurrent.atomic.AtomicReference;
 import org.apache.commons.io.FilenameUtils;
 
 /**
  * Default implementation of {@link Directory}.
  *
- * <p>Class is thread-safe.
+ * <p>Class is mutable and thread-safe.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
@@ -50,28 +51,30 @@ import org.apache.commons.io.FilenameUtils;
 final class DefaultDirectory implements Directory {
 
     /**
-     * Directory.
+     * Locked directory.
      */
-    private final transient File dir;
+    private final transient Lock lock;
 
     /**
      * Directory with baselined files.
      */
-    private final transient Baseline base;
+    private final transient AtomicReference<Baseline> base =
+        new AtomicReference<Baseline>();
 
     /**
      * Directory with draft.
      */
-    private final transient Draft draft;
+    private transient AtomicReference<Draft> draft =
+        new AtomicReference<Draft>();
 
     /**
      * Public ctor.
      * @param file The directory
      */
     public DefaultDirectory(final File file) throws IOException {
-        this.dir = file;
-        this.base = new Baseline(file);
-        this.draft = new Draft(file);
+        this.lock = new Lock(file);
+        this.base.set(new Baseline(this.lock.dir()));
+        this.draft.set(new Draft(this.lock.dir()));
     }
 
     /**
@@ -80,14 +83,14 @@ final class DefaultDirectory implements Directory {
     @Override
     public void save(final Attribute attr, final String value,
         final Numbers nums) throws IOException {
-        final File file = this.draft.numbers(attr);
+        final File file = this.draft.get().numbers(attr);
         final OutputStream stream = new FileOutputStream(file);
         try {
             nums.save(stream);
         } finally {
             stream.close();
         }
-        this.draft.backlog(attr).add(
+        this.draft.get().backlog(attr).add(
             new Backlog.Item(
                 value,
                 FilenameUtils.getName(file.getPath())
@@ -101,10 +104,10 @@ final class DefaultDirectory implements Directory {
     @Override
     public void load(final Attribute attr, final String value,
         final Numbers nums) throws IOException {
-        final File file = this.base.data(attr);
+        final File file = this.base.get().data(attr);
         final RandomAccessFile data = new RandomAccessFile(file, "r");
         try {
-            final long pos = this.base.catalog(attr).seek(value);
+            final long pos = this.base.get().catalog(attr).seek(value);
             if (pos >= 0) {
                 data.seek(pos);
                 final InputStream istream =
@@ -128,7 +131,7 @@ final class DefaultDirectory implements Directory {
     @Override
     public void save(final Attribute attr,
         final Reverse reverse) throws IOException {
-        final File file = this.draft.reverse(attr);
+        final File file = this.draft.get().reverse(attr);
         final OutputStream stream = new FileOutputStream(file);
         try {
             reverse.save(stream);
@@ -143,7 +146,7 @@ final class DefaultDirectory implements Directory {
     @Override
     public void load(final Attribute attr,
         final Reverse reverse) throws IOException {
-        final File file = this.base.reverse(attr);
+        final File file = this.base.get().reverse(attr);
         final InputStream stream = new FileInputStream(file);
         try {
             reverse.load(stream);
@@ -157,9 +160,14 @@ final class DefaultDirectory implements Directory {
      */
     @Override
     public void baseline() throws IOException {
-        final Baseline candidate = this.draft.baseline(this.base, this.dir);
-        this.base.rebase(candidate);
-        candidate.close();
+        final Baseline candidate = new Baseline(
+            this.lock.dir(),
+            new VersionBuilder(this.lock.dir()).draft()
+        );
+        this.draft.get().baseline(candidate, this.base.get());
+        this.base.get().close();
+        this.base.set(candidate);
+        this.draft.set(new Draft(this.lock.dir()));
     }
 
     /**
@@ -167,8 +175,11 @@ final class DefaultDirectory implements Directory {
      */
     @Override
     public void close() throws IOException {
-        this.base.close();
-        this.draft.close();
+        this.base.get().close();
+        this.base.set(null);
+        this.draft.get().close();
+        this.draft.set(null);
+        this.lock.close();
     }
 
 }

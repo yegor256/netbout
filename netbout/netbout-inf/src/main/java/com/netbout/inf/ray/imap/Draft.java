@@ -26,6 +26,7 @@
  */
 package com.netbout.inf.ray.imap;
 
+import com.jcabi.log.Logger;
 import com.netbout.inf.Attribute;
 import java.io.Closeable;
 import java.io.File;
@@ -48,11 +49,6 @@ import org.apache.commons.io.FileUtils;
 final class Draft implements Closeable {
 
     /**
-     * Directory.
-     */
-    private final transient File dir;
-
-    /**
      * Lock on the directory.
      */
     private final transient Lock lock;
@@ -63,9 +59,31 @@ final class Draft implements Closeable {
      * @throws IOException If some I/O problem inside
      */
     public Draft(final File file) throws IOException {
-        final String version = new VersionBuilder(file).draft();
-        this.dir = new File(file, String.format("/%s", version));
-        this.lock = new Lock(this.dir);
+        final String ver = new VersionBuilder(file).draft();
+        this.lock = new Lock(
+            new File(
+                file,
+                String.format("/%s", ver)
+            )
+        );
+        Logger.debug(this, "#Draft(%s): started %s", file, ver);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public int hashCode() {
+        return this.lock.hashCode();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean equals(final Object draft) {
+        return this == draft || (draft instanceof Draft
+            && Draft.class.cast(draft).lock.equals(this.lock));
     }
 
     /**
@@ -75,7 +93,7 @@ final class Draft implements Closeable {
      * @throws IOException If some I/O problem inside
      */
     public File numbers(final Attribute attr) throws IOException {
-        final File folder = new File(this.dir, attr.toString());
+        final File folder = new File(this.lock.dir(), attr.toString());
         folder.mkdirs();
         return File.createTempFile("numbers-", ".inf", folder);
     }
@@ -88,7 +106,7 @@ final class Draft implements Closeable {
      */
     public File reverse(final Attribute attr) throws IOException {
         final File file = new File(
-            this.dir,
+            this.lock.dir(),
             String.format("/%s/reverse.inf", attr)
         );
         FileUtils.touch(file);
@@ -104,7 +122,7 @@ final class Draft implements Closeable {
     public Backlog backlog(final Attribute attr) throws IOException {
         return new Backlog(
             new File(
-                this.dir,
+                this.lock.dir(),
                 String.format("/%s/backlog.inf", attr)
             )
         );
@@ -112,27 +130,21 @@ final class Draft implements Closeable {
 
     /**
      * Baseline it to a new place.
-     * @param src Original baseline
      * @param dest Where to save baseline
-     * @return The baseline created
+     * @param src Original baseline
      * @throws IOException If some I/O problem inside
      */
-    public Baseline baseline(final Baseline src,
-        final File dest) throws IOException {
-        final Baseline baseline = new Baseline(
-            dest,
-            new VersionBuilder(dest).draft()
-        );
-        for (File file : this.dir.listFiles()) {
+    public void baseline(final Baseline dest,
+        final Baseline src) throws IOException {
+        for (File file : this.lock.dir().listFiles()) {
             if (!file.isDirectory()) {
                 continue;
             }
             final Attribute attr = new Attribute(
                 FilenameUtils.getName(file.getPath())
             );
-            this.baseline(src, baseline, attr);
+            this.baseline(dest, src, attr);
         }
-        return baseline;
     }
 
     /**
@@ -140,24 +152,25 @@ final class Draft implements Closeable {
      */
     @Override
     public void close() throws IOException {
-        // nothing to do
+        this.lock.close();
+        Logger.debug(this, "#close(): closed");
     }
 
     /**
      * Baseline to the given place, for the given attribute.
+     * @param dest Where to save baseline
      * @param src Original baseline
-     * @param base Baseline to baseline to
      * @param attr Attribute
      * @throws IOException If some I/O problem inside
      */
-    private void baseline(final Baseline src, final Baseline base,
+    private void baseline(final Baseline dest, final Baseline src,
         final Attribute attr) throws IOException {
         File reverse = this.reverse(attr);
         if (!reverse.exists()) {
             reverse = src.reverse(attr);
         }
         if (reverse.exists()) {
-            FileUtils.copyFile(reverse, base.reverse(attr));
+            FileUtils.copyFile(reverse, dest.reverse(attr));
         }
         // todo...
     }
