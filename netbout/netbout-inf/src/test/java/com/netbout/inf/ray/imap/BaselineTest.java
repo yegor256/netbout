@@ -27,6 +27,7 @@
 package com.netbout.inf.ray.imap;
 
 import com.netbout.inf.Attribute;
+import java.io.File;
 import java.util.Collection;
 import java.util.Random;
 import java.util.TreeSet;
@@ -56,10 +57,21 @@ public final class BaselineTest {
      */
     @Test
     public void createsFileNames() throws Exception {
-        final Baseline draft = new Baseline(this.temp.newFolder("foo"));
+        final Baseline base = new Baseline(this.temp.newFolder("foo"));
         final Attribute attr = new Attribute("some-name");
-        MatcherAssert.assertThat(draft.data(attr), Matchers.notNullValue());
-        MatcherAssert.assertThat(draft.reverse(attr), Matchers.notNullValue());
+        MatcherAssert.assertThat(base.data(attr), Matchers.notNullValue());
+        MatcherAssert.assertThat(base.reverse(attr), Matchers.notNullValue());
+    }
+
+    /**
+     * Baseline can prevent against duplicate instances for the same folder.
+     * @throws Exception If there is some problem inside
+     */
+    @Test(expected = IllegalArgumentException.class)
+    public void preventsDuplicateInstances() throws Exception {
+        final File dir = this.temp.newFolder("foo-2");
+        final Baseline base = new Baseline(dir);
+        new Baseline(dir);
     }
 
 }

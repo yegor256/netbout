@@ -65,8 +65,7 @@ final class Baseline implements Closeable {
      * @throws IOException If some I/O problem inside
      */
     public Baseline(final File file) throws IOException {
-        this.dir = file;
-        this.version.set(new VersionBuilder(this.dir).baselined());
+        this(file, new VersionBuilder(file).baselined());
     }
 
     /**
