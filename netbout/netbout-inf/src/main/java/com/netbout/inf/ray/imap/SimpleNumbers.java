@@ -26,6 +26,7 @@
  */
 package com.netbout.inf.ray.imap;
 
+import com.jcabi.log.Logger;
 import com.netbout.inf.Lattice;
 import com.netbout.inf.lattice.LatticeBuilder;
 import java.io.DataInputStream;
@@ -124,6 +125,12 @@ final class SimpleNumbers implements Numbers {
         }
         data.writeLong(0L);
         data.flush();
+        Logger.debug(
+            this,
+            "#save(..): saved %d numbers %[list]s",
+            this.nums.size(),
+            this.nums
+        );
     }
 
     /**
@@ -140,6 +147,12 @@ final class SimpleNumbers implements Numbers {
             }
             this.nums.add(next);
         }
+        Logger.debug(
+            this,
+            "#load(..): loaded %d numbers %[list]s",
+            this.nums.size(),
+            this.nums
+        );
     }
 
 }

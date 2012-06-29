@@ -35,6 +35,7 @@ import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.FileUtils;
 
 /**
@@ -69,7 +70,20 @@ final class Baseline implements Closeable {
      */
     public Baseline(final File file, final String ver) throws IOException {
         this.lock = new Lock(new File(file, ver));
-        Logger.debug(this, "#Baseline(%s, %s): started", file, ver);
+        Logger.debug(
+            this,
+            "#Baseline(/%s, '%s'): started",
+            FilenameUtils.getName(file.getPath()),
+            ver
+        );
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String toString() {
+        return String.format("base:%s", this.lock.toString());
     }
 
     /**

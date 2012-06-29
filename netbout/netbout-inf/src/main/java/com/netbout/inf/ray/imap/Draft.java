@@ -35,9 +35,15 @@ import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.io.RandomAccessFile;
+import java.nio.channels.Channels;
 import java.util.Iterator;
+import java.util.NoSuchElementException;
+import java.util.concurrent.atomic.AtomicLong;
+import java.util.concurrent.atomic.AtomicReference;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 
 /**
  * Sub-directory with draft documents.
@@ -67,7 +73,20 @@ final class Draft implements Closeable {
                 String.format("/%s", ver)
             )
         );
-        Logger.debug(this, "#Draft(%s): started %s", file, ver);
+        Logger.debug(
+            this,
+            "#Draft(/%s): started %s",
+            FilenameUtils.getName(file.getPath()),
+            ver
+        );
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String toString() {
+        return String.format("draft:%s", this.lock.toString());
     }
 
     /**
@@ -166,6 +185,7 @@ final class Draft implements Closeable {
      */
     private void baseline(final Baseline dest, final Baseline src,
         final Attribute attr) throws IOException {
+        final long start = System.currentTimeMillis();
         File reverse = this.reverse(attr);
         if (!reverse.exists()) {
             reverse = src.reverse(attr);
@@ -173,28 +193,224 @@ final class Draft implements Closeable {
         if (reverse.exists()) {
             FileUtils.copyFile(reverse, dest.reverse(attr));
         }
-        // final Iterator<Backlog.Item> backlog = this.backlog(attr).iterator();
-        // final
-        // while (backlog.hasNext()) {
-        //     final Backlog.Item item = backlog.next();
-        // }
-        // final Iterator<Catalog.Item> items = src.backlog(attr).iterator();
-        // dest.catalog(attr).create(
-        //     new Iterator<Catalog.Item>() {
-        //         @Override
-        //         public boolean hasNext() {
-        //             return items.hasNext();
-        //         }
-        //         @Override
-        //         public Item next() {
-        //             return items.next();
-        //         }
-        //         @Override
-        //         public void remove() {
-        //             throw new UnsupportedOperationException("#remove");
-        //         }
-        //     }
-        // );
+        final Pipeline pipeline = new Pipeline(dest, src, attr);
+        dest.catalog(attr).create(pipeline);
+        pipeline.close();
+        Logger.debug(
+            this,
+            "#baseline('%s', '%s', '%s'): baselined in %[ms]s",
+            dest,
+            src,
+            attr,
+            System.currentTimeMillis() - start
+        );
+    }
+
+    /**
+     * Token.
+     */
+    interface Token {
+        /**
+         * Convert it to item.
+         * @return The item
+         * @throws IOException If some IO problem inside
+         */
+        Catalog.Item item() throws IOException;
+    }
+
+    /**
+     * Comparable token.
+     */
+    interface ComparableToken extends Token, Comparable<Token> {
+    }
+
+    /**
+     * Pipeline between back log and new catalog.
+     *
+     * <p>The class is thread-safe.
+     */
+    private final class Pipeline implements Iterator<Catalog.Item>, Closeable {
+        /**
+         * Source catalog.
+         */
+        private final transient Catalog catalog;
+        /**
+         * The attribute.
+         */
+        private final transient Attribute attribute;
+        /**
+         * Backlog with data.
+         */
+        private final transient Iterator<Backlog.Item> biterator;
+        /**
+         * Pre-existing catalog with data.
+         */
+        private final transient Iterator<Catalog.Item> citerator;
+        /**
+         * Pre-existing data file.
+         */
+        private final transient RandomAccessFile data;
+        /**
+         * Output stream.
+         */
+        private final transient OutputStream output;
+        /**
+         * Current position in output stream.
+         */
+        private final transient AtomicLong opos = new AtomicLong();
+        /**
+         * Information about the item already retrieved from iterators.
+         */
+        private final transient AtomicReference<Token> token =
+            new AtomicReference<Token>();
+        /**
+         * Public ctor.
+         * @param dest Destination
+         * @param src Source
+         * @param attr Attribute
+         * @throws IOException If some IO problem inside
+         */
+        public Pipeline(final Baseline dest, final Baseline src,
+            final Attribute attr) throws IOException {
+            this.attribute = attr;
+            this.catalog = src.catalog(this.attribute);
+            this.biterator = Draft.this.backlog(this.attribute).iterator();
+            this.citerator = this.catalog.iterator();
+            this.data = new RandomAccessFile(src.data(this.attribute), "r");
+            this.output = new FileOutputStream(dest.data(this.attribute));
+        }
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public void close() throws IOException {
+            this.data.close();
+            this.output.close();
+        }
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public boolean hasNext() {
+            return this.biterator.hasNext() || this.citerator.hasNext()
+                || this.token.get() != null;
+        }
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public Catalog.Item next() {
+            try {
+                if (this.token.get() == null) {
+                    if (this.citerator.hasNext()) {
+                        this.token.set(this.cattoken(this.citerator));
+                    } else if (this.biterator.hasNext()) {
+                        this.token.set(this.backtoken(this.biterator));
+                    } else {
+                        throw new NoSuchElementException();
+                    }
+                }
+                Catalog.Item next;
+                if (this.token.get() instanceof ComparableToken) {
+                    final ComparableToken comparable =
+                        ComparableToken.class.cast(this.token.get());
+                    final Token tkn = this.backtoken(this.biterator);
+                    if (comparable.compareTo(tkn) >= 0) {
+                        next = tkn.item();
+                    } else {
+                        next = comparable.item();
+                        this.token.set(tkn);
+                    }
+                } else {
+                    next = this.token.get().item();
+                    this.token.set(null);
+                }
+                return next;
+            } catch (java.io.IOException ex) {
+                throw new IllegalStateException(ex);
+            }
+        }
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public void remove() {
+            throw new UnsupportedOperationException("#remove");
+        }
+        /**
+         * Get token from backlog.
+         * @param iterator The iterator to read from
+         * @return Token retrieved
+         */
+        private Token backtoken(final Iterator<Backlog.Item> iterator) {
+            final Backlog.Item item = iterator.next();
+            return new Token() {
+                @Override
+                public Catalog.Item item() throws IOException {
+                    final File file = new File(
+                        Draft.this.lock.dir(),
+                        String.format(
+                            "/%s/%s",
+                            Pipeline.this.attribute,
+                            item.path()
+                        )
+                    );
+                    final InputStream input = new FileInputStream(file);
+                    final int len = IOUtils.copy(input, Pipeline.this.output);
+                    input.close();
+                    return new Catalog.Item(
+                        item.value(),
+                        Pipeline.this.opos.getAndAdd(len)
+                    );
+                }
+                @Override
+                public int hashCode() {
+                    return item.hashCode();
+                }
+                @Override
+                public boolean equals(final Object token) {
+                    return this == token || token.hashCode() == this.hashCode();
+                }
+            };
+        }
+        /**
+         * Get token from catalog.
+         * @param iterator The iterator to read from
+         * @return Token retrieved
+         */
+        private Token cattoken(final Iterator<Catalog.Item> iterator) {
+            final Catalog.Item item = iterator.next();
+            return new ComparableToken() {
+                @Override
+                public Catalog.Item item() throws IOException {
+                    final long pos = Pipeline.this.catalog.seek(item.value());
+                    Pipeline.this.data.seek(pos);
+                    final InputStream input = Channels.newInputStream(
+                        Pipeline.this.data.getChannel()
+                    );
+                    final int len = IOUtils.copy(input, Pipeline.this.output);
+                    input.close();
+                    return new Catalog.Item(
+                        item.value(),
+                        Pipeline.this.opos.getAndAdd(len)
+                    );
+                }
+                @Override
+                public int compareTo(final Token token) {
+                    return new Integer(this.hashCode()).compareTo(
+                        new Integer(token.hashCode())
+                    );
+                }
+                @Override
+                public int hashCode() {
+                    return item.hashCode();
+                }
+                @Override
+                public boolean equals(final Object token) {
+                    return this == token || token.hashCode() == this.hashCode();
+                }
+            };
+        }
     }
 
 }

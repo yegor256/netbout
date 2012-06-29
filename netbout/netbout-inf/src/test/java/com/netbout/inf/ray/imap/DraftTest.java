@@ -114,7 +114,8 @@ public final class DraftTest {
      */
     @Test
     public void baselinesItselfToBaselineWithNumbers() throws Exception {
-        final File dir = this.temp.newFolder("foo-4");
+        // final File dir = this.temp.newFolder("foo-4");
+        final File dir = new File("./boom");
         final Attribute attr = new Attribute("boom-boom-boom");
         final String value = "some data \u0433";
         final Draft draft = new Draft(dir);
@@ -136,7 +137,7 @@ public final class DraftTest {
         draft.baseline(src, dest);
         final Numbers restored = new SimpleNumbers();
         final InputStream input = new FileInputStream(file);
-        numbers.load(input);
+        restored.load(input);
         input.close();
         MatcherAssert.assertThat(
             restored.next(Long.MAX_VALUE),

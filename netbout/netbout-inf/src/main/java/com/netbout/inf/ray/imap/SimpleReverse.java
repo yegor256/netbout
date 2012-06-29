@@ -26,6 +26,7 @@
  */
 package com.netbout.inf.ray.imap;
 
+import com.jcabi.log.Logger;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -94,6 +95,11 @@ final class SimpleReverse implements Reverse {
         }
         data.writeLong(0L);
         data.flush();
+        Logger.debug(
+            this,
+            "#save(..): saved %d values",
+            this.map.size()
+        );
     }
 
     /**
@@ -110,6 +116,11 @@ final class SimpleReverse implements Reverse {
             }
             this.map.put(msg, data.readUTF());
         }
+        Logger.debug(
+            this,
+            "#load(..): loaded %d values",
+            this.map.size()
+        );
     }
 
 }

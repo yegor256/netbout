@@ -244,14 +244,14 @@ final class Catalog {
      * @throws IOException If some I/O problem inside
      */
     public Iterator<Item> iterator() throws IOException {
-        final InputStream stream = new FileInputStream(this.slow);
+        final FileInputStream stream = new FileInputStream(this.slow);
         final DataInputStream data = new DataInputStream(stream);
         return new Iterator<Item>() {
             @Override
             public boolean hasNext() {
                 boolean has;
                 try {
-                    has = data.available() > 0;
+                    has = stream.getFD().valid() && data.available() > 0;
                 } catch (java.io.IOException ex) {
                     throw new IllegalStateException(ex);
                 }
