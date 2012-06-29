@@ -30,6 +30,7 @@ import java.util.Collection;
 import java.util.Random;
 import java.util.TreeSet;
 import org.apache.commons.collections.IteratorUtils;
+import org.apache.commons.lang.RandomStringUtils;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Rule;
@@ -62,8 +63,14 @@ public final class CatalogTest {
         final Collection<Catalog.Item> items = new TreeSet<Catalog.Item>();
         items.add(new Catalog.Item(value, pos));
         // @checkstyle MagicNumber (1 line)
-        for (int num = 0; num < 1000; ++num) {
-            items.add(new Catalog.Item(String.format("foo-%s", num), num));
+        final int total = new Random().nextInt(500) + 100;
+        for (int num = 0; num < total; ++num) {
+            items.add(
+                new Catalog.Item(
+                    RandomStringUtils.random(num),
+                    num
+                )
+            );
         }
         catalog.create(items.iterator());
         MatcherAssert.assertThat(catalog.seek(value), Matchers.equalTo(pos));

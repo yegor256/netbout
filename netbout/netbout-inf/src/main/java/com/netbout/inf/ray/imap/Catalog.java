@@ -55,14 +55,14 @@ import org.apache.commons.io.IOUtils;
 final class Catalog {
 
     /**
-     * Main file.
+     * Index file, for fast search.
      */
-    private final transient File file;
+    private final transient File fast;
 
     /**
-     * File with duplicates.
+     * Full file for slow search.
      */
-    private final transient File dups;
+    private final transient File slow;
 
     /**
      * Public ctor.
@@ -70,17 +70,17 @@ final class Catalog {
      * @throws IOException If some I/O problem inside
      */
     public Catalog(final File ctlg) throws IOException {
-        this.file = ctlg;
-        FileUtils.touch(this.file);
-        this.dups = new File(
-            this.file.getParentFile(),
+        this.fast = ctlg;
+        FileUtils.touch(this.fast);
+        this.slow = new File(
+            this.fast.getParentFile(),
             String.format(
-                "%s-dups.%s",
-                FilenameUtils.getBaseName(this.file.getPath()),
-                FilenameUtils.getExtension(this.file.getPath())
+                "%s-slow.%s",
+                FilenameUtils.getBaseName(this.fast.getPath()),
+                FilenameUtils.getExtension(this.fast.getPath())
             )
         );
-        FileUtils.touch(this.dups);
+        FileUtils.touch(this.slow);
     }
 
     /**
@@ -94,9 +94,9 @@ final class Catalog {
          */
         public static final int SIZE = 4 + 8;
         /**
-         * Hash code.
+         * Value.
          */
-        private final transient int code;
+        private final transient String val;
         /**
          * Position.
          */
@@ -107,15 +107,7 @@ final class Catalog {
          * @param postn The position
          */
         public Item(final String value, final long postn) {
-            this(value.hashCode(), postn);
-        }
-        /**
-         * Public ctor.
-         * @param hash The hash value
-         * @param postn The position
-         */
-        public Item(final int hash, final long postn) {
-            this.code = hash;
+            this.val = value;
             this.pos = postn;
         }
         /**
@@ -123,7 +115,7 @@ final class Catalog {
          */
         @Override
         public int hashCode() {
-            return this.code;
+            return this.val.hashCode();
         }
         /**
          * {@inheritDoc}
@@ -131,21 +123,23 @@ final class Catalog {
         @Override
         public boolean equals(final Object item) {
             return this == item || (item instanceof Item
-                && Item.class.cast(item).code == this.code);
+                && item.hashCode() == this.hashCode());
         }
         /**
          * {@inheritDoc}
          */
         @Override
         public int compareTo(final Item item) {
-            return new Integer(this.code).compareTo(new Integer(item.code));
+            return new Integer(this.hashCode()).compareTo(
+                new Integer(item.hashCode())
+            );
         }
         /**
-         * Get hash code.
+         * Get value.
          * @return The value
          */
-        public int hash() {
-            return this.code;
+        public String value() {
+            return this.val;
         }
         /**
          * Get position.
@@ -167,7 +161,7 @@ final class Catalog {
      */
     public long seek(final String value) throws IOException {
         final int target = value.hashCode();
-        final RandomAccessFile data = new RandomAccessFile(this.file, "r");
+        final RandomAccessFile data = new RandomAccessFile(this.fast, "r");
         long left = 0;
         long right = data.length() / Item.SIZE;
         long found = -1;
@@ -179,7 +173,7 @@ final class Catalog {
                 found = data.readLong();
                 break;
             }
-            if (hash < target) {
+            if (hash < target && left < right - 1) {
                 left = pos;
             } else {
                 right = pos;
@@ -198,32 +192,40 @@ final class Catalog {
      * @throws IOException If some I/O problem inside
      */
     public void create(final Iterator<Item> items) throws IOException {
-        final OutputStream stream = new FileOutputStream(this.file);
+        final OutputStream fstream = new FileOutputStream(this.fast);
+        final OutputStream sstream = new FileOutputStream(this.slow);
         try {
-            final DataOutputStream data = new DataOutputStream(stream);
+            final DataOutputStream fdata = new DataOutputStream(fstream);
+            final DataOutputStream sdata = new DataOutputStream(sstream);
             int previous = Integer.MIN_VALUE;
             while (items.hasNext()) {
                 final Item item = items.next();
-                final int hash = item.hash();
+                final int hash = item.hashCode();
                 if (hash < previous) {
                     throw new IllegalArgumentException("items are not ordered");
                 }
                 if (hash == previous) {
                     throw new IllegalArgumentException("duplicate!");
                 }
-                data.writeInt(hash);
-                data.writeLong(item.position());
+                fdata.writeInt(hash);
+                fdata.writeLong(item.position());
+                sdata.writeUTF(item.value());
+                sdata.writeLong(item.position());
                 previous = hash;
             }
-            data.flush();
+            fdata.flush();
+            sdata.flush();
         } finally {
-            stream.close();
+            fstream.close();
+            sstream.close();
         }
         Logger.debug(
             this,
-            "#create(): saved to %s (%d bytes)",
-            this.file,
-            this.file.length()
+            "#create(): saved to %s (%d bytes) and %s (%s bytes)",
+            FilenameUtils.getName(this.fast.getPath()),
+            this.fast.length(),
+            FilenameUtils.getName(this.slow.getPath()),
+            this.slow.length()
         );
     }
 
@@ -233,7 +235,7 @@ final class Catalog {
      * @throws IOException If some I/O problem inside
      */
     public Iterator<Item> iterator() throws IOException {
-        final InputStream stream = new FileInputStream(this.file);
+        final InputStream stream = new FileInputStream(this.slow);
         final DataInputStream data = new DataInputStream(stream);
         return new Iterator<Item>() {
             @Override
@@ -252,7 +254,7 @@ final class Catalog {
             @Override
             public Item next() {
                 try {
-                    return new Item(data.readInt(), data.readLong());
+                    return new Item(data.readUTF(), data.readLong());
                 } catch (java.io.IOException ex) {
                     throw new IllegalStateException(ex);
                 }
