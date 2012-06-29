@@ -151,8 +151,8 @@ final class Catalog {
     }
 
     /**
-     * Get position of numbers in data file, for the given value, or -1
-     * if such a value is not found in catalog.
+     * Get position of numbers in data file, for the given value,
+     * or less than ZERO if such a value is not found in catalog.
      *
      * <p>The method is thread-safe.
      *
@@ -164,13 +164,13 @@ final class Catalog {
         final RandomAccessFile data = new RandomAccessFile(this.fast, "r");
         long left = 0;
         long right = data.length() / Item.SIZE;
-        long found = -1;
+        long found = Long.MIN_VALUE;
         while (left < right) {
             final long pos = left + (right - left) / 2;
             data.seek(pos * Item.SIZE);
             final int hash = data.readInt();
             if (hash == target) {
-                found = data.readLong();
+                found = this.normalized(data.readLong(), value);
                 break;
             }
             if (hash < target && left < right - 1) {
@@ -179,6 +179,12 @@ final class Catalog {
                 right = pos;
             }
         }
+        Logger.debug(
+            this,
+            "#seek('%[text]s'): found %d",
+            value,
+            found
+        );
         return found;
     }
 
@@ -192,12 +198,12 @@ final class Catalog {
      * @throws IOException If some I/O problem inside
      */
     public void create(final Iterator<Item> items) throws IOException {
-        final OutputStream fstream = new FileOutputStream(this.fast);
-        final OutputStream sstream = new FileOutputStream(this.slow);
+        final long start = System.currentTimeMillis();
+        final RandomAccessFile ffile = new RandomAccessFile(this.fast, "rw");
+        final RandomAccessFile sfile = new RandomAccessFile(this.slow, "rw");
         try {
-            final DataOutputStream fdata = new DataOutputStream(fstream);
-            final DataOutputStream sdata = new DataOutputStream(sstream);
             int previous = Integer.MIN_VALUE;
+            long dupstart = Integer.MIN_VALUE;
             while (items.hasNext()) {
                 final Item item = items.next();
                 final int hash = item.hashCode();
@@ -205,27 +211,30 @@ final class Catalog {
                     throw new IllegalArgumentException("items are not ordered");
                 }
                 if (hash == previous) {
-                    throw new IllegalArgumentException("duplicate!");
+                    ffile.seek(ffile.getFilePointer() - Item.SIZE);
+                    ffile.writeInt(hash);
+                    ffile.writeLong(-dupstart - 1);
+                } else {
+                    dupstart = sfile.getFilePointer();
+                    ffile.writeInt(hash);
+                    ffile.writeLong(item.position());
                 }
-                fdata.writeInt(hash);
-                fdata.writeLong(item.position());
-                sdata.writeUTF(item.value());
-                sdata.writeLong(item.position());
+                sfile.writeUTF(item.value());
+                sfile.writeLong(item.position());
                 previous = hash;
             }
-            fdata.flush();
-            sdata.flush();
         } finally {
-            fstream.close();
-            sstream.close();
+            ffile.close();
+            sfile.close();
         }
         Logger.debug(
             this,
-            "#create(): saved to %s (%d bytes) and %s (%s bytes)",
+            "#create(): saved to %s (%d bytes) and %s (%s bytes) in %[ms]s",
             FilenameUtils.getName(this.fast.getPath()),
             this.fast.length(),
             FilenameUtils.getName(this.slow.getPath()),
-            this.slow.length()
+            this.slow.length(),
+            System.currentTimeMillis() - start
         );
     }
 
@@ -264,6 +273,34 @@ final class Catalog {
                 throw new UnsupportedOperationException("#remove");
             }
         };
+    }
+
+    /**
+     * Convert position to the normal form.
+     *
+     * <p>If position is negative it means that we should do a full search
+     * in slow index, by its UTF value.
+     *
+     * @param pos Position found in fast index
+     * @param value The value
+     * @return Normalized position in data file
+     */
+    private long normalized(final long pos,
+        final String value) throws IOException {
+        long norm = pos;
+        if (norm < 0) {
+            final RandomAccessFile data = new RandomAccessFile(this.slow, "r");
+            data.seek(-norm - 1);
+            while (data.getFilePointer() < data.length()) {
+                final String val = data.readUTF();
+                final long num = data.readLong();
+                if (val.equals(value)) {
+                    norm = num;
+                    break;
+                }
+            }
+        }
+        return norm;
     }
 
 }

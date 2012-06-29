@@ -26,9 +26,16 @@
  */
 package com.netbout.inf.ray.imap;
 
-import java.util.Collection;
+import com.jcabi.log.VerboseThreads;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.Random;
-import java.util.TreeSet;
+import java.util.concurrent.Callable;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 import org.apache.commons.collections.IteratorUtils;
 import org.apache.commons.lang.RandomStringUtils;
 import org.hamcrest.MatcherAssert;
@@ -60,10 +67,10 @@ public final class CatalogTest {
         final Catalog catalog = new Catalog(this.temp.newFile("catalog.txt"));
         final String value = "some value to use, \u0433";
         final long pos = Math.max(Math.abs(new Random().nextLong()), 1L);
-        final Collection<Catalog.Item> items = new TreeSet<Catalog.Item>();
-        items.add(new Catalog.Item(value, pos));
         // @checkstyle MagicNumber (1 line)
         final int total = new Random().nextInt(500) + 100;
+        final List<Catalog.Item> items = new ArrayList<Catalog.Item>(total + 1);
+        items.add(new Catalog.Item(value, pos));
         for (int num = 0; num < total; ++num) {
             items.add(
                 new Catalog.Item(
@@ -72,9 +79,10 @@ public final class CatalogTest {
                 )
             );
         }
+        Collections.sort(items);
         catalog.create(items.iterator());
         MatcherAssert.assertThat(catalog.seek(value), Matchers.equalTo(pos));
-        MatcherAssert.assertThat(catalog.seek("absent"), Matchers.equalTo(-1L));
+        MatcherAssert.assertThat(catalog.seek("absent"), Matchers.lessThan(0L));
     }
 
     /**
@@ -86,13 +94,20 @@ public final class CatalogTest {
         final Catalog catalog = new Catalog(this.temp.newFile("catalog-2.txt"));
         final String value = "some value to use, \u0433";
         final long pos = Math.max(Math.abs(new Random().nextLong()), 1L);
-        final Collection<Catalog.Item> items = new TreeSet<Catalog.Item>();
+        // @checkstyle MagicNumber (1 line)
+        final int total = new Random().nextInt(500) + 100;
+        final List<Catalog.Item> items = new ArrayList<Catalog.Item>();
         final Catalog.Item item = new Catalog.Item(value, pos);
         items.add(item);
-        // @checkstyle MagicNumber (1 line)
-        for (int num = 0; num < 100; ++num) {
-            items.add(new Catalog.Item(String.format("foo-%s", num), num));
+        for (int num = 0; num < total; ++num) {
+            items.add(
+                new Catalog.Item(
+                    RandomStringUtils.random(num),
+                    num
+                )
+            );
         }
+        Collections.sort(items);
         catalog.create(items.iterator());
         MatcherAssert.assertThat(
             IteratorUtils.toArray(catalog.iterator()),
@@ -113,12 +128,56 @@ public final class CatalogTest {
             first.hashCode(),
             Matchers.equalTo(second.hashCode())
         );
-        final Collection<Catalog.Item> items = new TreeSet<Catalog.Item>();
+        final List<Catalog.Item> items = new ArrayList<Catalog.Item>(2);
         items.add(new Catalog.Item(first, 1));
         items.add(new Catalog.Item(second, 2));
+        Collections.sort(items);
         catalog.create(items.iterator());
         MatcherAssert.assertThat(catalog.seek(first), Matchers.equalTo(1L));
         MatcherAssert.assertThat(catalog.seek(second), Matchers.equalTo(2L));
+    }
+
+    /**
+     * Catalog can work in many threads in parallel.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void supportsMultiThreadingSearch() throws Exception {
+        final Catalog catalog = new Catalog(this.temp.newFile("catalog-4.txt"));
+        // @checkstyle MagicNumber (1 line)
+        final int total = new Random().nextInt(100) + 50;
+        final List<Catalog.Item> items = new ArrayList<Catalog.Item>();
+        for (int num = 0; num < total; ++num) {
+            items.add(
+                new Catalog.Item(
+                    RandomStringUtils.random(num),
+                    num
+                )
+            );
+        }
+        Collections.sort(items);
+        catalog.create(items.iterator());
+        // @checkstyle MagicNumber (1 line)
+        final int threads = 10;
+        final CountDownLatch start = new CountDownLatch(1);
+        final CountDownLatch latch = new CountDownLatch(threads);
+        final Callable<?> task = new Callable<Void>() {
+            @Override
+            public Void call() throws Exception {
+                start.await();
+                catalog.seek(RandomStringUtils.random(total));
+                latch.countDown();
+                return null;
+            }
+        };
+        final ExecutorService svc =
+            Executors.newFixedThreadPool(threads, new VerboseThreads());
+        for (int thread = 0; thread < threads; ++thread) {
+            svc.submit(task);
+        }
+        start.countDown();
+        latch.await(1, TimeUnit.SECONDS);
+        svc.shutdown();
     }
 
 }
