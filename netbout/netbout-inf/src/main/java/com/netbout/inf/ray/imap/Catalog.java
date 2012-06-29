@@ -181,9 +181,10 @@ final class Catalog {
         }
         Logger.debug(
             this,
-            "#seek('%[text]s'): found %d",
+            "#seek('%[text]s'): found pos #%d among %d value(s)",
             value,
-            found
+            found,
+            data.length() / Item.SIZE
         );
         return found;
     }
@@ -201,6 +202,7 @@ final class Catalog {
         final long start = System.currentTimeMillis();
         final RandomAccessFile ffile = new RandomAccessFile(this.fast, "rw");
         final RandomAccessFile sfile = new RandomAccessFile(this.slow, "rw");
+        int total = 0;
         try {
             int previous = Integer.MIN_VALUE;
             long dupstart = Integer.MIN_VALUE;
@@ -222,6 +224,7 @@ final class Catalog {
                 sfile.writeUTF(item.value());
                 sfile.writeLong(item.position());
                 previous = hash;
+                ++total;
             }
         } finally {
             ffile.close();
@@ -229,9 +232,11 @@ final class Catalog {
         }
         Logger.debug(
             this,
-            "#create(): saved to %s (%d bytes) and %s (%s bytes) in %[ms]s",
+            // @checkstyle LineLength (1 line)
+            "#create(): saved to %s (%d bytes, %d values) and %s (%s bytes) in %[ms]s",
             FilenameUtils.getName(this.fast.getPath()),
             this.fast.length(),
+            total,
             FilenameUtils.getName(this.slow.getPath()),
             this.slow.length(),
             System.currentTimeMillis() - start

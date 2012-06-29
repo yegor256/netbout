@@ -37,7 +37,9 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.RandomAccessFile;
 import java.nio.channels.Channels;
+import java.util.Collection;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.NoSuchElementException;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
@@ -107,6 +109,14 @@ final class Draft implements Closeable {
     }
 
     /**
+     * Expire it.
+     * @throws IOException If some I/O problem inside
+     */
+    public void expire() throws IOException {
+        this.lock.expire();
+    }
+
+    /**
      * Create new temp file for numbers.
      * @param attr Attribute
      * @return File name
@@ -156,6 +166,8 @@ final class Draft implements Closeable {
      */
     public void baseline(final Baseline dest,
         final Baseline src) throws IOException {
+        final long start = System.currentTimeMillis();
+        final Collection<Attribute> attrs = new LinkedList<Attribute>();
         for (File file : this.lock.dir().listFiles()) {
             if (!file.isDirectory()) {
                 continue;
@@ -164,7 +176,16 @@ final class Draft implements Closeable {
                 FilenameUtils.getName(file.getPath())
             );
             this.baseline(dest, src, attr);
+            attrs.add(attr);
         }
+        Logger.debug(
+            this,
+            "#baseline('%s', '%s'): baselined %[list]s in %[ms]s",
+            dest,
+            src,
+            attrs,
+            System.currentTimeMillis() - start
+        );
     }
 
     /**
@@ -185,7 +206,6 @@ final class Draft implements Closeable {
      */
     private void baseline(final Baseline dest, final Baseline src,
         final Attribute attr) throws IOException {
-        final long start = System.currentTimeMillis();
         File reverse = this.reverse(attr);
         if (!reverse.exists()) {
             reverse = src.reverse(attr);
@@ -196,14 +216,6 @@ final class Draft implements Closeable {
         final Pipeline pipeline = new Pipeline(dest, src, attr);
         dest.catalog(attr).create(pipeline);
         pipeline.close();
-        Logger.debug(
-            this,
-            "#baseline('%s', '%s', '%s'): baselined in %[ms]s",
-            dest,
-            src,
-            attr,
-            System.currentTimeMillis() - start
-        );
     }
 
     /**
@@ -358,6 +370,13 @@ final class Draft implements Closeable {
                     final InputStream input = new FileInputStream(file);
                     final int len = IOUtils.copy(input, Pipeline.this.output);
                     input.close();
+                    Logger.debug(
+                        this,
+                        "#item('%s'): copied %d bytes from '/%s'",
+                        Pipeline.this.attribute,
+                        len,
+                        FilenameUtils.getName(file.getPath())
+                    );
                     return new Catalog.Item(
                         item.value(),
                         Pipeline.this.opos.getAndAdd(len)
@@ -390,6 +409,12 @@ final class Draft implements Closeable {
                     );
                     final int len = IOUtils.copy(input, Pipeline.this.output);
                     input.close();
+                    Logger.debug(
+                        this,
+                        "#item(): copied %d bytes from pos #%d",
+                        len,
+                        pos
+                    );
                     return new Catalog.Item(
                         item.value(),
                         Pipeline.this.opos.getAndAdd(len)

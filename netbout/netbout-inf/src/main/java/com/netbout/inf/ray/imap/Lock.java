@@ -31,6 +31,7 @@ import java.io.Closeable;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.PrintStream;
 import java.nio.channels.FileChannel;
 import java.nio.channels.FileLock;
 import org.apache.commons.io.FilenameUtils;
@@ -76,6 +77,7 @@ final class Lock implements Closeable {
         final File lock = new File(this.directory, "lock.txt");
         lock.getParentFile().mkdirs();
         this.stream = new FileOutputStream(lock);
+        new PrintStream(this.stream).println("locked");
         this.channel = this.stream.getChannel();
         FileLock lck = null;
         try {
@@ -129,6 +131,7 @@ final class Lock implements Closeable {
         this.lock.release();
         this.channel.close();
         this.stream.close();
+        new File(this.directory, "lock.txt").delete();
         Logger.debug(
             this,
             "#close(): '/%s' unlocked by %s",
@@ -147,6 +150,27 @@ final class Lock implements Closeable {
             throw new IOException("closed lock");
         }
         return this.directory;
+    }
+
+    /**
+     * Expire it, mark the directory as expired.
+     * @throws IOException If some I/O problem inside
+     */
+    public void expire() throws IOException {
+        this.directory.renameTo(
+            new File(
+                this.directory.getParentFile(),
+                String.format(
+                    "%s-expired",
+                    FilenameUtils.getName(this.directory.getPath())
+                )
+            )
+        );
+        Logger.debug(
+            this,
+            "#expire(): '/%s' expired",
+            FilenameUtils.getName(this.directory.getPath())
+        );
     }
 
 }

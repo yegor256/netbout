@@ -123,6 +123,16 @@ final class DefaultDirectory implements Directory {
                 } finally {
                     istream.close();
                 }
+                Logger.debug(
+                    this,
+                    // @checkstyle LineLength (1 line)
+                    "#load('%s', '%[text]s', ..): loaded numbers from pos #%d (file.length=%d, file.name=/%s)",
+                    attr,
+                    value,
+                    pos,
+                    file.length(),
+                    FilenameUtils.getName(file.getPath())
+                );
             } else {
                 nums.load(new ByteArrayInputStream(new byte[0]));
             }
@@ -172,7 +182,10 @@ final class DefaultDirectory implements Directory {
         );
         this.draft.get().baseline(candidate, this.base.get());
         this.base.get().close();
+        this.base.get().expire();
         this.base.set(candidate);
+        this.draft.get().close();
+        this.draft.get().expire();
         this.draft.set(new Draft(this.lock.dir()));
     }
 

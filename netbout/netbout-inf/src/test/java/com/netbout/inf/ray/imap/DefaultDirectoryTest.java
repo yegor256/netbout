@@ -55,9 +55,10 @@ public final class DefaultDirectoryTest {
      */
     @Test
     public void savesAndRestoresNumbers() throws Exception {
-        final Directory dir = new DefaultDirectory(
-            new File(this.temp.newFolder("foo"), "/some/directory")
-        );
+        // final Directory dir = new DefaultDirectory(
+        //     new File(this.temp.newFolder("foo"), "/some/directory")
+        // );
+    final Directory dir = new DefaultDirectory(new File("./boom"));
         final Numbers numbers = new SimpleNumbers();
         final long msg = MsgMocker.number();
         numbers.add(msg);

@@ -104,6 +104,14 @@ final class Baseline implements Closeable {
     }
 
     /**
+     * Expire it.
+     * @throws IOException If some I/O problem inside
+     */
+    public void expire() throws IOException {
+        this.lock.expire();
+    }
+
+    /**
      * Get name of data file.
      * @param attr Attribute
      * @return File name
