@@ -79,17 +79,17 @@ final class Backlog {
          */
         private final transient String val;
         /**
-         * Reference.
+         * Name of the file.
          */
-        private final transient String ref;
+        private final transient String name;
         /**
          * Public ctor.
          * @param value Value
-         * @param refr Reference
+         * @param file Path to the file
          */
-        public Item(final String value, final String refr) {
+        public Item(final String value, final String path) {
             this.val = value;
-            this.ref = refr;
+            this.name = path;
         }
         /**
          * Get value.
@@ -102,8 +102,8 @@ final class Backlog {
          * Get reference.
          * @return The reference
          */
-        public String reference() {
-            return this.ref;
+        public String path() {
+            return this.name;
         }
     }
 
@@ -120,16 +120,16 @@ final class Backlog {
         try {
             final DataOutputStream data = new DataOutputStream(stream);
             data.writeUTF(item.value());
-            data.writeUTF(item.reference());
+            data.writeUTF(item.path());
             data.flush();
         } finally {
             stream.close();
         }
         Logger.debug(
             this,
-            "#add(%[text]s, %[text]s): added",
+            "#add('%[text]s', '%s'): added",
             item.value(),
-            item.reference()
+            item.path()
         );
     }
 

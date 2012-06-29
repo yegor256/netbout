@@ -27,10 +27,16 @@
 package com.netbout.inf.ray.imap;
 
 import com.netbout.inf.Attribute;
+import com.netbout.inf.MsgMocker;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.Collection;
 import java.util.Random;
 import java.util.TreeSet;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.FileUtils;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
@@ -81,11 +87,11 @@ public final class DraftTest {
     }
 
     /**
-     * Draft can baseline itself to a baseline.
+     * Draft can baseline itself to a baseline, with reverse inside.
      * @throws Exception If there is some problem inside
      */
     @Test
-    public void baselinesItselfToBaseline() throws Exception {
+    public void baselinesItselfToBaselineWithReverse() throws Exception {
         final File dir = this.temp.newFolder("foo-3");
         final Attribute attr = new Attribute("boom");
         final Draft draft = new Draft(dir);
@@ -99,6 +105,42 @@ public final class DraftTest {
         MatcherAssert.assertThat(
             FileUtils.readFileToString(dest.reverse(attr)),
             Matchers.endsWith("-hi!")
+        );
+    }
+
+    /**
+     * Draft can baseline itself to a baseline, with numbers inside.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void baselinesItselfToBaselineWithNumbers() throws Exception {
+        final File dir = this.temp.newFolder("foo-4");
+        final Attribute attr = new Attribute("boom-boom-boom");
+        final String value = "some data \u0433";
+        final Draft draft = new Draft(dir);
+        final File file = draft.numbers(attr);
+        draft.backlog(attr).add(
+            new Backlog.Item(
+                value,
+                FilenameUtils.getName(file.getPath())
+            )
+        );
+        final long msg = MsgMocker.number();
+        final Numbers numbers = new SimpleNumbers();
+        numbers.add(msg);
+        final OutputStream output = new FileOutputStream(file);
+        numbers.save(output);
+        output.close();
+        final Baseline src = new Baseline(dir);
+        final Baseline dest = new Baseline(this.temp.newFolder("foo-5"));
+        draft.baseline(src, dest);
+        final Numbers restored = new SimpleNumbers();
+        final InputStream input = new FileInputStream(file);
+        numbers.load(input);
+        input.close();
+        MatcherAssert.assertThat(
+            restored.next(Long.MAX_VALUE),
+            Matchers.equalTo(msg)
         );
     }
 
