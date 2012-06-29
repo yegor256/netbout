@@ -76,7 +76,10 @@ public final class VersionBuilderTest {
             new File(this.temp.newFolder("foo-1"), "/some/folder/to/create-2")
         );
         final String ver = builder.draft();
-        MatcherAssert.assertThat(builder.draft(), Matchers.equalTo(ver));
+        MatcherAssert.assertThat(
+            builder.draft(),
+            Matchers.not(Matchers.equalTo(ver))
+        );
     }
 
 }

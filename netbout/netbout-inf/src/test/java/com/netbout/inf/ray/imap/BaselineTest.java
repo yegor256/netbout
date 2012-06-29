@@ -67,7 +67,7 @@ public final class BaselineTest {
      * Baseline can prevent against duplicate instances for the same folder.
      * @throws Exception If there is some problem inside
      */
-    @Test(expected = IllegalArgumentException.class)
+    @Test(expected = java.io.IOException.class)
     public void preventsDuplicateInstances() throws Exception {
         final File dir = this.temp.newFolder("foo-2");
         final Baseline base = new Baseline(dir);

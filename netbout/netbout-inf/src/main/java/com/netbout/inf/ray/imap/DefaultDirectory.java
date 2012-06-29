@@ -26,6 +26,7 @@
  */
 package com.netbout.inf.ray.imap;
 
+import com.jcabi.log.Logger;
 import com.netbout.inf.Attribute;
 import java.io.ByteArrayInputStream;
 import java.io.Closeable;
@@ -75,6 +76,11 @@ final class DefaultDirectory implements Directory {
         this.lock = new Lock(file);
         this.base.set(new Baseline(this.lock.dir()));
         this.draft.set(new Draft(this.lock.dir()));
+        Logger.debug(
+            this,
+            "#DefaultDirectory('/%s'): started",
+            FilenameUtils.getName(file.getPath())
+        );
     }
 
     /**

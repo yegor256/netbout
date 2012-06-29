@@ -71,7 +71,7 @@ public final class ReversiveIndexTest {
     public void replacesValues() throws Exception {
         final Index index = new ReversiveIndex(
             new Attribute("attr-1"),
-            new DefaultDirectory(this.temp.newFile("file-1"))
+            new DefaultDirectory(this.temp.newFolder("foo-1"))
         );
         final long msg = MsgMocker.number();
         final String value = "some text \u0433!";
@@ -97,7 +97,7 @@ public final class ReversiveIndexTest {
     public void updatesInMultipleThreads() throws Exception {
         final Index index = new ReversiveIndex(
             new Attribute("attr-2"),
-            new DefaultDirectory(this.temp.newFile("file-3"))
+            new DefaultDirectory(this.temp.newFolder("foo-3"))
         );
         final long msg = MsgMocker.number();
         final String value = "some value to set";

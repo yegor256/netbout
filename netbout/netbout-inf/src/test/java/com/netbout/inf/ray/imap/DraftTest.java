@@ -114,8 +114,7 @@ public final class DraftTest {
      */
     @Test
     public void baselinesItselfToBaselineWithNumbers() throws Exception {
-        // final File dir = this.temp.newFolder("foo-4");
-        final File dir = new File("./boom");
+        final File dir = this.temp.newFolder("foo-4");
         final Attribute attr = new Attribute("boom-boom-boom");
         final String value = "some data \u0433";
         final Draft draft = new Draft(dir);

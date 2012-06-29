@@ -26,6 +26,7 @@
  */
 package com.netbout.inf.ray.imap;
 
+import com.jcabi.log.Logger;
 import java.io.Closeable;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -84,6 +85,12 @@ final class Lock implements Closeable {
         } finally {
             this.lock = lck;
         }
+        Logger.debug(
+            this,
+            "#Lock('/%s'): locked by %s",
+            FilenameUtils.getName(this.directory.getPath()),
+            super.toString()
+        );
     }
 
     /**
@@ -122,6 +129,12 @@ final class Lock implements Closeable {
         this.lock.release();
         this.channel.close();
         this.stream.close();
+        Logger.debug(
+            this,
+            "#close(): '/%s' unlocked by %s",
+            FilenameUtils.getName(this.directory.getPath()),
+            super.toString()
+        );
     }
 
     /**

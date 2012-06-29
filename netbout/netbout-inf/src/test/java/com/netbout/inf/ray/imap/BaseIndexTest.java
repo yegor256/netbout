@@ -71,7 +71,7 @@ public final class BaseIndexTest {
     public void ordersNumbersProperly() throws Exception {
         final Index index = new BaseIndex(
             new Attribute("some-attr-2"),
-            new DefaultDirectory(this.temp.newFile("file-2"))
+            new DefaultDirectory(this.temp.newFolder("file-2"))
         );
         final long msg = MsgMocker.number();
         final String value = "text-\u0433!";
