@@ -109,7 +109,7 @@ final class SimpleReverse implements Reverse {
     public void load(final InputStream stream) throws IOException {
         this.map.clear();
         final DataInputStream data = new DataInputStream(stream);
-        while (data.available() > 0) {
+        while (true) {
             final long msg = data.readLong();
             if (msg == 0) {
                 break;
