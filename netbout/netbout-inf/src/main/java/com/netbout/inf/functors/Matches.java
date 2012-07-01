@@ -27,6 +27,7 @@
 package com.netbout.inf.functors;
 
 import com.netbout.inf.Atom;
+import com.netbout.inf.Attribute;
 import com.netbout.inf.Functor;
 import com.netbout.inf.Ray;
 import com.netbout.inf.Term;
@@ -42,7 +43,8 @@ import java.util.Set;
 import org.apache.commons.collections.CollectionUtils;
 
 /**
- * Allows only matched messages.
+ * Allows only messages that contain provided word in their text or author name
+ * or something else (to be extended in the future).
  *
  * <p>This class is thread-safe.
  *
@@ -55,7 +57,7 @@ final class Matches implements Functor {
     /**
      * The attribute to use.
      */
-    private static final String ATTR = "word";
+    private static final Attribute ATTR = new Attribute("word");
 
     /**
      * {@inheritDoc}

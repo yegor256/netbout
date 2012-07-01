@@ -28,9 +28,9 @@ package com.netbout.inf.ray;
 
 import com.netbout.inf.Cursor;
 import com.netbout.inf.Lattice;
-import com.netbout.inf.Ray;
 import com.netbout.inf.Term;
-import java.util.Iterator;
+import com.netbout.inf.atoms.VariableAtom;
+import com.netbout.inf.lattice.LatticeBuilder;
 
 /**
  * Always term.
@@ -40,13 +40,7 @@ import java.util.Iterator;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-@Term.Cheap
 final class AlwaysTerm implements Term {
-
-    /**
-     * The ray we're working with.
-     */
-    private final transient Ray ray;
 
     /**
      * Index map.
@@ -55,11 +49,9 @@ final class AlwaysTerm implements Term {
 
     /**
      * Public ctor.
-     * @param iray The ray to work with
      * @param map The index map
      */
-    public AlwaysTerm(final Ray iray, final IndexMap map) {
-        this.ray = iray;
+    public AlwaysTerm(final IndexMap map) {
         this.imap = map;
     }
 
@@ -94,9 +86,7 @@ final class AlwaysTerm implements Term {
      */
     @Override
     public Lattice lattice() {
-        final Lattice lattice = this.ray.lattice();
-        lattice.always();
-        return lattice;
+        return new LatticeBuilder().always().build();
     }
 
     /**
@@ -123,16 +113,13 @@ final class AlwaysTerm implements Term {
      * @return Next one or zero if there is nothing else
      */
     private long next(final long number) {
-        final Iterator<Long> tail = this.imap.msgs()
-            .tailSet(number - 1)
-            .iterator();
-        long next;
-        if (tail.hasNext()) {
-            next = tail.next();
-        } else {
-            next = 0L;
+        try {
+            return this.imap
+                .index(VariableAtom.NUMBER.attribute())
+                .next("", number);
+        } catch (java.io.IOException ex) {
+            throw new IllegalStateException(ex);
         }
-        return next;
     }
 
 }

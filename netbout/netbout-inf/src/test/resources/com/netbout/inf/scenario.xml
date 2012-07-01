@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
-<!-- this file is used in InifityTest -->
 <scenario>
+    <!-- this file is used in InifityTest -->
     <scene>
         <see notice="com.netbout.inf.notices.MessagePostedNotice">
             <message.number>63</message.number>

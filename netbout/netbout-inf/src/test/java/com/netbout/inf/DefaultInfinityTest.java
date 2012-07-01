@@ -69,9 +69,14 @@ public final class DefaultInfinityTest {
                 }
             }
         ).toArray(new Urn[0]);
+        int total = 0;
         while (inf.eta(deps) != 0) {
             TimeUnit.MILLISECONDS.sleep(1);
             Logger.debug(this, "eta=%[nano]s", inf.eta(deps));
+            // @checkstyle MagicNumber (1 line)
+            if (++total > 1000) {
+                throw new IllegalStateException("time out");
+            }
         }
         final String query = String.format(
             "(pos 0)",
@@ -89,6 +94,7 @@ public final class DefaultInfinityTest {
      * @throws Exception If there is some problem inside
      */
     @Test
+    @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
     public void restoresItselfFromFileSystem() throws Exception {
         final Folder folder = new FolderMocker().mock();
         final Infinity inf = new DefaultInfinity(folder);
@@ -96,7 +102,7 @@ public final class DefaultInfinityTest {
             .withParticipant(new UrnMocker().mock())
             .mock();
         final Message msg = new MessageMocker()
-            .withText("Jeffrey Lebowski, \u0433!")
+            .withText("Jeffrey Lebowski, \u0443\u0440\u0430! How are you?")
             .withNumber(MsgMocker.number())
             .inBout(bout)
             .mock();
@@ -108,17 +114,24 @@ public final class DefaultInfinityTest {
                 }
             }
         ).toArray(new Urn[0]);
+        int total = 0;
         while (inf.eta(deps) != 0) {
             TimeUnit.MILLISECONDS.sleep(1);
+            // @checkstyle MagicNumber (1 line)
+            if (++total > 1000) {
+                throw new IllegalStateException("time out 2");
+            }
         }
         inf.flush();
         inf.close();
-        final Infinity restored = new DefaultInfinity(folder);
-        MatcherAssert.assertThat(
-            restored.messages("(matches '\u0433')"),
-            Matchers.<Long>iterableWithSize(1)
-        );
-        restored.close();
+        for (int attempt = 0; attempt <= 2; ++attempt) {
+            final Infinity restored = new DefaultInfinity(folder);
+            MatcherAssert.assertThat(
+                restored.messages("(matches 'Jeffrey')"),
+                Matchers.<Long>iterableWithSize(Matchers.greaterThan(0))
+            );
+            restored.close();
+        }
     }
 
 }

@@ -33,6 +33,8 @@ import com.netbout.inf.Term;
 /**
  * Volatile term.
  *
+ * <p>The most important thing here is the {@code Term.Volatile} annotation.
+ *
  * <p>This class is thread-safe.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)

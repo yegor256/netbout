@@ -24,65 +24,42 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.inf.ray;
+package com.netbout.inf.lattice;
 
-import com.netbout.inf.MsgMocker;
-import com.netbout.inf.RayMocker;
-import org.hamcrest.MatcherAssert;
-import org.hamcrest.Matchers;
-import org.junit.Rule;
+import com.netbout.inf.Cursor;
+import com.netbout.inf.CursorMocker;
+import com.netbout.inf.Lattice;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.SortedSet;
+import java.util.TreeSet;
 import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
+import org.mockito.Mockito;
 
 /**
- * Test case of {@link DefaultIndexMap}.
+ * Test case of {@link BitsetLattice}.
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class DefaultIndexMapTest {
+public final class BitsetLatticeTest {
 
     /**
-     * Temporary folder.
-     * @checkstyle VisibilityModifier (3 lines)
-     */
-    @Rule
-    public transient TemporaryFolder temp = new TemporaryFolder();
-
-    /**
-     * DefaultIndexMap can find and return index.
+     * BitsetLattice can shift a cursor to the right position.
      * @throws Exception If there is some problem inside
+     * @checkstyle MagicNumber (30 lines)
      */
     @Test
-    public void findsAndReturnsIndex() throws Exception {
-        final IndexMap map = new DefaultIndexMap(
-            new RayMocker().mock(),
-            this.temp.newFolder("foo")
-        );
-        final String attr = "attribute name";
-        final long msg = MsgMocker.number();
-        final String value = "some text \u0433!";
-        map.index(attr).add(msg, value);
-        MatcherAssert.assertThat(
-            map.index(attr).first(msg),
-            Matchers.equalTo(value)
-        );
-    }
-
-    /**
-     * DefaultIndexMap can convert itself to string.
-     * @throws Exception If there is some problem inside
-     */
-    @Test
-    public void convertsItselfToString() throws Exception {
-        final IndexMap map = new DefaultIndexMap(
-            new RayMocker().mock(),
-            this.temp.newFolder("bar")
-        );
-        map.index("attr-1").add(1L, "some value");
-        MatcherAssert.assertThat(
-            map,
-            Matchers.hasToString(Matchers.notNullValue())
-        );
+    public void shiftsCursorToTheRightPosition() throws Exception {
+        final SortedSet<Long> numbers =
+            new TreeSet<Long>(Collections.reverseOrder());
+        numbers.addAll(Arrays.asList(10000L, 350L, 150L, 50L));
+        final Lattice lattice = new LatticeBuilder()
+            .fill(numbers)
+            .build();
+        final Lattice.Shifter shifter = Mockito.mock(Lattice.Shifter.class);
+        final Cursor cursor = new CursorMocker().withMsg(5000L).mock();
+        lattice.correct(cursor, shifter);
+        Mockito.verify(shifter).shift(cursor, 383L);
     }
 
 }

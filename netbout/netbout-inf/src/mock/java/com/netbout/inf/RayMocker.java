@@ -41,23 +41,6 @@ public final class RayMocker {
     private final transient Ray ray = Mockito.mock(Ray.class);
 
     /**
-     * Public ctor.
-     */
-    public RayMocker() {
-        this.withLattice(new LatticeMocker().mock());
-    }
-
-    /**
-     * With this lattice.
-     * @param lattice The lattice
-     * @return This object
-     */
-    public RayMocker withLattice(final Lattice lattice) {
-        Mockito.doReturn(lattice).when(this.ray).lattice();
-        return this;
-    }
-
-    /**
      * Build it.
      * @return The ray
      */

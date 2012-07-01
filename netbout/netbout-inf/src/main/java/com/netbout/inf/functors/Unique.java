@@ -27,12 +27,14 @@
 package com.netbout.inf.functors;
 
 import com.netbout.inf.Atom;
+import com.netbout.inf.Attribute;
 import com.netbout.inf.Cursor;
 import com.netbout.inf.Functor;
 import com.netbout.inf.Lattice;
 import com.netbout.inf.Ray;
 import com.netbout.inf.Term;
 import com.netbout.inf.atoms.VariableAtom;
+import com.netbout.inf.lattice.LatticeBuilder;
 import java.util.List;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.ConcurrentSkipListMap;
@@ -53,7 +55,8 @@ final class Unique implements Functor {
      */
     @Override
     public Term build(final Ray ray, final List<Atom> atoms) {
-        final String attr = VariableAtom.class.cast(atoms.get(0)).attribute();
+        final Attribute attr =
+            VariableAtom.class.cast(atoms.get(0)).attribute();
         // @checkstyle AnonInnerLength (50 lines)
         return new Term() {
             private final transient ConcurrentMap<String, Term> terms =
@@ -79,13 +82,13 @@ final class Unique implements Functor {
             }
             @Override
             public Lattice lattice() {
-                final Lattice lattice = ray.lattice();
-                lattice.always();
-                lattice.and(this.terms.values());
-                return lattice;
+                return new LatticeBuilder()
+                    .always()
+                    .and(this.terms.values())
+                    .build();
             }
             private void record(final Cursor cursor) {
-                final String value = cursor.msg().first(attr);
+                final String value = cursor.msg().attr(attr);
                 this.terms.put(
                     value,
                     ray.builder().not(ray.builder().matcher(attr, value))

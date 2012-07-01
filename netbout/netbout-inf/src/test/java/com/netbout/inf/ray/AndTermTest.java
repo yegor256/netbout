@@ -26,11 +26,11 @@
  */
 package com.netbout.inf.ray;
 
+import com.netbout.inf.Attribute;
 import com.netbout.inf.Cursor;
 import com.netbout.inf.MsgMocker;
-import com.netbout.inf.Ray;
-import com.netbout.inf.RayMocker;
 import com.netbout.inf.Term;
+import com.netbout.inf.ray.imap.DefaultIndexMap;
 import java.util.Arrays;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
@@ -58,12 +58,10 @@ public final class AndTermTest {
      */
     @Test
     public void shiftsCursorToTheFirstValue() throws Exception {
-        final Ray ray = new RayMocker().mock();
         final IndexMap map = new DefaultIndexMap(
-            ray,
             this.temp.newFolder("foo")
         );
-        final String attr = "attribute name";
+        final Attribute attr = new Attribute("attribute-name");
         final String first = "some text-1 \u0433!";
         final String second = "some text-2 \u0433!";
         final String third = "some text-3 \u0433!";
@@ -75,7 +73,6 @@ public final class AndTermTest {
         map.index(attr).add(msg - 1, second);
         map.index(attr).add(msg - 2, third);
         final Term term = new AndTerm(
-            ray,
             map,
             Arrays.<Term>asList(
                 new MatcherTerm(map, attr, first),

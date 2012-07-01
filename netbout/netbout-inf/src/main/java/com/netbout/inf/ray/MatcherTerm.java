@@ -26,10 +26,10 @@
  */
 package com.netbout.inf.ray;
 
+import com.netbout.inf.Attribute;
 import com.netbout.inf.Cursor;
 import com.netbout.inf.Lattice;
 import com.netbout.inf.Term;
-import java.util.Iterator;
 
 /**
  * Matching term.
@@ -39,20 +39,16 @@ import java.util.Iterator;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-@Term.Cheap
 final class MatcherTerm implements Term {
 
     /**
-     * Name of attribute (also visible from {@link NotTerm}).
-     * @checkstyle VisibilityModifier (3 lines)
+     * Name of attribute.
      */
-    @SuppressWarnings("PMD.AvoidProtectedFieldInFinalClass")
-    private final transient String attr;
+    private final transient Attribute attr;
 
     /**
-     * Value to match (also visible from {@link NotTerm}).
+     * Value to match.
      */
-    @SuppressWarnings("PMD.AvoidProtectedFieldInFinalClass")
     private final transient String value;
 
     /**
@@ -66,7 +62,8 @@ final class MatcherTerm implements Term {
      * @param atr Attribute
      * @param val Value of it
      */
-    public MatcherTerm(final IndexMap map, final String atr, final String val) {
+    public MatcherTerm(final IndexMap map, final Attribute atr,
+        final String val) {
         this.imap = map;
         this.attr = atr;
         this.value = val;
@@ -102,7 +99,11 @@ final class MatcherTerm implements Term {
      */
     @Override
     public Lattice lattice() {
-        return this.imap.index(this.attr).lattice(this.value);
+        try {
+            return this.imap.index(this.attr).lattice(this.value);
+        } catch (java.io.IOException ex) {
+            throw new IllegalStateException(ex);
+        }
     }
 
     /**
@@ -114,26 +115,19 @@ final class MatcherTerm implements Term {
         if (cursor.end()) {
             shifted = cursor;
         } else {
-            final Iterator<Long> tail = this.imap.index(this.attr)
-                .msgs(this.value)
-                .tailSet(cursor.msg().number() - 1)
-                .iterator();
-            shifted = new MemCursor(this.next(tail), this.imap);
+            try {
+                shifted = new MemCursor(
+                    this.imap.index(this.attr).next(
+                        this.value,
+                        cursor.msg().number()
+                    ),
+                    this.imap
+                );
+            } catch (java.io.IOException ex) {
+                throw new IllegalStateException(ex);
+            }
         }
         return shifted;
-    }
-
-    /**
-     * Get next number from iterator, which is not equal to the provided one.
-     * @param iterator The iterator
-     * @return The number found or ZERO if nothing found
-     */
-    private long next(final Iterator<Long> iterator) {
-        Long next = 0L;
-        if (iterator.hasNext()) {
-            next = iterator.next();
-        }
-        return next;
     }
 
 }

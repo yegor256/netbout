@@ -24,43 +24,31 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.inf.ray;
+package com.netbout.inf.functors;
 
-import com.netbout.inf.Cursor;
-import com.netbout.inf.CursorMocker;
-import com.netbout.inf.Lattice;
-import org.hamcrest.MatcherAssert;
-import org.hamcrest.Matchers;
-import org.junit.Test;
-import org.mockito.Mockito;
+import com.netbout.inf.Attribute;
 
 /**
- * Test case of {@link DefaultLattice}.
+ * Name of attribute used for marking of bundled bouts.
+ *
+ * <p>This class is thread-safe.
+ *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class DefaultLatticeTest {
+@Attribute.Reversive
+final class BundledAttribute extends Attribute {
 
     /**
-     * DefaultLattice can shift a cursor to the right position.
-     * @throws Exception If there is some problem inside
-     * @checkstyle MagicNumber (30 lines)
+     * Singleton instance of this class.
      */
-    @Test
-    public void shiftsCursorToTheRightPosition() throws Exception {
-        final Cursor cursor = new CursorMocker().withMsg(5000L).mock();
-        final Lattice lattice = new DefaultLattice();
-        lattice.set(10000L, true, false);
-        lattice.set(350L, true, false);
-        lattice.set(150L, true, false);
-        lattice.set(50L, true, false);
-        MatcherAssert.assertThat(
-            lattice,
-            Matchers.hasToString(Matchers.containsString("16384"))
-        );
-        final Lattice.Shifter shifter = Mockito.mock(Lattice.Shifter.class);
-        lattice.correct(cursor, shifter);
-        Mockito.verify(shifter).shift(cursor, 383L);
+    public static final Attribute VALUE = new BundledAttribute();
+
+    /**
+     * Private ctor, to prevent multiple instantiation of the class.
+     */
+    private BundledAttribute() {
+        super("bundled");
     }
 
 }

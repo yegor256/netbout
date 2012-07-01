@@ -33,6 +33,7 @@ import com.netbout.inf.Lattice;
 import com.netbout.inf.Ray;
 import com.netbout.inf.Term;
 import com.netbout.inf.atoms.NumberAtom;
+import com.netbout.inf.lattice.LatticeBuilder;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -83,9 +84,7 @@ final class Limit implements Functor {
                 }
                 @Override
                 public Lattice lattice() {
-                    final Lattice lattice = ray.lattice();
-                    lattice.always();
-                    return lattice;
+                    return new LatticeBuilder().always().build();
                 }
             }
         );

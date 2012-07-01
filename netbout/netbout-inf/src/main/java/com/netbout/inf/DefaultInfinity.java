@@ -80,7 +80,7 @@ public final class DefaultInfinity implements Infinity {
      */
     protected DefaultInfinity(final Folder fldr) throws IOException {
         this.folder = fldr;
-        this.ray = new MemRay(new File(this.folder.path(), "ray"));
+        this.ray = new MemRay(new File(this.folder.path(), "ray-2"));
         this.mux = new Mux(this.ray, this.store);
         StageFarm.register(this);
         Logger.info(

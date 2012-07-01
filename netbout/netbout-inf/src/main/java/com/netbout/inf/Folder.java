@@ -43,10 +43,4 @@ public interface Folder extends Closeable {
      */
     File path();
 
-    /**
-     * Show some stats.
-     * @return Text stats
-     */
-    String statistics();
-
 }

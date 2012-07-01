@@ -26,10 +26,11 @@
  */
 package com.netbout.inf.ray;
 
+import com.netbout.inf.Attribute;
+import com.netbout.inf.AttributeMocker;
 import com.netbout.inf.Cursor;
 import com.netbout.inf.MsgMocker;
-import com.netbout.inf.Ray;
-import com.netbout.inf.RayMocker;
+import com.netbout.inf.ray.imap.DefaultIndexMap;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Rule;
@@ -56,19 +57,17 @@ public final class MemCursorTest {
      */
     @Test
     public void addsValuesToSelectedMessages() throws Exception {
-        final Ray ray = new RayMocker().mock();
         final IndexMap map = new DefaultIndexMap(
-            ray,
             this.temp.newFolder("foo1")
         );
         final Long msg = MsgMocker.number();
         map.touch(msg);
         final Cursor cursor = new MemCursor(Long.MAX_VALUE, map);
-        final String attr = "attribute name";
+        final Attribute attr = AttributeMocker.reversive();
         final String value = "some text \u0433!";
-        cursor.add(new PickerTerm(ray, map, msg), attr, value);
+        cursor.add(new PickerTerm(map, msg), attr, value);
         MatcherAssert.assertThat(
-            map.index(attr).first(msg),
+            map.index(attr).attr(msg),
             Matchers.equalTo(value)
         );
     }
@@ -79,23 +78,21 @@ public final class MemCursorTest {
      */
     @Test
     public void replacesValuesForSelectedMessages() throws Exception {
-        final Ray ray = new RayMocker().mock();
         final IndexMap map = new DefaultIndexMap(
-            ray,
             this.temp.newFolder("foo2")
         );
         final Long msg = MsgMocker.number();
         map.touch(msg);
         final Cursor cursor = new MemCursor(Long.MAX_VALUE, map);
-        final String attr = "attribute-1";
+        final Attribute attr = AttributeMocker.reversive();
         final String value = "text to save";
-        cursor.add(new PickerTerm(ray, map, msg), attr, "previous value");
-        cursor.add(new PickerTerm(ray, map, msg), attr, "previous value 2");
-        cursor.add(new PickerTerm(ray, map, msg), "another attr", "val-1");
-        cursor.replace(new PickerTerm(ray, map, msg), attr, value);
-        cursor.replace(new PickerTerm(ray, map, msg), "some other attr", "foo");
+        cursor.add(new PickerTerm(map, msg), attr, "previous value");
+        cursor.add(new PickerTerm(map, msg), attr, "previous value 2");
+        cursor.add(new PickerTerm(map, msg), new Attribute("xxx"), "val-1");
+        cursor.replace(new PickerTerm(map, msg), attr, value);
+        cursor.replace(new PickerTerm(map, msg), new Attribute("other"), "foo");
         MatcherAssert.assertThat(
-            map.index(attr).first(msg),
+            map.index(attr).attr(msg),
             Matchers.equalTo(value)
         );
     }
@@ -107,7 +104,6 @@ public final class MemCursorTest {
     @Test
     public void isComparableToCursor() throws Exception {
         final IndexMap map = new DefaultIndexMap(
-            new RayMocker().mock(),
             this.temp.newFolder("foo3")
         );
         final Long msg = MsgMocker.number();

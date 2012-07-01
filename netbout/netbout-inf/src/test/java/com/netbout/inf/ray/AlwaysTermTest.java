@@ -28,9 +28,8 @@ package com.netbout.inf.ray;
 
 import com.netbout.inf.Cursor;
 import com.netbout.inf.MsgMocker;
-import com.netbout.inf.Ray;
-import com.netbout.inf.RayMocker;
 import com.netbout.inf.Term;
+import com.netbout.inf.ray.imap.DefaultIndexMap;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Rule;
@@ -57,14 +56,12 @@ public final class AlwaysTermTest {
      */
     @Test
     public void shiftsCursorToTheFirstValue() throws Exception {
-        final Ray ray = new RayMocker().mock();
         final IndexMap map = new DefaultIndexMap(
-            ray,
             this.temp.newFolder("foo")
         );
         final long msg = MsgMocker.number();
         map.touch(msg);
-        final Term term = new AlwaysTerm(ray, map);
+        final Term term = new AlwaysTerm(map);
         final Cursor cursor = new MemCursor(Long.MAX_VALUE, map);
         MatcherAssert.assertThat(
             term.shift(cursor).msg().number(),

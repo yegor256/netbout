@@ -59,10 +59,10 @@ final class Unbundled implements Functor {
         final String marker = ray.cursor()
             .shift(matcher)
             .msg()
-            .first(Bundled.ATTR);
+            .attr(BundledAttribute.VALUE);
         return ray.builder().and(
             Arrays.asList(
-                ray.builder().matcher(Bundled.ATTR, marker),
+                ray.builder().matcher(BundledAttribute.VALUE, marker),
                 ray.builder().not(matcher)
             )
         );

@@ -32,7 +32,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Term.
+ * Term in query.
  *
  * <p>Implementation must be immutable and thread-safe.
  *
@@ -43,7 +43,7 @@ public interface Term {
 
     /**
      * Annotates a term that has to be re-calculated on every cursor (never
-     * assume that for the same cursor it will return the same value).
+     * assume that for the same cursor the term will return the same value).
      */
     @Retention(RetentionPolicy.RUNTIME)
     @Target(ElementType.TYPE)
@@ -51,23 +51,19 @@ public interface Term {
     }
 
     /**
-     * Annotates a term that can be cached, but there is no benefit in it.
-     */
-    @Retention(RetentionPolicy.RUNTIME)
-    @Target(ElementType.TYPE)
-    @interface Cheap {
-    }
-
-    /**
      * Shift this cursor to the next position.
+     *
+     * <p>Before doing this operation (which may be expensive time wise) try to
+     * use the lattice, and its {@code correct()} method.
+     *
      * @param cursor The cursor to shift
      * @return New cursor, shifted one
      */
     Cursor shift(Cursor cursor);
 
     /**
-     * Where this term makes sense, at which segments?
-     * @return Lattice to look into
+     * Get lattice of this term.
+     * @return The lattice to use for fast shifting
      */
     Lattice lattice();
 

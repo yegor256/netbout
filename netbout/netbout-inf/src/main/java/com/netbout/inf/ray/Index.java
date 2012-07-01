@@ -27,8 +27,6 @@
 package com.netbout.inf.ray;
 
 import com.netbout.inf.Lattice;
-import java.util.Set;
-import java.util.SortedSet;
 
 /**
  * Index, as a map of String to SortedSet of Long.
@@ -38,7 +36,7 @@ import java.util.SortedSet;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-interface Index {
+public interface Index {
 
     /**
      * Replace all existing values for this number with this one.
@@ -68,30 +66,25 @@ interface Index {
     void clean(long msg);
 
     /**
-     * Return first value of this message.
-     * @param msg Number of message
-     * @return The value
-     */
-    String first(long msg);
-
-    /**
-     * Get sorted set of numbers for the given value.
+     * Get lattice for this value.
      * @param value The value
-     * @return Set of message numbers
-     */
-    SortedSet<Long> msgs(String value);
-
-    /**
-     * All values.
-     * @return The values
-     */
-    Set<String> values();
-
-    /**
-     * Lattice for the given value.
-     * @param value The value
-     * @return Lattice
+     * @return The lattice
      */
     Lattice lattice(String value);
+
+    /**
+     * Return first value of this message.
+     * @param msg Number of message
+     * @return The value of the attribute
+     */
+    String attr(long msg);
+
+    /**
+     * Get next message number for the given value.
+     * @param value The value
+     * @param msg The message to look after
+     * @return Next message number of ZERO
+     */
+    long next(String value, long msg);
 
 }

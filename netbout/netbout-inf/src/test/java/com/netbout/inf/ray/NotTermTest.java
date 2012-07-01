@@ -26,11 +26,11 @@
  */
 package com.netbout.inf.ray;
 
+import com.netbout.inf.Attribute;
 import com.netbout.inf.Cursor;
 import com.netbout.inf.MsgMocker;
-import com.netbout.inf.Ray;
-import com.netbout.inf.RayMocker;
 import com.netbout.inf.Term;
+import com.netbout.inf.ray.imap.DefaultIndexMap;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Rule;
@@ -57,12 +57,10 @@ public final class NotTermTest {
      */
     @Test
     public void shiftsCursorToTheFirstValue() throws Exception {
-        final Ray ray = new RayMocker().mock();
         final IndexMap map = new DefaultIndexMap(
-            ray,
             this.temp.newFolder("foo")
         );
-        final String attr = "attribute name";
+        final Attribute attr = new Attribute("attribute-name");
         final String value = "some text-1 \u0433!";
         final long msg = MsgMocker.number();
         map.touch(msg);
@@ -70,7 +68,6 @@ public final class NotTermTest {
         map.touch(msg - 1);
         map.index(attr).add(msg - 1, "should be found by NOT term");
         final Term term = new NotTerm(
-            ray,
             map,
             new MatcherTerm(map, attr, value)
         );

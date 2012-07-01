@@ -24,51 +24,56 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.inf.ray;
+package com.netbout.inf.ray.imap;
 
-import com.jcabi.log.Logger;
+import com.netbout.inf.Attribute;
 import com.netbout.inf.Lattice;
-import com.netbout.inf.Ray;
-import java.io.File;
-import java.util.Collections;
-import java.util.Set;
-import java.util.SortedSet;
-import java.util.TreeSet;
+import java.io.IOException;
 
 /**
- * Index with no data inside.
+ * Reversive implemenation of {@link Index}.
  *
- * <p>This class is thread-safe.
+ * <p>This class is immutable and thread-safe.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  * @checkstyle ClassDataAbstractionCoupling (500 lines)
  */
-final class ShallowIndex implements FlushableIndex {
+class ReversiveIndex implements FlushableIndex {
 
     /**
-     * Ray we're using.
+     * The attribute.
      */
-    private final transient Ray ray;
+    private final transient Attribute attribute;
 
     /**
-     * Numbers to use.
+     * Straight index.
      */
-    private final transient SortedSet<Long> numbers;
+    private final transient FlushableIndex straight;
+
+    /**
+     * Reverse.
+     */
+    private final transient Reverse reverse;
+
+    /**
+     * Directory to work with.
+     */
+    private final transient Directory directory;
 
     /**
      * Public ctor.
-     * @param iray The ray to use
-     * @param nums Numbers
+     * @param attr The attribute
+     * @param dir The directory
+     * @throws IOException If some IO error
      */
-    public ShallowIndex(final Ray iray, final SortedSet<Long> nums) {
-        this.ray = iray;
-        this.numbers = nums;
-        Logger.debug(
-            ShallowIndex.class,
-            "#ShallowIndex(.., %d nums): instantiated",
-            nums.size()
-        );
+    public ReversiveIndex(final Attribute attr,
+        final Directory dir) throws IOException {
+        this.attribute = attr;
+        this.directory = dir;
+        this.straight = new BaseIndex(this.attribute, this.directory);
+        this.reverse = new SimpleReverse();
+        this.directory.load(this.attribute, this.reverse);
     }
 
     /**
@@ -76,7 +81,8 @@ final class ShallowIndex implements FlushableIndex {
      */
     @Override
     public void replace(final long msg, final String value) {
-        // ignore
+        this.straight.replace(msg, value);
+        this.reverse.put(msg, value);
     }
 
     /**
@@ -84,7 +90,8 @@ final class ShallowIndex implements FlushableIndex {
      */
     @Override
     public void add(final long msg, final String value) {
-        // ignore
+        this.straight.add(msg, value);
+        this.reverse.put(msg, value);
     }
 
     /**
@@ -92,7 +99,8 @@ final class ShallowIndex implements FlushableIndex {
      */
     @Override
     public void delete(final long msg, final String value) {
-        throw new UnsupportedOperationException("#delete()");
+        this.straight.delete(msg, value);
+        this.reverse.remove(msg);
     }
 
     /**
@@ -100,42 +108,8 @@ final class ShallowIndex implements FlushableIndex {
      */
     @Override
     public void clean(final long msg) {
-        throw new UnsupportedOperationException("#clean()");
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String first(final long msg) {
-        if (!this.numbers.contains(msg)) {
-            throw new IllegalArgumentException(
-                String.format("no message with number #%d", msg)
-            );
-        }
-        return Long.toString(msg);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public SortedSet<Long> msgs(final String value) {
-        final Long msg = Long.valueOf(value);
-        final SortedSet<Long> msgs =
-            new TreeSet<Long>(Collections.reverseOrder());
-        if (this.numbers.contains(msg)) {
-            msgs.add(msg);
-        }
-        return Collections.unmodifiableSortedSet(msgs);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Set<String> values() {
-        throw new UnsupportedOperationException("#values()");
+        this.straight.clean(msg);
+        this.reverse.remove(msg);
     }
 
     /**
@@ -143,17 +117,32 @@ final class ShallowIndex implements FlushableIndex {
      */
     @Override
     public Lattice lattice(final String value) {
-        final Lattice lattice = this.ray.lattice();
-        lattice.set(Long.valueOf(value), true, false);
-        return lattice;
+        return this.straight.lattice(value);
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public void flush(final File file) {
-        // nothing to do here
+    public long next(final String value, final long msg) {
+        return this.straight.next(value, msg);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String attr(final long msg) {
+        return this.reverse.get(msg);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void flush() throws IOException {
+        this.straight.flush();
+        this.directory.save(this.attribute, this.reverse);
     }
 
 }

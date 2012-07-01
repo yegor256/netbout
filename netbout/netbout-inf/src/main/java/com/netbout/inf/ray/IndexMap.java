@@ -26,41 +26,38 @@
  */
 package com.netbout.inf.ray;
 
-import java.util.SortedSet;
+import com.netbout.inf.Attribute;
+import java.io.Closeable;
+import java.io.IOException;
 
 /**
- * Index.
+ * Index Map.
  *
  * <p>Implementation must be thread-safe.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-interface IndexMap {
+public interface IndexMap extends Closeable {
 
     /**
-     * Get one index.
+     * Get one index, named.
      * @param attribute Name of attribute
      * @return The index
+     * @throws IOException If IO problem insde
      */
-    Index index(String attribute);
+    Index index(Attribute attribute) throws IOException;
 
     /**
-     * This message was used somewhere.
-     * @param number Number of it
+     * Make sure this message exists.
+     * @param msg Number of the message
      */
-    void touch(long number);
+    void touch(long msg);
 
     /**
-     * Sorted set of all messages.
-     * @return Sorted set of them
+     * Flush it to disc.
+     * @throws IOException If IO problem insde
      */
-    SortedSet<Long> msgs();
-
-    /**
-     * Maximum number of the message here (or zero if no messages).
-     * @return The number
-     */
-    long maximum();
+    void flush() throws IOException;
 
 }

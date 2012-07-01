@@ -24,26 +24,61 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.inf.ray;
+package com.netbout.inf.ray.imap;
 
-import java.io.File;
+import com.netbout.inf.Attribute;
+import java.io.Closeable;
 import java.io.IOException;
 
 /**
- * Index that can be flushed.
+ * Directory with files.
  *
  * <p>Implementation must be thread-safe.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-interface FlushableIndex extends Index {
+interface Directory extends Closeable {
 
     /**
-     * Flush this map to file.
-     * @param file Where to write
-     * @throws IOException If some problem
+     * Save numbers for the given attribute.
+     * @param attr The attribute
+     * @param value The value to set them to
+     * @param nums The numbers to save from
+     * @throws IOException If some I/O problem inside
      */
-    void flush(File file) throws IOException;
+    void save(Attribute attr, String value, Numbers nums) throws IOException;
+
+    /**
+     * Load numbers for the given attribute.
+     * @param attr The attribute
+     * @param value The value to set them to
+     * @param nums The numbers to load into
+     * @throws IOException If some I/O problem inside
+     */
+    void load(Attribute attr, String value, Numbers nums) throws IOException;
+
+    /**
+     * Save reverse for the given attribute.
+     * @param attr The attribute
+     * @param reverse The reverse to save from
+     * @throws IOException If some I/O problem inside
+     */
+    void save(Attribute attr, Reverse reverse) throws IOException;
+
+    /**
+     * Load reverse for the given attribute.
+     * @param attr The attribute
+     * @param reverse The reverse to load to
+     * @throws IOException If some I/O problem inside
+     */
+    void load(Attribute attr, Reverse reverse) throws IOException;
+
+    /**
+     * Baseline existing version (if we loose power right after this operation
+     * this version will be loaded after reboot).
+     * @throws IOException If some I/O problem inside
+     */
+    void baseline() throws IOException;
 
 }

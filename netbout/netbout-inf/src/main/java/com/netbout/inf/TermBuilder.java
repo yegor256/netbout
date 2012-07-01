@@ -44,7 +44,7 @@ public interface TermBuilder {
      * @param value Value of attribute
      * @return The term
      */
-    Term matcher(String name, String value);
+    Term matcher(Attribute name, String value);
 
     /**
      * Logical AND.

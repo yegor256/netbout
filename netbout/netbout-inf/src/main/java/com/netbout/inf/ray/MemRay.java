@@ -28,10 +28,11 @@ package com.netbout.inf.ray;
 
 import com.jcabi.log.Logger;
 import com.netbout.inf.Cursor;
-import com.netbout.inf.Lattice;
 import com.netbout.inf.Msg;
 import com.netbout.inf.Ray;
 import com.netbout.inf.TermBuilder;
+import com.netbout.inf.atoms.VariableAtom;
+import com.netbout.inf.ray.imap.DefaultIndexMap;
 import java.io.File;
 import java.io.IOException;
 
@@ -48,7 +49,7 @@ public final class MemRay implements Ray {
     /**
      * Index map.
      */
-    private final transient DefaultIndexMap imap;
+    private final transient IndexMap imap;
 
     /**
      * Public ctor.
@@ -56,7 +57,7 @@ public final class MemRay implements Ray {
      * @throws IOException If some I/O problem
      */
     public MemRay(final File dir) throws IOException {
-        this.imap = new DefaultIndexMap(this, dir);
+        this.imap = new DefaultIndexMap(dir);
         Logger.debug(this, "#MemRay(%s): instantiated", dir);
     }
 
@@ -73,6 +74,7 @@ public final class MemRay implements Ray {
      */
     @Override
     public void close() throws IOException {
+        this.imap.close();
         Logger.debug(this, "#close(): closed");
     }
 
@@ -106,15 +108,7 @@ public final class MemRay implements Ray {
      */
     @Override
     public TermBuilder builder() {
-        return new MemTermBuilder(this, this.imap);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Lattice lattice() {
-        return new DefaultLattice();
+        return new MemTermBuilder(this.imap);
     }
 
     /**
@@ -122,7 +116,12 @@ public final class MemRay implements Ray {
      */
     @Override
     public long maximum() {
-        return this.imap.maximum();
+        try {
+            return this.imap.index(VariableAtom.NUMBER.attribute())
+                .next("", Long.MAX_VALUE);
+        } catch (java.io.IOException ex) {
+            throw new IllegalStateException(ex);
+        }
     }
 
 }

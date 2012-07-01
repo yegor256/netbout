@@ -27,9 +27,9 @@
 package com.netbout.inf;
 
 /**
- * One atom.
+ * One atom, seen in query.
  *
- * <p>Implementators of this class should be immutable and thread-safe.
+ * <p>Implementation must be immutable and thread-safe.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$

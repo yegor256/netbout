@@ -65,12 +65,6 @@ public interface Ray extends Closeable {
     TermBuilder builder();
 
     /**
-     * Create an empty lattice.
-     * @return The lattice, empty one
-     */
-    Lattice lattice();
-
-    /**
      * How many messages were seen totally by this ray?
      * @return Maximum number of the msg here
      */

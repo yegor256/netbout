@@ -28,8 +28,8 @@ package com.netbout.inf.ray;
 
 import com.netbout.inf.Cursor;
 import com.netbout.inf.Lattice;
-import com.netbout.inf.Ray;
 import com.netbout.inf.Term;
+import com.netbout.inf.lattice.LatticeBuilder;
 import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -55,11 +55,6 @@ final class AndTerm implements Term {
     protected final transient Set<Term> terms = new LinkedHashSet<Term>();
 
     /**
-     * The ray we're working with.
-     */
-    private final transient Ray ray;
-
-    /**
      * Shifter for lattice.
      */
     private final transient Lattice.Shifter shifter = new Lattice.Shifter() {
@@ -68,13 +63,7 @@ final class AndTerm implements Term {
             if (msg >= crsr.msg().number()) {
                 throw new IllegalArgumentException("shift back is prohibited");
             }
-            return crsr.shift(
-                new PickerTerm(
-                    AndTerm.this.ray,
-                    AndTerm.this.imap,
-                    msg
-                )
-            );
+            return crsr.shift(new PickerTerm(AndTerm.this.imap, msg));
         }
     };
 
@@ -90,20 +79,17 @@ final class AndTerm implements Term {
 
     /**
      * Public ctor.
-     * @param iray The ray to work with
      * @param map The index map
      * @param args Arguments (terms)
      */
-    public AndTerm(final Ray iray, final IndexMap map,
-        final Collection<Term> args) {
-        this.ray = iray;
+    public AndTerm(final IndexMap map, final Collection<Term> args) {
         this.imap = map;
         this.terms.addAll(AndTerm.compress(args));
         if (this.terms.isEmpty()) {
-            this.terms.add(new AlwaysTerm(this.ray, this.imap));
+            this.terms.add(new AlwaysTerm(this.imap));
         }
         if (this.terms.size() > 1) {
-            this.terms.remove(new AlwaysTerm(this.ray, this.imap));
+            this.terms.remove(new AlwaysTerm(this.imap));
         }
         this.hash = this.toString().hashCode();
     }
@@ -144,10 +130,7 @@ final class AndTerm implements Term {
      */
     @Override
     public Lattice lattice() {
-        final Lattice lattice = this.ray.lattice();
-        lattice.always();
-        lattice.and(this.terms);
-        return lattice;
+        return new LatticeBuilder().always().and(this.terms).build();
     }
 
     /**
@@ -166,7 +149,7 @@ final class AndTerm implements Term {
                 cache
             );
             if (!slider.end()) {
-                slider = this.slide(slider, cache, lattice);
+                slider = this.slide(slider, cache);
             }
         }
         return slider;
@@ -193,19 +176,17 @@ final class AndTerm implements Term {
      * Slide them all down to the first match.
      * @param cursor First expected point to reach
      * @param cache Cached positions of every term
-     * @param lattice The lattice to use for corrections
      * @return Matched position (or END)
      */
     private Cursor slide(final Cursor cursor,
-        final ConcurrentMap<Term, Cursor> cache, final Lattice lattice) {
+        final ConcurrentMap<Term, Cursor> cache) {
         Cursor slider = cursor;
         boolean match;
         do {
             match = true;
             final Cursor expected = slider;
             for (Term term : this.terms) {
-                final Cursor above =
-                    this.above(lattice.correct(slider, this.shifter));
+                final Cursor above = this.above(slider);
                 slider = this.move(term, above, cache);
                 if (!expected.equals(slider)) {
                     match = false;

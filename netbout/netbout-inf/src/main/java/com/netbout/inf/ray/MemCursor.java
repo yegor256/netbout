@@ -26,6 +26,7 @@
  */
 package com.netbout.inf.ray;
 
+import com.netbout.inf.Attribute;
 import com.netbout.inf.Cursor;
 import com.netbout.inf.Msg;
 import com.netbout.inf.Term;
@@ -113,7 +114,7 @@ final class MemCursor implements Cursor {
      * {@inheritDoc}
      */
     @Override
-    public void add(final Term term, final String attr, final String value) {
+    public void add(final Term term, final Attribute attr, final String value) {
         this.update(
             new Updater() {
                 @Override
@@ -130,7 +131,7 @@ final class MemCursor implements Cursor {
      * {@inheritDoc}
      */
     @Override
-    public void replace(final Term term, final String attr,
+    public void replace(final Term term, final Attribute attr,
         final String value) {
         this.update(
             new Updater() {
@@ -148,7 +149,7 @@ final class MemCursor implements Cursor {
      * {@inheritDoc}
      */
     @Override
-    public void delete(final Term term, final String attr) {
+    public void delete(final Term term, final Attribute attr) {
         this.update(
             new Updater() {
                 @Override
@@ -165,7 +166,8 @@ final class MemCursor implements Cursor {
      * {@inheritDoc}
      */
     @Override
-    public void delete(final Term term, final String attr, final String value) {
+    public void delete(final Term term, final Attribute attr,
+        final String value) {
         this.update(
             new Updater() {
                 @Override
@@ -208,8 +210,12 @@ final class MemCursor implements Cursor {
                 return MemCursor.this.where;
             }
             @Override
-            public String first(final String name) {
-                return MemCursor.this.imap.index(name).first(this.number());
+            public String attr(final Attribute name) {
+                try {
+                    return MemCursor.this.imap.index(name).attr(this.number());
+                } catch (java.io.IOException ex) {
+                    throw new IllegalStateException(ex);
+                }
             }
         };
     }
@@ -229,8 +235,13 @@ final class MemCursor implements Cursor {
      * @param term The term
      */
     private void update(final MemCursor.Updater updater,
-        final String attr, final Term term) {
-        final Index index = this.imap.index(attr);
+        final Attribute attr, final Term term) {
+        Index index;
+        try {
+            index = this.imap.index(attr);
+        } catch (java.io.IOException ex) {
+            throw new IllegalStateException(ex);
+        }
         Cursor cursor = this;
         if (!cursor.end() && cursor.msg().number() == Long.MAX_VALUE) {
             cursor = cursor.shift(term);
