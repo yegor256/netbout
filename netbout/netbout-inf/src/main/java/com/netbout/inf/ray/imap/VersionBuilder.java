@@ -26,6 +26,7 @@
  */
 package com.netbout.inf.ray.imap;
 
+import com.jcabi.log.Logger;
 import com.netbout.inf.Attribute;
 import java.io.Closeable;
 import java.io.File;
@@ -48,6 +49,11 @@ import org.apache.commons.io.FileUtils;
 final class VersionBuilder {
 
     /**
+     * Version file name.
+     */
+    private static final String VFILE = "version.txt";
+
+    /**
      * Directory.
      */
     private final transient File dir;
@@ -67,9 +73,21 @@ final class VersionBuilder {
      * @throws IOException If some I/O problem inside
      */
     public void rebase(final String version) throws IOException {
+        final String previous = FileUtils.readFileToString(
+            new File(this.dir, VersionBuilder.VFILE)
+        );
+        if (version.equals(previous)) {
+            throw new IllegalArgumentException("same version in rebase");
+        }
         FileUtils.writeStringToFile(
-            new File(this.dir, "version.txt"),
+            new File(this.dir, VersionBuilder.VFILE),
             version
+        );
+        Logger.debug(
+            this,
+            "#rebase('%s'): rebased from %s",
+            version,
+            previous
         );
     }
 
@@ -79,7 +97,7 @@ final class VersionBuilder {
      * @throws IOException If some I/O problem inside
      */
     public String baselined() throws IOException {
-        final File marker = new File(this.dir, "version.txt");
+        final File marker = new File(this.dir, VersionBuilder.VFILE);
         if (!marker.exists()) {
             FileUtils.writeStringToFile(marker, this.ver());
         }

@@ -89,7 +89,8 @@ final class Lock implements Closeable {
         }
         Logger.debug(
             this,
-            "#Lock('/%s'): locked by %s",
+            "#Lock('/%s/%s'): locked by %s",
+            FilenameUtils.getName(this.directory.getParent()),
             FilenameUtils.getName(this.directory.getPath()),
             super.toString()
         );
