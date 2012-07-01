@@ -192,6 +192,7 @@ final class Catalog {
                 data.length() / Catalog.Item.SIZE
             );
         }
+        data.close();
         return found;
     }
 
