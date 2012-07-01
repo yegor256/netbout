@@ -35,6 +35,7 @@ import com.netbout.spi.Urn;
 import java.io.File;
 import java.io.IOException;
 import java.util.Set;
+import org.apache.commons.io.FileUtils;
 
 /**
  * Default implementation of Infitity.
@@ -114,19 +115,25 @@ public final class DefaultInfinity implements Infinity {
             .append(
                 String.format(
                     "  freeMemory(): %d\n",
-                    Runtime.getRuntime().freeMemory()
+                    FileUtils.byteCountToDisplaySize(
+                        Runtime.getRuntime().freeMemory()
+                    )
                 )
             )
             .append(
                 String.format(
                     "  maxMemory(): %d\n",
-                    Runtime.getRuntime().maxMemory()
+                    FileUtils.byteCountToDisplaySize(
+                        Runtime.getRuntime().maxMemory()
+                    )
                 )
             )
             .append(
                 String.format(
                     "  totalMemory(): %d\n",
-                    Runtime.getRuntime().totalMemory()
+                    FileUtils.byteCountToDisplaySize(
+                        Runtime.getRuntime().totalMemory()
+                    )
                 )
             );
         return text.toString();

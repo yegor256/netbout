@@ -42,6 +42,12 @@ import java.io.OutputStream;
 interface Reverse {
 
     /**
+     * How many bytes we consume in memory.
+     * @return Number of bytes
+     */
+    long sizeof();
+
+    /**
      * Get value by message number (throws runtime exception if message
      * is not found).
      * @param msg The number of the message

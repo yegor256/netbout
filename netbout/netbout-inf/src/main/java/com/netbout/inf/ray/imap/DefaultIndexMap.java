@@ -80,6 +80,22 @@ public final class DefaultIndexMap implements IndexMap {
      * {@inheritDoc}
      */
     @Override
+    public String toString() {
+        final StringBuilder text = new StringBuilder();
+        for (Attribute attr : this.map.keySet()) {
+            text.append(attr.toString())
+                .append(": ")
+                .append(this.map.get(attr).toString())
+                .append("\n");
+        }
+        text.append(this.directory.toString());
+        return text.toString();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public void close() throws IOException {
         this.directory.close();
     }
@@ -154,7 +170,7 @@ public final class DefaultIndexMap implements IndexMap {
         this.directory.baseline();
         Logger.info(
             this,
-            "#save(): saved %d indexes to %s in %[ms]s",
+            "#flush(): saved %d indexes to %s in %[ms]s",
             this.map.size(),
             this.directory,
             System.currentTimeMillis() - start

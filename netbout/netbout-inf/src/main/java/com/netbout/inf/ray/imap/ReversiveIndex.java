@@ -80,6 +80,19 @@ class ReversiveIndex implements FlushableIndex {
      * {@inheritDoc}
      */
     @Override
+    public String toString() {
+        final StringBuilder text = new StringBuilder();
+        text.append(this.straight.toString())
+            .append(" with reverse ")
+            .append(this.reverse.sizeof())
+            .append(" bytes");
+        return text.toString();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public void replace(final long msg, final String value) {
         this.straight.replace(msg, value);
         this.reverse.put(msg, value);

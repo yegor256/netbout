@@ -43,6 +43,12 @@ import java.io.OutputStream;
 interface Numbers {
 
     /**
+     * How many bytes we consume in memory.
+     * @return Number of bytes
+     */
+    long sizeof();
+
+    /**
      * Get lattice for this collection of numbers.
      * @return The lattice
      */

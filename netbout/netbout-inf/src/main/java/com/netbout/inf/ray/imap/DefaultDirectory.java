@@ -40,6 +40,7 @@ import java.io.OutputStream;
 import java.io.RandomAccessFile;
 import java.nio.channels.Channels;
 import java.util.concurrent.atomic.AtomicReference;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 
 /**
@@ -104,6 +105,24 @@ final class DefaultDirectory implements Directory {
      * {@inheritDoc}
      */
     @Override
+    public String toString() {
+        final StringBuilder text = new StringBuilder();
+        try {
+            text.append("version: ")
+                .append(this.versions.baselined())
+                .append(", ")
+                .append(FileUtils.sizeOfDirectory(this.lock.dir()))
+                .append(" bytes");
+        } catch (java.io.IOException ex) {
+            throw new IllegalStateException(ex);
+        }
+        return text.toString();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public void save(final Attribute attr, final String value,
         final Numbers nums) throws IOException {
         final File file = this.draft.get().numbers(attr);
@@ -143,11 +162,11 @@ final class DefaultDirectory implements Directory {
                 Logger.debug(
                     this,
                     // @checkstyle LineLength (1 line)
-                    "#load('%s', '%[text]s', ..): loaded numbers from pos #%d (file.length=%d, file.name=/%s)",
+                    "#load('%s', '%[text]s', ..): loaded numbers from pos #%d (file.length=%s, file.name=/%s)",
                     attr,
                     value,
                     pos,
-                    file.length(),
+                    FileUtils.byteCountToDisplaySize(file.length()),
                     FilenameUtils.getName(file.getPath())
                 );
             } finally {
