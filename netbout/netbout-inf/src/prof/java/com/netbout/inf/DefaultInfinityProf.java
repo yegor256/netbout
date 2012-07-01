@@ -64,19 +64,19 @@ public final class DefaultInfinityProf {
      * @throws Exception If there is some problem inside
      */
     private void run() throws Exception {
-        final Infinity inf = this.prepare();
-        final String query =
-            // @checkstyle LineLength (1 line)
-            "(and (or (talks-with 'urn:test:Jeff') (talks-with 'urn:facebook:1531296526')) (bundled) (limit 10))";
-        MatcherAssert.assertThat(
-            this.fetch(inf.messages(query).iterator()),
-            Matchers.hasSize(Matchers.greaterThan(0))
-        );
-        MatcherAssert.assertThat(
-            this.fetch(inf.messages(query).iterator()),
-            Matchers.hasSize(Matchers.greaterThan(0))
-        );
-        inf.close();
+        // final Infinity inf = this.prepare();
+        // final String query =
+        //     // @checkstyle LineLength (1 line)
+        //     "(and (or (talks-with 'urn:test:Jeff') (talks-with 'urn:facebook:1531296526')) (bundled) (limit 10))";
+        // MatcherAssert.assertThat(
+        //     this.fetch(inf.messages(query).iterator()),
+        //     Matchers.hasSize(Matchers.greaterThan(0))
+        // );
+        // MatcherAssert.assertThat(
+        //     this.fetch(inf.messages(query).iterator()),
+        //     Matchers.hasSize(Matchers.greaterThan(0))
+        // );
+        // inf.close();
     }
 
     /**

@@ -54,7 +54,7 @@ public final class LazyMessagesProf {
      * @throws Exception If there is some problem inside
      */
     public static void main(final String... args) throws Exception {
-        new LazyMessagesProf().run();
+        // new LazyMessagesProf().run();
     }
 
     /**

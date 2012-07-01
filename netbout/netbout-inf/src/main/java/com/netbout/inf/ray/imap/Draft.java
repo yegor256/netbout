@@ -501,9 +501,6 @@ final class Draft implements Closeable {
                 items.add(item);
             }
             Collections.sort(items);
-            // for (Backlog.Item item : items) {
-            //     System.out.println("item: " + item.value() + " hash: " + item.hashCode());
-            // }
             return items.iterator();
         }
     }

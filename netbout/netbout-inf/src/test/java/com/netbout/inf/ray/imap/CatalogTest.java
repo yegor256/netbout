@@ -112,8 +112,7 @@ public final class CatalogTest {
      */
     @Test
     public void handlesDuplicatesCorrectly() throws Exception {
-        // final Catalog catalog = new Catalog(this.temp.newFile("catalog-3.txt"));
-        final Catalog catalog = new Catalog(new java.io.File("./cat.txt"));
+        final Catalog catalog = new Catalog(this.temp.newFile("catalog-3.txt"));
         final String first = "TlYhv";
         final String second = "UMYhv";
         MatcherAssert.assertThat(

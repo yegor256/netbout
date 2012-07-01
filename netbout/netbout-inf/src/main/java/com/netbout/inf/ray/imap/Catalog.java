@@ -217,11 +217,9 @@ final class Catalog {
         try {
             int previous = Integer.MIN_VALUE;
             long dupstart = Integer.MIN_VALUE;
-            System.out.println("start");
             while (items.hasNext()) {
                 final Item item = items.next();
                 final int hash = item.hashCode();
-                System.out.println("item: " + item.value() + " hash: " + hash);
                 if (hash < previous) {
                     throw new IllegalArgumentException(
                         String.format(
@@ -306,7 +304,7 @@ final class Catalog {
          * @throws IOException If some I/O problem inside
          */
         public long pointer() throws IOException {
-            return this.file().length() - Backlog.eofMarkerLength;
+            return this.file().length() - Backlog.eofMarkerLength * 2;
         }
         /**
          * Convert position to the normal form.
