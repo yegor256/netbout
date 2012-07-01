@@ -53,10 +53,10 @@ public final class VersionsTest {
      */
     @Test
     public void createsVersionOfBaseline() throws Exception {
-        final Versions builder = new Versions(
-            new File(this.temp.newFolder("foo"), "/some/folder/to/create")
-        );
+        final File dir = new File(this.temp.newFolder("foo"), "/some/folder");
+        final Versions builder = new Versions(dir);
         final String ver = builder.baselined();
+        new File(dir, ver).mkdir();
         MatcherAssert.assertThat(builder.baselined(), Matchers.equalTo(ver));
         MatcherAssert.assertThat(
             builder.draft(),

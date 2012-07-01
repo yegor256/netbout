@@ -106,7 +106,24 @@ final class Versions {
         if (!marker.exists()) {
             FileUtils.writeStringToFile(marker, this.fresh());
         }
-        return FileUtils.readFileToString(marker);
+        String version = FileUtils.readFileToString(marker);
+        final File folder = new File(this.dir, version);
+        if (folder.exists()) {
+            Logger.debug(
+                this,
+                "#baselined(): restored version '%s'",
+                version
+            );
+        } else {
+            Logger.warn(
+                this,
+                "#baselined(): broken version '%s'",
+                version
+            );
+            version = this.fresh();
+            FileUtils.writeStringToFile(marker, version);
+        }
+        return version;
     }
 
     /**

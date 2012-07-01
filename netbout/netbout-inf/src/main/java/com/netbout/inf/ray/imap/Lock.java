@@ -82,7 +82,7 @@ final class Lock implements Closeable {
         final File file = new File(this.directory, Lock.NAME);
         file.getParentFile().mkdirs();
         if (file.exists()) {
-            Logger.debug(
+            Logger.warn(
                 this,
                 "#Lock('%s'): trying to clean a dirty lock...",
                 FilenameUtils.getName(this.directory.getPath())
