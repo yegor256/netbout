@@ -29,11 +29,7 @@ package com.netbout.inf.lattice;
 import com.jcabi.log.Logger;
 import com.netbout.inf.Cursor;
 import com.netbout.inf.Lattice;
-import com.netbout.inf.Term;
 import java.util.BitSet;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.SortedSet;
 
 /**
  * Lattice on top of bitset.
@@ -58,11 +54,13 @@ final class BitsetLattice implements Lattice {
 
     /**
      * The main bitset (also accessible from {@link LatticeBuilder}).
+     * @checkstyle VisibilityModifier (2 lines)
      */
     protected final transient BitSet main;
 
     /**
      * The reverse bitset (also accessible from {@link LatticeBuilder}).
+     * @checkstyle VisibilityModifier (2 lines)
      */
     protected final transient BitSet reverse;
 

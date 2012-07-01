@@ -29,19 +29,15 @@ package com.netbout.inf.ray.imap;
 import com.netbout.inf.Attribute;
 import com.netbout.inf.MsgMocker;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.RandomAccessFile;
 import java.nio.channels.Channels;
 import java.util.Arrays;
-import java.util.Collection;
-import java.util.Random;
-import java.util.TreeSet;
 import org.apache.commons.collections.IteratorUtils;
-import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.FilenameUtils;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Rule;
@@ -52,6 +48,7 @@ import org.junit.rules.TemporaryFolder;
  * Test case of {@link Draft}.
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
+ * @checkstyle ClassDataAbstractionCoupling (500 lines)
  */
 public final class DraftTest {
 
@@ -86,7 +83,7 @@ public final class DraftTest {
         final Attribute attr = new Attribute("boom");
         final Draft draft = new Draft(new Lock(new File(dir, "draft")));
         FileUtils.writeStringToFile(draft.reverse(attr), "reverse-hi!");
-        final Baseline src = new Baseline(new Lock(new File(dir, "src")));
+        final Baseline src = new Baseline(new Lock(new File(dir, "src-1")));
         FileUtils.writeStringToFile(src.reverse(attr), "previous value");
         final Baseline dest = new Baseline(new Lock(new File(dir, "dest")));
         draft.baseline(dest, src);
@@ -99,13 +96,14 @@ public final class DraftTest {
     /**
      * Draft can baseline itself to a baseline, with numbers inside.
      * @throws Exception If there is some problem inside
+     * @checkstyle ExecutableStatementCount (50 lines)
      */
     @Test
     public void baselinesItselfToBaselineWithNumbers() throws Exception {
         final File dir = this.temp.newFolder("foo-4");
         final Attribute attr = new Attribute("boom-boom-boom");
         final String value = "some data \u0433";
-        final Draft draft = new Draft(new Lock(new File(dir, "draft")));
+        final Draft draft = new Draft(new Lock(new File(dir, "draft-1")));
         final File file = draft.numbers(attr);
         draft.backlog(attr).add(
             new Backlog.Item(

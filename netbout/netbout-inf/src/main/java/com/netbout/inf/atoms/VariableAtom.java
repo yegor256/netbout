@@ -36,6 +36,7 @@ import com.netbout.inf.Attribute;
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
+ * @checkstyle MultipleStringLiterals (500 lines)
  */
 public enum VariableAtom implements Atom<String> {
 
@@ -85,9 +86,9 @@ public enum VariableAtom implements Atom<String> {
      */
     VariableAtom(final String value) {
         this.name = value;
-        if (value.equals("number")) {
+        if ("number".equals(value)) {
             this.attr = new VariableAtom.NumberAttribute();
-        } else if (value.equals("bout.number")) {
+        } else if ("bout.number".equals(value)) {
             this.attr = new VariableAtom.BoutNumberAttribute();
         } else {
             this.attr = new Attribute(

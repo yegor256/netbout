@@ -30,13 +30,12 @@ import com.jcabi.log.Logger;
 import com.netbout.inf.Attribute;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.Closeable;
 import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.InputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.RandomAccessFile;
 import java.nio.channels.Channels;
@@ -50,6 +49,7 @@ import org.apache.commons.io.FilenameUtils;
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
+ * @checkstyle ClassDataAbstractionCoupling (500 lines)
  */
 final class DefaultDirectory implements Directory {
 
@@ -78,6 +78,7 @@ final class DefaultDirectory implements Directory {
     /**
      * Public ctor.
      * @param file The directory
+     * @throws IOException If some I/O problem inside
      */
     public DefaultDirectory(final File file) throws IOException {
         this.lock = new Lock(file);

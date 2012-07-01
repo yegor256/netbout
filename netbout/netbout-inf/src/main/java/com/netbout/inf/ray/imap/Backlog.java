@@ -27,15 +27,12 @@
 package com.netbout.inf.ray.imap;
 
 import com.jcabi.log.Logger;
-import com.netbout.inf.Attribute;
 import java.io.ByteArrayOutputStream;
-import java.io.Closeable;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.InputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.RandomAccessFile;
@@ -43,9 +40,8 @@ import java.util.Iterator;
 import java.util.NoSuchElementException;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
-import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.IOUtils;
+import org.apache.commons.io.FilenameUtils;
 
 /**
  * Backlog in a directory.
@@ -55,6 +51,7 @@ import org.apache.commons.io.IOUtils;
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
+ * @checkstyle ClassDataAbstractionCoupling (500 lines)
  */
 class Backlog {
 
@@ -120,7 +117,7 @@ class Backlog {
      *
      * <p>The class is immutable and thread-safe;
      */
-    public static final class Item implements Comparable<Item> {
+    public static final class Item implements Comparable<Backlog.Item> {
         /**
          * Value.
          */
@@ -132,7 +129,7 @@ class Backlog {
         /**
          * Public ctor.
          * @param value Value
-         * @param file Path to the file
+         * @param path Path to the file
          */
         public Item(final String value, final String path) {
             this.val = value;
@@ -215,15 +212,16 @@ class Backlog {
      * @return The thread-safe iterator
      * @throws IOException If some I/O problem inside
      */
-    public Iterator<Item> iterator() throws IOException {
+    public Iterator<Backlog.Item> iterator() throws IOException {
         final FileInputStream stream = new FileInputStream(this.ifile);
         final DataInputStream data = new DataInputStream(stream);
         if (data.readInt() != Backlog.START_MARKER) {
             throw new IllegalArgumentException("wrong file format");
         }
-        return new Iterator<Item>() {
-            private final transient AtomicReference<Item> item =
-                new AtomicReference<Item>();
+        // @checkstyle AnonInnerLength (50 lines)
+        return new Iterator<Backlog.Item>() {
+            private final transient AtomicReference<Backlog.Item> item =
+                new AtomicReference<Backlog.Item>();
             private final transient AtomicBoolean eof = new AtomicBoolean();
             @Override
             public boolean hasNext() {

@@ -27,8 +27,6 @@
 package com.netbout.inf.ray;
 
 import com.netbout.inf.Lattice;
-import java.util.Set;
-import java.util.SortedSet;
 
 /**
  * Index, as a map of String to SortedSet of Long.

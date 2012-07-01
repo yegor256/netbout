@@ -26,13 +26,7 @@
  */
 package com.netbout.inf.ray.imap;
 
-import com.netbout.inf.Attribute;
 import java.io.File;
-import java.util.Collection;
-import java.util.Random;
-import java.util.TreeSet;
-import org.hamcrest.MatcherAssert;
-import org.hamcrest.Matchers;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
@@ -70,7 +64,7 @@ public final class LockTest {
      */
     @Test(expected = java.io.IOException.class)
     public void preventsDuplicateInstances() throws Exception {
-        final File dir = new File(this.temp.newFolder("foo"), "/boom/x");
+        final File dir = new File(this.temp.newFolder("foo-2"), "/boom/x");
         final Lock lock = new Lock(dir);
         new Lock(dir);
     }

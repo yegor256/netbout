@@ -29,34 +29,19 @@ package com.netbout.inf.ray.imap;
 import com.jcabi.log.Logger;
 import com.jcabi.log.VerboseThreads;
 import com.netbout.inf.Attribute;
-import com.netbout.inf.Lattice;
-import com.netbout.inf.Ray;
 import com.netbout.inf.atoms.VariableAtom;
 import com.netbout.inf.ray.Index;
 import com.netbout.inf.ray.IndexMap;
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
-import java.util.SortedSet;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
-import java.util.concurrent.ConcurrentSkipListSet;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
-import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang.CharEncoding;
 
 /**
  * Default implemenation of {@link IndexMap}.

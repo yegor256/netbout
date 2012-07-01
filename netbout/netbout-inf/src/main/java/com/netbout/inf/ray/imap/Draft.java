@@ -30,25 +30,11 @@ import com.jcabi.log.Logger;
 import com.netbout.inf.Attribute;
 import java.io.Closeable;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.InputStream;
 import java.io.IOException;
-import java.io.OutputStream;
-import java.io.RandomAccessFile;
-import java.nio.channels.Channels;
 import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Iterator;
 import java.util.LinkedList;
-import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.concurrent.atomic.AtomicLong;
-import java.util.concurrent.atomic.AtomicReference;
-import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.IOUtils;
+import org.apache.commons.io.FilenameUtils;
 
 /**
  * Sub-directory with draft documents.
@@ -57,6 +43,7 @@ import org.apache.commons.io.IOUtils;
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
+ * @checkstyle ClassDataAbstractionCoupling (500 lines)
  */
 final class Draft implements Closeable {
 
@@ -117,6 +104,20 @@ final class Draft implements Closeable {
         final File folder = new File(this.lock.dir(), attr.toString());
         folder.mkdirs();
         return File.createTempFile("numbers-", ".inf", folder);
+    }
+
+    /**
+     * Get access to existing file for numbers.
+     * @param attr Attribute
+     * @param name Name of the file
+     * @return File name
+     * @throws IOException If some I/O problem inside
+     */
+    public File numbers(final Attribute attr,
+        final String name) throws IOException {
+        final File folder = new File(this.lock.dir(), attr.toString());
+        folder.mkdirs();
+        return new File(folder, name);
     }
 
     /**
@@ -204,305 +205,9 @@ final class Draft implements Closeable {
         if (reverse.exists()) {
             FileUtils.copyFile(reverse, dest.reverse(attr));
         }
-        final Pipeline pipeline = new Pipeline(dest, src, attr);
+        final Pipeline pipeline = new Pipeline(this, dest, src, attr);
         dest.catalog(attr).create(pipeline);
         pipeline.close();
-    }
-
-    /**
-     * Token.
-     */
-    interface Token {
-        /**
-         * Convert it to item.
-         * @return The item
-         * @throws IOException If some IO problem inside
-         */
-        Catalog.Item item() throws IOException;
-    }
-
-    /**
-     * Comparable token.
-     */
-    interface ComparableToken extends Token, Comparable<Token> {
-    }
-
-    /**
-     * Pipeline between back log and new catalog.
-     *
-     * <p>The class is thread-safe.
-     */
-    private final class Pipeline implements Iterator<Catalog.Item>, Closeable {
-        /**
-         * Source catalog.
-         */
-        private final transient Catalog catalog;
-        /**
-         * The attribute.
-         */
-        private final transient Attribute attribute;
-        /**
-         * Backlog with data.
-         */
-        private final transient Iterator<Backlog.Item> biterator;
-        /**
-         * Pre-existing catalog with data.
-         */
-        private final transient Iterator<Catalog.Item> citerator;
-        /**
-         * Pre-existing data file.
-         */
-        private final transient RandomAccessFile data;
-        /**
-         * Output stream.
-         */
-        private final transient OutputStream output;
-        /**
-         * Current position in output stream.
-         */
-        private final transient AtomicLong opos = new AtomicLong();
-        /**
-         * Information about the item already retrieved from iterators.
-         */
-        private final transient AtomicReference<Token> token =
-            new AtomicReference<Token>();
-        /**
-         * Value retrieved in previous call to {@link #next()}.
-         */
-        private final transient AtomicReference<Catalog.Item> ahead =
-            new AtomicReference<Catalog.Item>();
-        /**
-         * Public ctor.
-         * @param dest Destination
-         * @param src Source
-         * @param attr Attribute
-         * @throws IOException If some IO problem inside
-         */
-        public Pipeline(final Baseline dest, final Baseline src,
-            final Attribute attr) throws IOException {
-            this.attribute = attr;
-            this.catalog = src.catalog(this.attribute);
-            this.biterator = this.reordered(
-                Draft.this.backlog(this.attribute).iterator()
-            );
-            this.citerator = this.catalog.iterator();
-            this.data = new RandomAccessFile(src.data(this.attribute), "r");
-            this.output = new FileOutputStream(dest.data(this.attribute));
-        }
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public void close() throws IOException {
-            this.data.close();
-            this.output.close();
-        }
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public boolean hasNext() {
-            return this.biterator.hasNext() || this.citerator.hasNext()
-                || this.token.get() != null;
-        }
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public Catalog.Item next() {
-            synchronized (this.token) {
-                Catalog.Item item = null;
-                while (this.hasNext()) {
-                    try {
-                        item = this.fetch();
-                    } catch (java.io.IOException ex) {
-                        throw new IllegalStateException(ex);
-                    }
-                    if (this.ahead.get() == null) {
-                        this.ahead.set(item);
-                    }
-                    if (!item.value().equals(this.ahead.get().value())) {
-                        item = this.ahead.getAndSet(item);
-                        break;
-                    }
-                }
-                if (item == null) {
-                    throw new NoSuchElementException();
-                }
-                return item;
-            }
-        }
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public void remove() {
-            throw new UnsupportedOperationException("#remove");
-        }
-        /**
-         * Fetch next item from one of two iterators.
-         *
-         * <p>This method is merging two iterators, sorting elements according
-         * to their hash codes. Catalog iterator {@code this.citerator} has
-         * higher priority. We keep items retrieved from iterators in
-         * {@code this.token} variable. When variable is set to null it means
-         * that we should to one of two iterators for the next value. If
-         * the variable holds some value - it is a candidate for the next
-         * result of this {@code next()} method.
-         *
-         * @return The item fetched
-         * @throws IOException If some IO problem inside
-         */
-        private Catalog.Item fetch() throws IOException {
-            if (this.token.get() == null) {
-                if (this.citerator.hasNext()) {
-                    this.token.set(this.cattoken(this.citerator));
-                } else if (this.biterator.hasNext()) {
-                    this.token.set(this.backtoken(this.biterator));
-                } else {
-                    throw new NoSuchElementException();
-                }
-            }
-            Catalog.Item next;
-            final Token saved = this.token.get();
-            if (saved instanceof ComparableToken
-                && this.biterator.hasNext()) {
-                final ComparableToken comparable =
-                    ComparableToken.class.cast(saved);
-                final Token btoken = this.backtoken(this.biterator);
-                if (comparable.compareTo(btoken) > 0) {
-                    next = btoken.item();
-                } else {
-                    next = comparable.item();
-                    this.token.set(btoken);
-                }
-            } else {
-                next = saved.item();
-                this.token.set(null);
-            }
-            return next;
-        }
-        /**
-         * Get token from catalog.
-         *
-         * <p>We don't close the input stream here, because such a closing
-         * operation will lead the closing of the entire
-         * {@link RandomAccessFile} ({@code Pipeline.this.data}).
-         *
-         * @param iterator The iterator to read from
-         * @return Token retrieved
-         */
-        private Token cattoken(final Iterator<Catalog.Item> iterator) {
-            final Catalog.Item item = iterator.next();
-            return new ComparableToken() {
-                @Override
-                public Catalog.Item item() throws IOException {
-                    final long pos = Pipeline.this.catalog.seek(item.value());
-                    Pipeline.this.data.seek(pos);
-                    final InputStream input = Channels.newInputStream(
-                        Pipeline.this.data.getChannel()
-                    );
-                    final int len = IOUtils.copy(input, Pipeline.this.output);
-                    Logger.debug(
-                        this,
-                        "#item(): copied %d bytes from pos #%d ('%[text]s')",
-                        len,
-                        pos,
-                        item.value()
-                    );
-                    return new Catalog.Item(
-                        item.value(),
-                        Pipeline.this.opos.getAndAdd(len)
-                    );
-                }
-                @Override
-                public int compareTo(final Token token) {
-                    return new Integer(this.hashCode()).compareTo(
-                        new Integer(token.hashCode())
-                    );
-                }
-                @Override
-                public int hashCode() {
-                    return item.hashCode();
-                }
-                @Override
-                public boolean equals(final Object token) {
-                    return this == token || token.hashCode() == this.hashCode();
-                }
-            };
-        }
-        /**
-         * Get token from backlog.
-         * @param iterator The iterator to read from
-         * @return Token retrieved
-         */
-        private Token backtoken(final Iterator<Backlog.Item> iterator) {
-            final Backlog.Item item = iterator.next();
-            return new Token() {
-                @Override
-                public Catalog.Item item() throws IOException {
-                    final File file = new File(
-                        Draft.this.lock.dir(),
-                        String.format(
-                            "/%s/%s",
-                            Pipeline.this.attribute,
-                            item.path()
-                        )
-                    );
-                    final InputStream input = new FileInputStream(file);
-                    final int len = IOUtils.copy(input, Pipeline.this.output);
-                    input.close();
-                    Logger.debug(
-                        this,
-                        "#item('%s'): copied %d bytes from '/%s' ('%[text]s')",
-                        Pipeline.this.attribute,
-                        len,
-                        FilenameUtils.getName(file.getPath()),
-                        item.value()
-                    );
-                    return new Catalog.Item(
-                        item.value(),
-                        Pipeline.this.opos.getAndAdd(len)
-                    );
-                }
-                @Override
-                public int hashCode() {
-                    return item.hashCode();
-                }
-                @Override
-                public boolean equals(final Object token) {
-                    return this == token || token.hashCode() == this.hashCode();
-                }
-            };
-        }
-        /**
-         * Create reordered iterator.
-         * @param iterator The iterator to read from
-         * @return Reordered iterator
-         */
-        private Iterator<Backlog.Item> reordered(
-            final Iterator<Backlog.Item> origin) {
-            final List<Backlog.Item> items = new LinkedList<Backlog.Item>();
-            while (origin.hasNext()) {
-                final Backlog.Item item = origin.next();
-                final int idx = Collections.binarySearch(
-                    items,
-                    item,
-                    new Comparator<Backlog.Item>() {
-                        public int compare(final Backlog.Item left,
-                            final Backlog.Item right) {
-                            return left.value().compareTo(right.value());
-                        }
-                    }
-                );
-                if (idx > 0) {
-                    items.remove(idx);
-                }
-                items.add(item);
-            }
-            Collections.sort(items);
-            return items.iterator();
-        }
     }
 
 }

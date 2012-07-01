@@ -49,6 +49,7 @@ import org.junit.rules.TemporaryFolder;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  * @checkstyle MagicNumber (500 lines)
+ * @checkstyle ClassDataAbstractionCoupling (500 lines)
  */
 public final class CatalogTest {
 
@@ -66,7 +67,7 @@ public final class CatalogTest {
     @Test
     public void registersValueAndFindsItThen() throws Exception {
         final Catalog catalog = new Catalog(this.temp.newFile("catalog.txt"));
-        final String value = "some value to use, \u0433";
+        final String value = "some value to use, \u0433\u0434";
         final long pos = Math.max(Math.abs(new Random().nextLong()), 1L);
         final int total = new Random().nextInt(500) + 100;
         final int length = 5;

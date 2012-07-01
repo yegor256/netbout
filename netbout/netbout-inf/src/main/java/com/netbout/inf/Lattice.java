@@ -26,9 +26,6 @@
  */
 package com.netbout.inf;
 
-import java.util.Collection;
-import java.util.SortedSet;
-
 /**
  * Lattice of a term.
  *

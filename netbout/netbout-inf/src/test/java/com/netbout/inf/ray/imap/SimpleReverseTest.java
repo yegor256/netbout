@@ -27,8 +27,8 @@
 package com.netbout.inf.ray.imap;
 
 import com.netbout.inf.MsgMocker;
-import java.io.ByteArrayOutputStream;
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;

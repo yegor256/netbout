@@ -27,21 +27,12 @@
 package com.netbout.inf.ray.imap;
 
 import com.jcabi.log.Logger;
-import com.netbout.inf.Attribute;
-import java.io.Closeable;
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.InputStream;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.io.RandomAccessFile;
 import java.util.Iterator;
-import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.IOUtils;
+import org.apache.commons.io.FilenameUtils;
 
 /**
  * Catalog in a directory.
@@ -66,7 +57,7 @@ final class Catalog {
 
     /**
      * Public ctor.
-     * @param file The file to use
+     * @param ctlg The file to use
      * @throws IOException If some I/O problem inside
      */
     public Catalog(final File ctlg) throws IOException {
@@ -89,9 +80,10 @@ final class Catalog {
      *
      * <p>The class is immutable and thread-safe;
      */
-    public static final class Item implements Comparable<Item> {
+    public static final class Item implements Comparable<Catalog.Item> {
         /**
          * Size of Item in bytes (INT + LONG).
+         * @checkstyle MagicNumber (2 lines)
          */
         public static final int SIZE = 4 + 8;
         /**
@@ -163,13 +155,14 @@ final class Catalog {
      */
     public long seek(final String value) throws IOException {
         final int target = value.hashCode();
+        // @checkstyle MultipleStringLiterals (1 line)
         final RandomAccessFile data = new RandomAccessFile(this.fast, "r");
         long left = 0;
-        long right = data.length() / Item.SIZE;
+        long right = data.length() / Catalog.Item.SIZE;
         long found = Long.MIN_VALUE;
         while (left < right) {
             final long pos = left + (right - left) / 2;
-            data.seek(pos * Item.SIZE);
+            data.seek(pos * Catalog.Item.SIZE);
             final int hash = data.readInt();
             if (hash == target) {
                 found = this.slow.normalized(data.readLong(), value);
@@ -187,7 +180,7 @@ final class Catalog {
                 "#seek('%[text]s'): found pos #%d among %d value(s)",
                 value,
                 found,
-                data.length() / Item.SIZE
+                data.length() / Catalog.Item.SIZE
             );
         } else {
             Logger.debug(
@@ -195,7 +188,7 @@ final class Catalog {
                 "#seek('%[text]s'): 0x%08X not found among %d value(s)",
                 value,
                 target,
-                data.length() / Item.SIZE
+                data.length() / Catalog.Item.SIZE
             );
         }
         return found;
@@ -207,10 +200,10 @@ final class Catalog {
      * <p>The method is NOT thread-safe.
      *
      * @param items The items to use
-     * @param position The position to register
      * @throws IOException If some I/O problem inside
+     * @checkstyle ExecutableStatementCount (100 lines)
      */
-    public void create(final Iterator<Item> items) throws IOException {
+    public void create(final Iterator<Catalog.Item> items) throws IOException {
         final long start = System.currentTimeMillis();
         final RandomAccessFile ffile = new RandomAccessFile(this.fast, "rw");
         ffile.setLength(0L);
@@ -238,7 +231,7 @@ final class Catalog {
                     )
                 );
                 if (hash == previous) {
-                    ffile.seek(ffile.getFilePointer() - Item.SIZE);
+                    ffile.seek(ffile.getFilePointer() - Catalog.Item.SIZE);
                     ffile.writeInt(hash);
                     ffile.writeLong(-dupstart);
                     Logger.debug(this, "#create(): duplicate '0x%08X'", hash);
@@ -271,9 +264,9 @@ final class Catalog {
      * @return The thread-safe iterator
      * @throws IOException If some I/O problem inside
      */
-    public Iterator<Item> iterator() throws IOException {
+    public Iterator<Catalog.Item> iterator() throws IOException {
         final Iterator<Catalog.SlowLog.Item> origin = this.slow.iterator();
-        return new Iterator<Item>() {
+        return new Iterator<Catalog.Item>() {
             @Override
             public boolean hasNext() {
                 return origin.hasNext();

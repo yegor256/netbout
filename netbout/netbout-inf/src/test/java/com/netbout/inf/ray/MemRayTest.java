@@ -33,7 +33,6 @@ import com.netbout.inf.FolderMocker;
 import com.netbout.inf.MsgMocker;
 import com.netbout.inf.Ray;
 import java.io.File;
-import org.apache.commons.io.FileUtils;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;

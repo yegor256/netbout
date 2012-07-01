@@ -47,6 +47,11 @@ import org.apache.commons.io.FilenameUtils;
 final class Lock implements Closeable {
 
     /**
+     * Name of the lock file.
+     */
+    private static final String NAME = "lock.txt";
+
+    /**
      * The directory itself.
      */
     private final transient File directory;
@@ -74,16 +79,16 @@ final class Lock implements Closeable {
      */
     public Lock(final File dir) throws IOException {
         this.directory = dir;
-        final File lock = new File(this.directory, "lock.txt");
-        lock.getParentFile().mkdirs();
-        if (lock.exists()) {
+        final File file = new File(this.directory, Lock.NAME);
+        file.getParentFile().mkdirs();
+        if (file.exists()) {
             Logger.debug(
                 this,
                 "#Lock('%s'): trying to clean a dirty lock...",
                 FilenameUtils.getName(this.directory.getPath())
             );
         }
-        this.stream = new FileOutputStream(lock);
+        this.stream = new FileOutputStream(file);
         new PrintStream(this.stream).println("locked");
         this.channel = this.stream.getChannel();
         FileLock lck = null;
@@ -139,7 +144,7 @@ final class Lock implements Closeable {
         this.lock.release();
         this.channel.close();
         this.stream.close();
-        new File(this.directory, "lock.txt").delete();
+        new File(this.directory, Lock.NAME).delete();
         Logger.debug(
             this,
             "#close(): '/%s' unlocked by %s",

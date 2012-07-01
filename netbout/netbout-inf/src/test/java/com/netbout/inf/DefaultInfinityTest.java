@@ -95,8 +95,7 @@ public final class DefaultInfinityTest {
      */
     @Test
     public void restoresItselfFromFileSystem() throws Exception {
-        // final Folder folder = new FolderMocker().mock();
-        final Folder folder = new FolderMocker().withPath(new java.io.File("./inf")).mock();
+        final Folder folder = new FolderMocker().mock();
         final Infinity inf = new DefaultInfinity(folder);
         final Bout bout = new BoutMocker()
             .withParticipant(new UrnMocker().mock())

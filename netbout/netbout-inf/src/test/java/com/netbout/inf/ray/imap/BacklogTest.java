@@ -27,7 +27,6 @@
 package com.netbout.inf.ray.imap;
 
 import java.util.Iterator;
-import java.util.Random;
 import org.apache.commons.collections.IteratorUtils;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;

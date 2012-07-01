@@ -30,12 +30,7 @@ import com.jcabi.log.Logger;
 import com.netbout.inf.Attribute;
 import java.io.Closeable;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.InputStream;
 import java.io.IOException;
-import java.io.OutputStream;
-import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.FileUtils;
 
 /**
@@ -129,6 +124,7 @@ final class Baseline implements Closeable {
      * Get catalog.
      * @param attr Attribute
      * @return The catalog
+     * @throws IOException If some I/O problem inside
      */
     public Catalog catalog(final Attribute attr) throws IOException {
         return new Catalog(

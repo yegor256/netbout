@@ -29,28 +29,10 @@ package com.netbout.inf.ray.imap;
 import com.jcabi.log.Logger;
 import com.netbout.inf.Attribute;
 import com.netbout.inf.Lattice;
-import com.netbout.inf.ray.Index;
-import com.netbout.inf.ray.IndexMap;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
-import java.util.Collections;
 import java.util.Map;
-import java.util.Set;
-import java.util.SortedSet;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
-import java.util.concurrent.ConcurrentSkipListSet;
-import java.util.concurrent.TimeUnit;
-import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang.CharEncoding;
 
 /**
  * Base implemenation of {@link Index}.
@@ -77,7 +59,7 @@ class BaseIndex implements FlushableIndex {
      * Main map.
      */
     private final transient ConcurrentMap<String, Numbers> map =
-         new ConcurrentHashMap<String, Numbers>();
+        new ConcurrentHashMap<String, Numbers>();
 
     /**
      * Public ctor.

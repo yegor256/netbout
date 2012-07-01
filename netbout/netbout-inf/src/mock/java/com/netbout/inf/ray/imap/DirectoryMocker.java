@@ -26,16 +26,9 @@
  */
 package com.netbout.inf.ray.imap;
 
-import com.jcabi.log.Logger;
-import com.netbout.inf.atoms.VariableAtom;
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.security.SecureRandom;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 import java.util.Random;
 
 /**
@@ -77,7 +70,6 @@ public final class DirectoryMocker {
      */
     public DirectoryMocker withMaximum(final int max) throws IOException {
         this.maximum = max;
-        // todo
         return this;
     }
 
@@ -90,7 +82,6 @@ public final class DirectoryMocker {
      */
     public DirectoryMocker withBouts(final int bouts, final int max)
         throws IOException {
-        // todo
         return this;
     }
 
@@ -104,7 +95,6 @@ public final class DirectoryMocker {
      */
     public DirectoryMocker withAttr(final String name, final String prefix,
         final int num) throws IOException {
-        // todo
         return this;
     }
 

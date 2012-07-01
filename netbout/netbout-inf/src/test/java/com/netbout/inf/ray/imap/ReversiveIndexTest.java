@@ -28,9 +28,7 @@ package com.netbout.inf.ray.imap;
 
 import com.jcabi.log.VerboseThreads;
 import com.netbout.inf.Attribute;
-import com.netbout.inf.Lattice;
 import com.netbout.inf.MsgMocker;
-import com.netbout.inf.RayMocker;
 import com.netbout.inf.ray.Index;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -46,7 +44,6 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 import org.mockito.ArgumentMatcher;
-import org.mockito.Mockito;
 
 /**
  * Test case of {@link ReversiveIndex}.

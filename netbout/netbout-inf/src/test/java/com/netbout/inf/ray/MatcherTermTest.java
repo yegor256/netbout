@@ -29,7 +29,6 @@ package com.netbout.inf.ray;
 import com.netbout.inf.Attribute;
 import com.netbout.inf.Cursor;
 import com.netbout.inf.MsgMocker;
-import com.netbout.inf.RayMocker;
 import com.netbout.inf.Term;
 import com.netbout.inf.ray.imap.DefaultIndexMap;
 import org.hamcrest.MatcherAssert;

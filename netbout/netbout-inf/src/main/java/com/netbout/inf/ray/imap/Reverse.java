@@ -26,7 +26,6 @@
  */
 package com.netbout.inf.ray.imap;
 
-import com.netbout.inf.Lattice;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -43,9 +42,10 @@ import java.io.OutputStream;
 interface Reverse {
 
     /**
-     * Get number by value (throws runtime exception if value is not found).
-     * @param value The value
-     * @return The number of message
+     * Get value by message number (throws runtime exception if message
+     * is not found).
+     * @param msg The number of the message
+     * @return The value
      */
     String get(long msg);
 

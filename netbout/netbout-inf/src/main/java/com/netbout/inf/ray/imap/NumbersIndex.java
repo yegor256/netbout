@@ -26,15 +26,9 @@
  */
 package com.netbout.inf.ray.imap;
 
-import com.jcabi.log.Logger;
 import com.netbout.inf.Attribute;
 import com.netbout.inf.Lattice;
-import com.netbout.inf.ray.IndexMap;
 import java.io.IOException;
-import java.util.Collections;
-import java.util.Set;
-import java.util.SortedSet;
-import java.util.TreeSet;
 
 /**
  * Index of message numbers.
@@ -65,7 +59,7 @@ final class NumbersIndex implements FlushableIndex {
     /**
      * Public ctor.
      * @param attr The attribute
-     * @param imp The index map we belong to
+     * @param dir The directory to work with
      * @throws IOException If some IO error
      */
     public NumbersIndex(final Attribute attr, final Directory dir)

@@ -27,17 +27,11 @@
 package com.netbout.inf.ray.imap;
 
 import com.jcabi.log.Logger;
-import com.netbout.inf.Attribute;
-import java.io.Closeable;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.InputStream;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.util.UUID;
-import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.FilenameUtils;
 
 /**
  * Versions in directory.

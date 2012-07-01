@@ -27,10 +27,6 @@
 package com.netbout.inf.ray.imap;
 
 import com.netbout.inf.Attribute;
-import java.io.File;
-import java.util.Collection;
-import java.util.Random;
-import java.util.TreeSet;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Rule;

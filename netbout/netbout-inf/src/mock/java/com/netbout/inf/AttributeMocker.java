@@ -34,6 +34,13 @@ package com.netbout.inf;
 public final class AttributeMocker {
 
     /**
+     * It's a utility class at the moment.
+     */
+    private AttributeMocker() {
+        // empty
+    }
+
+    /**
      * Reversive attribute.
      * @return The attribute
      */

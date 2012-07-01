@@ -29,7 +29,6 @@ package com.netbout.inf.ray;
 import com.netbout.inf.Attribute;
 import java.io.Closeable;
 import java.io.IOException;
-import java.util.SortedSet;
 
 /**
  * Index Map.
