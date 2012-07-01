@@ -289,7 +289,6 @@ final class Mux implements Closeable {
      */
     private void flush() throws InterruptedException {
         synchronized (this.flushed) {
-            // @checkstyle MagicNumber (1 line)
             if (System.currentTimeMillis() - this.flushed.get() > Mux.PERIOD) {
                 this.semaphore.acquire(Mux.THREADS);
                 try {
