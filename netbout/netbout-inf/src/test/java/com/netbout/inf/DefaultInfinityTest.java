@@ -94,6 +94,7 @@ public final class DefaultInfinityTest {
      * @throws Exception If there is some problem inside
      */
     @Test
+    @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
     public void restoresItselfFromFileSystem() throws Exception {
         final Folder folder = new FolderMocker().mock();
         final Infinity inf = new DefaultInfinity(folder);

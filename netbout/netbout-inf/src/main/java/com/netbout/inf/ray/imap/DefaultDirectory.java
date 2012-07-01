@@ -72,7 +72,7 @@ final class DefaultDirectory implements Directory {
     /**
      * Directory with draft.
      */
-    private transient AtomicReference<Draft> draft =
+    private final transient AtomicReference<Draft> draft =
         new AtomicReference<Draft>();
 
     /**

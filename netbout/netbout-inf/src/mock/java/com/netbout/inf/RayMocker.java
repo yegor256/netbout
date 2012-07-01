@@ -41,12 +41,6 @@ public final class RayMocker {
     private final transient Ray ray = Mockito.mock(Ray.class);
 
     /**
-     * Public ctor.
-     */
-    public RayMocker() {
-    }
-
-    /**
      * Build it.
      * @return The ray
      */

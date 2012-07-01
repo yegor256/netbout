@@ -88,6 +88,7 @@ public final class DefaultIndexMap implements IndexMap {
      * {@inheritDoc}
      */
     @Override
+    @SuppressWarnings("PMD.ConfusingTernary")
     public Index index(final Attribute attr) throws IOException {
         if (!this.map.containsKey(attr)) {
             FlushableIndex idx;

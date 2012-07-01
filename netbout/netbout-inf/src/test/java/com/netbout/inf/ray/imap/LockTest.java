@@ -65,7 +65,7 @@ public final class LockTest {
     @Test(expected = java.io.IOException.class)
     public void preventsDuplicateInstances() throws Exception {
         final File dir = new File(this.temp.newFolder("foo-2"), "/boom/x");
-        final Lock lock = new Lock(dir);
+        new Lock(dir);
         new Lock(dir);
     }
 

@@ -57,6 +57,7 @@ import org.apache.commons.io.IOUtils;
  * @version $Id$
  * @checkstyle ClassDataAbstractionCoupling (500 lines)
  */
+@SuppressWarnings("PMD.TooManyMethods")
 final class Pipeline implements Closeable, Iterator<Catalog.Item> {
 
     /**
@@ -357,18 +358,15 @@ final class Pipeline implements Closeable, Iterator<Catalog.Item> {
     private Iterator<Backlog.Item> reordered(
         final Iterator<Backlog.Item> origin) {
         final List<Backlog.Item> items = new LinkedList<Backlog.Item>();
+        final Comparator<Backlog.Item> comp = new Comparator<Backlog.Item>() {
+            public int compare(final Backlog.Item left,
+                final Backlog.Item right) {
+                return left.value().compareTo(right.value());
+            }
+        };
         while (origin.hasNext()) {
             final Backlog.Item item = origin.next();
-            final int idx = Collections.binarySearch(
-                items,
-                item,
-                new Comparator<Backlog.Item>() {
-                    public int compare(final Backlog.Item left,
-                        final Backlog.Item right) {
-                        return left.value().compareTo(right.value());
-                    }
-                }
-            );
+            final int idx = Collections.binarySearch(items, item, comp);
             if (idx > 0) {
                 items.remove(idx);
             }

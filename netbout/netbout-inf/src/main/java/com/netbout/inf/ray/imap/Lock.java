@@ -69,7 +69,7 @@ final class Lock implements Closeable {
     /**
      * The lock itself.
      */
-    private final transient FileLock lock;
+    private final transient FileLock filelock;
 
     /**
      * Public ctor.
@@ -97,7 +97,7 @@ final class Lock implements Closeable {
         } catch (java.nio.channels.OverlappingFileLockException ex) {
             throw new IOException(ex);
         } finally {
-            this.lock = lck;
+            this.filelock = lck;
         }
         Logger.debug(
             this,
@@ -141,7 +141,7 @@ final class Lock implements Closeable {
      */
     @Override
     public void close() throws IOException {
-        this.lock.release();
+        this.filelock.release();
         this.channel.close();
         this.stream.close();
         new File(this.directory, Lock.NAME).delete();
@@ -159,7 +159,7 @@ final class Lock implements Closeable {
      * @throws IOException If some I/O problem of the directory is not locked
      */
     public File dir() throws IOException {
-        if (!this.lock.isValid()) {
+        if (!this.filelock.isValid()) {
             throw new IOException("closed lock");
         }
         return this.directory;

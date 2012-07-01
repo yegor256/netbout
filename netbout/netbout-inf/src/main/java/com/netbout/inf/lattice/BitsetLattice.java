@@ -54,14 +54,16 @@ final class BitsetLattice implements Lattice {
 
     /**
      * The main bitset (also accessible from {@link LatticeBuilder}).
-     * @checkstyle VisibilityModifier (2 lines)
+     * @checkstyle VisibilityModifier (3 lines)
      */
+    @SuppressWarnings("PMD.AvoidProtectedFieldInFinalClass")
     protected final transient BitSet main;
 
     /**
      * The reverse bitset (also accessible from {@link LatticeBuilder}).
-     * @checkstyle VisibilityModifier (2 lines)
+     * @checkstyle VisibilityModifier (3 lines)
      */
+    @SuppressWarnings("PMD.AvoidProtectedFieldInFinalClass")
     protected final transient BitSet reverse;
 
     /**

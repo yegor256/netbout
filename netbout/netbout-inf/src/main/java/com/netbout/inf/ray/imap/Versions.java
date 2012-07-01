@@ -122,6 +122,7 @@ final class Versions {
      * Generate fresh version.
      * @return Version
      */
+    @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
     private String fresh() {
         String ver;
         do {

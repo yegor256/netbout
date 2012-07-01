@@ -45,6 +45,7 @@ import org.apache.commons.io.FilenameUtils;
  * @version $Id$
  * @checkstyle ClassDataAbstractionCoupling (500 lines)
  */
+@SuppressWarnings("PMD.TooManyMethods")
 final class Draft implements Closeable {
 
     /**
@@ -156,6 +157,7 @@ final class Draft implements Closeable {
      * @param src Original baseline
      * @throws IOException If some I/O problem inside
      */
+    @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
     public void baseline(final Baseline dest,
         final Baseline src) throws IOException {
         final long start = System.currentTimeMillis();

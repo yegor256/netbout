@@ -51,6 +51,7 @@ import org.junit.rules.TemporaryFolder;
  * @checkstyle MagicNumber (500 lines)
  * @checkstyle ClassDataAbstractionCoupling (500 lines)
  */
+@SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
 public final class CatalogTest {
 
     /**
@@ -70,7 +71,6 @@ public final class CatalogTest {
         final String value = "some value to use, \u0433\u0434";
         final long pos = Math.max(Math.abs(new Random().nextLong()), 1L);
         final int total = new Random().nextInt(500) + 100;
-        final int length = 5;
         final List<Catalog.Item> items = new ArrayList<Catalog.Item>(total + 1);
         items.add(new Catalog.Item(value, pos));
         for (int num = 0; num < total; ++num) {
@@ -92,7 +92,6 @@ public final class CatalogTest {
         final String value = "some value to use, \u0433";
         final long pos = Math.max(Math.abs(new Random().nextLong()), 1L);
         final int total = new Random().nextInt(500) + 100;
-        final int length = 5;
         final List<Catalog.Item> items = new ArrayList<Catalog.Item>();
         final Catalog.Item item = new Catalog.Item(value, pos);
         items.add(item);
@@ -150,7 +149,6 @@ public final class CatalogTest {
     public void supportsMultiThreadingSearch() throws Exception {
         final Catalog catalog = new Catalog(this.temp.newFile("catalog-4.txt"));
         final int total = new Random().nextInt(100) + 50;
-        final int length = 5;
         final List<Catalog.Item> items = new ArrayList<Catalog.Item>();
         for (int num = 0; num < total; ++num) {
             items.add(new Catalog.Item(CatalogTest.random(), num));

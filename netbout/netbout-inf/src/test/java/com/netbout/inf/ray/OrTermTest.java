@@ -29,8 +29,6 @@ package com.netbout.inf.ray;
 import com.netbout.inf.Attribute;
 import com.netbout.inf.Cursor;
 import com.netbout.inf.MsgMocker;
-import com.netbout.inf.Ray;
-import com.netbout.inf.RayMocker;
 import com.netbout.inf.Term;
 import com.netbout.inf.ray.imap.DefaultIndexMap;
 import java.util.Arrays;
@@ -60,7 +58,6 @@ public final class OrTermTest {
      */
     @Test
     public void shiftsCursorToTheFirstValue() throws Exception {
-        final Ray ray = new RayMocker().mock();
         final IndexMap map = new DefaultIndexMap(
             this.temp.newFolder("foo")
         );

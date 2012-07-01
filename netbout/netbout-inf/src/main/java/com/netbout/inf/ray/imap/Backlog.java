@@ -53,6 +53,7 @@ import org.apache.commons.io.FilenameUtils;
  * @version $Id$
  * @checkstyle ClassDataAbstractionCoupling (500 lines)
  */
+@SuppressWarnings("PMD.TooManyMethods")
 class Backlog {
 
     /**
@@ -213,49 +214,7 @@ class Backlog {
      * @throws IOException If some I/O problem inside
      */
     public Iterator<Backlog.Item> iterator() throws IOException {
-        final FileInputStream stream = new FileInputStream(this.ifile);
-        final DataInputStream data = new DataInputStream(stream);
-        if (data.readInt() != Backlog.START_MARKER) {
-            throw new IllegalArgumentException("wrong file format");
-        }
-        // @checkstyle AnonInnerLength (50 lines)
-        return new Iterator<Backlog.Item>() {
-            private final transient AtomicReference<Backlog.Item> item =
-                new AtomicReference<Backlog.Item>();
-            private final transient AtomicBoolean eof = new AtomicBoolean();
-            @Override
-            public boolean hasNext() {
-                if (this.item.get() == null && !this.eof.get()) {
-                    try {
-                        final Item next =
-                            new Item(data.readUTF(), data.readUTF());
-                        if (next.value().equals(Backlog.EOF_MARKER)
-                            && next.path().equals(Backlog.EOF_MARKER)) {
-                            this.eof.set(true);
-                            stream.close();
-                        } else {
-                            this.item.set(next);
-                        }
-                    } catch (java.io.IOException ex) {
-                        throw new IllegalStateException(ex);
-                    }
-                }
-                return !this.eof.get();
-            }
-            @Override
-            public Item next() {
-                if (!this.hasNext()) {
-                    throw new NoSuchElementException(
-                        "no more elements in backlog"
-                    );
-                }
-                return this.item.getAndSet(null);
-            }
-            @Override
-            public void remove() {
-                throw new UnsupportedOperationException("#remove");
-            }
-        };
+        return new Backlog.ItemsIterator();
     }
 
     /**
@@ -265,6 +224,81 @@ class Backlog {
      */
     protected final File file() throws IOException {
         return this.ifile;
+    }
+
+    /**
+     * Iterator of backlog items.
+     */
+    private final class ItemsIterator implements Iterator<Backlog.Item> {
+        /**
+         * Stream to read from.
+         */
+        private final transient FileInputStream stream;
+        /**
+         * Data input.
+         */
+        private final transient DataInputStream data;
+        /**
+         * Recent item.
+         */
+        private final transient AtomicReference<Backlog.Item> item =
+            new AtomicReference<Backlog.Item>();
+        /**
+         * EOF flag.
+         */
+        private final transient AtomicBoolean eof = new AtomicBoolean();
+        /**
+         * Public ctor.
+         * @throws IOException If some I/O problem inside
+         */
+        public ItemsIterator() throws IOException {
+            this.stream = new FileInputStream(Backlog.this.ifile);
+            this.data = new DataInputStream(this.stream);
+            if (this.data.readInt() != Backlog.START_MARKER) {
+                throw new IllegalArgumentException("wrong file format");
+            }
+        }
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public boolean hasNext() {
+            if (this.item.get() == null && !this.eof.get()) {
+                try {
+                    final Item next =
+                        new Item(this.data.readUTF(), this.data.readUTF());
+                    if (next.value().equals(Backlog.EOF_MARKER)
+                        && next.path().equals(Backlog.EOF_MARKER)) {
+                        this.eof.set(true);
+                        this.stream.close();
+                    } else {
+                        this.item.set(next);
+                    }
+                } catch (java.io.IOException ex) {
+                    throw new IllegalStateException(ex);
+                }
+            }
+            return !this.eof.get();
+        }
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public Item next() {
+            if (!this.hasNext()) {
+                throw new NoSuchElementException(
+                    "no more elements in backlog"
+                );
+            }
+            return this.item.getAndSet(null);
+        }
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public void remove() {
+            throw new UnsupportedOperationException("#remove");
+        }
     }
 
 }

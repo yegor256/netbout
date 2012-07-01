@@ -43,6 +43,7 @@ import org.apache.commons.io.FilenameUtils;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
+@SuppressWarnings("PMD.TooManyMethods")
 final class Catalog {
 
     /**
@@ -203,6 +204,7 @@ final class Catalog {
      * @throws IOException If some I/O problem inside
      * @checkstyle ExecutableStatementCount (100 lines)
      */
+    @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
     public void create(final Iterator<Catalog.Item> items) throws IOException {
         final long start = System.currentTimeMillis();
         final RandomAccessFile ffile = new RandomAccessFile(this.fast, "rw");

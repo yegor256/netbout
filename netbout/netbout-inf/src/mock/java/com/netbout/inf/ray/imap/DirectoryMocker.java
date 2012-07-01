@@ -104,6 +104,8 @@ public final class DirectoryMocker {
      * @throws IOException If something wrong inside
      */
     public Directory mock() throws IOException {
+        assert this.maximum != 0;
+        assert this.random != null;
         this.directory.baseline();
         return this.directory;
     }
