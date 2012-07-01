@@ -57,6 +57,14 @@ final class SimpleReverse implements Reverse {
      * {@inheritDoc}
      */
     @Override
+    public long sizeof() {
+        return this.map.size();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public String get(final long msg) {
         final String value = this.map.get(msg);
         if (value == null) {

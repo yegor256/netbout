@@ -43,6 +43,7 @@ import java.util.concurrent.ConcurrentMap;
  * @version $Id$
  * @checkstyle ClassDataAbstractionCoupling (500 lines)
  */
+@SuppressWarnings("PMD.TooManyMethods")
 class BaseIndex implements FlushableIndex {
 
     /**
@@ -69,6 +70,21 @@ class BaseIndex implements FlushableIndex {
     public BaseIndex(final Attribute attr, final Directory dir) {
         this.attribute = attr;
         this.directory = dir;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String toString() {
+        final StringBuilder text = new StringBuilder();
+        text.append(this.map.size()).append(" values, ");
+        long sizeof = 0L;
+        for (Numbers numbers : this.map.values()) {
+            sizeof += numbers.sizeof();
+        }
+        text.append(sizeof).append(" bytes");
+        return text.toString();
     }
 
     /**

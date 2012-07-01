@@ -72,6 +72,14 @@ final class SimpleNumbers implements Numbers {
      * {@inheritDoc}
      */
     @Override
+    public long sizeof() {
+        return this.nums.size();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public Lattice lattice() {
         return this.lat;
     }
