@@ -102,7 +102,7 @@ public final class DefaultInfinityTest {
             .withParticipant(new UrnMocker().mock())
             .mock();
         final Message msg = new MessageMocker()
-            .withText("Jeffrey Lebowski, \u0433!")
+            .withText("Jeffrey Lebowski, \u0443\u0440\u0430! How are you?")
             .withNumber(MsgMocker.number())
             .inBout(bout)
             .mock();
@@ -124,12 +124,14 @@ public final class DefaultInfinityTest {
         }
         inf.flush();
         inf.close();
-        // final Infinity restored = new DefaultInfinity(folder);
-        // MatcherAssert.assertThat(
-        //     restored.messages("(matches 'Jeffrey')"),
-        //     Matchers.<Long>iterableWithSize(1)
-        // );
-        // restored.close();
+        for (int attempt = 0; attempt <= 2; ++attempt) {
+            final Infinity restored = new DefaultInfinity(folder);
+            MatcherAssert.assertThat(
+                restored.messages("(matches 'Jeffrey')"),
+                Matchers.<Long>iterableWithSize(Matchers.greaterThan(0))
+            );
+            restored.close();
+        }
     }
 
 }

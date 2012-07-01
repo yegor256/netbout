@@ -76,6 +76,13 @@ final class Lock implements Closeable {
         this.directory = dir;
         final File lock = new File(this.directory, "lock.txt");
         lock.getParentFile().mkdirs();
+        if (lock.exists()) {
+            Logger.debug(
+                this,
+                "#Lock('%s'): trying to clean a dirty lock...",
+                FilenameUtils.getName(this.directory.getPath())
+            );
+        }
         this.stream = new FileOutputStream(lock);
         new PrintStream(this.stream).println("locked");
         this.channel = this.stream.getChannel();

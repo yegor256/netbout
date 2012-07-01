@@ -212,20 +212,30 @@ final class Catalog {
     public void create(final Iterator<Item> items) throws IOException {
         final long start = System.currentTimeMillis();
         final RandomAccessFile ffile = new RandomAccessFile(this.fast, "rw");
+        ffile.setLength(0L);
         int total = 0;
         try {
             int previous = Integer.MIN_VALUE;
             long dupstart = Integer.MIN_VALUE;
+            System.out.println("start");
             while (items.hasNext()) {
                 final Item item = items.next();
                 final int hash = item.hashCode();
+                System.out.println("item: " + item.value() + " hash: " + hash);
                 if (hash < previous) {
-                    throw new IllegalArgumentException("items are not ordered");
+                    throw new IllegalArgumentException(
+                        String.format(
+                            "item:('%s', #%d) at wrong ordering position",
+                            item.value(),
+                            item.position()
+                        )
+                    );
                 }
                 if (hash == previous) {
                     ffile.seek(ffile.getFilePointer() - Item.SIZE);
                     ffile.writeInt(hash);
                     ffile.writeLong(-dupstart);
+                    Logger.debug(this, "#create(): duplicate '0x%08X'", hash);
                 } else {
                     dupstart = this.slow.pointer();
                     ffile.writeInt(hash);

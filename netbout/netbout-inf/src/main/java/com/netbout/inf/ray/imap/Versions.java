@@ -36,6 +36,7 @@ import java.io.InputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.UUID;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.FileUtils;
 
 /**
@@ -65,6 +66,16 @@ final class Versions {
      */
     public Versions(final File file) throws IOException {
         this.dir = file;
+        final String base = this.baselined();
+        for (File folder : this.dir.listFiles()) {
+            if (!folder.isDirectory()) {
+                continue;
+            }
+            final String name = FilenameUtils.getName(folder.getPath());
+            if (!name.equals(base)) {
+                FileUtils.deleteDirectory(folder);
+            }
+        }
     }
 
     /**

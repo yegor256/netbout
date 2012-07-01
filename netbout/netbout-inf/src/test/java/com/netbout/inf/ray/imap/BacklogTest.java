@@ -26,6 +26,7 @@
  */
 package com.netbout.inf.ray.imap;
 
+import java.util.Iterator;
 import java.util.Random;
 import org.apache.commons.collections.IteratorUtils;
 import org.hamcrest.MatcherAssert;
@@ -60,10 +61,14 @@ public final class BacklogTest {
         backlog.add(new Backlog.Item(value, ref));
         backlog.add(new Backlog.Item("abc", ref));
         backlog.add(new Backlog.Item("foo", "bar"));
+        final Iterator<Backlog.Item> iterator = backlog.iterator();
+        MatcherAssert.assertThat(iterator.hasNext(), Matchers.is(true));
+        MatcherAssert.assertThat(iterator.hasNext(), Matchers.is(true));
         MatcherAssert.assertThat(
-            backlog.iterator().next().value(),
+            iterator.next().value(),
             Matchers.equalTo(value)
         );
+        MatcherAssert.assertThat(iterator.hasNext(), Matchers.is(true));
         MatcherAssert.assertThat(
             IteratorUtils.toList(backlog.iterator()).size(),
             Matchers.greaterThan(2)

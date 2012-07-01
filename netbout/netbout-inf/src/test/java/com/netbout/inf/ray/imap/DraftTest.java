@@ -33,9 +33,13 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.RandomAccessFile;
+import java.nio.channels.Channels;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Random;
 import java.util.TreeSet;
+import org.apache.commons.collections.IteratorUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.FileUtils;
 import org.hamcrest.MatcherAssert;
@@ -83,6 +87,7 @@ public final class DraftTest {
         final Draft draft = new Draft(new Lock(new File(dir, "draft")));
         FileUtils.writeStringToFile(draft.reverse(attr), "reverse-hi!");
         final Baseline src = new Baseline(new Lock(new File(dir, "src")));
+        FileUtils.writeStringToFile(src.reverse(attr), "previous value");
         final Baseline dest = new Baseline(new Lock(new File(dir, "dest")));
         draft.baseline(dest, src);
         MatcherAssert.assertThat(
@@ -109,24 +114,51 @@ public final class DraftTest {
             )
         );
         final long msg = MsgMocker.number();
-        final Numbers numbers = new SimpleNumbers();
-        numbers.add(msg);
-        final OutputStream output = new FileOutputStream(file);
-        numbers.save(output);
-        output.close();
+        DraftTest.save(file, msg);
         final Baseline src = new Baseline(new Lock(new File(dir, "src")));
+        DraftTest.save(src.data(attr), msg + 1, msg - 1);
+        src.catalog(attr).create(
+            Arrays.asList(new Catalog.Item(value, 0L)).iterator()
+        );
         final Baseline dest = new Baseline(
             new Lock(this.temp.newFolder("foo-5"))
         );
-        draft.baseline(src, dest);
+        draft.baseline(dest, src);
+        draft.close();
+        src.close();
+        final long pos = dest.catalog(attr).seek(value);
+        final RandomAccessFile data =
+            new RandomAccessFile(dest.data(attr), "r");
+        data.seek(pos);
+        final InputStream istream = Channels.newInputStream(data.getChannel());
         final Numbers restored = new SimpleNumbers();
-        final InputStream input = new FileInputStream(file);
-        restored.load(input);
-        input.close();
+        restored.load(istream);
+        istream.close();
         MatcherAssert.assertThat(
             restored.next(Long.MAX_VALUE),
             Matchers.equalTo(msg)
         );
+        MatcherAssert.assertThat(
+            IteratorUtils.toList(dest.catalog(attr).iterator()).size(),
+            Matchers.equalTo(1)
+        );
+    }
+
+    /**
+     * Save numbers to file.
+     * @param file The file to save to
+     * @param nums Numbers to save
+     * @throws Exception If there is some problem inside
+     */
+    private static void save(final File file, final long... nums)
+        throws Exception {
+        final Numbers numbers = new SimpleNumbers();
+        for (long num : nums) {
+            numbers.add(num);
+        }
+        final OutputStream output = new FileOutputStream(file);
+        numbers.save(output);
+        output.close();
     }
 
 }

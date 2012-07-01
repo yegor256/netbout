@@ -59,11 +59,6 @@ import org.apache.commons.io.IOUtils;
 class Backlog {
 
     /**
-     * Marker at the beginning of the file.
-     */
-    private static final String START_MARKER = "BACKLOG";
-
-    /**
      * Marker at the end of file.
      */
     protected static final String EOF_MARKER = "EOF";
@@ -103,7 +98,7 @@ class Backlog {
         if (this.ifile.length() == 0) {
             final OutputStream stream = new FileOutputStream(this.ifile);
             final DataOutputStream data = new DataOutputStream(stream);
-            data.writeUTF(Backlog.START_MARKER);
+            data.writeUTF(Backlog.EOF_MARKER);
             data.writeUTF(Backlog.EOF_MARKER);
             stream.close();
             Logger.debug(
@@ -119,7 +114,7 @@ class Backlog {
      *
      * <p>The class is immutable and thread-safe;
      */
-    public static final class Item {
+    public static final class Item implements Comparable<Item> {
         /**
          * Value.
          */
@@ -136,6 +131,30 @@ class Backlog {
         public Item(final String value, final String path) {
             this.val = value;
             this.name = path;
+        }
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public int compareTo(final Item item) {
+            return new Integer(this.hashCode()).compareTo(
+                new Integer(item.hashCode())
+            );
+        }
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public int hashCode() {
+            return this.val.hashCode();
+        }
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public boolean equals(final Object item) {
+            return this == item || (item instanceof Item
+                && item.hashCode() == this.hashCode());
         }
         /**
          * Get value.
@@ -164,9 +183,10 @@ class Backlog {
     public final void add(final Item item) throws IOException {
         final RandomAccessFile data = new RandomAccessFile(this.ifile, "rw");
         try {
-            data.seek(this.ifile.length() - Backlog.eofMarkerLength);
+            data.seek(this.ifile.length() - Backlog.eofMarkerLength * 2);
             data.writeUTF(item.value());
             data.writeUTF(item.path());
+            data.writeUTF(Backlog.EOF_MARKER);
             data.writeUTF(Backlog.EOF_MARKER);
         } finally {
             data.close();
@@ -188,9 +208,6 @@ class Backlog {
     public Iterator<Item> iterator() throws IOException {
         final FileInputStream stream = new FileInputStream(this.ifile);
         final DataInputStream data = new DataInputStream(stream);
-        if (!data.readUTF().equals(Backlog.START_MARKER)) {
-            throw new IllegalArgumentException("wrong file format");
-        }
         return new Iterator<Item>() {
             private final transient AtomicReference<Item> item =
                 new AtomicReference<Item>();
@@ -199,12 +216,14 @@ class Backlog {
             public boolean hasNext() {
                 if (this.item.get() == null && !this.eof.get()) {
                     try {
-                        final String value = data.readUTF();
-                        if (value.equals(Backlog.EOF_MARKER)) {
+                        final Item next =
+                            new Item(data.readUTF(), data.readUTF());
+                        if (next.value().equals(Backlog.EOF_MARKER)
+                            && next.path().equals(Backlog.EOF_MARKER)) {
                             this.eof.set(true);
                             stream.close();
                         } else {
-                            this.item.set(new Item(value, data.readUTF()));
+                            this.item.set(next);
                         }
                     } catch (java.io.IOException ex) {
                         throw new IllegalStateException(ex);
@@ -215,7 +234,9 @@ class Backlog {
             @Override
             public Item next() {
                 if (!this.hasNext()) {
-                    throw new NoSuchElementException();
+                    throw new NoSuchElementException(
+                        "no more elements in backlog"
+                    );
                 }
                 return this.item.getAndSet(null);
             }
