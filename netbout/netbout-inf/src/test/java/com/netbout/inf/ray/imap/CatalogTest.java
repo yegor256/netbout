@@ -27,6 +27,9 @@
 package com.netbout.inf.ray.imap;
 
 import com.jcabi.log.VerboseThreads;
+import com.sun.management.UnixOperatingSystemMXBean;
+import java.lang.management.ManagementFactory;
+import java.lang.management.OperatingSystemMXBean;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -180,11 +183,41 @@ public final class CatalogTest {
     }
 
     /**
+     * Catalog can close files after usage.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void closesFilesAfterUsages() throws Exception {
+        final long files = CatalogTest.openFiles();
+        final Catalog catalog = new Catalog(this.temp.newFile("catalog-7.txt"));
+        MatcherAssert.assertThat(catalog.seek("test"), Matchers.lessThan(0L));
+        MatcherAssert.assertThat(
+            CatalogTest.openFiles(),
+            Matchers.equalTo(files)
+        );
+    }
+
+    /**
      * Generate random string.
      * @return The string
      */
     private static String random() {
         return RandomStringUtils.random(new Random().nextInt(6) + 1);
+    }
+
+    /**
+     * Retrieve count of open files.
+     * @return Open files count.
+     */
+    private static long openFiles() {
+        long count = 0;
+        final OperatingSystemMXBean bean =
+            ManagementFactory.getOperatingSystemMXBean();
+        if (bean instanceof UnixOperatingSystemMXBean) {
+            count = UnixOperatingSystemMXBean.class.cast(bean)
+                .getOpenFileDescriptorCount();
+        }
+        return count;
     }
 
 }
