@@ -115,17 +115,30 @@ public final class CatalogTest {
         final Catalog catalog = new Catalog(this.temp.newFile("catalog-3.txt"));
         final String first = "TlYhv";
         final String second = "UMYhv";
+        final String third = "TkyJW";
         MatcherAssert.assertThat(
             first.hashCode(),
-            Matchers.equalTo(second.hashCode())
+            Matchers.allOf(
+                Matchers.equalTo(second.hashCode()),
+                Matchers.equalTo(third.hashCode())
+            )
         );
         final List<Catalog.Item> items = new ArrayList<Catalog.Item>(2);
         items.add(new Catalog.Item(first, 1));
+        items.add(new Catalog.Item("ZZZZZ", 100));
         items.add(new Catalog.Item(second, 2));
+        items.add(new Catalog.Item("XXXXX", 101));
+        items.add(new Catalog.Item(third, 3));
+        items.add(new Catalog.Item("YYYYY", 102));
         Collections.sort(items);
         catalog.create(items.iterator());
         MatcherAssert.assertThat(catalog.seek(first), Matchers.equalTo(1L));
         MatcherAssert.assertThat(catalog.seek(second), Matchers.equalTo(2L));
+        MatcherAssert.assertThat(catalog.seek(third), Matchers.equalTo(3L));
+        MatcherAssert.assertThat(
+            IteratorUtils.toList(catalog.iterator()).size(),
+            Matchers.equalTo(6)
+        );
     }
 
     /**

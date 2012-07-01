@@ -75,4 +75,15 @@ public final class BacklogTest {
         );
     }
 
+    /**
+     * Backlog can have non-negative size with empty content.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void hasPositiveSizeWithEmptyContent() throws Exception {
+        final Backlog backlog = new Backlog(this.temp.newFile("backlog-2.txt"));
+        final long pos = backlog.add(new Backlog.Item("foo-2", "bar-2"));
+        MatcherAssert.assertThat(pos, Matchers.greaterThan(0L));
+    }
+
 }

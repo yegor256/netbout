@@ -192,8 +192,9 @@ final class Catalog {
         } else {
             Logger.debug(
                 this,
-                "#seek('%[text]s'): not found among %d value(s)",
+                "#seek('%[text]s'): 0x%08X not found among %d value(s)",
                 value,
+                target,
                 data.length() / Item.SIZE
             );
         }
@@ -214,6 +215,7 @@ final class Catalog {
         final RandomAccessFile ffile = new RandomAccessFile(this.fast, "rw");
         ffile.setLength(0L);
         int total = 0;
+        int dups = 0;
         try {
             int previous = Integer.MIN_VALUE;
             long dupstart = Integer.MIN_VALUE;
@@ -229,24 +231,25 @@ final class Catalog {
                         )
                     );
                 }
-                if (hash == previous) {
-                    ffile.seek(ffile.getFilePointer() - Item.SIZE);
-                    ffile.writeInt(hash);
-                    ffile.writeLong(-dupstart);
-                    Logger.debug(this, "#create(): duplicate '0x%08X'", hash);
-                } else {
-                    dupstart = this.slow.pointer();
-                    ffile.writeInt(hash);
-                    ffile.writeLong(item.position());
-                }
-                this.slow.add(
+                final long pos = this.slow.add(
                     new SlowLog.Item(
                         item.value(),
                         Long.toString(item.position())
                     )
                 );
+                if (hash == previous) {
+                    ffile.seek(ffile.getFilePointer() - Item.SIZE);
+                    ffile.writeInt(hash);
+                    ffile.writeLong(-dupstart);
+                    Logger.debug(this, "#create(): duplicate '0x%08X'", hash);
+                    ++dups;
+                } else {
+                    dupstart = pos;
+                    ffile.writeInt(hash);
+                    ffile.writeLong(item.position());
+                    ++total;
+                }
                 previous = hash;
-                ++total;
             }
         } finally {
             ffile.close();
@@ -254,10 +257,11 @@ final class Catalog {
         Logger.debug(
             this,
             // @checkstyle LineLength (1 line)
-            "#create(): saved to %s (%d bytes, %d values) in %[ms]s",
+            "#create(): saved to %s (%d bytes, %d values, %d dups) in %[ms]s",
             FilenameUtils.getName(this.fast.getPath()),
             this.fast.length(),
             total,
+            dups,
             System.currentTimeMillis() - start
         );
     }
@@ -297,14 +301,6 @@ final class Catalog {
          */
         public SlowLog(final File file) throws IOException {
             super(file);
-        }
-        /**
-         * Where we are now in the file.
-         * @return File pointer
-         * @throws IOException If some I/O problem inside
-         */
-        public long pointer() throws IOException {
-            return this.file().length() - Backlog.eofMarkerLength * 2;
         }
         /**
          * Convert position to the normal form.

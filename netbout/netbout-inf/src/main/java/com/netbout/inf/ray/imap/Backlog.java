@@ -59,14 +59,19 @@ import org.apache.commons.io.IOUtils;
 class Backlog {
 
     /**
-     * Marker at the end of file.
+     * Marker at the end of file (also visible from {@code Catalog.SlowLow}).
      */
     protected static final String EOF_MARKER = "EOF";
 
     /**
+     * Marker of the file start.
+     */
+    protected static final int START_MARKER = 0x00ABCDEF;
+
+    /**
      * Length of EOF marker, in bytes.
      */
-    protected static int eofMarkerLength;
+    private static int eofMarkerLength;
 
     /**
      * Calculate the size of {@code writeUTF()} for EOF marker.
@@ -98,6 +103,7 @@ class Backlog {
         if (this.ifile.length() == 0) {
             final OutputStream stream = new FileOutputStream(this.ifile);
             final DataOutputStream data = new DataOutputStream(stream);
+            data.writeInt(Backlog.START_MARKER);
             data.writeUTF(Backlog.EOF_MARKER);
             data.writeUTF(Backlog.EOF_MARKER);
             stream.close();
@@ -178,12 +184,15 @@ class Backlog {
      * <p>The method is NOT thread-safe.
      *
      * @param item The item to add
+     * @return Position in file where this item is added
      * @throws IOException If some I/O problem inside
      */
-    public final void add(final Item item) throws IOException {
+    public final long add(final Item item) throws IOException {
         final RandomAccessFile data = new RandomAccessFile(this.ifile, "rw");
+        long pos;
         try {
             data.seek(this.ifile.length() - Backlog.eofMarkerLength * 2);
+            pos = data.getFilePointer();
             data.writeUTF(item.value());
             data.writeUTF(item.path());
             data.writeUTF(Backlog.EOF_MARKER);
@@ -193,11 +202,12 @@ class Backlog {
         }
         Logger.debug(
             this,
-            "#add('%[text]s', '%s'): added (file.length=%d)",
+            "#add('%[text]s', '%s'): added at pos #%d",
             item.value(),
             item.path(),
-            this.file().length()
+            pos
         );
+        return pos;
     }
 
     /**
@@ -208,6 +218,9 @@ class Backlog {
     public Iterator<Item> iterator() throws IOException {
         final FileInputStream stream = new FileInputStream(this.ifile);
         final DataInputStream data = new DataInputStream(stream);
+        if (data.readInt() != Backlog.START_MARKER) {
+            throw new IllegalArgumentException("wrong file format");
+        }
         return new Iterator<Item>() {
             private final transient AtomicReference<Item> item =
                 new AtomicReference<Item>();
