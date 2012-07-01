@@ -159,6 +159,7 @@ final class Catalog {
      *
      * @param value The value
      * @return Position in data file or -1 if not found
+     * @throws IOException If some I/O problem inside
      */
     public long seek(final String value) throws IOException {
         final int target = value.hashCode();

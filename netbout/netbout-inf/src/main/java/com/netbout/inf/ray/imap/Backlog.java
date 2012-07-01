@@ -197,7 +197,7 @@ class Backlog {
             private final transient AtomicBoolean eof = new AtomicBoolean();
             @Override
             public boolean hasNext() {
-                if (this.item.get() == null) {
+                if (this.item.get() == null && !this.eof.get()) {
                     try {
                         final String value = data.readUTF();
                         if (value.equals(Backlog.EOF_MARKER)) {

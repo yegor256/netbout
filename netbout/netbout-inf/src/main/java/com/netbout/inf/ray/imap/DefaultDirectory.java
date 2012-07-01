@@ -29,7 +29,9 @@ package com.netbout.inf.ray.imap;
 import com.jcabi.log.Logger;
 import com.netbout.inf.Attribute;
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.Closeable;
+import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -110,11 +112,11 @@ final class DefaultDirectory implements Directory {
     @Override
     public void load(final Attribute attr, final String value,
         final Numbers nums) throws IOException {
-        final File file = this.base.get().data(attr);
-        final RandomAccessFile data = new RandomAccessFile(file, "r");
-        try {
-            final long pos = this.base.get().catalog(attr).seek(value);
-            if (pos >= 0) {
+        final long pos = this.base.get().catalog(attr).seek(value);
+        if (pos >= 0) {
+            final File file = this.base.get().data(attr);
+            final RandomAccessFile data = new RandomAccessFile(file, "r");
+            try {
                 data.seek(pos);
                 final InputStream istream =
                     Channels.newInputStream(data.getChannel());
@@ -133,11 +135,11 @@ final class DefaultDirectory implements Directory {
                     file.length(),
                     FilenameUtils.getName(file.getPath())
                 );
-            } else {
-                nums.load(new ByteArrayInputStream(new byte[0]));
+            } finally {
+                data.close();
             }
-        } finally {
-            data.close();
+        } else {
+            nums.load(DefaultDirectory.emptyStream());
         }
     }
 
@@ -163,7 +165,12 @@ final class DefaultDirectory implements Directory {
     public void load(final Attribute attr,
         final Reverse reverse) throws IOException {
         final File file = this.base.get().reverse(attr);
-        final InputStream stream = new FileInputStream(file);
+        InputStream stream;
+        if (file.length() > 0) {
+            stream = new FileInputStream(file);
+        } else {
+            stream = DefaultDirectory.emptyStream();
+        }
         try {
             reverse.load(stream);
         } finally {
@@ -199,6 +206,19 @@ final class DefaultDirectory implements Directory {
         this.draft.get().close();
         this.draft.set(null);
         this.lock.close();
+    }
+
+    /**
+     * Create input stream with no numbers (just leading ZERO long).
+     * @return Stream
+     * @throws IOException If some I/O problem inside
+     */
+    private static InputStream emptyStream() throws IOException {
+        final ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        final DataOutputStream data = new DataOutputStream(baos);
+        data.writeLong(0L);
+        final byte[] bytes = baos.toByteArray();
+        return new ByteArrayInputStream(bytes);
     }
 
 }
