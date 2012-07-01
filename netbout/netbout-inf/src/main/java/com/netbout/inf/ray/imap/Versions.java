@@ -39,19 +39,19 @@ import java.util.UUID;
 import org.apache.commons.io.FileUtils;
 
 /**
- * Builder of version.
+ * Versions in directory.
  *
  * <p>Class is thread-safe.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-final class VersionBuilder {
+final class Versions {
 
     /**
-     * Version file name.
+     * Name of main version marker.
      */
-    private static final String VFILE = "version.txt";
+    private static final String MARKER = "version.txt";
 
     /**
      * Directory.
@@ -63,7 +63,7 @@ final class VersionBuilder {
      * @param file The directory
      * @throws IOException If some I/O problem inside
      */
-    public VersionBuilder(final File file) throws IOException {
+    public Versions(final File file) throws IOException {
         this.dir = file;
     }
 
@@ -74,13 +74,13 @@ final class VersionBuilder {
      */
     public void rebase(final String version) throws IOException {
         final String previous = FileUtils.readFileToString(
-            new File(this.dir, VersionBuilder.VFILE)
+            new File(this.dir, Versions.MARKER)
         );
         if (version.equals(previous)) {
             throw new IllegalArgumentException("same version in rebase");
         }
         FileUtils.writeStringToFile(
-            new File(this.dir, VersionBuilder.VFILE),
+            new File(this.dir, Versions.MARKER),
             version
         );
         Logger.debug(
@@ -97,9 +97,9 @@ final class VersionBuilder {
      * @throws IOException If some I/O problem inside
      */
     public String baselined() throws IOException {
-        final File marker = new File(this.dir, VersionBuilder.VFILE);
+        final File marker = new File(this.dir, Versions.MARKER);
         if (!marker.exists()) {
-            FileUtils.writeStringToFile(marker, this.ver());
+            FileUtils.writeStringToFile(marker, this.fresh());
         }
         return FileUtils.readFileToString(marker);
     }
@@ -110,14 +110,14 @@ final class VersionBuilder {
      * @throws IOException If some I/O problem inside
      */
     public String draft() throws IOException {
-        return this.ver();
+        return this.fresh();
     }
 
     /**
-     * Generate version.
+     * Generate fresh version.
      * @return Version
      */
-    private String ver() {
+    private String fresh() {
         String ver;
         do {
             ver = String.format(

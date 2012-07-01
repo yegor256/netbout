@@ -65,25 +65,11 @@ public final class DraftTest {
     @Test
     public void createsFileNames() throws Exception {
         final Draft draft = new Draft(
-            new File(this.temp.newFolder("foo"), "/some/folder")
+            new Lock(new File(this.temp.newFolder("foo"), "/some/folder"))
         );
         final Attribute attr = new Attribute("some-name");
         MatcherAssert.assertThat(draft.numbers(attr), Matchers.notNullValue());
         MatcherAssert.assertThat(draft.reverse(attr), Matchers.notNullValue());
-    }
-
-    /**
-     * Draft can create a new clean disc for every object.
-     * @throws Exception If there is some problem inside
-     */
-    @Test
-    public void preventsDuplicateInstances() throws Exception {
-        final File dir = this.temp.newFolder("foo-2");
-        final Draft draft = new Draft(dir);
-        MatcherAssert.assertThat(
-            new Draft(dir),
-            Matchers.not(Matchers.equalTo(draft))
-        );
     }
 
     /**
@@ -94,13 +80,10 @@ public final class DraftTest {
     public void baselinesItselfToBaselineWithReverse() throws Exception {
         final File dir = this.temp.newFolder("foo-3");
         final Attribute attr = new Attribute("boom");
-        final Draft draft = new Draft(dir);
+        final Draft draft = new Draft(new Lock(new File(dir, "draft")));
         FileUtils.writeStringToFile(draft.reverse(attr), "reverse-hi!");
-        final Baseline src = new Baseline(dir);
-        final Baseline dest = new Baseline(
-            dir,
-            new VersionBuilder(dir).draft()
-        );
+        final Baseline src = new Baseline(new Lock(new File(dir, "src")));
+        final Baseline dest = new Baseline(new Lock(new File(dir, "dest")));
         draft.baseline(dest, src);
         MatcherAssert.assertThat(
             FileUtils.readFileToString(dest.reverse(attr)),
@@ -117,7 +100,7 @@ public final class DraftTest {
         final File dir = this.temp.newFolder("foo-4");
         final Attribute attr = new Attribute("boom-boom-boom");
         final String value = "some data \u0433";
-        final Draft draft = new Draft(dir);
+        final Draft draft = new Draft(new Lock(new File(dir, "draft")));
         final File file = draft.numbers(attr);
         draft.backlog(attr).add(
             new Backlog.Item(
@@ -131,8 +114,10 @@ public final class DraftTest {
         final OutputStream output = new FileOutputStream(file);
         numbers.save(output);
         output.close();
-        final Baseline src = new Baseline(dir);
-        final Baseline dest = new Baseline(this.temp.newFolder("foo-5"));
+        final Baseline src = new Baseline(new Lock(new File(dir, "src")));
+        final Baseline dest = new Baseline(
+            new Lock(this.temp.newFolder("foo-5"))
+        );
         draft.baseline(src, dest);
         final Numbers restored = new SimpleNumbers();
         final InputStream input = new FileInputStream(file);

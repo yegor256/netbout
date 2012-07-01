@@ -55,27 +55,11 @@ final class Baseline implements Closeable {
 
     /**
      * Public ctor.
-     * @param file The directory
+     * @param lck The directory where to work
      * @throws IOException If some I/O problem inside
      */
-    public Baseline(final File file) throws IOException {
-        this(file, new VersionBuilder(file).baselined());
-    }
-
-    /**
-     * Public ctor.
-     * @param file The directory
-     * @param ver The version to use
-     * @throws IOException If some I/O problem inside
-     */
-    public Baseline(final File file, final String ver) throws IOException {
-        this.lock = new Lock(new File(file, ver));
-        Logger.debug(
-            this,
-            "#Baseline(/%s, '%s'): started",
-            FilenameUtils.getName(file.getPath()),
-            ver
-        );
+    public Baseline(final Lock lck) throws IOException {
+        this.lock = lck;
     }
 
     /**

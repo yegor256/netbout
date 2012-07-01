@@ -57,21 +57,11 @@ public final class BaselineTest {
      */
     @Test
     public void createsFileNames() throws Exception {
-        final Baseline base = new Baseline(this.temp.newFolder("foo"));
+        final Baseline base =
+            new Baseline(new Lock(this.temp.newFolder("foo")));
         final Attribute attr = new Attribute("some-name");
         MatcherAssert.assertThat(base.data(attr), Matchers.notNullValue());
         MatcherAssert.assertThat(base.reverse(attr), Matchers.notNullValue());
-    }
-
-    /**
-     * Baseline can prevent against duplicate instances for the same folder.
-     * @throws Exception If there is some problem inside
-     */
-    @Test(expected = java.io.IOException.class)
-    public void preventsDuplicateInstances() throws Exception {
-        final File dir = this.temp.newFolder("foo-2");
-        final Baseline base = new Baseline(dir);
-        new Baseline(dir);
     }
 
 }

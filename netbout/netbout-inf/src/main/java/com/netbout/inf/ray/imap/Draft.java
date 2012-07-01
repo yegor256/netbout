@@ -64,23 +64,11 @@ final class Draft implements Closeable {
 
     /**
      * Public ctor.
-     * @param file The directory
+     * @param lck The directory where to work
      * @throws IOException If some I/O problem inside
      */
-    public Draft(final File file) throws IOException {
-        final String ver = new VersionBuilder(file).draft();
-        this.lock = new Lock(
-            new File(
-                file,
-                String.format("/%s", ver)
-            )
-        );
-        Logger.debug(
-            this,
-            "#Draft(/%s): started %s",
-            FilenameUtils.getName(file.getPath()),
-            ver
-        );
+    public Draft(final Lock lck) throws IOException {
+        this.lock = lck;
     }
 
     /**

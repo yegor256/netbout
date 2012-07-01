@@ -59,6 +59,11 @@ final class DefaultDirectory implements Directory {
     private final transient Lock lock;
 
     /**
+     * All versions in the directory.
+     */
+    private final transient Versions versions;
+
+    /**
      * Directory with baselined files.
      */
     private final transient AtomicReference<Baseline> base =
@@ -76,8 +81,17 @@ final class DefaultDirectory implements Directory {
      */
     public DefaultDirectory(final File file) throws IOException {
         this.lock = new Lock(file);
-        this.base.set(new Baseline(this.lock.dir()));
-        this.draft.set(new Draft(this.lock.dir()));
+        this.versions = new Versions(this.lock.dir());
+        this.base.set(
+            new Baseline(
+                new Lock(new File(this.lock.dir(), this.versions.baselined()))
+            )
+        );
+        this.draft.set(
+            new Draft(
+                new Lock(new File(this.lock.dir(), this.versions.draft()))
+            )
+        );
         Logger.debug(
             this,
             "#DefaultDirectory('/%s'): started",
@@ -183,9 +197,9 @@ final class DefaultDirectory implements Directory {
      */
     @Override
     public void baseline() throws IOException {
+        final String version = this.versions.draft();
         final Baseline candidate = new Baseline(
-            this.lock.dir(),
-            new VersionBuilder(this.lock.dir()).draft()
+            new Lock(new File(this.lock.dir(), version))
         );
         this.draft.get().baseline(candidate, this.base.get());
         this.base.get().close();
@@ -193,7 +207,12 @@ final class DefaultDirectory implements Directory {
         this.base.set(candidate);
         this.draft.get().close();
         this.draft.get().expire();
-        this.draft.set(new Draft(this.lock.dir()));
+        this.draft.set(
+            new Draft(
+                new Lock(new File(this.lock.dir(), this.versions.draft()))
+            )
+        );
+        this.versions.rebase(version);
     }
 
     /**

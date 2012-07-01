@@ -36,11 +36,11 @@ import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
 /**
- * Test case of {@link VersionBuilder}.
+ * Test case of {@link Versions}.
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class VersionBuilderTest {
+public final class VersionsTest {
 
     /**
      * Temporary folder.
@@ -50,12 +50,12 @@ public final class VersionBuilderTest {
     public transient TemporaryFolder temp = new TemporaryFolder();
 
     /**
-     * VersionBuilder can create version number.
+     * Versions can create version number.
      * @throws Exception If there is some problem inside
      */
     @Test
     public void createsVersionOfBaseline() throws Exception {
-        final VersionBuilder builder = new VersionBuilder(
+        final Versions builder = new Versions(
             new File(this.temp.newFolder("foo"), "/some/folder/to/create")
         );
         final String ver = builder.baselined();
@@ -67,12 +67,12 @@ public final class VersionBuilderTest {
     }
 
     /**
-     * VersionBuilder can create version number.
+     * Versions can create version number.
      * @throws Exception If there is some problem inside
      */
     @Test
     public void createsVersionOfDraft() throws Exception {
-        final VersionBuilder builder = new VersionBuilder(
+        final Versions builder = new Versions(
             new File(this.temp.newFolder("foo-1"), "/some/folder/to/create-2")
         );
         final String ver = builder.draft();
