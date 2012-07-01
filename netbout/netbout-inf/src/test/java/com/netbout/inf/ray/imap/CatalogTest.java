@@ -48,6 +48,7 @@ import org.junit.rules.TemporaryFolder;
  * Test case of {@link Catalog}.
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
+ * @checkstyle MagicNumber (500 lines)
  */
 public final class CatalogTest {
 
@@ -67,17 +68,12 @@ public final class CatalogTest {
         final Catalog catalog = new Catalog(this.temp.newFile("catalog.txt"));
         final String value = "some value to use, \u0433";
         final long pos = Math.max(Math.abs(new Random().nextLong()), 1L);
-        // @checkstyle MagicNumber (1 line)
         final int total = new Random().nextInt(500) + 100;
+        final int length = 5;
         final List<Catalog.Item> items = new ArrayList<Catalog.Item>(total + 1);
         items.add(new Catalog.Item(value, pos));
         for (int num = 0; num < total; ++num) {
-            items.add(
-                new Catalog.Item(
-                    RandomStringUtils.random(num),
-                    num
-                )
-            );
+            items.add(new Catalog.Item(CatalogTest.random(), num));
         }
         Collections.sort(items);
         catalog.create(items.iterator());
@@ -94,18 +90,13 @@ public final class CatalogTest {
         final Catalog catalog = new Catalog(this.temp.newFile("catalog-2.txt"));
         final String value = "some value to use, \u0433";
         final long pos = Math.max(Math.abs(new Random().nextLong()), 1L);
-        // @checkstyle MagicNumber (1 line)
         final int total = new Random().nextInt(500) + 100;
+        final int length = 5;
         final List<Catalog.Item> items = new ArrayList<Catalog.Item>();
         final Catalog.Item item = new Catalog.Item(value, pos);
         items.add(item);
         for (int num = 0; num < total; ++num) {
-            items.add(
-                new Catalog.Item(
-                    RandomStringUtils.random(num),
-                    num
-                )
-            );
+            items.add(new Catalog.Item(CatalogTest.random(), num));
         }
         Collections.sort(items);
         catalog.create(items.iterator());
@@ -120,8 +111,9 @@ public final class CatalogTest {
      * @throws Exception If there is some problem inside
      */
     @Test
-    public void handlesDuplicastesCorrectly() throws Exception {
-        final Catalog catalog = new Catalog(this.temp.newFile("catalog-3.txt"));
+    public void handlesDuplicatesCorrectly() throws Exception {
+        // final Catalog catalog = new Catalog(this.temp.newFile("catalog-3.txt"));
+        final Catalog catalog = new Catalog(new java.io.File("./cat.txt"));
         final String first = "TlYhv";
         final String second = "UMYhv";
         MatcherAssert.assertThat(
@@ -144,20 +136,14 @@ public final class CatalogTest {
     @Test
     public void supportsMultiThreadingSearch() throws Exception {
         final Catalog catalog = new Catalog(this.temp.newFile("catalog-4.txt"));
-        // @checkstyle MagicNumber (1 line)
         final int total = new Random().nextInt(100) + 50;
+        final int length = 5;
         final List<Catalog.Item> items = new ArrayList<Catalog.Item>();
         for (int num = 0; num < total; ++num) {
-            items.add(
-                new Catalog.Item(
-                    RandomStringUtils.random(num),
-                    num
-                )
-            );
+            items.add(new Catalog.Item(CatalogTest.random(), num));
         }
         Collections.sort(items);
         catalog.create(items.iterator());
-        // @checkstyle MagicNumber (1 line)
         final int threads = 10;
         final CountDownLatch start = new CountDownLatch(1);
         final CountDownLatch latch = new CountDownLatch(threads);
@@ -165,7 +151,9 @@ public final class CatalogTest {
             @Override
             public Void call() throws Exception {
                 start.await();
-                catalog.seek(RandomStringUtils.random(total));
+                for (int attempt = 0; attempt < 20; ++attempt) {
+                    catalog.seek(CatalogTest.random());
+                }
                 latch.countDown();
                 return null;
             }
@@ -178,6 +166,14 @@ public final class CatalogTest {
         start.countDown();
         latch.await(1, TimeUnit.SECONDS);
         svc.shutdown();
+    }
+
+    /**
+     * Generate random string.
+     * @return The string
+     */
+    private static String random() {
+        return RandomStringUtils.random(new Random().nextInt(6) + 1);
     }
 
 }

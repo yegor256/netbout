@@ -286,6 +286,7 @@ final class Draft implements Closeable {
             final Attribute attr) throws IOException {
             this.attribute = attr;
             this.catalog = src.catalog(this.attribute);
+            // we should cache values first
             this.biterator = Draft.this.backlog(this.attribute).iterator();
             this.citerator = this.catalog.iterator();
             this.data = new RandomAccessFile(src.data(this.attribute), "r");

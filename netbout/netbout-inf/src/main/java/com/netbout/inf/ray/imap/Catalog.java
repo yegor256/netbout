@@ -62,7 +62,7 @@ final class Catalog {
     /**
      * Full file for slow search.
      */
-    private final transient File slow;
+    private final transient Catalog.SlowLog slow;
 
     /**
      * Public ctor.
@@ -72,15 +72,16 @@ final class Catalog {
     public Catalog(final File ctlg) throws IOException {
         this.fast = ctlg;
         FileUtils.touch(this.fast);
-        this.slow = new File(
-            this.fast.getParentFile(),
-            String.format(
-                "%s-slow.%s",
-                FilenameUtils.getBaseName(this.fast.getPath()),
-                FilenameUtils.getExtension(this.fast.getPath())
+        this.slow = new Catalog.SlowLog(
+            new File(
+                this.fast.getParentFile(),
+                String.format(
+                    "%s-slow.%s",
+                    FilenameUtils.getBaseName(this.fast.getPath()),
+                    FilenameUtils.getExtension(this.fast.getPath())
+                )
             )
         );
-        FileUtils.touch(this.slow);
     }
 
     /**
@@ -170,7 +171,7 @@ final class Catalog {
             data.seek(pos * Item.SIZE);
             final int hash = data.readInt();
             if (hash == target) {
-                found = this.normalized(data.readLong(), value);
+                found = this.slow.normalized(data.readLong(), value);
                 break;
             }
             if (hash < target && left < right - 1) {
@@ -179,13 +180,22 @@ final class Catalog {
                 right = pos;
             }
         }
-        Logger.debug(
-            this,
-            "#seek('%[text]s'): found pos #%d among %d value(s)",
-            value,
-            found,
-            data.length() / Item.SIZE
-        );
+        if (found > 0) {
+            Logger.debug(
+                this,
+                "#seek('%[text]s'): found pos #%d among %d value(s)",
+                value,
+                found,
+                data.length() / Item.SIZE
+            );
+        } else {
+            Logger.debug(
+                this,
+                "#seek('%[text]s'): not found among %d value(s)",
+                value,
+                data.length() / Item.SIZE
+            );
+        }
         return found;
     }
 
@@ -201,7 +211,6 @@ final class Catalog {
     public void create(final Iterator<Item> items) throws IOException {
         final long start = System.currentTimeMillis();
         final RandomAccessFile ffile = new RandomAccessFile(this.fast, "rw");
-        final RandomAccessFile sfile = new RandomAccessFile(this.slow, "rw");
         int total = 0;
         try {
             int previous = Integer.MIN_VALUE;
@@ -215,63 +224,51 @@ final class Catalog {
                 if (hash == previous) {
                     ffile.seek(ffile.getFilePointer() - Item.SIZE);
                     ffile.writeInt(hash);
-                    ffile.writeLong(-dupstart - 1);
+                    ffile.writeLong(-dupstart);
                 } else {
-                    dupstart = sfile.getFilePointer();
+                    dupstart = this.slow.pointer();
                     ffile.writeInt(hash);
                     ffile.writeLong(item.position());
                 }
-                sfile.writeUTF(item.value());
-                sfile.writeLong(item.position());
+                this.slow.add(
+                    new SlowLog.Item(
+                        item.value(),
+                        Long.toString(item.position())
+                    )
+                );
                 previous = hash;
                 ++total;
             }
         } finally {
             ffile.close();
-            sfile.close();
         }
         Logger.debug(
             this,
             // @checkstyle LineLength (1 line)
-            "#create(): saved to %s (%d bytes, %d values) and %s (%s bytes) in %[ms]s",
+            "#create(): saved to %s (%d bytes, %d values) in %[ms]s",
             FilenameUtils.getName(this.fast.getPath()),
             this.fast.length(),
             total,
-            FilenameUtils.getName(this.slow.getPath()),
-            this.slow.length(),
             System.currentTimeMillis() - start
         );
     }
 
     /**
      * Get an iterator of them items.
-     * @return The iterator
+     * @return The thread-safe iterator
      * @throws IOException If some I/O problem inside
      */
     public Iterator<Item> iterator() throws IOException {
-        final FileInputStream stream = new FileInputStream(this.slow);
-        final DataInputStream data = new DataInputStream(stream);
+        final Iterator<Catalog.SlowLog.Item> origin = this.slow.iterator();
         return new Iterator<Item>() {
             @Override
             public boolean hasNext() {
-                boolean has;
-                try {
-                    has = stream.getFD().valid() && data.available() > 0;
-                } catch (java.io.IOException ex) {
-                    throw new IllegalStateException(ex);
-                }
-                if (!has) {
-                    IOUtils.closeQuietly(stream);
-                }
-                return has;
+                return origin.hasNext();
             }
             @Override
             public Item next() {
-                try {
-                    return new Item(data.readUTF(), data.readLong());
-                } catch (java.io.IOException ex) {
-                    throw new IllegalStateException(ex);
-                }
+                final Catalog.SlowLog.Item item = origin.next();
+                return new Item(item.value(), Long.valueOf(item.path()));
             }
             @Override
             public void remove() {
@@ -281,31 +278,83 @@ final class Catalog {
     }
 
     /**
-     * Convert position to the normal form.
-     *
-     * <p>If position is negative it means that we should do a full search
-     * in slow index, by its UTF value.
-     *
-     * @param pos Position found in fast index
-     * @param value The value
-     * @return Normalized position in data file
+     * Slow log.
      */
-    private long normalized(final long pos,
-        final String value) throws IOException {
-        long norm = pos;
-        if (norm < 0) {
-            final RandomAccessFile data = new RandomAccessFile(this.slow, "r");
-            data.seek(-norm - 1);
-            while (data.getFilePointer() < data.length()) {
+    private static final class SlowLog extends Backlog {
+        /**
+         * Public ctor.
+         * @param file The file to use
+         * @throws IOException If some I/O problem inside
+         */
+        public SlowLog(final File file) throws IOException {
+            super(file);
+        }
+        /**
+         * Where we are now in the file.
+         * @return File pointer
+         * @throws IOException If some I/O problem inside
+         */
+        public long pointer() throws IOException {
+            return this.file().length() - Backlog.eofMarkerLength;
+        }
+        /**
+         * Convert position to the normal form.
+         *
+         * <p>If position is negative it means that we should do a full search
+         * in slow index, by its UTF value.
+         *
+         * @param pos Position found in fast index
+         * @param value The value
+         * @return Normalized position in data file
+         * @throws IOException If some I/O problem inside
+         */
+        public long normalized(final long pos,
+            final String value) throws IOException {
+            long norm;
+            if (pos < 0) {
+                norm = Long.valueOf(this.seek(-pos, value));
+            } else {
+                norm = pos;
+            }
+            return norm;
+        }
+        /**
+         * Find ref by value, starting with given position.
+         * @param pos Position to start with
+         * @param value The value to search for
+         * @return Reference found
+         * @throws IOException If some I/O problem inside
+         */
+        private String seek(final long pos,
+            final String value) throws IOException {
+            final RandomAccessFile data =
+                new RandomAccessFile(this.file(), "r");
+            data.seek(pos);
+            String ref;
+            while (true) {
                 final String val = data.readUTF();
-                final long num = data.readLong();
+                if (val.equals(Backlog.EOF_MARKER)) {
+                    throw new IllegalArgumentException(
+                        String.format(
+                            "value '%s' not found in slow index",
+                            value
+                        )
+                    );
+                }
+                ref = data.readUTF();
                 if (val.equals(value)) {
-                    norm = num;
+                    Logger.debug(
+                        this,
+                        "#seek(%d, '%[text]s'): found pos #%s in slow search",
+                        pos,
+                        value,
+                        ref
+                    );
                     break;
                 }
             }
+            return ref;
         }
-        return norm;
     }
 
 }

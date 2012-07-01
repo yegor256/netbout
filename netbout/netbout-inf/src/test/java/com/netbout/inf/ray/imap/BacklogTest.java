@@ -27,6 +27,7 @@
 package com.netbout.inf.ray.imap;
 
 import java.util.Random;
+import org.apache.commons.collections.IteratorUtils;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Rule;
@@ -53,16 +54,19 @@ public final class BacklogTest {
      */
     @Test
     public void registersValuesAndFindsThen() throws Exception {
-        final Backlog backlog = new Backlog(
-            this.temp.newFile("backlog.txt")
-        );
+        final Backlog backlog = new Backlog(this.temp.newFile("backlog.txt"));
         final String value = "some value to use, \u0433";
         final String ref = "some reference to use, \u0433";
         backlog.add(new Backlog.Item(value, ref));
         backlog.add(new Backlog.Item("abc", ref));
+        backlog.add(new Backlog.Item("foo", "bar"));
         MatcherAssert.assertThat(
             backlog.iterator().next().value(),
             Matchers.equalTo(value)
+        );
+        MatcherAssert.assertThat(
+            IteratorUtils.toList(backlog.iterator()).size(),
+            Matchers.greaterThan(2)
         );
     }
 
