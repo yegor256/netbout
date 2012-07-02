@@ -32,7 +32,6 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.util.Iterator;
@@ -40,7 +39,6 @@ import java.util.NoSuchElementException;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.FilenameUtils;
 
 /**
  * Backlog in a directory.
@@ -180,15 +178,12 @@ class Backlog {
      * <p>The method is NOT thread-safe.
      *
      * @param item The item to add
-     * @return Position in file where this item is added
      * @throws IOException If some I/O problem inside
      */
-    public final long add(final Item item) throws IOException {
+    public final void add(final Item item) throws IOException {
         final RandomAccessFile data = new RandomAccessFile(this.ifile, "rw");
-        long pos;
         try {
             data.seek(this.ifile.length() - Backlog.eofMarkerLength * 2);
-            pos = data.getFilePointer();
             data.writeUTF(item.value());
             data.writeUTF(item.path());
             data.writeUTF(Backlog.EOF_MARKER);
@@ -198,12 +193,10 @@ class Backlog {
         }
         Logger.debug(
             this,
-            "#add('%[text]s', '%s'): added at pos #%d",
+            "#add('%[text]s', '%s'): added",
             item.value(),
-            item.path(),
-            pos
+            item.path()
         );
-        return pos;
     }
 
     /**
@@ -260,8 +253,10 @@ class Backlog {
         public boolean hasNext() {
             if (this.item.get() == null && !this.eof.get()) {
                 try {
-                    final Item next =
-                        new Item(this.data.readUTF(), this.data.readUTF());
+                    final Item next = new Item(
+                        this.data.readUTF(),
+                        this.data.readUTF()
+                    );
                     if (next.value().equals(Backlog.EOF_MARKER)
                         && next.path().equals(Backlog.EOF_MARKER)) {
                         this.eof.set(true);

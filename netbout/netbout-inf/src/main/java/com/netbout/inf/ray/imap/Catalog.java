@@ -248,6 +248,7 @@ final class Catalog {
             }
         } finally {
             output.close();
+            slowlog.close();
         }
         Logger.debug(
             this,

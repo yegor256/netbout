@@ -26,9 +26,7 @@
  */
 package com.netbout.inf.ray.imap;
 
-import java.util.Iterator;
 import java.util.Random;
-import org.apache.commons.collections.IteratorUtils;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Rule;
@@ -55,13 +53,14 @@ public final class SlowlogTest {
      */
     @Test
     public void savesDataThroughOutputStream() throws Exception {
-        final Slowlog slowlog = new Slowlog(this.temp.newFile("backlog-5.txt"));
+        final Slowlog slowlog = new Slowlog(this.temp.newFile("slowlog-5.txt"));
         final BacklogOutputStream stream = slowlog.open();
         final String value = "some value, \u0433";
         final long num = new Random().nextLong();
         final long pos = stream.write(
             new Slowlog.Item(value, Long.toString(num))
         );
+        MatcherAssert.assertThat(pos, Matchers.greaterThan(0L));
         stream.write(new Slowlog.Item("foo", "2324"));
         stream.close();
         MatcherAssert.assertThat(

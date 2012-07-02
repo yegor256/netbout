@@ -26,12 +26,10 @@
  */
 package com.netbout.inf.ray.imap;
 
-import java.io.Closeable;
 import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * Output stream with {@link Backlog} items.
