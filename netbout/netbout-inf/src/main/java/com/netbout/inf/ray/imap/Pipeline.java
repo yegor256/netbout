@@ -28,6 +28,8 @@ package com.netbout.inf.ray.imap;
 
 import com.jcabi.log.Logger;
 import com.netbout.inf.Attribute;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.Closeable;
 import java.io.File;
 import java.io.FileInputStream;
@@ -117,7 +119,7 @@ final class Pipeline implements Closeable, Iterator<Catalog.Item> {
     /**
      * Output stream.
      */
-    private final transient OutputStream output;
+    private final transient DataOutputStream output;
 
     /**
      * Current position in output stream.
@@ -156,7 +158,9 @@ final class Pipeline implements Closeable, Iterator<Catalog.Item> {
         );
         this.citerator = this.catalog.iterator();
         this.data = new RandomAccessFile(src.data(this.attribute), "r");
-        this.output = new FileOutputStream(dest.data(this.attribute));
+        this.output = new DataOutputStream(
+            new FileOutputStream(dest.data(this.attribute))
+        );
     }
 
     /**
@@ -321,24 +325,31 @@ final class Pipeline implements Closeable, Iterator<Catalog.Item> {
         public Catalog.Item item() throws IOException {
             final long pos = Pipeline.this.catalog.seek(this.item.value());
             Pipeline.this.data.seek(pos);
-            final InputStream input = Channels.newInputStream(
-                Pipeline.this.data.getChannel()
+            final DataInputStream input = new DataInputStream(
+                Channels.newInputStream(Pipeline.this.data.getChannel())
             );
-            final int len = IOUtils.copy(
-                input,
-                Pipeline.this.output
-            );
+            long copied = 0;
+            while (true) {
+                final long num = input.readLong();
+                Pipeline.this.output.writeLong(num);
+                ++copied;
+                if (num == 0) {
+                    break;
+                }
+            }
             Logger.debug(
                 this,
-                "#item('%s'): copied %d bytes from pos #%d ('%[text]s')",
+                // @checkstyle LineLength (1 line)
+                "#item('%s'): copied %d nums (%d bytes) from pos #%d ('%[text]s')",
                 Pipeline.this.attribute,
-                len,
+                copied,
+                copied * Numbers.SIZE,
                 pos,
                 this.item.value()
             );
             return new Catalog.Item(
                 this.item.value(),
-                Pipeline.this.opos.getAndAdd(len)
+                Pipeline.this.opos.getAndAdd(copied * Numbers.SIZE)
             );
         }
         /**

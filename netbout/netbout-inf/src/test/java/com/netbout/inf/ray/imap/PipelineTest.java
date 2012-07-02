@@ -81,24 +81,28 @@ public final class PipelineTest {
         }
         draft.close();
         src.close();
-        // MatcherAssert.assertThat(
-        //     items,
-        //     Matchers.hasSize(Matchers.greaterThan(1))
-        // );
-        //
-        // final long pos = items.get(0).position();
-        // // MatcherAssert.assertThat(pos, Matchers.equalTo(0L));
-        // final RandomAccessFile data =
-        //     new RandomAccessFile(dest.data(attr), "r");
-        // data.seek(pos);
-        // final InputStream istream = Channels.newInputStream(data.getChannel());
-        // final Numbers restored = new SimpleNumbers();
-        // restored.load(istream);
-        // istream.close();
-        // MatcherAssert.assertThat(
-        //     restored.next(Long.MAX_VALUE),
-        //     Matchers.not(Matchers.equalTo(0L))
-        // );
+        MatcherAssert.assertThat(
+            dest.data(attr).length(),
+            Matchers.greaterThanOrEqualTo(
+                (long) Numbers.SIZE * PipelineTest.values().length
+            )
+        );
+        MatcherAssert.assertThat(
+            items,
+            Matchers.hasSize(PipelineTest.values().length)
+        );
+        final long pos = items.get(0).position();
+        final RandomAccessFile data =
+            new RandomAccessFile(dest.data(attr), "r");
+        data.seek(pos);
+        final InputStream istream = Channels.newInputStream(data.getChannel());
+        final Numbers restored = new SimpleNumbers();
+        restored.load(istream);
+        istream.close();
+        MatcherAssert.assertThat(
+            restored.next(Long.MAX_VALUE),
+            Matchers.not(Matchers.equalTo(0L))
+        );
     }
 
     /**
@@ -139,9 +143,10 @@ public final class PipelineTest {
         final OutputStream output = new FileOutputStream(base.data(attr));
         long pos = 0;
         final List<Catalog.Item> items = new LinkedList<Catalog.Item>();
+        final Numbers numbers = new SimpleNumbers();
         for (String value : PipelineTest.values()) {
             items.add(new Catalog.Item(value, pos));
-            pos += PipelineTest.numbers().save(output);
+            pos += numbers.save(output);
         }
         output.close();
         Collections.sort(items);
