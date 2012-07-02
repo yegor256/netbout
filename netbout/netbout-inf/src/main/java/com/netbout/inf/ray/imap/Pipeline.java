@@ -126,7 +126,8 @@ final class Pipeline implements Closeable, Iterator<Catalog.Item> {
         new AtomicReference<Pipeline.Token>();
 
     /**
-     * Value retrieved in previous call to {@link #next()}.
+     * Value retrieved in previous call to {@link #next()} (to consume
+     * and filter out duplicated values).
      */
     private final transient AtomicReference<Catalog.Item> ahead =
         new AtomicReference<Catalog.Item>();

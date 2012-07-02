@@ -134,9 +134,8 @@ final class SimpleNumbers implements Numbers {
         data.flush();
         Logger.debug(
             this,
-            "#save(..): saved %d numbers %[list]s",
-            this.nums.size(),
-            this.nums
+            "#save(..): saved %d numbers",
+            this.nums.size()
         );
     }
 
@@ -157,9 +156,8 @@ final class SimpleNumbers implements Numbers {
         if (!this.nums.isEmpty()) {
             Logger.debug(
                 this,
-                "#load(..): loaded %d numbers %[list]s",
-                this.nums.size(),
-                this.nums
+                "#load(..): loaded %d numbers",
+                this.nums.size()
             );
         }
     }
