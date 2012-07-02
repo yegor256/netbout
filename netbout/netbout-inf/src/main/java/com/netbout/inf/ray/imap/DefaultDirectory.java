@@ -112,7 +112,11 @@ final class DefaultDirectory implements Directory {
             text.append("version: ")
                 .append(this.versions.baselined())
                 .append(", ")
-                .append(FileUtils.sizeOfDirectory(this.lock.dir()))
+                .append(
+                    FileUtils.byteCountToDisplaySize(
+                        FileUtils.sizeOfDirectory(this.lock.dir())
+                    )
+                )
                 .append(" bytes");
         } catch (java.io.IOException ex) {
             throw new IllegalStateException(ex);
