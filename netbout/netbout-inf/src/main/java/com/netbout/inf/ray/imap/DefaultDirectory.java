@@ -84,6 +84,7 @@ final class DefaultDirectory implements Directory {
     public DefaultDirectory(final File file) throws IOException {
         this.lock = new Lock(file);
         this.versions = new Versions(this.lock.dir());
+        this.versions.clear();
         this.base.set(
             new Baseline(
                 new Lock(new File(this.lock.dir(), this.versions.baselined()))
@@ -227,12 +228,13 @@ final class DefaultDirectory implements Directory {
         this.base.set(candidate);
         this.draft.get().close();
         this.draft.get().expire();
+        this.versions.rebase(version);
+        this.versions.clear();
         this.draft.set(
             new Draft(
                 new Lock(new File(this.lock.dir(), this.versions.draft()))
             )
         );
-        this.versions.rebase(version);
     }
 
     /**

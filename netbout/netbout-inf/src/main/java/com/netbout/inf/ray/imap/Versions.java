@@ -60,16 +60,6 @@ final class Versions {
      */
     public Versions(final File file) throws IOException {
         this.dir = file;
-        final String base = this.baselined();
-        for (File folder : this.dir.listFiles()) {
-            if (!folder.isDirectory()) {
-                continue;
-            }
-            final String name = FilenameUtils.getName(folder.getPath());
-            if (!name.equals(base)) {
-                FileUtils.deleteDirectory(folder);
-            }
-        }
     }
 
     /**
@@ -133,6 +123,24 @@ final class Versions {
      */
     public String draft() throws IOException {
         return this.fresh();
+    }
+
+    /**
+     * Remove old versions from disc (except the provided draft version).
+     * @throws IOException If some I/O problem inside
+     */
+    public void clear() throws IOException {
+        final String base = this.baselined();
+        for (File folder : this.dir.listFiles()) {
+            if (!folder.isDirectory()) {
+                continue;
+            }
+            final String name = FilenameUtils.getName(folder.getPath());
+            if (name.equals(base)) {
+                continue;
+            }
+            FileUtils.deleteDirectory(folder);
+        }
     }
 
     /**
