@@ -98,18 +98,7 @@ class Backlog {
         this.ifile = bck;
         FileUtils.touch(this.ifile);
         if (this.ifile.length() == 0) {
-            final DataOutputStream data = new DataOutputStream(
-                new FileOutputStream(this.ifile)
-            );
-            data.writeInt(Backlog.START_MARKER);
-            data.writeUTF(Backlog.EOF_MARKER);
-            data.writeUTF(Backlog.EOF_MARKER);
-            data.close();
-            Logger.debug(
-                this,
-                "#Backlog('%s'): started",
-                FilenameUtils.getName(this.ifile.getPath())
-            );
+            this.open().close();
         }
     }
 
@@ -174,6 +163,15 @@ class Backlog {
         public String path() {
             return this.name;
         }
+    }
+
+    /**
+     * Open output stream of this backlog.
+     * @return The output stream
+     * @throws IOException If some I/O problem inside
+     */
+    public final BacklogOutputStream open() throws IOException {
+        return new BacklogOutputStream(this.ifile);
     }
 
     /**
