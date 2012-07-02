@@ -114,7 +114,7 @@ public final class DefaultInfinity implements Infinity {
             )
             .append(
                 String.format(
-                    "  freeMemory(): %d\n",
+                    "  freeMemory(): %s\n",
                     FileUtils.byteCountToDisplaySize(
                         Runtime.getRuntime().freeMemory()
                     )
@@ -122,7 +122,7 @@ public final class DefaultInfinity implements Infinity {
             )
             .append(
                 String.format(
-                    "  maxMemory(): %d\n",
+                    "  maxMemory(): %s\n",
                     FileUtils.byteCountToDisplaySize(
                         Runtime.getRuntime().maxMemory()
                     )
@@ -130,7 +130,7 @@ public final class DefaultInfinity implements Infinity {
             )
             .append(
                 String.format(
-                    "  totalMemory(): %d\n",
+                    "  totalMemory(): %s\n",
                     FileUtils.byteCountToDisplaySize(
                         Runtime.getRuntime().totalMemory()
                     )
