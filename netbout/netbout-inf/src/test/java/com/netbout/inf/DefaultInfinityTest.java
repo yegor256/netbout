@@ -134,4 +134,16 @@ public final class DefaultInfinityTest {
         }
     }
 
+    /**
+     * DefaultInfinity can convert itselt to string.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void convertsItseltToString() throws Exception {
+        MatcherAssert.assertThat(
+            new DefaultInfinity(new FolderMocker().mock()),
+            Matchers.hasToString(Matchers.notNullValue())
+        );
+    }
+
 }

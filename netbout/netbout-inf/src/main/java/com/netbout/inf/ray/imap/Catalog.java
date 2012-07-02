@@ -42,6 +42,7 @@ import org.apache.commons.io.FilenameUtils;
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
+ * @checkstyle ClassDataAbstractionCoupling (500 lines)
  */
 @SuppressWarnings("PMD.TooManyMethods")
 final class Catalog {
@@ -208,8 +209,7 @@ final class Catalog {
     @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
     public void create(final Iterator<Catalog.Item> items) throws IOException {
         final long start = System.currentTimeMillis();
-        final RandomAccessFile ffile = new RandomAccessFile(this.fast, "rw");
-        ffile.setLength(0L);
+        final CatalogOutputStream output = new CatalogOutputStream(this.fast);
         int total = 0;
         int dups = 0;
         try {
@@ -234,21 +234,19 @@ final class Catalog {
                     )
                 );
                 if (hash == previous) {
-                    ffile.seek(ffile.getFilePointer() - Catalog.Item.SIZE);
-                    ffile.writeInt(hash);
-                    ffile.writeLong(-dupstart);
+                    output.back();
+                    output.write(new Catalog.Item(item.value(), -dupstart));
                     Logger.debug(this, "#create(): duplicate '0x%08X'", hash);
                     ++dups;
                 } else {
                     dupstart = pos;
-                    ffile.writeInt(hash);
-                    ffile.writeLong(item.position());
+                    output.write(item);
                     ++total;
                 }
                 previous = hash;
             }
         } finally {
-            ffile.close();
+            output.close();
         }
         Logger.debug(
             this,
@@ -354,6 +352,7 @@ final class Catalog {
                     break;
                 }
             }
+            data.close();
             return ref;
         }
     }

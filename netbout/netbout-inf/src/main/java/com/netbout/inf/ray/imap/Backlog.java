@@ -34,7 +34,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.io.RandomAccessFile;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
@@ -99,12 +98,13 @@ class Backlog {
         this.ifile = bck;
         FileUtils.touch(this.ifile);
         if (this.ifile.length() == 0) {
-            final OutputStream stream = new FileOutputStream(this.ifile);
-            final DataOutputStream data = new DataOutputStream(stream);
+            final DataOutputStream data = new DataOutputStream(
+                new FileOutputStream(this.ifile)
+            );
             data.writeInt(Backlog.START_MARKER);
             data.writeUTF(Backlog.EOF_MARKER);
             data.writeUTF(Backlog.EOF_MARKER);
-            stream.close();
+            data.close();
             Logger.debug(
                 this,
                 "#Backlog('%s'): started",
@@ -231,10 +231,6 @@ class Backlog {
      */
     private final class ItemsIterator implements Iterator<Backlog.Item> {
         /**
-         * Stream to read from.
-         */
-        private final transient FileInputStream stream;
-        /**
          * Data input.
          */
         private final transient DataInputStream data;
@@ -252,8 +248,9 @@ class Backlog {
          * @throws IOException If some I/O problem inside
          */
         public ItemsIterator() throws IOException {
-            this.stream = new FileInputStream(Backlog.this.ifile);
-            this.data = new DataInputStream(this.stream);
+            this.data = new DataInputStream(
+                new FileInputStream(Backlog.this.ifile)
+            );
             if (this.data.readInt() != Backlog.START_MARKER) {
                 throw new IllegalArgumentException("wrong file format");
             }
@@ -270,7 +267,7 @@ class Backlog {
                     if (next.value().equals(Backlog.EOF_MARKER)
                         && next.path().equals(Backlog.EOF_MARKER)) {
                         this.eof.set(true);
-                        this.stream.close();
+                        this.data.close();
                     } else {
                         this.item.set(next);
                     }
