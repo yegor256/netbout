@@ -124,11 +124,13 @@ final class SimpleReverse implements Reverse {
             }
             this.map.put(msg, data.readUTF());
         }
-        Logger.debug(
-            this,
-            "#load(..): loaded %d values",
-            this.map.size()
-        );
+        if (!this.map.isEmpty()) {
+            Logger.debug(
+                this,
+                "#load(..): loaded %d values",
+                this.map.size()
+            );
+        }
     }
 
 }

@@ -154,12 +154,14 @@ final class SimpleNumbers implements Numbers {
             }
             this.nums.add(next);
         }
-        Logger.debug(
-            this,
-            "#load(..): loaded %d numbers %[list]s",
-            this.nums.size(),
-            this.nums
-        );
+        if (!this.nums.isEmpty()) {
+            Logger.debug(
+                this,
+                "#load(..): loaded %d numbers %[list]s",
+                this.nums.size(),
+                this.nums
+            );
+        }
     }
 
 }
