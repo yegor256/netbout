@@ -34,13 +34,10 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.RandomAccessFile;
 import java.nio.channels.Channels;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
-import org.apache.commons.collections.IteratorUtils;
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
@@ -54,6 +51,7 @@ import org.junit.rules.TemporaryFolder;
  * @version $Id$
  * @checkstyle ClassDataAbstractionCoupling (500 lines)
  */
+@SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
 public final class PipelineTest {
 
     /**
@@ -66,6 +64,7 @@ public final class PipelineTest {
     /**
      * Pipeline can create an iterator from two sources.
      * @throws Exception If there is some problem inside
+     * @checkstyle ExecutableStatementCount (100 lines)
      */
     @Test
     public void mergesTwoIteratorsIntoOne() throws Exception {
@@ -110,20 +109,20 @@ public final class PipelineTest {
      * @param file The file to save to
      * @param attr Attribute
      * @return The draft created
-     * @throws IOException If there is some problem inside
+     * @throws Exception If there is some problem inside
      */
     private Draft draft(final File file,
         final Attribute attr) throws Exception {
         final Draft draft = new Draft(new Lock(file));
         for (String value : PipelineTest.values()) {
-            final File temp = draft.numbers(attr);
+            final File tmp = draft.numbers(attr);
             draft.backlog(attr).add(
                 new Backlog.Item(
                     value,
-                    FilenameUtils.getName(temp.getPath())
+                    FilenameUtils.getName(tmp.getPath())
                 )
             );
-            final OutputStream output = new FileOutputStream(temp);
+            final OutputStream output = new FileOutputStream(tmp);
             PipelineTest.numbers().save(output);
             output.close();
         }
@@ -135,7 +134,7 @@ public final class PipelineTest {
      * @param file The file to save to
      * @param attr Attribute
      * @return The baseline created
-     * @throws IOException If there is some problem inside
+     * @throws Exception If there is some problem inside
      */
     private Baseline baseline(final File file,
         final Attribute attr) throws Exception {
@@ -170,7 +169,8 @@ public final class PipelineTest {
      */
     private static Numbers numbers() {
         final Numbers numbers = new SimpleNumbers();
-        final int total = new Random().nextInt(10);
+        // @checkstyle MagicNumber (1 line)
+        final int total = new Random().nextInt(10) + 1;
         for (int num = 0; num < total; ++num) {
             numbers.add(MsgMocker.number());
         }

@@ -28,15 +28,14 @@ package com.netbout.inf.ray.imap;
 
 import com.jcabi.log.Logger;
 import com.netbout.inf.Attribute;
+import java.io.Closeable;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
-import java.io.Closeable;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.io.RandomAccessFile;
 import java.nio.channels.Channels;
 import java.util.Collections;
@@ -201,11 +200,11 @@ final class Pipeline implements Closeable, Iterator<Catalog.Item> {
                     tkn = this.ahead.getAndSet(tkn);
                     break;
                 }
+                this.ahead.set(tkn);
             }
             if (tkn == null) {
                 throw new NoSuchElementException();
             }
-            System.out.println("ready to return:");
             try {
                 return tkn.item();
             } catch (java.io.IOException ex) {
@@ -295,24 +294,24 @@ final class Pipeline implements Closeable, Iterator<Catalog.Item> {
     /**
      * Catalog token.
      */
-    private final class CatalogToken implements ComparableToken {
+    private final class CatalogToken implements Pipeline.ComparableToken {
         /**
          * Item to work with.
          */
-        private final transient Catalog.Item item;
+        private final transient Catalog.Item origin;
         /**
          * Public ctor.
          * @param itm The item
          */
         public CatalogToken(final Catalog.Item itm) {
-            this.item = itm;
+            this.origin = itm;
         }
         /**
          * {@inheritDoc}
          */
         @Override
         public String value() {
-            return this.item.value();
+            return this.origin.value();
         }
         /**
          * {@inheritDoc}
@@ -323,7 +322,7 @@ final class Pipeline implements Closeable, Iterator<Catalog.Item> {
          */
         @Override
         public Catalog.Item item() throws IOException {
-            final long pos = Pipeline.this.catalog.seek(this.item.value());
+            final long pos = Pipeline.this.catalog.seek(this.origin.value());
             Pipeline.this.data.seek(pos);
             final DataInputStream input = new DataInputStream(
                 Channels.newInputStream(Pipeline.this.data.getChannel())
@@ -345,10 +344,10 @@ final class Pipeline implements Closeable, Iterator<Catalog.Item> {
                 copied,
                 copied * Numbers.SIZE,
                 pos,
-                this.item.value()
+                this.origin.value()
             );
             return new Catalog.Item(
-                this.item.value(),
+                this.origin.value(),
                 Pipeline.this.opos.getAndAdd(copied * Numbers.SIZE)
             );
         }
@@ -366,7 +365,7 @@ final class Pipeline implements Closeable, Iterator<Catalog.Item> {
          */
         @Override
         public int hashCode() {
-            return this.item.hashCode();
+            return this.origin.hashCode();
         }
         /**
          * {@inheritDoc}
@@ -380,24 +379,24 @@ final class Pipeline implements Closeable, Iterator<Catalog.Item> {
     /**
      * Backlog token.
      */
-    private final class BacklogToken implements Token {
+    private final class BacklogToken implements Pipeline.Token {
         /**
          * Item to work with.
          */
-        private final transient Backlog.Item item;
+        private final transient Backlog.Item origin;
         /**
          * Public ctor.
          * @param itm The item
          */
         public BacklogToken(final Backlog.Item itm) {
-            this.item = itm;
+            this.origin = itm;
         }
         /**
          * {@inheritDoc}
          */
         @Override
         public String value() {
-            return item.value();
+            return this.origin.value();
         }
         /**
          * {@inheritDoc}
@@ -405,7 +404,7 @@ final class Pipeline implements Closeable, Iterator<Catalog.Item> {
         @Override
         public Catalog.Item item() throws IOException {
             final File file = Pipeline.this.draft.numbers(
-                Pipeline.this.attribute, this.item.path()
+                Pipeline.this.attribute, this.origin.path()
             );
             final InputStream input = new FileInputStream(file);
             final int len = IOUtils.copy(
@@ -419,10 +418,10 @@ final class Pipeline implements Closeable, Iterator<Catalog.Item> {
                 Pipeline.this.attribute,
                 len,
                 FilenameUtils.getName(file.getPath()),
-                this.item.value()
+                this.origin.value()
             );
             return new Catalog.Item(
-                this.item.value(),
+                this.origin.value(),
                 Pipeline.this.opos.getAndAdd(len)
             );
         }
@@ -431,7 +430,7 @@ final class Pipeline implements Closeable, Iterator<Catalog.Item> {
          */
         @Override
         public int hashCode() {
-            return item.hashCode();
+            return this.origin.hashCode();
         }
         /**
          * {@inheritDoc}
