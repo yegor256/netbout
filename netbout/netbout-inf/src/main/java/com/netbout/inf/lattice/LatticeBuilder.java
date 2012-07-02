@@ -82,7 +82,7 @@ public final class LatticeBuilder {
             final int bit = BitsetLattice.bit(num);
             this.main.set(bit);
         }
-        this.reverse.set(0, BitsetLattice.BITS, true);
+        this.reverse.set(0, BitsetLattice.BITS);
         final Iterator<Long> iterator = numbers.iterator();
         Long next = Long.MAX_VALUE;
         for (int bit = 0; bit < BitsetLattice.BITS; ++bit) {
@@ -120,8 +120,8 @@ public final class LatticeBuilder {
      * @return This object
      */
     public LatticeBuilder always() {
-        this.main.set(0, BitsetLattice.BITS, true);
-        this.reverse.set(0, BitsetLattice.BITS, false);
+        this.main.set(0, BitsetLattice.BITS);
+        this.reverse.clear(0, BitsetLattice.BITS);
         return this;
     }
 
@@ -130,8 +130,8 @@ public final class LatticeBuilder {
      * @return This object
      */
     public LatticeBuilder never() {
-        this.main.set(0, BitsetLattice.BITS, false);
-        this.reverse.set(0, BitsetLattice.BITS, true);
+        this.main.clear(0, BitsetLattice.BITS);
+        this.reverse.set(0, BitsetLattice.BITS);
         return this;
     }
 

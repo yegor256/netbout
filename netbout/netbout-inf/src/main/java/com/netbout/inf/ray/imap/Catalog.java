@@ -184,14 +184,6 @@ final class Catalog {
                 found,
                 data.length() / Catalog.Item.SIZE
             );
-        } else {
-            Logger.debug(
-                this,
-                "#seek('%[text]s'): 0x%08X not found among %d value(s)",
-                value,
-                target,
-                data.length() / Catalog.Item.SIZE
-            );
         }
         data.close();
         return found;
