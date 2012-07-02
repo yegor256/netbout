@@ -85,6 +85,7 @@ final class Slowlog extends Backlog {
             new RandomAccessFile(this.file(), "r");
         data.seek(pos);
         String ref;
+        int steps = 0;
         while (true) {
             final String val = data.readUTF();
             if (val.equals(Backlog.EOF_MARKER)) {

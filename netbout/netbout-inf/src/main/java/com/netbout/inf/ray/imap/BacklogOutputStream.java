@@ -26,6 +26,7 @@
  */
 package com.netbout.inf.ray.imap;
 
+import com.jcabi.log.Logger;
 import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -59,6 +60,11 @@ final class BacklogOutputStream extends DataOutputStream {
         this.writeUTF(Backlog.EOF_MARKER);
         this.writeUTF(Backlog.EOF_MARKER);
         super.close();
+        Logger.debug(
+            this,
+            "#close(): saved %d bytes",
+            this.written
+        );
     }
 
     /**

@@ -125,18 +125,23 @@ final class SimpleNumbers implements Numbers {
      * {@inheritDoc}
      */
     @Override
-    public void save(final OutputStream stream) throws IOException {
+    public long save(final OutputStream stream) throws IOException {
         final DataOutputStream data = new DataOutputStream(stream);
+        long size = 0;
         for (Long number : this.nums) {
             data.writeLong(number);
+            size += Numbers.SIZE;
         }
         data.writeLong(0L);
+        size += Numbers.SIZE;
         data.flush();
         Logger.debug(
             this,
-            "#save(..): saved %d numbers",
-            this.nums.size()
+            "#save(..): saved %d numbers (%d bytes)",
+            this.nums.size(),
+            size
         );
+        return size;
     }
 
     /**

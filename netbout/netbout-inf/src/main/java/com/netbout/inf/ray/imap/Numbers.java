@@ -43,6 +43,11 @@ import java.io.OutputStream;
 interface Numbers {
 
     /**
+     * Size of one element in input/output stream (size of LONG).
+     */
+    int SIZE = 8;
+
+    /**
      * How many bytes we consume in memory.
      * @return Number of bytes
      */
@@ -77,9 +82,10 @@ interface Numbers {
     /**
      * Save them all to the output stream.
      * @param stream The stream to save to
+     * @return How many bytes were just saved
      * @throws IOException If some I/O problem inside
      */
-    void save(OutputStream stream) throws IOException;
+    long save(OutputStream stream) throws IOException;
 
     /**
      * Load from the input stream and add here.

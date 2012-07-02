@@ -65,6 +65,11 @@ final class Pipeline implements Closeable, Iterator<Catalog.Item> {
      */
     interface Token {
         /**
+         * Get its value.
+         * @return The value
+         */
+        String value();
+        /**
          * Convert it to item.
          * @return The item
          * @throws IOException If some IO problem inside
@@ -129,8 +134,8 @@ final class Pipeline implements Closeable, Iterator<Catalog.Item> {
      * Value retrieved in previous call to {@link #next()} (to consume
      * and filter out duplicated values).
      */
-    private final transient AtomicReference<Catalog.Item> ahead =
-        new AtomicReference<Catalog.Item>();
+    private final transient AtomicReference<Pipeline.Token> ahead =
+        new AtomicReference<Pipeline.Token>();
 
     /**
      * Public ctor.
@@ -178,25 +183,30 @@ final class Pipeline implements Closeable, Iterator<Catalog.Item> {
     @Override
     public Catalog.Item next() {
         synchronized (this.token) {
-            Catalog.Item item = null;
+            Pipeline.Token tkn = null;
             while (this.hasNext()) {
                 try {
-                    item = this.fetch();
+                    tkn = this.fetch();
                 } catch (java.io.IOException ex) {
                     throw new IllegalStateException(ex);
                 }
                 if (this.ahead.get() == null) {
-                    this.ahead.set(item);
+                    this.ahead.set(tkn);
                 }
-                if (!item.value().equals(this.ahead.get().value())) {
-                    item = this.ahead.getAndSet(item);
+                if (!tkn.value().equals(this.ahead.get().value())) {
+                    tkn = this.ahead.getAndSet(tkn);
                     break;
                 }
             }
-            if (item == null) {
+            if (tkn == null) {
                 throw new NoSuchElementException();
             }
-            return item;
+            System.out.println("ready to return:");
+            try {
+                return tkn.item();
+            } catch (java.io.IOException ex) {
+                throw new IllegalStateException(ex);
+            }
         }
     }
 
@@ -209,7 +219,7 @@ final class Pipeline implements Closeable, Iterator<Catalog.Item> {
     }
 
     /**
-     * Fetch next item from one of two iterators.
+     * Fetch next token from one of two iterators.
      *
      * <p>This method is merging two iterators, sorting elements according
      * to their hash codes. Catalog iterator {@code this.citerator} has
@@ -219,136 +229,37 @@ final class Pipeline implements Closeable, Iterator<Catalog.Item> {
      * the variable holds some value - it is a candidate for the next
      * result of this {@code next()} method.
      *
-     * @return The item fetched
+     * @return The token fetched
      * @throws IOException If some IO problem inside
      */
-    private Catalog.Item fetch() throws IOException {
+    private Pipeline.Token fetch() throws IOException {
         if (this.token.get() == null) {
             if (this.citerator.hasNext()) {
-                this.token.set(this.cattoken(this.citerator));
+                this.token.set(new CatalogToken(this.citerator.next()));
             } else if (this.biterator.hasNext()) {
-                this.token.set(this.backtoken(this.biterator));
+                this.token.set(new BacklogToken(this.biterator.next()));
             } else {
                 throw new NoSuchElementException();
             }
         }
-        Catalog.Item next;
+        Pipeline.Token next;
         final Pipeline.Token saved = this.token.get();
         if (saved instanceof Pipeline.ComparableToken
             && this.biterator.hasNext()) {
             final Pipeline.ComparableToken comparable =
                 Pipeline.ComparableToken.class.cast(saved);
-            final Token btoken = this.backtoken(this.biterator);
+            final Token btoken = new BacklogToken(this.biterator.next());
             if (comparable.compareTo(btoken) > 0) {
-                next = btoken.item();
+                next = btoken;
             } else {
-                next = comparable.item();
+                next = comparable;
                 this.token.set(btoken);
             }
         } else {
-            next = saved.item();
+            next = saved;
             this.token.set(null);
         }
         return next;
-    }
-
-    /**
-     * Get token from catalog.
-     *
-     * <p>We don't close the input stream here, because such a closing
-     * operation will lead the closing of the entire
-     * {@link RandomAccessFile} ({@code Pipeline.this.data}).
-     *
-     * @param iterator The iterator to read from
-     * @return Token retrieved
-     */
-    private Token cattoken(final Iterator<Catalog.Item> iterator) {
-        final Catalog.Item item = iterator.next();
-        // @checkstyle AnonInnerLength (50 lines)
-        return new ComparableToken() {
-            @Override
-            public Catalog.Item item() throws IOException {
-                final long pos =
-                    Pipeline.this.catalog.seek(item.value());
-                Pipeline.this.data.seek(pos);
-                final InputStream input = Channels.newInputStream(
-                    Pipeline.this.data.getChannel()
-                );
-                final int len = IOUtils.copy(
-                    input,
-                    Pipeline.this.output
-                );
-                Logger.debug(
-                    this,
-                    "#item(): copied %d bytes from pos #%d ('%[text]s')",
-                    len,
-                    pos,
-                    item.value()
-                );
-                return new Catalog.Item(
-                    item.value(),
-                    Pipeline.this.opos.getAndAdd(len)
-                );
-            }
-            @Override
-            public int compareTo(final Token tkn) {
-                return new Integer(this.hashCode()).compareTo(
-                    new Integer(tkn.hashCode())
-                );
-            }
-            @Override
-            public int hashCode() {
-                return item.hashCode();
-            }
-            @Override
-            public boolean equals(final Object tkn) {
-                return this == tkn || tkn.hashCode() == this.hashCode();
-            }
-        };
-    }
-
-    /**
-     * Get token from backlog.
-     * @param iterator The iterator to read from
-     * @return Token retrieved
-     */
-    private Token backtoken(final Iterator<Backlog.Item> iterator) {
-        final Backlog.Item item = iterator.next();
-        // @checkstyle AnonInnerLength (50 lines)
-        return new Token() {
-            @Override
-            public Catalog.Item item() throws IOException {
-                final File file = Pipeline.this.draft.numbers(
-                    Pipeline.this.attribute, item.path()
-                );
-                final InputStream input = new FileInputStream(file);
-                final int len = IOUtils.copy(
-                    input,
-                    Pipeline.this.output
-                );
-                input.close();
-                Logger.debug(
-                    this,
-                    "#item('%s'): copied %d bytes from '/%s' ('%[text]s')",
-                    Pipeline.this.attribute,
-                    len,
-                    FilenameUtils.getName(file.getPath()),
-                    item.value()
-                );
-                return new Catalog.Item(
-                    item.value(),
-                    Pipeline.this.opos.getAndAdd(len)
-                );
-            }
-            @Override
-            public int hashCode() {
-                return item.hashCode();
-            }
-            @Override
-            public boolean equals(final Object tkn) {
-                return this == tkn || tkn.hashCode() == this.hashCode();
-            }
-        };
     }
 
     /**
@@ -375,6 +286,149 @@ final class Pipeline implements Closeable, Iterator<Catalog.Item> {
         }
         Collections.sort(items);
         return items.iterator();
+    }
+
+    /**
+     * Catalog token.
+     */
+    private final class CatalogToken implements ComparableToken {
+        /**
+         * Item to work with.
+         */
+        private final transient Catalog.Item item;
+        /**
+         * Public ctor.
+         * @param itm The item
+         */
+        public CatalogToken(final Catalog.Item itm) {
+            this.item = itm;
+        }
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public String value() {
+            return this.item.value();
+        }
+        /**
+         * {@inheritDoc}
+         *
+         * <p>We don't close the input stream here, because such a closing
+         * operation will lead the closing of the entire
+         * {@link RandomAccessFile} ({@code Pipeline.this.data}).
+         */
+        @Override
+        public Catalog.Item item() throws IOException {
+            final long pos = Pipeline.this.catalog.seek(this.item.value());
+            Pipeline.this.data.seek(pos);
+            final InputStream input = Channels.newInputStream(
+                Pipeline.this.data.getChannel()
+            );
+            final int len = IOUtils.copy(
+                input,
+                Pipeline.this.output
+            );
+            Logger.debug(
+                this,
+                "#item('%s'): copied %d bytes from pos #%d ('%[text]s')",
+                Pipeline.this.attribute,
+                len,
+                pos,
+                this.item.value()
+            );
+            return new Catalog.Item(
+                this.item.value(),
+                Pipeline.this.opos.getAndAdd(len)
+            );
+        }
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public int compareTo(final Token tkn) {
+            return new Integer(this.hashCode()).compareTo(
+                new Integer(tkn.hashCode())
+            );
+        }
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public int hashCode() {
+            return this.item.hashCode();
+        }
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public boolean equals(final Object tkn) {
+            return this == tkn || tkn.hashCode() == this.hashCode();
+        }
+    }
+
+    /**
+     * Backlog token.
+     */
+    private final class BacklogToken implements Token {
+        /**
+         * Item to work with.
+         */
+        private final transient Backlog.Item item;
+        /**
+         * Public ctor.
+         * @param itm The item
+         */
+        public BacklogToken(final Backlog.Item itm) {
+            this.item = itm;
+        }
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public String value() {
+            return item.value();
+        }
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public Catalog.Item item() throws IOException {
+            final File file = Pipeline.this.draft.numbers(
+                Pipeline.this.attribute, this.item.path()
+            );
+            final InputStream input = new FileInputStream(file);
+            final int len = IOUtils.copy(
+                input,
+                Pipeline.this.output
+            );
+            input.close();
+            Logger.debug(
+                this,
+                "#item('%s'): copied %d bytes from '/%s' ('%[text]s')",
+                Pipeline.this.attribute,
+                len,
+                FilenameUtils.getName(file.getPath()),
+                this.item.value()
+            );
+            return new Catalog.Item(
+                this.item.value(),
+                Pipeline.this.opos.getAndAdd(len)
+            );
+        }
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public int hashCode() {
+            return item.hashCode();
+        }
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public boolean equals(final Object tkn) {
+            return this == tkn || tkn.hashCode() == this.hashCode();
+        }
     }
 
 }
