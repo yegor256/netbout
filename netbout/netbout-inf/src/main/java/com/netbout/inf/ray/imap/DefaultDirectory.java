@@ -218,18 +218,21 @@ final class DefaultDirectory implements Directory {
      */
     @Override
     public void baseline() throws IOException {
-        final String version = this.versions.draft();
-        final Baseline candidate = new Baseline(
-            new Lock(new File(this.lock.dir(), version))
-        );
-        this.draft.get().baseline(candidate, this.base.get());
-        this.base.get().close();
-        this.base.get().expire();
-        this.base.set(candidate);
-        this.draft.get().close();
-        this.draft.get().expire();
-        this.versions.rebase(version);
-        this.versions.clear();
+        try {
+            final String version = this.versions.draft();
+            final Baseline candidate = new Baseline(
+                new Lock(new File(this.lock.dir(), version))
+            );
+            this.draft.get().baseline(candidate, this.base.get());
+            this.base.get().close();
+            this.base.get().expire();
+            this.base.set(candidate);
+            this.draft.get().close();
+            this.draft.get().expire();
+            this.versions.rebase(version);
+        } finally {
+            this.versions.clear();
+        }
         this.draft.set(
             new Draft(
                 new Lock(new File(this.lock.dir(), this.versions.draft()))
