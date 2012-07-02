@@ -214,9 +214,12 @@ final class Catalog {
                 if (hash < previous) {
                     throw new IllegalArgumentException(
                         String.format(
-                            "item:('%s', #%d) at wrong ordering position",
+                            // @checkstyle LineLength (1 line)
+                            "item:('%s', #%d) at wrong ordering position (%d total, %d dups)",
                             item.value(),
-                            item.position()
+                            item.position(),
+                            total,
+                            dups
                         )
                     );
                 }
