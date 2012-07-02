@@ -295,9 +295,10 @@ final class Mux implements Closeable {
                     this.ray.flush();
                 } catch (java.io.IOException ex) {
                     throw new IllegalArgumentException(ex);
+                } finally {
+                    this.semaphore.release(Mux.THREADS);
+                    this.flushed.set(System.currentTimeMillis());
                 }
-                this.semaphore.release(Mux.THREADS);
-                this.flushed.set(System.currentTimeMillis());
             }
         }
     }

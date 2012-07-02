@@ -26,8 +26,7 @@
  */
 package com.netbout.inf.ray.imap;
 
-import java.util.Iterator;
-import org.apache.commons.collections.IteratorUtils;
+import java.util.Random;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Rule;
@@ -35,11 +34,11 @@ import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
 /**
- * Test case of {@link Backlog}.
+ * Test case of {@link Slowlog}.
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class BacklogTest {
+public final class SlowlogTest {
 
     /**
      * Temporary folder.
@@ -49,47 +48,24 @@ public final class BacklogTest {
     public transient TemporaryFolder temp = new TemporaryFolder();
 
     /**
-     * Backlog can register value and find it laters.
-     * @throws Exception If there is some problem inside
-     */
-    @Test
-    public void registersValuesAndFindsThen() throws Exception {
-        final Backlog backlog = new Backlog(this.temp.newFile("backlog.txt"));
-        final String value = "some value to use, \u0433";
-        final String ref = "some reference to use, \u0433";
-        backlog.add(new Backlog.Item(value, ref));
-        backlog.add(new Backlog.Item("abc", ref));
-        backlog.add(new Backlog.Item("foo", "bar"));
-        final Iterator<Backlog.Item> iterator = backlog.iterator();
-        MatcherAssert.assertThat(iterator.hasNext(), Matchers.is(true));
-        MatcherAssert.assertThat(iterator.hasNext(), Matchers.is(true));
-        MatcherAssert.assertThat(
-            iterator.next().value(),
-            Matchers.equalTo(value)
-        );
-        MatcherAssert.assertThat(iterator.hasNext(), Matchers.is(true));
-        MatcherAssert.assertThat(
-            IteratorUtils.toList(backlog.iterator()).size(),
-            Matchers.greaterThan(2)
-        );
-    }
-
-    /**
-     * Backlog can be saved through output stream.
+     * Slowlog can be saved through output stream.
      * @throws Exception If there is some problem inside
      */
     @Test
     public void savesDataThroughOutputStream() throws Exception {
-        final Backlog backlog = new Backlog(this.temp.newFile("backlog-5.txt"));
-        final BacklogOutputStream stream = backlog.open();
+        final Slowlog slowlog = new Slowlog(this.temp.newFile("slowlog-5.txt"));
+        final BacklogOutputStream stream = slowlog.open();
         final String value = "some value, \u0433";
-        final String ref = "some reference, \u0433";
-        stream.write(new Backlog.Item(value, ref));
-        stream.write(new Backlog.Item("some other value", "boomboom"));
+        final long num = new Random().nextLong();
+        final long pos = stream.write(
+            new Slowlog.Item(value, Long.toString(num))
+        );
+        MatcherAssert.assertThat(pos, Matchers.greaterThan(0L));
+        stream.write(new Slowlog.Item("foo", "2324"));
         stream.close();
         MatcherAssert.assertThat(
-            backlog.iterator().next().value(),
-            Matchers.equalTo(value)
+            slowlog.normalized(-pos, value),
+            Matchers.equalTo(num)
         );
     }
 

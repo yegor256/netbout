@@ -55,7 +55,7 @@ final class Catalog {
     /**
      * Full file for slow search.
      */
-    private final transient Catalog.SlowLog slow;
+    private final transient Slowlog slow;
 
     /**
      * Public ctor.
@@ -65,7 +65,7 @@ final class Catalog {
     public Catalog(final File ctlg) throws IOException {
         this.fast = ctlg;
         FileUtils.touch(this.fast);
-        this.slow = new Catalog.SlowLog(
+        this.slow = new Slowlog(
             new File(
                 this.fast.getParentFile(),
                 String.format(
@@ -210,6 +210,7 @@ final class Catalog {
     public void create(final Iterator<Catalog.Item> items) throws IOException {
         final long start = System.currentTimeMillis();
         final CatalogOutputStream output = new CatalogOutputStream(this.fast);
+        final BacklogOutputStream slowlog = this.slow.open();
         int total = 0;
         int dups = 0;
         try {
@@ -227,8 +228,8 @@ final class Catalog {
                         )
                     );
                 }
-                final long pos = this.slow.add(
-                    new SlowLog.Item(
+                final long pos = slowlog.write(
+                    new Slowlog.Item(
                         item.value(),
                         Long.toString(item.position())
                     )
@@ -247,6 +248,7 @@ final class Catalog {
             }
         } finally {
             output.close();
+            slowlog.close();
         }
         Logger.debug(
             this,
@@ -266,7 +268,7 @@ final class Catalog {
      * @throws IOException If some I/O problem inside
      */
     public Iterator<Catalog.Item> iterator() throws IOException {
-        final Iterator<Catalog.SlowLog.Item> origin = this.slow.iterator();
+        final Iterator<Slowlog.Item> origin = this.slow.iterator();
         return new Iterator<Catalog.Item>() {
             @Override
             public boolean hasNext() {
@@ -274,7 +276,7 @@ final class Catalog {
             }
             @Override
             public Item next() {
-                final Catalog.SlowLog.Item item = origin.next();
+                final Slowlog.Item item = origin.next();
                 return new Item(item.value(), Long.valueOf(item.path()));
             }
             @Override
@@ -282,79 +284,6 @@ final class Catalog {
                 throw new UnsupportedOperationException("#remove");
             }
         };
-    }
-
-    /**
-     * Slow log.
-     */
-    private static final class SlowLog extends Backlog {
-        /**
-         * Public ctor.
-         * @param file The file to use
-         * @throws IOException If some I/O problem inside
-         */
-        public SlowLog(final File file) throws IOException {
-            super(file);
-        }
-        /**
-         * Convert position to the normal form.
-         *
-         * <p>If position is negative it means that we should do a full search
-         * in slow index, by its UTF value.
-         *
-         * @param pos Position found in fast index
-         * @param value The value
-         * @return Normalized position in data file
-         * @throws IOException If some I/O problem inside
-         */
-        public long normalized(final long pos,
-            final String value) throws IOException {
-            long norm;
-            if (pos < 0) {
-                norm = Long.valueOf(this.seek(-pos, value));
-            } else {
-                norm = pos;
-            }
-            return norm;
-        }
-        /**
-         * Find ref by value, starting with given position.
-         * @param pos Position to start with
-         * @param value The value to search for
-         * @return Reference found
-         * @throws IOException If some I/O problem inside
-         */
-        private String seek(final long pos,
-            final String value) throws IOException {
-            final RandomAccessFile data =
-                new RandomAccessFile(this.file(), "r");
-            data.seek(pos);
-            String ref;
-            while (true) {
-                final String val = data.readUTF();
-                if (val.equals(Backlog.EOF_MARKER)) {
-                    throw new IllegalArgumentException(
-                        String.format(
-                            "value '%s' not found in slow index",
-                            value
-                        )
-                    );
-                }
-                ref = data.readUTF();
-                if (val.equals(value)) {
-                    Logger.debug(
-                        this,
-                        "#seek(%d, '%[text]s'): found pos #%s in slow search",
-                        pos,
-                        value,
-                        ref
-                    );
-                    break;
-                }
-            }
-            data.close();
-            return ref;
-        }
     }
 
 }
