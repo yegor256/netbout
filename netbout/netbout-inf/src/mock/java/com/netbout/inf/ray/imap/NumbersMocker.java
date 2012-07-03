@@ -43,6 +43,7 @@ public final class NumbersMocker {
 
     /**
      * Total number of messages.
+     * @checkstyle MagicNumber (2 lines)
      */
     private transient int maximum = 10;
 

@@ -27,7 +27,6 @@
 package com.netbout.inf.ray.imap;
 
 import com.netbout.inf.Attribute;
-import com.netbout.inf.MsgMocker;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
@@ -38,7 +37,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Random;
 import org.apache.commons.io.FilenameUtils;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
@@ -71,7 +69,7 @@ public final class PipelineTest {
     public void mergesTwoIteratorsIntoOne() throws Exception {
         final File dir = this.temp.newFolder("foo");
         final Attribute attr = new Attribute("boom-boom-boom");
-        final Collection<String> values = ReverseMocker.values(5);
+        final Collection<String> values = ReverseMocker.values(10);
         final Draft draft = this.draft(
             new File(dir, "draft"),
             attr,
@@ -157,8 +155,10 @@ public final class PipelineTest {
      * @param file The file to save to
      * @param attr Attribute
      * @param vals Values to use
+     * @param max Max number of numbers
      * @return The draft created
      * @throws Exception If there is some problem inside
+     * @checkstyle ParameterNumber (5 lines)
      */
     private Draft draft(final File file, final Attribute attr,
         final Collection<String> vals, final int max) throws Exception {
@@ -186,6 +186,7 @@ public final class PipelineTest {
      * @param max Maximum number of numbers to put in every one
      * @return The baseline created
      * @throws Exception If there is some problem inside
+     * @checkstyle ParameterNumber (5 lines)
      */
     private Baseline baseline(final File file,
         final Attribute attr, final Collection<String> vals,

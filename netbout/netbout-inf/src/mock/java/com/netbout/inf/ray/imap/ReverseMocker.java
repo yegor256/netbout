@@ -42,7 +42,6 @@ public final class ReverseMocker {
      * Create a number of values.
      * @param max How many of them to return, maximum
      * @return The values
-     * @throws IOException If something wrong inside
      */
     public static Collection<String> values(final int max) {
         final Collection<String> values = new LinkedList<String>();
