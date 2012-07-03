@@ -87,6 +87,16 @@ INSERT IGNORE INTO identity (name, photo, date) VALUES (
     'http://img.netbout.com/unknown.png',
     '2010-11-21'
 );
+INSERT IGNORE INTO identity (name, photo, date) VALUES (
+    'urn:test:bruno',
+    'http://img.netbout.com/unknown.png',
+    '2010-11-21'
+);
+INSERT IGNORE INTO alias (identity, name, date) VALUES (
+    'urn:test:cindy',
+    'Cindy Crawford',
+    '2010-11-23'
+);
 INSERT IGNORE INTO alias (identity, name, date) VALUES (
     'urn:facebook:4466',
     'John Turturro',
@@ -107,6 +117,9 @@ INSERT IGNORE INTO participant (bout, identity, confirmed, date) VALUES (
 );
 INSERT IGNORE INTO participant (bout, identity, confirmed, date) VALUES (
     555, 'urn:test:cindy', 1, '2010-11-22'
+);
+INSERT IGNORE INTO participant (bout, identity, confirmed, date) VALUES (
+    555, 'urn:test:bruno', 1, '2010-11-22'
 );
 INSERT IGNORE INTO message (bout, date, author, text) VALUES (
     555, '2011-11-15 03:18:34', 'urn:facebook:4466', 'first message'

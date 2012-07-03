@@ -46,7 +46,7 @@ bout.rename('finding friends with AJAX/Selenium')
 def driver = new HtmlUnitDriver()
 driver.setJavascriptEnabled(true)
 driver.navigate().to(RestUriBuilder.from(bout).build().toURL())
-driver.findElementByCssSelector('form#invite input[name="mask"]').sendKeys('Turturro')
+driver.findElementByCssSelector('form#invite input[name="mask"]').sendKeys('cindy')
 TimeUnit.SECONDS.sleep(5)
 
 MatcherAssert.assertThat(
