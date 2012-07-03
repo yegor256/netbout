@@ -78,7 +78,7 @@ final class Versions {
                 .append(":")
                 .append(
                     FileUtils.byteCountToDisplaySize(
-                        FileUtils.sizeOfDirectory(this.dir)
+                        FileUtils.sizeOfDirectory(folder)
                     )
                 );
         }
