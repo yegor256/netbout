@@ -48,7 +48,7 @@ import java.util.concurrent.ConcurrentSkipListSet;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-final class SimpleNumbers implements Numbers {
+class SimpleNumbers implements Numbers {
 
     /**
      * Set of numbers.
@@ -72,7 +72,7 @@ final class SimpleNumbers implements Numbers {
      * {@inheritDoc}
      */
     @Override
-    public long sizeof() {
+    public final long sizeof() {
         return this.nums.size();
     }
 
@@ -80,7 +80,7 @@ final class SimpleNumbers implements Numbers {
      * {@inheritDoc}
      */
     @Override
-    public Lattice lattice() {
+    public final Lattice lattice() {
         return this.lat;
     }
 
@@ -88,7 +88,7 @@ final class SimpleNumbers implements Numbers {
      * {@inheritDoc}
      */
     @Override
-    public void add(final long number) {
+    public final void add(final long number) {
         this.nums.add(number);
         this.lat = new LatticeBuilder()
             .copy(this.lat)
@@ -100,7 +100,7 @@ final class SimpleNumbers implements Numbers {
      * {@inheritDoc}
      */
     @Override
-    public void remove(final long number) {
+    public final void remove(final long number) {
         this.nums.remove(number);
         this.lat = new LatticeBuilder()
             .copy(this.lat)
@@ -112,7 +112,7 @@ final class SimpleNumbers implements Numbers {
      * {@inheritDoc}
      */
     @Override
-    public long next(final long number) {
+    public final long next(final long number) {
         long next = 0L;
         final Iterator<Long> tail = this.nums.tailSet(number - 1).iterator();
         if (tail.hasNext()) {
@@ -125,7 +125,7 @@ final class SimpleNumbers implements Numbers {
      * {@inheritDoc}
      */
     @Override
-    public long save(final OutputStream stream) throws IOException {
+    public final long save(final OutputStream stream) throws IOException {
         final DataOutputStream data = new DataOutputStream(stream);
         long size = 0;
         for (Long number : this.nums) {
@@ -148,7 +148,7 @@ final class SimpleNumbers implements Numbers {
      * {@inheritDoc}
      */
     @Override
-    public void load(final InputStream stream) throws IOException {
+    public final void load(final InputStream stream) throws IOException {
         this.nums.clear();
         final DataInputStream data = new DataInputStream(stream);
         while (true) {

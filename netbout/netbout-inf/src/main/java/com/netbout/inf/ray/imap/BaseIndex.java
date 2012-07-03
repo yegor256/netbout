@@ -33,6 +33,7 @@ import java.io.IOException;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * Base implemenation of {@link Index}.
@@ -59,8 +60,33 @@ class BaseIndex implements FlushableIndex {
     /**
      * Main map.
      */
-    private final transient ConcurrentMap<String, Numbers> map =
-        new ConcurrentHashMap<String, Numbers>();
+    private final transient ConcurrentMap<String, BaseIndex.TempNumbers> map =
+        new ConcurrentHashMap<String, BaseIndex.TempNumbers>();
+
+    /**
+     * Numbers that has expiration date.
+     */
+    private static final class TempNumbers extends SimpleNumbers {
+        /**
+         * When was it accessed last time.
+         */
+        private final transient AtomicLong time = new AtomicLong();
+        /**
+         * Mark access time.
+         */
+        public void ping() {
+            this.time.set(System.currentTimeMillis());
+        }
+        /**
+         * Is it already expired and may be removed from memory?
+         * @return TRUE if yes
+         */
+        public boolean expired() {
+            return System.currentTimeMillis() - this.time.get()
+                // @checkstyle MagicNumber (1 line)
+                > 10 * 60 * 1000;
+        }
+    }
 
     /**
      * Public ctor.
@@ -155,12 +181,16 @@ class BaseIndex implements FlushableIndex {
     @Override
     public void flush() throws IOException {
         final long start = System.currentTimeMillis();
-        for (Map.Entry<String, Numbers> entry : this.map.entrySet()) {
+        for (Map.Entry<String, BaseIndex.TempNumbers> entry
+            : this.map.entrySet()) {
             this.directory.save(
                 this.attribute,
                 entry.getKey(),
                 entry.getValue()
             );
+            if (entry.getValue().expired()) {
+                this.map.remove(entry.getKey());
+            }
         }
         Logger.debug(
             this,
@@ -194,7 +224,8 @@ class BaseIndex implements FlushableIndex {
     private Numbers numbers(final String text) {
         synchronized (this.map) {
             if (!this.map.containsKey(text)) {
-                final Numbers numbers = new SimpleNumbers();
+                final BaseIndex.TempNumbers numbers =
+                    new BaseIndex.TempNumbers();
                 try {
                     this.directory.load(this.attribute, text, numbers);
                 } catch (java.io.IOException ex) {
@@ -203,7 +234,9 @@ class BaseIndex implements FlushableIndex {
                 this.map.put(text, numbers);
             }
         }
-        return this.map.get(text);
+        final BaseIndex.TempNumbers nums = this.map.get(text);
+        nums.ping();
+        return nums;
     }
 
 }
