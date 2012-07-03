@@ -190,6 +190,11 @@ class BaseIndex implements FlushableIndex {
             );
             if (entry.getValue().expired()) {
                 this.map.remove(entry.getKey());
+                Logger.debug(
+                    this,
+                    "#flush(): '%[text]s' expired and removed",
+                    entry.getKey()
+                );
             }
         }
         Logger.debug(
