@@ -35,6 +35,7 @@ import java.io.OutputStream;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Simple implementation of {@link Reverse}.
@@ -66,10 +67,28 @@ final class SimpleReverse implements Reverse {
      */
     @Override
     public String get(final long msg) {
-        final String value = this.map.get(msg);
+        String value = null;
+        int count = 0;
+        // @checkstyle MagicNumber (1 line)
+        while (++count < 15) {
+            value = this.map.get(msg);
+            if (value != null) {
+                break;
+            }
+            try {
+                TimeUnit.SECONDS.sleep(1);
+            } catch (InterruptedException ex) {
+                Thread.currentThread().interrupt();
+                throw new IllegalStateException(ex);
+            }
+        }
         if (value == null) {
             throw new IllegalArgumentException(
-                String.format("value not found for msg #%d", msg)
+                String.format(
+                    "value not found for msg #%d among %d others",
+                    msg,
+                    this.map.size()
+                )
             );
         }
         return value;
