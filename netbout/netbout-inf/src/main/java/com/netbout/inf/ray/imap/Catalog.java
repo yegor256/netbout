@@ -162,6 +162,7 @@ final class Catalog {
         long left = 0;
         long right = data.length() / Catalog.Item.SIZE;
         long found = Long.MIN_VALUE;
+        int hops = 0;
         while (left < right) {
             final long pos = left + (right - left) / 2;
             data.seek(pos * Catalog.Item.SIZE);
@@ -175,14 +176,16 @@ final class Catalog {
             } else {
                 right = pos;
             }
+            ++hops;
         }
         if (found > 0) {
             Logger.debug(
                 this,
-                "#seek('%[text]s'): found pos #%d among %d value(s)",
+                "#seek('%[text]s'): found pos #%d among %d value(s) in %d hops",
                 value,
                 found,
-                data.length() / Catalog.Item.SIZE
+                data.length() / Catalog.Item.SIZE,
+                hops
             );
         }
         data.close();
@@ -214,9 +217,12 @@ final class Catalog {
                 if (hash < previous) {
                     throw new IllegalArgumentException(
                         String.format(
-                            "item:('%s', #%d) at wrong ordering position",
+                            // @checkstyle LineLength (1 line)
+                            "item:('%s', #%d) at wrong ordering position (%d total, %d dups)",
                             item.value(),
-                            item.position()
+                            item.position(),
+                            total,
+                            dups
                         )
                     );
                 }

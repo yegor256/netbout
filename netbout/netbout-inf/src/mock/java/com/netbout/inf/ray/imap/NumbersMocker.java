@@ -23,33 +23,54 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
- *
+ */
+package com.netbout.inf.ray.imap;
+
+import com.netbout.inf.MsgMocker;
+import java.util.Random;
+
+/**
+ * Mocker of {@link Numbers}.
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-package com.netbout.rest.rexsl.scripts.selenium
+public final class NumbersMocker {
 
-import com.netbout.spi.Urn
-import com.netbout.spi.client.RestSession
-import com.netbout.spi.client.RestUriBuilder
-import java.util.concurrent.TimeUnit
-import org.hamcrest.MatcherAssert
-import org.hamcrest.Matchers
-import org.openqa.selenium.By
-import org.openqa.selenium.htmlunit.HtmlUnitDriver
+    /**
+     * The randomizer.
+     */
+    private final transient Random random = new Random();
 
-def bruno = new RestSession(rexsl.home).authenticate(new Urn('urn:test:bruno'), '')
-def bout = bruno.start()
-bout.post('hi, I will try to find friends with AJAX!')
-bout.rename('finding friends with AJAX/Selenium')
+    /**
+     * Total number of messages.
+     * @checkstyle MagicNumber (2 lines)
+     */
+    private transient int maximum = 10;
 
-def driver = new HtmlUnitDriver()
-driver.setJavascriptEnabled(true)
-driver.navigate().to(RestUriBuilder.from(bout).build().toURL())
-driver.findElementByCssSelector('form#invite input[name="mask"]').sendKeys('cindy')
-TimeUnit.SECONDS.sleep(5)
+    /**
+     * Total amount of messages to have there.
+     * @param max Total number of messages
+     * @return This object
+     */
+    public NumbersMocker withMaximum(final int max) {
+        this.maximum = max;
+        return this;
+    }
 
-MatcherAssert.assertThat(
-    driver.findElementById('invite-list').findElements(By.cssSelector('li')).size(),
-    Matchers.greaterThan(0)
-)
+    /**
+     * Build it.
+     * @return The numbers
+     */
+    public Numbers mock() {
+        final Numbers numbers = new SimpleNumbers();
+        int total = this.maximum;
+        if (total > 0) {
+            total = this.random.nextInt(total) + 1;
+        }
+        for (int num = 0; num < total; ++num) {
+            numbers.add(MsgMocker.number());
+        }
+        return numbers;
+    }
+
+}

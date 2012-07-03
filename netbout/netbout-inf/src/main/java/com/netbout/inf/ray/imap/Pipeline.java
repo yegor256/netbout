@@ -44,6 +44,8 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
 import org.apache.commons.io.FilenameUtils;
@@ -91,32 +93,34 @@ final class Pipeline implements Closeable, Iterator<Catalog.Item> {
     private final transient Draft draft;
 
     /**
-     * Source catalog.
+     * Source catalog, from Baseline.
      */
     private final transient Catalog catalog;
 
     /**
-     * The attribute.
+     * The attribute we're working with.
      */
     private final transient Attribute attribute;
 
     /**
-     * Backlog with data.
+     * Backlog with data, from the source Draft.
      */
     private final transient Iterator<Backlog.Item> biterator;
 
     /**
-     * Pre-existing catalog with data.
+     * Pre-existing catalog with data, from the source Baseline.
      */
     private final transient Iterator<Catalog.Item> citerator;
 
     /**
-     * Pre-existing data file.
+     * Pre-existing data file, with data (we keep it open until the pipeline
+     * is closed).
      */
     private final transient RandomAccessFile data;
 
     /**
-     * Output stream.
+     * Output stream, with new data (we keep it open until the pipeline
+     * is closed).
      */
     private final transient DataOutputStream output;
 
@@ -132,11 +136,10 @@ final class Pipeline implements Closeable, Iterator<Catalog.Item> {
         new AtomicReference<Pipeline.Token>();
 
     /**
-     * Value retrieved in previous call to {@link #next()} (to consume
+     * Value retrieved in previous calls to {@link #next()} (to consume
      * and filter out duplicated values).
      */
-    private final transient AtomicReference<Pipeline.Token> ahead =
-        new AtomicReference<Pipeline.Token>();
+    private final transient Buffer buffer = new Buffer();
 
     /**
      * Public ctor.
@@ -185,28 +188,9 @@ final class Pipeline implements Closeable, Iterator<Catalog.Item> {
      */
     @Override
     public Catalog.Item next() {
-        synchronized (this.token) {
-            Pipeline.Token tkn = null;
-            while (this.hasNext()) {
-                try {
-                    tkn = this.fetch();
-                } catch (java.io.IOException ex) {
-                    throw new IllegalStateException(ex);
-                }
-                if (this.ahead.get() == null) {
-                    this.ahead.set(tkn);
-                }
-                if (!tkn.value().equals(this.ahead.get().value())) {
-                    tkn = this.ahead.getAndSet(tkn);
-                    break;
-                }
-                this.ahead.set(tkn);
-            }
-            if (tkn == null) {
-                throw new NoSuchElementException();
-            }
+        synchronized (this.buffer) {
             try {
-                return tkn.item();
+                return this.buffer.fetch().item();
             } catch (java.io.IOException ex) {
                 throw new IllegalStateException(ex);
             }
@@ -234,6 +218,7 @@ final class Pipeline implements Closeable, Iterator<Catalog.Item> {
      *
      * @return The token fetched
      * @throws IOException If some IO problem inside
+     * @checkstyle ExecutableStatementCount (50 lines)
      */
     private Pipeline.Token fetch() throws IOException {
         if (this.token.get() == null) {
@@ -257,6 +242,15 @@ final class Pipeline implements Closeable, Iterator<Catalog.Item> {
             } else {
                 next = comparable;
                 this.token.set(btoken);
+            }
+        } else if (this.citerator.hasNext()) {
+            final Pipeline.ComparableToken ctoken =
+                new CatalogToken(this.citerator.next());
+            if (ctoken.compareTo(saved) > 0) {
+                next = saved;
+                this.token.set(ctoken);
+            } else {
+                next = ctoken;
             }
         } else {
             next = saved;
@@ -289,6 +283,67 @@ final class Pipeline implements Closeable, Iterator<Catalog.Item> {
         }
         Collections.sort(items);
         return items.iterator();
+    }
+
+    /**
+     * Buffer of tokens.
+     *
+     * <p>The class is NOT thread-safe.
+     */
+    private final class Buffer {
+        /**
+         * Value retrieved in previous calls to {@link #next()} (to consume
+         * and filter out duplicated values).
+         */
+        private final transient ConcurrentMap<String, Pipeline.Token> tokens =
+            new ConcurrentHashMap<String, Pipeline.Token>();
+        /**
+         * One token ahead of buffer.
+         */
+        private final transient AtomicReference<Pipeline.Token> ahead =
+            new AtomicReference<Pipeline.Token>();
+        /**
+         * Fetch next token.
+         * @return The token fetched (through buffer)
+         * @throws IOException If some IO problem inside
+         */
+        public Pipeline.Token fetch() throws IOException {
+            if (!this.consume()) {
+                throw new NoSuchElementException();
+            }
+            final String value = this.tokens.keySet().iterator().next();
+            final Pipeline.Token fetched = this.tokens.get(value);
+            this.tokens.remove(value);
+            return fetched;
+        }
+        /**
+         * Consume as many tokens as possible from input.
+         * @return TRUE if something is ready in the buffer
+         * @throws IOException If some IO problem inside
+         */
+        private boolean consume() throws IOException {
+            if (this.tokens.isEmpty() && this.ahead.get() != null) {
+                this.shift();
+            }
+            if (this.ahead.get() == null) {
+                while (Pipeline.this.hasNext()) {
+                    this.ahead.set(Pipeline.this.fetch());
+                    if (!this.tokens.isEmpty() && this.ahead.get().hashCode()
+                        != this.tokens.keySet().iterator().next().hashCode()) {
+                        break;
+                    }
+                    this.shift();
+                }
+            }
+            return !this.tokens.isEmpty();
+        }
+        /**
+         * Shift ahead token to the buffer.
+         */
+        private void shift() {
+            final Pipeline.Token tkn = this.ahead.getAndSet(null);
+            this.tokens.put(tkn.value(), tkn);
+        }
     }
 
     /**

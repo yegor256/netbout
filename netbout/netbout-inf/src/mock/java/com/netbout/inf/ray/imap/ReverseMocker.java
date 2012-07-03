@@ -23,33 +23,47 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
- *
+ */
+package com.netbout.inf.ray.imap;
+
+import java.util.Collection;
+import java.util.LinkedList;
+import java.util.Random;
+import org.apache.commons.lang.RandomStringUtils;
+
+/**
+ * Mocker of {@link Reverse}.
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-package com.netbout.rest.rexsl.scripts.selenium
+public final class ReverseMocker {
 
-import com.netbout.spi.Urn
-import com.netbout.spi.client.RestSession
-import com.netbout.spi.client.RestUriBuilder
-import java.util.concurrent.TimeUnit
-import org.hamcrest.MatcherAssert
-import org.hamcrest.Matchers
-import org.openqa.selenium.By
-import org.openqa.selenium.htmlunit.HtmlUnitDriver
+    /**
+     * Create a number of values.
+     * @param max How many of them to return, maximum
+     * @return The values
+     */
+    public static Collection<String> values(final int max) {
+        final Collection<String> values = new LinkedList<String>();
+        values.add("TlYhv");
+        values.add("UMYhv");
+        values.add("TkyJW");
+        final int total = max - values.size();
+        final Random random = new Random();
+        for (int num = 0; num < total; ++num) {
+            values.add(
+                RandomStringUtils.randomAlphabetic(random.nextInt(max) + max)
+            );
+        }
+        return values;
+    }
 
-def bruno = new RestSession(rexsl.home).authenticate(new Urn('urn:test:bruno'), '')
-def bout = bruno.start()
-bout.post('hi, I will try to find friends with AJAX!')
-bout.rename('finding friends with AJAX/Selenium')
+    /**
+     * Build it.
+     * @return The reverse
+     */
+    public Reverse mock() {
+        return null;
+    }
 
-def driver = new HtmlUnitDriver()
-driver.setJavascriptEnabled(true)
-driver.navigate().to(RestUriBuilder.from(bout).build().toURL())
-driver.findElementByCssSelector('form#invite input[name="mask"]').sendKeys('cindy')
-TimeUnit.SECONDS.sleep(5)
-
-MatcherAssert.assertThat(
-    driver.findElementById('invite-list').findElements(By.cssSelector('li')).size(),
-    Matchers.greaterThan(0)
-)
+}
