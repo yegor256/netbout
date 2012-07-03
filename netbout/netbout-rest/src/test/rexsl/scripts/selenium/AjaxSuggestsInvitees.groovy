@@ -38,8 +38,8 @@ import org.hamcrest.Matchers
 import org.openqa.selenium.By
 import org.openqa.selenium.htmlunit.HtmlUnitDriver
 
-def leon = new RestSession(rexsl.home).authenticate(new Urn('urn:test:leon'), '')
-def bout = leon.start()
+def bruno = new RestSession(rexsl.home).authenticate(new Urn('urn:test:bruno'), '')
+def bout = bruno.start()
 bout.post('hi, I will try to find friends with AJAX!')
 bout.rename('finding friends with AJAX/Selenium')
 
