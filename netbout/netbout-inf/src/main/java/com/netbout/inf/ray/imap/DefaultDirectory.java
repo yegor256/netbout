@@ -108,16 +108,20 @@ final class DefaultDirectory implements Directory {
     @Override
     public String toString() {
         final StringBuilder text = new StringBuilder();
+        text.append("lock: ")
+            .append(this.lock.toString())
+            .append("\nversions: ")
+            .append(this.versions.toString())
+            .append("\nbaseline: ")
+            .append(this.base.get().toString())
+            .append("\ndraft: ")
+            .append(this.draft.get().toString());
         try {
-            text.append("version: ")
-                .append(this.versions.baselined())
-                .append(", ")
-                .append(
-                    FileUtils.byteCountToDisplaySize(
-                        FileUtils.sizeOfDirectory(this.lock.dir())
-                    )
+            text.append(
+                FileUtils.byteCountToDisplaySize(
+                    FileUtils.sizeOfDirectory(this.lock.dir())
                 )
-                .append(" bytes");
+            ).append(" bytes");
         } catch (java.io.IOException ex) {
             throw new IllegalStateException(ex);
         }

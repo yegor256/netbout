@@ -63,6 +63,29 @@ final class Versions {
     }
 
     /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String toString() {
+        final StringBuilder text = new StringBuilder();
+        text.append(this.dir.getPath());
+        for (File folder : this.dir.listFiles()) {
+            if (!folder.isDirectory()) {
+                continue;
+            }
+            text.append(" ")
+                .append(FilenameUtils.getName(folder.getPath()))
+                .append(":")
+                .append(
+                    FileUtils.byteCountToDisplaySize(
+                        FileUtils.sizeOfDirectory(this.dir)
+                    )
+                );
+        }
+        return text.toString();
+    }
+
+    /**
      * Set new baselined version.
      * @param version New version
      * @throws IOException If some I/O problem inside
