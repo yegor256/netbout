@@ -130,7 +130,7 @@ final class EbsDevice {
      * @return The state of device
      * @throws IOException If some IO problem inside
      */
-    public VolumeAttachmentState attach() throws IOException {
+    private VolumeAttachmentState attach() throws IOException {
         final VolumeAttachment attachment = this.attachment();
         VolumeAttachmentState state = null;
         if (attachment == null) {
@@ -146,7 +146,7 @@ final class EbsDevice {
      * @return The state of device
      * @throws IOException If some IO problem inside
      */
-    public VolumeAttachmentState request() throws IOException {
+    private VolumeAttachmentState request() throws IOException {
         final String state = this.amazon.attachVolume(
             new AttachVolumeRequest(
                 this.volume,
