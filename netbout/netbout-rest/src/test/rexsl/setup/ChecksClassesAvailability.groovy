@@ -29,7 +29,11 @@
  */
 package com.netbout.rest.rexsl.setup
 
-import org.apache.http.Consts
-
-// this one is required by Amazon AWS tool
-assert Consts.UTF_8 != null
+[
+    '/com/netbout/inf/DefaultInfinity.class',
+    '/org/apache/http/Const.class',
+].each { name ->
+    if (this.class.getResource(name) == null) {
+        throw new IllegalStateException("class ${name} not found in classpath");
+    }
+}
