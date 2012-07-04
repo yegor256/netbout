@@ -178,6 +178,28 @@
             <artifactId>selenium-java</artifactId>
             <version since="30 Oct 2011">2.9.0</version>
             <scope>test</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.apache.httpcomponents</groupId>
+                    <artifactId>httpclient</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.apache.httpcomponents</groupId>
+                    <artifactId>httpcore</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <!-- HTTP components, to unify its version in the project -->
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpclient</artifactId>
+            <version since="4 Jul 2012">4.2-beta1</version>
+        </dependency>
+        <dependency>
+            <!-- HTTP components, to unify its version in the project -->
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpcore</artifactId>
+            <version since="4 Jul 2012">4.2-beta1</version>
         </dependency>
         <dependency>
             <!-- JavaMail API 1.4 -->
@@ -218,6 +240,16 @@
             <groupId>com.amazonaws</groupId>
             <artifactId>aws-java-sdk</artifactId>
             <version since="3 Jun 2012">1.3.11</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.apache.httpcomponents</groupId>
+                    <artifactId>httpclient</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.apache.httpcomponents</groupId>
+                    <artifactId>httpcore</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>joda-time</groupId>
@@ -267,12 +299,6 @@
             </exclusions>
         </dependency>
         <dependency>
-            <!-- HTTP related constants, for testing and for AWS SDK -->
-            <groupId>org.apache.httpcomponents</groupId>
-            <artifactId>httpcore</artifactId>
-            <version>4.1.2</version>
-        </dependency>
-        <dependency>
             <groupId>com.ymock</groupId>
             <artifactId>ymock-server</artifactId>
             <version since="2 Mar 2012">1.0.5</version>
@@ -281,6 +307,14 @@
                 <exclusion>
                     <groupId>com.sun.jersey</groupId>
                     <artifactId>jersey-core</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.apache.httpcomponents</groupId>
+                    <artifactId>httpclient</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.apache.httpcomponents</groupId>
+                    <artifactId>httpcore</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>

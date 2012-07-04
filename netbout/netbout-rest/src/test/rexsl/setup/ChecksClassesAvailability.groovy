@@ -31,7 +31,7 @@ package com.netbout.rest.rexsl.setup
 
 [
     '/com/netbout/inf/DefaultInfinity.class',
-    '/org/apache/http/Const.class',
+    '/com/netbout/hub/DefaultHub.class',
 ].each { name ->
     if (this.class.getResource(name) == null) {
         throw new IllegalStateException("class ${name} not found in classpath");
