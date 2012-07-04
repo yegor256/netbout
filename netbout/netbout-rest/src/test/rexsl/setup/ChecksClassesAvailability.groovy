@@ -34,6 +34,6 @@ package com.netbout.rest.rexsl.setup
     '/com/netbout/hub/DefaultHub.class',
 ].each { name ->
     if (this.class.getResource(name) == null) {
-        throw new IllegalStateException("class ${name} not found in classpath");
+        throw new IllegalStateException("class ${name} not found in classpath")
     }
 }
