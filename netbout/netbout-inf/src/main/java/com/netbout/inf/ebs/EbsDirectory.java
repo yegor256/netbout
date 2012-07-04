@@ -284,7 +284,7 @@ final class EbsDirectory implements Closeable {
                     }
                     @Override
                     public void log(final int level, final String msg) {
-                        Logger.error(EbsDirectory.class, "%s", msg);
+                        Logger.info(EbsDirectory.class, "%s", msg);
                     }
                 }
             );
