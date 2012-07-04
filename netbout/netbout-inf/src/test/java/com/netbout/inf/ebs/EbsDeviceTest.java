@@ -26,7 +26,6 @@
  */
 package com.netbout.inf.ebs;
 
-import org.hamcrest.MatcherAssert;
 import org.junit.Test;
 
 /**
