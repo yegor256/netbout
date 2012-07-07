@@ -56,7 +56,7 @@ public final class DefaultInfinityProf {
      * @throws Exception If there is some problem inside
      */
     public static void main(final String... args) throws Exception {
-        new DefaultInfinityProf().run();
+        // new DefaultInfinityProf().run();
     }
 
     /**
