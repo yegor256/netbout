@@ -66,10 +66,10 @@ public final class DefaultInfinityProf {
     private void run() throws Exception {
         final Infinity inf = this.prepare();
         final String[] queries = new String[] {
-            // "(and (or (talks-with 'urn:test:Jeff') (talks-with 'urn:facebook:1531296526')) (bundled) (limit 10))";
-            "(and (talks-with 'urn:facebook:1531296526') (unbundled 5615) (unique $bout.number))"
+            "(and (or (talks-with 'urn:test:Jeff') (talks-with 'urn:facebook:1531296526')) (bundled) (limit 10))",
+            "(and (talks-with 'urn:facebook:1531296526') (unbundled 5615) (unique $bout.number))",
         };
-        for (int retry = 0; retry < 1; ++retry) {
+        for (int retry = 0; retry < 2; ++retry) {
             for (String query : queries) {
                 MatcherAssert.assertThat(
                     this.fetch(inf.messages(query).iterator()),

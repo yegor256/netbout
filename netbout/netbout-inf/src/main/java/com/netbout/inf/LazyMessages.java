@@ -43,7 +43,7 @@ final class LazyMessages implements Iterable<Long> {
     /**
      * Time out interval in milliseconds.
      */
-    private static final long TIMEOUT = 1000;
+    private static final long TIMEOUT = 5000;
 
     /**
      * The ray.
@@ -104,7 +104,6 @@ final class LazyMessages implements Iterable<Long> {
             synchronized (this.start) {
                 if (!this.shifted) {
                     Cursor next;
-                    // @checkstyle MagicNumber (1 line)
                     if (System.currentTimeMillis() - this.start
                         > LazyMessages.TIMEOUT) {
                         next = this.cursor.shift(
