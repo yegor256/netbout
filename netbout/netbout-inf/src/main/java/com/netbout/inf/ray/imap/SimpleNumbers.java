@@ -59,14 +59,7 @@ class SimpleNumbers implements Numbers {
     /**
      * Lattice.
      */
-    private transient Lattice lat;
-
-    /**
-     * Default ctor.
-     */
-    public SimpleNumbers() {
-        this.lat = new LatticeBuilder().never().build();
-    }
+    private final transient LatticeBuilder lat = new LatticeBuilder().never();
 
     /**
      * {@inheritDoc}
@@ -81,7 +74,7 @@ class SimpleNumbers implements Numbers {
      */
     @Override
     public final Lattice lattice() {
-        return this.lat;
+        return this.lat.build();
     }
 
     /**
@@ -90,10 +83,7 @@ class SimpleNumbers implements Numbers {
     @Override
     public final void add(final long number) {
         this.nums.add(number);
-        this.lat = new LatticeBuilder()
-            .copy(this.lat)
-            .set(number, true, this.nums)
-            .build();
+        this.lat.set(number, true, this.nums);
     }
 
     /**
@@ -102,10 +92,7 @@ class SimpleNumbers implements Numbers {
     @Override
     public final void remove(final long number) {
         this.nums.remove(number);
-        this.lat = new LatticeBuilder()
-            .copy(this.lat)
-            .set(number, false, this.nums)
-            .build();
+        this.lat.set(number, false, this.nums);
     }
 
     /**
@@ -164,6 +151,7 @@ class SimpleNumbers implements Numbers {
                 "#load(..): loaded %d numbers",
                 this.nums.size()
             );
+            this.lat.fill(this.nums);
         }
     }
 

@@ -55,46 +55,83 @@ final class Unique implements Functor {
      */
     @Override
     public Term build(final Ray ray, final List<Atom> atoms) {
-        final Attribute attr =
-            VariableAtom.class.cast(atoms.get(0)).attribute();
-        // @checkstyle AnonInnerLength (50 lines)
-        return new Term() {
-            private final transient ConcurrentMap<String, Term> terms =
-                new ConcurrentSkipListMap<String, Term>();
-            @Override
-            public Cursor shift(final Cursor cursor) {
-                Cursor shifted;
-                if (cursor.end()) {
-                    shifted = cursor;
-                } else {
-                    shifted = cursor.shift(
-                        ray.builder().and(this.terms.values())
-                    );
-                    if (!shifted.end()) {
-                        this.record(shifted);
-                    }
-                }
-                return shifted;
-            }
-            @Override
-            public String toString() {
-                return String.format("(UNIQUE %s)", attr);
-            }
-            @Override
-            public Lattice lattice() {
-                return new LatticeBuilder()
-                    .always()
-                    .and(this.terms.values())
-                    .build();
-            }
-            private void record(final Cursor cursor) {
-                final String value = cursor.msg().attr(attr);
-                this.terms.put(
-                    value,
-                    ray.builder().not(ray.builder().matcher(attr, value))
+        return new Unique.UniqueTerm(
+            ray,
+            VariableAtom.class.cast(atoms.get(0)).attribute()
+        );
+    }
+
+    private static final class UniqueTerm implements Term {
+        /**
+         * The ray to work at.
+         */
+        private final transient Ray ray;
+        /**
+         * The attribute to work with.
+         */
+        private final transient Attribute attr;
+        /**
+         * All NOT-terms, of successfully cached messages.
+         */
+        private final transient ConcurrentMap<String, Term> terms =
+            new ConcurrentSkipListMap<String, Term>();
+        /**
+         * Public ctor.
+         * @param iray The ray to work with
+         * @param attrib The attribute
+         */
+        public UniqueTerm(final Ray iray, final Attribute attrib) {
+            this.ray = iray;
+            this.attr = attrib;
+        }
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public Cursor shift(final Cursor cursor) {
+            Cursor shifted;
+            if (cursor.end()) {
+                shifted = cursor;
+            } else {
+                shifted = cursor.shift(
+                    this.ray.builder().and(this.terms.values())
                 );
+                if (!shifted.end()) {
+                    this.record(shifted);
+                }
             }
-        };
+            return shifted;
+        }
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public String toString() {
+            return String.format("(UNIQUE %s)", this.attr);
+        }
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public Lattice lattice() {
+            return new LatticeBuilder()
+                .always()
+                .and(this.terms.values())
+                .build();
+        }
+        /**
+         * Record one message successfully passed.
+         * @param cursor The cursor where we are at
+         */
+        private void record(final Cursor cursor) {
+            final String value = cursor.msg().attr(this.attr);
+            this.terms.put(
+                value,
+                this.ray.builder().not(
+                    this.ray.builder().matcher(this.attr, value)
+                )
+            );
+        }
     }
 
 }

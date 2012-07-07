@@ -36,12 +36,17 @@ import java.util.SortedSet;
 /**
  * Builder of Lattice.
  *
- * <p>The class is mutable and NOT thread-safe.
+ * <p>The class is mutable and thread-safe.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
 public final class LatticeBuilder {
+
+    /**
+     * Synchronization mutex.
+     */
+    private final transient Integer mutex = new Integer(0);
 
     /**
      * The main bitset.
@@ -66,34 +71,36 @@ public final class LatticeBuilder {
      * @param numbers The numbers to use
      * @return This object
      */
-    public LatticeBuilder fill(final SortedSet<Long> numbers) {
-        this.main.clear(0, BitsetLattice.BITS);
-        long previous = Long.MAX_VALUE;
-        for (Long num : numbers) {
-            if (num > previous) {
-                throw new IllegalArgumentException(
-                    "numbers should be reverse-ordered"
-                );
+    public LatticeBuilder fill(final Collection<Long> numbers) {
+        synchronized (this.mutex) {
+            this.main.clear(0, BitsetLattice.BITS);
+            long previous = Long.MAX_VALUE;
+            for (Long num : numbers) {
+                if (num > previous) {
+                    throw new IllegalArgumentException(
+                        "numbers should be reverse-ordered"
+                    );
+                }
+                if (previous - num < BitsetLattice.SIZE / 2) {
+                    continue;
+                }
+                previous = num;
+                final int bit = BitsetLattice.bit(num);
+                this.main.set(bit);
             }
-            if (previous - num < BitsetLattice.SIZE / 2) {
-                continue;
-            }
-            previous = num;
-            final int bit = BitsetLattice.bit(num);
-            this.main.set(bit);
-        }
-        this.reverse.set(0, BitsetLattice.BITS);
-        final Iterator<Long> iterator = numbers.iterator();
-        Long next = Long.MAX_VALUE;
-        for (int bit = 0; bit < BitsetLattice.BITS; ++bit) {
-            final long window = BitsetLattice.msg(bit + 1);
-            boolean seen = false;
-            while (next > window && iterator.hasNext()) {
-                seen = true;
-                next = iterator.next();
-            }
-            if (seen) {
-                this.reverse.clear(bit);
+            this.reverse.set(0, BitsetLattice.BITS);
+            final Iterator<Long> iterator = numbers.iterator();
+            Long next = Long.MAX_VALUE;
+            for (int bit = 0; bit < BitsetLattice.BITS; ++bit) {
+                final long window = BitsetLattice.msg(bit + 1);
+                boolean seen = false;
+                while (next > window && iterator.hasNext()) {
+                    seen = true;
+                    next = iterator.next();
+                }
+                if (seen) {
+                    this.reverse.clear(bit);
+                }
             }
         }
         return this;
@@ -106,12 +113,14 @@ public final class LatticeBuilder {
      * @return This object
      */
     public LatticeBuilder copy(final Lattice lattice) {
-        this.main = BitSet.class.cast(
-            BitsetLattice.class.cast(lattice).main.clone()
-        );
-        this.reverse = BitSet.class.cast(
-            BitsetLattice.class.cast(lattice).reverse.clone()
-        );
+        synchronized (this.mutex) {
+            this.main = BitSet.class.cast(
+                BitsetLattice.class.cast(lattice).main.clone()
+            );
+            this.reverse = BitSet.class.cast(
+                BitsetLattice.class.cast(lattice).reverse.clone()
+            );
+        }
         return this;
     }
 
@@ -120,8 +129,10 @@ public final class LatticeBuilder {
      * @return This object
      */
     public LatticeBuilder always() {
-        this.main.set(0, BitsetLattice.BITS);
-        this.reverse.clear(0, BitsetLattice.BITS);
+        synchronized (this.mutex) {
+            this.main.set(0, BitsetLattice.BITS);
+            this.reverse.clear(0, BitsetLattice.BITS);
+        }
         return this;
     }
 
@@ -130,8 +141,10 @@ public final class LatticeBuilder {
      * @return This object
      */
     public LatticeBuilder never() {
-        this.main.clear(0, BitsetLattice.BITS);
-        this.reverse.set(0, BitsetLattice.BITS);
+        synchronized (this.mutex) {
+            this.main.clear(0, BitsetLattice.BITS);
+            this.reverse.set(0, BitsetLattice.BITS);
+        }
         return this;
     }
 
@@ -141,11 +154,13 @@ public final class LatticeBuilder {
      * @return This object
      */
     public LatticeBuilder and(final Collection<Term> terms) {
-        for (Term term : terms) {
-            final BitsetLattice lattice =
-                BitsetLattice.class.cast(term.lattice());
-            this.main.and(lattice.main);
-            this.reverse.or(lattice.reverse);
+        synchronized (this.mutex) {
+            for (Term term : terms) {
+                final BitsetLattice lattice =
+                    BitsetLattice.class.cast(term.lattice());
+                this.main.and(lattice.main);
+                this.reverse.or(lattice.reverse);
+            }
         }
         return this;
     }
@@ -158,11 +173,13 @@ public final class LatticeBuilder {
      */
     @SuppressWarnings("PMD.ShortMethodName")
     public LatticeBuilder or(final Collection<Term> terms) {
-        for (Term term : terms) {
-            final BitsetLattice lattice =
-                BitsetLattice.class.cast(term.lattice());
-            this.main.or(lattice.main);
-            this.reverse.and(lattice.reverse);
+        synchronized (this.mutex) {
+            for (Term term : terms) {
+                final BitsetLattice lattice =
+                    BitsetLattice.class.cast(term.lattice());
+                this.main.or(lattice.main);
+                this.reverse.and(lattice.reverse);
+            }
         }
         return this;
     }
@@ -172,9 +189,11 @@ public final class LatticeBuilder {
      * @return This object
      */
     public LatticeBuilder revert() {
-        final BitSet temp = this.main;
-        this.main = this.reverse;
-        this.reverse = temp;
+        synchronized (this.mutex) {
+            final BitSet temp = this.main;
+            this.main = this.reverse;
+            this.reverse = temp;
+        }
         return this;
     }
 
@@ -187,12 +206,14 @@ public final class LatticeBuilder {
      */
     public LatticeBuilder set(final long number, final boolean bit,
         final SortedSet<Long> numbers) {
-        final int num = BitsetLattice.bit(number);
-        if (bit) {
-            this.main.set(num);
-        }
-        if (!bit && this.emptyBit(numbers, number)) {
-            this.reverse.set(num);
+        synchronized (this.mutex) {
+            final int num = BitsetLattice.bit(number);
+            if (bit) {
+                this.main.set(num);
+            }
+            if (!bit && this.emptyBit(numbers, number)) {
+                this.reverse.set(num);
+            }
         }
         return this;
     }
