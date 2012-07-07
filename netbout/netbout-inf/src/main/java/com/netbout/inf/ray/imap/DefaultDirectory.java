@@ -219,6 +219,12 @@ final class DefaultDirectory implements Directory {
         } finally {
             stream.close();
         }
+        Logger.debug(
+            this,
+            "#load('%s', ..): loaded reverse (file.length=%s)",
+            attr,
+            FileUtils.byteCountToDisplaySize(file.length())
+        );
     }
 
     /**

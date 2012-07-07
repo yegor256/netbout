@@ -64,19 +64,20 @@ public final class DefaultInfinityProf {
      * @throws Exception If there is some problem inside
      */
     private void run() throws Exception {
-        // final Infinity inf = this.prepare();
-        // final String query =
-        //     // @checkstyle LineLength (1 line)
-        //     "(and (or (talks-with 'urn:test:Jeff') (talks-with 'urn:facebook:1531296526')) (bundled) (limit 10))";
-        // MatcherAssert.assertThat(
-        //     this.fetch(inf.messages(query).iterator()),
-        //     Matchers.hasSize(Matchers.greaterThan(0))
-        // );
-        // MatcherAssert.assertThat(
-        //     this.fetch(inf.messages(query).iterator()),
-        //     Matchers.hasSize(Matchers.greaterThan(0))
-        // );
-        // inf.close();
+        final Infinity inf = this.prepare();
+        final String[] queries = new String[] {
+            // "(and (or (talks-with 'urn:test:Jeff') (talks-with 'urn:facebook:1531296526')) (bundled) (limit 10))";
+            "(and (talks-with 'urn:facebook:1531296526') (unbundled 5615) (unique $bout.number))"
+        };
+        for (int retry = 0; retry < 1; ++retry) {
+            for (String query : queries) {
+                MatcherAssert.assertThat(
+                    this.fetch(inf.messages(query).iterator()),
+                    Matchers.hasSize(Matchers.greaterThan(0))
+                );
+            }
+        }
+        inf.close();
     }
 
     /**
@@ -87,8 +88,8 @@ public final class DefaultInfinityProf {
     private Infinity prepare() throws Exception {
         final Folder folder = new FolderMocker().mock();
         FileUtils.copyDirectory(
-            new File("./src/prof/resources/com/netbout/inf/ray-330k"),
-            new File(folder.path(), "/ray")
+            new File("./src/prof/resources/com/netbout/inf/ray-2"),
+            new File(folder.path(), "/ray-2")
         );
         return new DefaultInfinity(folder);
     }
