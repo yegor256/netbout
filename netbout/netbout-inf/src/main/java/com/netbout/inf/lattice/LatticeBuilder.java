@@ -71,7 +71,7 @@ public final class LatticeBuilder {
      * @param numbers The numbers to use
      * @return This object
      */
-    public LatticeBuilder fill(final SortedSet<Long> numbers) {
+    public LatticeBuilder fill(final Collection<Long> numbers) {
         synchronized (this.mutex) {
             this.main.clear(0, BitsetLattice.BITS);
             long previous = Long.MAX_VALUE;
