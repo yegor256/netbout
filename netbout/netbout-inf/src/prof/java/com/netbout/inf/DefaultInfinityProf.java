@@ -89,7 +89,7 @@ public final class DefaultInfinityProf {
         final Folder folder = new FolderMocker().mock();
         FileUtils.copyDirectory(
             new File("./src/prof/resources/com/netbout/inf/ray-2"),
-            new File(folder.path(), "/ray-2")
+            new File(folder.path(), "/ray")
         );
         return new DefaultInfinity(folder);
     }
