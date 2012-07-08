@@ -28,13 +28,11 @@ package com.netbout.inf.ray.imap;
 
 import com.jcabi.log.Logger;
 import com.netbout.inf.Attribute;
-import java.io.Closeable;
 import java.io.File;
 import java.io.IOException;
-import java.util.Collection;
-import java.util.LinkedList;
+import java.util.HashSet;
+import java.util.Set;
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.FilenameUtils;
 
 /**
  * Sub-directory with draft documents.
@@ -43,56 +41,16 @@ import org.apache.commons.io.FilenameUtils;
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
- * @checkstyle ClassDataAbstractionCoupling (500 lines)
  */
-@SuppressWarnings("PMD.TooManyMethods")
-final class Draft implements Closeable {
-
-    /**
-     * Lock on the directory.
-     */
-    private final transient Lock lock;
+final class Draft extends BaseVersion {
 
     /**
      * Public ctor.
-     * @param lck The directory where to work
+     * @param lock The directory where to work
      * @throws IOException If some I/O problem inside
      */
-    public Draft(final Lock lck) throws IOException {
-        this.lock = lck;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String toString() {
-        return String.format("draft:%s", this.lock.toString());
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public int hashCode() {
-        return this.lock.hashCode();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public boolean equals(final Object draft) {
-        return this == draft || (draft instanceof Draft
-            && Draft.class.cast(draft).lock.equals(this.lock));
-    }
-
-    /**
-     * Expire it.
-     * @throws IOException If some I/O problem inside
-     */
-    public void expire() throws IOException {
-        this.lock.expire();
+    public Draft(final Lock lock) throws IOException {
+        super(lock);
     }
 
     /**
@@ -102,7 +60,7 @@ final class Draft implements Closeable {
      * @throws IOException If some I/O problem inside
      */
     public File numbers(final Attribute attr) throws IOException {
-        final File folder = new File(this.lock.dir(), attr.toString());
+        final File folder = new File(this.dir(), attr.toString());
         folder.mkdirs();
         return File.createTempFile("numbers-", ".inf", folder);
     }
@@ -116,24 +74,9 @@ final class Draft implements Closeable {
      */
     public File numbers(final Attribute attr,
         final String name) throws IOException {
-        final File folder = new File(this.lock.dir(), attr.toString());
+        final File folder = new File(this.dir(), attr.toString());
         folder.mkdirs();
         return new File(folder, name);
-    }
-
-    /**
-     * Get name of reverse file.
-     * @param attr Attribute
-     * @return File name
-     * @throws IOException If some I/O problem inside
-     */
-    public File reverse(final Attribute attr) throws IOException {
-        final File file = new File(
-            this.lock.dir(),
-            String.format("/%s/reverse.inf", attr)
-        );
-        FileUtils.touch(file);
-        return file;
     }
 
     /**
@@ -145,7 +88,7 @@ final class Draft implements Closeable {
     public Backlog backlog(final Attribute attr) throws IOException {
         return new Backlog(
             new File(
-                this.lock.dir(),
+                this.dir(),
                 String.format("/%s/backlog.inf", attr)
             )
         );
@@ -157,20 +100,14 @@ final class Draft implements Closeable {
      * @param src Original baseline
      * @throws IOException If some I/O problem inside
      */
-    @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
     public void baseline(final Baseline dest,
         final Baseline src) throws IOException {
         final long start = System.currentTimeMillis();
-        final Collection<Attribute> attrs = new LinkedList<Attribute>();
-        for (File file : this.lock.dir().listFiles()) {
-            if (!file.isDirectory()) {
-                continue;
-            }
-            final Attribute attr = new Attribute(
-                FilenameUtils.getName(file.getPath())
-            );
+        final Set<Attribute> attrs = new HashSet<Attribute>();
+        attrs.addAll(this.attributes());
+        attrs.addAll(src.attributes());
+        for (Attribute attr : attrs) {
             this.baseline(dest, src, attr);
-            attrs.add(attr);
         }
         Logger.debug(
             this,
@@ -180,15 +117,6 @@ final class Draft implements Closeable {
             attrs,
             System.currentTimeMillis() - start
         );
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void close() throws IOException {
-        this.lock.close();
-        Logger.debug(this, "#close(): closed");
     }
 
     /**

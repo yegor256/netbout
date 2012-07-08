@@ -70,7 +70,7 @@ final class SimpleReverse implements Reverse {
         String value = null;
         int count = 0;
         // @checkstyle MagicNumber (1 line)
-        while (++count < 15) {
+        while (++count < 5) {
             value = this.map.get(msg);
             if (value != null) {
                 break;
@@ -85,9 +85,11 @@ final class SimpleReverse implements Reverse {
         if (value == null) {
             throw new IllegalArgumentException(
                 String.format(
-                    "value not found for msg #%d among %d others",
+                    // @checkstyle LineLength (1 line)
+                    "value not found for msg #%d among %d others, even after %d seconds of waiting",
                     msg,
-                    this.map.size()
+                    this.map.size(),
+                    count
                 )
             );
         }

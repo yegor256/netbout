@@ -66,7 +66,7 @@ class SimpleNumbers implements Numbers {
      */
     @Override
     public final long sizeof() {
-        return this.nums.size();
+        return this.nums.size() * Numbers.SIZE;
     }
 
     /**

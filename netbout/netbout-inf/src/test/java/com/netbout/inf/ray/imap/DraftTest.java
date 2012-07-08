@@ -143,6 +143,33 @@ public final class DraftTest {
     }
 
     /**
+     * Draft can pick up all attributes from source baseline.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void picksUpAllAttributesFromBaseline() throws Exception {
+        final File dir = this.temp.newFolder("foo-55");
+        final Attribute attr = new Attribute("boom-boom-bar");
+        final String value = "some value \u0433";
+        final Draft draft = new Draft(new Lock(new File(dir, "draft-3")));
+        final Baseline src = new Baseline(new Lock(new File(dir, "src-3")));
+        DraftTest.save(src.data(attr), 1L, 2L);
+        src.catalog(attr).create(
+            Arrays.asList(new Catalog.Item(value, 0L)).iterator()
+        );
+        final Baseline dest = new Baseline(
+            new Lock(this.temp.newFolder("dest-3"))
+        );
+        draft.baseline(dest, src);
+        draft.close();
+        src.close();
+        MatcherAssert.assertThat(
+            dest.catalog(attr).seek(value),
+            Matchers.greaterThanOrEqualTo(0L)
+        );
+    }
+
+    /**
      * Save numbers to file.
      * @param file The file to save to
      * @param nums Numbers to save
