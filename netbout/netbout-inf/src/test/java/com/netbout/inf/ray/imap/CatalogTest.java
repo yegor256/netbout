@@ -193,7 +193,7 @@ public final class CatalogTest {
         MatcherAssert.assertThat(catalog.seek("test"), Matchers.lessThan(0L));
         MatcherAssert.assertThat(
             CatalogTest.openFiles(),
-            Matchers.equalTo(files)
+            Matchers.lessThanOrEqualTo(files)
         );
     }
 
