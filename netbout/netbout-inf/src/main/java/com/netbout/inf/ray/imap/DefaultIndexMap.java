@@ -170,8 +170,9 @@ public final class DefaultIndexMap implements IndexMap {
         this.directory.baseline();
         Logger.info(
             this,
-            "#flush(): saved %d indexes to %s in %[ms]s",
+            "#flush(): saved %d indexes %[list]s to %s in %[ms]s",
             this.map.size(),
+            this.map.keySet(),
             this.directory,
             System.currentTimeMillis() - start
         );
