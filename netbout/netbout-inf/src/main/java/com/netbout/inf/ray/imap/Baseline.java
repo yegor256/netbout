@@ -26,9 +26,7 @@
  */
 package com.netbout.inf.ray.imap;
 
-import com.jcabi.log.Logger;
 import com.netbout.inf.Attribute;
-import java.io.Closeable;
 import java.io.File;
 import java.io.IOException;
 import org.apache.commons.io.FileUtils;
@@ -41,53 +39,15 @@ import org.apache.commons.io.FileUtils;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-final class Baseline implements Closeable {
-
-    /**
-     * Lock on the directory.
-     */
-    private final transient Lock lock;
+final class Baseline extends BaseVersion {
 
     /**
      * Public ctor.
-     * @param lck The directory where to work
+     * @param lock The directory where to work
      * @throws IOException If some I/O problem inside
      */
-    public Baseline(final Lock lck) throws IOException {
-        this.lock = lck;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String toString() {
-        return String.format("base:%s", this.lock.toString());
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public int hashCode() {
-        return this.lock.hashCode();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public boolean equals(final Object base) {
-        return this == base || (base instanceof Baseline
-            && Baseline.class.cast(base).lock.equals(this.lock));
-    }
-
-    /**
-     * Expire it.
-     * @throws IOException If some I/O problem inside
-     */
-    public void expire() throws IOException {
-        this.lock.expire();
+    public Baseline(final Lock lock) throws IOException {
+        super(lock);
     }
 
     /**
@@ -98,23 +58,8 @@ final class Baseline implements Closeable {
      */
     public File data(final Attribute attr) throws IOException {
         final File file = new File(
-            this.lock.dir(),
+            this.dir(),
             String.format("/%s/data.inf", attr)
-        );
-        FileUtils.touch(file);
-        return file;
-    }
-
-    /**
-     * Get name of reverse file.
-     * @param attr Attribute
-     * @return File name
-     * @throws IOException If some I/O problem inside
-     */
-    public File reverse(final Attribute attr) throws IOException {
-        final File file = new File(
-            this.lock.dir(),
-            String.format("/%s/reverse.inf", attr)
         );
         FileUtils.touch(file);
         return file;
@@ -129,19 +74,10 @@ final class Baseline implements Closeable {
     public Catalog catalog(final Attribute attr) throws IOException {
         return new Catalog(
             new File(
-                this.lock.dir(),
+                this.dir(),
                 String.format("/%s/catalog.inf", attr)
             )
         );
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void close() throws IOException {
-        this.lock.close();
-        Logger.debug(this, "#close(): closed");
     }
 
 }

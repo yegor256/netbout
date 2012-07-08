@@ -149,7 +149,7 @@ public final class DraftTest {
     @Test
     public void picksUpAllAttributesFromBaseline() throws Exception {
         final File dir = this.temp.newFolder("foo-55");
-        final Attribute attr = new Attribute("boom-boom-boom");
+        final Attribute attr = new Attribute("boom-boom-bar");
         final String value = "some value \u0433";
         final Draft draft = new Draft(new Lock(new File(dir, "draft-3")));
         final Baseline src = new Baseline(new Lock(new File(dir, "src-3")));
@@ -165,7 +165,7 @@ public final class DraftTest {
         src.close();
         MatcherAssert.assertThat(
             dest.catalog(attr).seek(value),
-            Matchers.greaterThan(0L)
+            Matchers.greaterThanOrEqualTo(0L)
         );
     }
 
