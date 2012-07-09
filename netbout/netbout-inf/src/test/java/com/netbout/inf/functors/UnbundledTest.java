@@ -86,4 +86,22 @@ public final class UnbundledTest {
         );
     }
 
+    /**
+     * Unbundled can find nothing when bout number is not correct.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void findsNothingWithInvalidBoutNumber() throws Exception {
+        final Ray ray = new MemRay(new FolderMocker().mock().path());
+        final long bnum = MsgMocker.number();
+        final Term term = new Unbundled().build(
+            ray,
+            Arrays.asList(new Atom[] {new NumberAtom(bnum)})
+        );
+        MatcherAssert.assertThat(
+            ray.cursor().shift(term).end(),
+            Matchers.is(true)
+        );
+    }
+
 }
