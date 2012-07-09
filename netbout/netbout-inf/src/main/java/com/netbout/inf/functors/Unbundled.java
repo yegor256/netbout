@@ -27,6 +27,7 @@
 package com.netbout.inf.functors;
 
 import com.netbout.inf.Atom;
+import com.netbout.inf.Cursor;
 import com.netbout.inf.Functor;
 import com.netbout.inf.Ray;
 import com.netbout.inf.Term;
@@ -56,16 +57,22 @@ final class Unbundled implements Functor {
             VariableAtom.BOUT_NUMBER.attribute(),
             bout.toString()
         );
-        final String marker = ray.cursor()
-            .shift(matcher)
-            .msg()
-            .attr(BundledAttribute.VALUE);
-        return ray.builder().and(
-            Arrays.asList(
-                ray.builder().matcher(BundledAttribute.VALUE, marker),
-                ray.builder().not(matcher)
-            )
-        );
+        final Cursor cursor = ray.cursor().shift(matcher);
+        Term term;
+        if (cursor.end()) {
+            term = ray.builder().never();
+        } else {
+            term = ray.builder().and(
+                Arrays.asList(
+                    ray.builder().matcher(
+                        BundledAttribute.VALUE,
+                        cursor.msg().attr(BundledAttribute.VALUE)
+                    ),
+                    ray.builder().not(matcher)
+                )
+            );
+        }
+        return term;
     }
 
 }
