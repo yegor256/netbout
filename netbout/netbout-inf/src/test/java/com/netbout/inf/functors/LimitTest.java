@@ -27,6 +27,7 @@
 package com.netbout.inf.functors;
 
 import com.netbout.inf.Atom;
+import com.netbout.inf.Cursor;
 import com.netbout.inf.FolderMocker;
 import com.netbout.inf.MsgMocker;
 import com.netbout.inf.Ray;
@@ -61,18 +62,12 @@ public final class LimitTest {
             ray,
             Arrays.<Atom>asList(new NumberAtom(2L))
         );
-        MatcherAssert.assertThat(
-            ray.cursor().shift(term).end(),
-            Matchers.equalTo(false)
-        );
-        MatcherAssert.assertThat(
-            ray.cursor().shift(term).shift(term).end(),
-            Matchers.equalTo(false)
-        );
-        MatcherAssert.assertThat(
-            ray.cursor().shift(term).shift(term).shift(term).end(),
-            Matchers.equalTo(true)
-        );
+        Cursor cursor = ray.cursor().shift(term);
+        MatcherAssert.assertThat(cursor.end(), Matchers.is(false));
+        cursor = cursor.shift(term);
+        MatcherAssert.assertThat(cursor.end(), Matchers.is(false));
+        cursor = cursor.shift(term);
+        MatcherAssert.assertThat(cursor.end(), Matchers.is(true));
     }
 
 }

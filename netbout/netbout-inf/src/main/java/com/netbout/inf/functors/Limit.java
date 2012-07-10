@@ -94,18 +94,14 @@ final class Limit implements Functor {
          */
         @Override
         public Cursor shift(final Cursor cursor) {
-            Cursor shifted = cursor;
+            Cursor shifted = cursor.shift(this.ray.builder().always());
             if (!shifted.end()) {
-                shifted = shifted.shift(this.ray.builder().always());
-                if (!shifted.end()) {
-                    // @checkstyle NestedIfDepth (5 lines)
-                    if (shifted.msg().number() < this.recent.get()
-                        && this.pos.getAndIncrement() >= this.limit) {
-                        shifted = shifted.shift(this.ray.builder().never());
-                        this.recent.set(0);
-                    } else {
-                        this.recent.set(shifted.msg().number());
-                    }
+                if (shifted.msg().number() < this.recent.get()
+                    && this.pos.getAndIncrement() >= this.limit) {
+                    shifted = shifted.shift(this.ray.builder().never());
+                    this.recent.set(0);
+                } else {
+                    this.recent.set(shifted.msg().number());
                 }
             }
             return shifted;

@@ -117,23 +117,17 @@ final class MatcherTerm implements Term {
      */
     @Override
     public Cursor shift(final Cursor cursor) {
-        Cursor shifted;
-        if (cursor.end()) {
-            shifted = cursor;
-        } else {
-            try {
-                shifted = new MemCursor(
-                    this.imap.index(this.attr).next(
-                        this.value,
-                        cursor.msg().number()
-                    ),
-                    this.imap
-                );
-            } catch (java.io.IOException ex) {
-                throw new IllegalStateException(ex);
-            }
+        try {
+            return new MemCursor(
+                this.imap.index(this.attr).next(
+                    this.value,
+                    cursor.msg().number()
+                ),
+                this.imap
+            );
+        } catch (java.io.IOException ex) {
+            throw new IllegalStateException(ex);
         }
-        return shifted;
     }
 
 }

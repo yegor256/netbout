@@ -92,16 +92,11 @@ final class Unique implements Functor {
          */
         @Override
         public Cursor shift(final Cursor cursor) {
-            Cursor shifted;
-            if (cursor.end()) {
-                shifted = cursor;
-            } else {
-                shifted = cursor.shift(
-                    this.ray.builder().and(this.terms.values())
-                );
-                if (!shifted.end()) {
-                    this.record(shifted);
-                }
+            final Cursor shifted = cursor.shift(
+                this.ray.builder().and(this.terms.values())
+            );
+            if (!shifted.end()) {
+                this.record(shifted);
             }
             return shifted;
         }

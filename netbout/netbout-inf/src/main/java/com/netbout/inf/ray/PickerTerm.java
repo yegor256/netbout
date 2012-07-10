@@ -104,9 +104,7 @@ final class PickerTerm implements Term {
     @Override
     public Cursor shift(final Cursor cursor) {
         Cursor shifted;
-        if (cursor.end()) {
-            shifted = cursor;
-        } else if (cursor.msg().number() > this.number) {
+        if (cursor.msg().number() > this.number) {
             shifted = new MemCursor(this.number, this.imap);
         } else {
             shifted = new MemCursor(0L, this.imap);

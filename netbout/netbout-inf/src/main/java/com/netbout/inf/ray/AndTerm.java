@@ -138,18 +138,15 @@ final class AndTerm implements Term {
     @Override
     public Cursor shift(final Cursor cursor) {
         final Lattice lattice = this.lattice();
-        Cursor slider = lattice.correct(cursor, this.shifter);
+        final ConcurrentMap<Term, Cursor> cache =
+            new ConcurrentHashMap<Term, Cursor>();
+        Cursor slider = this.move(
+            this.terms.iterator().next(),
+            lattice.correct(cursor, this.shifter),
+            cache
+        );
         if (!slider.end()) {
-            final ConcurrentMap<Term, Cursor> cache =
-                new ConcurrentHashMap<Term, Cursor>();
-            slider = this.move(
-                this.terms.iterator().next(),
-                slider,
-                cache
-            );
-            if (!slider.end()) {
-                slider = this.slide(slider, cache);
-            }
+            slider = this.slide(slider, cache);
         }
         return slider;
     }

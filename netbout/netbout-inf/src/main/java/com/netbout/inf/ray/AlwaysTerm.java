@@ -95,16 +95,10 @@ final class AlwaysTerm implements Term {
     @Override
     @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
     public Cursor shift(final Cursor cursor) {
-        Cursor shifted;
-        if (cursor.end()) {
-            shifted = cursor;
-        } else {
-            shifted = new MemCursor(
-                this.next(cursor.msg().number()),
-                this.imap
-            );
-        }
-        return shifted;
+        return new MemCursor(
+            this.next(cursor.msg().number()),
+            this.imap
+        );
     }
 
     /**

@@ -129,23 +129,18 @@ final class OrTerm implements Term {
      */
     @Override
     public Cursor shift(final Cursor cursor) {
+        final Collection<Long> msgs = new ArrayList<Long>(this.terms.size());
+        for (Term term : this.terms) {
+            final Cursor shifted = cursor.shift(term);
+            if (!shifted.end()) {
+                msgs.add(shifted.msg().number());
+            }
+        }
         Cursor slider;
-        if (cursor.end()) {
-            slider = cursor;
+        if (msgs.isEmpty()) {
+            slider = new MemCursor(0L, this.imap);
         } else {
-            final Collection<Long> msgs =
-                new ArrayList<Long>(this.terms.size());
-            for (Term term : this.terms) {
-                final Cursor shifted = cursor.shift(term);
-                if (!shifted.end()) {
-                    msgs.add(shifted.msg().number());
-                }
-            }
-            if (msgs.isEmpty()) {
-                slider = new MemCursor(0L, this.imap);
-            } else {
-                slider = new MemCursor(Collections.max(msgs), this.imap);
-            }
+            slider = new MemCursor(Collections.max(msgs), this.imap);
         }
         return slider;
     }
