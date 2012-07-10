@@ -109,6 +109,14 @@ final class Bundled implements Functor {
                 final String marker = shifted.msg().attr(
                     BundledAttribute.VALUE
                 );
+                if (this.terms.containsKey(marker)) {
+                    throw new IllegalStateException(
+                        String.format(
+                            "marker '%s' has already been seen",
+                            marker
+                        )
+                    );
+                }
                 this.terms.put(
                     marker,
                     this.ray.builder().not(

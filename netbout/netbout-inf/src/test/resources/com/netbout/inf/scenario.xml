@@ -198,4 +198,35 @@
             <messages>456540</messages>
         </query>
     </scene>
+    <scene>
+        <see notice="com.netbout.inf.notices.MessagePostedNotice">
+            <message.number>10</message.number>
+            <bout.participants>urn:test:man1, urn:test:man2</bout.participants>
+            <bout.number>55</bout.number>
+        </see>
+        <see notice="com.netbout.inf.notices.MessagePostedNotice">
+            <message.number>9</message.number>
+            <bout.participants>urn:test:man1, urn:test:man2</bout.participants>
+            <bout.number>54</bout.number>
+        </see>
+        <see notice="com.netbout.inf.notices.MessagePostedNotice">
+            <message.number>8</message.number>
+            <bout.participants>urn:test:man1</bout.participants>
+            <bout.number>53</bout.number>
+        </see>
+        <see notice="com.netbout.inf.notices.MessagePostedNotice">
+            <message.number>7</message.number>
+            <bout.participants>urn:test:man1, urn:test:man2</bout.participants>
+            <bout.number>52</bout.number>
+        </see>
+        <see notice="com.netbout.inf.notices.MessagePostedNotice">
+            <message.number>6</message.number>
+            <bout.participants>urn:test:man1, urn:test:man2, urn:test:man3</bout.participants>
+            <bout.number>51</bout.number>
+        </see>
+        <query>
+            <predicate>(and (talks-with 'urn:test:man1') (bundled) (from 1) (limit 2) (unique $bout.number))</predicate>
+            <messages>8, 6</messages>
+        </query>
+    </scene>
 </scenario>
