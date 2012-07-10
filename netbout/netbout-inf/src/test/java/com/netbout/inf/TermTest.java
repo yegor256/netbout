@@ -43,9 +43,12 @@ public final class TermTest {
      */
     @Test
     public void acceptsInCorrectDirection() throws Exception {
-        final Term term = new Term.Valve(new TermMocker().mock());
-        term.shift(new CursorMocker().withMsg(2).mock());
-        term.shift(new CursorMocker().withMsg(1).mock());
+        final long msg = MsgMocker.number();
+        final Term term = new Term.Valve(
+            new TermMocker().shiftTo(msg).mock()
+        );
+        term.shift(new CursorMocker().withMsg(Long.MAX_VALUE).mock());
+        term.shift(new CursorMocker().withMsg(msg).mock());
     }
 
     /**
@@ -54,9 +57,12 @@ public final class TermTest {
      */
     @Test(expected = IllegalArgumentException.class)
     public void throwsInInvalidDirection() throws Exception {
-        final Term term = new Term.Valve(new TermMocker().mock());
-        term.shift(new CursorMocker().withMsg(1).mock());
-        term.shift(new CursorMocker().withMsg(2).mock());
+        final long msg = MsgMocker.number();
+        final Term term = new Term.Valve(
+            new TermMocker().shiftTo(msg).mock()
+        );
+        term.shift(new CursorMocker().withMsg(Long.MAX_VALUE).mock());
+        term.shift(new CursorMocker().withMsg(msg + 1).mock());
     }
 
 }

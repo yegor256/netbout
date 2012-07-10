@@ -30,6 +30,7 @@ import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * Term in query.
@@ -69,12 +70,18 @@ public interface Term {
 
     /**
      * Allows cursors only in one direction, from bigger to smaller.
+     *
+     * <p>The class is thread-safe.
      */
     class Valve implements Term {
         /**
          * Original term.
          */
         private final transient Term origin;
+        /**
+         * The maximum number we are ready to accept.
+         */
+        private transient long max = Long.MAX_VALUE;
         /**
          * Public ctor.
          * @param term Original term
@@ -87,7 +94,24 @@ public interface Term {
          */
         @Override
         public Cursor shift(Cursor cursor) {
-            return this.origin.shift(cursor);
+            final long number = cursor.msg().number();
+            if (number > this.max) {
+                throw new IllegalArgumentException(
+                    String.format(
+                        "%s can't go reverse to %s (max=%d)",
+                        this,
+                        cursor,
+                        this.max
+                    )
+                );
+            }
+            final Cursor shifted = this.origin.shift(cursor);
+            if (shifted.end()) {
+                this.max = 0;
+            } else {
+                this.max = shifted.msg().number();
+            }
+            return shifted;
         }
         /**
          * {@inheritDoc}
