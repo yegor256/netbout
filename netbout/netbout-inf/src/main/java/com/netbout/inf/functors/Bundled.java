@@ -60,52 +60,7 @@ final class Bundled implements Functor {
      */
     @Override
     public Term build(final Ray ray, final List<Atom> atoms) {
-        // @checkstyle AnonInnerLength (50 lines)
-        return new Term() {
-            private final transient ConcurrentMap<String, Term> terms =
-                new ConcurrentSkipListMap<String, Term>();
-            @Override
-            public Cursor shift(final Cursor cursor) {
-                final Cursor shifted = cursor.shift(
-                    ray.builder().and(this.terms.values())
-                );
-                if (!shifted.end()) {
-                    final String marker = shifted.msg().attr(
-                        BundledAttribute.VALUE
-                    );
-                    this.terms.put(
-                        marker,
-                        ray.builder().not(
-                            ray.builder().matcher(
-                                BundledAttribute.VALUE,
-                                marker
-                            )
-                        )
-                    );
-                }
-                return shifted;
-            }
-            @Override
-            public String toString() {
-                return "(BUNDLED)";
-            }
-            @Override
-            public Lattice lattice() {
-                return new LatticeBuilder()
-                    .always()
-                    .and(this.terms.values())
-                    .build();
-            }
-            private Cursor next(final Cursor cursor) {
-                Cursor next;
-                if (cursor.end()) {
-                    next = cursor;
-                } else {
-                    next = cursor.shift(ray.builder().always());
-                }
-                return next;
-            }
-        };
+        return new Bundled.BundledTerm(ray);
     }
 
     /**
@@ -120,6 +75,77 @@ final class Bundled implements Functor {
             BundledAttribute.VALUE,
             Bundled.marker(notice.message())
         );
+    }
+
+    /**
+     * The term to instantiate here.
+     */
+    private static final class BundledTerm implements Term {
+        /**
+         * Ray to use.
+         */
+        private final transient Ray ray;
+        /**
+         * Terms to ignore (passed already).
+         */
+        private final transient ConcurrentMap<String, Term> terms =
+            new ConcurrentSkipListMap<String, Term>();
+        /**
+         * Public ctor.
+         * @param iray The ray to work with
+         */
+        public BundledTerm(final Ray iray) {
+            this.ray = iray;
+        }
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public Cursor shift(final Cursor cursor) {
+            final Cursor shifted = cursor.shift(
+                this.ray.builder().and(this.terms.values())
+            );
+            if (!shifted.end()) {
+                final String marker = shifted.msg().attr(
+                    BundledAttribute.VALUE
+                );
+                if (this.terms.containsKey(marker)) {
+                    throw new IllegalStateException(
+                        String.format(
+                            "marker '%s' has already been seen",
+                            marker
+                        )
+                    );
+                }
+                this.terms.put(
+                    marker,
+                    this.ray.builder().not(
+                        this.ray.builder().matcher(
+                            BundledAttribute.VALUE,
+                            marker
+                        )
+                    )
+                );
+            }
+            return shifted;
+        }
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public String toString() {
+            return "(BUNDLED)";
+        }
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public Lattice lattice() {
+            return new LatticeBuilder()
+                .always()
+                .and(this.terms.values())
+                .build();
+        }
     }
 
     /**

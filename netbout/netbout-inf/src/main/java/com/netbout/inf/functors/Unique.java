@@ -61,6 +61,9 @@ final class Unique implements Functor {
         );
     }
 
+    /**
+     * The term to instantiate here.
+     */
     private static final class UniqueTerm implements Term {
         /**
          * The ray to work at.
@@ -125,6 +128,14 @@ final class Unique implements Functor {
          */
         private void record(final Cursor cursor) {
             final String value = cursor.msg().attr(this.attr);
+            if (this.terms.containsKey(value)) {
+                throw new IllegalStateException(
+                    String.format(
+                        "value '%s' has already been seen",
+                        value
+                    )
+                );
+            }
             this.terms.put(
                 value,
                 this.ray.builder().not(

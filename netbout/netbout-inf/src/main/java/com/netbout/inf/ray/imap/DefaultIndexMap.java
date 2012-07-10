@@ -88,8 +88,15 @@ public final class DefaultIndexMap implements IndexMap {
                 .append(this.map.get(attr).toString())
                 .append("\n");
         }
-        text.append(this.directory.toString());
-        return text.toString();
+        long sizeof = 0L;
+        for (FlushableIndex idx : this.map.values()) {
+            sizeof += idx.sizeof();
+        }
+        return text.append("total size: ")
+            .append(sizeof)
+            .append(" \n")
+            .append(this.directory.toString())
+            .toString();
     }
 
     /**

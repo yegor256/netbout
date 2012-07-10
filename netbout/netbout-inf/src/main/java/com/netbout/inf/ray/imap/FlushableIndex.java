@@ -40,6 +40,12 @@ import java.io.IOException;
 interface FlushableIndex extends Index {
 
     /**
+     * How many bytes we consume in memory.
+     * @return Number of bytes
+     */
+    long sizeof();
+
+    /**
      * Flush this index to the disc.
      * @throws IOException If some problem
      */
