@@ -60,6 +60,14 @@ final class VolatileTerm implements Term {
      * {@inheritDoc}
      */
     @Override
+    public Term copy() {
+        return new VolatileTerm(this.origin.copy());
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public Cursor shift(final Cursor cursor) {
         return this.origin.shift(cursor);
     }

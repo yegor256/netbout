@@ -79,6 +79,14 @@ final class MatcherTerm implements Term {
      * {@inheritDoc}
      */
     @Override
+    public Term copy() {
+        return new MatcherTerm(this.imap, this.attr, this.value);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public int hashCode() {
         return this.hash;
     }

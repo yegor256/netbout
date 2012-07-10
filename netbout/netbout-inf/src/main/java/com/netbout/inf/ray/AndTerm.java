@@ -30,6 +30,7 @@ import com.netbout.inf.Cursor;
 import com.netbout.inf.Lattice;
 import com.netbout.inf.Term;
 import com.netbout.inf.lattice.LatticeBuilder;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -92,6 +93,18 @@ final class AndTerm implements Term {
             this.terms.remove(new AlwaysTerm(this.imap));
         }
         this.hash = this.toString().hashCode();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Term copy() {
+        final Collection<Term> copies = new ArrayList<Term>(this.terms.size());
+        for (Term term : this.terms) {
+            copies.add(term.copy());
+        }
+        return new AndTerm(this.imap, copies);
     }
 
     /**

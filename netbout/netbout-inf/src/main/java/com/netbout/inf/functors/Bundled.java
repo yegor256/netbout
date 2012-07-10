@@ -101,6 +101,13 @@ final class Bundled implements Functor {
          * {@inheritDoc}
          */
         @Override
+        public Term copy() {
+            return new Bundled.BundledTerm(this.ray);
+        }
+        /**
+         * {@inheritDoc}
+         */
+        @Override
         public Cursor shift(final Cursor cursor) {
             final Cursor shifted = cursor.shift(
                 this.ray.builder().and(this.terms.values())

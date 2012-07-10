@@ -93,6 +93,13 @@ final class Limit implements Functor {
          * {@inheritDoc}
          */
         @Override
+        public Term copy() {
+            return new Limit.LimitTerm(this.ray, this.limit);
+        }
+        /**
+         * {@inheritDoc}
+         */
+        @Override
         public Cursor shift(final Cursor cursor) {
             Cursor shifted = cursor.shift(this.ray.builder().always());
             if (!shifted.end()) {

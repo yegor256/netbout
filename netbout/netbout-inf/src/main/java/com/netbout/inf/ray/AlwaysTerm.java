@@ -59,6 +59,14 @@ final class AlwaysTerm implements Term {
      * {@inheritDoc}
      */
     @Override
+    public Term copy() {
+        return new AlwaysTerm(this.imap);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public String toString() {
         return "(ALWAYS)";
     }

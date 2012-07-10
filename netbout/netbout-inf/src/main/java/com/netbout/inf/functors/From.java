@@ -95,6 +95,13 @@ final class From implements Functor {
          * {@inheritDoc}
          */
         @Override
+        public Term copy() {
+            return new From.FromTerm(this.ray, this.from);
+        }
+        /**
+         * {@inheritDoc}
+         */
+        @Override
         public Cursor shift(final Cursor cursor) {
             Cursor shifted = cursor.shift(this.ray.builder().always());
             if (!shifted.end()

@@ -99,6 +99,18 @@ final class OrTerm implements Term {
      * {@inheritDoc}
      */
     @Override
+    public Term copy() {
+        final Collection<Term> copies = new ArrayList<Term>(this.terms.size());
+        for (Term term : this.terms) {
+            copies.add(term.copy());
+        }
+        return new OrTerm(this.imap, copies);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public int hashCode() {
         return this.hash;
     }

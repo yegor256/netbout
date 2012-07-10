@@ -71,6 +71,14 @@ final class NotTerm implements Term {
      * {@inheritDoc}
      */
     @Override
+    public Term copy() {
+        return new NotTerm(this.imap, this.term.copy());
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public int hashCode() {
         return this.hash;
     }

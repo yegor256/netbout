@@ -72,7 +72,7 @@ final class LazyMessages implements Iterable<Long> {
      */
     @Override
     public Iterator<Long> iterator() {
-        return new MessagesIterator(this.ray.cursor());
+        return new MessagesIterator(this.term.copy(), this.ray.cursor());
     }
 
     /**
@@ -80,11 +80,15 @@ final class LazyMessages implements Iterable<Long> {
      *
      * <p>The class is thread-safe.
      */
-    private final class MessagesIterator implements Iterator<Long> {
+    private static final class MessagesIterator implements Iterator<Long> {
         /**
          * When the iterator was started.
          */
         private final transient Long start = System.currentTimeMillis();
+        /**
+         * Term to use.
+         */
+        private final transient Term term;
         /**
          * Cursor to use.
          */
@@ -95,9 +99,11 @@ final class LazyMessages implements Iterable<Long> {
         private final transient AtomicBoolean shifted = new AtomicBoolean();
         /**
          * Public ctor.
+         * @param trm The term to use
          * @param crs The cursor
          */
-        public MessagesIterator(final Cursor crs) {
+        public MessagesIterator(final Term trm, final Cursor crs) {
+            this.term = trm;
             this.cursor = new AtomicReference<Cursor>(crs);
         }
         /**
@@ -108,14 +114,14 @@ final class LazyMessages implements Iterable<Long> {
             synchronized (this.start) {
                 if (!this.shifted.get()) {
                     final Cursor next =
-                        this.cursor.get().shift(LazyMessages.this.term);
+                        this.cursor.get().shift(this.term);
                     if (next.compareTo(this.cursor.get()) >= 0) {
                         throw new IllegalStateException(
                             String.format(
                                 "%s shifted to %s by %s, wrong way",
                                 this.cursor,
                                 next,
-                                LazyMessages.this.term
+                                this.term
                             )
                         );
                     }
@@ -128,7 +134,7 @@ final class LazyMessages implements Iterable<Long> {
                     Logger.warn(
                         this,
                         "#hasNext(): slow iterator at '%s', over %[ms]s",
-                        LazyMessages.this.term,
+                        this.term,
                         System.currentTimeMillis() - this.start
                     );
                     has = false;
@@ -153,7 +159,7 @@ final class LazyMessages implements Iterable<Long> {
                     this,
                     "#next(): #%d for %[text]s, %[ms]s",
                     number,
-                    LazyMessages.this.term,
+                    this.term,
                     System.currentTimeMillis() - this.start
                 );
                 return number;

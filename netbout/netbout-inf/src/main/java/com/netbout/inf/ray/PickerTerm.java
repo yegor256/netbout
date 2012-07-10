@@ -67,6 +67,14 @@ final class PickerTerm implements Term {
      * {@inheritDoc}
      */
     @Override
+    public Term copy() {
+        return new PickerTerm(this.imap, this.number);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public int hashCode() {
         return this.imap.hashCode() + this.toString().hashCode();
     }

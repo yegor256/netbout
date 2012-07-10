@@ -35,7 +35,7 @@ import java.util.concurrent.atomic.AtomicLong;
 /**
  * Term in query.
  *
- * <p>Implementation must be immutable and thread-safe.
+ * <p>Implementation must be thread-safe. It may be muttable and stateful.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
@@ -69,6 +69,12 @@ public interface Term {
     Lattice lattice();
 
     /**
+     * Create a copy of this term.
+     * @return The copy of this term
+     */
+    Term copy();
+
+    /**
      * Allows cursors only in one direction, from bigger to smaller.
      *
      * <p>The class is thread-safe.
@@ -88,6 +94,13 @@ public interface Term {
          */
         public Valve(final Term term) {
             this.origin = term;
+        }
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public Term copy() {
+            return new Term.Valve(this.origin.copy());
         }
         /**
          * {@inheritDoc}

@@ -91,6 +91,13 @@ final class Unique implements Functor {
          * {@inheritDoc}
          */
         @Override
+        public Term copy() {
+            return new Unique.UniqueTerm(this.ray, this.attr);
+        }
+        /**
+         * {@inheritDoc}
+         */
+        @Override
         public Cursor shift(final Cursor cursor) {
             final Cursor shifted = cursor.shift(
                 this.ray.builder().and(this.terms.values())
