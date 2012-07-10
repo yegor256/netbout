@@ -61,6 +61,9 @@ final class Unique implements Functor {
         );
     }
 
+    /**
+     * The term to instantiate here.
+     */
     private static final class UniqueTerm implements Term {
         /**
          * The ray to work at.

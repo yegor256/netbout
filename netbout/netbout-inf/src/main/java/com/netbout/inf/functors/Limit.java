@@ -53,41 +53,77 @@ final class Limit implements Functor {
      */
     @Override
     public Term build(final Ray ray, final List<Atom> atoms) {
-        final long limit = NumberAtom.class.cast(atoms.get(0)).value();
         return new VolatileTerm(
-            // @checkstyle AnonInnerLength (50 lines)
-            new Term() {
-                private final transient AtomicLong pos = new AtomicLong(0L);
-                private final transient AtomicLong recent =
-                    new AtomicLong(Long.MAX_VALUE);
-                @Override
-                public Cursor shift(final Cursor cursor) {
-                    Cursor shifted = cursor;
-                    if (!shifted.end()) {
-                        shifted = shifted.shift(ray.builder().always());
-                        if (!shifted.end()) {
-                            // @checkstyle NestedIfDepth (5 lines)
-                            if (shifted.msg().number() < this.recent.get()
-                                && this.pos.getAndIncrement() >= limit) {
-                                shifted = shifted.shift(ray.builder().never());
-                                this.recent.set(0);
-                            } else {
-                                this.recent.set(shifted.msg().number());
-                            }
-                        }
+            new LimitTerm(ray, NumberAtom.class.cast(atoms.get(0)).value())
+        );
+    }
+
+    /**
+     * The term to instantiate.
+     */
+    @Term.Volatile
+    private static final class LimitTerm implements Term {
+        /**
+         * Ray to work with.
+         */
+        private final transient Ray ray;
+        /**
+         * Maximum number of messages we can accept here.
+         */
+        private final transient long limit;
+        /**
+         * Position.
+         */
+        private final transient AtomicLong pos = new AtomicLong(0L);
+        /**
+         * Recently seen bout number.
+         */
+        private final transient AtomicLong recent =
+            new AtomicLong(Long.MAX_VALUE);
+        /**
+         * Public ctor.
+         * @param iray The ray
+         * @param lmt Maximum number of msgs to accept
+         */
+        public LimitTerm(final Ray iray, final long lmt) {
+            this.ray = iray;
+            this.limit = lmt;
+        }
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public Cursor shift(final Cursor cursor) {
+            Cursor shifted = cursor;
+            if (!shifted.end()) {
+                shifted = shifted.shift(this.ray.builder().always());
+                if (!shifted.end()) {
+                    // @checkstyle NestedIfDepth (5 lines)
+                    if (shifted.msg().number() < this.recent.get()
+                        && this.pos.getAndIncrement() >= this.limit) {
+                        shifted = shifted.shift(this.ray.builder().never());
+                        this.recent.set(0);
+                    } else {
+                        this.recent.set(shifted.msg().number());
                     }
-                    return shifted;
-                }
-                @Override
-                public String toString() {
-                    return String.format("(LIMIT %d)", limit);
-                }
-                @Override
-                public Lattice lattice() {
-                    return new LatticeBuilder().always().build();
                 }
             }
-        );
+            return shifted;
+        }
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public String toString() {
+            return String.format("(LIMIT %d)", this.limit);
+        }
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public Lattice lattice() {
+            return new LatticeBuilder().always().build();
+        }
     }
 
 }
