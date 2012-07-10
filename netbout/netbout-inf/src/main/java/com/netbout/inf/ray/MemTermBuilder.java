@@ -60,7 +60,7 @@ final class MemTermBuilder implements TermBuilder {
      */
     @Override
     public Term matcher(final Attribute name, final String value) {
-        return new MatcherTerm(this.imap, name, value);
+        return new Term.Valve(new MatcherTerm(this.imap, name, value));
     }
 
     /**
@@ -76,7 +76,7 @@ final class MemTermBuilder implements TermBuilder {
         } else {
             agg = new AndTerm(this.imap, terms);
         }
-        return agg;
+        return new Term.Valve(agg);
     }
 
     /**
@@ -94,7 +94,7 @@ final class MemTermBuilder implements TermBuilder {
         } else {
             agg = new OrTerm(this.imap, terms);
         }
-        return agg;
+        return new Term.Valve(agg);
     }
 
     /**
@@ -106,7 +106,7 @@ final class MemTermBuilder implements TermBuilder {
      */
     @Override
     public Term not(final Term term) {
-        return new NotTerm(this.imap, term);
+        return new Term.Valve(new NotTerm(this.imap, term));
     }
 
     /**
@@ -114,7 +114,7 @@ final class MemTermBuilder implements TermBuilder {
      */
     @Override
     public Term never() {
-        return new NeverTerm(this.imap);
+        return new Term.Valve(new NeverTerm(this.imap));
     }
 
     /**
@@ -122,7 +122,7 @@ final class MemTermBuilder implements TermBuilder {
      */
     @Override
     public Term always() {
-        return new AlwaysTerm(this.imap);
+        return new Term.Valve(new AlwaysTerm(this.imap));
     }
 
     /**
@@ -130,7 +130,7 @@ final class MemTermBuilder implements TermBuilder {
      */
     @Override
     public Term picker(final long number) {
-        return new PickerTerm(this.imap, number);
+        return new Term.Valve(new PickerTerm(this.imap, number));
     }
 
 }

@@ -67,4 +67,35 @@ public interface Term {
      */
     Lattice lattice();
 
+    /**
+     * Allows cursors only in one direction, from bigger to smaller.
+     */
+    class Valve implements Term {
+        /**
+         * Original term.
+         */
+        private final transient Term origin;
+        /**
+         * Public ctor.
+         * @param term Original term
+         */
+        public Valve(final Term term) {
+            this.origin = term;
+        }
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public Cursor shift(Cursor cursor) {
+            return this.origin.shift(cursor);
+        }
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public Lattice lattice() {
+            return this.origin.lattice();
+        }
+    }
+
 }
