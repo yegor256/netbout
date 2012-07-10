@@ -108,7 +108,8 @@ public interface Term {
          */
         @Override
         public boolean equals(final Object term) {
-            return this.origin.equals(term);
+            return this == term || (term instanceof Term &&
+                this.hashCode() == term.hashCode());
         }
         /**
          * {@inheritDoc}
