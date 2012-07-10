@@ -93,8 +93,37 @@ public interface Term {
          * {@inheritDoc}
          */
         @Override
+        public String toString() {
+            return this.origin.toString();
+        }
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public int hashCode() {
+            return this.origin.hashCode();
+        }
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public boolean equals(final Object term) {
+            return this.origin.equals(term);
+        }
+        /**
+         * {@inheritDoc}
+         */
+        @Override
         public Cursor shift(Cursor cursor) {
             final long number = cursor.msg().number();
+            if (this.max == 0) {
+                throw new IllegalArgumentException(
+                    String.format(
+                        "%s can't be used any more",
+                        this
+                    )
+                );
+            }
             if (number > this.max) {
                 throw new IllegalArgumentException(
                     String.format(

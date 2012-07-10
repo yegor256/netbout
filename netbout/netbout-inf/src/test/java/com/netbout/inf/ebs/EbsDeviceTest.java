@@ -39,7 +39,7 @@ public final class EbsDeviceTest {
      * EbsDevice can return a valid directory, even when there is no AWS at all.
      * @throws Exception If there is some problem inside
      */
-    @Test(expected = com.amazonaws.AmazonServiceException.class)
+    @Test(expected = com.amazonaws.AmazonClientException.class)
     public void attachesAndMounts() throws Exception {
         new EbsDevice("fake-instance", "fake-volume").name();
     }
