@@ -77,6 +77,14 @@ final class NumbersIndex implements FlushableIndex {
      * {@inheritDoc}
      */
     @Override
+    public long sizeof() {
+        return this.numbers.sizeof();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public String toString() {
         final StringBuilder text = new StringBuilder();
         text.append(this.numbers.sizeof()).append(" bytes in numbers");

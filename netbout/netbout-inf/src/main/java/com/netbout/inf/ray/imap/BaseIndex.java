@@ -102,15 +102,25 @@ class BaseIndex implements FlushableIndex {
      * {@inheritDoc}
      */
     @Override
-    public String toString() {
-        final StringBuilder text = new StringBuilder();
-        text.append(this.map.size()).append(" values, ");
+    public long sizeof() {
         long sizeof = 0L;
         for (Numbers numbers : this.map.values()) {
             sizeof += numbers.sizeof();
         }
-        text.append(sizeof).append(" bytes");
-        return text.toString();
+        return sizeof;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String toString() {
+        return new StringBuilder()
+            .append(this.map.size())
+            .append(" values, ")
+            .append(this.sizeof())
+            .append(" bytes")
+            .toString();
     }
 
     /**
