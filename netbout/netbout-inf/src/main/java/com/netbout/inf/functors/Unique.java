@@ -131,8 +131,11 @@ final class Unique implements Functor {
             if (this.terms.containsKey(value)) {
                 throw new IllegalStateException(
                     String.format(
-                        "value '%s' has already been seen",
-                        value
+                        // @checkstyle LineLength (1 line)
+                        "value '%s' has already been seen in %s, among %d others",
+                        value,
+                        this.terms.get(value),
+                        this.terms.size()
                     )
                 );
             }

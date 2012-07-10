@@ -112,8 +112,11 @@ final class Bundled implements Functor {
                 if (this.terms.containsKey(marker)) {
                     throw new IllegalStateException(
                         String.format(
-                            "marker '%s' has already been seen",
-                            marker
+                            // @checkstyle LineLength (1 line)
+                            "marker '%s' has already been seen in %s among %d others",
+                            marker,
+                            this.terms.get(marker),
+                            this.terms.size()
                         )
                     );
                 }
