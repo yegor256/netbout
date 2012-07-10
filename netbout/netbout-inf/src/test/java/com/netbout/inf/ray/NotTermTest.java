@@ -57,9 +57,7 @@ public final class NotTermTest {
      */
     @Test
     public void shiftsCursorToTheFirstValue() throws Exception {
-        final IndexMap map = new DefaultIndexMap(
-            this.temp.newFolder("foo")
-        );
+        final IndexMap map = new DefaultIndexMap(this.temp.newFolder("foo"));
         final Attribute attr = new Attribute("attribute-name");
         final String value = "some text-1 \u0433!";
         final long msg = MsgMocker.number();
@@ -67,19 +65,23 @@ public final class NotTermTest {
         map.index(attr).add(msg, value);
         map.touch(msg - 1);
         map.index(attr).add(msg - 1, "should be found by NOT term");
-        final Term term = new NotTerm(
-            map,
-            new MatcherTerm(map, attr, value)
+        Cursor cursor = new MemCursor(msg, map).shift(
+            new NotTerm(
+                map,
+                new Term.Valve(new MatcherTerm(map, attr, value))
+            )
         );
-        final Cursor cursor = new MemCursor(msg, map);
         MatcherAssert.assertThat(
-            term.shift(cursor).msg().number(),
+            cursor.msg().number(),
             Matchers.equalTo(msg - 1)
         );
-        MatcherAssert.assertThat(
-            term.shift(term.shift(cursor)).end(),
-            Matchers.equalTo(true)
+        cursor = cursor.shift(
+            new NotTerm(
+                map,
+                new Term.Valve(new MatcherTerm(map, attr, value))
+            )
         );
+        MatcherAssert.assertThat(cursor.end(), Matchers.is(true));
     }
 
 }

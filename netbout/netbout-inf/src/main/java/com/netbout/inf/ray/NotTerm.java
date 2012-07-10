@@ -109,20 +109,28 @@ final class NotTerm implements Term {
 
     /**
      * {@inheritDoc}
+     *
+     * <p>There are two cursors that we shift down at the same time. The first
+     * one ({@code always}) always shifts one message down. The second one
+     * ({@code matcher}) goes independently, according to the incapsulated
+     * term.
      */
     @Override
     public Cursor shift(final Cursor cursor) {
-        Cursor shifted = cursor;
-        Cursor candidate = shifted;
-        final Term always = new AlwaysTerm(this.imap);
-        while (!shifted.end()) {
-            candidate = shifted.shift(always);
-            shifted = shifted.shift(this.term);
-            if (shifted.compareTo(candidate) < 0) {
+        Cursor always = cursor;
+        Cursor matcher = cursor;
+        final Term aterm = new AlwaysTerm(this.imap);
+        while (true) {
+            always = always.shift(aterm);
+            matcher = matcher.shift(this.term);
+            if (always.end() || matcher.end()) {
+                break;
+            }
+            if (always.compareTo(matcher) < 0) {
                 break;
             }
         }
-        return candidate;
+        return always;
     }
 
 }

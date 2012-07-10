@@ -135,6 +135,9 @@ public interface Term {
                     )
                 );
             }
+            if (cursor.end()) {
+                throw new IllegalArgumentException("end of cursor");
+            }
             final Cursor shifted = this.origin.shift(cursor);
             if (shifted.end()) {
                 this.max = 0;

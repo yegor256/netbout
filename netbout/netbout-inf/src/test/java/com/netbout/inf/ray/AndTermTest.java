@@ -72,23 +72,28 @@ public final class AndTermTest {
         map.index(attr).add(msg, third);
         map.index(attr).add(msg - 1, second);
         map.index(attr).add(msg - 2, third);
-        final Term term = new AndTerm(
-            map,
-            Arrays.<Term>asList(
-                new MatcherTerm(map, attr, first),
-                new MatcherTerm(map, attr, second),
-                new MatcherTerm(map, attr, third)
+        Cursor cursor = new MemCursor(Long.MAX_VALUE, map).shift(
+            new AndTerm(
+                map,
+                Arrays.<Term>asList(
+                    new Term.Valve(new MatcherTerm(map, attr, first)),
+                    new Term.Valve(new MatcherTerm(map, attr, second)),
+                    new Term.Valve(new MatcherTerm(map, attr, third))
+                )
             )
         );
-        final Cursor cursor = new MemCursor(Long.MAX_VALUE, map);
-        MatcherAssert.assertThat(
-            term.shift(cursor).msg().number(),
-            Matchers.equalTo(msg)
+        MatcherAssert.assertThat(cursor.msg().number(), Matchers.equalTo(msg));
+        cursor = cursor.shift(
+            new AndTerm(
+                map,
+                Arrays.<Term>asList(
+                    new Term.Valve(new MatcherTerm(map, attr, first)),
+                    new Term.Valve(new MatcherTerm(map, attr, second)),
+                    new Term.Valve(new MatcherTerm(map, attr, third))
+                )
+            )
         );
-        MatcherAssert.assertThat(
-            term.shift(term.shift(cursor)).end(),
-            Matchers.equalTo(true)
-        );
+        MatcherAssert.assertThat(cursor.end(), Matchers.is(true));
     }
 
 }
