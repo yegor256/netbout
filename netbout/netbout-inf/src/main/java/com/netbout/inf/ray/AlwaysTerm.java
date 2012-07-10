@@ -93,7 +93,6 @@ final class AlwaysTerm implements Term {
      * {@inheritDoc}
      */
     @Override
-    @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
     public Cursor shift(final Cursor cursor) {
         return new MemCursor(
             this.next(cursor.msg().number()),
