@@ -53,11 +53,7 @@ final class Unbundled implements Functor {
     @Override
     public Term build(final Ray ray, final List<Atom> atoms) {
         final Long bout = NumberAtom.class.cast(atoms.get(0)).value();
-        final Term matcher = ray.builder().matcher(
-            VariableAtom.BOUT_NUMBER.attribute(),
-            bout.toString()
-        );
-        final Cursor cursor = ray.cursor().shift(matcher);
+        final Cursor cursor = ray.cursor().shift(this.matcher(ray, bout));
         Term term;
         if (cursor.end()) {
             term = ray.builder().never();
@@ -68,11 +64,24 @@ final class Unbundled implements Functor {
                         BundledAttribute.VALUE,
                         cursor.msg().attr(BundledAttribute.VALUE)
                     ),
-                    ray.builder().not(matcher)
+                    ray.builder().not(this.matcher(ray, bout))
                 )
             );
         }
         return term;
+    }
+
+    /**
+     * Create matching term.
+     * @param ray The ray
+     * @param bout Bout number
+     * @return The matcher
+     */
+    private Term matcher(final Ray ray, final Long bout) {
+        return ray.builder().matcher(
+            VariableAtom.BOUT_NUMBER.attribute(),
+            bout.toString()
+        );
     }
 
 }
