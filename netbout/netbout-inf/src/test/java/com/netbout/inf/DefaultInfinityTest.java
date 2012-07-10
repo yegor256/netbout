@@ -27,6 +27,7 @@
 package com.netbout.inf;
 
 import com.jcabi.log.Logger;
+import com.jcabi.log.VerboseThreads;
 import com.netbout.inf.notices.MessagePostedNotice;
 import com.netbout.spi.Bout;
 import com.netbout.spi.BoutMocker;
@@ -34,6 +35,10 @@ import com.netbout.spi.Message;
 import com.netbout.spi.MessageMocker;
 import com.netbout.spi.Urn;
 import com.netbout.spi.UrnMocker;
+import java.util.concurrent.Callable;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
@@ -43,6 +48,8 @@ import org.junit.Test;
  * Test case of {@link DefaultInfinity}.
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
+ * @checkstyle MagicNumber (500 lines)
+ * @checkstyle ClassDataAbstractionCoupling (500 lines)
  */
 public final class DefaultInfinityTest {
 
@@ -73,7 +80,6 @@ public final class DefaultInfinityTest {
         while (inf.eta(deps) != 0) {
             TimeUnit.MILLISECONDS.sleep(1);
             Logger.debug(this, "eta=%[nano]s", inf.eta(deps));
-            // @checkstyle MagicNumber (1 line)
             if (++total > 1000) {
                 throw new IllegalStateException("time out");
             }
@@ -117,7 +123,6 @@ public final class DefaultInfinityTest {
         int total = 0;
         while (inf.eta(deps) != 0) {
             TimeUnit.MILLISECONDS.sleep(1);
-            // @checkstyle MagicNumber (1 line)
             if (++total > 1000) {
                 throw new IllegalStateException("time out 2");
             }
@@ -144,6 +149,70 @@ public final class DefaultInfinityTest {
             new DefaultInfinity(new FolderMocker().mock()),
             Matchers.hasToString(Matchers.notNullValue())
         );
+    }
+
+    /**
+     * DefaultInfinity can search in parallel threads.
+     * @throws Exception If there is some problem inside
+     * @checkstyle ExecutableStatementCount (100 lines)
+     */
+    @Test
+    @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
+    public void searchesInParallelThreads() throws Exception {
+        final Folder folder = new FolderMocker().mock();
+        final Infinity inf = new DefaultInfinity(folder);
+        for (int num = 0; num < 10; ++num) {
+            final Bout bout = new BoutMocker()
+                .withParticipant(new UrnMocker().mock())
+                .withNumber(MsgMocker.number())
+                .mock();
+            final Message msg = new MessageMocker()
+                .withText("Jeffrey Lebowski, \u0443\u0440\u0430! What's up?")
+                .withNumber(MsgMocker.number())
+                .inBout(bout)
+                .mock();
+            final Urn[] deps = inf.see(
+                new MessagePostedNotice() {
+                    @Override
+                    public Message message() {
+                        return msg;
+                    }
+                }
+            ).toArray(new Urn[0]);
+            int total = 0;
+            while (inf.eta(deps) != 0) {
+                TimeUnit.MILLISECONDS.sleep(1);
+                if (++total > 1000) {
+                    throw new IllegalStateException("time out 3");
+                }
+            }
+        }
+        final int threads = 10;
+        final CountDownLatch start = new CountDownLatch(1);
+        final CountDownLatch latch = new CountDownLatch(threads);
+        final Callable<?> task = new Callable<Void>() {
+            @Override
+            public Void call() throws Exception {
+                start.await();
+                for (int attempt = 0; attempt < 10; ++attempt) {
+                    MatcherAssert.assertThat(
+                        inf.messages("(and (matches 'Jeffrey') (bundled))"),
+                        Matchers.<Long>iterableWithSize(Matchers.greaterThan(0))
+                    );
+                }
+                latch.countDown();
+                return null;
+            }
+        };
+        final ExecutorService svc =
+            Executors.newFixedThreadPool(threads, new VerboseThreads());
+        for (int thread = 0; thread < threads; ++thread) {
+            svc.submit(task);
+        }
+        start.countDown();
+        latch.await(1, TimeUnit.SECONDS);
+        svc.shutdown();
+        inf.close();
     }
 
 }

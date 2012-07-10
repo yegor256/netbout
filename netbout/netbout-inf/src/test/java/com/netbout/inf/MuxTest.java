@@ -78,6 +78,7 @@ public final class MuxTest {
         MatcherAssert.assertThat(mux.eta(name), Matchers.equalTo(0L));
         mux.close();
     }
+
     /**
      * Mux can render statistics.
      * @throws Exception If there is some problem inside
