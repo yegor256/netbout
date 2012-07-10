@@ -57,6 +57,11 @@ final class MatcherTerm implements Term {
     private final transient IndexMap imap;
 
     /**
+     * Hash code, for performance reasons.
+     */
+    private final transient int hash;
+
+    /**
      * Public ctor.
      * @param map The index map
      * @param atr Attribute
@@ -67,6 +72,7 @@ final class MatcherTerm implements Term {
         this.imap = map;
         this.attr = atr;
         this.value = val;
+        this.hash = this.toString().hashCode();
     }
 
     /**
@@ -74,7 +80,7 @@ final class MatcherTerm implements Term {
      */
     @Override
     public int hashCode() {
-        return this.toString().hashCode();
+        return this.hash;
     }
 
     /**

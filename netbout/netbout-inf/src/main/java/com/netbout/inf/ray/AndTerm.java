@@ -121,8 +121,7 @@ final class AndTerm implements Term {
         for (Term term : this.terms) {
             text.append(' ').append(term);
         }
-        text.append(')');
-        return text.toString();
+        return text.append(')').toString();
     }
 
     /**
