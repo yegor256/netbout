@@ -225,7 +225,21 @@
             <bout.number>51</bout.number>
         </see>
         <query>
-            <predicate>(and (talks-with 'urn:test:man1') (bundled) (from 1) (limit 2) (unique $bout.number))</predicate>
+            <predicate>
+                (and
+                    (or
+                        (talks-with 'urn:test:man1')
+                        (matches 'something to match')
+                        (matches 'some other text')
+                        (talks-with 'urn:test:man2')
+                        (talks-with 'urn:test:man3')
+                    )
+                    (bundled)
+                    (from 1)
+                    (limit 2)
+                    (unique $bout.number)
+                )
+            </predicate>
             <messages>8, 6</messages>
         </query>
     </scene>

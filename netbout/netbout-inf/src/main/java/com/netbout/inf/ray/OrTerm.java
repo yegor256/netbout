@@ -33,8 +33,11 @@ import com.netbout.inf.lattice.LatticeBuilder;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.LinkedHashSet;
+import java.util.Queue;
 import java.util.Set;
+import java.util.concurrent.ConcurrentSkipListSet;
 
 /**
  * OR term.
@@ -62,6 +65,12 @@ final class OrTerm implements Term {
      * Index map.
      */
     private final transient IndexMap imap;
+
+    /**
+     * Ordered queue of messages to return.
+     */
+    private final transient Collection<Long> msgs =
+        new ConcurrentSkipListSet<Long>(Collections.reverseOrder());
 
     /**
      * Public ctor.
@@ -129,20 +138,44 @@ final class OrTerm implements Term {
      */
     @Override
     public Cursor shift(final Cursor cursor) {
-        final Collection<Long> msgs = new ArrayList<Long>(this.terms.size());
-        for (Term term : this.terms) {
-            final Cursor shifted = cursor.shift(term);
-            if (!shifted.end()) {
-                msgs.add(shifted.msg().number());
+        this.prefetch(cursor);
+        return new MemCursor(this.poll(), this.imap);
+    }
+
+    /**
+     * Pre-fetch all message numbers from all terms.
+     * @param cursor Where to start
+     */
+    private void prefetch(final Cursor cursor) {
+        for (Long msg : this.msgs) {
+            if (msg > cursor.msg().number()) {
+                this.msgs.remove(msg);
             }
         }
-        Cursor slider;
-        if (msgs.isEmpty()) {
-            slider = new MemCursor(0L, this.imap);
-        } else {
-            slider = new MemCursor(Collections.max(msgs), this.imap);
+        if (this.msgs.isEmpty()) {
+            for (Term term : this.terms) {
+                final Cursor shifted = cursor.shift(term);
+                if (!shifted.end()) {
+                    this.msgs.add(shifted.msg().number());
+                }
+            }
         }
-        return slider;
+    }
+
+    /**
+     * Poll the next msg or ZERO if it's empty.
+     * @return The message number or ZERO
+     */
+    private long poll() {
+        final Iterator<Long> iterator = this.msgs.iterator();
+        Long msg;
+        if (iterator.hasNext()) {
+            msg = iterator.next();
+            this.msgs.remove(msg);
+        } else {
+            msg = 0L;
+        }
+        return msg;
     }
 
 }

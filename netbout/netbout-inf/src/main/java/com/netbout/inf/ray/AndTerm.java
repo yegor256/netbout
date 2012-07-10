@@ -129,7 +129,10 @@ final class AndTerm implements Term {
      */
     @Override
     public Lattice lattice() {
-        return new LatticeBuilder().always().and(this.terms).build();
+        return new LatticeBuilder()
+            .always()
+            .and(this.terms)
+            .build();
     }
 
     /**
