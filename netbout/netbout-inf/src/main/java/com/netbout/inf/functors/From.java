@@ -50,20 +50,23 @@ final class From implements Functor {
 
     /**
      * {@inheritDoc}
+     *
+     * <p>There is only one atom accepted and it has to be a {@link NumberAtom},
+     * containing the number of position we should start with. Positions are
+     * numbers from zero. Thus, if you want to see everything provide ZERO here.
      */
     @Override
     public Term build(final Ray ray, final List<Atom> atoms) {
-        return new VolatileTerm(
-            new FromTerm(
-                ray,
-                NumberAtom.class.cast(atoms.get(0)).value()
-            )
+        return new FromTerm(
+            ray,
+            NumberAtom.class.cast(atoms.get(0)).value()
         );
     }
 
     /**
      * The term to use.
      */
+    @Term.Volatile
     private static final class FromTerm implements Term {
         /**
          * Ray to work with.
@@ -74,11 +77,12 @@ final class From implements Functor {
          */
         private final transient long from;
         /**
-         * Current position.
+         * How many messages we passed through already.
          */
-        private final transient AtomicLong pos = new AtomicLong(0L);
+        private final transient AtomicLong passed = new AtomicLong(-1L);
         /**
-         * Most recent position passed.
+         * Most recent message number passed (we keep track of this number
+         * in order to avoid duplicate matches).
          */
         private final transient AtomicLong recent =
             new AtomicLong(Long.MAX_VALUE);
@@ -95,20 +99,25 @@ final class From implements Functor {
          * {@inheritDoc}
          */
         @Override
+        public Term copy() {
+            return new From.FromTerm(this.ray, this.from);
+        }
+        /**
+         * {@inheritDoc}
+         */
+        @Override
         public Cursor shift(final Cursor cursor) {
-            Cursor shifted = cursor;
-            if (!shifted.end()) {
-                shifted = shifted.shift(this.ray.builder().always());
-                if (!shifted.end()
-                    && shifted.msg().number() <= this.recent.get()
-                    && this.pos.getAndIncrement() < this.from) {
-                    shifted = shifted.shift(this.ray.builder().always());
-                }
-                if (shifted.end()) {
-                    this.recent.set(0);
-                } else {
-                    this.recent.set(shifted.msg().number());
-                }
+            final Term always = this.ray.builder().always();
+            Cursor shifted = cursor.shift(always);
+            if (!shifted.end()
+                && shifted.msg().number() <= this.recent.get()
+                && this.passed.incrementAndGet() < this.from) {
+                shifted = shifted.shift(always);
+            }
+            if (shifted.end()) {
+                this.recent.set(0);
+            } else {
+                this.recent.set(shifted.msg().number());
             }
             return shifted;
         }

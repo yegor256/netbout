@@ -59,6 +59,14 @@ final class AlwaysTerm implements Term {
      * {@inheritDoc}
      */
     @Override
+    public Term copy() {
+        return new AlwaysTerm(this.imap);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public String toString() {
         return "(ALWAYS)";
     }
@@ -93,18 +101,11 @@ final class AlwaysTerm implements Term {
      * {@inheritDoc}
      */
     @Override
-    @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
     public Cursor shift(final Cursor cursor) {
-        Cursor shifted;
-        if (cursor.end()) {
-            shifted = cursor;
-        } else {
-            shifted = new MemCursor(
-                this.next(cursor.msg().number()),
-                this.imap
-            );
-        }
-        return shifted;
+        return new MemCursor(
+            this.next(cursor.msg().number()),
+            this.imap
+        );
     }
 
     /**

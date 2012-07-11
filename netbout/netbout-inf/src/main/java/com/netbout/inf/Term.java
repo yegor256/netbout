@@ -34,7 +34,7 @@ import java.lang.annotation.Target;
 /**
  * Term in query.
  *
- * <p>Implementation must be immutable and thread-safe.
+ * <p>Implementation must be thread-safe. It may be muttable and stateful.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
@@ -66,5 +66,11 @@ public interface Term {
      * @return The lattice to use for fast shifting
      */
     Lattice lattice();
+
+    /**
+     * Create a copy of this term.
+     * @return The copy of this term
+     */
+    Term copy();
 
 }

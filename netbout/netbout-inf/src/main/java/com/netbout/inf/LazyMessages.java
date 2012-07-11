@@ -29,6 +29,8 @@ package com.netbout.inf;
 import com.jcabi.log.Logger;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * Lazy list of message numbers.
@@ -70,31 +72,39 @@ final class LazyMessages implements Iterable<Long> {
      */
     @Override
     public Iterator<Long> iterator() {
-        return new MessagesIterator(this.ray.cursor());
+        return new MessagesIterator(this.term.copy(), this.ray.cursor());
     }
 
     /**
-     * Iterator, thread safe.
+     * Iterator.
+     *
+     * <p>The class is thread-safe.
      */
-    private final class MessagesIterator implements Iterator<Long> {
+    private static final class MessagesIterator implements Iterator<Long> {
         /**
          * When the iterator was started.
          */
         private final transient Long start = System.currentTimeMillis();
         /**
+         * Term to use.
+         */
+        private final transient Term term;
+        /**
          * Cursor to use.
          */
-        private transient Cursor cursor;
+        private final transient AtomicReference<Cursor> cursor;
         /**
          * Shifted already?
          */
-        private transient boolean shifted;
+        private final transient AtomicBoolean shifted = new AtomicBoolean();
         /**
          * Public ctor.
+         * @param trm The term to use
          * @param crs The cursor
          */
-        public MessagesIterator(final Cursor crs) {
-            this.cursor = crs;
+        public MessagesIterator(final Term trm, final Cursor crs) {
+            this.term = trm;
+            this.cursor = new AtomicReference<Cursor>(crs);
         }
         /**
          * {@inheritDoc}
@@ -102,45 +112,37 @@ final class LazyMessages implements Iterable<Long> {
         @Override
         public boolean hasNext() {
             synchronized (this.start) {
-                if (!this.shifted) {
-                    Cursor next;
-                    if (System.currentTimeMillis() - this.start
-                        > LazyMessages.TIMEOUT) {
-                        next = this.cursor.shift(
-                            LazyMessages.this.ray.builder().never()
-                        );
-                        Logger.warn(
-                            this,
-                            // @checkstyle LineLength (1 line)
-                            "#hasNext(): expired iterator at '%s', over %[ms]s",
-                            LazyMessages.this.term,
-                            System.currentTimeMillis() - this.start
-                        );
-                    } else {
-                        next = this.cursor.shift(LazyMessages.this.term);
-                    }
-                    if (next.compareTo(this.cursor) >= 0) {
+                if (!this.shifted.get()) {
+                    final Cursor next =
+                        this.cursor.get().shift(this.term);
+                    if (next.compareTo(this.cursor.get()) >= 0) {
                         throw new IllegalStateException(
                             String.format(
-                                "%s shifted to %s, wrong way",
+                                "%s shifted to %s by %s, wrong way",
                                 this.cursor,
-                                next
+                                next,
+                                this.term
                             )
                         );
                     }
-                    this.cursor = next;
-                    this.shifted = true;
+                    this.cursor.set(next);
+                    this.shifted.set(true);
                 }
+                boolean has;
                 if (System.currentTimeMillis() - this.start
                     > LazyMessages.TIMEOUT) {
                     Logger.warn(
                         this,
                         "#hasNext(): slow iterator at '%s', over %[ms]s",
-                        LazyMessages.this.term,
+                        this.term,
                         System.currentTimeMillis() - this.start
                     );
+                    has = false;
+                } else {
+                    has = this.cursor.get().end();
+                    has ^= true;
                 }
-                return !this.cursor.end();
+                return has;
             }
         }
         /**
@@ -152,13 +154,13 @@ final class LazyMessages implements Iterable<Long> {
                 throw new NoSuchElementException();
             }
             synchronized (this.start) {
-                this.shifted = false;
-                final Long number = this.cursor.msg().number();
+                this.shifted.set(false);
+                final Long number = this.cursor.get().msg().number();
                 Logger.debug(
                     this,
                     "#next(): #%d for %[text]s, %[ms]s",
                     number,
-                    LazyMessages.this.term,
+                    this.term,
                     System.currentTimeMillis() - this.start
                 );
                 return number;

@@ -26,53 +26,38 @@
  */
 package com.netbout.inf.ray;
 
-import com.netbout.inf.Attribute;
 import com.netbout.inf.Cursor;
 import com.netbout.inf.Lattice;
 import com.netbout.inf.Term;
 
 /**
- * Matching term.
+ * One-way valve.
  *
- * <p>The class is immutable and thread-safe.
+ * <p>Allows cursors only in one direction, from bigger to smaller.
+ *
+ * <p>The class is thread-safe.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-final class MatcherTerm implements Term {
+final class Valve implements Term {
 
     /**
-     * Name of attribute.
+     * Original term.
      */
-    private final transient Attribute attr;
+    private final transient Term origin;
 
     /**
-     * Value to match.
+     * The maximum number we are ready to accept.
      */
-    private final transient String value;
-
-    /**
-     * Index map.
-     */
-    private final transient IndexMap imap;
-
-    /**
-     * Hash code, for performance reasons.
-     */
-    private final transient int hash;
+    private transient long max = Long.MAX_VALUE;
 
     /**
      * Public ctor.
-     * @param map The index map
-     * @param atr Attribute
-     * @param val Value of it
+     * @param term Original term
      */
-    public MatcherTerm(final IndexMap map, final Attribute atr,
-        final String val) {
-        this.imap = map;
-        this.attr = atr;
-        this.value = val;
-        this.hash = this.toString().hashCode();
+    public Valve(final Term term) {
+        this.origin = term;
     }
 
     /**
@@ -80,24 +65,7 @@ final class MatcherTerm implements Term {
      */
     @Override
     public Term copy() {
-        return new MatcherTerm(this.imap, this.attr, this.value);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public int hashCode() {
-        return this.hash;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public boolean equals(final Object term) {
-        return term == this || (term instanceof MatcherTerm
-            && this.hashCode() == term.hashCode());
+        return new Valve(this.origin.copy());
     }
 
     /**
@@ -105,19 +73,24 @@ final class MatcherTerm implements Term {
      */
     @Override
     public String toString() {
-        return String.format("(%s:%s)", this.attr, this.value);
+        return String.format("v:%s", this.origin.toString());
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public Lattice lattice() {
-        try {
-            return this.imap.index(this.attr).lattice(this.value);
-        } catch (java.io.IOException ex) {
-            throw new IllegalStateException(ex);
-        }
+    public int hashCode() {
+        return this.origin.hashCode();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean equals(final Object term) {
+        return this == term || (term instanceof Term
+            && this.hashCode() == term.hashCode());
     }
 
     /**
@@ -125,17 +98,43 @@ final class MatcherTerm implements Term {
      */
     @Override
     public Cursor shift(final Cursor cursor) {
-        try {
-            return new MemCursor(
-                this.imap.index(this.attr).next(
-                    this.value,
-                    cursor.msg().number()
-                ),
-                this.imap
+        final long number = cursor.msg().number();
+        if (this.max == 0) {
+            throw new IllegalArgumentException(
+                String.format(
+                    "%s can't be used any more",
+                    this
+                )
             );
-        } catch (java.io.IOException ex) {
-            throw new IllegalStateException(ex);
         }
+        if (number > this.max) {
+            throw new IllegalArgumentException(
+                String.format(
+                    "%s can't go reverse to %s (max=%d)",
+                    this,
+                    cursor,
+                    this.max
+                )
+            );
+        }
+        if (cursor.end()) {
+            throw new IllegalArgumentException("end of cursor");
+        }
+        final Cursor shifted = this.origin.shift(cursor);
+        if (shifted.end()) {
+            this.max = 0;
+        } else {
+            this.max = shifted.msg().number();
+        }
+        return shifted;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Lattice lattice() {
+        return this.origin.lattice();
     }
 
 }

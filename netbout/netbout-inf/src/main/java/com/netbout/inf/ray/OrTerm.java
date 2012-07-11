@@ -32,9 +32,10 @@ import com.netbout.inf.Term;
 import com.netbout.inf.lattice.LatticeBuilder;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 /**
  * OR term.
@@ -64,6 +65,12 @@ final class OrTerm implements Term {
     private final transient IndexMap imap;
 
     /**
+     * Cached cursors from every term.
+     */
+    private final transient ConcurrentMap<Term, Cursor> cache =
+        new ConcurrentHashMap<Term, Cursor>();
+
+    /**
      * Public ctor.
      * @param map The index map
      * @param args Arguments (terms)
@@ -84,6 +91,18 @@ final class OrTerm implements Term {
             this.terms.add(new AlwaysTerm(this.imap));
         }
         this.hash = this.toString().hashCode();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Term copy() {
+        final Collection<Term> copies = new ArrayList<Term>(this.terms.size());
+        for (Term term : this.terms) {
+            copies.add(term.copy());
+        }
+        return new OrTerm(this.imap, copies);
     }
 
     /**
@@ -113,8 +132,7 @@ final class OrTerm implements Term {
         for (Term term : this.terms) {
             text.append(' ').append(term);
         }
-        text.append(')');
-        return text.toString();
+        return text.append(')').toString();
     }
 
     /**
@@ -130,25 +148,23 @@ final class OrTerm implements Term {
      */
     @Override
     public Cursor shift(final Cursor cursor) {
-        Cursor slider;
-        if (cursor.end()) {
-            slider = cursor;
-        } else {
-            final Collection<Long> msgs =
-                new ArrayList<Long>(this.terms.size());
-            for (Term term : this.terms) {
-                final Cursor shifted = cursor.shift(term);
-                if (!shifted.end()) {
-                    msgs.add(shifted.msg().number());
-                }
+        Cursor found = null;
+        for (Term term : this.terms) {
+            if (!this.cache.containsKey(term)) {
+                this.cache.put(term, cursor.shift(term));
             }
-            if (msgs.isEmpty()) {
-                slider = new MemCursor(0L, this.imap);
-            } else {
-                slider = new MemCursor(Collections.max(msgs), this.imap);
+            if (this.cache.get(term).compareTo(cursor) >= 0) {
+                this.cache.put(term, cursor.shift(term));
+            }
+            final Cursor candidate = this.cache.get(term);
+            if (found == null || candidate.compareTo(found) > 0) {
+                found = candidate;
             }
         }
-        return slider;
+        if (found == null) {
+            found = new MemCursor(0L, this.imap);
+        }
+        return found;
     }
 
 }

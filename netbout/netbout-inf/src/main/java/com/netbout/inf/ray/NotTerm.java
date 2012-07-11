@@ -30,11 +30,12 @@ import com.netbout.inf.Cursor;
 import com.netbout.inf.Lattice;
 import com.netbout.inf.Term;
 import com.netbout.inf.lattice.LatticeBuilder;
+import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * NOT term.
  *
- * <p>The class is immutable and thread-safe.
+ * <p>The class is mutable and thread-safe.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
@@ -57,6 +58,12 @@ final class NotTerm implements Term {
     private final transient Term term;
 
     /**
+     * Most recent position of the matcher.
+     */
+    private final transient AtomicReference<Cursor> matcher =
+        new AtomicReference<Cursor>();
+
+    /**
      * Public ctor.
      * @param map The index map
      * @param trm The term
@@ -65,6 +72,14 @@ final class NotTerm implements Term {
         this.imap = map;
         this.term = trm;
         this.hash = this.toString().hashCode();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Term copy() {
+        return new NotTerm(this.imap, this.term.copy());
     }
 
     /**
@@ -89,9 +104,11 @@ final class NotTerm implements Term {
      */
     @Override
     public String toString() {
-        final StringBuilder text = new StringBuilder();
-        text.append("(NOT ").append(this.term).append(')');
-        return text.toString();
+        return new StringBuilder()
+            .append("(NOT ")
+            .append(this.term)
+            .append(')')
+            .toString();
     }
 
     /**
@@ -107,20 +124,32 @@ final class NotTerm implements Term {
 
     /**
      * {@inheritDoc}
+     *
+     * <p>There are two cursors that we shift down at the same time. The first
+     * one ({@code always}) always shifts one message down. The second one
+     * ({@code this.matcher}) goes independently, according to the incapsulated
+     * term. The matcher is kept in the class, in order to avoid duplicate
+     * shifting of the incapsulated term.
      */
     @Override
     public Cursor shift(final Cursor cursor) {
-        Cursor shifted = cursor;
-        Cursor candidate = shifted;
-        final Term always = new AlwaysTerm(this.imap);
-        while (!shifted.end()) {
-            candidate = shifted.shift(always);
-            shifted = shifted.shift(this.term);
-            if (shifted.compareTo(candidate) < 0) {
+        if (this.matcher.get() == null
+            || cursor.compareTo(this.matcher.get()) < 0) {
+            this.matcher.set(cursor.shift(this.term));
+        }
+        Cursor always = cursor;
+        final Term aterm = new AlwaysTerm(this.imap);
+        while (true) {
+            always = always.shift(aterm);
+            if (always.end() || this.matcher.get().end()) {
                 break;
             }
+            if (always.compareTo(this.matcher.get()) > 0) {
+                break;
+            }
+            this.matcher.set(this.matcher.get().shift(this.term));
         }
-        return candidate;
+        return always;
     }
 
 }

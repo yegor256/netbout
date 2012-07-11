@@ -35,6 +35,9 @@ import com.netbout.spi.Urn;
 import com.netbout.spi.UrnMocker;
 import com.rexsl.test.SimpleXml;
 import com.rexsl.test.XmlDocument;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 import org.hamcrest.MatcherAssert;
@@ -71,14 +74,16 @@ public final class InfinityTest {
             final Infinity inf = this.prepare(scene);
             for (XmlDocument query : scene.nodes("query")) {
                 final String nums = query.xpath("messages/text()").get(0);
-                MatcherAssert.assertThat(
-                    inf.messages(query.xpath("predicate/text()").get(0)),
-                    Matchers.contains(InfinityTest.numbers(nums))
-                );
-                MatcherAssert.assertThat(
-                    inf.messages(query.xpath("predicate/text() ").get(0)),
-                    Matchers.contains(InfinityTest.numbers(nums))
-                );
+                for (int retry = 0; retry < 1; ++retry) {
+                    MatcherAssert.assertThat(
+                        InfinityTest.toList(
+                            inf.messages(
+                                query.xpath("predicate/text()").get(0)
+                            )
+                        ),
+                        Matchers.contains(InfinityTest.numbers(nums))
+                    );
+                }
             }
             inf.close();
         }
@@ -190,6 +195,21 @@ public final class InfinityTest {
             nums[pos] = Long.valueOf(parts[pos]);
         }
         return nums;
+    }
+
+    /**
+     * Convert iterator to test.
+     * @param iterable The iterable to use
+     * @return The list
+     */
+    private static List<Long> toList(final Iterable<Long> iterable) {
+        final List<Long> list = new LinkedList<Long>();
+        final Iterator<Long> iterator = iterable.iterator();
+        while (iterator.hasNext()) {
+            list.add(iterator.next());
+        }
+        com.jcabi.log.Logger.info(InfinityTest.class, "%[list]s", list);
+        return list;
     }
 
 }

@@ -91,17 +91,19 @@ final class Unique implements Functor {
          * {@inheritDoc}
          */
         @Override
+        public Term copy() {
+            return new Unique.UniqueTerm(this.ray, this.attr);
+        }
+        /**
+         * {@inheritDoc}
+         */
+        @Override
         public Cursor shift(final Cursor cursor) {
-            Cursor shifted;
-            if (cursor.end()) {
-                shifted = cursor;
-            } else {
-                shifted = cursor.shift(
-                    this.ray.builder().and(this.terms.values())
-                );
-                if (!shifted.end()) {
-                    this.record(shifted);
-                }
+            final Cursor shifted = cursor.shift(
+                this.ray.builder().and(this.terms.values())
+            );
+            if (!shifted.end()) {
+                this.record(shifted);
             }
             return shifted;
         }
@@ -131,8 +133,11 @@ final class Unique implements Functor {
             if (this.terms.containsKey(value)) {
                 throw new IllegalStateException(
                     String.format(
-                        "value '%s' has already been seen",
-                        value
+                        // @checkstyle LineLength (1 line)
+                        "value '%s' has already been seen in %s, among %d others",
+                        value,
+                        this.terms.get(value),
+                        this.terms.size()
                     )
                 );
             }

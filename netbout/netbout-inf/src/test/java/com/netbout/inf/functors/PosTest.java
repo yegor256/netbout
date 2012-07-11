@@ -27,6 +27,7 @@
 package com.netbout.inf.functors;
 
 import com.netbout.inf.Atom;
+import com.netbout.inf.Cursor;
 import com.netbout.inf.FolderMocker;
 import com.netbout.inf.MsgMocker;
 import com.netbout.inf.Ray;
@@ -59,14 +60,13 @@ public final class PosTest {
             ray,
             Arrays.<Atom>asList(new NumberAtom(0L))
         );
+        Cursor cursor = ray.cursor().shift(term);
         MatcherAssert.assertThat(
-            ray.cursor().shift(term).msg().number(),
+            cursor.msg().number(),
             Matchers.equalTo(msg)
         );
-        MatcherAssert.assertThat(
-            ray.cursor().shift(term).shift(term).end(),
-            Matchers.equalTo(true)
-        );
+        cursor = cursor.shift(term);
+        MatcherAssert.assertThat(cursor.end(), Matchers.is(true));
     }
 
     /**
@@ -84,14 +84,13 @@ public final class PosTest {
             ray,
             Arrays.<Atom>asList(new NumberAtom(1L))
         );
+        Cursor cursor = ray.cursor().shift(term);
         MatcherAssert.assertThat(
-            ray.cursor().shift(term).msg().number(),
+            cursor.msg().number(),
             Matchers.equalTo(msg)
         );
-        MatcherAssert.assertThat(
-            ray.cursor().shift(term).shift(term).end(),
-            Matchers.equalTo(true)
-        );
+        cursor = cursor.shift(term);
+        MatcherAssert.assertThat(cursor.end(), Matchers.is(true));
     }
 
 }

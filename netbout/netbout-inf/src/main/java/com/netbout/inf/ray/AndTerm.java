@@ -30,6 +30,7 @@ import com.netbout.inf.Cursor;
 import com.netbout.inf.Lattice;
 import com.netbout.inf.Term;
 import com.netbout.inf.lattice.LatticeBuilder;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -45,6 +46,7 @@ import java.util.concurrent.ConcurrentMap;
  * @version $Id$
  * @checkstyle ClassDataAbstractionCoupling (500 lines)
  */
+@SuppressWarnings("PMD.TooManyMethods")
 final class AndTerm implements Term {
 
     /**
@@ -98,6 +100,18 @@ final class AndTerm implements Term {
      * {@inheritDoc}
      */
     @Override
+    public Term copy() {
+        final Collection<Term> copies = new ArrayList<Term>(this.terms.size());
+        for (Term term : this.terms) {
+            copies.add(term.copy());
+        }
+        return new AndTerm(this.imap, copies);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public int hashCode() {
         return this.hash;
     }
@@ -121,8 +135,7 @@ final class AndTerm implements Term {
         for (Term term : this.terms) {
             text.append(' ').append(term);
         }
-        text.append(')');
-        return text.toString();
+        return text.append(')').toString();
     }
 
     /**
@@ -130,7 +143,10 @@ final class AndTerm implements Term {
      */
     @Override
     public Lattice lattice() {
-        return new LatticeBuilder().always().and(this.terms).build();
+        return new LatticeBuilder()
+            .always()
+            .and(this.terms)
+            .build();
     }
 
     /**
@@ -138,19 +154,15 @@ final class AndTerm implements Term {
      */
     @Override
     public Cursor shift(final Cursor cursor) {
-        final Lattice lattice = this.lattice();
-        Cursor slider = lattice.correct(cursor, this.shifter);
+        final ConcurrentMap<Term, Cursor> cache =
+            new ConcurrentHashMap<Term, Cursor>();
+        Cursor slider = this.move(
+            this.terms.iterator().next(),
+            this.lattice().correct(cursor, this.shifter),
+            cache
+        );
         if (!slider.end()) {
-            final ConcurrentMap<Term, Cursor> cache =
-                new ConcurrentHashMap<Term, Cursor>();
-            slider = this.move(
-                this.terms.iterator().next(),
-                slider,
-                cache
-            );
-            if (!slider.end()) {
-                slider = this.slide(slider, cache);
-            }
+            slider = this.slide(slider, cache);
         }
         return slider;
     }

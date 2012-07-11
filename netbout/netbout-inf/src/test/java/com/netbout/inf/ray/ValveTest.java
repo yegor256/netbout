@@ -24,60 +24,47 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.inf.functors;
+package com.netbout.inf.ray;
 
-import com.netbout.inf.Cursor;
-import com.netbout.inf.Lattice;
+import com.netbout.inf.CursorMocker;
+import com.netbout.inf.MsgMocker;
 import com.netbout.inf.Term;
+import com.netbout.inf.TermMocker;
+import org.junit.Test;
 
 /**
- * Volatile term.
- *
- * <p>The most important thing here is the {@code Term.Volatile} annotation.
- *
- * <p>This class is thread-safe.
- *
+ * Test case of {@link Valve}.
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-@Term.Volatile
-final class VolatileTerm implements Term {
+public final class ValveTest {
 
     /**
-     * Original term.
+     * Valve can accept cursors only in one direction.
+     * @throws Exception If there is some problem inside
      */
-    private final transient Term origin;
-
-    /**
-     * Public ctor.
-     * @param term Original term
-     */
-    public VolatileTerm(final Term term) {
-        this.origin = term;
+    @Test
+    public void acceptsInCorrectDirection() throws Exception {
+        final long msg = MsgMocker.number();
+        final Term term = new Valve(
+            new TermMocker().shiftTo(msg).mock()
+        );
+        term.shift(new CursorMocker().withMsg(Long.MAX_VALUE).mock());
+        term.shift(new CursorMocker().withMsg(msg).mock());
     }
 
     /**
-     * {@inheritDoc}
+     * Valve can throw when direction is wrong.
+     * @throws Exception If there is some problem inside
      */
-    @Override
-    public Cursor shift(final Cursor cursor) {
-        return this.origin.shift(cursor);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String toString() {
-        return String.format("v:%s", this.origin);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Lattice lattice() {
-        return this.origin.lattice();
+    @Test(expected = IllegalArgumentException.class)
+    public void throwsInInvalidDirection() throws Exception {
+        final long msg = MsgMocker.number();
+        final Term term = new Valve(
+            new TermMocker().shiftTo(msg).mock()
+        );
+        term.shift(new CursorMocker().withMsg(Long.MAX_VALUE).mock());
+        term.shift(new CursorMocker().withMsg(msg + 1).mock());
     }
 
 }

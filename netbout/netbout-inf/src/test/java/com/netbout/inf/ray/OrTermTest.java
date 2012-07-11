@@ -69,26 +69,39 @@ public final class OrTermTest {
         map.index(attr).add(msg, first);
         map.index(attr).add(msg, second);
         map.index(attr).add(msg - 1, "irrelevant");
-        final Term term = new OrTerm(
-            map,
-            Arrays.<Term>asList(
-                new MatcherTerm(map, attr, first),
-                new MatcherTerm(map, attr, second)
+        Cursor cursor = new MemCursor(Long.MAX_VALUE, map).shift(
+            new OrTerm(
+                map,
+                Arrays.<Term>asList(
+                    new Valve(new MatcherTerm(map, attr, first)),
+                    new Valve(new MatcherTerm(map, attr, second))
+                )
             )
         );
-        final Cursor cursor = new MemCursor(Long.MAX_VALUE, map);
         MatcherAssert.assertThat(
-            term.shift(cursor).msg().number(),
+            cursor.msg().number(),
             Matchers.equalTo(msg + 1)
         );
-        MatcherAssert.assertThat(
-            term.shift(term.shift(cursor)).msg().number(),
-            Matchers.equalTo(msg)
+        cursor = cursor.shift(
+            new OrTerm(
+                map,
+                Arrays.<Term>asList(
+                    new Valve(new MatcherTerm(map, attr, first)),
+                    new Valve(new MatcherTerm(map, attr, second))
+                )
+            )
         );
-        MatcherAssert.assertThat(
-            term.shift(term.shift(term.shift(cursor))).end(),
-            Matchers.equalTo(true)
+        MatcherAssert.assertThat(cursor.msg().number(), Matchers.equalTo(msg));
+        cursor = cursor.shift(
+            new OrTerm(
+                map,
+                Arrays.<Term>asList(
+                    new Valve(new MatcherTerm(map, attr, first)),
+                    new Valve(new MatcherTerm(map, attr, second))
+                )
+            )
         );
+        MatcherAssert.assertThat(cursor.end(), Matchers.is(true));
     }
 
 }

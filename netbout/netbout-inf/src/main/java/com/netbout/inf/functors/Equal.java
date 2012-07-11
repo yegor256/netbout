@@ -68,21 +68,19 @@ final class Equal implements Functor {
      */
     @Noticable
     public void see(final Ray ray, final MessagePostedNotice notice) {
-        final Term matcher = ray.builder().picker(
-            ray.msg(notice.message().number()).number()
-        );
+        final long number = ray.msg(notice.message().number()).number();
         ray.cursor().replace(
-            matcher,
+            ray.builder().picker(number),
             VariableAtom.NUMBER.attribute(),
             notice.message().number().toString()
         );
         ray.cursor().replace(
-            matcher,
+            ray.builder().picker(number),
             VariableAtom.BOUT_NUMBER.attribute(),
             notice.message().bout().number().toString()
         );
         ray.cursor().replace(
-            matcher,
+            ray.builder().picker(number),
             VariableAtom.AUTHOR_NAME.attribute(),
             notice.message().author().name().toString()
         );

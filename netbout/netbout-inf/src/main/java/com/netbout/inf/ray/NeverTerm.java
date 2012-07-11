@@ -58,6 +58,14 @@ final class NeverTerm implements Term {
      * {@inheritDoc}
      */
     @Override
+    public Term copy() {
+        return new NeverTerm(this.imap);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public int hashCode() {
         return this.toString().hashCode();
     }

@@ -67,6 +67,14 @@ final class PickerTerm implements Term {
      * {@inheritDoc}
      */
     @Override
+    public Term copy() {
+        return new PickerTerm(this.imap, this.number);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public int hashCode() {
         return this.imap.hashCode() + this.toString().hashCode();
     }
@@ -104,9 +112,7 @@ final class PickerTerm implements Term {
     @Override
     public Cursor shift(final Cursor cursor) {
         Cursor shifted;
-        if (cursor.end()) {
-            shifted = cursor;
-        } else if (cursor.msg().number() > this.number) {
+        if (cursor.msg().number() > this.number) {
             shifted = new MemCursor(this.number, this.imap);
         } else {
             shifted = new MemCursor(0L, this.imap);

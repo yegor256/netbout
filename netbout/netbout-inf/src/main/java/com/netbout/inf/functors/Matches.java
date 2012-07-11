@@ -87,11 +87,9 @@ final class Matches implements Functor {
      */
     @Noticable
     public void see(final Ray ray, final MessagePostedNotice notice) {
-        final Term matcher = ray.builder().picker(
-            ray.msg(notice.message().number()).number()
-        );
+        final long number = ray.msg(notice.message().number()).number();
         for (String word : Matches.words(notice.message().text())) {
-            ray.cursor().add(matcher, Matches.ATTR, word);
+            ray.cursor().add(ray.builder().picker(number), Matches.ATTR, word);
         }
     }
 
