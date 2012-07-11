@@ -68,7 +68,7 @@ public final class NotTermTest {
         Cursor cursor = new MemCursor(msg, map).shift(
             new NotTerm(
                 map,
-                new Term.Valve(new MatcherTerm(map, attr, value))
+                new Valve(new MatcherTerm(map, attr, value))
             )
         );
         MatcherAssert.assertThat(
@@ -78,7 +78,7 @@ public final class NotTermTest {
         cursor = cursor.shift(
             new NotTerm(
                 map,
-                new Term.Valve(new MatcherTerm(map, attr, value))
+                new Valve(new MatcherTerm(map, attr, value))
             )
         );
         MatcherAssert.assertThat(cursor.end(), Matchers.is(true));

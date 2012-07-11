@@ -117,7 +117,7 @@ public final class PredicateAtom implements Atom<String> {
      * @throws InvalidSyntaxException If can't build it
      */
     public Term term(final Ray ray) throws InvalidSyntaxException {
-        return new Term.Valve(this.functor.build(ray, this.args));
+        return this.functor.build(ray, this.args);
     }
 
 }

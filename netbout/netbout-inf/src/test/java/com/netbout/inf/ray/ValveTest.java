@@ -24,27 +24,31 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.inf;
+package com.netbout.inf.ray;
 
+import com.netbout.inf.CursorMocker;
+import com.netbout.inf.MsgMocker;
+import com.netbout.inf.Term;
+import com.netbout.inf.TermMocker;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;
 
 /**
- * Test case of {@link Term}.
+ * Test case of {@link Valve}.
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class TermTest {
+public final class ValveTest {
 
     /**
-     * Term.Valve can accept cursors only in one direction.
+     * Valve can accept cursors only in one direction.
      * @throws Exception If there is some problem inside
      */
     @Test
     public void acceptsInCorrectDirection() throws Exception {
         final long msg = MsgMocker.number();
-        final Term term = new Term.Valve(
+        final Term term = new Valve(
             new TermMocker().shiftTo(msg).mock()
         );
         term.shift(new CursorMocker().withMsg(Long.MAX_VALUE).mock());
@@ -52,13 +56,13 @@ public final class TermTest {
     }
 
     /**
-     * Term.Valve can throw when direction is wrong.
+     * Valve can throw when direction is wrong.
      * @throws Exception If there is some problem inside
      */
     @Test(expected = IllegalArgumentException.class)
     public void throwsInInvalidDirection() throws Exception {
         final long msg = MsgMocker.number();
-        final Term term = new Term.Valve(
+        final Term term = new Valve(
             new TermMocker().shiftTo(msg).mock()
         );
         term.shift(new CursorMocker().withMsg(Long.MAX_VALUE).mock());

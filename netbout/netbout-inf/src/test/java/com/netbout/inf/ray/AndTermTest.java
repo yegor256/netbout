@@ -76,9 +76,9 @@ public final class AndTermTest {
             new AndTerm(
                 map,
                 Arrays.<Term>asList(
-                    new Term.Valve(new MatcherTerm(map, attr, first)),
-                    new Term.Valve(new MatcherTerm(map, attr, second)),
-                    new Term.Valve(new MatcherTerm(map, attr, third))
+                    new Valve(new MatcherTerm(map, attr, first)),
+                    new Valve(new MatcherTerm(map, attr, second)),
+                    new Valve(new MatcherTerm(map, attr, third))
                 )
             )
         );
@@ -87,9 +87,9 @@ public final class AndTermTest {
             new AndTerm(
                 map,
                 Arrays.<Term>asList(
-                    new Term.Valve(new MatcherTerm(map, attr, first)),
-                    new Term.Valve(new MatcherTerm(map, attr, second)),
-                    new Term.Valve(new MatcherTerm(map, attr, third))
+                    new Valve(new MatcherTerm(map, attr, first)),
+                    new Valve(new MatcherTerm(map, attr, second)),
+                    new Valve(new MatcherTerm(map, attr, third))
                 )
             )
         );

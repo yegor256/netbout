@@ -60,7 +60,7 @@ final class MemTermBuilder implements TermBuilder {
      */
     @Override
     public Term matcher(final Attribute name, final String value) {
-        return new Term.Valve(new MatcherTerm(this.imap, name, value));
+        return new Valve(new MatcherTerm(this.imap, name, value));
     }
 
     /**
@@ -74,9 +74,9 @@ final class MemTermBuilder implements TermBuilder {
         } else if (terms.isEmpty()) {
             agg = this.always();
         } else {
-            agg = new AndTerm(this.imap, terms);
+            agg = new Valve(new AndTerm(this.imap, terms));
         }
-        return new Term.Valve(agg);
+        return agg;
     }
 
     /**
@@ -92,9 +92,9 @@ final class MemTermBuilder implements TermBuilder {
         } else if (terms.isEmpty()) {
             agg = this.always();
         } else {
-            agg = new OrTerm(this.imap, terms);
+            agg = new Valve(new OrTerm(this.imap, terms));
         }
-        return new Term.Valve(agg);
+        return agg;
     }
 
     /**
@@ -106,7 +106,7 @@ final class MemTermBuilder implements TermBuilder {
      */
     @Override
     public Term not(final Term term) {
-        return new Term.Valve(new NotTerm(this.imap, term));
+        return new Valve(new NotTerm(this.imap, term));
     }
 
     /**
@@ -114,7 +114,7 @@ final class MemTermBuilder implements TermBuilder {
      */
     @Override
     public Term never() {
-        return new Term.Valve(new NeverTerm(this.imap));
+        return new Valve(new NeverTerm(this.imap));
     }
 
     /**
@@ -122,7 +122,7 @@ final class MemTermBuilder implements TermBuilder {
      */
     @Override
     public Term always() {
-        return new Term.Valve(new AlwaysTerm(this.imap));
+        return new Valve(new AlwaysTerm(this.imap));
     }
 
     /**
@@ -130,7 +130,7 @@ final class MemTermBuilder implements TermBuilder {
      */
     @Override
     public Term picker(final long number) {
-        return new Term.Valve(new PickerTerm(this.imap, number));
+        return new Valve(new PickerTerm(this.imap, number));
     }
 
 }

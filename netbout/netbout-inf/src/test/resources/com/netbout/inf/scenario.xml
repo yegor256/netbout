@@ -99,7 +99,7 @@
             <bout.participants>urn:test:william</bout.participants>
         </see>
         <query>
-            <predicate>(and (talks-with 'urn:test:william') (from 2) (limit 1))</predicate>
+            <predicate>(and (talks-with 'urn:test:william') (from 2))</predicate>
             <messages>63</messages>
         </query>
     </scene>

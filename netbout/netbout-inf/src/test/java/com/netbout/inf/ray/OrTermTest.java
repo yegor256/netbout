@@ -73,8 +73,8 @@ public final class OrTermTest {
             new OrTerm(
                 map,
                 Arrays.<Term>asList(
-                    new Term.Valve(new MatcherTerm(map, attr, first)),
-                    new Term.Valve(new MatcherTerm(map, attr, second))
+                    new Valve(new MatcherTerm(map, attr, first)),
+                    new Valve(new MatcherTerm(map, attr, second))
                 )
             )
         );
@@ -86,8 +86,8 @@ public final class OrTermTest {
             new OrTerm(
                 map,
                 Arrays.<Term>asList(
-                    new Term.Valve(new MatcherTerm(map, attr, first)),
-                    new Term.Valve(new MatcherTerm(map, attr, second))
+                    new Valve(new MatcherTerm(map, attr, first)),
+                    new Valve(new MatcherTerm(map, attr, second))
                 )
             )
         );
@@ -96,8 +96,8 @@ public final class OrTermTest {
             new OrTerm(
                 map,
                 Arrays.<Term>asList(
-                    new Term.Valve(new MatcherTerm(map, attr, first)),
-                    new Term.Valve(new MatcherTerm(map, attr, second))
+                    new Valve(new MatcherTerm(map, attr, first)),
+                    new Valve(new MatcherTerm(map, attr, second))
                 )
             )
         );
