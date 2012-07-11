@@ -24,9 +24,12 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.inf.ray.imap;
+package com.netbout.inf.ray.imap.dir;
 
 import com.netbout.inf.Attribute;
+import com.netbout.inf.ray.imap.Numbers;
+import com.netbout.inf.ray.imap.NumbersMocker;
+import com.netbout.inf.ray.imap.ReverseMocker;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;

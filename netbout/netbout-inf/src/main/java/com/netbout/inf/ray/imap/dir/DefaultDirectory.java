@@ -24,10 +24,13 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.inf.ray.imap;
+package com.netbout.inf.ray.imap.dir;
 
 import com.jcabi.log.Logger;
 import com.netbout.inf.Attribute;
+import com.netbout.inf.ray.imap.Directory;
+import com.netbout.inf.ray.imap.Numbers;
+import com.netbout.inf.ray.imap.Reverse;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
@@ -52,7 +55,7 @@ import org.apache.commons.io.FilenameUtils;
  * @version $Id$
  * @checkstyle ClassDataAbstractionCoupling (500 lines)
  */
-final class DefaultDirectory implements Directory {
+public final class DefaultDirectory implements Directory {
 
     /**
      * Locked directory.

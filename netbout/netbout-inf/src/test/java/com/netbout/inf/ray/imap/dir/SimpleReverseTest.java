@@ -24,68 +24,42 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.inf.ray.imap;
+package com.netbout.inf.ray.imap.dir;
 
-import java.io.File;
-import org.apache.commons.io.FileUtils;
+import com.netbout.inf.MsgMocker;
+import com.netbout.inf.ray.imap.Reverse;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
 
 /**
- * Test case of {@link Lock}.
+ * Test case of {@link SimpleReverse}.
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class LockTest {
+public final class SimpleReverseTest {
 
     /**
-     * Temporary folder.
-     * @checkstyle VisibilityModifier (3 lines)
-     */
-    @Rule
-    public transient TemporaryFolder temp = new TemporaryFolder();
-
-    /**
-     * Lock can lock a directory and release lock later.
+     * SimpleReverse can save to stream and restore.
      * @throws Exception If there is some problem inside
      */
     @Test
-    public void locksDirectoryAndReleases() throws Exception {
-        final File dir = new File(this.temp.newFolder("foo"), "/boom/a");
-        Lock lock = new Lock(dir);
-        lock.close();
-        lock = new Lock(dir);
-        lock.close();
-    }
-
-    /**
-     * Lock can prevent against duplicate instances.
-     * @throws Exception If there is some problem inside
-     */
-    @Test(expected = java.io.IOException.class)
-    public void preventsDuplicateInstances() throws Exception {
-        final File dir = new File(this.temp.newFolder("foo-2"), "/boom/x");
-        new Lock(dir);
-        new Lock(dir);
-    }
-
-    /**
-     * Lock can delete all files in the directory.
-     * @throws Exception If there is some problem inside
-     */
-    @Test
-    public void deletesAllFilesInDirectory() throws Exception {
-        final File dir = this.temp.newFolder("some-dir-1");
-        final File file = new File(dir, "some-file.txt");
-        FileUtils.touch(file);
-        MatcherAssert.assertThat(file.exists(), Matchers.is(true));
-        Lock lock = new Lock(dir);
-        lock.clear();
-        lock.close();
-        MatcherAssert.assertThat(file.exists(), Matchers.is(false));
+    public void savesAndRestores() throws Exception {
+        final Reverse reverse = new SimpleReverse();
+        final long msg = MsgMocker.number();
+        final String value = "some value, \u0433";
+        reverse.put(msg, value);
+        MatcherAssert.assertThat(reverse.get(msg), Matchers.equalTo(value));
+        final ByteArrayOutputStream ostream = new ByteArrayOutputStream();
+        reverse.save(ostream);
+        final byte[] data = ostream.toByteArray();
+        final Reverse restored = new SimpleReverse();
+        final InputStream istream = new ByteArrayInputStream(data);
+        restored.load(istream);
+        MatcherAssert.assertThat(restored.get(msg), Matchers.equalTo(value));
     }
 
 }

@@ -24,23 +24,22 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.inf.ray.imap;
+package com.netbout.inf.ray.imap.dir;
 
 import com.jcabi.log.Logger;
-import com.netbout.inf.Lattice;
-import com.netbout.inf.lattice.LatticeBuilder;
+import com.netbout.inf.ray.imap.Reverse;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.SortedSet;
-import java.util.concurrent.ConcurrentSkipListSet;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.TimeUnit;
 
 /**
- * Simple implemenation of {@link Numbers}.
+ * Simple implementation of {@link Reverse}.
  *
  * <p>The class is thread-safe, except {@link #load(InputStream)}
  * and {@link #save(OutputStream)} methods.
@@ -48,115 +47,114 @@ import java.util.concurrent.ConcurrentSkipListSet;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-class SimpleNumbers implements Numbers {
+public final class SimpleReverse implements Reverse {
 
     /**
-     * Set of numbers.
+     * Map of values and message numbers.
      */
-    private final transient SortedSet<Long> nums =
-        new ConcurrentSkipListSet<Long>(Collections.reverseOrder());
-
-    /**
-     * Lattice.
-     */
-    private final transient LatticeBuilder lat = new LatticeBuilder().never();
+    private final transient ConcurrentMap<Long, String> map =
+        new ConcurrentHashMap<Long, String>();
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public final long sizeof() {
-        return this.nums.size() * Numbers.SIZE;
+    public long sizeof() {
+        return this.map.size();
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public final Lattice lattice() {
-        return this.lat.build();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public final void add(final long number) {
-        this.nums.add(number);
-        this.lat.set(number, true, this.nums);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public final void remove(final long number) {
-        this.nums.remove(number);
-        this.lat.set(number, false, this.nums);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public final long next(final long number) {
-        long next = 0L;
-        final Iterator<Long> tail = this.nums.tailSet(number - 1).iterator();
-        if (tail.hasNext()) {
-            next = tail.next();
+    public String get(final long msg) {
+        String value = null;
+        int count = 0;
+        // @checkstyle MagicNumber (1 line)
+        while (++count < 5) {
+            value = this.map.get(msg);
+            if (value != null) {
+                break;
+            }
+            try {
+                TimeUnit.SECONDS.sleep(1);
+            } catch (InterruptedException ex) {
+                Thread.currentThread().interrupt();
+                throw new IllegalStateException(ex);
+            }
         }
-        return next;
+        if (value == null) {
+            throw new IllegalArgumentException(
+                String.format(
+                    // @checkstyle LineLength (1 line)
+                    "value not found for msg #%d among %d others, even after %d seconds of waiting",
+                    msg,
+                    this.map.size(),
+                    count
+                )
+            );
+        }
+        return value;
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public final long save(final OutputStream stream) throws IOException {
+    public void put(final long number, final String value) {
+        this.map.put(number, value);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void remove(final long msg) {
+        this.map.remove(msg);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void save(final OutputStream stream) throws IOException {
         final DataOutputStream data = new DataOutputStream(stream);
-        long size = 0;
-        for (Long number : this.nums) {
-            data.writeLong(number);
-            size += Numbers.SIZE;
+        for (Map.Entry<Long, String> entry : this.map.entrySet()) {
+            data.writeLong(entry.getKey());
+            data.writeUTF(entry.getValue());
         }
         data.writeLong(0L);
-        size += Numbers.SIZE;
         data.flush();
         Logger.debug(
             this,
-            "#save(..): saved %d numbers (%d bytes)",
-            this.nums.size(),
-            size
+            "#save(..): saved %d values",
+            this.map.size()
         );
-        return size;
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public final void load(final InputStream stream) throws IOException {
-        this.nums.clear();
+    public void load(final InputStream stream) throws IOException {
+        this.map.clear();
         final DataInputStream data = new DataInputStream(stream);
-        long previous = Long.MAX_VALUE;
         while (true) {
-            final long next = data.readLong();
-            if (next > previous) {
-                throw new IOException("invalid order of numbers");
-            }
-            if (next == 0) {
+            final long msg = data.readLong();
+            if (msg == 0) {
                 break;
             }
-            this.nums.add(next);
-            previous = next;
+            if (this.map.containsKey(msg)) {
+                throw new IOException("duplicate key in reverse");
+            }
+            this.map.put(msg, data.readUTF());
         }
-        if (!this.nums.isEmpty()) {
+        if (!this.map.isEmpty()) {
             Logger.debug(
                 this,
-                "#load(..): loaded %d numbers",
-                this.nums.size()
+                "#load(..): loaded %d values",
+                this.map.size()
             );
-            this.lat.fill(this.nums);
         }
     }
 

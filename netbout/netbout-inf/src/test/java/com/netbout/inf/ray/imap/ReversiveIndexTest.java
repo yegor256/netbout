@@ -30,6 +30,7 @@ import com.jcabi.log.VerboseThreads;
 import com.netbout.inf.Attribute;
 import com.netbout.inf.MsgMocker;
 import com.netbout.inf.ray.Index;
+import com.netbout.inf.ray.imap.dir.DefaultDirectory;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.concurrent.Callable;

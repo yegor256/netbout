@@ -24,11 +24,9 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.inf.ray.imap;
+package com.netbout.inf.ray.imap.dir;
 
-import com.netbout.inf.Attribute;
-import java.io.File;
-import org.apache.commons.io.FileUtils;
+import java.util.Random;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Rule;
@@ -36,11 +34,11 @@ import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
 /**
- * Test case of {@link Baseline}.
+ * Test case of {@link Slowlog}.
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class BaselineTest {
+public final class SlowlogTest {
 
     /**
      * Temporary folder.
@@ -50,33 +48,24 @@ public final class BaselineTest {
     public transient TemporaryFolder temp = new TemporaryFolder();
 
     /**
-     * Baseline can create file names.
+     * Slowlog can be saved through output stream.
      * @throws Exception If there is some problem inside
      */
     @Test
-    public void createsFileNames() throws Exception {
-        final Baseline base =
-            new Baseline(new Lock(this.temp.newFolder("foo")));
-        final Attribute attr = new Attribute("some-name");
-        MatcherAssert.assertThat(base.data(attr), Matchers.notNullValue());
-        MatcherAssert.assertThat(base.reverse(attr), Matchers.notNullValue());
-    }
-
-    /**
-     * Baseline can start in a broken directory.
-     * @throws Exception If there is some problem inside
-     */
-    @Test
-    public void auditsAndCleansDirectoryBeforeStart() throws Exception {
-        final File dir = this.temp.newFolder("foo-4");
-        FileUtils.writeStringToFile(
-            new File(dir, "/some-attribute/catalog-slow.inf"),
-            "some invalid data"
+    public void savesDataThroughOutputStream() throws Exception {
+        final Slowlog slowlog = new Slowlog(this.temp.newFile("slowlog-5.txt"));
+        final BacklogOutputStream stream = slowlog.open();
+        final String value = "some value, \u0433";
+        final long num = new Random().nextLong();
+        final long pos = stream.write(
+            new Slowlog.Item(value, Long.toString(num))
         );
-        final Baseline base = new Baseline(new Lock(dir));
+        MatcherAssert.assertThat(pos, Matchers.greaterThan(0L));
+        stream.write(new Slowlog.Item("foo", "2324"));
+        stream.close();
         MatcherAssert.assertThat(
-            base.attributes(),
-            Matchers.<Attribute>empty()
+            slowlog.normalized(-pos, value),
+            Matchers.equalTo(num)
         );
     }
 

@@ -24,42 +24,60 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.inf.ray.imap;
+package com.netbout.inf.ray.imap.dir;
 
-import com.netbout.inf.MsgMocker;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.InputStream;
+import com.netbout.inf.Attribute;
+import java.io.File;
+import org.apache.commons.io.FileUtils;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
 
 /**
- * Test case of {@link SimpleNumbers}.
+ * Test case of {@link Baseline}.
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class SimpleNumbersTest {
+public final class BaselineTest {
 
     /**
-     * SimpleNumbers can save to stream and restore.
+     * Temporary folder.
+     * @checkstyle VisibilityModifier (3 lines)
+     */
+    @Rule
+    public transient TemporaryFolder temp = new TemporaryFolder();
+
+    /**
+     * Baseline can create file names.
      * @throws Exception If there is some problem inside
      */
     @Test
-    public void savesAndRestores() throws Exception {
-        final Numbers numbers = new SimpleNumbers();
-        final long msg = MsgMocker.number();
-        numbers.add(msg);
-        numbers.add(msg - 1);
-        MatcherAssert.assertThat(numbers.next(msg), Matchers.equalTo(msg - 1));
-        final ByteArrayOutputStream ostream = new ByteArrayOutputStream();
-        numbers.save(ostream);
-        final byte[] data = ostream.toByteArray();
-        final Numbers restored = new SimpleNumbers();
-        final InputStream istream = new ByteArrayInputStream(data);
-        restored.load(istream);
-        MatcherAssert.assertThat(restored.next(msg), Matchers.equalTo(msg - 1));
-        MatcherAssert.assertThat(restored.next(msg - 1), Matchers.equalTo(0L));
+    public void createsFileNames() throws Exception {
+        final Baseline base =
+            new Baseline(new Lock(this.temp.newFolder("foo")));
+        final Attribute attr = new Attribute("some-name");
+        MatcherAssert.assertThat(base.data(attr), Matchers.notNullValue());
+        MatcherAssert.assertThat(base.reverse(attr), Matchers.notNullValue());
+    }
+
+    /**
+     * Baseline can start in a broken directory.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void auditsAndCleansDirectoryBeforeStart() throws Exception {
+        final File dir = this.temp.newFolder("foo-4");
+        FileUtils.writeStringToFile(
+            new File(dir, "/some-attribute/catalog-slow.inf"),
+            "some invalid data"
+        );
+        final Baseline base = new Baseline(new Lock(dir));
+        MatcherAssert.assertThat(
+            base.attributes(),
+            Matchers.<Attribute>empty()
+        );
     }
 
 }

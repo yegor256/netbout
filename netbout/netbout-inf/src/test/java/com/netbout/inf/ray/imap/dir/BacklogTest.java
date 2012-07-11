@@ -24,9 +24,10 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.inf.ray.imap;
+package com.netbout.inf.ray.imap.dir;
 
-import java.io.File;
+import java.util.Iterator;
+import org.apache.commons.collections.IteratorUtils;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Rule;
@@ -34,11 +35,11 @@ import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
 /**
- * Test case of {@link Versions}.
+ * Test case of {@link Backlog}.
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class VersionsTest {
+public final class BacklogTest {
 
     /**
      * Temporary folder.
@@ -48,35 +49,47 @@ public final class VersionsTest {
     public transient TemporaryFolder temp = new TemporaryFolder();
 
     /**
-     * Versions can create version number.
+     * Backlog can register value and find it laters.
      * @throws Exception If there is some problem inside
      */
     @Test
-    public void createsVersionOfBaseline() throws Exception {
-        final File dir = new File(this.temp.newFolder("foo"), "/some/folder");
-        final Versions builder = new Versions(dir);
-        final String ver = builder.baselined();
-        new File(dir, ver).mkdir();
-        MatcherAssert.assertThat(builder.baselined(), Matchers.equalTo(ver));
+    public void registersValuesAndFindsThen() throws Exception {
+        final Backlog backlog = new Backlog(this.temp.newFile("backlog.txt"));
+        final String value = "some value to use, \u0433";
+        final String ref = "some reference to use, \u0433";
+        backlog.add(new Backlog.Item(value, ref));
+        backlog.add(new Backlog.Item("abc", ref));
+        backlog.add(new Backlog.Item("foo", "bar"));
+        final Iterator<Backlog.Item> iterator = backlog.iterator();
+        MatcherAssert.assertThat(iterator.hasNext(), Matchers.is(true));
+        MatcherAssert.assertThat(iterator.hasNext(), Matchers.is(true));
         MatcherAssert.assertThat(
-            builder.draft(),
-            Matchers.not(Matchers.equalTo(ver))
+            iterator.next().value(),
+            Matchers.equalTo(value)
+        );
+        MatcherAssert.assertThat(iterator.hasNext(), Matchers.is(true));
+        MatcherAssert.assertThat(
+            IteratorUtils.toList(backlog.iterator()).size(),
+            Matchers.greaterThan(2)
         );
     }
 
     /**
-     * Versions can create version number.
+     * Backlog can be saved through output stream.
      * @throws Exception If there is some problem inside
      */
     @Test
-    public void createsVersionOfDraft() throws Exception {
-        final Versions builder = new Versions(
-            new File(this.temp.newFolder("foo-1"), "/some/folder/to/create-2")
-        );
-        final String ver = builder.draft();
+    public void savesDataThroughOutputStream() throws Exception {
+        final Backlog backlog = new Backlog(this.temp.newFile("backlog-5.txt"));
+        final BacklogOutputStream stream = backlog.open();
+        final String value = "some value, \u0433";
+        final String ref = "some reference, \u0433";
+        stream.write(new Backlog.Item(value, ref));
+        stream.write(new Backlog.Item("some other value", "boomboom"));
+        stream.close();
         MatcherAssert.assertThat(
-            builder.draft(),
-            Matchers.not(Matchers.equalTo(ver))
+            backlog.iterator().next().value(),
+            Matchers.equalTo(value)
         );
     }
 

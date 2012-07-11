@@ -24,11 +24,10 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.inf.ray.imap;
+package com.netbout.inf.ray.imap.dir;
 
-import com.netbout.inf.Attribute;
-import com.netbout.inf.MsgMocker;
 import java.io.File;
+import org.apache.commons.io.FileUtils;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Rule;
@@ -36,11 +35,11 @@ import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
 /**
- * Test case of {@link DefaultDirectory}.
+ * Test case of {@link Lock}.
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class DefaultDirectoryTest {
+public final class LockTest {
 
     /**
      * Temporary folder.
@@ -50,46 +49,43 @@ public final class DefaultDirectoryTest {
     public transient TemporaryFolder temp = new TemporaryFolder();
 
     /**
-     * DefaultDirectory can save numbers to file and restore them back.
+     * Lock can lock a directory and release lock later.
      * @throws Exception If there is some problem inside
      */
     @Test
-    public void savesAndRestoresNumbers() throws Exception {
-        final Directory dir = new DefaultDirectory(
-            new File(this.temp.newFolder("foo"), "/some/directory")
-        );
-        final Numbers numbers = new SimpleNumbers();
-        final long msg = MsgMocker.number();
-        numbers.add(msg);
-        numbers.add(msg - 1);
-        final Attribute attr = new Attribute("some-attr");
-        final String value = "some value to use";
-        dir.save(attr, value, numbers);
-        dir.baseline();
-        final Numbers restored = new SimpleNumbers();
-        dir.load(attr, value, restored);
-        MatcherAssert.assertThat(restored.next(msg), Matchers.equalTo(msg - 1));
+    public void locksDirectoryAndReleases() throws Exception {
+        final File dir = new File(this.temp.newFolder("foo"), "/boom/a");
+        Lock lock = new Lock(dir);
+        lock.close();
+        lock = new Lock(dir);
+        lock.close();
     }
 
     /**
-     * DefaultDirectory can save reverse to file and restore them back.
+     * Lock can prevent against duplicate instances.
+     * @throws Exception If there is some problem inside
+     */
+    @Test(expected = java.io.IOException.class)
+    public void preventsDuplicateInstances() throws Exception {
+        final File dir = new File(this.temp.newFolder("foo-2"), "/boom/x");
+        new Lock(dir);
+        new Lock(dir);
+    }
+
+    /**
+     * Lock can delete all files in the directory.
      * @throws Exception If there is some problem inside
      */
     @Test
-    public void savesAndRestoresReverse() throws Exception {
-        final Directory dir = new DefaultDirectory(
-            this.temp.newFolder("foo-2")
-        );
-        final Reverse reverse = new SimpleReverse();
-        final long msg = MsgMocker.number();
-        final String value = "some value 2, \u0433";
-        reverse.put(msg, value);
-        final Attribute attr = new Attribute("some-attr-2");
-        dir.save(attr, reverse);
-        dir.baseline();
-        final Reverse restored = new SimpleReverse();
-        dir.load(attr, restored);
-        MatcherAssert.assertThat(restored.get(msg), Matchers.equalTo(value));
+    public void deletesAllFilesInDirectory() throws Exception {
+        final File dir = this.temp.newFolder("some-dir-1");
+        final File file = new File(dir, "some-file.txt");
+        FileUtils.touch(file);
+        MatcherAssert.assertThat(file.exists(), Matchers.is(true));
+        Lock lock = new Lock(dir);
+        lock.clear();
+        lock.close();
+        MatcherAssert.assertThat(file.exists(), Matchers.is(false));
     }
 
 }

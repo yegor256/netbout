@@ -24,43 +24,32 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.inf.ray.imap;
+package com.netbout.inf.ray.imap.dir;
 
-import java.io.Closeable;
+import com.jcabi.log.Logger;
 import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.concurrent.atomic.AtomicReference;
 
 /**
- * Output stream with {@link Catalog} items.
+ * Output stream with {@link Backlog} items.
  *
  * <p>The class is thread-safe.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-final class CatalogOutputStream implements Closeable {
-
-    /**
-     * The stream to write to.
-     */
-    private final transient DataOutputStream output;
-
-    /**
-     * Most recently added item, buffered.
-     */
-    private final transient AtomicReference<Catalog.Item> buffer =
-        new AtomicReference<Catalog.Item>();
+final class BacklogOutputStream extends DataOutputStream {
 
     /**
      * Public ctor.
      * @param file The file to use
      * @throws IOException If some I/O problem inside
      */
-    public CatalogOutputStream(final File file) throws IOException {
-        this.output = new DataOutputStream(new FileOutputStream(file));
+    public BacklogOutputStream(final File file) throws IOException {
+        super(new FileOutputStream(file));
+        this.writeInt(Backlog.START_MARKER);
     }
 
     /**
@@ -68,38 +57,27 @@ final class CatalogOutputStream implements Closeable {
      */
     @Override
     public void close() throws IOException {
-        this.flush();
-        this.output.close();
+        this.writeUTF(Backlog.EOF_MARKER);
+        this.writeUTF(Backlog.EOF_MARKER);
+        super.close();
+        Logger.debug(
+            this,
+            "#close(): saved %d bytes",
+            this.written
+        );
     }
 
     /**
      * Add new item.
      * @param item The items to add
+     * @return Position where this writing happened
      * @throws IOException If some I/O problem inside
      */
-    public void write(final Catalog.Item item) throws IOException {
-        this.flush();
-        this.buffer.set(item);
-    }
-
-    /**
-     * Make one step back.
-     * @throws IOException If some I/O problem inside
-     */
-    public void back() throws IOException {
-        this.buffer.set(null);
-    }
-
-    /**
-     * Flush buffer to stream.
-     * @throws IOException If some I/O problem inside
-     */
-    private void flush() throws IOException {
-        final Catalog.Item item = this.buffer.getAndSet(null);
-        if (item != null) {
-            this.output.writeInt(item.hashCode());
-            this.output.writeLong(item.position());
-        }
+    public long write(final Backlog.Item item) throws IOException {
+        final long pos = this.written;
+        this.writeUTF(item.value());
+        this.writeUTF(item.path());
+        return pos;
     }
 
 }

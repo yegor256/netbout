@@ -32,6 +32,7 @@ import com.netbout.inf.Attribute;
 import com.netbout.inf.atoms.VariableAtom;
 import com.netbout.inf.ray.Index;
 import com.netbout.inf.ray.IndexMap;
+import com.netbout.inf.ray.imap.dir.DefaultDirectory;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;

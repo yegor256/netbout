@@ -24,60 +24,28 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.inf.ray.imap;
-
-import com.jcabi.log.Logger;
-import java.io.DataOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
+package com.netbout.inf.ray.imap.dir;
 
 /**
- * Output stream with {@link Backlog} items.
+ * Auditor of data structures.
  *
- * <p>The class is thread-safe.
+ * <p>Implementation must be thread-safe.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-final class BacklogOutputStream extends DataOutputStream {
+interface Auditor {
 
     /**
-     * Public ctor.
-     * @param file The file to use
-     * @throws IOException If some I/O problem inside
+     * A new problem detected.
+     * @param text Text description of the problem
      */
-    public BacklogOutputStream(final File file) throws IOException {
-        super(new FileOutputStream(file));
-        this.writeInt(Backlog.START_MARKER);
-    }
+    void problem(String text);
 
     /**
-     * {@inheritDoc}
+     * A new problem/exception detected.
+     * @param expn Exception
      */
-    @Override
-    public void close() throws IOException {
-        this.writeUTF(Backlog.EOF_MARKER);
-        this.writeUTF(Backlog.EOF_MARKER);
-        super.close();
-        Logger.debug(
-            this,
-            "#close(): saved %d bytes",
-            this.written
-        );
-    }
-
-    /**
-     * Add new item.
-     * @param item The items to add
-     * @return Position where this writing happened
-     * @throws IOException If some I/O problem inside
-     */
-    public long write(final Backlog.Item item) throws IOException {
-        final long pos = this.written;
-        this.writeUTF(item.value());
-        this.writeUTF(item.path());
-        return pos;
-    }
+    void problem(Exception expn);
 
 }

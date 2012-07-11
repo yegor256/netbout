@@ -27,6 +27,7 @@
 package com.netbout.inf.ray.imap;
 
 import com.netbout.inf.MsgMocker;
+import com.netbout.inf.ray.imap.dir.SimpleNumbers;
 import java.util.Random;
 
 /**

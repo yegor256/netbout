@@ -24,62 +24,11 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.inf.ray.imap;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 
 /**
- * Map of values and message numbers.
- *
- * <p>Implementation must be thread-safe, except {@link #load(InputStream)}
- * and {@link #save(OutputStream)} methods.
+ * Directory implementation, tests.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public interface Reverse {
-
-    /**
-     * How many bytes we consume in memory.
-     * @return Number of bytes
-     */
-    long sizeof();
-
-    /**
-     * Get value by message number (throws runtime exception if message
-     * is not found).
-     * @param msg The number of the message
-     * @return The value
-     */
-    String get(long msg);
-
-    /**
-     * Put value and number.
-     * @param number The number to add
-     * @param value The value
-     */
-    void put(long number, String value);
-
-    /**
-     * Remove this message.
-     * @param number The message to delete
-     */
-    void remove(long number);
-
-    /**
-     * Save them all to the output stream.
-     * @param stream The stream to save to
-     * @throws IOException If some I/O problem inside
-     */
-    void save(OutputStream stream) throws IOException;
-
-    /**
-     * Load from the input stream and add here.
-     * @param stream The stream to load from
-     * @throws IOException If some I/O problem inside
-     */
-    void load(InputStream stream) throws IOException;
-
-}
+package com.netbout.inf.ray.imap.dir;

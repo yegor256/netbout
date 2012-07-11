@@ -29,6 +29,7 @@ package com.netbout.inf.ray.imap;
 import com.netbout.inf.Attribute;
 import com.netbout.inf.MsgMocker;
 import com.netbout.inf.ray.Index;
+import com.netbout.inf.ray.imap.dir.DefaultDirectory;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Rule;

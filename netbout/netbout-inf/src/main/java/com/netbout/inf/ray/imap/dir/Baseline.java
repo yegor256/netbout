@@ -24,7 +24,7 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.inf.ray.imap;
+package com.netbout.inf.ray.imap.dir;
 
 import com.jcabi.log.Logger;
 import com.netbout.inf.Attribute;
@@ -74,22 +74,6 @@ final class Baseline extends BaseVersion {
     }
 
     /**
-     * Listener of all problems.
-     */
-    private interface Auditor {
-        /**
-         * A new problem detected.
-         * @param text Text description of the problem
-         */
-        void problem(String text);
-        /**
-         * A new problem/exception detected.
-         * @param expn Exception
-         */
-        void problem(Exception expn);
-    }
-
-    /**
      * Get name of data file.
      * @param attr Attribute
      * @return File name
@@ -127,7 +111,7 @@ final class Baseline extends BaseVersion {
         final long start = System.currentTimeMillis();
         try {
             for (Attribute attr : this.attributes()) {
-                this.audit(attr, auditor);
+                // this.audit(auditor);
             }
         } catch (IOException ex) {
             auditor.problem(ex);
@@ -139,31 +123,40 @@ final class Baseline extends BaseVersion {
         );
     }
 
-    /**
-     * Audit one attribute in the directory and report problems.
-     * @param attr The attribute
-     * @param auditor Listener of problems
-     */
-    private void audit(final Attribute attr, final Auditor auditor) {
-        try {
-            final Iterator<Catalog.Item> items = this.catalog(attr).iterator();
-            final Numbers numbers = new SimpleNumbers();
-            final RandomAccessFile data =
-                new RandomAccessFile(this.data(attr), "r");
-            try {
-                while (items.hasNext()) {
-                    final Catalog.Item item = items.next();
-                    data.seek(item.position());
-                    final InputStream stream =
-                        Channels.newInputStream(data.getChannel());
-                    numbers.load(stream);
-                }
-            } finally {
-                data.close();
-            }
-        } catch (IOException ex) {
-            auditor.problem(ex);
-        }
-    }
+    // /**
+    //  * {@inheritDoc}
+    //  */
+    // @Override
+    // public void audit(final Auditor auditor) {
+    //     final long start = System.currentTimeMillis();
+    //     int count = 0;
+    //     try {
+    //         final Iterator<Catalog.Item> items = this.catalog(attr).iterator();
+    //         final Numbers numbers = new SimpleNumbers();
+    //         final RandomAccessFile data =
+    //             new RandomAccessFile(this.data(attr), "r");
+    //         try {
+    //             while (items.hasNext()) {
+    //                 final Catalog.Item item = items.next();
+    //                 data.seek(item.position());
+    //                 final InputStream stream =
+    //                     Channels.newInputStream(data.getChannel());
+    //                 numbers.load(stream);
+    //                 ++count;
+    //             }
+    //         } finally {
+    //             data.close();
+    //         }
+    //     } catch (IOException ex) {
+    //         auditor.problem(ex);
+    //     }
+    //     Logger.info(
+    //         this,
+    //         "#audit(): attribute '%s' with %d values in %[ms]s",
+    //         attr,
+    //         count,
+    //         System.currentTimeMillis() - start
+    //     );
+    // }
 
 }

@@ -24,49 +24,43 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.inf.ray.imap;
+package com.netbout.inf.ray.imap.dir;
 
-import java.util.Random;
+import com.netbout.inf.MsgMocker;
+import com.netbout.inf.ray.imap.Numbers;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
 
 /**
- * Test case of {@link Slowlog}.
+ * Test case of {@link SimpleNumbers}.
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class SlowlogTest {
+public final class SimpleNumbersTest {
 
     /**
-     * Temporary folder.
-     * @checkstyle VisibilityModifier (3 lines)
-     */
-    @Rule
-    public transient TemporaryFolder temp = new TemporaryFolder();
-
-    /**
-     * Slowlog can be saved through output stream.
+     * SimpleNumbers can save to stream and restore.
      * @throws Exception If there is some problem inside
      */
     @Test
-    public void savesDataThroughOutputStream() throws Exception {
-        final Slowlog slowlog = new Slowlog(this.temp.newFile("slowlog-5.txt"));
-        final BacklogOutputStream stream = slowlog.open();
-        final String value = "some value, \u0433";
-        final long num = new Random().nextLong();
-        final long pos = stream.write(
-            new Slowlog.Item(value, Long.toString(num))
-        );
-        MatcherAssert.assertThat(pos, Matchers.greaterThan(0L));
-        stream.write(new Slowlog.Item("foo", "2324"));
-        stream.close();
-        MatcherAssert.assertThat(
-            slowlog.normalized(-pos, value),
-            Matchers.equalTo(num)
-        );
+    public void savesAndRestores() throws Exception {
+        final Numbers numbers = new SimpleNumbers();
+        final long msg = MsgMocker.number();
+        numbers.add(msg);
+        numbers.add(msg - 1);
+        MatcherAssert.assertThat(numbers.next(msg), Matchers.equalTo(msg - 1));
+        final ByteArrayOutputStream ostream = new ByteArrayOutputStream();
+        numbers.save(ostream);
+        final byte[] data = ostream.toByteArray();
+        final Numbers restored = new SimpleNumbers();
+        final InputStream istream = new ByteArrayInputStream(data);
+        restored.load(istream);
+        MatcherAssert.assertThat(restored.next(msg), Matchers.equalTo(msg - 1));
+        MatcherAssert.assertThat(restored.next(msg - 1), Matchers.equalTo(0L));
     }
 
 }
