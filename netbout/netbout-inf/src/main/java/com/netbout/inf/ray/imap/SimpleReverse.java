@@ -143,6 +143,9 @@ final class SimpleReverse implements Reverse {
             if (msg == 0) {
                 break;
             }
+            if (this.map.containsKey(msg)) {
+                throw new IOException("duplicate key in reverse");
+            }
             this.map.put(msg, data.readUTF());
         }
         if (!this.map.isEmpty()) {
