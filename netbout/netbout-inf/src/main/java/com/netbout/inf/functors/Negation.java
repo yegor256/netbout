@@ -32,8 +32,6 @@ import com.netbout.inf.InvalidSyntaxException;
 import com.netbout.inf.Ray;
 import com.netbout.inf.Term;
 import com.netbout.inf.atoms.PredicateAtom;
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 /**

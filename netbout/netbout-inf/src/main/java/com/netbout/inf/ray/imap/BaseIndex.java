@@ -115,12 +115,11 @@ class BaseIndex implements FlushableIndex {
      */
     @Override
     public String toString() {
-        return new StringBuilder()
-            .append(this.map.size())
-            .append(" values, ")
-            .append(this.sizeof())
-            .append(" bytes")
-            .toString();
+        return String.format(
+            "%,d values in %,d bytes",
+            this.map.size(),
+            this.sizeof()
+        );
     }
 
     /**

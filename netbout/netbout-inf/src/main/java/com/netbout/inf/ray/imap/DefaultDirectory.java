@@ -171,12 +171,11 @@ final class DefaultDirectory implements Directory {
                 Logger.debug(
                     this,
                     // @checkstyle LineLength (1 line)
-                    "#load('%s', '%[text]s', ..): loaded numbers from pos #%d (file.length=%s, file.name=/%s)",
+                    "#load('%s', '%[text]s', ..): loaded numbers from pos #%d (file.length=%s)",
                     attr,
                     value,
                     pos,
-                    FileUtils.byteCountToDisplaySize(file.length()),
-                    FilenameUtils.getName(file.getPath())
+                    FileUtils.byteCountToDisplaySize(file.length())
                 );
             } finally {
                 data.close();

@@ -180,7 +180,6 @@ final class AndTerm implements Term {
             || cache.get(term).compareTo(from) >= 0
             || term.getClass().getAnnotation(Term.Volatile.class) != null) {
             cache.put(term, from.shift(term));
-            System.out.println("cached " + term + " with " + cache.get(term) + " from " + from);
         }
         return cache.get(term);
     }
