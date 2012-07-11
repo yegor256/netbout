@@ -74,7 +74,7 @@ final class Valve implements Term {
      */
     @Override
     public String toString() {
-        return this.origin.toString();
+        return String.format("x:%s", this.origin.toString());
     }
 
     /**

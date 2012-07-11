@@ -53,20 +53,18 @@ final class Pos implements Functor {
     @Override
     public Term build(final Ray ray, final List<Atom> atoms)
         throws InvalidSyntaxException {
-        return new VolatileTerm(
-            new Conjunction().build(
-                ray,
-                Arrays.<Atom>asList(
-                    new PredicateAtom(
-                        "from",
-                        atoms,
-                        new From()
-                    ),
-                    new PredicateAtom(
-                        "limit",
-                        Arrays.asList(new Atom[] {new NumberAtom(1L)}),
-                        new Limit()
-                    )
+        return new Conjunction().build(
+            ray,
+            Arrays.<Atom>asList(
+                new PredicateAtom(
+                    "from",
+                    atoms,
+                    new From()
+                ),
+                new PredicateAtom(
+                    "limit",
+                    Arrays.asList(new Atom[] {new NumberAtom(1L)}),
+                    new Limit()
                 )
             )
         );

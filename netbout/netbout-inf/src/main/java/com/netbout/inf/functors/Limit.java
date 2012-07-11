@@ -53,9 +53,7 @@ final class Limit implements Functor {
      */
     @Override
     public Term build(final Ray ray, final List<Atom> atoms) {
-        return new VolatileTerm(
-            new LimitTerm(ray, NumberAtom.class.cast(atoms.get(0)).value())
-        );
+        return new LimitTerm(ray, NumberAtom.class.cast(atoms.get(0)).value());
     }
 
     /**

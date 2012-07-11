@@ -57,17 +57,16 @@ final class From implements Functor {
      */
     @Override
     public Term build(final Ray ray, final List<Atom> atoms) {
-        return new VolatileTerm(
-            new FromTerm(
-                ray,
-                NumberAtom.class.cast(atoms.get(0)).value()
-            )
+        return new FromTerm(
+            ray,
+            NumberAtom.class.cast(atoms.get(0)).value()
         );
     }
 
     /**
      * The term to use.
      */
+    @Term.Volatile
     private static final class FromTerm implements Term {
         /**
          * Ray to work with.
