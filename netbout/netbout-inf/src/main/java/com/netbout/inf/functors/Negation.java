@@ -58,9 +58,9 @@ final class Negation implements Functor {
                 "exactly one argument required for NOT"
             );
         }
-        final Collection<Term> terms = new ArrayList<Term>(1);
-        terms.add(PredicateAtom.class.cast(atoms.get(0)).term(ray));
-        return ray.builder().and(terms);
+        return ray.builder().not(
+            PredicateAtom.class.cast(atoms.get(0)).term(ray)
+        );
     }
 
 }
