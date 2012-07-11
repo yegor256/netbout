@@ -138,12 +138,17 @@ class SimpleNumbers implements Numbers {
     public final void load(final InputStream stream) throws IOException {
         this.nums.clear();
         final DataInputStream data = new DataInputStream(stream);
+        long previous = Long.MAX_VALUE;
         while (true) {
             final long next = data.readLong();
+            if (next > previous) {
+                throw new IOException("invalid order of numbers");
+            }
             if (next == 0) {
                 break;
             }
             this.nums.add(next);
+            previous = next;
         }
         if (!this.nums.isEmpty()) {
             Logger.debug(

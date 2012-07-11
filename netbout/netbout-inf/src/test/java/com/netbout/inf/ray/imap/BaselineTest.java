@@ -27,6 +27,8 @@
 package com.netbout.inf.ray.imap;
 
 import com.netbout.inf.Attribute;
+import java.io.File;
+import org.apache.commons.io.FileUtils;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Rule;
@@ -58,6 +60,24 @@ public final class BaselineTest {
         final Attribute attr = new Attribute("some-name");
         MatcherAssert.assertThat(base.data(attr), Matchers.notNullValue());
         MatcherAssert.assertThat(base.reverse(attr), Matchers.notNullValue());
+    }
+
+    /**
+     * Baseline can start in a broken directory.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void auditsAndCleansDirectoryBeforeStart() throws Exception {
+        final File dir = this.temp.newFolder("foo-4");
+        FileUtils.writeStringToFile(
+            new File(dir, "/some-attribute/catalog-slow.inf"),
+            "some invalid data"
+        );
+        final Baseline base = new Baseline(new Lock(dir));
+        MatcherAssert.assertThat(
+            base.attributes(),
+            Matchers.<Attribute>empty()
+        );
     }
 
 }

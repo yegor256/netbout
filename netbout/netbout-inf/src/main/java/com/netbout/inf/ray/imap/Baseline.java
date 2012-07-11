@@ -61,6 +61,11 @@ final class Baseline extends BaseVersion {
                 Logger.warn(this, "audit: %s", text);
                 failed.set(true);
             }
+            @Override
+            public void problem(final Exception expn) {
+                Logger.warn(this, "audit: %[exception]s", expn);
+                failed.set(true);
+            }
         };
         this.audit(auditor);
         if (failed.get()) {
@@ -77,6 +82,11 @@ final class Baseline extends BaseVersion {
          * @param text Text description of the problem
          */
         void problem(String text);
+        /**
+         * A new problem/exception detected.
+         * @param expn Exception
+         */
+        void problem(Exception expn);
     }
 
     /**
@@ -112,12 +122,15 @@ final class Baseline extends BaseVersion {
     /**
      * Audit in the directory and report problems.
      * @param auditor Listener of problems
-     * @throws IOException If some I/O problem inside
      */
-    private void audit(final Auditor auditor) throws IOException {
+    private void audit(final Auditor auditor) {
         final long start = System.currentTimeMillis();
-        for (Attribute attr : this.attributes()) {
-            this.audit(attr, auditor);
+        try {
+            for (Attribute attr : this.attributes()) {
+                this.audit(attr, auditor);
+            }
+        } catch (IOException ex) {
+            auditor.problem(ex);
         }
         Logger.info(
             this,
@@ -127,27 +140,29 @@ final class Baseline extends BaseVersion {
     }
 
     /**
-     * Audit one attribue in the directory and report problems.
+     * Audit one attribute in the directory and report problems.
      * @param attr The attribute
      * @param auditor Listener of problems
-     * @throws IOException If some I/O problem inside
      */
-    private void audit(final Attribute attr,
-        final Auditor auditor) throws IOException {
-        final Iterator<Catalog.Item> items = this.catalog(attr).iterator();
-        final Numbers numbers = new SimpleNumbers();
-        final RandomAccessFile data =
-            new RandomAccessFile(this.data(attr), "r");
+    private void audit(final Attribute attr, final Auditor auditor) {
         try {
-            while (items.hasNext()) {
-                final Catalog.Item item = items.next();
-                data.seek(item.position());
-                final InputStream stream =
-                    Channels.newInputStream(data.getChannel());
-                numbers.load(stream);
+            final Iterator<Catalog.Item> items = this.catalog(attr).iterator();
+            final Numbers numbers = new SimpleNumbers();
+            final RandomAccessFile data =
+                new RandomAccessFile(this.data(attr), "r");
+            try {
+                while (items.hasNext()) {
+                    final Catalog.Item item = items.next();
+                    data.seek(item.position());
+                    final InputStream stream =
+                        Channels.newInputStream(data.getChannel());
+                    numbers.load(stream);
+                }
+            } finally {
+                data.close();
             }
-        } finally {
-            data.close();
+        } catch (IOException ex) {
+            auditor.problem(ex);
         }
     }
 

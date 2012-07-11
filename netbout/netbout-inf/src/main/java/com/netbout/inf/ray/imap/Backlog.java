@@ -243,7 +243,7 @@ class Backlog {
                 new FileInputStream(Backlog.this.ifile)
             );
             if (this.data.readInt() != Backlog.START_MARKER) {
-                throw new IllegalArgumentException("wrong file format");
+                throw new IOException("wrong file format");
             }
         }
         /**
