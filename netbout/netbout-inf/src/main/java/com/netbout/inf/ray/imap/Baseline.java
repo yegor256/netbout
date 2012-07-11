@@ -30,6 +30,10 @@ import com.jcabi.log.Logger;
 import com.netbout.inf.Attribute;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.RandomAccessFile;
+import java.nio.channels.Channels;
+import java.util.Iterator;
 import java.util.concurrent.atomic.AtomicBoolean;
 import org.apache.commons.io.FileUtils;
 
@@ -111,7 +115,40 @@ final class Baseline extends BaseVersion {
      * @throws IOException If some I/O problem inside
      */
     private void audit(final Auditor auditor) throws IOException {
-        // ..
+        final long start = System.currentTimeMillis();
+        for (Attribute attr : this.attributes()) {
+            this.audit(attr, auditor);
+        }
+        Logger.info(
+            this,
+            "#audit(): done in %[ms]s",
+            System.currentTimeMillis() - start
+        );
+    }
+
+    /**
+     * Audit one attribue in the directory and report problems.
+     * @param attr The attribute
+     * @param auditor Listener of problems
+     * @throws IOException If some I/O problem inside
+     */
+    private void audit(final Attribute attr,
+        final Auditor auditor) throws IOException {
+        final Iterator<Catalog.Item> items = this.catalog(attr).iterator();
+        final Numbers numbers = new SimpleNumbers();
+        final RandomAccessFile data =
+            new RandomAccessFile(this.data(attr), "r");
+        try {
+            while (items.hasNext()) {
+                final Catalog.Item item = items.next();
+                data.seek(item.position());
+                final InputStream stream =
+                    Channels.newInputStream(data.getChannel());
+                numbers.load(stream);
+            }
+        } finally {
+            data.close();
+        }
     }
 
 }
