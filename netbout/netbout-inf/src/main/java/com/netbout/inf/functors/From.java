@@ -110,7 +110,7 @@ final class From implements Functor {
             final Term always = this.ray.builder().always();
             Cursor shifted = cursor.shift(always);
             if (!shifted.end()
-                && shifted.msg().number() < this.recent.get()
+                && shifted.msg().number() <= this.recent.get()
                 && this.passed.incrementAndGet() < this.from) {
                 shifted = shifted.shift(always);
                 System.out.println("passed: " + this.passed.get());
