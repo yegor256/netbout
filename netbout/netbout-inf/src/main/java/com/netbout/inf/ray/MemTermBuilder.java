@@ -74,7 +74,7 @@ final class MemTermBuilder implements TermBuilder {
         } else if (terms.isEmpty()) {
             agg = this.always();
         } else {
-            agg = new Valve(new AndTerm(this.imap, terms));
+            agg = new AndTerm(this.imap, terms);
         }
         return agg;
     }
@@ -92,7 +92,7 @@ final class MemTermBuilder implements TermBuilder {
         } else if (terms.isEmpty()) {
             agg = this.always();
         } else {
-            agg = new Valve(new OrTerm(this.imap, terms));
+            agg = new OrTerm(this.imap, terms);
         }
         return agg;
     }
@@ -106,7 +106,7 @@ final class MemTermBuilder implements TermBuilder {
      */
     @Override
     public Term not(final Term term) {
-        return new Valve(new NotTerm(this.imap, term));
+        return new NotTerm(this.imap, term);
     }
 
     /**
