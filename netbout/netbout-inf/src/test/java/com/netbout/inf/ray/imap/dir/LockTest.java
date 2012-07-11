@@ -82,7 +82,7 @@ public final class LockTest {
         final File file = new File(dir, "some-file.txt");
         FileUtils.touch(file);
         MatcherAssert.assertThat(file.exists(), Matchers.is(true));
-        Lock lock = new Lock(dir);
+        final Lock lock = new Lock(dir);
         lock.clear();
         lock.close();
         MatcherAssert.assertThat(file.exists(), Matchers.is(false));

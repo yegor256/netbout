@@ -28,6 +28,7 @@ package com.netbout.inf.ray.imap.dir;
 
 import com.jcabi.log.Logger;
 import com.netbout.inf.Attribute;
+import com.netbout.inf.ray.imap.Numbers;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -111,7 +112,7 @@ final class Baseline extends BaseVersion {
         final long start = System.currentTimeMillis();
         try {
             for (Attribute attr : this.attributes()) {
-                // this.audit(auditor);
+                this.audit(auditor, attr);
             }
         } catch (IOException ex) {
             auditor.problem(ex);
@@ -123,40 +124,41 @@ final class Baseline extends BaseVersion {
         );
     }
 
-    // /**
-    //  * {@inheritDoc}
-    //  */
-    // @Override
-    // public void audit(final Auditor auditor) {
-    //     final long start = System.currentTimeMillis();
-    //     int count = 0;
-    //     try {
-    //         final Iterator<Catalog.Item> items = this.catalog(attr).iterator();
-    //         final Numbers numbers = new SimpleNumbers();
-    //         final RandomAccessFile data =
-    //             new RandomAccessFile(this.data(attr), "r");
-    //         try {
-    //             while (items.hasNext()) {
-    //                 final Catalog.Item item = items.next();
-    //                 data.seek(item.position());
-    //                 final InputStream stream =
-    //                     Channels.newInputStream(data.getChannel());
-    //                 numbers.load(stream);
-    //                 ++count;
-    //             }
-    //         } finally {
-    //             data.close();
-    //         }
-    //     } catch (IOException ex) {
-    //         auditor.problem(ex);
-    //     }
-    //     Logger.info(
-    //         this,
-    //         "#audit(): attribute '%s' with %d values in %[ms]s",
-    //         attr,
-    //         count,
-    //         System.currentTimeMillis() - start
-    //     );
-    // }
+    /**
+     * Audit in the directory with an attribute and report problems.
+     * @param attr The attribute
+     * @param auditor Listener of problems
+     */
+    private void audit(final Auditor auditor, final Attribute attr) {
+        final long start = System.currentTimeMillis();
+        int count = 0;
+        try {
+            final Iterator<Catalog.Item> items = this.catalog(attr).iterator();
+            final Numbers numbers = new SimpleNumbers();
+            final RandomAccessFile data =
+                new RandomAccessFile(this.data(attr), "r");
+            try {
+                while (items.hasNext()) {
+                    final Catalog.Item item = items.next();
+                    data.seek(item.position());
+                    final InputStream stream =
+                        Channels.newInputStream(data.getChannel());
+                    numbers.load(stream);
+                    ++count;
+                }
+            } finally {
+                data.close();
+            }
+        } catch (IOException ex) {
+            auditor.problem(ex);
+        }
+        Logger.info(
+            this,
+            "#audit(): attribute '%s' with %d values in %[ms]s",
+            attr,
+            count,
+            System.currentTimeMillis() - start
+        );
+    }
 
 }
