@@ -113,7 +113,6 @@ final class From implements Functor {
                 && shifted.msg().number() <= this.recent.get()
                 && this.passed.incrementAndGet() < this.from) {
                 shifted = shifted.shift(always);
-                System.out.println("passed: " + this.passed.get());
             }
             if (shifted.end()) {
                 this.recent.set(0);

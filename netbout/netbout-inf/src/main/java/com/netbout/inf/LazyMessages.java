@@ -139,7 +139,8 @@ final class LazyMessages implements Iterable<Long> {
                     );
                     has = false;
                 } else {
-                    has = !this.cursor.get().end();
+                    has = this.cursor.get().end();
+                    has ^= true;
                 }
                 return has;
             }

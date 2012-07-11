@@ -30,11 +30,12 @@ import com.netbout.inf.Cursor;
 import com.netbout.inf.Lattice;
 import com.netbout.inf.Term;
 import com.netbout.inf.lattice.LatticeBuilder;
+import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * NOT term.
  *
- * <p>The class is immutable and thread-safe.
+ * <p>The class is mutable and thread-safe.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
@@ -55,6 +56,12 @@ final class NotTerm implements Term {
      * Term to negate.
      */
     private final transient Term term;
+
+    /**
+     * Most recent position of the matcher.
+     */
+    private final transient AtomicReference<Cursor> matcher =
+        new AtomicReference<Cursor>();
 
     /**
      * Public ctor.
@@ -120,23 +127,27 @@ final class NotTerm implements Term {
      *
      * <p>There are two cursors that we shift down at the same time. The first
      * one ({@code always}) always shifts one message down. The second one
-     * ({@code matcher}) goes independently, according to the incapsulated
-     * term.
+     * ({@code this.matcher}) goes independently, according to the incapsulated
+     * term. The matcher is kept in the class, in order to avoid duplicate
+     * shifting of the incapsulated term.
      */
     @Override
     public Cursor shift(final Cursor cursor) {
+        if (this.matcher.get() == null
+            || cursor.compareTo(this.matcher.get()) < 0) {
+            this.matcher.set(cursor.shift(this.term));
+        }
         Cursor always = cursor;
-        Cursor matcher = cursor;
         final Term aterm = new AlwaysTerm(this.imap);
         while (true) {
             always = always.shift(aterm);
-            matcher = matcher.shift(this.term);
-            if (always.end() || matcher.end()) {
+            if (always.end() || this.matcher.get().end()) {
                 break;
             }
-            if (always.compareTo(matcher) < 0) {
+            if (always.compareTo(this.matcher.get()) > 0) {
                 break;
             }
+            this.matcher.set(this.matcher.get().shift(this.term));
         }
         return always;
     }

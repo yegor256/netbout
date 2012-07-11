@@ -46,6 +46,7 @@ import java.util.concurrent.ConcurrentMap;
  * @version $Id$
  * @checkstyle ClassDataAbstractionCoupling (500 lines)
  */
+@SuppressWarnings("PMD.TooManyMethods")
 final class AndTerm implements Term {
 
     /**

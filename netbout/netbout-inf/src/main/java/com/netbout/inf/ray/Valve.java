@@ -29,7 +29,6 @@ package com.netbout.inf.ray;
 import com.netbout.inf.Cursor;
 import com.netbout.inf.Lattice;
 import com.netbout.inf.Term;
-import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * One-way valve.
@@ -90,15 +89,15 @@ final class Valve implements Term {
      */
     @Override
     public boolean equals(final Object term) {
-        return this == term || (term instanceof Term &&
-            this.hashCode() == term.hashCode());
+        return this == term || (term instanceof Term
+            && this.hashCode() == term.hashCode());
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public Cursor shift(Cursor cursor) {
+    public Cursor shift(final Cursor cursor) {
         final long number = cursor.msg().number();
         if (this.max == 0) {
             throw new IllegalArgumentException(

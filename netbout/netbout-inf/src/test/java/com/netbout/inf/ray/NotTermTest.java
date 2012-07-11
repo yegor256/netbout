@@ -29,7 +29,6 @@ package com.netbout.inf.ray;
 import com.netbout.inf.Attribute;
 import com.netbout.inf.Cursor;
 import com.netbout.inf.MsgMocker;
-import com.netbout.inf.Term;
 import com.netbout.inf.ray.imap.DefaultIndexMap;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
@@ -61,11 +60,13 @@ public final class NotTermTest {
         final Attribute attr = new Attribute("attribute-name");
         final String value = "some text-1 \u0433!";
         final long msg = MsgMocker.number();
+        map.touch(msg + 2);
+        map.index(attr).add(msg + 2, "should be found by NOT term");
+        map.touch(msg + 1);
+        map.index(attr).add(msg + 1, "should also be found by NOT term");
         map.touch(msg);
         map.index(attr).add(msg, value);
-        map.touch(msg - 1);
-        map.index(attr).add(msg - 1, "should be found by NOT term");
-        Cursor cursor = new MemCursor(msg, map).shift(
+        Cursor cursor = new MemCursor(Long.MAX_VALUE, map).shift(
             new NotTerm(
                 map,
                 new Valve(new MatcherTerm(map, attr, value))
@@ -73,7 +74,17 @@ public final class NotTermTest {
         );
         MatcherAssert.assertThat(
             cursor.msg().number(),
-            Matchers.equalTo(msg - 1)
+            Matchers.equalTo(msg + 2)
+        );
+        cursor = cursor.shift(
+            new NotTerm(
+                map,
+                new Valve(new MatcherTerm(map, attr, value))
+            )
+        );
+        MatcherAssert.assertThat(
+            cursor.msg().number(),
+            Matchers.equalTo(msg + 1)
         );
         cursor = cursor.shift(
             new NotTerm(

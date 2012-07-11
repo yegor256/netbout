@@ -109,9 +109,15 @@ final class Bundled implements Functor {
          */
         @Override
         public Cursor shift(final Cursor cursor) {
-            final Cursor shifted = cursor.shift(
-                this.ray.builder().and(this.terms.values())
-            );
+            Term term;
+            if (this.terms.isEmpty()) {
+                term = this.ray.builder().always();
+            } else if (this.terms.size() == 1) {
+                term = this.terms.values().iterator().next();
+            } else {
+                term = this.ray.builder().and(this.terms.values());
+            }
+            final Cursor shifted = cursor.shift(term);
             if (!shifted.end()) {
                 final String marker = shifted.msg().attr(
                     BundledAttribute.VALUE
@@ -120,10 +126,13 @@ final class Bundled implements Functor {
                     throw new IllegalStateException(
                         String.format(
                             // @checkstyle LineLength (1 line)
-                            "marker '%s' has already been seen in %s among %d others",
+                            "marker '%s' at %s has already been seen in %s among %d others, shifted from %s by %s",
                             marker,
+                            shifted,
                             this.terms.get(marker),
-                            this.terms.size()
+                            this.terms.size(),
+                            cursor,
+                            term
                         )
                     );
                 }

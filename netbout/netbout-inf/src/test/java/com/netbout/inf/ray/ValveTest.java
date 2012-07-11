@@ -30,8 +30,6 @@ import com.netbout.inf.CursorMocker;
 import com.netbout.inf.MsgMocker;
 import com.netbout.inf.Term;
 import com.netbout.inf.TermMocker;
-import org.hamcrest.MatcherAssert;
-import org.hamcrest.Matchers;
 import org.junit.Test;
 
 /**

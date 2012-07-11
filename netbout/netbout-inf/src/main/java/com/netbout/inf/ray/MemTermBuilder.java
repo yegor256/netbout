@@ -106,7 +106,7 @@ final class MemTermBuilder implements TermBuilder {
      */
     @Override
     public Term not(final Term term) {
-        return new NotTerm(this.imap, term);
+        return new Valve(new NotTerm(this.imap, term));
     }
 
     /**
