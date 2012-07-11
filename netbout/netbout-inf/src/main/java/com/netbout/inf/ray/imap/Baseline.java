@@ -26,9 +26,11 @@
  */
 package com.netbout.inf.ray.imap;
 
+import com.jcabi.log.Logger;
 import com.netbout.inf.Attribute;
 import java.io.File;
 import java.io.IOException;
+import java.util.concurrent.atomic.AtomicBoolean;
 import org.apache.commons.io.FileUtils;
 
 /**
@@ -48,6 +50,29 @@ final class Baseline extends BaseVersion {
      */
     public Baseline(final Lock lock) throws IOException {
         super(lock);
+        final AtomicBoolean failed = new AtomicBoolean();
+        final Auditor auditor = new Auditor() {
+            @Override
+            public void problem(final String text) {
+                Logger.warn(this, "audit: %s", text);
+                failed.set(true);
+            }
+        };
+        this.audit(auditor);
+        if (failed.get()) {
+            lock.clear();
+        }
+    }
+
+    /**
+     * Listener of all problems.
+     */
+    private interface Auditor {
+        /**
+         * A new problem detected.
+         * @param text Text description of the problem
+         */
+        void problem(String text);
     }
 
     /**
@@ -78,6 +103,15 @@ final class Baseline extends BaseVersion {
                 String.format("/%s/catalog.inf", attr)
             )
         );
+    }
+
+    /**
+     * Audit in the directory and report problems.
+     * @param auditor Listener of problems
+     * @throws IOException If some I/O problem inside
+     */
+    private void audit(final Auditor auditor) throws IOException {
+        // ..
     }
 
 }

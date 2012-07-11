@@ -27,6 +27,9 @@
 package com.netbout.inf.ray.imap;
 
 import java.io.File;
+import org.apache.commons.io.FileUtils;
+import org.hamcrest.MatcherAssert;
+import org.hamcrest.Matchers;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
@@ -67,6 +70,22 @@ public final class LockTest {
         final File dir = new File(this.temp.newFolder("foo-2"), "/boom/x");
         new Lock(dir);
         new Lock(dir);
+    }
+
+    /**
+     * Lock can delete all files in the directory.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void deletesAllFilesInDirectory() throws Exception {
+        final File dir = this.temp.newFolder("some-dir-1");
+        final File file = new File(dir, "some-file.txt");
+        FileUtils.touch(file);
+        MatcherAssert.assertThat(file.exists(), Matchers.is(true));
+        Lock lock = new Lock(dir);
+        lock.clear();
+        lock.close();
+        MatcherAssert.assertThat(file.exists(), Matchers.is(false));
     }
 
 }
