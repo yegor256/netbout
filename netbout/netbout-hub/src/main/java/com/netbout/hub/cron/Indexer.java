@@ -152,7 +152,13 @@ final class Indexer extends AbstractCron {
             .arg(bnum)
             .exec();
         if (dudes.isEmpty()) {
-            throw new IllegalStateException();
+            throw new IllegalStateException(
+                String.format(
+                    "empty list of participants for bout #%d (message #%d)",
+                    bnum,
+                    number
+                )
+            );
         }
         return this.hub().identity(dudes.get(0)).bout(bnum).message(number);
     }
