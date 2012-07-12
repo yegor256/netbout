@@ -37,7 +37,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.ConcurrentSkipListMap;
 import java.util.concurrent.TimeUnit;
@@ -70,6 +69,7 @@ public final class SimpleReverse implements Reverse {
     /**
      * {@inheritDoc}
      * @checkstyle MagicNumber (30 lines)
+     * @checkstyle RedundantThrows (5 lines)
      */
     @Override
     public String get(final long msg) throws Reverse.ValueNotFoundException {
@@ -181,7 +181,7 @@ public final class SimpleReverse implements Reverse {
      * @param value The value these numbers are used for
      * @param numbers All numbers we should see for this value
      */
-    public final void audit(final Audit audit, final String value,
+    public void audit(final Audit audit, final String value,
         final Collection<Long> numbers) {
         final Iterator<Long> iterator = numbers.iterator();
         long next = Long.MAX_VALUE;

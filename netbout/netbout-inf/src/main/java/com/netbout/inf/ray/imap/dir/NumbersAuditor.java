@@ -28,16 +28,11 @@ package com.netbout.inf.ray.imap.dir;
 
 import com.jcabi.log.Logger;
 import com.netbout.inf.Attribute;
-import com.netbout.inf.ray.imap.Numbers;
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.RandomAccessFile;
 import java.nio.channels.Channels;
 import java.util.Iterator;
-import java.util.concurrent.atomic.AtomicBoolean;
-import org.apache.commons.io.FileUtils;
 
 /**
  * Auditor of numbers data file.

@@ -142,6 +142,9 @@ public class SimpleNumbers implements Numbers {
         long previous = Long.MAX_VALUE;
         while (true) {
             final long next = data.readLong();
+            if (next == previous) {
+                throw new IOException("duplicate number");
+            }
             if (next > previous) {
                 throw new IOException("invalid order of numbers");
             }

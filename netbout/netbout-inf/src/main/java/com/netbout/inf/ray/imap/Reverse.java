@@ -76,7 +76,8 @@ public interface Reverse {
      * is not found).
      * @param msg The number of the message
      * @return The value
-     * @throws ValueNotFoundException If a value is not found for this message
+     * @throws Reverse.ValueNotFoundException If a value is
+     *  not found for this message
      */
     String get(long msg) throws Reverse.ValueNotFoundException;
 
