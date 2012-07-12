@@ -26,11 +26,6 @@
  */
 package com.netbout.inf.ray.imap.dir;
 
-import com.netbout.inf.MsgMocker;
-import com.netbout.inf.ray.imap.Reverse;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.InputStream;
 import java.util.concurrent.atomic.AtomicInteger;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;

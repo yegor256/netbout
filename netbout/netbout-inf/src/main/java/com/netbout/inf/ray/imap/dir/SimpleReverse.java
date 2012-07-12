@@ -35,7 +35,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.ConcurrentSkipListMap;
@@ -183,21 +182,24 @@ public final class SimpleReverse implements Reverse {
      */
     public void audit(final Audit audit, final String value,
         final Collection<Long> numbers) {
-        final Iterator<Long> iterator = numbers.iterator();
-        long next = Long.MAX_VALUE;
-        for (Map.Entry<Long, String> entry : this.map.entrySet()) {
-            if (entry.getKey() < next) {
-                if (!iterator.hasNext()) {
-                    break;
-                }
-                next = iterator.next();
-            } else if (!entry.getValue().equals(value)) {
+        for (Long number : numbers) {
+            if (!this.map.containsKey(number)) {
                 audit.problem(
                     String.format(
-                        "value '%s' not equal to '%s' for msg #%d",
-                        entry.getValue(),
-                        value,
-                        next
+                        "msg #%d doesn't have a value, while '%s' expected",
+                        number,
+                        value
+                    )
+                );
+                break;
+            }
+            if (!this.map.get(number).equals(value)) {
+                audit.problem(
+                    String.format(
+                        "msg #%d has value '%s' while '%s' expected",
+                        number,
+                        this.map.get(number),
+                        value
                     )
                 );
                 break;

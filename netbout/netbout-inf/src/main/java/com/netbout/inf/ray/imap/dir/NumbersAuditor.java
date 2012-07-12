@@ -51,18 +51,17 @@ final class NumbersAuditor implements Auditor {
     public void audit(final Baseline base,
         final Audit audit) throws IOException {
         for (Attribute attr : base.attributes()) {
-            this.audit(base, audit, attr);
+            this.audit(base, attr);
         }
     }
 
     /**
      * Audit in the directory with an attribute and report problems.
      * @param base The baseline
-     * @param audit Listener of problems
      * @param attr The attribute
      * @throws IOException If some exception inside
      */
-    private void audit(final Baseline base, final Audit audit,
+    private void audit(final Baseline base,
         final Attribute attr) throws IOException {
         final long start = System.currentTimeMillis();
         int count = 0;
