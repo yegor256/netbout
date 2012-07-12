@@ -24,7 +24,7 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.inf.ray.imap;
+package com.netbout.inf.ray.imap.dir;
 
 import com.jcabi.log.Logger;
 import java.io.Closeable;
@@ -34,6 +34,7 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.nio.channels.FileChannel;
 import java.nio.channels.FileLock;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 
 /**
@@ -182,6 +183,27 @@ final class Lock implements Closeable {
         Logger.debug(
             this,
             "#expire(): '/%s' expired",
+            FilenameUtils.getName(this.directory.getPath())
+        );
+    }
+
+    /**
+     * Delete all files in the directory.
+     * @throws IOException If some I/O problem inside
+     */
+    public void clear() throws IOException {
+        int deleted = 0;
+        for (File file : this.directory.listFiles()) {
+            if (Lock.NAME.equals(FilenameUtils.getName(file.getPath()))) {
+                continue;
+            }
+            FileUtils.forceDelete(file);
+            ++deleted;
+        }
+        Logger.debug(
+            this,
+            "#clear(): %d file(s) removed in '/%s'",
+            deleted,
             FilenameUtils.getName(this.directory.getPath())
         );
     }

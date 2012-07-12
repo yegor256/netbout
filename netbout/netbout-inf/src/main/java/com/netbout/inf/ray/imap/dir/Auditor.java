@@ -24,49 +24,23 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.inf.ray.imap;
-
-import java.io.File;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
+package com.netbout.inf.ray.imap.dir;
 
 /**
- * Test case of {@link Lock}.
+ * Auditor of baseline.
+ *
+ * <p>Implementation must be thread-safe.
+ *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class LockTest {
+interface Auditor {
 
     /**
-     * Temporary folder.
-     * @checkstyle VisibilityModifier (3 lines)
+     * Audit this baseline and report problems.
+     * @param baseline The baseline to audit
+     * @param audit The audit to store results into
      */
-    @Rule
-    public transient TemporaryFolder temp = new TemporaryFolder();
-
-    /**
-     * Lock can lock a directory and release lock later.
-     * @throws Exception If there is some problem inside
-     */
-    @Test
-    public void locksDirectoryAndReleases() throws Exception {
-        final File dir = new File(this.temp.newFolder("foo"), "/boom/a");
-        Lock lock = new Lock(dir);
-        lock.close();
-        lock = new Lock(dir);
-        lock.close();
-    }
-
-    /**
-     * Lock can prevent against duplicate instances.
-     * @throws Exception If there is some problem inside
-     */
-    @Test(expected = java.io.IOException.class)
-    public void preventsDuplicateInstances() throws Exception {
-        final File dir = new File(this.temp.newFolder("foo-2"), "/boom/x");
-        new Lock(dir);
-        new Lock(dir);
-    }
+    void audit(Baseline baseline, Audit audit);
 
 }

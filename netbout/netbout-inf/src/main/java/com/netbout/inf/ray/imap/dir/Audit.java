@@ -24,60 +24,28 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.inf.ray.imap;
-
-import java.io.File;
-import org.hamcrest.MatcherAssert;
-import org.hamcrest.Matchers;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
+package com.netbout.inf.ray.imap.dir;
 
 /**
- * Test case of {@link Versions}.
+ * Audit result of data structures.
+ *
+ * <p>Implementation must be thread-safe.
+ *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class VersionsTest {
+interface Audit {
 
     /**
-     * Temporary folder.
-     * @checkstyle VisibilityModifier (3 lines)
+     * A new problem detected.
+     * @param text Text description of the problem
      */
-    @Rule
-    public transient TemporaryFolder temp = new TemporaryFolder();
+    void problem(String text);
 
     /**
-     * Versions can create version number.
-     * @throws Exception If there is some problem inside
+     * A new problem/exception detected.
+     * @param expn Exception
      */
-    @Test
-    public void createsVersionOfBaseline() throws Exception {
-        final File dir = new File(this.temp.newFolder("foo"), "/some/folder");
-        final Versions builder = new Versions(dir);
-        final String ver = builder.baselined();
-        new File(dir, ver).mkdir();
-        MatcherAssert.assertThat(builder.baselined(), Matchers.equalTo(ver));
-        MatcherAssert.assertThat(
-            builder.draft(),
-            Matchers.not(Matchers.equalTo(ver))
-        );
-    }
-
-    /**
-     * Versions can create version number.
-     * @throws Exception If there is some problem inside
-     */
-    @Test
-    public void createsVersionOfDraft() throws Exception {
-        final Versions builder = new Versions(
-            new File(this.temp.newFolder("foo-1"), "/some/folder/to/create-2")
-        );
-        final String ver = builder.draft();
-        MatcherAssert.assertThat(
-            builder.draft(),
-            Matchers.not(Matchers.equalTo(ver))
-        );
-    }
+    void problem(Exception expn);
 
 }

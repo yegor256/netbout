@@ -1,6 +1,47 @@
 <?xml version="1.0"?>
+<!-- this file is used in InifityTest -->
 <scenario>
-    <!-- this file is used in InifityTest -->
+    <scene>
+        <see notice="com.netbout.inf.notices.MessagePostedNotice">
+            <message.number>50</message.number>
+            <bout.participants>urn:test:man1, urn:test:man3</bout.participants>
+            <bout.number>55</bout.number>
+        </see>
+        <see notice="com.netbout.inf.notices.MessagePostedNotice">
+            <message.number>45</message.number>
+            <bout.participants>urn:test:somebody-else</bout.participants>
+            <bout.number>120</bout.number>
+        </see>
+        <see notice="com.netbout.inf.notices.MessagePostedNotice">
+            <message.number>40</message.number>
+            <bout.participants>urn:test:man2, urn:test:man1</bout.participants>
+            <bout.number>54</bout.number>
+        </see>
+        <see notice="com.netbout.inf.notices.MessagePostedNotice">
+            <message.number>35</message.number>
+            <bout.participants>urn:test:somebody-else</bout.participants>
+            <bout.number>110</bout.number>
+        </see>
+        <see notice="com.netbout.inf.notices.MessagePostedNotice">
+            <message.number>30</message.number>
+            <bout.participants>urn:test:man3, urn:test:man2</bout.participants>
+            <bout.number>53</bout.number>
+        </see>
+        <see notice="com.netbout.inf.notices.MessagePostedNotice">
+            <message.number>20</message.number>
+            <bout.participants>urn:test:somebody-else</bout.participants>
+            <bout.number>100</bout.number>
+        </see>
+        <query>
+            <predicate>
+                (and
+                    (not (talks-with 'urn:test:man1'))
+                    (not (talks-with 'urn:test:man2'))
+                )
+            </predicate>
+            <messages>45, 35, 20</messages>
+        </query>
+    </scene>
     <scene>
         <see notice="com.netbout.inf.notices.MessagePostedNotice">
             <message.number>63</message.number>
@@ -196,51 +237,6 @@
         <query>
             <predicate>(and (equal $number 456540) (from 0))</predicate>
             <messages>456540</messages>
-        </query>
-    </scene>
-    <scene>
-        <see notice="com.netbout.inf.notices.MessagePostedNotice">
-            <message.number>10</message.number>
-            <bout.participants>urn:test:man1, urn:test:man2</bout.participants>
-            <bout.number>55</bout.number>
-        </see>
-        <see notice="com.netbout.inf.notices.MessagePostedNotice">
-            <message.number>9</message.number>
-            <bout.participants>urn:test:man1, urn:test:man2</bout.participants>
-            <bout.number>54</bout.number>
-        </see>
-        <see notice="com.netbout.inf.notices.MessagePostedNotice">
-            <message.number>8</message.number>
-            <bout.participants>urn:test:man1</bout.participants>
-            <bout.number>53</bout.number>
-        </see>
-        <see notice="com.netbout.inf.notices.MessagePostedNotice">
-            <message.number>7</message.number>
-            <bout.participants>urn:test:man1, urn:test:man2</bout.participants>
-            <bout.number>52</bout.number>
-        </see>
-        <see notice="com.netbout.inf.notices.MessagePostedNotice">
-            <message.number>6</message.number>
-            <bout.participants>urn:test:man1, urn:test:man2, urn:test:man3</bout.participants>
-            <bout.number>51</bout.number>
-        </see>
-        <query>
-            <predicate>
-                (and
-                    (or
-                        (talks-with 'urn:test:man1')
-                        (matches 'something to match')
-                        (matches 'some other text')
-                        (talks-with 'urn:test:man2')
-                        (talks-with 'urn:test:man3')
-                    )
-                    (bundled)
-                    (from 1)
-                    (limit 2)
-                    (unique $bout.number)
-                )
-            </predicate>
-            <messages>8, 6</messages>
         </query>
     </scene>
 </scenario>

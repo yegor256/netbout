@@ -24,11 +24,9 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.inf.ray.imap;
+package com.netbout.inf.ray.imap.dir;
 
-import com.netbout.inf.Attribute;
-import com.netbout.inf.MsgMocker;
-import java.io.File;
+import java.util.Random;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Rule;
@@ -36,11 +34,11 @@ import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
 /**
- * Test case of {@link DefaultDirectory}.
+ * Test case of {@link Slowlog}.
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class DefaultDirectoryTest {
+public final class SlowlogTest {
 
     /**
      * Temporary folder.
@@ -50,46 +48,25 @@ public final class DefaultDirectoryTest {
     public transient TemporaryFolder temp = new TemporaryFolder();
 
     /**
-     * DefaultDirectory can save numbers to file and restore them back.
+     * Slowlog can be saved through output stream.
      * @throws Exception If there is some problem inside
      */
     @Test
-    public void savesAndRestoresNumbers() throws Exception {
-        final Directory dir = new DefaultDirectory(
-            new File(this.temp.newFolder("foo"), "/some/directory")
+    public void savesDataThroughOutputStream() throws Exception {
+        final Slowlog slowlog = new Slowlog(this.temp.newFile("slowlog-5.txt"));
+        final BacklogOutputStream stream = slowlog.open();
+        final String value = "some value, \u0433";
+        final long num = new Random().nextLong();
+        final long pos = stream.write(
+            new Slowlog.Item(value, Long.toString(num))
         );
-        final Numbers numbers = new SimpleNumbers();
-        final long msg = MsgMocker.number();
-        numbers.add(msg);
-        numbers.add(msg - 1);
-        final Attribute attr = new Attribute("some-attr");
-        final String value = "some value to use";
-        dir.save(attr, value, numbers);
-        dir.baseline();
-        final Numbers restored = new SimpleNumbers();
-        dir.load(attr, value, restored);
-        MatcherAssert.assertThat(restored.next(msg), Matchers.equalTo(msg - 1));
-    }
-
-    /**
-     * DefaultDirectory can save reverse to file and restore them back.
-     * @throws Exception If there is some problem inside
-     */
-    @Test
-    public void savesAndRestoresReverse() throws Exception {
-        final Directory dir = new DefaultDirectory(
-            this.temp.newFolder("foo-2")
+        MatcherAssert.assertThat(pos, Matchers.greaterThan(0L));
+        stream.write(new Slowlog.Item("foo", "2324"));
+        stream.close();
+        MatcherAssert.assertThat(
+            slowlog.normalized(-pos, value),
+            Matchers.equalTo(num)
         );
-        final Reverse reverse = new SimpleReverse();
-        final long msg = MsgMocker.number();
-        final String value = "some value 2, \u0433";
-        reverse.put(msg, value);
-        final Attribute attr = new Attribute("some-attr-2");
-        dir.save(attr, reverse);
-        dir.baseline();
-        final Reverse restored = new SimpleReverse();
-        dir.load(attr, restored);
-        MatcherAssert.assertThat(restored.get(msg), Matchers.equalTo(value));
     }
 
 }

@@ -24,60 +24,41 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.inf.ray.imap;
+package com.netbout.inf.functors;
 
-import com.jcabi.log.Logger;
-import java.io.DataOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import com.netbout.inf.Atom;
+import com.netbout.inf.Functor;
+import com.netbout.inf.InvalidSyntaxException;
+import com.netbout.inf.Ray;
+import com.netbout.inf.Term;
+import com.netbout.inf.atoms.PredicateAtom;
+import java.util.List;
 
 /**
- * Output stream with {@link Backlog} items.
+ * NOT.
  *
- * <p>The class is thread-safe.
+ * <p>This class is immutable and thread-safe.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-final class BacklogOutputStream extends DataOutputStream {
-
-    /**
-     * Public ctor.
-     * @param file The file to use
-     * @throws IOException If some I/O problem inside
-     */
-    public BacklogOutputStream(final File file) throws IOException {
-        super(new FileOutputStream(file));
-        this.writeInt(Backlog.START_MARKER);
-    }
+@NamedAs("not")
+final class Negation implements Functor {
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public void close() throws IOException {
-        this.writeUTF(Backlog.EOF_MARKER);
-        this.writeUTF(Backlog.EOF_MARKER);
-        super.close();
-        Logger.debug(
-            this,
-            "#close(): saved %d bytes",
-            this.written
+    public Term build(final Ray ray, final List<Atom> atoms)
+        throws InvalidSyntaxException {
+        if (atoms.size() != 1) {
+            throw new InvalidSyntaxException(
+                "exactly one argument required for NOT"
+            );
+        }
+        return ray.builder().not(
+            PredicateAtom.class.cast(atoms.get(0)).term(ray)
         );
-    }
-
-    /**
-     * Add new item.
-     * @param item The items to add
-     * @return Position where this writing happened
-     * @throws IOException If some I/O problem inside
-     */
-    public long write(final Backlog.Item item) throws IOException {
-        final long pos = this.written;
-        this.writeUTF(item.value());
-        this.writeUTF(item.path());
-        return pos;
     }
 
 }

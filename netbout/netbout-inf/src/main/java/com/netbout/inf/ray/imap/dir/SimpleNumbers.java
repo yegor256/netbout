@@ -24,11 +24,12 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.inf.ray.imap;
+package com.netbout.inf.ray.imap.dir;
 
 import com.jcabi.log.Logger;
 import com.netbout.inf.Lattice;
 import com.netbout.inf.lattice.LatticeBuilder;
+import com.netbout.inf.ray.imap.Numbers;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -48,7 +49,7 @@ import java.util.concurrent.ConcurrentSkipListSet;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-class SimpleNumbers implements Numbers {
+public class SimpleNumbers implements Numbers {
 
     /**
      * Set of numbers.
@@ -138,12 +139,20 @@ class SimpleNumbers implements Numbers {
     public final void load(final InputStream stream) throws IOException {
         this.nums.clear();
         final DataInputStream data = new DataInputStream(stream);
+        long previous = Long.MAX_VALUE;
         while (true) {
             final long next = data.readLong();
+            if (next == previous) {
+                throw new IOException("duplicate number");
+            }
+            if (next > previous) {
+                throw new IOException("invalid order of numbers");
+            }
             if (next == 0) {
                 break;
             }
             this.nums.add(next);
+            previous = next;
         }
         if (!this.nums.isEmpty()) {
             Logger.debug(
@@ -153,6 +162,17 @@ class SimpleNumbers implements Numbers {
             );
             this.lat.fill(this.nums);
         }
+    }
+
+    /**
+     * Audit it against the reverse.
+     * @param audit The audit
+     * @param value The value these numbers are used for
+     * @param reverse The reverse
+     */
+    public final void audit(final Audit audit, final String value,
+        final SimpleReverse reverse) {
+        reverse.audit(audit, value, this.nums);
     }
 
 }

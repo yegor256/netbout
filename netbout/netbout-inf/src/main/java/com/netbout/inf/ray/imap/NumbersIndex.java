@@ -28,6 +28,7 @@ package com.netbout.inf.ray.imap;
 
 import com.netbout.inf.Attribute;
 import com.netbout.inf.Lattice;
+import com.netbout.inf.ray.imap.dir.SimpleNumbers;
 import java.io.IOException;
 
 /**

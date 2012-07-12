@@ -24,61 +24,81 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.inf.ray.imap;
+package com.netbout.inf.ray.imap.dir;
 
+import com.jcabi.log.Logger;
 import com.netbout.inf.Attribute;
-import java.io.Closeable;
+import java.io.File;
 import java.io.IOException;
+import java.util.concurrent.atomic.AtomicBoolean;
+import org.apache.commons.io.FileUtils;
 
 /**
- * Directory with files.
+ * Sub-directory with baselined documents.
  *
- * <p>Implementation must be thread-safe.
+ * <p>Class is immutable and thread-safe.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public interface Directory extends Closeable {
+final class Baseline extends BaseVersion {
 
     /**
-     * Save numbers for the given attribute.
-     * @param attr The attribute
-     * @param value The value to set them to
-     * @param nums The numbers to save from
+     * Public ctor.
+     * @param lock The directory where to work
      * @throws IOException If some I/O problem inside
      */
-    void save(Attribute attr, String value, Numbers nums) throws IOException;
+    public Baseline(final Lock lock) throws IOException {
+        super(lock);
+        final AtomicBoolean failed = new AtomicBoolean();
+        new CompositeAuditor().audit(
+            this,
+            new Audit() {
+                @Override
+                public void problem(final String text) {
+                    Logger.warn(this, "audit: %s", text);
+                    failed.set(true);
+                }
+                @Override
+                public void problem(final Exception expn) {
+                    Logger.warn(this, "audit: %[exception]s", expn);
+                    failed.set(true);
+                }
+            }
+        );
+        if (failed.get()) {
+            lock.clear();
+        }
+    }
 
     /**
-     * Load numbers for the given attribute.
-     * @param attr The attribute
-     * @param value The value to set them to
-     * @param nums The numbers to load into
+     * Get name of data file.
+     * @param attr Attribute
+     * @return File name
      * @throws IOException If some I/O problem inside
      */
-    void load(Attribute attr, String value, Numbers nums) throws IOException;
+    public File data(final Attribute attr) throws IOException {
+        final File file = new File(
+            this.dir(),
+            String.format("/%s/data.inf", attr)
+        );
+        FileUtils.touch(file);
+        return file;
+    }
 
     /**
-     * Save reverse for the given attribute.
-     * @param attr The attribute
-     * @param reverse The reverse to save from
+     * Get catalog.
+     * @param attr Attribute
+     * @return The catalog
      * @throws IOException If some I/O problem inside
      */
-    void save(Attribute attr, Reverse reverse) throws IOException;
-
-    /**
-     * Load reverse for the given attribute.
-     * @param attr The attribute
-     * @param reverse The reverse to load to
-     * @throws IOException If some I/O problem inside
-     */
-    void load(Attribute attr, Reverse reverse) throws IOException;
-
-    /**
-     * Baseline existing version (if we loose power right after this operation
-     * this version will be loaded after reboot).
-     * @throws IOException If some I/O problem inside
-     */
-    void baseline() throws IOException;
+    public Catalog catalog(final Attribute attr) throws IOException {
+        return new Catalog(
+            new File(
+                this.dir(),
+                String.format("/%s/catalog.inf", attr)
+            )
+        );
+    }
 
 }

@@ -56,7 +56,9 @@ public final class DefaultInfinityProf {
      * @throws Exception If there is some problem inside
      */
     public static void main(final String... args) throws Exception {
-        // new DefaultInfinityProf().run();
+        if (System.getProperty("prof") != null) {
+            new DefaultInfinityProf().run();
+        }
     }
 
     /**
@@ -66,8 +68,9 @@ public final class DefaultInfinityProf {
     private void run() throws Exception {
         final Infinity inf = this.prepare();
         final String[] queries = new String[] {
-            "(and (or (talks-with 'urn:test:Jeff') (talks-with 'urn:facebook:1531296526')) (bundled) (limit 10))",
-            "(and (talks-with 'urn:facebook:1531296526') (unbundled 5615) (unique $bout.number))",
+            // "(and (or (talks-with 'urn:test:Jeff') (talks-with 'urn:facebook:1531296526')) (bundled) (limit 10))",
+            // "(and (talks-with 'urn:facebook:1531296526') (unbundled 5615) (unique $bout.number))",
+            "(and (talks-with 'urn:facebook:1531296526') (bundled))",
         };
         for (int retry = 0; retry < 2; ++retry) {
             for (String query : queries) {
@@ -88,7 +91,7 @@ public final class DefaultInfinityProf {
     private Infinity prepare() throws Exception {
         final Folder folder = new FolderMocker().mock();
         FileUtils.copyDirectory(
-            new File("./src/prof/resources/com/netbout/inf/ray-2"),
+            new File("./src/prof/resources/com/netbout/inf/ray-3"),
             new File(folder.path(), "/ray")
         );
         return new DefaultInfinity(folder);

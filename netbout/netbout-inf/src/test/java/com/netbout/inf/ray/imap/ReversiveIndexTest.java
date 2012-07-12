@@ -30,6 +30,7 @@ import com.jcabi.log.VerboseThreads;
 import com.netbout.inf.Attribute;
 import com.netbout.inf.MsgMocker;
 import com.netbout.inf.ray.Index;
+import com.netbout.inf.ray.imap.dir.DefaultDirectory;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.concurrent.Callable;
@@ -73,7 +74,6 @@ public final class ReversiveIndexTest {
         final long msg = MsgMocker.number();
         final String value = "some text \u0433!";
         index.add(msg, "first value");
-        index.add(msg, "second value");
         index.replace(msg, value);
         MatcherAssert.assertThat(
             index.attr(msg),

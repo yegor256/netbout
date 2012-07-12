@@ -24,49 +24,42 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.inf.ray.imap;
+package com.netbout.inf.ray.imap.dir;
 
-import java.util.Random;
+import com.netbout.inf.MsgMocker;
+import com.netbout.inf.ray.imap.Reverse;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
 
 /**
- * Test case of {@link Slowlog}.
+ * Test case of {@link SimpleReverse}.
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class SlowlogTest {
+public final class SimpleReverseTest {
 
     /**
-     * Temporary folder.
-     * @checkstyle VisibilityModifier (3 lines)
-     */
-    @Rule
-    public transient TemporaryFolder temp = new TemporaryFolder();
-
-    /**
-     * Slowlog can be saved through output stream.
+     * SimpleReverse can save to stream and restore.
      * @throws Exception If there is some problem inside
      */
     @Test
-    public void savesDataThroughOutputStream() throws Exception {
-        final Slowlog slowlog = new Slowlog(this.temp.newFile("slowlog-5.txt"));
-        final BacklogOutputStream stream = slowlog.open();
+    public void savesAndRestores() throws Exception {
+        final Reverse reverse = new SimpleReverse();
+        final long msg = MsgMocker.number();
         final String value = "some value, \u0433";
-        final long num = new Random().nextLong();
-        final long pos = stream.write(
-            new Slowlog.Item(value, Long.toString(num))
-        );
-        MatcherAssert.assertThat(pos, Matchers.greaterThan(0L));
-        stream.write(new Slowlog.Item("foo", "2324"));
-        stream.close();
-        MatcherAssert.assertThat(
-            slowlog.normalized(-pos, value),
-            Matchers.equalTo(num)
-        );
+        reverse.put(msg, value);
+        MatcherAssert.assertThat(reverse.get(msg), Matchers.equalTo(value));
+        final ByteArrayOutputStream ostream = new ByteArrayOutputStream();
+        reverse.save(ostream);
+        final byte[] data = ostream.toByteArray();
+        final Reverse restored = new SimpleReverse();
+        final InputStream istream = new ByteArrayInputStream(data);
+        restored.load(istream);
+        MatcherAssert.assertThat(restored.get(msg), Matchers.equalTo(value));
     }
 
 }

@@ -24,61 +24,82 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.inf.ray.imap;
+package com.netbout.inf.ray.imap.dir;
 
-import com.netbout.inf.Attribute;
 import java.io.Closeable;
+import java.io.DataOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.concurrent.atomic.AtomicReference;
 
 /**
- * Directory with files.
+ * Output stream with {@link Catalog} items.
  *
- * <p>Implementation must be thread-safe.
+ * <p>The class is thread-safe.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public interface Directory extends Closeable {
+final class CatalogOutputStream implements Closeable {
 
     /**
-     * Save numbers for the given attribute.
-     * @param attr The attribute
-     * @param value The value to set them to
-     * @param nums The numbers to save from
-     * @throws IOException If some I/O problem inside
+     * The stream to write to.
      */
-    void save(Attribute attr, String value, Numbers nums) throws IOException;
+    private final transient DataOutputStream output;
 
     /**
-     * Load numbers for the given attribute.
-     * @param attr The attribute
-     * @param value The value to set them to
-     * @param nums The numbers to load into
-     * @throws IOException If some I/O problem inside
+     * Most recently added item, buffered.
      */
-    void load(Attribute attr, String value, Numbers nums) throws IOException;
+    private final transient AtomicReference<Catalog.Item> buffer =
+        new AtomicReference<Catalog.Item>();
 
     /**
-     * Save reverse for the given attribute.
-     * @param attr The attribute
-     * @param reverse The reverse to save from
+     * Public ctor.
+     * @param file The file to use
      * @throws IOException If some I/O problem inside
      */
-    void save(Attribute attr, Reverse reverse) throws IOException;
+    public CatalogOutputStream(final File file) throws IOException {
+        this.output = new DataOutputStream(new FileOutputStream(file));
+    }
 
     /**
-     * Load reverse for the given attribute.
-     * @param attr The attribute
-     * @param reverse The reverse to load to
-     * @throws IOException If some I/O problem inside
+     * {@inheritDoc}
      */
-    void load(Attribute attr, Reverse reverse) throws IOException;
+    @Override
+    public void close() throws IOException {
+        this.flush();
+        this.output.close();
+    }
 
     /**
-     * Baseline existing version (if we loose power right after this operation
-     * this version will be loaded after reboot).
+     * Add new item.
+     * @param item The items to add
      * @throws IOException If some I/O problem inside
      */
-    void baseline() throws IOException;
+    public void write(final Catalog.Item item) throws IOException {
+        this.flush();
+        this.buffer.set(item);
+    }
+
+    /**
+     * Make one step back.
+     * @throws IOException If some I/O problem inside
+     */
+    public void back() throws IOException {
+        this.buffer.set(null);
+    }
+
+    /**
+     * Flush buffer to stream.
+     * @throws IOException If some I/O problem inside
+     */
+    private void flush() throws IOException {
+        final Catalog.Item item = this.buffer.getAndSet(null);
+        if (item != null) {
+            this.output.writeInt(item.hashCode());
+            this.output.writeLong(item.position());
+        }
+    }
 
 }

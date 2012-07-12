@@ -24,17 +24,21 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.inf.ray.imap;
+package com.netbout.inf.ray.imap.dir;
 
 import com.jcabi.log.Logger;
+import com.netbout.inf.ray.imap.Reverse;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Iterator;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.ConcurrentSkipListMap;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -46,13 +50,13 @@ import java.util.concurrent.TimeUnit;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-final class SimpleReverse implements Reverse {
+public final class SimpleReverse implements Reverse {
 
     /**
      * Map of values and message numbers.
      */
     private final transient ConcurrentMap<Long, String> map =
-        new ConcurrentHashMap<Long, String>();
+        new ConcurrentSkipListMap<Long, String>(Collections.reverseOrder());
 
     /**
      * {@inheritDoc}
@@ -64,34 +68,35 @@ final class SimpleReverse implements Reverse {
 
     /**
      * {@inheritDoc}
+     * @checkstyle MagicNumber (30 lines)
+     * @checkstyle RedundantThrows (5 lines)
      */
     @Override
-    public String get(final long msg) {
+    public String get(final long msg) throws Reverse.ValueNotFoundException {
         String value = null;
-        int count = 0;
-        // @checkstyle MagicNumber (1 line)
-        while (++count < 5) {
+        final long start = System.currentTimeMillis();
+        while (true) {
             value = this.map.get(msg);
             if (value != null) {
                 break;
             }
+            if (System.currentTimeMillis() - start > 10) {
+                throw new Reverse.ValueNotFoundException(
+                    String.format(
+                        // @checkstyle LineLength (1 line)
+                        "value not found for msg #%d among %d others, even after %[ms]s of waiting",
+                        msg,
+                        this.map.size(),
+                        System.currentTimeMillis() - start
+                    )
+                );
+            }
             try {
-                TimeUnit.SECONDS.sleep(1);
+                TimeUnit.MILLISECONDS.sleep(1);
             } catch (InterruptedException ex) {
                 Thread.currentThread().interrupt();
                 throw new IllegalStateException(ex);
             }
-        }
-        if (value == null) {
-            throw new IllegalArgumentException(
-                String.format(
-                    // @checkstyle LineLength (1 line)
-                    "value not found for msg #%d among %d others, even after %d seconds of waiting",
-                    msg,
-                    this.map.size(),
-                    count
-                )
-            );
         }
         return value;
     }
@@ -101,7 +106,20 @@ final class SimpleReverse implements Reverse {
      */
     @Override
     public void put(final long number, final String value) {
-        this.map.put(number, value);
+        synchronized (this.map) {
+            final String existing = this.map.get(number);
+            if (existing != null && !existing.equals(value)) {
+                throw new IllegalArgumentException(
+                    String.format(
+                        "can't replace value for msg #%d from '%s' to '%s'",
+                        number,
+                        existing,
+                        value
+                    )
+                );
+            }
+            this.map.put(number, value);
+        }
     }
 
     /**
@@ -143,6 +161,9 @@ final class SimpleReverse implements Reverse {
             if (msg == 0) {
                 break;
             }
+            if (this.map.containsKey(msg)) {
+                throw new IOException("duplicate key in reverse");
+            }
             this.map.put(msg, data.readUTF());
         }
         if (!this.map.isEmpty()) {
@@ -151,6 +172,35 @@ final class SimpleReverse implements Reverse {
                 "#load(..): loaded %d values",
                 this.map.size()
             );
+        }
+    }
+
+    /**
+     * Audit it against the list of numbers.
+     * @param audit The audit
+     * @param value The value these numbers are used for
+     * @param numbers All numbers we should see for this value
+     */
+    public void audit(final Audit audit, final String value,
+        final Collection<Long> numbers) {
+        final Iterator<Long> iterator = numbers.iterator();
+        long next = Long.MAX_VALUE;
+        for (Map.Entry<Long, String> entry : this.map.entrySet()) {
+            if (entry.getKey() < next) {
+                if (!iterator.hasNext()) {
+                    break;
+                }
+                next = iterator.next();
+            } else if (!entry.getValue().equals(value)) {
+                audit.problem(
+                    String.format(
+                        "value '%s' not equal to '%s' for msg #%d",
+                        entry.getValue(),
+                        value,
+                        next
+                    )
+                );
+            }
         }
     }
 

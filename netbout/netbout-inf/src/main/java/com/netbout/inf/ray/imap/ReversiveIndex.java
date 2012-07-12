@@ -28,6 +28,7 @@ package com.netbout.inf.ray.imap;
 
 import com.netbout.inf.Attribute;
 import com.netbout.inf.Lattice;
+import com.netbout.inf.ray.imap.dir.SimpleReverse;
 import java.io.IOException;
 
 /**
@@ -102,8 +103,8 @@ class ReversiveIndex implements FlushableIndex {
      */
     @Override
     public void replace(final long msg, final String value) {
-        this.straight.replace(msg, value);
-        this.reverse.put(msg, value);
+        this.delete(msg, value);
+        this.add(msg, value);
     }
 
     /**
@@ -154,7 +155,11 @@ class ReversiveIndex implements FlushableIndex {
      */
     @Override
     public String attr(final long msg) {
-        return this.reverse.get(msg);
+        try {
+            return this.reverse.get(msg);
+        } catch (Reverse.ValueNotFoundException ex) {
+            throw new IllegalArgumentException(ex);
+        }
     }
 
     /**

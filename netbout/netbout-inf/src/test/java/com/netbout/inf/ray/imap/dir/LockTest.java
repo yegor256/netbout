@@ -24,12 +24,10 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.inf.ray.imap;
+package com.netbout.inf.ray.imap.dir;
 
-import com.netbout.inf.Attribute;
-import com.netbout.inf.MsgMocker;
-import com.netbout.inf.ray.Index;
-import com.netbout.inf.ray.imap.dir.DefaultDirectory;
+import java.io.File;
+import org.apache.commons.io.FileUtils;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Rule;
@@ -37,12 +35,11 @@ import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
 /**
- * Test case of {@link BaseIndex}.
+ * Test case of {@link Lock}.
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
- * @checkstyle ClassDataAbstractionCoupling (500 lines)
  */
-public final class BaseIndexTest {
+public final class LockTest {
 
     /**
      * Temporary folder.
@@ -52,27 +49,43 @@ public final class BaseIndexTest {
     public transient TemporaryFolder temp = new TemporaryFolder();
 
     /**
-     * DefaultIndex can order message numbers propertly.
+     * Lock can lock a directory and release lock later.
      * @throws Exception If there is some problem inside
      */
     @Test
-    public void ordersNumbersProperly() throws Exception {
-        final Index index = new BaseIndex(
-            new Attribute("some-attr-2"),
-            new DefaultDirectory(this.temp.newFolder("file-2"))
-        );
-        final long msg = MsgMocker.number();
-        final String value = "text-\u0433!";
-        final int total = 10;
-        for (int pos = 1; pos < total; ++pos) {
-            index.add(msg - pos, value);
-        }
-        for (int pos = 1; pos < total; ++pos) {
-            MatcherAssert.assertThat(
-                index.next(value, msg - pos + 1),
-                Matchers.equalTo(msg - pos)
-            );
-        }
+    public void locksDirectoryAndReleases() throws Exception {
+        final File dir = new File(this.temp.newFolder("foo"), "/boom/a");
+        Lock lock = new Lock(dir);
+        lock.close();
+        lock = new Lock(dir);
+        lock.close();
+    }
+
+    /**
+     * Lock can prevent against duplicate instances.
+     * @throws Exception If there is some problem inside
+     */
+    @Test(expected = java.io.IOException.class)
+    public void preventsDuplicateInstances() throws Exception {
+        final File dir = new File(this.temp.newFolder("foo-2"), "/boom/x");
+        new Lock(dir);
+        new Lock(dir);
+    }
+
+    /**
+     * Lock can delete all files in the directory.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void deletesAllFilesInDirectory() throws Exception {
+        final File dir = this.temp.newFolder("some-dir-1");
+        final File file = new File(dir, "some-file.txt");
+        FileUtils.touch(file);
+        MatcherAssert.assertThat(file.exists(), Matchers.is(true));
+        final Lock lock = new Lock(dir);
+        lock.clear();
+        lock.close();
+        MatcherAssert.assertThat(file.exists(), Matchers.is(false));
     }
 
 }

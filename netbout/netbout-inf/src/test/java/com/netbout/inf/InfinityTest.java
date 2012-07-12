@@ -26,6 +26,7 @@
  */
 package com.netbout.inf;
 
+import com.jcabi.log.Logger;
 import com.netbout.inf.notices.MessagePostedNotice;
 import com.netbout.spi.Bout;
 import com.netbout.spi.BoutMocker;
@@ -208,7 +209,7 @@ public final class InfinityTest {
         while (iterator.hasNext()) {
             list.add(iterator.next());
         }
-        com.jcabi.log.Logger.info(InfinityTest.class, "%[list]s", list);
+        Logger.info(InfinityTest.class, "iterable contains: %[list]s", list);
         return list;
     }
 

@@ -32,6 +32,7 @@ import com.netbout.inf.Attribute;
 import com.netbout.inf.atoms.VariableAtom;
 import com.netbout.inf.ray.Index;
 import com.netbout.inf.ray.IndexMap;
+import com.netbout.inf.ray.imap.dir.DefaultDirectory;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -92,9 +93,7 @@ public final class DefaultIndexMap implements IndexMap {
         for (FlushableIndex idx : this.map.values()) {
             sizeof += idx.sizeof();
         }
-        return text.append("total size: ")
-            .append(sizeof)
-            .append(" \n")
+        return text.append(String.format("total size: %,d\n", sizeof))
             .append(this.directory.toString())
             .toString();
     }

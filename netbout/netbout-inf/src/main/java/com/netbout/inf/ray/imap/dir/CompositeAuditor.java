@@ -24,59 +24,38 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.inf.ray.imap;
+package com.netbout.inf.ray.imap.dir;
 
-import com.netbout.inf.Attribute;
-import java.io.File;
-import java.io.IOException;
-import org.apache.commons.io.FileUtils;
+import com.jcabi.log.Logger;
 
 /**
- * Sub-directory with baselined documents.
+ * Composite auditor of a baseline.
  *
  * <p>Class is immutable and thread-safe.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-final class Baseline extends BaseVersion {
+final class CompositeAuditor implements Auditor {
 
     /**
-     * Public ctor.
-     * @param lock The directory where to work
-     * @throws IOException If some I/O problem inside
+     * {@inheritDoc}
      */
-    public Baseline(final Lock lock) throws IOException {
-        super(lock);
-    }
-
-    /**
-     * Get name of data file.
-     * @param attr Attribute
-     * @return File name
-     * @throws IOException If some I/O problem inside
-     */
-    public File data(final Attribute attr) throws IOException {
-        final File file = new File(
-            this.dir(),
-            String.format("/%s/data.inf", attr)
-        );
-        FileUtils.touch(file);
-        return file;
-    }
-
-    /**
-     * Get catalog.
-     * @param attr Attribute
-     * @return The catalog
-     * @throws IOException If some I/O problem inside
-     */
-    public Catalog catalog(final Attribute attr) throws IOException {
-        return new Catalog(
-            new File(
-                this.dir(),
-                String.format("/%s/catalog.inf", attr)
-            )
+    @Override
+    public void audit(final Baseline base, final Audit audit) {
+        final long start = System.currentTimeMillis();
+        final Auditor[] auditors = new Auditor[] {
+            new NumbersAuditor(),
+            new ReversiveAuditor(),
+        };
+        for (Auditor auditor : auditors) {
+            auditor.audit(base, audit);
+        }
+        Logger.info(
+            this,
+            "#audit('%s', ..): done in %[ms]s",
+            base,
+            System.currentTimeMillis() - start
         );
     }
 

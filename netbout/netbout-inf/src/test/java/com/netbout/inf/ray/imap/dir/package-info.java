@@ -24,55 +24,11 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.inf.ray.imap;
-
-import com.netbout.inf.Attribute;
-import com.netbout.inf.MsgMocker;
-import com.netbout.inf.ray.Index;
-import com.netbout.inf.ray.imap.dir.DefaultDirectory;
-import org.hamcrest.MatcherAssert;
-import org.hamcrest.Matchers;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
 
 /**
- * Test case of {@link BaseIndex}.
+ * Directory implementation, tests.
+ *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
- * @checkstyle ClassDataAbstractionCoupling (500 lines)
  */
-public final class BaseIndexTest {
-
-    /**
-     * Temporary folder.
-     * @checkstyle VisibilityModifier (3 lines)
-     */
-    @Rule
-    public transient TemporaryFolder temp = new TemporaryFolder();
-
-    /**
-     * DefaultIndex can order message numbers propertly.
-     * @throws Exception If there is some problem inside
-     */
-    @Test
-    public void ordersNumbersProperly() throws Exception {
-        final Index index = new BaseIndex(
-            new Attribute("some-attr-2"),
-            new DefaultDirectory(this.temp.newFolder("file-2"))
-        );
-        final long msg = MsgMocker.number();
-        final String value = "text-\u0433!";
-        final int total = 10;
-        for (int pos = 1; pos < total; ++pos) {
-            index.add(msg - pos, value);
-        }
-        for (int pos = 1; pos < total; ++pos) {
-            MatcherAssert.assertThat(
-                index.next(value, msg - pos + 1),
-                Matchers.equalTo(msg - pos)
-            );
-        }
-    }
-
-}
+package com.netbout.inf.ray.imap.dir;

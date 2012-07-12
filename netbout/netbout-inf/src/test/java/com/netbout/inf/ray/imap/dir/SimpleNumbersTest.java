@@ -24,9 +24,10 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.inf.ray.imap;
+package com.netbout.inf.ray.imap.dir;
 
 import com.netbout.inf.MsgMocker;
+import com.netbout.inf.ray.imap.Numbers;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
@@ -35,30 +36,31 @@ import org.hamcrest.Matchers;
 import org.junit.Test;
 
 /**
- * Test case of {@link SimpleReverse}.
+ * Test case of {@link SimpleNumbers}.
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class SimpleReverseTest {
+public final class SimpleNumbersTest {
 
     /**
-     * SimpleReverse can save to stream and restore.
+     * SimpleNumbers can save to stream and restore.
      * @throws Exception If there is some problem inside
      */
     @Test
     public void savesAndRestores() throws Exception {
-        final Reverse reverse = new SimpleReverse();
+        final Numbers numbers = new SimpleNumbers();
         final long msg = MsgMocker.number();
-        final String value = "some value, \u0433";
-        reverse.put(msg, value);
-        MatcherAssert.assertThat(reverse.get(msg), Matchers.equalTo(value));
+        numbers.add(msg);
+        numbers.add(msg - 1);
+        MatcherAssert.assertThat(numbers.next(msg), Matchers.equalTo(msg - 1));
         final ByteArrayOutputStream ostream = new ByteArrayOutputStream();
-        reverse.save(ostream);
+        numbers.save(ostream);
         final byte[] data = ostream.toByteArray();
-        final Reverse restored = new SimpleReverse();
+        final Numbers restored = new SimpleNumbers();
         final InputStream istream = new ByteArrayInputStream(data);
         restored.load(istream);
-        MatcherAssert.assertThat(restored.get(msg), Matchers.equalTo(value));
+        MatcherAssert.assertThat(restored.next(msg), Matchers.equalTo(msg - 1));
+        MatcherAssert.assertThat(restored.next(msg - 1), Matchers.equalTo(0L));
     }
 
 }

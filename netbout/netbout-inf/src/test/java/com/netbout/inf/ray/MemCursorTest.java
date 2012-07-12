@@ -87,7 +87,6 @@ public final class MemCursorTest {
         final Attribute attr = AttributeMocker.reversive();
         final String value = "text to save";
         cursor.add(new PickerTerm(map, msg), attr, "previous value");
-        cursor.add(new PickerTerm(map, msg), attr, "previous value 2");
         cursor.add(new PickerTerm(map, msg), new Attribute("xxx"), "val-1");
         cursor.replace(new PickerTerm(map, msg), attr, value);
         cursor.replace(new PickerTerm(map, msg), new Attribute("other"), "foo");

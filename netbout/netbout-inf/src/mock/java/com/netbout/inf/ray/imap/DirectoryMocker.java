@@ -26,6 +26,7 @@
  */
 package com.netbout.inf.ray.imap;
 
+import com.netbout.inf.ray.imap.dir.DefaultDirectory;
 import java.io.File;
 import java.io.IOException;
 import java.security.SecureRandom;

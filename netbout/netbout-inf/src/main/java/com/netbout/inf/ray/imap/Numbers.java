@@ -40,7 +40,7 @@ import java.io.OutputStream;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-interface Numbers {
+public interface Numbers {
 
     /**
      * Size of one element in input/output stream (size of LONG).
