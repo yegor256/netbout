@@ -200,6 +200,7 @@ public final class SimpleReverse implements Reverse {
                         next
                     )
                 );
+                break;
             }
         }
     }
