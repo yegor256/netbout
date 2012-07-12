@@ -133,7 +133,17 @@ class BaseVersion implements Closeable {
             if (!file.isDirectory()) {
                 continue;
             }
-            attrs.add(new Attribute(FilenameUtils.getName(file.getPath())));
+            final String name = FilenameUtils.getName(file.getPath());
+            if (!name.matches("[a-z][a-z0-9\\-]+")) {
+                throw new IOException(
+                    String.format(
+                        "invalid name of attribute '%s' in %s",
+                        name,
+                        file
+                    )
+                );
+            }
+            attrs.add(new Attribute(name));
         }
         return attrs;
     }
