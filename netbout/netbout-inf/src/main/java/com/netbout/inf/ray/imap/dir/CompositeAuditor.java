@@ -26,21 +26,37 @@
  */
 package com.netbout.inf.ray.imap.dir;
 
+import com.jcabi.log.Logger;
+
 /**
- * Auditor of baseline.
+ * Composite auditor of a baseline.
  *
- * <p>Implementation must be thread-safe.
+ * <p>Class is immutable and thread-safe.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-interface Auditor {
+final class CompositeAuditor implements Auditor {
 
     /**
-     * Audit this baseline and report problems.
-     * @param baseline The baseline to audit
-     * @param audit The audit to store results into
+     * {@inheritDoc}
      */
-    void audit(Baseline baseline, Audit audit);
+    @Override
+    public void audit(final Baseline base, final Audit audit) {
+        final long start = System.currentTimeMillis();
+        final Auditor[] auditors = new Auditor[] {
+            new NumbersAuditor(),
+            new ReversiveAuditor(),
+        };
+        for (Auditor auditor : auditors) {
+            auditor.audit(base, audit);
+        }
+        Logger.info(
+            this,
+            "#audit('%s', ..): done in %[ms]s",
+            base,
+            System.currentTimeMillis() - start
+        );
+    }
 
 }

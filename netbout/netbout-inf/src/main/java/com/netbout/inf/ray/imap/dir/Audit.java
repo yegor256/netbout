@@ -27,20 +27,25 @@
 package com.netbout.inf.ray.imap.dir;
 
 /**
- * Auditor of baseline.
+ * Audit result of data structures.
  *
  * <p>Implementation must be thread-safe.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-interface Auditor {
+interface Audit {
 
     /**
-     * Audit this baseline and report problems.
-     * @param baseline The baseline to audit
-     * @param audit The audit to store results into
+     * A new problem detected.
+     * @param text Text description of the problem
      */
-    void audit(Baseline baseline, Audit audit);
+    void problem(String text);
+
+    /**
+     * A new problem/exception detected.
+     * @param expn Exception
+     */
+    void problem(Exception expn);
 
 }

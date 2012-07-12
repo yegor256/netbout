@@ -40,70 +40,66 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import org.apache.commons.io.FileUtils;
 
 /**
- * Sub-directory with baselined documents.
+ * Auditor of numbers data file.
  *
  * <p>Class is immutable and thread-safe.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-final class Baseline extends BaseVersion {
+final class NumbersAuditor implements Auditor {
 
     /**
-     * Public ctor.
-     * @param lock The directory where to work
-     * @throws IOException If some I/O problem inside
+     * {@inheritDoc}
      */
-    public Baseline(final Lock lock) throws IOException {
-        super(lock);
-        final AtomicBoolean failed = new AtomicBoolean();
-        new CompositeAuditor().audit(
-            this,
-            new Audit() {
-                @Override
-                public void problem(final String text) {
-                    Logger.warn(this, "audit: %s", text);
-                    failed.set(true);
-                }
-                @Override
-                public void problem(final Exception expn) {
-                    Logger.warn(this, "audit: %[exception]s", expn);
-                    failed.set(true);
-                }
+    @Override
+    public void audit(final Baseline base, final Audit audit) {
+        try {
+            for (Attribute attr : base.attributes()) {
+                this.audit(base, audit, attr);
             }
-        );
-        if (failed.get()) {
-            lock.clear();
+        } catch (IOException ex) {
+            audit.problem(ex);
         }
     }
 
     /**
-     * Get name of data file.
-     * @param attr Attribute
-     * @return File name
-     * @throws IOException If some I/O problem inside
+     * Audit in the directory with an attribute and report problems.
+     * @param base The baseline
+     * @param audit Listener of problems
+     * @param attr The attribute
      */
-    public File data(final Attribute attr) throws IOException {
-        final File file = new File(
-            this.dir(),
-            String.format("/%s/data.inf", attr)
-        );
-        FileUtils.touch(file);
-        return file;
-    }
-
-    /**
-     * Get catalog.
-     * @param attr Attribute
-     * @return The catalog
-     * @throws IOException If some I/O problem inside
-     */
-    public Catalog catalog(final Attribute attr) throws IOException {
-        return new Catalog(
-            new File(
-                this.dir(),
-                String.format("/%s/catalog.inf", attr)
-            )
+    private void audit(final Baseline base, final Audit audit,
+        final Attribute attr) {
+        final long start = System.currentTimeMillis();
+        int count = 0;
+        try {
+            final Iterator<Catalog.Item> items = base.catalog(attr).iterator();
+            final SimpleNumbers numbers = new SimpleNumbers();
+            final RandomAccessFile data =
+                new RandomAccessFile(base.data(attr), "r");
+            try {
+                while (items.hasNext()) {
+                    final Catalog.Item item = items.next();
+                    data.seek(item.position());
+                    final InputStream stream =
+                        Channels.newInputStream(data.getChannel());
+                    numbers.load(stream);
+                    ++count;
+                }
+            } finally {
+                data.close();
+            }
+        } catch (IOException ex) {
+            audit.problem(ex);
+        }
+        Logger.info(
+            this,
+            "#audit('%s', .., '%s'): %d values in %[ms]s",
+            base,
+            attr,
+            count,
+            System.currentTimeMillis() - start
         );
     }
 
