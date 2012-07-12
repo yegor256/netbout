@@ -30,7 +30,7 @@ import com.jcabi.log.Logger;
 import com.netbout.inf.Attribute;
 import java.io.File;
 import java.io.IOException;
-import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 import org.apache.commons.io.FileUtils;
 
 /**
@@ -50,24 +50,30 @@ final class Baseline extends BaseVersion {
      */
     public Baseline(final Lock lock) throws IOException {
         super(lock);
-        final AtomicBoolean failed = new AtomicBoolean();
+        final AtomicInteger failures = new AtomicInteger();
         try {
             new CompositeAuditor().audit(
                 this,
                 new Audit() {
                     @Override
                     public void problem(final String text) {
-                        Logger.warn(this, "audit: %s", text);
-                        failed.set(true);
+                        // @checkstyle MagicNumber (1 line)
+                        if (failures.getAndIncrement() < 10) {
+                            Logger.warn(this, "audit: %s", text);
+                        }
                     }
                 }
             );
         } catch (IOException ex) {
-            failed.set(true);
+            failures.getAndIncrement();
             Logger.warn(this, "audit failed: %[exception]s", ex);
         }
-        if (failed.get()) {
-            Logger.warn(this, "cleaning baseline because of a failed audit");
+        if (failures.get() > 0) {
+            Logger.warn(
+                this,
+                "cleaning baseline, %d failures in audit",
+                failures.get()
+            );
             lock.clear();
         }
     }
