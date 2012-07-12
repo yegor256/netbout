@@ -82,7 +82,7 @@ public final class SimpleReverse implements Reverse {
             }
             if (System.currentTimeMillis() - start > 10) {
                 throw new Reverse.ValueNotFoundException(
-                    String.format(
+                    Logger.format(
                         // @checkstyle LineLength (1 line)
                         "value not found for msg #%d among %d others, even after %[ms]s of waiting",
                         msg,

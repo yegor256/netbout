@@ -87,9 +87,10 @@ final class NumbersIndex implements FlushableIndex {
      */
     @Override
     public String toString() {
-        final StringBuilder text = new StringBuilder();
-        text.append(this.numbers.sizeof()).append(" bytes in numbers");
-        return text.toString();
+        return String.format(
+            "%,d bytes in numbers",
+            this.numbers.sizeof()
+        );
     }
 
     /**
