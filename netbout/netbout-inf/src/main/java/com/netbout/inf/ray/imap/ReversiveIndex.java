@@ -166,8 +166,11 @@ class ReversiveIndex implements FlushableIndex {
      */
     @Override
     public void flush() throws IOException {
+        System.out.println("start flush of straight index");
         this.straight.flush();
+        System.out.println("done flush of straight index");
         this.directory.save(this.attribute, this.reverse);
+        System.out.println("done flush of reverse");
     }
 
 }

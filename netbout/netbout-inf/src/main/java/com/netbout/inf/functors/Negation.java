@@ -42,7 +42,7 @@ import java.util.List;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-@NamedAs("not")
+@Functor.NamedAs("not")
 final class Negation implements Functor {
 
     /**

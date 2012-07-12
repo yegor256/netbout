@@ -44,7 +44,7 @@ import java.util.List;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-@NamedAs("unbundled")
+@Functor.NamedAs("unbundled")
 final class Unbundled implements Functor {
 
     /**

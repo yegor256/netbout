@@ -60,6 +60,12 @@ public interface Numbers {
     Lattice lattice();
 
     /**
+     * Is it empty with not numbers inside?
+     * @return TRUE if empty
+     */
+    boolean isEmpty();
+
+    /**
      * Get next number after the provided one, or ZERO.
      * @param number The number to start searching from
      * @return The number, next to this one (or ZERO if nothing found)

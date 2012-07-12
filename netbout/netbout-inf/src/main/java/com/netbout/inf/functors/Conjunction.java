@@ -44,7 +44,7 @@ import java.util.List;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-@NamedAs("and")
+@Functor.NamedAs("and")
 final class Conjunction implements Functor {
 
     /**

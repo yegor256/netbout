@@ -26,6 +26,10 @@
  */
 package com.netbout.inf;
 
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 import java.util.List;
 
 /**
@@ -37,6 +41,30 @@ import java.util.List;
  * @version $Id$
  */
 public interface Functor {
+
+    /**
+     * How to name it.
+     */
+    @Retention(RetentionPolicy.RUNTIME)
+    @Target(ElementType.TYPE)
+    @interface NamedAs {
+        /**
+         * What is the name of it.
+         */
+        String value() default "";
+    }
+
+    /**
+     * What other class it depends on?
+     */
+    @Retention(RetentionPolicy.RUNTIME)
+    @Target(ElementType.TYPE)
+    @interface DependsOn {
+        /**
+         * Class we depend on.
+         */
+        Class<? extends Functor> value();
+    }
 
     /**
      * Create a term.

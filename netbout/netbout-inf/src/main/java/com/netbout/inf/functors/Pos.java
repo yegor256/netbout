@@ -44,7 +44,7 @@ import java.util.List;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-@NamedAs("pos")
+@Functor.NamedAs("pos")
 final class Pos implements Functor {
 
     /**

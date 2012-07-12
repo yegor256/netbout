@@ -45,7 +45,7 @@ import java.util.concurrent.atomic.AtomicLong;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-@NamedAs("limit")
+@Functor.NamedAs("limit")
 final class Limit implements Functor {
 
     /**

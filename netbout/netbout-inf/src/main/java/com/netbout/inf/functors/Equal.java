@@ -43,7 +43,7 @@ import java.util.List;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-@NamedAs("equal")
+@Functor.NamedAs("equal")
 final class Equal implements Functor {
 
     /**

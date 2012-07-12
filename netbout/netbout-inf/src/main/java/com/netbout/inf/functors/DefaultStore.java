@@ -125,7 +125,7 @@ public final class DefaultStore implements Store {
                 throw new IllegalStateException(ex);
             }
             map.put(
-                type.getAnnotation(NamedAs.class).value(),
+                type.getAnnotation(Functor.NamedAs.class).value(),
                 functor
             );
         }
