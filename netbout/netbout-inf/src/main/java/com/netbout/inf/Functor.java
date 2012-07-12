@@ -63,7 +63,7 @@ public interface Functor {
         /**
          * Class we depend on.
          */
-        Class<? extends Functor> value();
+        Class<? extends Functor>[] value();
     }
 
     /**
