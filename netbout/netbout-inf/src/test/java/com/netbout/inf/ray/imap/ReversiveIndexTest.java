@@ -74,7 +74,6 @@ public final class ReversiveIndexTest {
         final long msg = MsgMocker.number();
         final String value = "some text \u0433!";
         index.add(msg, "first value");
-        index.add(msg, "second value");
         index.replace(msg, value);
         MatcherAssert.assertThat(
             index.attr(msg),

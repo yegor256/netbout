@@ -48,12 +48,37 @@ public interface Reverse {
     long sizeof();
 
     /**
+     * If value is not found.
+     */
+    class ValueNotFoundException extends Exception {
+        /**
+         * Serialization marker.
+         */
+        private static final long serialVersionUID = 0x7549F8789ED28479L;
+        /**
+         * Public ctor.
+         * @param cause The cause of it
+         */
+        public ValueNotFoundException(final Throwable cause) {
+            super(cause);
+        }
+        /**
+         * Public ctor.
+         * @param cause The cause of it
+         */
+        public ValueNotFoundException(final String cause) {
+            super(cause);
+        }
+    }
+
+    /**
      * Get value by message number (throws runtime exception if message
      * is not found).
      * @param msg The number of the message
      * @return The value
+     * @throws ValueNotFoundException If a value is not found for this message
      */
-    String get(long msg);
+    String get(long msg) throws Reverse.ValueNotFoundException;
 
     /**
      * Put value and number.

@@ -65,34 +65,34 @@ public final class SimpleReverse implements Reverse {
 
     /**
      * {@inheritDoc}
+     * @checkstyle MagicNumber (30 lines)
      */
     @Override
-    public String get(final long msg) {
+    public String get(final long msg) throws Reverse.ValueNotFoundException {
         String value = null;
-        int count = 0;
-        // @checkstyle MagicNumber (1 line)
-        while (++count < 5) {
+        final long start = System.currentTimeMillis();
+        while (true) {
             value = this.map.get(msg);
             if (value != null) {
                 break;
             }
+            if (System.currentTimeMillis() - start > 10) {
+                throw new Reverse.ValueNotFoundException(
+                    String.format(
+                        // @checkstyle LineLength (1 line)
+                        "value not found for msg #%d among %d others, even after %[ms]s of waiting",
+                        msg,
+                        this.map.size(),
+                        System.currentTimeMillis() - start
+                    )
+                );
+            }
             try {
-                TimeUnit.SECONDS.sleep(1);
+                TimeUnit.MILLISECONDS.sleep(1);
             } catch (InterruptedException ex) {
                 Thread.currentThread().interrupt();
                 throw new IllegalStateException(ex);
             }
-        }
-        if (value == null) {
-            throw new IllegalArgumentException(
-                String.format(
-                    // @checkstyle LineLength (1 line)
-                    "value not found for msg #%d among %d others, even after %d seconds of waiting",
-                    msg,
-                    this.map.size(),
-                    count
-                )
-            );
         }
         return value;
     }
@@ -102,7 +102,20 @@ public final class SimpleReverse implements Reverse {
      */
     @Override
     public void put(final long number, final String value) {
-        this.map.put(number, value);
+        synchronized (this.map) {
+            final String existing = this.map.get(number);
+            if (existing != null && !existing.equals(value)) {
+                throw new IllegalArgumentException(
+                    String.format(
+                        "can't replace value for msg #%d from '%s' to '%s'",
+                        number,
+                        existing,
+                        value
+                    )
+                );
+            }
+            this.map.put(number, value);
+        }
     }
 
     /**

@@ -30,6 +30,7 @@ import com.jcabi.log.Logger;
 import com.netbout.inf.Attribute;
 import com.netbout.inf.ray.imap.Numbers;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.RandomAccessFile;
@@ -133,8 +134,19 @@ final class Baseline extends BaseVersion {
         final long start = System.currentTimeMillis();
         int count = 0;
         try {
+            final File rfile = this.reverse(attr);
+            SimpleReverse reverse = null;
+            if (rfile.length() > 0) {
+                reverse = new SimpleReverse();
+                final InputStream stream = new FileInputStream(rfile);
+                try {
+                    reverse.load(stream);
+                } finally {
+                    stream.close();
+                }
+            }
             final Iterator<Catalog.Item> items = this.catalog(attr).iterator();
-            final Numbers numbers = new SimpleNumbers();
+            final SimpleNumbers numbers = new SimpleNumbers();
             final RandomAccessFile data =
                 new RandomAccessFile(this.data(attr), "r");
             try {
@@ -144,6 +156,9 @@ final class Baseline extends BaseVersion {
                     final InputStream stream =
                         Channels.newInputStream(data.getChannel());
                     numbers.load(stream);
+                    // if (reverse != null) {
+                    //     numbers.audit(auditor, item.value(), reverse);
+                    // }
                     ++count;
                 }
             } finally {
