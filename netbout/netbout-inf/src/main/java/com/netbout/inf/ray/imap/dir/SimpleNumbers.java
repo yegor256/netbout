@@ -161,19 +161,15 @@ public class SimpleNumbers implements Numbers {
         }
     }
 
-    // /**
-    //  * Audit it against the reverse.
-    //  * @param auditor The auditor
-    //  * @param value The value these numbers are used for
-    //  * @param reverse The reverse
-    //  */
-    // public final void audit(final Auditor auditor, final String value,
-    //     final SimpleReverse reverse) {
-    //     for (Long number : this.nums) {
-    //         if (!reverse.get(number).equals(value)) {
-    //             throw
-    //         }
-    //     }
-    // }
+    /**
+     * Audit it against the reverse.
+     * @param audit The audit
+     * @param value The value these numbers are used for
+     * @param reverse The reverse
+     */
+    public final void audit(final Audit audit, final String value,
+        final SimpleReverse reverse) {
+        reverse.audit(audit, value, this.nums);
+    }
 
 }

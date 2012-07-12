@@ -33,9 +33,13 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.ConcurrentSkipListMap;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -53,7 +57,7 @@ public final class SimpleReverse implements Reverse {
      * Map of values and message numbers.
      */
     private final transient ConcurrentMap<Long, String> map =
-        new ConcurrentHashMap<Long, String>();
+        new ConcurrentSkipListMap<Long, String>(Collections.reverseOrder());
 
     /**
      * {@inheritDoc}
@@ -168,6 +172,35 @@ public final class SimpleReverse implements Reverse {
                 "#load(..): loaded %d values",
                 this.map.size()
             );
+        }
+    }
+
+    /**
+     * Audit it against the list of numbers.
+     * @param audit The audit
+     * @param value The value these numbers are used for
+     * @param numbers All numbers we should see for this value
+     */
+    public final void audit(final Audit audit, final String value,
+        final Collection<Long> numbers) {
+        final Iterator<Long> iterator = numbers.iterator();
+        long next = Long.MAX_VALUE;
+        for (Map.Entry<Long, String> entry : this.map.entrySet()) {
+            if (entry.getKey() < next) {
+                if (!iterator.hasNext()) {
+                    break;
+                }
+                next = iterator.next();
+            } else if (!entry.getValue().equals(value)) {
+                audit.problem(
+                    String.format(
+                        "value '%s' not equal to '%s' for msg #%d",
+                        entry.getValue(),
+                        value,
+                        next
+                    )
+                );
+            }
         }
     }
 
