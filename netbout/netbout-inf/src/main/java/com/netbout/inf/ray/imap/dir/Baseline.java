@@ -51,17 +51,23 @@ final class Baseline extends BaseVersion {
     public Baseline(final Lock lock) throws IOException {
         super(lock);
         final AtomicBoolean failed = new AtomicBoolean();
-        new CompositeAuditor().audit(
-            this,
-            new Audit() {
-                @Override
-                public void problem(final String text) {
-                    Logger.warn(this, "audit: %s", text);
-                    failed.set(true);
+        try {
+            new CompositeAuditor().audit(
+                this,
+                new Audit() {
+                    @Override
+                    public void problem(final String text) {
+                        Logger.warn(this, "audit: %s", text);
+                        failed.set(true);
+                    }
                 }
-            }
-        );
+            );
+        } catch (IOException ex) {
+            failed.set(true);
+            Logger.warn(this, "audit failed: %[exception]s", ex);
+        }
         if (failed.get()) {
+            Logger.warn(this, "cleaning baseline because of a failed audit");
             lock.clear();
         }
     }
