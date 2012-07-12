@@ -155,15 +155,20 @@ public final class SimpleReverse implements Reverse {
     public void load(final InputStream stream) throws IOException {
         this.map.clear();
         final DataInputStream data = new DataInputStream(stream);
+        long previous = Long.MAX_VALUE;
         while (true) {
             final long msg = data.readLong();
+            if (msg == previous) {
+                throw new IOException("duplicate key in reverse");
+            }
+            if (msg > previous) {
+                throw new IOException("wrong order of values");
+            }
             if (msg == 0) {
                 break;
             }
-            if (this.map.containsKey(msg)) {
-                throw new IOException("duplicate key in reverse");
-            }
             this.map.put(msg, data.readUTF());
+            previous = msg;
         }
         if (!this.map.isEmpty()) {
             Logger.debug(
