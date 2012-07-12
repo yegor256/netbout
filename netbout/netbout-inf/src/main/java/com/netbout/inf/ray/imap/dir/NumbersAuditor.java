@@ -48,13 +48,10 @@ final class NumbersAuditor implements Auditor {
      * {@inheritDoc}
      */
     @Override
-    public void audit(final Baseline base, final Audit audit) {
-        try {
-            for (Attribute attr : base.attributes()) {
-                this.audit(base, audit, attr);
-            }
-        } catch (IOException ex) {
-            audit.problem(ex);
+    public void audit(final Baseline base,
+        final Audit audit) throws IOException {
+        for (Attribute attr : base.attributes()) {
+            this.audit(base, audit, attr);
         }
     }
 
@@ -63,30 +60,27 @@ final class NumbersAuditor implements Auditor {
      * @param base The baseline
      * @param audit Listener of problems
      * @param attr The attribute
+     * @throws IOException If some exception inside
      */
     private void audit(final Baseline base, final Audit audit,
-        final Attribute attr) {
+        final Attribute attr) throws IOException {
         final long start = System.currentTimeMillis();
         int count = 0;
+        final Iterator<Catalog.Item> items = base.catalog(attr).iterator();
+        final SimpleNumbers numbers = new SimpleNumbers();
+        final RandomAccessFile data =
+            new RandomAccessFile(base.data(attr), "r");
         try {
-            final Iterator<Catalog.Item> items = base.catalog(attr).iterator();
-            final SimpleNumbers numbers = new SimpleNumbers();
-            final RandomAccessFile data =
-                new RandomAccessFile(base.data(attr), "r");
-            try {
-                while (items.hasNext()) {
-                    final Catalog.Item item = items.next();
-                    data.seek(item.position());
-                    final InputStream stream =
-                        Channels.newInputStream(data.getChannel());
-                    numbers.load(stream);
-                    ++count;
-                }
-            } finally {
-                data.close();
+            while (items.hasNext()) {
+                final Catalog.Item item = items.next();
+                data.seek(item.position());
+                final InputStream stream =
+                    Channels.newInputStream(data.getChannel());
+                numbers.load(stream);
+                ++count;
             }
-        } catch (IOException ex) {
-            audit.problem(ex);
+        } finally {
+            data.close();
         }
         Logger.info(
             this,

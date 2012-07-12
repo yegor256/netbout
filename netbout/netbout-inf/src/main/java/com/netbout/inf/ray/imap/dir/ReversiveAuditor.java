@@ -51,30 +51,27 @@ final class ReversiveAuditor implements Auditor {
      */
     @Override
     @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
-    public void audit(final Baseline base, final Audit audit) {
+    public void audit(final Baseline base,
+        final Audit audit) throws IOException {
         final SimpleReverse reverse = new SimpleReverse();
-        try {
-            for (Attribute attr : base.attributes()) {
-                final File rfile = base.reverse(attr);
-                if (rfile.length() == 0) {
-                    Logger.info(
-                        this,
-                        "#audit('%s'): attribute '%s' is not reversive",
-                        base,
-                        attr
-                    );
-                    continue;
-                }
-                final InputStream stream = new FileInputStream(rfile);
-                try {
-                    reverse.load(stream);
-                } finally {
-                    stream.close();
-                }
-                this.audit(base, audit, attr, reverse);
+        for (Attribute attr : base.attributes()) {
+            final File rfile = base.reverse(attr);
+            if (rfile.length() == 0) {
+                Logger.info(
+                    this,
+                    "#audit('%s'): attribute '%s' is not reversive",
+                    base,
+                    attr
+                );
+                continue;
             }
-        } catch (IOException ex) {
-            audit.problem(ex);
+            final InputStream stream = new FileInputStream(rfile);
+            try {
+                reverse.load(stream);
+            } finally {
+                stream.close();
+            }
+            this.audit(base, audit, attr, reverse);
         }
     }
 
@@ -84,32 +81,29 @@ final class ReversiveAuditor implements Auditor {
      * @param audit Listener of problems
      * @param attr The attribute
      * @param reverse The reverse found
+     * @throws IOException If some problem inside
      * @checkstyle ParameterNumber (4 lines)
      */
     private void audit(final Baseline base, final Audit audit,
-        final Attribute attr, final SimpleReverse reverse) {
+        final Attribute attr, final SimpleReverse reverse) throws IOException {
         final long start = System.currentTimeMillis();
         int count = 0;
+        final Iterator<Catalog.Item> items = base.catalog(attr).iterator();
+        final SimpleNumbers numbers = new SimpleNumbers();
+        final RandomAccessFile data =
+            new RandomAccessFile(base.data(attr), "r");
         try {
-            final Iterator<Catalog.Item> items = base.catalog(attr).iterator();
-            final SimpleNumbers numbers = new SimpleNumbers();
-            final RandomAccessFile data =
-                new RandomAccessFile(base.data(attr), "r");
-            try {
-                while (items.hasNext()) {
-                    final Catalog.Item item = items.next();
-                    data.seek(item.position());
-                    final InputStream stream =
-                        Channels.newInputStream(data.getChannel());
-                    numbers.load(stream);
-                    numbers.audit(audit, item.value(), reverse);
-                    ++count;
-                }
-            } finally {
-                data.close();
+            while (items.hasNext()) {
+                final Catalog.Item item = items.next();
+                data.seek(item.position());
+                final InputStream stream =
+                    Channels.newInputStream(data.getChannel());
+                numbers.load(stream);
+                numbers.audit(audit, item.value(), reverse);
+                ++count;
             }
-        } catch (IOException ex) {
-            audit.problem(ex);
+        } finally {
+            data.close();
         }
         Logger.info(
             this,

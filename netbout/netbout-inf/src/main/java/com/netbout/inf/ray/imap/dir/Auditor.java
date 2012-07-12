@@ -26,6 +26,8 @@
  */
 package com.netbout.inf.ray.imap.dir;
 
+import java.io.IOException;
+
 /**
  * Auditor of baseline.
  *
@@ -40,7 +42,8 @@ interface Auditor {
      * Audit this baseline and report problems.
      * @param baseline The baseline to audit
      * @param audit The audit to store results into
+     * @throws IOException If some I/O problem inside
      */
-    void audit(Baseline baseline, Audit audit);
+    void audit(Baseline baseline, Audit audit) throws IOException;
 
 }

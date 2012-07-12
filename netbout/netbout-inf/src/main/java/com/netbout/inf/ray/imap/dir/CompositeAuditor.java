@@ -27,6 +27,7 @@
 package com.netbout.inf.ray.imap.dir;
 
 import com.jcabi.log.Logger;
+import java.io.IOException;
 
 /**
  * Composite auditor of a baseline.
@@ -42,7 +43,8 @@ final class CompositeAuditor implements Auditor {
      * {@inheritDoc}
      */
     @Override
-    public void audit(final Baseline base, final Audit audit) {
+    public void audit(final Baseline base,
+        final Audit audit) throws IOException {
         final long start = System.currentTimeMillis();
         final Auditor[] auditors = new Auditor[] {
             new NumbersAuditor(),

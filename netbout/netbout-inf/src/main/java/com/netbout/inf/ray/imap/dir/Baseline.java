@@ -59,11 +59,6 @@ final class Baseline extends BaseVersion {
                     Logger.warn(this, "audit: %s", text);
                     failed.set(true);
                 }
-                @Override
-                public void problem(final Exception expn) {
-                    Logger.warn(this, "audit: %[exception]s", expn);
-                    failed.set(true);
-                }
             }
         );
         if (failed.get()) {
