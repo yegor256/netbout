@@ -97,7 +97,8 @@ public final class InfinityTest {
      * @throws Exception If there is some problem inside
      */
     private Infinity prepare(final XmlDocument xml) throws Exception {
-        final Infinity inf = new DefaultInfinity(new FolderMocker().mock());
+        final Folder folder = new FolderMocker().mock();
+        final Infinity inf = new DefaultInfinity(folder);
         final Urn[] array = new Urn[0];
         for (XmlDocument see : xml.nodes("see")) {
             final Urn[] deps = inf.see(this.notice(see)).toArray(array);
@@ -110,7 +111,9 @@ public final class InfinityTest {
                 }
             }
         }
-        return inf;
+        inf.flush();
+        inf.close();
+        return new DefaultInfinity(folder);
     }
 
     /**
