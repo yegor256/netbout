@@ -62,11 +62,11 @@ public final class LatticeBuilderTest {
      */
     @Test
     public void createsLatticeFromNumbers() throws Exception {
-        for (int retry = 0; retry < 10; ++retry) {
-            final SortedSet<Long> numbers = this.numbers(20);
+        for (int nums = 0; nums < 25; ++nums) {
+            final SortedSet<Long> numbers = this.numbers(nums);
             final LatticeBuilder builder = new LatticeBuilder().never();
             for (Long number : LatticeBuilderTest.shuffle(numbers)) {
-                builder.set(number, true, numbers);
+                builder.update(number, numbers);
             }
             MatcherAssert.assertThat(
                 new LatticeBuilder().fill(numbers).build(),
@@ -96,7 +96,7 @@ public final class LatticeBuilderTest {
                 start.await();
                 builder.fill(numbers);
                 for (Long number : LatticeBuilderTest.shuffle(numbers)) {
-                    builder.set(number, true, numbers);
+                    builder.update(number, numbers);
                 }
                 latch.countDown();
                 return null;

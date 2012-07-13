@@ -133,7 +133,7 @@ final class BitsetLattice implements Lattice {
     public static int bit(final long number) {
         int bit;
         if (number == Long.MAX_VALUE) {
-            bit = BitsetLattice.BITS + 1;
+            bit = 0;
         } else if (number >= BitsetLattice.BITS * BitsetLattice.SIZE) {
             throw new IllegalArgumentException(
                 String.format("message #%d is out of range", number)
@@ -155,7 +155,7 @@ final class BitsetLattice implements Lattice {
      * @see DefaultIndex#emptyBit(String,long)
      */
     public static long msg(final int bit) {
-        if (bit > BitsetLattice.BITS + 1 || bit < 0) {
+        if (bit > BitsetLattice.BITS || bit < 0) {
             throw new IllegalArgumentException(
                 String.format("bit #%d is out of range", bit)
             );

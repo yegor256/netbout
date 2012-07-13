@@ -54,7 +54,8 @@ public final class LatticeBuilder {
     private transient BitSet main = new BitSet(BitsetLattice.BITS);
 
     /**
-     * The reverse bitset.
+     * The reverse bitset, where ONE means that there is at least one ZEROs
+     * in this bit at the main bitset.
      */
     private transient BitSet reverse = new BitSet(BitsetLattice.BITS);
 
@@ -70,15 +71,17 @@ public final class LatticeBuilder {
     }
 
     /**
-     * Fill lattice with this set of numbers.
-     * @param numbers The numbers to use
+     * Fill lattice with this reverse-ordered set of numbers.
+     * @param numbers The numbers to use (in reverse order, starting with the
+     *  biggest number in the set
      * @return This object
      */
     public LatticeBuilder fill(final Collection<Long> numbers) {
         synchronized (this.started) {
             this.main.clear(0, BitsetLattice.BITS);
-            this.reverse.set(0, BitsetLattice.BITS);
+            this.reverse.clear(0, BitsetLattice.BITS);
             long previous = Long.MAX_VALUE;
+            long delta = 0;
             for (Long num : numbers) {
                 if (num == previous) {
                     throw new IllegalArgumentException(
@@ -92,8 +95,17 @@ public final class LatticeBuilder {
                 }
                 final int bit = BitsetLattice.bit(num);
                 this.main.set(bit);
-                this.reverse.clear(bit);
+                delta = previous - num;
+                if (delta > 1) {
+                    this.reverse.set(BitsetLattice.bit(previous), bit);
+                }
                 previous = num;
+            }
+            if (delta != 1) {
+                this.reverse.set(
+                    BitsetLattice.bit(previous),
+                    BitsetLattice.BITS
+                );
             }
             this.started.set(true);
         }
@@ -210,13 +222,12 @@ public final class LatticeBuilder {
     }
 
     /**
-     * Set main and reverse bit for this message.
+     * Update status for this particular message, according to other msgs.
      * @param number The number of message
-     * @param set Shall we set (TRUE) or reset (FALSE)
      * @param numbers Where it is happening
      * @return This object
      */
-    public LatticeBuilder set(final long number, final boolean set,
+    public LatticeBuilder update(final long number,
         final SortedSet<Long> numbers) {
         if (!this.started.get()) {
             throw new IllegalStateException(
@@ -225,42 +236,13 @@ public final class LatticeBuilder {
         }
         synchronized (this.started) {
             final int bit = BitsetLattice.bit(number);
-            if (set) {
-                this.main.set(bit);
-                this.reverse.clear(bit);
-            }
-            if (!set && this.emptyBit(numbers, number)) {
-                this.reverse.set(bit);
-            }
+            final Collection<Long> window = numbers
+                .tailSet(BitsetLattice.msg(bit))
+                .headSet(BitsetLattice.msg(bit + 1));
+            this.main.set(bit, !window.isEmpty());
+            this.reverse.set(bit, window.size() < BitsetLattice.SIZE);
         }
         return this;
-    }
-
-    /**
-     * Do we have an empty bit for this message.
-     *
-     * <p>The method checks all message around the provided one inside the
-     * the provided set and returns TRUE only if nothing is found near by. The
-     * distance boundaries around the message are defined by the size of
-     * the window of this lattice.
-     *
-     * @param numbers The numbers to work with
-     * @param msg The message number
-     * @return TRUE if we have no messages around this one
-     */
-    private boolean emptyBit(final SortedSet<Long> numbers,
-        final long msg) {
-        final int bit = BitsetLattice.bit(msg);
-        final SortedSet<Long> tail = numbers.tailSet(BitsetLattice.msg(bit));
-        boolean empty = true;
-        if (!tail.isEmpty()) {
-            try {
-                empty = tail.first() < BitsetLattice.msg(bit + 1);
-            } catch (java.util.NoSuchElementException ex) {
-                empty = true;
-            }
-        }
-        return empty;
     }
 
 }
