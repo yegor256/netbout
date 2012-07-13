@@ -91,7 +91,8 @@ public final class InfinityTest {
     }
 
     /**
-     * Prepare infinity.
+     * Prepare infinity, flush it to disc, and create a new one from the
+     * saved set of files (for a validation of restoring mechanism).
      * @param xml XML config
      * @return Infinity
      * @throws Exception If there is some problem inside

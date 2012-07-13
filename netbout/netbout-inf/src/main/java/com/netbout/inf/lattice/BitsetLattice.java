@@ -89,7 +89,7 @@ final class BitsetLattice implements Lattice {
      */
     @Override
     public int hashCode() {
-        return this.main.hashCode();
+        return this.toString().hashCode();
     }
 
     /**
@@ -116,7 +116,7 @@ final class BitsetLattice implements Lattice {
                 corrected = shifter.shift(cursor, BitsetLattice.msg(next));
                 Logger.debug(
                     this,
-                    "#correct(%s, %[type]s): moved to %s",
+                    "#correct(%s, %s): moved to %s",
                     cursor,
                     shifter,
                     corrected
