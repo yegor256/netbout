@@ -492,8 +492,6 @@
                         <argLine>-Dfile.encoding=UTF8</argLine>
                         <runOrder>random</runOrder>
                         <useFile>false</useFile>
-                        <perCoreThreadCount>true</perCoreThreadCount>
-                        <threadCount>2</threadCount>
                     </configuration>
                 </plugin>
                 <plugin>
