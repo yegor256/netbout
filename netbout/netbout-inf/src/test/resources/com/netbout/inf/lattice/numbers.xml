@@ -1,0 +1,44 @@
+<?xml version="1.0"?>
+<!-- this file is used in BitsetLatticeTest -->
+<numbers>
+    <test>
+        <numbers>10000, 5000, 1500, 500</numbers>
+        <asserts>
+            <assert>
+                <cursor>6000</cursor>
+                <matcher>greaterThanOrEqualTo</matcher>
+                <value>5000</value>
+            </assert>
+            <assert>
+                <cursor>3000</cursor>
+                <matcher>greaterThanOrEqualTo</matcher>
+                <value>1500</value>
+            </assert>
+            <assert>
+                <cursor>499</cursor>
+                <matcher>lessThanOrEqualTo</matcher>
+                <value>499</value>
+            </assert>
+        </asserts>
+    </test>
+    <test>
+        <numbers reverse="true">10000, 5000, 1500, 500</numbers>
+        <asserts>
+            <assert>
+                <cursor>6000</cursor>
+                <matcher>equalTo</matcher>
+                <value>6000</value>
+            </assert>
+            <assert>
+                <cursor>3000</cursor>
+                <matcher>equalTo</matcher>
+                <value>3000</value>
+            </assert>
+            <assert>
+                <cursor>499</cursor>
+                <matcher>equalTo</matcher>
+                <value>499</value>
+            </assert>
+        </asserts>
+    </test>
+</numbers>
