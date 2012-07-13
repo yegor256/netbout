@@ -54,7 +54,7 @@ public final class BitsetLatticeTest {
      * @throws Exception If there is some problem inside
      */
     @Test
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({ "unchecked", "PMD.AvoidInstantiatingObjectsInLoops" })
     public void shiftsCursorToTheRightPosition() throws Exception {
         final XmlDocument xml = new SimpleXml(
             this.getClass().getResourceAsStream("numbers.xml")
