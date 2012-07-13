@@ -53,6 +53,7 @@ import org.mockito.Mockito;
  * @version $Id$
  * @checkstyle MagicNumber (500 lines)
  */
+@SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
 public final class LatticeBuilderTest {
 
     /**

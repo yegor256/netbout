@@ -189,6 +189,7 @@ public final class DefaultStore implements Store {
      * @param map The map of functors
      * @return Map of names and who they depend on
      */
+    @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
     private static ConcurrentMap<String, Collection<String>> deps(
         final ConcurrentMap<String, Functor> map) {
         final ConcurrentMap<String, Collection<String>> deps =
