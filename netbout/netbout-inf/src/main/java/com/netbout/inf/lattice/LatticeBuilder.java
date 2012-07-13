@@ -78,6 +78,7 @@ public final class LatticeBuilder {
     public LatticeBuilder fill(final Collection<Long> numbers) {
         synchronized (this.started) {
             this.main.clear(0, BitsetLattice.BITS);
+            this.reverse.set(0, BitsetLattice.BITS);
             long previous = Long.MAX_VALUE;
             for (Long num : numbers) {
                 if (num == previous) {
@@ -90,22 +91,10 @@ public final class LatticeBuilder {
                         "numbers should be reverse-ordered"
                     );
                 }
-                this.main.set(BitsetLattice.bit(num));
+                final int bit = BitsetLattice.bit(num);
+                this.main.set(bit);
+                this.reverse.clear(bit);
                 previous = num;
-            }
-            this.reverse.set(0, BitsetLattice.BITS);
-            final Iterator<Long> iterator = numbers.iterator();
-            Long next = Long.MAX_VALUE;
-            for (int bit = 0; bit < BitsetLattice.BITS; ++bit) {
-                final long window = BitsetLattice.msg(bit + 1);
-                boolean seen = false;
-                while (next > window && iterator.hasNext()) {
-                    seen = true;
-                    next = iterator.next();
-                }
-                if (seen) {
-                    this.reverse.clear(bit);
-                }
             }
             this.started.set(true);
         }
@@ -119,11 +108,6 @@ public final class LatticeBuilder {
      * @return This object
      */
     public LatticeBuilder copy(final Lattice lattice) {
-        if (!this.started.get()) {
-            throw new IllegalStateException(
-                "can't call #copy(), start with always(), fill(), or never()"
-            );
-        }
         synchronized (this.started) {
             this.main = BitSet.class.cast(
                 BitsetLattice.class.cast(lattice).main.clone()
