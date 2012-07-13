@@ -32,7 +32,6 @@ import com.netbout.inf.Lattice;
 import com.rexsl.test.SimpleXml;
 import com.rexsl.test.XmlDocument;
 import java.lang.reflect.Method;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.SortedSet;
 import java.util.TreeSet;
@@ -89,7 +88,7 @@ public final class BitsetLatticeTest {
 
     /**
      * Create lattice with these numbers.
-     * @param numbers List of numbers, in any order, comma-separated
+     * @param text List of numbers, in any order, comma-separated
      * @return Lattice
      */
     private static Lattice lattice(final String text) {
