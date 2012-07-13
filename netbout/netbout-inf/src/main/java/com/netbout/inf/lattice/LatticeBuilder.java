@@ -63,7 +63,10 @@ public final class LatticeBuilder {
      * @return The lattice built
      */
     public Lattice build() {
-        return new BitsetLattice(this.main, this.reverse);
+        return new BitsetLattice(
+            BitSet.class.cast(this.main.clone()),
+            BitSet.class.cast(this.reverse.clone())
+        );
     }
 
     /**
@@ -86,12 +89,12 @@ public final class LatticeBuilder {
                         "numbers should be reverse-ordered"
                     );
                 }
-                if (previous - num < BitsetLattice.SIZE / 2) {
-                    continue;
-                }
-                previous = num;
+                // if (previous - num < BitsetLattice.SIZE / 2) {
+                //     continue;
+                // }
                 final int bit = BitsetLattice.bit(num);
                 this.main.set(bit);
+                previous = num;
             }
             this.reverse.set(0, BitsetLattice.BITS);
             final Iterator<Long> iterator = numbers.iterator();
@@ -205,19 +208,19 @@ public final class LatticeBuilder {
     /**
      * Set main and reverse bit for this message.
      * @param number The number of message
-     * @param bit Main bit to set to
+     * @param set Shall we set (TRUE) or reset (FALSE)
      * @param numbers Where it is happening
      * @return This object
      */
-    public LatticeBuilder set(final long number, final boolean bit,
+    public LatticeBuilder set(final long number, final boolean set,
         final SortedSet<Long> numbers) {
         synchronized (this.mutex) {
-            final int num = BitsetLattice.bit(number);
-            if (bit) {
-                this.main.set(num);
+            final int bit = BitsetLattice.bit(number);
+            if (set) {
+                this.main.set(bit);
             }
-            if (!bit && this.emptyBit(numbers, number)) {
-                this.reverse.set(num);
+            if (!set && this.emptyBit(numbers, number)) {
+                this.reverse.set(bit);
             }
         }
         return this;

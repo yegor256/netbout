@@ -62,15 +62,17 @@ public final class LatticeBuilderTest {
      */
     @Test
     public void createsLatticeFromNumbers() throws Exception {
-        final SortedSet<Long> numbers = this.numbers(25);
-        final LatticeBuilder builder = new LatticeBuilder();
-        for (Long number : LatticeBuilderTest.shuffle(numbers)) {
-            builder.set(number, true, numbers);
+        for (int retry = 0; retry < 10; ++retry) {
+            final SortedSet<Long> numbers = this.numbers(5);
+            final LatticeBuilder builder = new LatticeBuilder();
+            for (Long number : LatticeBuilderTest.shuffle(numbers)) {
+                builder.set(number, true, numbers);
+            }
+            MatcherAssert.assertThat(
+                new LatticeBuilder().fill(numbers).build(),
+                Matchers.equalTo(builder.build())
+            );
         }
-        MatcherAssert.assertThat(
-            new LatticeBuilder().fill(numbers).build(),
-            Matchers.equalTo(builder.build())
-        );
     }
 
     /**
@@ -117,10 +119,13 @@ public final class LatticeBuilderTest {
     @Test
     public void createsWorkingLatticeFromNumbers() throws Exception {
         final Lattice.Shifter shifter = Mockito.mock(Lattice.Shifter.class);
-        final Cursor cursor = new CursorMocker().withMsg(Long.MAX_VALUE).mock();
+        final Cursor cursor = new CursorMocker()
+            .withMsg(500000)
+            .mock();
         new LatticeBuilder().fill(LatticeBuilderTest.numbers(10))
             .build().correct(cursor, shifter);
-        Mockito.verify(shifter).shift(cursor, 1L);
+        Mockito.verify(shifter)
+            .shift(Mockito.any(Cursor.class), Mockito.anyLong());
     }
 
     /**
@@ -147,10 +152,13 @@ public final class LatticeBuilderTest {
         final LatticeBuilder builder =
             new LatticeBuilder().fill(LatticeBuilderTest.numbers(5));
         final Lattice.Shifter shifter = Mockito.mock(Lattice.Shifter.class);
-        final Cursor cursor = new CursorMocker().withMsg(Long.MAX_VALUE).mock();
+        final Cursor cursor = new CursorMocker()
+            .withMsg(500000)
+            .mock();
         builder.build().correct(cursor, shifter);
         Mockito.verify(shifter)
-            .shift(cursor, 1L);
+            .shift(Mockito.any(Cursor.class), Mockito.anyLong());
+        Mockito.reset(shifter);
         builder.revert().build().correct(cursor, shifter);
         Mockito.verify(shifter, Mockito.times(0))
             .shift(Mockito.any(Cursor.class), Mockito.anyLong());
