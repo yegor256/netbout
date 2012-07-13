@@ -63,7 +63,7 @@ public final class LatticeBuilderTest {
     @Test
     public void createsLatticeFromNumbers() throws Exception {
         for (int retry = 0; retry < 10; ++retry) {
-            final SortedSet<Long> numbers = this.numbers(5);
+            final SortedSet<Long> numbers = this.numbers(20);
             final LatticeBuilder builder = new LatticeBuilder();
             for (Long number : LatticeBuilderTest.shuffle(numbers)) {
                 builder.set(number, true, numbers);
