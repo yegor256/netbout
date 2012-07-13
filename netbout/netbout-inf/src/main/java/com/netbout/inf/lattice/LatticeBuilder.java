@@ -32,6 +32,7 @@ import java.util.BitSet;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.SortedSet;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * Builder of Lattice.
@@ -44,9 +45,9 @@ import java.util.SortedSet;
 public final class LatticeBuilder {
 
     /**
-     * Synchronization mutex.
+     * Was it started with {@link #never()} or {@link #always()}.
      */
-    private final transient Integer mutex = new Integer(0);
+    private final transient AtomicBoolean started = new AtomicBoolean(false);
 
     /**
      * The main bitset.
@@ -75,7 +76,7 @@ public final class LatticeBuilder {
      * @return This object
      */
     public LatticeBuilder fill(final Collection<Long> numbers) {
-        synchronized (this.mutex) {
+        synchronized (this.started) {
             this.main.clear(0, BitsetLattice.BITS);
             long previous = Long.MAX_VALUE;
             for (Long num : numbers) {
@@ -106,6 +107,7 @@ public final class LatticeBuilder {
                     this.reverse.clear(bit);
                 }
             }
+            this.started.set(true);
         }
         return this;
     }
@@ -117,7 +119,12 @@ public final class LatticeBuilder {
      * @return This object
      */
     public LatticeBuilder copy(final Lattice lattice) {
-        synchronized (this.mutex) {
+        if (!this.started.get()) {
+            throw new IllegalStateException(
+                "can't call #copy(), start with always(), fill(), or never()"
+            );
+        }
+        synchronized (this.started) {
             this.main = BitSet.class.cast(
                 BitsetLattice.class.cast(lattice).main.clone()
             );
@@ -133,10 +140,11 @@ public final class LatticeBuilder {
      * @return This object
      */
     public LatticeBuilder always() {
-        synchronized (this.mutex) {
+        synchronized (this.started) {
             this.main.set(0, BitsetLattice.BITS);
             this.reverse.clear(0, BitsetLattice.BITS);
         }
+        this.started.set(true);
         return this;
     }
 
@@ -145,10 +153,11 @@ public final class LatticeBuilder {
      * @return This object
      */
     public LatticeBuilder never() {
-        synchronized (this.mutex) {
+        synchronized (this.started) {
             this.main.clear(0, BitsetLattice.BITS);
             this.reverse.set(0, BitsetLattice.BITS);
         }
+        this.started.set(true);
         return this;
     }
 
@@ -158,7 +167,12 @@ public final class LatticeBuilder {
      * @return This object
      */
     public LatticeBuilder and(final Collection<Term> terms) {
-        synchronized (this.mutex) {
+        if (!this.started.get()) {
+            throw new IllegalStateException(
+                "can't call #and(), start with always(), fill(), or never()"
+            );
+        }
+        synchronized (this.started) {
             for (Term term : terms) {
                 final BitsetLattice lattice =
                     BitsetLattice.class.cast(term.lattice());
@@ -177,7 +191,12 @@ public final class LatticeBuilder {
      */
     @SuppressWarnings("PMD.ShortMethodName")
     public LatticeBuilder or(final Collection<Term> terms) {
-        synchronized (this.mutex) {
+        if (!this.started.get()) {
+            throw new IllegalStateException(
+                "can't call #or(), start with always(), fill(), or never()"
+            );
+        }
+        synchronized (this.started) {
             for (Term term : terms) {
                 final BitsetLattice lattice =
                     BitsetLattice.class.cast(term.lattice());
@@ -193,7 +212,12 @@ public final class LatticeBuilder {
      * @return This object
      */
     public LatticeBuilder revert() {
-        synchronized (this.mutex) {
+        if (!this.started.get()) {
+            throw new IllegalStateException(
+                "can't call #revert(), start with always(), fill(), or never()"
+            );
+        }
+        synchronized (this.started) {
             final BitSet temp = this.main;
             this.main = this.reverse;
             this.reverse = temp;
@@ -210,10 +234,16 @@ public final class LatticeBuilder {
      */
     public LatticeBuilder set(final long number, final boolean set,
         final SortedSet<Long> numbers) {
-        synchronized (this.mutex) {
+        if (!this.started.get()) {
+            throw new IllegalStateException(
+                "can't call #set(), start with always(), fill(), or never()"
+            );
+        }
+        synchronized (this.started) {
             final int bit = BitsetLattice.bit(number);
             if (set) {
                 this.main.set(bit);
+                this.reverse.clear(bit);
             }
             if (!set && this.emptyBit(numbers, number)) {
                 this.reverse.set(bit);
