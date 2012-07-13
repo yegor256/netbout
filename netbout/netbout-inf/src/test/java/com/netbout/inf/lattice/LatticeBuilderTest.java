@@ -72,6 +72,10 @@ public final class LatticeBuilderTest {
                 new LatticeBuilder().fill(numbers).build(),
                 Matchers.equalTo(builder.build())
             );
+            MatcherAssert.assertThat(
+                new LatticeBuilder().fill(numbers).revert().build(),
+                Matchers.equalTo(builder.revert().build())
+            );
         }
     }
 
