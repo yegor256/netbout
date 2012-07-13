@@ -251,7 +251,8 @@ final class Catalog {
         Logger.debug(
             this,
             // @checkstyle LineLength (1 line)
-            "#create(): saved to %s (%s bytes, %d values, %d dups) in %[ms]s",
+            "#create(): saved to %s/%s (%s bytes, %d values, %d dups) in %[ms]s",
+            FilenameUtils.getName(this.fast.getParent()),
             FilenameUtils.getName(this.fast.getPath()),
             FileUtils.byteCountToDisplaySize(this.fast.length()),
             total,

@@ -105,20 +105,7 @@ public final class SimpleReverse implements Reverse {
      */
     @Override
     public void put(final long number, final String value) {
-        synchronized (this.map) {
-            final String existing = this.map.get(number);
-            if (existing != null && !existing.equals(value)) {
-                throw new IllegalArgumentException(
-                    String.format(
-                        "can't replace value for msg #%d from '%s' to '%s'",
-                        number,
-                        existing,
-                        value
-                    )
-                );
-            }
-            this.map.put(number, value);
-        }
+        this.map.put(number, value);
     }
 
     /**
