@@ -2,7 +2,7 @@
 <!-- this file is used in BitsetLatticeTest -->
 <numbers>
     <test>
-        <numbers>10000, 5000, 1500, 500</numbers>
+        <numbers>10000, 5000, 1500, 301, 300</numbers>
         <asserts>
             <assert>
                 <cursor>6000</cursor>
@@ -15,9 +15,14 @@
                 <value>1500</value>
             </assert>
             <assert>
-                <cursor>499</cursor>
+                <cursor>301</cursor>
+                <matcher>greaterThanOrEqualTo</matcher>
+                <value>300</value>
+            </assert>
+            <assert>
+                <cursor>299</cursor>
                 <matcher>lessThanOrEqualTo</matcher>
-                <value>499</value>
+                <value>299</value>
             </assert>
         </asserts>
     </test>

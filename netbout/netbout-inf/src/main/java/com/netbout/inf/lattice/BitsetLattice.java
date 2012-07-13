@@ -110,13 +110,14 @@ final class BitsetLattice implements Lattice {
         final int next = this.main.nextSetBit(bit);
         Cursor corrected;
         if (next != -1 && next > bit) {
-            corrected = shifter.shift(cursor, BitsetLattice.msg(next));
+            final long msg = BitsetLattice.msg(next);
+            corrected = shifter.shift(cursor, msg);
             Logger.debug(
                 this,
-                "#correct(%s, %s): moved to %s",
-                cursor,
+                "#correct(#%d, %s): moved to #%d",
+                cursor.msg().number(),
                 shifter,
-                corrected
+                msg
             );
         } else {
             corrected = cursor;
