@@ -147,8 +147,7 @@ public final class DefaultIndexMap implements IndexMap {
     public void flush() throws IOException {
         final long start = System.currentTimeMillis();
         final ExecutorService service = Executors.newFixedThreadPool(
-            1,
-            // Runtime.getRuntime().availableProcessors(),
+            Runtime.getRuntime().availableProcessors(),
             new VerboseThreads("imap-flush")
         );
         final Collection<Callable<Void>> tasks =

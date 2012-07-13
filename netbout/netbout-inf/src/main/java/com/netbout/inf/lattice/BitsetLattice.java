@@ -130,12 +130,21 @@ final class BitsetLattice implements Lattice {
      * @return The bit
      */
     public static int bit(final long number) {
-        if (number > BitsetLattice.BITS * BitsetLattice.SIZE || number <= 0) {
+        int bit;
+        if (number == Long.MAX_VALUE) {
+            bit = BitsetLattice.BITS + 1;
+        } else if (number >= BitsetLattice.BITS * BitsetLattice.SIZE) {
             throw new IllegalArgumentException(
                 String.format("message #%d is out of range", number)
             );
+        } else if (number <= 0) {
+            throw new IllegalArgumentException(
+                String.format("message #%d is negative or zero", number)
+            );
+        } else {
+            bit = BitsetLattice.BITS - (int) number / BitsetLattice.SIZE;
         }
-        return BitsetLattice.BITS - (int) number / BitsetLattice.SIZE;
+        return bit;
     }
 
     /**
@@ -145,7 +154,7 @@ final class BitsetLattice implements Lattice {
      * @see DefaultIndex#emptyBit(String,long)
      */
     public static long msg(final int bit) {
-        if (bit > BitsetLattice.BITS || bit < 0) {
+        if (bit > BitsetLattice.BITS + 1 || bit < 0) {
             throw new IllegalArgumentException(
                 String.format("bit #%d is out of range", bit)
             );

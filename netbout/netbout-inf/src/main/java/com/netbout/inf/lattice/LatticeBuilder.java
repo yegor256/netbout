@@ -30,7 +30,6 @@ import com.netbout.inf.Lattice;
 import com.netbout.inf.Term;
 import java.util.BitSet;
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.SortedSet;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -116,6 +115,7 @@ public final class LatticeBuilder {
                 BitsetLattice.class.cast(lattice).reverse.clone()
             );
         }
+        this.started.set(true);
         return this;
     }
 
@@ -252,11 +252,13 @@ public final class LatticeBuilder {
         final long msg) {
         final int bit = BitsetLattice.bit(msg);
         final SortedSet<Long> tail = numbers.tailSet(BitsetLattice.msg(bit));
-        boolean empty = tail.isEmpty();
-        try {
-            empty |= tail.first() < BitsetLattice.msg(bit + 1);
-        } catch (java.util.NoSuchElementException ex) {
-            empty = true;
+        boolean empty = true;
+        if (!tail.isEmpty()) {
+            try {
+                empty = tail.first() < BitsetLattice.msg(bit + 1);
+            } catch (java.util.NoSuchElementException ex) {
+                empty = true;
+            }
         }
         return empty;
     }

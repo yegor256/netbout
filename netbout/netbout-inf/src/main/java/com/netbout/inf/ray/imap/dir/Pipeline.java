@@ -250,12 +250,12 @@ final class Pipeline implements Closeable, Iterator<Catalog.Item> {
         /**
          * Public ctor.
          * @param backlog Backlog iterator
-         * @param catalog Catalog iterator
+         * @param ctlg Catalog iterator
          */
         public Buffer(final Iterator<Backlog.Item> backlog,
-            final Iterator<Catalog.Item> catalog) {
+            final Iterator<Catalog.Item> ctlg) {
             this.biterator = backlog;
-            this.citerator = catalog;
+            this.citerator = ctlg;
         }
         /**
          * Is it empty?
