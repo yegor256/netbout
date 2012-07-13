@@ -104,16 +104,6 @@ final class Pipeline implements Closeable, Iterator<Catalog.Item> {
     private final transient Attribute attribute;
 
     /**
-     * Backlog with data, from the source Draft.
-     */
-    private final transient Iterator<Backlog.Item> biterator;
-
-    /**
-     * Pre-existing catalog with data, from the source Baseline.
-     */
-    private final transient Iterator<Catalog.Item> citerator;
-
-    /**
      * Pre-existing data file, with data (we keep it open until the pipeline
      * is closed).
      */
@@ -131,16 +121,10 @@ final class Pipeline implements Closeable, Iterator<Catalog.Item> {
     private final transient AtomicLong opos = new AtomicLong();
 
     /**
-     * Information about the item already retrieved from iterators.
-     */
-    private final transient AtomicReference<Pipeline.Token> token =
-        new AtomicReference<Pipeline.Token>();
-
-    /**
      * Value retrieved in previous calls to {@link #next()} (to consume
      * and filter out duplicated values).
      */
-    private final transient Buffer buffer = new Buffer();
+    private final transient Buffer buffer;
 
     /**
      * Public ctor.
@@ -156,10 +140,12 @@ final class Pipeline implements Closeable, Iterator<Catalog.Item> {
         this.attribute = attr;
         this.catalog = src.catalog(this.attribute);
         this.draft = drft;
-        this.biterator = this.reordered(
-            this.draft.backlog(this.attribute).iterator()
+        this.buffer = new Buffer(
+            this.reordered(
+                this.draft.backlog(this.attribute).iterator()
+            ),
+            this.catalog.iterator()
         );
-        this.citerator = this.catalog.iterator();
         this.data = new RandomAccessFile(src.data(this.attribute), "r");
         this.output = new DataOutputStream(
             new FileOutputStream(dest.data(this.attribute))
@@ -180,8 +166,7 @@ final class Pipeline implements Closeable, Iterator<Catalog.Item> {
      */
     @Override
     public boolean hasNext() {
-        return this.biterator.hasNext() || this.citerator.hasNext()
-            || this.token.get() != null;
+        return this.buffer.hasNext();
     }
 
     /**
@@ -191,7 +176,7 @@ final class Pipeline implements Closeable, Iterator<Catalog.Item> {
     public Catalog.Item next() {
         synchronized (this.buffer) {
             try {
-                return this.buffer.fetch().item();
+                return this.buffer.next().item();
             } catch (java.io.IOException ex) {
                 throw new IllegalStateException(ex);
             }
@@ -204,60 +189,6 @@ final class Pipeline implements Closeable, Iterator<Catalog.Item> {
     @Override
     public void remove() {
         throw new UnsupportedOperationException("#remove");
-    }
-
-    /**
-     * Fetch next token from one of two iterators.
-     *
-     * <p>This method is merging two iterators, sorting elements according
-     * to their hash codes. Catalog iterator {@code this.citerator} has
-     * higher priority. We keep items retrieved from iterators in
-     * {@code this.token} variable. When variable is set to null it means
-     * that we should to one of two iterators for the next value. If
-     * the variable holds some value - it is a candidate for the next
-     * result of this {@code next()} method.
-     *
-     * @return The token fetched
-     * @throws IOException If some IO problem inside
-     * @checkstyle ExecutableStatementCount (50 lines)
-     */
-    private Pipeline.Token fetch() throws IOException {
-        if (this.token.get() == null) {
-            if (this.citerator.hasNext()) {
-                this.token.set(new CatalogToken(this.citerator.next()));
-            } else if (this.biterator.hasNext()) {
-                this.token.set(new BacklogToken(this.biterator.next()));
-            } else {
-                throw new NoSuchElementException();
-            }
-        }
-        Pipeline.Token next;
-        final Pipeline.Token saved = this.token.get();
-        if (saved instanceof Pipeline.ComparableToken
-            && this.biterator.hasNext()) {
-            final Pipeline.ComparableToken comparable =
-                Pipeline.ComparableToken.class.cast(saved);
-            final Token btoken = new BacklogToken(this.biterator.next());
-            if (comparable.compareTo(btoken) > 0) {
-                next = btoken;
-            } else {
-                next = comparable;
-                this.token.set(btoken);
-            }
-        } else if (this.citerator.hasNext()) {
-            final Pipeline.ComparableToken ctoken =
-                new CatalogToken(this.citerator.next());
-            if (ctoken.compareTo(saved) > 0) {
-                next = saved;
-                this.token.set(ctoken);
-            } else {
-                next = ctoken;
-            }
-        } else {
-            next = saved;
-            this.token.set(null);
-        }
-        return next;
     }
 
     /**
@@ -287,11 +218,24 @@ final class Pipeline implements Closeable, Iterator<Catalog.Item> {
     }
 
     /**
-     * Buffer of tokens.
+     * Buffer of tokens, an iterator actually.
      *
      * <p>The class is NOT thread-safe.
      */
     private final class Buffer {
+        /**
+         * Backlog with data, from the source Draft.
+         */
+        private final transient Iterator<Backlog.Item> biterator;
+        /**
+         * Pre-existing catalog with data, from the source Baseline.
+         */
+        private final transient Iterator<Catalog.Item> citerator;
+        /**
+         * Information about the item already retrieved from iterators.
+         */
+        private final transient AtomicReference<Pipeline.Token> token =
+            new AtomicReference<Pipeline.Token>();
         /**
          * Value retrieved in previous calls to {@link #next()} (to consume
          * and filter out duplicated values).
@@ -304,11 +248,29 @@ final class Pipeline implements Closeable, Iterator<Catalog.Item> {
         private final transient AtomicReference<Pipeline.Token> ahead =
             new AtomicReference<Pipeline.Token>();
         /**
+         * Public ctor.
+         * @param backlog Backlog iterator
+         * @param catalog Catalog iterator
+         */
+        public Buffer(final Iterator<Backlog.Item> backlog,
+            final Iterator<Catalog.Item> catalog) {
+            this.biterator = backlog;
+            this.citerator = catalog;
+        }
+        /**
+         * Is it empty?
+         * @return TRUE if the buffer is empty
+         */
+        public boolean hasNext() {
+            return !this.isEmpty() || !this.tokens.isEmpty()
+                || this.ahead.get() != null;
+        }
+        /**
          * Fetch next token.
          * @return The token fetched (through buffer)
          * @throws IOException If some IO problem inside
          */
-        public Pipeline.Token fetch() throws IOException {
+        public Pipeline.Token next() throws IOException {
             if (!this.consume()) {
                 throw new NoSuchElementException();
             }
@@ -327,8 +289,8 @@ final class Pipeline implements Closeable, Iterator<Catalog.Item> {
                 this.shift();
             }
             if (this.ahead.get() == null) {
-                while (Pipeline.this.hasNext()) {
-                    this.ahead.set(Pipeline.this.fetch());
+                while (!this.isEmpty()) {
+                    this.ahead.set(this.fetch());
                     if (!this.tokens.isEmpty() && this.ahead.get().hashCode()
                         != this.tokens.keySet().iterator().next().hashCode()) {
                         break;
@@ -344,6 +306,69 @@ final class Pipeline implements Closeable, Iterator<Catalog.Item> {
         private void shift() {
             final Pipeline.Token tkn = this.ahead.getAndSet(null);
             this.tokens.put(tkn.value(), tkn);
+        }
+        /**
+         * Iterators are empty, next call to fetch() will throw an exception.
+         * @return TRUE if iterators are empty
+         */
+        private boolean isEmpty() {
+            return !this.biterator.hasNext() && !this.citerator.hasNext()
+                && this.token.get() == null;
+        }
+        /**
+         * Fetch next token from one of two iterators (called from
+         * {@link Pipeline.Buffer#consume()}).
+         *
+         * <p>This method is merging two iterators, sorting elements according
+         * to their hash codes. Catalog iterator {@code this.citerator} has
+         * higher priority. We keep items retrieved from iterators in
+         * {@code this.token} variable. When variable is set to null it means
+         * that we should to one of two iterators for the next value. If
+         * the variable holds some value - it is a candidate for the next
+         * result of this {@code next()} method.
+         *
+         * @return The token fetched
+         * @throws IOException If some IO problem inside
+         * @see Pipeline.Buffer#consume()
+         * @checkstyle ExecutableStatementCount (50 lines)
+         */
+        private Pipeline.Token fetch() throws IOException {
+            if (this.token.get() == null) {
+                if (this.citerator.hasNext()) {
+                    this.token.set(new CatalogToken(this.citerator.next()));
+                } else if (this.biterator.hasNext()) {
+                    this.token.set(new BacklogToken(this.biterator.next()));
+                } else {
+                    throw new NoSuchElementException();
+                }
+            }
+            Pipeline.Token next;
+            final Pipeline.Token saved = this.token.get();
+            if (saved instanceof Pipeline.ComparableToken
+                && this.biterator.hasNext()) {
+                final Pipeline.ComparableToken comparable =
+                    Pipeline.ComparableToken.class.cast(saved);
+                final Token btoken = new BacklogToken(this.biterator.next());
+                if (comparable.compareTo(btoken) > 0) {
+                    next = btoken;
+                } else {
+                    next = comparable;
+                    this.token.set(btoken);
+                }
+            } else if (this.citerator.hasNext()) {
+                final Pipeline.ComparableToken ctoken =
+                    new CatalogToken(this.citerator.next());
+                if (ctoken.compareTo(saved) > 0) {
+                    next = saved;
+                    this.token.set(ctoken);
+                } else {
+                    next = ctoken;
+                }
+            } else {
+                next = saved;
+                this.token.set(null);
+            }
+            return next;
         }
     }
 

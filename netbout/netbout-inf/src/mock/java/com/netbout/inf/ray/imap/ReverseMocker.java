@@ -28,6 +28,7 @@ package com.netbout.inf.ray.imap;
 
 import java.util.Collection;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Random;
 import org.apache.commons.lang.RandomStringUtils;
 
@@ -44,7 +45,7 @@ public final class ReverseMocker {
      * @return The values
      */
     public static Collection<String> values(final int max) {
-        final Collection<String> values = new LinkedList<String>();
+        final List<String> values = new LinkedList<String>();
         values.add("TlYhv");
         values.add("UMYhv");
         values.add("TkyJW");
@@ -55,7 +56,7 @@ public final class ReverseMocker {
                 RandomStringUtils.randomAlphabetic(random.nextInt(max) + max)
             );
         }
-        return values;
+        return values.subList(0, max);
     }
 
     /**

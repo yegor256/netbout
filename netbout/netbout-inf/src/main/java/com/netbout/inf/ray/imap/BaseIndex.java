@@ -128,7 +128,6 @@ class BaseIndex implements FlushableIndex {
      */
     @Override
     public void replace(final long msg, final String value) {
-        System.out.println("replace at " + msg + ", with " + value);
         this.clean(BaseIndex.validate(msg));
         this.add(msg, value);
     }
@@ -191,7 +190,6 @@ class BaseIndex implements FlushableIndex {
      */
     @Override
     public void flush() throws IOException {
-        System.out.println("abc");
         final long start = System.currentTimeMillis();
         for (Map.Entry<String, BaseIndex.TempNumbers> entry
             : this.map.entrySet()) {
