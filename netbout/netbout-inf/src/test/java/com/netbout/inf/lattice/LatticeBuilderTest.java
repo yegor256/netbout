@@ -26,22 +26,33 @@
  */
 package com.netbout.inf.lattice;
 
+import com.jcabi.log.VerboseThreads;
 import com.netbout.inf.Cursor;
 import com.netbout.inf.CursorMocker;
 import com.netbout.inf.Lattice;
 import com.netbout.inf.MsgMocker;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 import java.util.SortedSet;
 import java.util.TreeSet;
+import java.util.concurrent.Callable;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;
+import org.mockito.Mockito;
 
 /**
  * Test case of {@link LatticeBuilder}.
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
+ * @checkstyle MagicNumber (500 lines)
  */
 public final class LatticeBuilderTest {
 
@@ -51,9 +62,9 @@ public final class LatticeBuilderTest {
      */
     @Test
     public void createsLatticeFromNumbers() throws Exception {
-        final SortedSet<Long> numbers = this.numbers();
+        final SortedSet<Long> numbers = this.numbers(25);
         final LatticeBuilder builder = new LatticeBuilder();
-        for (Long number : numbers) {
+        for (Long number : LatticeBuilderTest.shuffle(numbers)) {
             builder.set(number, true, numbers);
         }
         MatcherAssert.assertThat(
@@ -63,13 +74,63 @@ public final class LatticeBuilderTest {
     }
 
     /**
+     * LatticeBuilder can build lattice in multiple threads.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void createsLatticeInMultipleThreads() throws Exception {
+        final SortedSet<Long> numbers = LatticeBuilderTest.numbers(10);
+        final LatticeBuilder builder = new LatticeBuilder();
+        final int threads = 10;
+        final CountDownLatch start = new CountDownLatch(1);
+        final CountDownLatch latch = new CountDownLatch(threads);
+        final Callable<?> task = new Callable<Void>() {
+            @Override
+            public Void call() throws Exception {
+                start.await();
+                builder.fill(numbers);
+                for (Long number : LatticeBuilderTest.shuffle(numbers)) {
+                    builder.set(number, true, numbers);
+                }
+                latch.countDown();
+                return null;
+            }
+        };
+        final ExecutorService svc =
+            Executors.newFixedThreadPool(threads, new VerboseThreads());
+        for (int thread = 0; thread < threads; ++thread) {
+            svc.submit(task);
+        }
+        start.countDown();
+        latch.await(1, TimeUnit.SECONDS);
+        svc.shutdown();
+        MatcherAssert.assertThat(
+            new LatticeBuilder().fill(numbers).build(),
+            Matchers.equalTo(builder.build())
+        );
+    }
+
+    /**
+     * LatticeBuilder can create working lattice from numbers.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void createsWorkingLatticeFromNumbers() throws Exception {
+        final Lattice.Shifter shifter = Mockito.mock(Lattice.Shifter.class);
+        final Cursor cursor = new CursorMocker().withMsg(Long.MAX_VALUE).mock();
+        new LatticeBuilder().fill(LatticeBuilderTest.numbers(10))
+            .build().correct(cursor, shifter);
+        Mockito.verify(shifter).shift(cursor, 1L);
+    }
+
+    /**
      * LatticeBuilder can copy lattice.
      * @throws Exception If there is some problem inside
      */
     @Test
     public void copiesLatticeWithAllNumbers() throws Exception {
         final Lattice lattice = new LatticeBuilder()
-            .fill(this.numbers())
+            .fill(LatticeBuilderTest.numbers(10))
             .build();
         MatcherAssert.assertThat(
             lattice,
@@ -78,17 +139,46 @@ public final class LatticeBuilderTest {
     }
 
     /**
+     * LatticeBuilder can revert lattice.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void revertsLatticeWithAllNumbers() throws Exception {
+        final LatticeBuilder builder =
+            new LatticeBuilder().fill(LatticeBuilderTest.numbers(5));
+        final Lattice.Shifter shifter = Mockito.mock(Lattice.Shifter.class);
+        final Cursor cursor = new CursorMocker().withMsg(Long.MAX_VALUE).mock();
+        builder.build().correct(cursor, shifter);
+        Mockito.verify(shifter)
+            .shift(cursor, 1L);
+        builder.revert().build().correct(cursor, shifter);
+        Mockito.verify(shifter, Mockito.times(0))
+            .shift(Mockito.any(Cursor.class), Mockito.anyLong());
+    }
+
+    /**
      * Create some numbers.
+     * @param total How many numbers to create
      * @return Set of numbers
      */
-    private SortedSet<Long> numbers() {
+    private static SortedSet<Long> numbers(final int total) {
         final SortedSet<Long> numbers =
             new TreeSet<Long>(Collections.reverseOrder());
-        // @checkstyle MagicNumber (1 line)
-        for (int num = 0; num < 10; ++num) {
+        for (int num = 0; num < total; ++num) {
             numbers.add(MsgMocker.number());
         }
         return numbers;
+    }
+
+    /**
+     * Create randomly ordered numbers.
+     * @param numbers The numbers to order randomly
+     * @return Collection of the same numbers, but ordered randomly
+     */
+    private static Collection<Long> shuffle(final Collection<Long> numbers) {
+        final List<Long> list = new ArrayList<Long>(numbers);
+        Collections.shuffle(list);
+        return list;
     }
 
 }
