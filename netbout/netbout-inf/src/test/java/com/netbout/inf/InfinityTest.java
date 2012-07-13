@@ -115,6 +115,7 @@ public final class InfinityTest {
         inf.flush();
         inf.close();
         return new DefaultInfinity(folder);
+        // return inf;
     }
 
     /**

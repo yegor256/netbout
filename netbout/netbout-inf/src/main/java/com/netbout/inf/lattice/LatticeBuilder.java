@@ -76,6 +76,11 @@ public final class LatticeBuilder {
             this.main.clear(0, BitsetLattice.BITS);
             long previous = Long.MAX_VALUE;
             for (Long num : numbers) {
+                if (num == previous) {
+                    throw new IllegalArgumentException(
+                        "duplicate numbers not allowed"
+                    );
+                }
                 if (num > previous) {
                     throw new IllegalArgumentException(
                         "numbers should be reverse-ordered"
@@ -233,9 +238,7 @@ public final class LatticeBuilder {
     private boolean emptyBit(final SortedSet<Long> numbers,
         final long msg) {
         final int bit = BitsetLattice.bit(msg);
-        final SortedSet<Long> tail = numbers.tailSet(
-            BitsetLattice.msg(bit)
-        );
+        final SortedSet<Long> tail = numbers.tailSet(BitsetLattice.msg(bit));
         boolean empty = tail.isEmpty();
         try {
             empty |= tail.first() < BitsetLattice.msg(bit + 1);
