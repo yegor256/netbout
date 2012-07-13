@@ -30,6 +30,11 @@
                 <value>6000</value>
             </assert>
             <assert>
+                <cursor>5000</cursor>
+                <matcher>lessThanOrEqualTo</matcher>
+                <value>5000</value>
+            </assert>
+            <assert>
                 <cursor>3000</cursor>
                 <matcher>equalTo</matcher>
                 <value>3000</value>
@@ -38,6 +43,11 @@
                 <cursor>499</cursor>
                 <matcher>equalTo</matcher>
                 <value>499</value>
+            </assert>
+            <assert>
+                <cursor>49</cursor>
+                <matcher>equalTo</matcher>
+                <value>49</value>
             </assert>
         </asserts>
     </test>

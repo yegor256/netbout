@@ -68,9 +68,8 @@ public final class BitsetLatticeTest {
                 lattice = new LatticeBuilder().copy(lattice).revert().build();
             }
             for (XmlDocument asrt : test.nodes("asserts/assert")) {
-                final Method method = Matchers.class.getMethod(
-                    asrt.xpath("matcher/text()").get(0),
-                    Comparable.class
+                final Method method = BitsetLatticeTest.matcher(
+                    asrt.xpath("matcher/text()").get(0)
                 );
                 MatcherAssert.assertThat(
                     BitsetLatticeTest.corrected(
@@ -127,6 +126,22 @@ public final class BitsetLatticeTest {
             }
         );
         return msg.get();
+    }
+
+    /**
+     * Create matcher by name.
+     * @param name The name of it
+     * @return Method of {@link Matchers}
+     */
+    private static Method matcher(final String name) {
+        Method matcher = null;
+        for (Method method : Matchers.class.getDeclaredMethods()) {
+            if (method.getName().equals(name)) {
+                matcher = method;
+                break;
+            }
+        }
+        return matcher;
     }
 
 }
