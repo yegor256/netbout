@@ -51,7 +51,8 @@ import org.apache.commons.collections.CollectionUtils;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-@NamedAs("matches")
+@Functor.NamedAs("matches")
+@Functor.DependsOn(Equal.class)
 final class Matches implements Functor {
 
     /**

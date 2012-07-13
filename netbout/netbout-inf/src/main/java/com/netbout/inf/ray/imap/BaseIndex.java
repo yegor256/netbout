@@ -193,16 +193,18 @@ class BaseIndex implements FlushableIndex {
         final long start = System.currentTimeMillis();
         for (Map.Entry<String, BaseIndex.TempNumbers> entry
             : this.map.entrySet()) {
-            this.directory.save(
-                this.attribute,
-                entry.getKey(),
-                entry.getValue()
-            );
-            if (entry.getValue().expired()) {
+            if (!entry.getValue().isEmpty()) {
+                this.directory.save(
+                    this.attribute,
+                    entry.getKey(),
+                    entry.getValue()
+                );
+            }
+            if (entry.getValue().isEmpty() || entry.getValue().expired()) {
                 this.map.remove(entry.getKey());
                 Logger.debug(
                     this,
-                    "#flush(): '%[text]s' expired and removed",
+                    "#flush(): '%[text]s' removed because expired or empty",
                     entry.getKey()
                 );
             }

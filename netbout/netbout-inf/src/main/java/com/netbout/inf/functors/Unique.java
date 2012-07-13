@@ -47,7 +47,7 @@ import java.util.concurrent.ConcurrentSkipListMap;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-@NamedAs("unique")
+@Functor.NamedAs("unique")
 final class Unique implements Functor {
 
     /**

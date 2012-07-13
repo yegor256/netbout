@@ -82,9 +82,17 @@ public class SimpleNumbers implements Numbers {
      * {@inheritDoc}
      */
     @Override
+    public final boolean isEmpty() {
+        return this.nums.isEmpty();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public final void add(final long number) {
         this.nums.add(number);
-        this.lat.set(number, true, this.nums);
+        this.lat.update(number, this.nums);
     }
 
     /**
@@ -93,7 +101,7 @@ public class SimpleNumbers implements Numbers {
     @Override
     public final void remove(final long number) {
         this.nums.remove(number);
-        this.lat.set(number, false, this.nums);
+        this.lat.update(number, this.nums);
     }
 
     /**

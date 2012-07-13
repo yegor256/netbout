@@ -104,11 +104,7 @@ final class NotTerm implements Term {
      */
     @Override
     public String toString() {
-        return new StringBuilder()
-            .append("(NOT ")
-            .append(this.term)
-            .append(')')
-            .toString();
+        return String.format("(NOT %s)", this.term);
     }
 
     /**

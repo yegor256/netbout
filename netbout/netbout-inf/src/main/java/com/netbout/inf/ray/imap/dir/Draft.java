@@ -129,12 +129,10 @@ final class Draft extends BaseVersion {
     private void baseline(final Baseline dest, final Baseline src,
         final Attribute attr) throws IOException {
         File reverse = this.reverse(attr);
-        if (!reverse.exists()) {
+        if (reverse.length() == 0) {
             reverse = src.reverse(attr);
         }
-        if (reverse.exists()) {
-            FileUtils.copyFile(reverse, dest.reverse(attr));
-        }
+        FileUtils.copyFile(reverse, dest.reverse(attr));
         final Pipeline pipeline = new Pipeline(this, dest, src, attr);
         dest.catalog(attr).create(pipeline);
         pipeline.close();

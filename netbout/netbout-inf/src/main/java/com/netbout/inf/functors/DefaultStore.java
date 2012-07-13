@@ -33,8 +33,14 @@ import com.netbout.inf.Notice;
 import com.netbout.inf.Ray;
 import com.netbout.inf.Store;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Comparator;
+import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.ConcurrentSkipListMap;
+import java.util.concurrent.ConcurrentSkipListSet;
 import org.reflections.Reflections;
 
 /**
@@ -125,7 +131,7 @@ public final class DefaultStore implements Store {
                 throw new IllegalStateException(ex);
             }
             map.put(
-                type.getAnnotation(NamedAs.class).value(),
+                type.getAnnotation(Functor.NamedAs.class).value(),
                 functor
             );
         }
@@ -135,7 +141,74 @@ public final class DefaultStore implements Store {
             map.size(),
             map.keySet()
         );
-        return map;
+        final List<String> ordered = DefaultStore.order(map);
+        final ConcurrentMap<String, Functor> sorted =
+            new ConcurrentSkipListMap<String, Functor>(
+                new Comparator<String>() {
+                    public int compare(final String left, final String right) {
+                        return new Integer(ordered.indexOf(left)).compareTo(
+                            new Integer(ordered.indexOf(right))
+                        );
+                    }
+                }
+            );
+        sorted.putAll(map);
+        return sorted;
+    }
+
+    /**
+     * Topological sorting of the provided map.
+     * @param map The map of functors
+     * @return Sorted list of their names
+     * @see http://en.wikipedia.org/wiki/Topological_sort
+     */
+    private static List<String> order(
+        final ConcurrentMap<String, Functor> map) {
+        final ConcurrentMap<String, Collection<String>> deps =
+            DefaultStore.deps(map);
+        final List<String> ordered = new ArrayList<String>(deps.size());
+        while (!deps.isEmpty()) {
+            for (String name : deps.keySet()) {
+                final Collection<String> parents = deps.get(name);
+                for (String parent : parents) {
+                    if (!deps.containsKey(parent)) {
+                        parents.remove(parent);
+                    }
+                }
+                if (parents.isEmpty()) {
+                    deps.remove(name);
+                    ordered.add(name);
+                }
+            }
+        }
+        return ordered;
+    }
+
+    /**
+     * Discover dependencies.
+     * @param map The map of functors
+     * @return Map of names and who they depend on
+     */
+    @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
+    private static ConcurrentMap<String, Collection<String>> deps(
+        final ConcurrentMap<String, Functor> map) {
+        final ConcurrentMap<String, Collection<String>> deps =
+            new ConcurrentHashMap<String, Collection<String>>(map.size());
+        for (String name : map.keySet()) {
+            final Collection<String> parents =
+                new ConcurrentSkipListSet<String>();
+            deps.put(name, parents);
+            final Functor.DependsOn annot = map.get(name).getClass()
+                .getAnnotation(Functor.DependsOn.class);
+            if (annot != null) {
+                for (Class<?> parent : annot.value()) {
+                    parents.add(
+                        parent.getAnnotation(Functor.NamedAs.class).value()
+                    );
+                }
+            }
+        }
+        return deps;
     }
 
 }

@@ -89,7 +89,7 @@ final class BitsetLattice implements Lattice {
      */
     @Override
     public int hashCode() {
-        return this.main.hashCode();
+        return this.toString().hashCode();
     }
 
     /**
@@ -106,24 +106,21 @@ final class BitsetLattice implements Lattice {
      */
     @Override
     public Cursor correct(final Cursor cursor, final Lattice.Shifter shifter) {
+        final int bit = BitsetLattice.bit(cursor.msg().number());
+        final int next = this.main.nextSetBit(bit);
         Cursor corrected;
-        if (cursor.end()) {
-            corrected = cursor;
+        if (next != -1 && next > bit) {
+            final long msg = BitsetLattice.msg(next);
+            corrected = shifter.shift(cursor, msg);
+            Logger.debug(
+                this,
+                "#correct(#%d, %s): moved to #%d",
+                cursor.msg().number(),
+                shifter,
+                msg
+            );
         } else {
-            final int bit = BitsetLattice.bit(cursor.msg().number());
-            final int next = this.main.nextSetBit(bit);
-            if (next != -1 && next > bit) {
-                corrected = shifter.shift(cursor, BitsetLattice.msg(next));
-                Logger.debug(
-                    this,
-                    "#correct(%s, %[type]s): moved to %s",
-                    cursor,
-                    shifter,
-                    corrected
-                );
-            } else {
-                corrected = cursor;
-            }
+            corrected = cursor;
         }
         return corrected;
     }
@@ -134,7 +131,21 @@ final class BitsetLattice implements Lattice {
      * @return The bit
      */
     public static int bit(final long number) {
-        return BitsetLattice.BITS - (int) number / BitsetLattice.SIZE;
+        int bit;
+        if (number == Long.MAX_VALUE) {
+            bit = 0;
+        } else if (number >= BitsetLattice.BITS * BitsetLattice.SIZE) {
+            throw new IllegalArgumentException(
+                String.format("message #%d is out of range", number)
+            );
+        } else if (number <= 0) {
+            throw new IllegalArgumentException(
+                String.format("message #%d is negative or zero", number)
+            );
+        } else {
+            bit = BitsetLattice.BITS - (int) number / BitsetLattice.SIZE;
+        }
+        return bit;
     }
 
     /**
@@ -144,6 +155,11 @@ final class BitsetLattice implements Lattice {
      * @see DefaultIndex#emptyBit(String,long)
      */
     public static long msg(final int bit) {
+        if (bit > BitsetLattice.BITS + 1 || bit < 0) {
+            throw new IllegalArgumentException(
+                String.format("bit #%d is out of range", bit)
+            );
+        }
         return (BitsetLattice.BITS - bit + 1) * BitsetLattice.SIZE - 1;
     }
 

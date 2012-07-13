@@ -24,26 +24,47 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.inf.functors;
+package com.netbout.inf.ray.imap.dir;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import java.util.concurrent.atomic.AtomicInteger;
+import org.hamcrest.MatcherAssert;
+import org.hamcrest.Matchers;
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
 
 /**
- * Meta information about functor.
- *
+ * Test case of {@link ReversiveAuditor}.
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-@Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.TYPE)
-@interface NamedAs {
+public final class ReversiveAuditorTest {
 
     /**
-     * What is the name of it.
+     * Temporary folder.
+     * @checkstyle VisibilityModifier (3 lines)
      */
-    String value() default "";
+    @Rule
+    public transient TemporaryFolder temp = new TemporaryFolder();
+
+    /**
+     * ReversiveAuditor can detect problems in numbers and reverse.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void detectsProblemsInNumbersAndReverse() throws Exception {
+        final Baseline base = new Baseline(new Lock(this.temp.newFolder("x")));
+        final AtomicInteger problems = new AtomicInteger();
+        new ReversiveAuditor().audit(
+            base,
+            new Audit() {
+                @Override
+                public void problem(final String text) {
+                    problems.incrementAndGet();
+                }
+            }
+        );
+        MatcherAssert.assertThat(problems.get(), Matchers.equalTo(0));
+    }
 
 }

@@ -35,7 +35,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.ConcurrentSkipListMap;
@@ -82,7 +81,7 @@ public final class SimpleReverse implements Reverse {
             }
             if (System.currentTimeMillis() - start > 10) {
                 throw new Reverse.ValueNotFoundException(
-                    String.format(
+                    Logger.format(
                         // @checkstyle LineLength (1 line)
                         "value not found for msg #%d among %d others, even after %[ms]s of waiting",
                         msg,
@@ -106,20 +105,7 @@ public final class SimpleReverse implements Reverse {
      */
     @Override
     public void put(final long number, final String value) {
-        synchronized (this.map) {
-            final String existing = this.map.get(number);
-            if (existing != null && !existing.equals(value)) {
-                throw new IllegalArgumentException(
-                    String.format(
-                        "can't replace value for msg #%d from '%s' to '%s'",
-                        number,
-                        existing,
-                        value
-                    )
-                );
-            }
-            this.map.put(number, value);
-        }
+        this.map.put(number, value);
     }
 
     /**
@@ -156,15 +142,20 @@ public final class SimpleReverse implements Reverse {
     public void load(final InputStream stream) throws IOException {
         this.map.clear();
         final DataInputStream data = new DataInputStream(stream);
+        long previous = Long.MAX_VALUE;
         while (true) {
             final long msg = data.readLong();
+            if (msg == previous) {
+                throw new IOException("duplicate key in reverse");
+            }
+            if (msg > previous) {
+                throw new IOException("wrong order of values");
+            }
             if (msg == 0) {
                 break;
             }
-            if (this.map.containsKey(msg)) {
-                throw new IOException("duplicate key in reverse");
-            }
             this.map.put(msg, data.readUTF());
+            previous = msg;
         }
         if (!this.map.isEmpty()) {
             Logger.debug(
@@ -183,21 +174,24 @@ public final class SimpleReverse implements Reverse {
      */
     public void audit(final Audit audit, final String value,
         final Collection<Long> numbers) {
-        final Iterator<Long> iterator = numbers.iterator();
-        long next = Long.MAX_VALUE;
-        for (Map.Entry<Long, String> entry : this.map.entrySet()) {
-            if (entry.getKey() < next) {
-                if (!iterator.hasNext()) {
-                    break;
-                }
-                next = iterator.next();
-            } else if (!entry.getValue().equals(value)) {
+        for (Long number : numbers) {
+            if (!this.map.containsKey(number)) {
                 audit.problem(
                     String.format(
-                        "value '%s' not equal to '%s' for msg #%d",
-                        entry.getValue(),
-                        value,
-                        next
+                        "msg #%d doesn't have a value, while '%s' expected",
+                        number,
+                        value
+                    )
+                );
+                break;
+            }
+            if (!this.map.get(number).equals(value)) {
+                audit.problem(
+                    String.format(
+                        "msg #%d has value '%s' while '%s' expected",
+                        number,
+                        this.map.get(number),
+                        value
                     )
                 );
                 break;

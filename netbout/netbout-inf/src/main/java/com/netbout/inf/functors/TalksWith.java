@@ -47,7 +47,8 @@ import java.util.List;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-@NamedAs("talks-with")
+@Functor.NamedAs("talks-with")
+@Functor.DependsOn(Equal.class)
 final class TalksWith implements Functor {
 
     /**

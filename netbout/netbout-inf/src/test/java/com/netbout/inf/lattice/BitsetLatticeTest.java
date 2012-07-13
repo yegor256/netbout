@@ -29,37 +29,118 @@ package com.netbout.inf.lattice;
 import com.netbout.inf.Cursor;
 import com.netbout.inf.CursorMocker;
 import com.netbout.inf.Lattice;
-import java.util.Arrays;
+import com.rexsl.test.SimpleXml;
+import com.rexsl.test.XmlDocument;
+import java.lang.reflect.Method;
 import java.util.Collections;
 import java.util.SortedSet;
 import java.util.TreeSet;
+import java.util.concurrent.atomic.AtomicLong;
+import org.hamcrest.Matcher;
+import org.hamcrest.MatcherAssert;
+import org.hamcrest.Matchers;
 import org.junit.Test;
-import org.mockito.Mockito;
 
 /**
  * Test case of {@link BitsetLattice}.
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
+ * @checkstyle MagicNumber (500 lines)
  */
 public final class BitsetLatticeTest {
 
     /**
      * BitsetLattice can shift a cursor to the right position.
      * @throws Exception If there is some problem inside
-     * @checkstyle MagicNumber (30 lines)
      */
     @Test
+    @SuppressWarnings({ "unchecked", "PMD.AvoidInstantiatingObjectsInLoops" })
     public void shiftsCursorToTheRightPosition() throws Exception {
+        final XmlDocument xml = new SimpleXml(
+            this.getClass().getResourceAsStream("numbers.xml")
+        );
+        for (XmlDocument test : xml.nodes("/numbers/test")) {
+            Lattice lattice = BitsetLatticeTest.lattice(
+                test.xpath("numbers/text()").get(0)
+            );
+            if (!test.xpath("numbers/@reverse").isEmpty()) {
+                lattice = new LatticeBuilder().copy(lattice).revert().build();
+            }
+            for (XmlDocument asrt : test.nodes("asserts/assert")) {
+                final Method method = BitsetLatticeTest.matcher(
+                    asrt.xpath("matcher/text()").get(0)
+                );
+                MatcherAssert.assertThat(
+                    BitsetLatticeTest.corrected(
+                        lattice,
+                        Long.valueOf(asrt.xpath("cursor/text()").get(0))
+                    ),
+                    Matcher.class.cast(
+                        method.invoke(
+                            null,
+                            Long.valueOf(asrt.xpath("value/text()").get(0))
+                        )
+                    )
+                );
+            }
+        }
+    }
+
+    /**
+     * Create lattice with these numbers.
+     * @param text List of numbers, in any order, comma-separated
+     * @return Lattice
+     */
+    private static Lattice lattice(final String text) {
+        final String[] parts = text.split("[^0-9]*,[^0-9]*");
+        final Long[] nums = new Long[parts.length];
+        for (int pos = 0; pos < parts.length; ++pos) {
+            nums[pos] = Long.valueOf(parts[pos]);
+        }
         final SortedSet<Long> numbers =
             new TreeSet<Long>(Collections.reverseOrder());
-        numbers.addAll(Arrays.asList(10000L, 350L, 150L, 50L));
-        final Lattice lattice = new LatticeBuilder()
-            .fill(numbers)
-            .build();
-        final Lattice.Shifter shifter = Mockito.mock(Lattice.Shifter.class);
-        final Cursor cursor = new CursorMocker().withMsg(5000L).mock();
-        lattice.correct(cursor, shifter);
-        Mockito.verify(shifter).shift(cursor, 383L);
+        for (long number : nums) {
+            numbers.add(number);
+        }
+        return new LatticeBuilder().fill(numbers).build();
+    }
+
+    /**
+     * Shift from the number through lattice and return the resulted
+     * message number.
+     * @param lattice The lattice to use for correction
+     * @param from Message num to correct
+     * @return Corrected number
+     */
+    private static long corrected(final Lattice lattice, final long from) {
+        final AtomicLong msg = new AtomicLong(from);
+        lattice.correct(
+            new CursorMocker().withMsg(from).mock(),
+            new Lattice.Shifter() {
+                @Override
+                public Cursor shift(final Cursor cursor, final long num) {
+                    msg.set(num);
+                    return cursor;
+                }
+            }
+        );
+        return msg.get();
+    }
+
+    /**
+     * Create matcher by name.
+     * @param name The name of it
+     * @return Method of {@link Matchers}
+     */
+    private static Method matcher(final String name) {
+        Method matcher = null;
+        for (Method method : Matchers.class.getDeclaredMethods()) {
+            if (method.getName().equals(name)) {
+                matcher = method;
+                break;
+            }
+        }
+        return matcher;
     }
 
 }

@@ -44,7 +44,7 @@ import java.util.List;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-@NamedAs("or")
+@Functor.NamedAs("or")
 final class Disjunction implements Functor {
 
     /**

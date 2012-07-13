@@ -82,6 +82,27 @@
     </scene>
     <scene>
         <see notice="com.netbout.inf.notices.MessagePostedNotice">
+            <message.number>444</message.number>
+            <bout.participants>urn:test:walter</bout.participants>
+            <bout.number>4444</bout.number>
+        </see>
+        <see notice="com.netbout.inf.notices.MessagePostedNotice">
+            <message.number>444</message.number>
+            <bout.participants>urn:test:jeffrey</bout.participants>
+            <bout.number>4444</bout.number>
+        </see>
+        <see notice="com.netbout.inf.notices.MessagePostedNotice">
+            <message.number>444</message.number>
+            <bout.participants>urn:test:donny</bout.participants>
+            <bout.number>4444</bout.number>
+        </see>
+        <query>
+            <predicate>(talks-with 'urn:test:donny')</predicate>
+            <messages>444</messages>
+        </query>
+    </scene>
+    <scene>
+        <see notice="com.netbout.inf.notices.MessagePostedNotice">
             <bout.number>1023</bout.number>
             <bout.participants>urn:test:Somebody</bout.participants>
         </see>

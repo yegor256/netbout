@@ -93,6 +93,7 @@ public final class PipelineTest {
         }
         draft.close();
         src.close();
+        MatcherAssert.assertThat(items, Matchers.hasSize(values.size()));
         MatcherAssert.assertThat(
             dest.data(attr).length(),
             Matchers.greaterThanOrEqualTo(
@@ -151,6 +152,72 @@ public final class PipelineTest {
         }
         draft.close();
         src.close();
+    }
+
+    /**
+     * Pipeline can copy all items from draft.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void copiesAllValuesFromDraft() throws Exception {
+        final File dir = this.temp.newFolder("foo-4");
+        final Attribute attr = new Attribute("bar-bar-boom");
+        final int total = 6;
+        final Draft draft = this.draft(
+            new File(dir, "draft-4"),
+            attr,
+            ReverseMocker.values(total),
+            total
+        );
+        final Baseline src = this.baseline(
+            new File(dir, "src-4"),
+            attr,
+            ReverseMocker.values(0),
+            0
+        );
+        final Baseline dest = new Baseline(new Lock(new File(dir, "dest-4")));
+        final Pipeline pipe = new Pipeline(draft, dest, src, attr);
+        int copied = 0;
+        while (pipe.hasNext()) {
+            pipe.next();
+            ++copied;
+        }
+        draft.close();
+        src.close();
+        MatcherAssert.assertThat(copied, Matchers.equalTo(total));
+    }
+
+    /**
+     * Pipeline can copy all items from baseline.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void copiesAllValuesFromBaseline() throws Exception {
+        final File dir = this.temp.newFolder("foo-5");
+        final Attribute attr = new Attribute("bar-bar-boom2");
+        final int total = 6;
+        final Draft draft = this.draft(
+            new File(dir, "draft-5"),
+            attr,
+            ReverseMocker.values(0),
+            0
+        );
+        final Baseline src = this.baseline(
+            new File(dir, "src-5"),
+            attr,
+            ReverseMocker.values(total),
+            total
+        );
+        final Baseline dest = new Baseline(new Lock(new File(dir, "dest-5")));
+        final Pipeline pipe = new Pipeline(draft, dest, src, attr);
+        int copied = 0;
+        while (pipe.hasNext()) {
+            pipe.next();
+            ++copied;
+        }
+        draft.close();
+        src.close();
+        MatcherAssert.assertThat(copied, Matchers.equalTo(total));
     }
 
     /**

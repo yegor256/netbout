@@ -52,7 +52,8 @@ import java.util.concurrent.ConcurrentSkipListMap;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-@NamedAs("bundled")
+@Functor.NamedAs("bundled")
+@Functor.DependsOn(Equal.class)
 final class Bundled implements Functor {
 
     /**

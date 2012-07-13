@@ -90,12 +90,11 @@ class ReversiveIndex implements FlushableIndex {
      */
     @Override
     public String toString() {
-        return new StringBuilder()
-            .append(this.straight.toString())
-            .append(" with reverse ")
-            .append(this.reverse.sizeof())
-            .append(" bytes")
-            .toString();
+        return String.format(
+            "%s with reversive %,d bytes",
+            this.straight.toString(),
+            this.reverse.sizeof()
+        );
     }
 
     /**
@@ -103,8 +102,8 @@ class ReversiveIndex implements FlushableIndex {
      */
     @Override
     public void replace(final long msg, final String value) {
-        this.delete(msg, value);
-        this.add(msg, value);
+        this.straight.replace(msg, value);
+        this.reverse.put(msg, value);
     }
 
     /**

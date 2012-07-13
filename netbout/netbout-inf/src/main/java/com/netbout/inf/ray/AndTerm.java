@@ -67,6 +67,10 @@ final class AndTerm implements Term {
             }
             return crsr.shift(new PickerTerm(AndTerm.this.imap, msg));
         }
+        @Override
+        public String toString() {
+            return AndTerm.this.toString();
+        }
     };
 
     /**

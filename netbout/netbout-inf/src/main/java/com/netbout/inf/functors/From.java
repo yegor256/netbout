@@ -45,7 +45,7 @@ import java.util.concurrent.atomic.AtomicLong;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-@NamedAs("from")
+@Functor.NamedAs("from")
 final class From implements Functor {
 
     /**

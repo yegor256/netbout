@@ -46,7 +46,8 @@ import java.util.List;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-@NamedAs("ns")
+@Functor.NamedAs("ns")
+@Functor.DependsOn(Equal.class)
 final class Namespace implements Functor {
 
     /**

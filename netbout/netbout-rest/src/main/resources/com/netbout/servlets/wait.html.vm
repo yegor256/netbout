@@ -14,7 +14,7 @@
             </a>
         </p>
         <p>
-            Please wait, we're loading data...
+            Please wait, we're loading data (r.${build.number})...
         </p>
         <p>
             ${message}

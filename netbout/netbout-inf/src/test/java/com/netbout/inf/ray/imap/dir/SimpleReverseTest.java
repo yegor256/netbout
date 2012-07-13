@@ -52,6 +52,10 @@ public final class SimpleReverseTest {
         final long msg = MsgMocker.number();
         final String value = "some value, \u0433";
         reverse.put(msg, value);
+        reverse.put(msg + 1, "some other value");
+        reverse.put(msg + 2, "some other new value");
+        reverse.put(msg - 2, "some text");
+        reverse.put(msg - 1, value);
         MatcherAssert.assertThat(reverse.get(msg), Matchers.equalTo(value));
         final ByteArrayOutputStream ostream = new ByteArrayOutputStream();
         reverse.save(ostream);

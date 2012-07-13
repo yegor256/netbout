@@ -42,10 +42,4 @@ interface Audit {
      */
     void problem(String text);
 
-    /**
-     * A new problem/exception detected.
-     * @param expn Exception
-     */
-    void problem(Exception expn);
-
 }

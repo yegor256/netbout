@@ -1,0 +1,64 @@
+<?xml version="1.0"?>
+<!-- this file is used in BitsetLatticeTest -->
+<numbers>
+    <test>
+        <numbers>10000, 5000, 1500, 305, 304, 303, 302, 301, 300</numbers>
+        <asserts>
+            <assert>
+                <cursor>6000</cursor>
+                <matcher>greaterThanOrEqualTo</matcher>
+                <value>5000</value>
+            </assert>
+            <assert>
+                <cursor>3000</cursor>
+                <matcher>greaterThanOrEqualTo</matcher>
+                <value>1500</value>
+            </assert>
+            <assert>
+                <cursor>1499</cursor>
+                <matcher>greaterThanOrEqualTo</matcher>
+                <value>305</value>
+            </assert>
+            <assert>
+                <cursor>301</cursor>
+                <matcher>greaterThanOrEqualTo</matcher>
+                <value>300</value>
+            </assert>
+            <assert>
+                <cursor>299</cursor>
+                <matcher>lessThanOrEqualTo</matcher>
+                <value>299</value>
+            </assert>
+        </asserts>
+    </test>
+    <test>
+        <numbers reverse="true">10000, 5000, 1500, 500</numbers>
+        <asserts>
+            <assert>
+                <cursor>6000</cursor>
+                <matcher>equalTo</matcher>
+                <value>6000</value>
+            </assert>
+            <assert>
+                <cursor>5000</cursor>
+                <matcher>lessThanOrEqualTo</matcher>
+                <value>5000</value>
+            </assert>
+            <assert>
+                <cursor>3000</cursor>
+                <matcher>equalTo</matcher>
+                <value>3000</value>
+            </assert>
+            <assert>
+                <cursor>499</cursor>
+                <matcher>equalTo</matcher>
+                <value>499</value>
+            </assert>
+            <assert>
+                <cursor>49</cursor>
+                <matcher>equalTo</matcher>
+                <value>49</value>
+            </assert>
+        </asserts>
+    </test>
+</numbers>
