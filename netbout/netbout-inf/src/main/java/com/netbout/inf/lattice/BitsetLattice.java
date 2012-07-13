@@ -155,7 +155,7 @@ final class BitsetLattice implements Lattice {
      * @see DefaultIndex#emptyBit(String,long)
      */
     public static long msg(final int bit) {
-        if (bit > BitsetLattice.BITS || bit < 0) {
+        if (bit > BitsetLattice.BITS + 1 || bit < 0) {
             throw new IllegalArgumentException(
                 String.format("bit #%d is out of range", bit)
             );

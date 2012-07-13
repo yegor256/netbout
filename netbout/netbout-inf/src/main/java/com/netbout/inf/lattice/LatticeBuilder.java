@@ -104,7 +104,7 @@ public final class LatticeBuilder {
             if (delta != 1) {
                 this.reverse.set(
                     BitsetLattice.bit(previous),
-                    BitsetLattice.BITS
+                    BitsetLattice.bit(1L)
                 );
             }
             this.started.set(true);
