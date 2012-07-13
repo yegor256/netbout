@@ -89,9 +89,9 @@ public final class LatticeBuilder {
                         "numbers should be reverse-ordered"
                     );
                 }
-                // if (previous - num < BitsetLattice.SIZE / 2) {
-                //     continue;
-                // }
+                if (previous - num < BitsetLattice.SIZE / 4) {
+                    continue;
+                }
                 final int bit = BitsetLattice.bit(num);
                 this.main.set(bit);
                 previous = num;
