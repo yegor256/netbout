@@ -61,13 +61,13 @@ class BaseIndex implements FlushableIndex {
     /**
      * Main map.
      */
-    private final transient ConcurrentMap<String, BaseIndex.TempNumbers> map =
-        new ConcurrentHashMap<String, BaseIndex.TempNumbers>();
+    private final transient ConcurrentMap<String, BaseIndex.LruNumbers> map =
+        new ConcurrentHashMap<String, BaseIndex.LruNumbers>();
 
     /**
-     * Numbers that has expiration date.
+     * Numbers that has expiration date (least recently used).
      */
-    private static final class TempNumbers extends SimpleNumbers {
+    private static final class LruNumbers extends SimpleNumbers {
         /**
          * When was it accessed last time.
          */
@@ -191,7 +191,7 @@ class BaseIndex implements FlushableIndex {
     @Override
     public void flush() throws IOException {
         final long start = System.currentTimeMillis();
-        for (Map.Entry<String, BaseIndex.TempNumbers> entry
+        for (Map.Entry<String, BaseIndex.LruNumbers> entry
             : this.map.entrySet()) {
             if (!entry.getValue().isEmpty()) {
                 this.directory.save(
@@ -241,8 +241,8 @@ class BaseIndex implements FlushableIndex {
     private Numbers numbers(final String text) {
         synchronized (this.map) {
             if (!this.map.containsKey(text)) {
-                final BaseIndex.TempNumbers numbers =
-                    new BaseIndex.TempNumbers();
+                final BaseIndex.LruNumbers numbers =
+                    new BaseIndex.LruNumbers();
                 try {
                     this.directory.load(this.attribute, text, numbers);
                 } catch (java.io.IOException ex) {
@@ -251,7 +251,7 @@ class BaseIndex implements FlushableIndex {
                 this.map.put(text, numbers);
             }
         }
-        final BaseIndex.TempNumbers nums = this.map.get(text);
+        final BaseIndex.LruNumbers nums = this.map.get(text);
         nums.ping();
         return nums;
     }
