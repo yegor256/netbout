@@ -127,14 +127,6 @@ final class BitsetLattice implements Lattice {
             );
         } else {
             corrected = cursor;
-            Logger.debug(
-                this,
-                "#correct(#%d, %s): nothing to correct (msg=%d, bit=%d)",
-                cursor.msg().number(),
-                shifter,
-                number,
-                bit
-            );
         }
         return corrected;
     }
