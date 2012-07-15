@@ -32,9 +32,11 @@ import com.netbout.inf.CursorMocker;
 import com.netbout.inf.Lattice;
 import com.netbout.inf.MsgMocker;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Random;
 import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.concurrent.Callable;
@@ -52,8 +54,11 @@ import org.mockito.Mockito;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  * @checkstyle MagicNumber (500 lines)
+ * @checkstyle ClassDataAbstractionCoupling (500 lines)
  */
-@SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
+@SuppressWarnings({
+    "PMD.AvoidInstantiatingObjectsInLoops", "PMD.TooManyMethods"
+})
 public final class LatticeBuilderTest {
 
     /**
@@ -63,7 +68,7 @@ public final class LatticeBuilderTest {
     @Test
     public void createsLatticeFromNumbers() throws Exception {
         for (int nums = 0; nums < 25; ++nums) {
-            final SortedSet<Long> numbers = this.numbers(nums);
+            final SortedSet<Long> numbers = LatticeBuilderTest.numbers(nums);
             final LatticeBuilder builder = new LatticeBuilder().never();
             for (Long number : LatticeBuilderTest.shuffle(numbers)) {
                 builder.update(number, numbers);
@@ -75,6 +80,133 @@ public final class LatticeBuilderTest {
             MatcherAssert.assertThat(
                 new LatticeBuilder().fill(numbers).revert().build(),
                 Matchers.equalTo(builder.revert().build())
+            );
+        }
+    }
+
+    /**
+     * LatticeBuilder can create reverse lattice correctly.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void createsAndFillsReverseLattice() throws Exception {
+        final Long[][] samples = new Long[][] {
+            {500L, 135L, 134L},
+            {5L, 4L, 3L, 2L, 1L},
+            {505L, 504L, 503L, 502L},
+            {129L, 128L, 64L, 63L},
+        };
+        for (Long[] sample : samples) {
+            final SortedSet<Long> numbers = new TreeSet<Long>(
+                Collections.reverseOrder()
+            );
+            numbers.addAll(Arrays.asList(sample));
+            final LatticeBuilder builder = new LatticeBuilder().never();
+            for (Long number : numbers) {
+                builder.update(number, numbers);
+            }
+            MatcherAssert.assertThat(
+                new LatticeBuilder().fill(numbers).revert().build(),
+                Matchers.equalTo(builder.revert().build())
+            );
+        }
+    }
+
+    /**
+     * LatticeBuilder can throw exception for ZERO message number.
+     * @throws Exception If there is some problem inside
+     */
+    @Test(expected = LatticeException.class)
+    public void throwsWhenZeroMesageNumber() throws Exception {
+        new LatticeBuilder()
+            .never()
+            .update(0, new TreeSet<Long>(Collections.reverseOrder()));
+    }
+
+    /**
+     * LatticeBuilder can throw exception for MAX message number.
+     * @throws Exception If there is some problem inside
+     */
+    @Test(expected = LatticeException.class)
+    public void throwsWhenMaxMesageNumber() throws Exception {
+        new LatticeBuilder()
+            .always()
+            .update(
+                Long.MAX_VALUE,
+                new TreeSet<Long>(Collections.reverseOrder())
+            );
+    }
+
+    /**
+     * LatticeBuilder can convert numbers to bits.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void convertsNumbersToBits() throws Exception {
+        MatcherAssert.assertThat(
+            BitsetLattice.bit(1L),
+            Matchers.equalTo(BitsetLattice.BITS - 1)
+        );
+        MatcherAssert.assertThat(
+            BitsetLattice.bit(BitsetLattice.SIZE),
+            Matchers.equalTo(BitsetLattice.BITS - 1)
+        );
+        MatcherAssert.assertThat(
+            BitsetLattice.bit(BitsetLattice.SIZE + 1),
+            Matchers.equalTo(BitsetLattice.BITS - 2)
+        );
+        MatcherAssert.assertThat(
+            BitsetLattice.bit((BitsetLattice.BITS - 1) * BitsetLattice.SIZE),
+            Matchers.equalTo(1)
+        );
+        MatcherAssert.assertThat(
+            BitsetLattice.bit(BitsetLattice.BITS * BitsetLattice.SIZE),
+            Matchers.equalTo(0)
+        );
+    }
+
+    /**
+     * LatticeBuilder can convert bits to numbers.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void convertsBitsToNumbers() throws Exception {
+        MatcherAssert.assertThat(
+            BitsetLattice.msg(0),
+            Matchers.equalTo((long) BitsetLattice.BITS * BitsetLattice.SIZE)
+        );
+        MatcherAssert.assertThat(
+            BitsetLattice.msg(1),
+            Matchers.equalTo(
+                (long) (BitsetLattice.BITS - 1) * BitsetLattice.SIZE
+            )
+        );
+        MatcherAssert.assertThat(
+            BitsetLattice.msg(BitsetLattice.BITS - 2),
+            Matchers.equalTo((long) BitsetLattice.SIZE * 2)
+        );
+        MatcherAssert.assertThat(
+            BitsetLattice.msg(BitsetLattice.BITS - 1),
+            Matchers.equalTo((long) BitsetLattice.SIZE)
+        );
+    }
+
+    /**
+     * LatticeBuilder can accept any number for an empty set.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void acceptsAnyNumberOnEmptySet() throws Exception {
+        final LatticeBuilder builder = new LatticeBuilder().never();
+        final SortedSet<Long> numbers =
+            new TreeSet<Long>(Collections.reverseOrder());
+        builder.update(1L, numbers);
+        builder.update(BitsetLattice.BITS * BitsetLattice.SIZE, numbers);
+        final Random random = new Random();
+        for (int retry = 0; retry < 100; ++retry) {
+            builder.update(
+                random.nextInt(BitsetLattice.BITS * BitsetLattice.SIZE - 1) + 1,
+                numbers
             );
         }
     }
@@ -124,7 +256,7 @@ public final class LatticeBuilderTest {
     public void createsWorkingLatticeFromNumbers() throws Exception {
         final Lattice.Shifter shifter = Mockito.mock(Lattice.Shifter.class);
         final Cursor cursor = new CursorMocker()
-            .withMsg(500000)
+            .withMsg(Long.MAX_VALUE)
             .mock();
         new LatticeBuilder().fill(LatticeBuilderTest.numbers(10))
             .build().correct(cursor, shifter);
@@ -157,7 +289,7 @@ public final class LatticeBuilderTest {
             new LatticeBuilder().fill(LatticeBuilderTest.numbers(5));
         final Lattice.Shifter shifter = Mockito.mock(Lattice.Shifter.class);
         final Cursor cursor = new CursorMocker()
-            .withMsg(500000)
+            .withMsg(Long.MAX_VALUE)
             .mock();
         builder.build().correct(cursor, shifter);
         Mockito.verify(shifter)

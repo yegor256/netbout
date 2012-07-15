@@ -26,6 +26,7 @@
  */
 package com.netbout.inf.ray;
 
+import com.jcabi.log.Logger;
 import com.netbout.inf.Attribute;
 import com.netbout.inf.Cursor;
 import com.netbout.inf.Msg;
@@ -53,13 +54,29 @@ final class MemCursor implements Cursor {
     private final transient IndexMap imap;
 
     /**
+     * Which step we're at.
+     */
+    private final transient int step;
+
+    /**
      * Public ctor.
      * @param num Message number
      * @param map The index map
      */
     public MemCursor(final long num, final IndexMap map) {
+        this(num, map, 0);
+    }
+
+    /**
+     * Public ctor.
+     * @param num Message number
+     * @param map The index map
+     * @param stp Which step it is?
+     */
+    private MemCursor(final long num, final IndexMap map, final int stp) {
         this.where = num;
         this.imap = map;
+        this.step = stp;
     }
 
     /**
@@ -92,7 +109,7 @@ final class MemCursor implements Cursor {
      */
     @Override
     public boolean equals(final Object cursor) {
-        return cursor == this || (cursor instanceof MemCursor
+        return cursor == this || (cursor instanceof Cursor
             && cursor.hashCode() == this.hashCode());
     }
 
@@ -185,7 +202,26 @@ final class MemCursor implements Cursor {
      */
     @Override
     public Cursor shift(final Term term) {
-        return term.shift(this);
+        Cursor shifted;
+        if (term instanceof JumpTerm) {
+            long msg;
+            // @checkstyle MagicNumber (1 line)
+            if (this.step > 100) {
+                Logger.warn(
+                    this,
+                    "#shift('%s'): shifted %d times already",
+                    term,
+                    this.step
+                );
+                msg = 0L;
+            } else {
+                msg = JumpTerm.class.cast(term).msg();
+            }
+            shifted = new MemCursor(msg, this.imap, this.step + 1);
+        } else {
+            shifted = term.shift(this);
+        }
+        return shifted;
     }
 
     /**

@@ -24,50 +24,46 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.inf.ray.imap.dir;
-
-import com.jcabi.log.Logger;
-import java.io.IOException;
-import org.apache.commons.lang.StringUtils;
+package com.netbout.inf.lattice;
 
 /**
- * Composite auditor of a baseline.
+ * Invalid call to the lattice.
  *
- * <p>Class is immutable and thread-safe.
+ * <p>This class is immutable and thread-safe.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-final class CompositeAuditor implements Auditor {
+final class LatticeException extends RuntimeException {
 
     /**
-     * {@inheritDoc}
+     * Serialization marker.
      */
-    @Override
-    public void audit(final Baseline base,
-        final Audit audit) throws IOException {
-        final long start = System.currentTimeMillis();
-        final Auditor[] auditors = new Auditor[] {
-            new NumbersAuditor(),
-            new ReversiveAuditor(),
-        };
-        if (StringUtils.equals(System.getProperty("netbout.prof"), "true")) {
-            Logger.warn(
-                this,
-                "#audit('%s'): skipped because of 'netbout.prof' system var",
-                base
-            );
-        } else {
-            for (Auditor auditor : auditors) {
-                auditor.audit(base, audit);
-            }
-            Logger.info(
-                this,
-                "#audit('%s', ..): done in %[ms]s",
-                base,
-                System.currentTimeMillis() - start
-            );
-        }
+    private static final long serialVersionUID = 0x7529FA189ED11179L;
+
+    /**
+     * Public ctor.
+     * @param cause The cause of it
+     */
+    public LatticeException(final Throwable cause) {
+        super(cause);
+    }
+
+    /**
+     * Public ctor.
+     * @param cause The cause of it
+     */
+    public LatticeException(final String cause) {
+        super(cause);
+    }
+
+    /**
+     * Public ctor.
+     * @param query The query that cause this problem
+     * @param thr The cause of it
+     */
+    public LatticeException(final String query, final Throwable thr) {
+        super(query, thr);
     }
 
 }

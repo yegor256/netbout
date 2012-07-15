@@ -31,6 +31,7 @@ import java.util.Iterator;
 import java.util.NoSuchElementException;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
+import org.apache.commons.lang.StringUtils;
 
 /**
  * Lazy list of message numbers.
@@ -40,6 +41,7 @@ import java.util.concurrent.atomic.AtomicReference;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
+@SuppressWarnings("PMD.TooManyMethods")
 final class LazyMessages implements Iterable<Long> {
 
     /**
@@ -72,7 +74,10 @@ final class LazyMessages implements Iterable<Long> {
      */
     @Override
     public Iterator<Long> iterator() {
-        return new MessagesIterator(this.term.copy(), this.ray.cursor());
+        return new MessagesIterator(
+            this.term.copy(),
+            this.ray.cursor()
+        );
     }
 
     /**
@@ -129,8 +134,7 @@ final class LazyMessages implements Iterable<Long> {
                     this.shifted.set(true);
                 }
                 boolean has;
-                if (System.currentTimeMillis() - this.start
-                    > LazyMessages.TIMEOUT) {
+                if (this.isExpired()) {
                     Logger.warn(
                         this,
                         "#hasNext(): slow iterator at '%s', over %[ms]s",
@@ -172,6 +176,18 @@ final class LazyMessages implements Iterable<Long> {
         @Override
         public void remove() {
             throw new UnsupportedOperationException("#remove()");
+        }
+        /**
+         * Is it expired already because of a time out?
+         * @return TRUE if expired and should be stopped
+         */
+        private boolean isExpired() {
+            return System.currentTimeMillis() - this.start
+                > LazyMessages.TIMEOUT
+                && !StringUtils.equals(
+                    System.getProperty("netbout.prof"),
+                    "true"
+                );
         }
     }
 }

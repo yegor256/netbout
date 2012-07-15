@@ -258,7 +258,8 @@
                                     <arguments>
                                         <!-- <argument>-agentlib:hprof=cpu=times,file=target/java.hprof,cutoff=0,interval=100</argument> -->
                                         <argument>-Xms256m</argument>
-                                        <argument>-Xmx1024m</argument>
+                                        <argument>-Xmx512m</argument>
+                                        <argument>-Dnetbout.prof=${netbout.prof}</argument>
                                         <argument>-classpath</argument>
                                         <classpath/>
                                         <argument>com.netbout.inf.DefaultInfinityProf</argument>
@@ -277,7 +278,8 @@
                                     <arguments>
                                         <!-- <argument>-agentlib:hprof=cpu=times,file=target/java.hprof,cutoff=0,interval=100</argument> -->
                                         <argument>-Xms256m</argument>
-                                        <argument>-Xmx1024m</argument>
+                                        <argument>-Xmx512m</argument>
+                                        <argument>-Dnetbout.prof=${netbout.prof}</argument>
                                         <argument>-classpath</argument>
                                         <classpath/>
                                         <argument>com.netbout.inf.LazyMessagesProf</argument>

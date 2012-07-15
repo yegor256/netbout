@@ -160,13 +160,16 @@ final class AndTerm implements Term {
     public Cursor shift(final Cursor cursor) {
         final ConcurrentMap<Term, Cursor> cache =
             new ConcurrentHashMap<Term, Cursor>();
-        Cursor slider = this.move(
-            this.terms.iterator().next(),
-            this.lattice().correct(cursor, this.shifter),
-            cache
-        );
+        Cursor slider = this.lattice().correct(cursor, this.shifter);
         if (!slider.end()) {
-            slider = this.slide(slider, cache);
+            slider = this.move(
+                this.terms.iterator().next(),
+                slider,
+                cache
+            );
+            if (!slider.end()) {
+                slider = this.slide(slider, cache);
+            }
         }
         return slider;
     }
@@ -237,7 +240,7 @@ final class AndTerm implements Term {
         if (cursor.msg().number() == Long.MAX_VALUE) {
             throw new IllegalArgumentException("can't use above()");
         }
-        return new MemCursor(cursor.msg().number() + 1, this.imap);
+        return cursor.shift(new JumpTerm(cursor.msg().number() + 1));
     }
 
     /**

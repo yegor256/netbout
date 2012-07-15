@@ -34,6 +34,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang.StringUtils;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.mockito.Mockito;
@@ -56,7 +57,7 @@ public final class DefaultInfinityProf {
      * @throws Exception If there is some problem inside
      */
     public static void main(final String... args) throws Exception {
-        if (System.getProperty("prof") != null) {
+        if (StringUtils.equals(System.getProperty("netbout.prof"), "true")) {
             new DefaultInfinityProf().run();
         }
     }
@@ -69,8 +70,8 @@ public final class DefaultInfinityProf {
         final Infinity inf = this.prepare();
         final String[] queries = new String[] {
             // "(and (or (talks-with 'urn:test:Jeff') (talks-with 'urn:facebook:1531296526')) (bundled) (limit 10))",
-            // "(and (talks-with 'urn:facebook:1531296526') (unbundled 5615) (unique $bout.number))",
-            "(and (talks-with 'urn:facebook:1531296526') (bundled))",
+            "(and (talks-with 'urn:facebook:1531296526') (unbundled 5615) (unique $bout.number))",
+            // "(and (talks-with 'urn:facebook:1531296526') (bundled) (unique $bout.number))",
         };
         for (int retry = 0; retry < 2; ++retry) {
             for (String query : queries) {
@@ -91,7 +92,7 @@ public final class DefaultInfinityProf {
     private Infinity prepare() throws Exception {
         final Folder folder = new FolderMocker().mock();
         FileUtils.copyDirectory(
-            new File("./src/prof/resources/com/netbout/inf/ray-3"),
+            new File("./src/prof/resources/com/netbout/inf/ray-2"),
             new File(folder.path(), "/ray")
         );
         return new DefaultInfinity(folder);

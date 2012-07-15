@@ -43,7 +43,7 @@ import java.util.BitSet;
 final class BitsetLattice implements Lattice {
 
     /**
-     * Total maximum number of bits in the lattice.
+     * Total maximum number of bits in the lattice (16384).
      */
     public static final int BITS = 16384;
 
@@ -106,11 +106,17 @@ final class BitsetLattice implements Lattice {
      */
     @Override
     public Cursor correct(final Cursor cursor, final Lattice.Shifter shifter) {
-        final int bit = BitsetLattice.bit(cursor.msg().number());
+        long number = cursor.msg().number();
+        if (number == Long.MAX_VALUE) {
+            number = BitsetLattice.BITS * BitsetLattice.SIZE;
+        }
+        final int bit = BitsetLattice.bit(Math.max(number - 1, 1L));
         final int next = this.main.nextSetBit(bit);
         Cursor corrected;
-        if (next != -1 && next > bit) {
-            final long msg = BitsetLattice.msg(next);
+        if (next == -1) {
+            corrected = shifter.shift(cursor, 0L);
+        } else if (next > bit) {
+            final long msg = BitsetLattice.msg(next) + 1;
             corrected = shifter.shift(cursor, msg);
             Logger.debug(
                 this,
@@ -130,22 +136,19 @@ final class BitsetLattice implements Lattice {
      * @param number The number
      * @return The bit
      */
-    public static int bit(final long number) {
-        int bit;
-        if (number == Long.MAX_VALUE) {
-            bit = 0;
-        } else if (number >= BitsetLattice.BITS * BitsetLattice.SIZE) {
-            throw new IllegalArgumentException(
+    @SuppressWarnings("PMD.DefaultPackage")
+    static int bit(final long number) {
+        if (number > BitsetLattice.BITS * BitsetLattice.SIZE) {
+            throw new LatticeException(
                 String.format("message #%d is out of range", number)
             );
-        } else if (number <= 0) {
-            throw new IllegalArgumentException(
+        }
+        if (number <= 0) {
+            throw new LatticeException(
                 String.format("message #%d is negative or zero", number)
             );
-        } else {
-            bit = BitsetLattice.BITS - (int) number / BitsetLattice.SIZE;
         }
-        return bit;
+        return BitsetLattice.BITS - (int) (number - 1) / BitsetLattice.SIZE - 1;
     }
 
     /**
@@ -154,13 +157,14 @@ final class BitsetLattice implements Lattice {
      * @return The message number
      * @see DefaultIndex#emptyBit(String,long)
      */
-    public static long msg(final int bit) {
-        if (bit > BitsetLattice.BITS + 1 || bit < 0) {
-            throw new IllegalArgumentException(
+    @SuppressWarnings("PMD.DefaultPackage")
+    static long msg(final int bit) {
+        if (bit >= BitsetLattice.BITS || bit < 0) {
+            throw new LatticeException(
                 String.format("bit #%d is out of range", bit)
             );
         }
-        return (BitsetLattice.BITS - bit + 1) * BitsetLattice.SIZE - 1;
+        return (BitsetLattice.BITS - bit) * BitsetLattice.SIZE;
     }
 
 }

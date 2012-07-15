@@ -106,7 +106,7 @@ final class MemTermBuilder implements TermBuilder {
      */
     @Override
     public Term not(final Term term) {
-        return new Valve(new NotTerm(this.imap, term));
+        return new NotTerm(this.imap, term);
     }
 
     /**
@@ -114,7 +114,7 @@ final class MemTermBuilder implements TermBuilder {
      */
     @Override
     public Term never() {
-        return new Valve(new NeverTerm(this.imap));
+        return new NeverTerm(this.imap);
     }
 
     /**
@@ -122,7 +122,7 @@ final class MemTermBuilder implements TermBuilder {
      */
     @Override
     public Term always() {
-        return new Valve(new AlwaysTerm(this.imap));
+        return new AlwaysTerm(this.imap);
     }
 
     /**
@@ -130,7 +130,7 @@ final class MemTermBuilder implements TermBuilder {
      */
     @Override
     public Term picker(final long number) {
-        return new Valve(new PickerTerm(this.imap, number));
+        return new PickerTerm(this.imap, number);
     }
 
 }

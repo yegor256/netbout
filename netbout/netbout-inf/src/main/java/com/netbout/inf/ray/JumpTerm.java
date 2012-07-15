@@ -29,24 +29,17 @@ package com.netbout.inf.ray;
 import com.netbout.inf.Cursor;
 import com.netbout.inf.Lattice;
 import com.netbout.inf.Term;
-import com.netbout.inf.lattice.LatticeBuilder;
-import java.util.Arrays;
-import java.util.TreeSet;
 
 /**
- * Picker term.
+ * Fast-jump term, that is treated by MemCursor in a special way, see
+ * {@code MemCursor#shift(Cursor)}.
  *
  * <p>The class is immutable and thread-safe.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-final class PickerTerm implements Term {
-
-    /**
-     * Index map.
-     */
-    private final transient IndexMap imap;
+final class JumpTerm implements Term {
 
     /**
      * Number of message to pick.
@@ -55,12 +48,18 @@ final class PickerTerm implements Term {
 
     /**
      * Public ctor.
-     * @param map The index map
-     * @param num The number
+     * @param num The number to jump to
      */
-    public PickerTerm(final IndexMap map, final long num) {
-        this.imap = map;
+    public JumpTerm(final long num) {
         this.number = num;
+    }
+
+    /**
+     * Get message number.
+     * @return The number
+     */
+    public long msg() {
+        return this.number;
     }
 
     /**
@@ -68,7 +67,9 @@ final class PickerTerm implements Term {
      */
     @Override
     public Term copy() {
-        return new PickerTerm(this.imap, this.number);
+        throw new UnsupportedOperationException(
+            "Method #copy() should never be called"
+        );
     }
 
     /**
@@ -76,7 +77,9 @@ final class PickerTerm implements Term {
      */
     @Override
     public int hashCode() {
-        return this.imap.hashCode() + this.toString().hashCode();
+        throw new UnsupportedOperationException(
+            "Method #hashCode() should never be called"
+        );
     }
 
     /**
@@ -84,8 +87,9 @@ final class PickerTerm implements Term {
      */
     @Override
     public boolean equals(final Object term) {
-        return term == this || (term instanceof PickerTerm
-            && this.hashCode() == term.hashCode());
+        throw new UnsupportedOperationException(
+            "Method #equals() should never be called"
+        );
     }
 
     /**
@@ -93,7 +97,7 @@ final class PickerTerm implements Term {
      */
     @Override
     public String toString() {
-        return String.format("(PICKER %d)", this.number);
+        return String.format("(JUMP %d)", this.number);
     }
 
     /**
@@ -101,9 +105,9 @@ final class PickerTerm implements Term {
      */
     @Override
     public Lattice lattice() {
-        return new LatticeBuilder()
-            .fill(new TreeSet<Long>(Arrays.asList(this.number)))
-            .build();
+        throw new UnsupportedOperationException(
+            "Method #lattice() should never be called"
+        );
     }
 
     /**
@@ -111,13 +115,7 @@ final class PickerTerm implements Term {
      */
     @Override
     public Cursor shift(final Cursor cursor) {
-        Cursor shifted;
-        if (cursor.msg().number() > this.number) {
-            shifted = cursor.shift(new JumpTerm(this.number));
-        } else {
-            shifted = cursor.shift(new JumpTerm(0L));
-        }
-        return shifted;
+        throw new UnsupportedOperationException();
     }
 
 }
