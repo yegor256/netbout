@@ -84,29 +84,24 @@ public final class LatticeBuilder {
             long delta = 0;
             for (Long num : numbers) {
                 if (num == previous) {
-                    throw new IllegalArgumentException(
+                    throw new LatticeException(
                         "duplicate numbers not allowed"
                     );
                 }
                 if (num > previous) {
-                    throw new IllegalArgumentException(
+                    throw new LatticeException(
                         "numbers should be reverse-ordered"
                     );
                 }
                 final int bit = BitsetLattice.bit(num);
-                this.main.set(bit);
+                this.main.set(bit, true);
                 delta = previous - num;
                 if (delta > 1) {
-                    this.reverse.set(BitsetLattice.bit(previous), bit);
+                    LatticeBuilder.range(this.reverse, previous, num);
                 }
                 previous = num;
             }
-            if (delta != 1) {
-                this.reverse.set(
-                    BitsetLattice.bit(previous),
-                    BitsetLattice.bit(1L)
-                );
-            }
+            LatticeBuilder.range(this.reverse, previous, 0L);
             this.started.set(true);
         }
         return this;
@@ -164,7 +159,7 @@ public final class LatticeBuilder {
      */
     public LatticeBuilder and(final Collection<Term> terms) {
         if (!this.started.get()) {
-            throw new IllegalStateException(
+            throw new LatticeException(
                 "can't call #and(), start with always(), fill(), or never()"
             );
         }
@@ -188,7 +183,7 @@ public final class LatticeBuilder {
     @SuppressWarnings("PMD.ShortMethodName")
     public LatticeBuilder or(final Collection<Term> terms) {
         if (!this.started.get()) {
-            throw new IllegalStateException(
+            throw new LatticeException(
                 "can't call #or(), start with always(), fill(), or never()"
             );
         }
@@ -209,7 +204,7 @@ public final class LatticeBuilder {
      */
     public LatticeBuilder revert() {
         if (!this.started.get()) {
-            throw new IllegalStateException(
+            throw new LatticeException(
                 "can't call #revert(), start with always(), fill(), or never()"
             );
         }
@@ -230,19 +225,44 @@ public final class LatticeBuilder {
     public LatticeBuilder update(final long number,
         final SortedSet<Long> numbers) {
         if (!this.started.get()) {
-            throw new IllegalStateException(
+            throw new LatticeException(
                 "can't call #set(), start with always(), fill(), or never()"
             );
         }
         synchronized (this.started) {
             final int bit = BitsetLattice.bit(number);
+            long right;
+            if (bit < BitsetLattice.BITS - 1) {
+                right = BitsetLattice.msg(bit + 1);
+            } else {
+                right = 0L;
+            }
             final Collection<Long> window = numbers
                 .tailSet(BitsetLattice.msg(bit))
-                .headSet(BitsetLattice.msg(bit + 1));
+                .headSet(right);
             this.main.set(bit, !window.isEmpty());
             this.reverse.set(bit, window.size() < BitsetLattice.SIZE);
         }
         return this;
+    }
+
+    /**
+     * Set bits for the range.
+     * @param bitset The bitset to use
+     * @param left FROM message number (bigger than TO)
+     * @param right TO message number
+     */
+    private static void range(final BitSet bitset, final long left,
+        final long right) {
+        if (left > 1) {
+            int lbit;
+            if (left == Long.MAX_VALUE) {
+                lbit = 0;
+            } else {
+                lbit = BitsetLattice.bit(left - 1);
+            }
+            bitset.set(lbit, BitsetLattice.bit(right + 1) + 1);
+        }
     }
 
 }
