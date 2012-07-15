@@ -219,6 +219,9 @@ final class MemCursor implements Cursor {
             }
             shifted = new MemCursor(msg, this.imap, this.step + 1);
         } else {
+            if (this.end()) {
+                throw new IllegalStateException("can't shift END cursor");
+            }
             shifted = term.shift(this);
         }
         return shifted;
