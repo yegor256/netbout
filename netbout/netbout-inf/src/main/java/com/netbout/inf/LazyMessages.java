@@ -30,6 +30,7 @@ import com.jcabi.log.Logger;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 
 /**
@@ -72,7 +73,130 @@ final class LazyMessages implements Iterable<Long> {
      */
     @Override
     public Iterator<Long> iterator() {
-        return new MessagesIterator(this.term.copy(), this.ray.cursor());
+        return new MessagesIterator(
+            this.term.copy(),
+            new LazyMessages.CapCursor(this.ray.cursor())
+        );
+    }
+
+    /**
+     * Cursor that allows only certain amount of shifts.
+     *
+     * <p>The class is thread-safe.
+     */
+    private static final class CapCursor implements Cursor {
+        /**
+         * Original cursor.
+         */
+        private final transient Cursor origin;
+        /**
+         * How many times we already shifted this cursor.
+         */
+        private final transient AtomicInteger count = new AtomicInteger();
+        /**
+         * Public ctor.
+         * @param cursor Original cursor
+         */
+        public CapCursor(final Cursor cursor) {
+            this.origin = cursor;
+        }
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public String toString() {
+            return this.origin.toString();
+        }
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public int hashCode() {
+            return this.origin.hashCode();
+        }
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public boolean equals(final Object cursor) {
+            return this.origin.equals(cursor);
+        }
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public int compareTo(final Cursor cursor) {
+            return this.origin.compareTo(cursor);
+        }
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public void add(final Term term, final Attribute attr, final String value) {
+            throw new UnsupportedOperationException();
+        }
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public void replace(final Term term, final Attribute attr,
+            final String value) {
+            throw new UnsupportedOperationException();
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public void delete(final Term term, final Attribute attr) {
+            throw new UnsupportedOperationException();
+        }
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public void delete(final Term term, final Attribute attr,
+            final String value) {
+            throw new UnsupportedOperationException();
+        }
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public Cursor shift(final Term term) {
+            // @checkstyle MagicNumber (1 line)
+            if (this.count.incrementAndGet() > 20) {
+                Logger.warn(
+                    this,
+                    "#shift('%s'): %s shifted %d times already",
+                    term,
+                    this,
+                    this.count.get()
+                );
+            }
+            return this.origin.shift(term);
+        }
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public Cursor copy() {
+            return this.origin.copy();
+        }
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public Msg msg() {
+            return this.origin.msg();
+        }
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public boolean end() {
+            return this.origin.end();
+        }
     }
 
     /**
