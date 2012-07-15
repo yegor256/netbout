@@ -254,7 +254,7 @@ public final class LatticeBuilder {
      */
     private static void range(final BitSet bitset, final long left,
         final long right) {
-        if (left > 1) {
+        if (left > 1 && right < BitsetLattice.SIZE * BitsetLattice.SIZE) {
             int lbit;
             if (left == Long.MAX_VALUE) {
                 lbit = 0;

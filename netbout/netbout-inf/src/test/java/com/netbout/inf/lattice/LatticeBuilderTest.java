@@ -121,7 +121,7 @@ public final class LatticeBuilderTest {
         final SortedSet<Long> numbers = new TreeSet<Long>(
             Collections.reverseOrder()
         );
-        for (long msg = 1000; msg > 10; --msg) {
+        for (long msg = 1000; msg > 500; --msg) {
             numbers.add(msg);
         }
         final LatticeBuilder builder = new LatticeBuilder().never();

@@ -33,7 +33,7 @@
     </test>
     <test>
         <numbers reverse="true">
-            10000, 5000, 1500, 500-100
+            10000, 5000, 1500, 800-100
         </numbers>
         <asserts>
             <assert>
@@ -52,9 +52,9 @@
                 <value>3000</value>
             </assert>
             <assert>
-                <cursor>499</cursor>
+                <cursor>400</cursor>
                 <matcher>lessThan</matcher>
-                <value>499</value>
+                <value>400</value>
             </assert>
             <assert>
                 <cursor>49</cursor>
