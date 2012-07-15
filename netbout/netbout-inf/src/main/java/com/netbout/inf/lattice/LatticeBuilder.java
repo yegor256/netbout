@@ -101,7 +101,9 @@ public final class LatticeBuilder {
                 }
                 previous = num;
             }
-            LatticeBuilder.range(this.reverse, previous, 0L);
+            if (previous > 1L) {
+                LatticeBuilder.range(this.reverse, previous, 0L);
+            }
             this.started.set(true);
         }
         return this;
@@ -247,22 +249,23 @@ public final class LatticeBuilder {
     }
 
     /**
-     * Set bits for the range.
+     * Set reverse bits for the range, where we assume that all numbers between
+     * provided "left" and "right" are missed, and ONEs should be set for
+     * them in the provided bitset.
      * @param bitset The bitset to use
-     * @param left FROM message number (bigger than TO)
+     * @param left FROM message number (bigger than TO, and bigger than 1L)
      * @param right TO message number
      */
     private static void range(final BitSet bitset, final long left,
         final long right) {
-        if (left > 1 && right < BitsetLattice.SIZE * BitsetLattice.SIZE) {
-            int lbit;
-            if (left == Long.MAX_VALUE) {
-                lbit = 0;
-            } else {
-                lbit = BitsetLattice.bit(left - 1);
-            }
-            bitset.set(lbit, BitsetLattice.bit(right + 1) + 1);
+        int lbit;
+        if (left == Long.MAX_VALUE) {
+            lbit = 0;
+        } else {
+            lbit = BitsetLattice.bit(left - 1);
         }
+        final int rbit = BitsetLattice.bit(right + 1);
+        bitset.set(lbit, rbit + 1);
     }
 
 }
