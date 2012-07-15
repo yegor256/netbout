@@ -92,15 +92,19 @@ public final class BitsetLatticeTest {
      * @return Lattice
      */
     private static Lattice lattice(final String text) {
-        final String[] parts = text.split("[^0-9]*,[^0-9]*");
-        final Long[] nums = new Long[parts.length];
-        for (int pos = 0; pos < parts.length; ++pos) {
-            nums[pos] = Long.valueOf(parts[pos]);
-        }
+        final String[] parts = text.split("\\s*,\\s*");
         final SortedSet<Long> numbers =
             new TreeSet<Long>(Collections.reverseOrder());
-        for (long number : nums) {
-            numbers.add(number);
+        for (int pos = 0; pos < parts.length; ++pos) {
+            if (parts[pos].contains("-")) {
+                final String[] range = parts[pos].split("-", 2);
+                for (long msg = Long.valueOf(range[0].trim());
+                    msg > Long.valueOf(range[1].trim()); --msg) {
+                    numbers.add(msg);
+                }
+            } else {
+                numbers.add(Long.valueOf(parts[pos].trim()));
+            }
         }
         return new LatticeBuilder().fill(numbers).build();
     }
