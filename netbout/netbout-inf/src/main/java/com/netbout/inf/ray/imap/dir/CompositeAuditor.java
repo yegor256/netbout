@@ -28,6 +28,7 @@ package com.netbout.inf.ray.imap.dir;
 
 import com.jcabi.log.Logger;
 import java.io.IOException;
+import org.apache.commons.lang.StringUtils;
 
 /**
  * Composite auditor of a baseline.
@@ -50,15 +51,23 @@ final class CompositeAuditor implements Auditor {
             new NumbersAuditor(),
             new ReversiveAuditor(),
         };
-        for (Auditor auditor : auditors) {
-            auditor.audit(base, audit);
+        if (StringUtils.equals(System.getProperty("netbout.prof"), "true")) {
+            Logger.warn(
+                this,
+                "#audit('%s'): skipped because of 'netbout.prof' system var",
+                base
+            );
+        } else {
+            for (Auditor auditor : auditors) {
+                auditor.audit(base, audit);
+            }
+            Logger.info(
+                this,
+                "#audit('%s', ..): done in %[ms]s",
+                base,
+                System.currentTimeMillis() - start
+            );
         }
-        Logger.info(
-            this,
-            "#audit('%s', ..): done in %[ms]s",
-            base,
-            System.currentTimeMillis() - start
-        );
     }
 
 }

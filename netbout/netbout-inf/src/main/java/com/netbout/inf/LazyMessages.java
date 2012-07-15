@@ -41,6 +41,7 @@ import java.util.concurrent.atomic.AtomicReference;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
+@SuppressWarnings("PMD.TooManyMethods")
 final class LazyMessages implements Iterable<Long> {
 
     /**
