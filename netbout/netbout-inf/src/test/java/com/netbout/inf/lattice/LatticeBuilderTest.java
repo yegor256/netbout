@@ -113,6 +113,28 @@ public final class LatticeBuilderTest {
     }
 
     /**
+     * LatticeBuilder can create reverse lattice correctly, with dense nums.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void createsAndFillsReverseLatticeWithDenseNums() throws Exception {
+        final SortedSet<Long> numbers = new TreeSet<Long>(
+            Collections.reverseOrder()
+        );
+        for (long msg = 1000; msg > 10; --msg) {
+            numbers.add(msg);
+        }
+        final LatticeBuilder builder = new LatticeBuilder().never();
+        for (Long number : numbers) {
+            builder.update(number, numbers);
+        }
+        MatcherAssert.assertThat(
+            new LatticeBuilder().fill(numbers).revert().build(),
+            Matchers.equalTo(builder.revert().build())
+        );
+    }
+
+    /**
      * LatticeBuilder can throw exception for ZERO message number.
      * @throws Exception If there is some problem inside
      */
