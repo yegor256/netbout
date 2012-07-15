@@ -102,10 +102,7 @@ final class AlwaysTerm implements Term {
      */
     @Override
     public Cursor shift(final Cursor cursor) {
-        return new MemCursor(
-            this.next(cursor.msg().number()),
-            this.imap
-        );
+        return cursor.shift(new JumpTerm(this.next(cursor.msg().number())));
     }
 
     /**

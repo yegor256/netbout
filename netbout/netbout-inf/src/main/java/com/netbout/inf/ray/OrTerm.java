@@ -162,7 +162,7 @@ final class OrTerm implements Term {
             }
         }
         if (found == null) {
-            found = new MemCursor(0L, this.imap);
+            found = cursor.shift(new NeverTerm(this.imap));
         }
         return found;
     }

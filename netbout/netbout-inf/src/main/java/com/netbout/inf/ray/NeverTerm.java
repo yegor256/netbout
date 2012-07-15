@@ -100,7 +100,7 @@ final class NeverTerm implements Term {
      */
     @Override
     public Cursor shift(final Cursor cursor) {
-        return new MemCursor(0L, this.imap);
+        return cursor.shift(new JumpTerm(0L));
     }
 
 }

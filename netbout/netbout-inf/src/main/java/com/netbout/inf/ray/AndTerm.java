@@ -237,7 +237,7 @@ final class AndTerm implements Term {
         if (cursor.msg().number() == Long.MAX_VALUE) {
             throw new IllegalArgumentException("can't use above()");
         }
-        return new MemCursor(cursor.msg().number() + 1, this.imap);
+        return cursor.shift(new JumpTerm(cursor.msg().number() + 1));
     }
 
     /**

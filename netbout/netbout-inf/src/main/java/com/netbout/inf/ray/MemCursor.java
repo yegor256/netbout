@@ -185,7 +185,13 @@ final class MemCursor implements Cursor {
      */
     @Override
     public Cursor shift(final Term term) {
-        return term.shift(this);
+        Cursor shifted;
+        if (term instanceof JumpTerm) {
+            shifted = new MemCursor(JumpTerm.class.cast(term).msg(), this.imap);
+        } else {
+            shifted = term.shift(this);
+        }
+        return shifted;
     }
 
     /**
