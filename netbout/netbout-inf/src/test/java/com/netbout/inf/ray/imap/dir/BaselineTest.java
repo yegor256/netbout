@@ -31,6 +31,7 @@ import java.io.File;
 import org.apache.commons.io.FileUtils;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
+import org.junit.Assume;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
@@ -68,6 +69,10 @@ public final class BaselineTest {
      */
     @Test
     public void auditsAndCleansDirectoryBeforeStart() throws Exception {
+        Assume.assumeThat(
+            System.getProperty("netbout.prof"),
+            Matchers.not(Matchers.equalTo("true"))
+        );
         final File dir = this.temp.newFolder("foo-4");
         FileUtils.writeStringToFile(
             new File(dir, "/some-attribute/catalog-slow.inf"),

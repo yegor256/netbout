@@ -29,9 +29,6 @@ package com.netbout.inf.ray;
 import com.netbout.inf.Cursor;
 import com.netbout.inf.Lattice;
 import com.netbout.inf.Term;
-import com.netbout.inf.lattice.LatticeBuilder;
-import java.util.Arrays;
-import java.util.TreeSet;
 
 /**
  * Fast-jump term, that is treated by MemCursor in a special way, see

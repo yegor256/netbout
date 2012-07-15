@@ -30,7 +30,6 @@ import com.jcabi.log.Logger;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 import org.apache.commons.lang.StringUtils;
 
@@ -135,9 +134,7 @@ final class LazyMessages implements Iterable<Long> {
                     this.shifted.set(true);
                 }
                 boolean has;
-                if (System.currentTimeMillis() - this.start
-                    > LazyMessages.TIMEOUT && !StringUtils.equals(
-                    System.getProperty("netbout.prof"), "true")) {
+                if (this.isExpired()) {
                     Logger.warn(
                         this,
                         "#hasNext(): slow iterator at '%s', over %[ms]s",
@@ -179,6 +176,18 @@ final class LazyMessages implements Iterable<Long> {
         @Override
         public void remove() {
             throw new UnsupportedOperationException("#remove()");
+        }
+        /**
+         * Is it expired already because of a time out?
+         * @return TRUE if expired and should be stopped
+         */
+        private boolean isExpired() {
+            return System.currentTimeMillis() - this.start
+                > LazyMessages.TIMEOUT
+                && !StringUtils.equals(
+                    System.getProperty("netbout.prof"),
+                    "true"
+                );
         }
     }
 }
