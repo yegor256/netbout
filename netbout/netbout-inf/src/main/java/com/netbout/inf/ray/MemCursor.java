@@ -206,7 +206,7 @@ final class MemCursor implements Cursor {
         if (term instanceof JumpTerm) {
             long msg;
             // @checkstyle MagicNumber (1 line)
-            if (this.step > 50) {
+            if (this.step > 100) {
                 Logger.warn(
                     this,
                     "#shift('%s'): shifted %d times already",
