@@ -68,7 +68,7 @@ final class Mux implements Closeable {
      * How many threads to use.
      */
     private static final int THREADS =
-        Runtime.getRuntime().availableProcessors() * 4;
+        Runtime.getRuntime().availableProcessors();
 
     /**
      * The ray.
