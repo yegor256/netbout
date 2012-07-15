@@ -147,21 +147,23 @@ final class NotTerm implements Term {
     @Override
     public Cursor shift(final Cursor cursor) {
         final Cursor corrected = this.lattice().correct(cursor, this.shifter);
-        if (this.matcher.get() == null
-            || cursor.compareTo(this.matcher.get()) < 0) {
-            this.matcher.set(corrected.shift(this.term));
-        }
         Cursor always = corrected;
-        final Term aterm = new AlwaysTerm(this.imap);
-        while (true) {
-            always = always.shift(aterm);
-            if (always.end() || this.matcher.get().end()) {
-                break;
+        if (!always.end()) {
+            final Term aterm = new AlwaysTerm(this.imap);
+            if (this.matcher.get() == null
+                || cursor.compareTo(this.matcher.get()) < 0) {
+                this.matcher.set(corrected.shift(this.term));
             }
-            if (always.compareTo(this.matcher.get()) > 0) {
-                break;
+            while (true) {
+                always = always.shift(aterm);
+                if (always.end() || this.matcher.get().end()) {
+                    break;
+                }
+                if (always.compareTo(this.matcher.get()) > 0) {
+                    break;
+                }
+                this.matcher.set(this.matcher.get().shift(this.term));
             }
-            this.matcher.set(this.matcher.get().shift(this.term));
         }
         return always;
     }

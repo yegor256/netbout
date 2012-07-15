@@ -70,7 +70,7 @@ public final class DefaultInfinityProf {
         final Infinity inf = this.prepare();
         final String[] queries = new String[] {
             // "(and (or (talks-with 'urn:test:Jeff') (talks-with 'urn:facebook:1531296526')) (bundled) (limit 10))",
-            // "(and (talks-with 'urn:facebook:1531296526') (unbundled 5615) (unique $bout.number))",
+            "(and (talks-with 'urn:facebook:1531296526') (unbundled 5615) (unique $bout.number))",
             "(and (talks-with 'urn:facebook:1531296526') (bundled) (unique $bout.number))",
         };
         for (int retry = 0; retry < 2; ++retry) {
