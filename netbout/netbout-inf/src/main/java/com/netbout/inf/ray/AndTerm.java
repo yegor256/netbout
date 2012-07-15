@@ -160,13 +160,16 @@ final class AndTerm implements Term {
     public Cursor shift(final Cursor cursor) {
         final ConcurrentMap<Term, Cursor> cache =
             new ConcurrentHashMap<Term, Cursor>();
-        Cursor slider = this.move(
-            this.terms.iterator().next(),
-            this.lattice().correct(cursor, this.shifter),
-            cache
-        );
+        Cursor slider = this.lattice().correct(cursor, this.shifter);
         if (!slider.end()) {
-            slider = this.slide(slider, cache);
+            slider = this.move(
+                this.terms.iterator().next(),
+                slider,
+                cache
+            );
+            if (!slider.end()) {
+                slider = this.slide(slider, cache);
+            }
         }
         return slider;
     }

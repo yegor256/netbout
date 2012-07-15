@@ -106,17 +106,17 @@ final class BitsetLattice implements Lattice {
      */
     @Override
     public Cursor correct(final Cursor cursor, final Lattice.Shifter shifter) {
-        final long number = cursor.msg().number();
-        int bit;
+        long number = cursor.msg().number();
         if (number == Long.MAX_VALUE) {
-            bit = 0;
-        } else {
-            bit = BitsetLattice.bit(number);
+            number = BitsetLattice.BITS * BitsetLattice.SIZE;
         }
+        final int bit = BitsetLattice.bit(Math.max(number - 1, 1L));
         final int next = this.main.nextSetBit(bit);
         Cursor corrected;
-        if (next != -1 && next > bit) {
-            final long msg = BitsetLattice.msg(next);
+        if (next == -1) {
+            corrected = shifter.shift(cursor, 0L);
+        } else if (next > bit) {
+            final long msg = BitsetLattice.msg(next) + 1;
             corrected = shifter.shift(cursor, msg);
             Logger.debug(
                 this,
@@ -136,6 +136,7 @@ final class BitsetLattice implements Lattice {
      * @param number The number
      * @return The bit
      */
+    @SuppressWarnings("PMD.DefaultPackage")
     static int bit(final long number) {
         if (number > BitsetLattice.BITS * BitsetLattice.SIZE) {
             throw new LatticeException(
@@ -156,6 +157,7 @@ final class BitsetLattice implements Lattice {
      * @return The message number
      * @see DefaultIndex#emptyBit(String,long)
      */
+    @SuppressWarnings("PMD.DefaultPackage")
     static long msg(final int bit) {
         if (bit >= BitsetLattice.BITS || bit < 0) {
             throw new LatticeException(

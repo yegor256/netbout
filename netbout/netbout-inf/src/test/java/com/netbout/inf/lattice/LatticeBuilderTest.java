@@ -54,8 +54,11 @@ import org.mockito.Mockito;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  * @checkstyle MagicNumber (500 lines)
+ * @checkstyle ClassDataAbstractionCoupling (500 lines)
  */
-@SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
+@SuppressWarnings({
+    "PMD.AvoidInstantiatingObjectsInLoops", "PMD.TooManyMethods"
+})
 public final class LatticeBuilderTest {
 
     /**
@@ -174,7 +177,9 @@ public final class LatticeBuilderTest {
         );
         MatcherAssert.assertThat(
             BitsetLattice.msg(1),
-            Matchers.equalTo((long) (BitsetLattice.BITS - 1) * BitsetLattice.SIZE)
+            Matchers.equalTo(
+                (long) (BitsetLattice.BITS - 1) * BitsetLattice.SIZE
+            )
         );
         MatcherAssert.assertThat(
             BitsetLattice.msg(BitsetLattice.BITS - 2),
