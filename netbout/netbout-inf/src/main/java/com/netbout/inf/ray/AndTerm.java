@@ -199,7 +199,7 @@ final class AndTerm implements Term {
      */
     private Cursor slide(final Cursor cursor,
         final ConcurrentMap<Term, Cursor> cache) {
-        Cursor slider = cursor;
+        Cursor slider = this.lattice().correct(cursor, this.shifter);
         boolean match;
         do {
             match = true;

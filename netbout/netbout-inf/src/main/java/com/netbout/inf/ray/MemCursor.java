@@ -213,7 +213,7 @@ final class MemCursor implements Cursor {
                 this.step + 1
             );
         // @checkstyle MagicNumber (1 line)
-        } else if (this.step > 100000) {
+        } else if (this.step > 10000) {
             Logger.warn(
                 this,
                 "#shift('%s'): shifted %d times already",
