@@ -32,6 +32,7 @@ import java.util.NoSuchElementException;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
+import org.apache.commons.lang.StringUtils;
 
 /**
  * Lazy list of message numbers.
@@ -93,13 +94,22 @@ final class LazyMessages implements Iterable<Long> {
         /**
          * How many times we already shifted this cursor.
          */
-        private final transient AtomicInteger count = new AtomicInteger();
+        private final transient int step;
         /**
          * Public ctor.
          * @param cursor Original cursor
          */
         public CapCursor(final Cursor cursor) {
+            this(cursor, 0);;
+        }
+        /**
+         * Public ctor.
+         * @param cursor Original cursor
+         * @param stp Which step is running now
+         */
+        private CapCursor(final Cursor cursor, final int stp) {
             this.origin = cursor;
+            this.step = stp;
         }
         /**
          * {@inheritDoc}
@@ -166,16 +176,16 @@ final class LazyMessages implements Iterable<Long> {
         @Override
         public Cursor shift(final Term term) {
             // @checkstyle MagicNumber (1 line)
-            if (this.count.incrementAndGet() > 20) {
+            if (this.step > 20) {
                 Logger.warn(
                     this,
                     "#shift('%s'): %s shifted %d times already",
                     term,
                     this,
-                    this.count.get()
+                    this.step
                 );
             }
-            return this.origin.shift(term);
+            return new CapCursor(this.origin.shift(term), this.step + 1);
         }
         /**
          * {@inheritDoc}
@@ -255,7 +265,8 @@ final class LazyMessages implements Iterable<Long> {
                 }
                 boolean has;
                 if (System.currentTimeMillis() - this.start
-                    > LazyMessages.TIMEOUT) {
+                    > LazyMessages.TIMEOUT && !StringUtils.equals(
+                    System.getProperty("netbout.prof"), "true")) {
                     Logger.warn(
                         this,
                         "#hasNext(): slow iterator at '%s', over %[ms]s",
