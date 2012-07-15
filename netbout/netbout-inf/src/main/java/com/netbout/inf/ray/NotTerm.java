@@ -64,6 +64,23 @@ final class NotTerm implements Term {
         new AtomicReference<Cursor>();
 
     /**
+     * Shifter for lattice.
+     */
+    private final transient Lattice.Shifter shifter = new Lattice.Shifter() {
+        @Override
+        public Cursor shift(final Cursor crsr, final long msg) {
+            if (msg >= crsr.msg().number()) {
+                throw new IllegalArgumentException("shift back is prohibited");
+            }
+            return crsr.shift(new PickerTerm(NotTerm.this.imap, msg));
+        }
+        @Override
+        public String toString() {
+            return NotTerm.this.toString();
+        }
+    };
+
+    /**
      * Public ctor.
      * @param map The index map
      * @param trm The term
@@ -129,21 +146,25 @@ final class NotTerm implements Term {
      */
     @Override
     public Cursor shift(final Cursor cursor) {
-        if (this.matcher.get() == null
-            || cursor.compareTo(this.matcher.get()) < 0) {
-            this.matcher.set(cursor.shift(this.term));
-        }
-        Cursor always = cursor;
-        final Term aterm = new AlwaysTerm(this.imap);
-        while (true) {
-            always = always.shift(aterm);
-            if (always.end() || this.matcher.get().end()) {
-                break;
+        Cursor always = this.lattice().correct(cursor, this.shifter);
+        if (!always.end()) {
+            final Term aterm = new AlwaysTerm(this.imap);
+            if (this.matcher.get() == null
+                || cursor.compareTo(this.matcher.get()) < 0) {
+                this.matcher.set(always.shift(this.term));
             }
-            if (always.compareTo(this.matcher.get()) > 0) {
-                break;
+            while (true) {
+                always = this.lattice()
+                    .correct(always, this.shifter)
+                    .shift(aterm);
+                if (always.end() || this.matcher.get().end()) {
+                    break;
+                }
+                if (always.compareTo(this.matcher.get()) > 0) {
+                    break;
+                }
+                this.matcher.set(always.shift(this.term));
             }
-            this.matcher.set(this.matcher.get().shift(this.term));
         }
         return always;
     }

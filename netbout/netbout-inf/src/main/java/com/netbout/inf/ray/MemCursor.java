@@ -202,22 +202,25 @@ final class MemCursor implements Cursor {
      */
     @Override
     public Cursor shift(final Term term) {
+        if (this.end()) {
+            throw new IllegalStateException("can't shift END cursor");
+        }
         Cursor shifted;
         if (term instanceof JumpTerm) {
-            long msg;
-            // @checkstyle MagicNumber (1 line)
-            if (this.step > 100) {
-                Logger.warn(
-                    this,
-                    "#shift('%s'): shifted %d times already",
-                    term,
-                    this.step
-                );
-                msg = 0L;
-            } else {
-                msg = JumpTerm.class.cast(term).msg();
-            }
-            shifted = new MemCursor(msg, this.imap, this.step + 1);
+            shifted = new MemCursor(
+                JumpTerm.class.cast(term).msg(),
+                this.imap,
+                this.step + 1
+            );
+        // @checkstyle MagicNumber (1 line)
+        } else if (this.step > 10000) {
+            Logger.warn(
+                this,
+                "#shift('%s'): shifted %d times already",
+                term,
+                this.step
+            );
+            shifted = new MemCursor(0L, this.imap, 0);
         } else {
             shifted = term.shift(this);
         }

@@ -132,18 +132,22 @@ final class Mux implements Closeable {
     public Mux(final Ray iray, final Store str) {
         this.ray = iray;
         this.store = str;
+        // @checkstyle AnonInnerLength (30 lines)
         final Runnable runnable = new Runnable() {
             @Override
             public void run() {
                 try {
                     Mux.this.flush();
                     Mux.this.semaphore.acquire();
-                    final MuxTask task = Mux.this.queue.take();
-                    task.run();
-                    for (Urn who : task.dependants()) {
-                        Mux.this.dependants.get(who).decrementAndGet();
+                    final MuxTask task =
+                        Mux.this.queue.poll(1, TimeUnit.MINUTES);
+                    if (task != null) {
+                        task.run();
+                        for (Urn who : task.dependants()) {
+                            Mux.this.dependants.get(who).decrementAndGet();
+                        }
+                        Mux.this.stats.addValue((double) task.time());
                     }
-                    Mux.this.stats.addValue((double) task.time());
                 } catch (InterruptedException ex) {
                     Thread.currentThread().interrupt();
                 } finally {

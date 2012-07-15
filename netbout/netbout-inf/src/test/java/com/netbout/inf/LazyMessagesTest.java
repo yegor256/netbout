@@ -26,8 +26,11 @@
  */
 package com.netbout.inf;
 
+import com.netbout.inf.ray.MemRay;
+import java.util.Iterator;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
+import org.junit.Assert;
 import org.junit.Test;
 
 /**
@@ -47,6 +50,25 @@ public final class LazyMessagesTest {
         final Term term = new TermMocker().mock();
         final Iterable<Long> msgs = new LazyMessages(ray, term);
         MatcherAssert.assertThat(msgs, Matchers.notNullValue());
+    }
+
+    /**
+     * LazyMessages can stop at the end of cursor.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void stopsIteratorOnEndOfCursor() throws Exception {
+        final Ray ray = new MemRay(new FolderMocker().mock().path());
+        final Term term = ray.builder().never();
+        final Iterable<Long> msgs = new LazyMessages(ray, term);
+        final Iterator<Long> iterator = msgs.iterator();
+        MatcherAssert.assertThat(iterator.hasNext(), Matchers.is(false));
+        try {
+            iterator.next();
+            Assert.fail("exception expected");
+        } catch (java.util.NoSuchElementException ex) {
+            MatcherAssert.assertThat(iterator.hasNext(), Matchers.is(false));
+        }
     }
 
 }
