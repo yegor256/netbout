@@ -223,14 +223,6 @@ final class MemCursor implements Cursor {
             );
         } else {
             shifted = term.shift(this);
-            // Logger.debug(
-            //     this,
-            //     "#shift('%s'): #%d: %s to %s",
-            //     term,
-            //     this.step,
-            //     this,
-            //     shifted
-            // ); // delete me
         }
         return shifted;
     }

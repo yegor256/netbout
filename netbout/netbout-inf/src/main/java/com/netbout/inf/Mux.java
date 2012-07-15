@@ -132,6 +132,7 @@ final class Mux implements Closeable {
     public Mux(final Ray iray, final Store str) {
         this.ray = iray;
         this.store = str;
+        // @checkstyle AnonInnerLength (30 lines)
         final Runnable runnable = new Runnable() {
             @Override
             public void run() {

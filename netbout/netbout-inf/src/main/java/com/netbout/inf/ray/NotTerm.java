@@ -146,7 +146,7 @@ final class NotTerm implements Term {
      */
     @Override
     public Cursor shift(final Cursor cursor) {
-        Cursor corrected = this.lattice().correct(cursor, this.shifter);
+        final Cursor corrected = this.lattice().correct(cursor, this.shifter);
         if (this.matcher.get() == null
             || cursor.compareTo(this.matcher.get()) < 0) {
             this.matcher.set(corrected.shift(this.term));
