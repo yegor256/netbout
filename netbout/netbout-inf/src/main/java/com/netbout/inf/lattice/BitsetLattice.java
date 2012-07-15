@@ -120,10 +120,12 @@ final class BitsetLattice implements Lattice {
             corrected = shifter.shift(cursor, msg);
             Logger.debug(
                 this,
-                "#correct(#%d, %s): moved to #%d",
+                "#correct(#%d, %s): moved to #%d (bit=%d, next=%d)",
                 cursor.msg().number(),
                 shifter,
-                msg
+                msg,
+                bit,
+                next
             );
         } else {
             corrected = cursor;

@@ -91,10 +91,11 @@ public final class LatticeBuilderTest {
     @Test
     public void createsAndFillsReverseLattice() throws Exception {
         final Long[][] samples = new Long[][] {
+            {},
             {500L, 135L, 134L},
             {5L, 4L, 3L, 2L, 1L},
             {505L, 504L, 503L, 502L},
-            {129L, 128L, 64L, 63L},
+            {65536L, 32768L, 129L, 128L, 64L, 63L},
         };
         for (Long[] sample : samples) {
             final SortedSet<Long> numbers = new TreeSet<Long>(
@@ -106,7 +107,9 @@ public final class LatticeBuilderTest {
                 builder.update(number, numbers);
             }
             MatcherAssert.assertThat(
-                new LatticeBuilder().fill(numbers).revert().build(),
+                new LatticeBuilder().copy(
+                    new LatticeBuilder().fill(numbers).build()
+                ).revert().build(),
                 Matchers.equalTo(builder.revert().build())
             );
         }
