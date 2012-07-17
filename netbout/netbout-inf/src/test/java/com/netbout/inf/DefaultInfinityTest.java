@@ -127,7 +127,6 @@ public final class DefaultInfinityTest {
                 throw new IllegalStateException("time out 2");
             }
         }
-        inf.flush();
         inf.close();
         for (int attempt = 0; attempt <= 2; ++attempt) {
             final Infinity restored = new DefaultInfinity(folder);
