@@ -143,7 +143,7 @@ public final class DefaultInfinity implements Infinity {
      * {@inheritDoc}
      */
     @Override
-    public void close() throws java.io.IOException {
+    public void close() throws IOException {
         this.mux.close();
         this.ray.close();
         this.folder.close();
@@ -154,7 +154,7 @@ public final class DefaultInfinity implements Infinity {
      * {@inheritDoc}
      */
     @Override
-    public void flush() throws java.io.IOException {
+    public void flush() throws IOException {
         this.ray.flush();
     }
 
@@ -196,7 +196,11 @@ public final class DefaultInfinity implements Infinity {
      */
     @Override
     public Set<Urn> see(final Notice notice) {
-        return this.mux.add(notice);
+        try {
+            return this.mux.add(notice);
+        } catch (IOException ex) {
+            throw new IllegalArgumentException(ex);
+        }
     }
 
 }

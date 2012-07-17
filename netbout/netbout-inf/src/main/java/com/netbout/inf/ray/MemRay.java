@@ -30,6 +30,7 @@ import com.jcabi.log.Logger;
 import com.netbout.inf.Cursor;
 import com.netbout.inf.Msg;
 import com.netbout.inf.Ray;
+import com.netbout.inf.Stash;
 import com.netbout.inf.TermBuilder;
 import com.netbout.inf.atoms.VariableAtom;
 import com.netbout.inf.ray.imap.DefaultIndexMap;
@@ -122,6 +123,14 @@ public final class MemRay implements Ray {
         } catch (java.io.IOException ex) {
             throw new IllegalStateException(ex);
         }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Stash stash() throws IOException {
+        return this.imap.stash();
     }
 
 }

@@ -24,48 +24,41 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.inf.ray;
+package com.netbout.inf;
 
-import com.netbout.inf.Attribute;
-import com.netbout.inf.Stash;
 import java.io.Closeable;
 import java.io.IOException;
+import java.util.Iterator;
 
 /**
- * Index Map.
+ * Stash of notices.
  *
  * <p>Implementation must be thread-safe.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public interface IndexMap extends Closeable {
+public interface Stash extends Closeable {
 
     /**
-     * Get one index, named.
-     * @param attribute Name of attribute
-     * @return The index
+     * Add new notice.
+     * @param notice The notice to add
      * @throws IOException If IO problem insde
      */
-    Index index(Attribute attribute) throws IOException;
+    void add(Notice notice) throws IOException;
 
     /**
-     * Make sure this message exists.
-     * @param msg Number of the message
-     */
-    void touch(long msg);
-
-    /**
-     * Flush it to disc.
+     * Remove a notice.
+     * @param notice The notice to add
      * @throws IOException If IO problem insde
      */
-    void flush() throws IOException;
+    void remove(Notice notice) throws IOException;
 
     /**
-     * Get stash.
-     * @return The stash to use
+     * Get an iterator of notices in this stash.
+     * @return The iterator of them
      * @throws IOException If IO problem insde
      */
-    Stash stash() throws IOException;
+    Iterator<Notice> iterator() throws IOException;
 
 }

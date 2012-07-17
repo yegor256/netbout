@@ -29,6 +29,7 @@ package com.netbout.inf.ray.imap;
 import com.jcabi.log.Logger;
 import com.jcabi.log.VerboseThreads;
 import com.netbout.inf.Attribute;
+import com.netbout.inf.Stash;
 import com.netbout.inf.atoms.VariableAtom;
 import com.netbout.inf.ray.Index;
 import com.netbout.inf.ray.IndexMap;
@@ -182,6 +183,14 @@ public final class DefaultIndexMap implements IndexMap {
             this.directory,
             System.currentTimeMillis() - start
         );
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Stash stash() throws IOException {
+        return this.directory.stash();
     }
 
 }

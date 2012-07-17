@@ -31,9 +31,11 @@ import com.jcabi.log.VerboseRunnable;
 import com.jcabi.log.VerboseThreads;
 import com.netbout.spi.Urn;
 import java.io.Closeable;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Set;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ConcurrentHashMap;
@@ -128,8 +130,9 @@ final class Mux implements Closeable {
      * Public ctor.
      * @param iray The ray to use
      * @param str The store to use
+     * @throws IOException If some I/O problem inside
      */
-    public Mux(final Ray iray, final Store str) {
+    public Mux(final Ray iray, final Store str) throws IOException {
         this.ray = iray;
         this.store = str;
         // @checkstyle AnonInnerLength (30 lines)
@@ -163,6 +166,11 @@ final class Mux implements Closeable {
                 )
             );
         }
+        final Iterator<Notice> iterator = this.ray.stash().iterator();
+        while (iterator.hasNext()) {
+            this.add(iterator.next());
+            iterator.remove();
+        }
     }
 
     /**
@@ -190,8 +198,10 @@ final class Mux implements Closeable {
      * Add new notice to be executed ASAP.
      * @param notice The notice to process
      * @return Who should wait for its processing
+     * @throws IOException If some IO problem inside
      */
-    public Set<Urn> add(final Notice notice) {
+    public Set<Urn> add(final Notice notice) throws IOException {
+        this.ray.stash().add(notice);
         final MuxTask task = new MuxTask(notice, this.ray, this.store);
         final Set<Urn> deps = new HashSet<Urn>();
         if (this.queue.contains(task)) {

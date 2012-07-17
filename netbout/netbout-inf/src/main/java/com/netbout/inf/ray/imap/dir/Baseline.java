@@ -28,6 +28,7 @@ package com.netbout.inf.ray.imap.dir;
 
 import com.jcabi.log.Logger;
 import com.netbout.inf.Attribute;
+import com.netbout.inf.Stash;
 import java.io.File;
 import java.io.IOException;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -44,12 +45,18 @@ import org.apache.commons.io.FileUtils;
 final class Baseline extends BaseVersion {
 
     /**
+     * Stash.
+     */
+    private final transient Stash istash;
+
+    /**
      * Public ctor.
      * @param lock The directory where to work
      * @throws IOException If some I/O problem inside
      */
     public Baseline(final Lock lock) throws IOException {
         super(lock);
+        this.istash = new DefaultStash(new File(this.dir(), "stash"));
         final AtomicInteger failures = new AtomicInteger();
         try {
             new CompositeAuditor().audit(
@@ -106,6 +113,15 @@ final class Baseline extends BaseVersion {
                 String.format("/%s/catalog.inf", attr)
             )
         );
+    }
+
+    /**
+     * Get stash.
+     * @return The stash
+     * @throws IOException If some I/O problem inside
+     */
+    public Stash stash() throws IOException {
+        return this.istash;
     }
 
 }

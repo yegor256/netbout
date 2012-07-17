@@ -26,6 +26,27 @@
  */
 package com.netbout.inf;
 
+import com.jcabi.log.Logger;
+import com.netbout.inf.notices.AliasAddedNotice;
+import com.netbout.inf.notices.BoutNotice;
+import com.netbout.inf.notices.BoutRenamedNotice;
+import com.netbout.inf.notices.IdentityNotice;
+import com.netbout.inf.notices.JoinNotice;
+import com.netbout.inf.notices.KickOffNotice;
+import com.netbout.inf.notices.MessageNotice;
+import com.netbout.inf.notices.MessagePostedNotice;
+import com.netbout.inf.notices.MessageSeenNotice;
+import com.netbout.spi.Bout;
+import com.netbout.spi.Participant;
+import com.netbout.spi.Urn;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
+
 /**
  * Notice for infinity.
  *
@@ -33,5 +54,203 @@ package com.netbout.inf;
  * @version $Id$
  */
 public interface Notice {
+
+    /**
+     * Serializable notice.
+     */
+    class SerializableNotice {
+        /**
+         * Original notice.
+         */
+        private final transient Notice origin;
+        /**
+         * Public ctor.
+         * @param notice Original notice
+         */
+        public SerializableNotice(final Notice notice) {
+            this.origin = notice;
+        }
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public String toString() {
+            final StringBuilder text = new StringBuilder();
+            text.append(this.nameOf());
+            if (this.origin instanceof IdentityNotice) {
+                text.append(" w/").append(
+                    IdentityNotice.class.cast(this.origin).identity().name()
+                );
+            }
+            if (this.origin instanceof BoutNotice) {
+                text.append(" @").append(
+                    BoutNotice.class.cast(this.origin).bout().number()
+                );
+            }
+            if (this.origin instanceof MessageNotice) {
+                text.append(" at").append(
+                    MessageNotice.class.cast(this.origin).message().number()
+                );
+            }
+            return text.toString();
+        }
+        /**
+         * Dependencies of this notice.
+         * @return Set of names
+         */
+        public Set<Urn> deps() {
+            final Set<Urn> urns = new HashSet<Urn>();
+            if (this.origin instanceof IdentityNotice) {
+                urns.add(
+                    IdentityNotice.class.cast(this.origin).identity().name()
+                );
+            }
+            if (this.origin instanceof BoutNotice) {
+                urns.addAll(
+                    this.dudesOf(BoutNotice.class.cast(this.origin).bout())
+                );
+            }
+            if (this.origin instanceof MessageNotice) {
+                urns.addAll(
+                    this.dudesOf(
+                        MessageNotice.class.cast(this.origin).message().bout()
+                    )
+                );
+            }
+            if (urns.isEmpty()) {
+                throw new IllegalArgumentException(
+                    Logger.format(
+                        "empty list of deps in %[type]s",
+                        this.origin
+                    )
+                );
+            }
+            return urns;
+        }
+        /**
+         * Convert it to bytearray.
+         * @return The array
+         */
+        public byte[] serialize() {
+            final ByteArrayOutputStream stream = new ByteArrayOutputStream();
+            final DataOutputStream data = new DataOutputStream(stream);
+            data.writeUTF(this.nameOf());
+            if (this.origin instanceof MessagePostedNotice) {
+                new MessagePostedNotice.Serial(this.origin).write(data);
+            } else if (this.origin instanceof MessageSeenNotice) {
+                new MessageSeenNotice.Serial(this.origin).write(data);
+            } else if (this.origin instanceof AliasAddedNotice) {
+                new AliasAddedNotice.Serial(this.origin).write(data);
+            } else if (this.origin instanceof BoutRenamedNotice) {
+                new BoutRenamedNotice.Serial(this.origin).write(data);
+            } else if (this.origin instanceof KickOffNotice) {
+                new KickOffNotice.Serial(this.origin).write(data);
+            } else if (this.origin instanceof JoinNotice) {
+                new JoinNotice.Serial(this.origin).write(data);
+            } else {
+                throw new IllegalStateException(
+                    Logger.format(
+                        "unknown type '%[type]s' serialized",
+                        this.origin
+                    )
+                );
+            }
+            data.flush();
+            return stream.toByteArray();
+        }
+        /**
+         * Convert bytearray to Notice.
+         * @param bytes The data
+         * @return The notice
+         */
+        public static Notice deserialize(final byte[] bytes) {
+            final DataInputStream data = new DataInputStream(
+                new ByteArrayInputStream(bytes)
+            );
+            final Class<? extends Notice> type =
+                Notice.SerializableNotice.reverse(data.readUTF());
+            Notice notice;
+            if (type.equals(MessagePostedNotice.class)) {
+                notice = MessagePostedNotice.Serial.read(data);
+            } else if (type.equals(MessageSeenNotice.class)) {
+                notice = MessageSeenNotice.Serial.read(data);
+            } else if (type.equals(AliasAddedNotice.class)) {
+                notice = AliasAddedNotice.Serial.read(data);
+            } else if (type.equals(BoutRenamedNotice.class)) {
+                notice = BoutRenamedNotice.Serial.read(data);
+            } else if (type.equals(KickOffNotice.class)) {
+                notice = KickOffNotice.Serial.read(data);
+            } else if (type.equals(JoinNotice.class)) {
+                notice = JoinNotice.Serial.read(data);
+            } else {
+                throw new IllegalStateException(
+                    Logger.format(
+                        "unknown type '%s' deserialized",
+                        type.getName()
+                    )
+                );
+            }
+            return notice;
+        }
+        /**
+         * Get name of notice.
+         * @return The name
+         */
+        private String nameOf() {
+            String name;
+            if (this.origin instanceof MessagePostedNotice) {
+                name = "message posted";
+            } else if (this.origin instanceof MessageSeenNotice) {
+                name = "message seen";
+            } else if (this.origin instanceof AliasAddedNotice) {
+                name = "alias added";
+            } else if (this.origin instanceof BoutRenamedNotice) {
+                name = "bout renamed";
+            } else if (this.origin instanceof KickOffNotice) {
+                name = "kicked off";
+            } else if (this.origin instanceof JoinNotice) {
+                name = "participation confirmed";
+            } else {
+                throw new IllegalStateException("unknown type of notice");
+            }
+            return name;
+        }
+        /**
+         * Reverse name to notice type.
+         * @param name The name
+         * @return The type
+         */
+        private static Class<? extends Notice> reverse(final String name) {
+            Class<? extends Notice> type;
+            if ("message posted".equals(name)) {
+                type = MessagePostedNotice.class;
+            } else if ("message seen".equals(name)) {
+                type = MessageSeenNotice.class;
+            } else if ("alias added".equals(name)) {
+                type = AliasAddedNotice.class;
+            } else if ("bout renamed".equals(name)) {
+                type = BoutRenamedNotice.class;
+            } else if ("kicked off".equals(name)) {
+                type = KickOffNotice.class;
+            } else if ("participation confirmed".equals(name)) {
+                type = JoinNotice.class;
+            } else {
+                throw new IllegalStateException("unknown name of notice");
+            }
+            return type;
+        }
+        /**
+         * Get list of dudes (names of participants) from the bout.
+         * @param bout The bout to analyze
+         * @return The names
+         */
+        private Set<Urn> dudesOf(final Bout bout) {
+            final Set<Urn> deps = new HashSet<Urn>();
+            for (Participant dude : bout.participants()) {
+                deps.add(dude.identity().name());
+            }
+            return deps;
+        }
+    }
 
 }
