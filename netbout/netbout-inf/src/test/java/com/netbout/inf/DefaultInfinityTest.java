@@ -107,32 +107,29 @@ public final class DefaultInfinityTest {
         final Bout bout = new BoutMocker()
             .withParticipant(new UrnMocker().mock())
             .mock();
-        final Message msg = new MessageMocker()
-            .withText("Jeffrey Lebowski, \u0443\u0440\u0430! How are you?")
-            .withNumber(MsgMocker.number())
-            .inBout(bout)
-            .mock();
-        final Urn[] deps = inf.see(
-            new MessagePostedNotice() {
-                @Override
-                public Message message() {
-                    return msg;
+        final long number = MsgMocker.number();
+        final int total = 100;
+        for (int pos = 0; pos < total; ++pos) {
+            final Message msg = new MessageMocker()
+                .withText("Jeffrey Lebowski, \u0443\u0440\u0430! How are you?")
+                .withNumber(number + pos)
+                .inBout(bout)
+                .mock();
+            inf.see(
+                new MessagePostedNotice() {
+                    @Override
+                    public Message message() {
+                        return msg;
+                    }
                 }
-            }
-        ).toArray(new Urn[0]);
-        int total = 0;
-        while (inf.eta(deps) != 0) {
-            TimeUnit.MILLISECONDS.sleep(1);
-            if (++total > 1000) {
-                throw new IllegalStateException("time out 2");
-            }
+            );
         }
         inf.close();
         for (int attempt = 0; attempt <= 2; ++attempt) {
             final Infinity restored = new DefaultInfinity(folder);
             MatcherAssert.assertThat(
                 restored.messages("(matches 'Jeffrey')"),
-                Matchers.<Long>iterableWithSize(Matchers.greaterThan(0))
+                Matchers.<Long>iterableWithSize(total)
             );
             restored.close();
         }
