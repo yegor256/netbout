@@ -35,6 +35,8 @@ import com.netbout.spi.Message;
 import com.netbout.spi.MessageMocker;
 import com.netbout.spi.Urn;
 import com.netbout.spi.UrnMocker;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
@@ -109,24 +111,36 @@ public final class DefaultInfinityTest {
             .mock();
         final long number = MsgMocker.number();
         final int total = 100;
+        final Set<Urn> authors = new HashSet<Urn>();
         for (int pos = 0; pos < total; ++pos) {
             final Message msg = new MessageMocker()
                 .withText("Jeffrey Lebowski, \u0443\u0440\u0430! How are you?")
                 .withNumber(number + pos)
                 .inBout(bout)
                 .mock();
-            inf.see(
-                new MessagePostedNotice() {
-                    @Override
-                    public Message message() {
-                        return msg;
+            authors.addAll(
+                inf.see(
+                    new MessagePostedNotice() {
+                        @Override
+                        public Message message() {
+                            return msg;
+                        }
                     }
-                }
+                )
             );
         }
         inf.close();
+        final Urn[] deps = authors.toArray(new Urn[0]);
         for (int attempt = 0; attempt <= 2; ++attempt) {
             final Infinity restored = new DefaultInfinity(folder);
+            int cycles = 0;
+            while (restored.eta(deps) != 0) {
+                TimeUnit.MILLISECONDS.sleep(1);
+                Logger.debug(this, "eta=%[nano]s", restored.eta(deps));
+                if (++cycles > 1000) {
+                    throw new IllegalStateException("time out");
+                }
+            }
             MatcherAssert.assertThat(
                 restored.messages("(matches 'Jeffrey')"),
                 Matchers.<Long>iterableWithSize(total)
