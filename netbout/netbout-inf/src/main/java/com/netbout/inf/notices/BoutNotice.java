@@ -75,6 +75,17 @@ public interface BoutNotice extends Notice {
          * {@inheritDoc}
          */
         @Override
+        public Set<Urn> deps(final BoutNotice notice) {
+            final Set<Urn> deps = new HashSet<Urn>();
+            for (Participant dude : notice.bout().participants()) {
+                deps.add(dude.identity().name());
+            }
+            return deps;
+        }
+        /**
+         * {@inheritDoc}
+         */
+        @Override
         public void write(final BoutNotice notice,
             final DataOutputStream stream) throws IOException {
             stream.writeLong(notice.bout().number());

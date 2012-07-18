@@ -27,9 +27,12 @@
 package com.netbout.inf.notices;
 
 import com.netbout.spi.Bout;
+import com.netbout.spi.Urn;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Bout was just renamed.
@@ -48,7 +51,15 @@ public interface BoutRenamedNotice extends BoutNotice {
          */
         @Override
         public String nameOf(final BoutRenamedNotice notice) {
+            // name should be really unique
             return new BoutNotice.Serial().nameOf(notice);
+        }
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public Set<Urn> deps(final BoutRenamedNotice notice) {
+            return new BoutNotice.Serial().deps(notice);
         }
         /**
          * {@inheritDoc}

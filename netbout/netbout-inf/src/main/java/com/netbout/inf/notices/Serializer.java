@@ -27,9 +27,11 @@
 package com.netbout.inf.notices;
 
 import com.netbout.inf.Notice;
+import com.netbout.spi.Urn;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.util.Set;
 
 /**
  * Serializer of notice.
@@ -45,6 +47,13 @@ interface Serializer<T extends Notice> {
      * @return The name
      */
     String nameOf(T notice);
+
+    /**
+     * Get dependencies of this notice.
+     * @param notice The notice
+     * @return Names of deps
+     */
+    Set<Urn> deps(T notice);
 
     /**
      * Write it to the stream.

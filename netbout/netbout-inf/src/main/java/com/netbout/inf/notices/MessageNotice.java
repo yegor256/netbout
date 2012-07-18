@@ -35,6 +35,8 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Message-related notice.
@@ -63,6 +65,25 @@ public interface MessageNotice extends Notice {
                 "message:%d",
                 notice.message().number()
             );
+        }
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public Set<Urn> deps(final MessageNotice notice) {
+            final Set<Urn> deps = new HashSet<Urn>();
+            deps.addAll(
+                new BoutNotice.Serial().deps(
+                    new BoutNotice() {
+                        @Override
+                        public Bout bout() {
+                            return notice.message().bout();
+                        }
+                    }
+                )
+            );
+            deps.add(notice.message().author().name());
+            return deps;
         }
         /**
          * {@inheritDoc}

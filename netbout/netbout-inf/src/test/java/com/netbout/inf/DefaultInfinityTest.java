@@ -38,10 +38,12 @@ import com.netbout.spi.UrnMocker;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.Callable;
+import java.util.concurrent.ConcurrentSkipListSet;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;
@@ -106,29 +108,40 @@ public final class DefaultInfinityTest {
     public void restoresItselfFromFileSystem() throws Exception {
         final Folder folder = new FolderMocker().mock();
         final Infinity inf = new DefaultInfinity(folder);
-        final Bout bout = new BoutMocker()
-            .withParticipant(new UrnMocker().mock())
-            .mock();
-        final long number = MsgMocker.number();
         final int total = 100;
-        final Set<Urn> authors = new HashSet<Urn>();
+        final Set<Urn> authors = new ConcurrentSkipListSet<Urn>();
+        final ExecutorService svc = Executors.newFixedThreadPool(
+            Runtime.getRuntime().availableProcessors(),
+            new VerboseThreads()
+        );
+        final AtomicInteger added = new AtomicInteger();
+        final long start = MsgMocker.number();
         for (int pos = 0; pos < total; ++pos) {
-            final Message msg = new MessageMocker()
-                .withText("Jeffrey Lebowski, \u0443\u0440\u0430! How are you?")
-                .withNumber(number + pos)
-                .inBout(bout)
-                .mock();
-            authors.addAll(
-                inf.see(
-                    new MessagePostedNotice() {
-                        @Override
-                        public Message message() {
-                            return msg;
-                        }
+            final long number = start + pos;
+            svc.submit(
+                new Runnable() {
+                    @Override
+                    public void run() {
+                        authors.addAll(
+                            inf.see(
+                                new MessagePostedNotice() {
+                                    @Override
+                                    public Message message() {
+                                        return new MessageMocker()
+                                            .withText("about Jeffrey")
+                                            .withNumber(number)
+                                            .mock();
+                                    }
+                                }
+                            )
+                        );
+                        added.incrementAndGet();
                     }
-                )
+                }
             );
         }
+        svc.shutdown();
+        svc.awaitTermination(5, TimeUnit.SECONDS);
         inf.close();
         final Urn[] deps = authors.toArray(new Urn[0]);
         for (int attempt = 0; attempt <= 2; ++attempt) {
@@ -143,7 +156,7 @@ public final class DefaultInfinityTest {
             }
             MatcherAssert.assertThat(
                 restored.messages("(matches 'Jeffrey')"),
-                Matchers.<Long>iterableWithSize(total)
+                Matchers.<Long>iterableWithSize(added.get())
             );
             restored.close();
         }

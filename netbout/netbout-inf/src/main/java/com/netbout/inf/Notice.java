@@ -119,25 +119,40 @@ public interface Notice {
          * @return Set of names
          */
         public Set<Urn> deps() {
-            final Set<Urn> urns = new HashSet<Urn>();
-            if (this.origin instanceof IdentityNotice) {
-                urns.add(
-                    IdentityNotice.class.cast(this.origin).identity().name()
+            Set<Urn> deps;
+            if (this.origin instanceof MessagePostedNotice) {
+                deps = new MessagePostedNotice.Serial().deps(
+                    MessagePostedNotice.class.cast(this.origin)
                 );
-            }
-            if (this.origin instanceof BoutNotice) {
-                urns.addAll(
-                    this.dudesOf(BoutNotice.class.cast(this.origin).bout())
+            } else if (this.origin instanceof MessageSeenNotice) {
+                deps = new MessageSeenNotice.Serial().deps(
+                    MessageSeenNotice.class.cast(this.origin)
                 );
-            }
-            if (this.origin instanceof MessageNotice) {
-                urns.addAll(
-                    this.dudesOf(
-                        MessageNotice.class.cast(this.origin).message().bout()
+            } else if (this.origin instanceof AliasAddedNotice) {
+                deps = new AliasAddedNotice.Serial().deps(
+                    AliasAddedNotice.class.cast(this.origin)
+                );
+            } else if (this.origin instanceof BoutRenamedNotice) {
+                deps = new BoutRenamedNotice.Serial().deps(
+                    BoutRenamedNotice.class.cast(this.origin)
+                );
+            } else if (this.origin instanceof KickOffNotice) {
+                deps = new KickOffNotice.Serial().deps(
+                    KickOffNotice.class.cast(this.origin)
+                );
+            } else if (this.origin instanceof JoinNotice) {
+                deps = new JoinNotice.Serial().deps(
+                    JoinNotice.class.cast(this.origin)
+                );
+            } else {
+                throw new IllegalStateException(
+                    Logger.format(
+                        "unknown type '%[type]s' for deps searching",
+                        this.origin
                     )
                 );
             }
-            if (urns.isEmpty()) {
+            if (deps.isEmpty()) {
                 throw new IllegalArgumentException(
                     Logger.format(
                         "empty list of deps in %[type]s",
@@ -145,7 +160,7 @@ public interface Notice {
                     )
                 );
             }
-            return urns;
+            return deps;
         }
         /**
          * Convert it to bytearray.
@@ -279,18 +294,6 @@ public interface Notice {
                 throw new IllegalStateException("unknown name of notice");
             }
             return type;
-        }
-        /**
-         * Get list of dudes (names of participants) from the bout.
-         * @param bout The bout to analyze
-         * @return The names
-         */
-        private Set<Urn> dudesOf(final Bout bout) {
-            final Set<Urn> deps = new HashSet<Urn>();
-            for (Participant dude : bout.participants()) {
-                deps.add(dude.identity().name());
-            }
-            return deps;
         }
     }
 

@@ -29,9 +29,12 @@ package com.netbout.inf.notices;
 import com.netbout.spi.Bout;
 import com.netbout.spi.Identity;
 import com.netbout.spi.Message;
+import com.netbout.spi.Urn;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Message was just seen.
@@ -55,6 +58,16 @@ public interface MessageSeenNotice extends MessageNotice, IdentityNotice {
                 new IdentityNotice.Serial().nameOf(notice),
                 new MessageNotice.Serial().nameOf(notice)
             );
+        }
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public Set<Urn> deps(final MessageSeenNotice notice) {
+            final Set<Urn> deps = new HashSet<Urn>();
+            deps.addAll(new IdentityNotice.Serial().deps(notice));
+            deps.addAll(new MessageNotice.Serial().deps(notice));
+            return deps;
         }
         /**
          * {@inheritDoc}

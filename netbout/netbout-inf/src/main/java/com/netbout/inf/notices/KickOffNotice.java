@@ -28,9 +28,12 @@ package com.netbout.inf.notices;
 
 import com.netbout.spi.Bout;
 import com.netbout.spi.Identity;
+import com.netbout.spi.Urn;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Participant was kicked off.
@@ -54,6 +57,16 @@ public interface KickOffNotice extends IdentityNotice, BoutNotice {
                 new IdentityNotice.Serial().nameOf(notice),
                 new BoutNotice.Serial().nameOf(notice)
             );
+        }
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public Set<Urn> deps(final KickOffNotice notice) {
+            final Set<Urn> deps = new HashSet<Urn>();
+            deps.addAll(new IdentityNotice.Serial().deps(notice));
+            deps.addAll(new BoutNotice.Serial().deps(notice));
+            return deps;
         }
         /**
          * {@inheritDoc}

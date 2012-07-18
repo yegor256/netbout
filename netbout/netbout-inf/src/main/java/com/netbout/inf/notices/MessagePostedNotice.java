@@ -29,9 +29,12 @@ package com.netbout.inf.notices;
 import com.netbout.spi.Bout;
 import com.netbout.spi.Identity;
 import com.netbout.spi.Message;
+import com.netbout.spi.Urn;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * New message was just posted.
@@ -51,6 +54,13 @@ public interface MessagePostedNotice extends MessageNotice {
         @Override
         public String nameOf(final MessagePostedNotice notice) {
             return new MessageNotice.Serial().nameOf(notice);
+        }
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public Set<Urn> deps(final MessagePostedNotice notice) {
+            return new MessageNotice.Serial().deps(notice);
         }
         /**
          * {@inheritDoc}

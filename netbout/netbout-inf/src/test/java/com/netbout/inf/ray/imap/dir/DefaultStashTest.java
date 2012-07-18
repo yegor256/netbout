@@ -62,12 +62,13 @@ public final class DefaultStashTest {
     @Test
     public void savesNoticesAndRetrievesThem() throws Exception {
         final File dir = this.temp.newFolder("foo");
+        final long number = MsgMocker.number();
         final Notice notice = new MessagePostedNotice() {
             @Override
             public Message message() {
                 return new MessageMocker()
                     .withText("some text to index")
-                    .withNumber(MsgMocker.number())
+                    .withNumber(number)
                     .mock();
             }
         };
@@ -90,7 +91,7 @@ public final class DefaultStashTest {
         second.close();
         MatcherAssert.assertThat(
             new DefaultStash(dir).iterator().hasNext(),
-            Matchers.is(false)
+            Matchers.is(true)
         );
     }
 

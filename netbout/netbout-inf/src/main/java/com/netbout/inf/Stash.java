@@ -38,7 +38,7 @@ import java.util.Iterator;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public interface Stash extends Closeable {
+public interface Stash extends Closeable, Iterable<Notice> {
 
     /**
      * Add new notice.
@@ -55,10 +55,10 @@ public interface Stash extends Closeable {
     void remove(Notice notice) throws IOException;
 
     /**
-     * Get an iterator of notices in this stash.
-     * @return The iterator of them
+     * Copy this stash to a new one, ignoring deleted notices.
+     * @param stash Where to copy to
      * @throws IOException If IO problem insde
      */
-    Iterator<Notice> iterator() throws IOException;
+    void copyTo(Stash stash) throws IOException;
 
 }

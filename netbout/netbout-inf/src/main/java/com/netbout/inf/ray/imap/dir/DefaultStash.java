@@ -31,12 +31,16 @@ import com.netbout.inf.Notice;
 import com.netbout.inf.Stash;
 import java.io.File;
 import java.io.IOException;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
+import java.util.concurrent.ConcurrentSkipListSet;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang.CharEncoding;
 import org.apache.commons.lang.StringUtils;
 
 /**
@@ -53,6 +57,12 @@ final class DefaultStash implements Stash {
      * Lock on the directory.
      */
     private final transient Lock lock;
+
+    /**
+     * Processed notices, their file names.
+     */
+    private final transient Collection<File> done =
+        new ConcurrentSkipListSet<File>();
 
     /**
      * Public ctor.
@@ -83,8 +93,8 @@ final class DefaultStash implements Stash {
         FileUtils.writeByteArrayToFile(file, bytes);
         Logger.debug(
             this,
-            "#add(%[type]s): saved %d bytes into %s",
-            notice,
+            "#add('%s'): saved %d bytes into %s",
+            new Notice.SerializableNotice(notice),
             bytes.length,
             FilenameUtils.getName(file.getPath())
         );
@@ -95,93 +105,94 @@ final class DefaultStash implements Stash {
      */
     @Override
     public void remove(Notice notice) throws IOException {
-        final File file = this.file(new Notice.SerializableNotice(notice));
-        file.delete();
+        this.done.add(this.file(new Notice.SerializableNotice(notice)));
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void copyTo(final Stash stash) throws IOException {
+        int count = 0;
+        for (File file : this.files()) {
+            if (this.done.contains(file)) {
+                continue;
+            }
+            FileUtils.copyFileToDirectory(
+                file,
+                DefaultStash.class.cast(stash).lock.dir()
+            );
+            ++count;
+        }
         Logger.debug(
             this,
-            "#remove(%[type]s): deleted %s",
-            notice,
-            FilenameUtils.getName(file.getPath())
+            "#copyTo(..): copied %d files",
+            count
         );
     }
 
     /**
      * {@inheritDoc}
-     *
-     * <p>Returned iterator is thread-safe.
      */
     @Override
-    public Iterator<Notice> iterator() throws IOException {
+    public Iterator<Notice> iterator() {
+        Collection<File> files;
+        try {
+            files = this.files();
+        } catch (java.io.IOException ex) {
+            throw new IllegalStateException(ex);
+        }
+        final Iterator<File> iterator = files.iterator();
         return new Iterator<Notice>() {
-            private final transient AtomicReference<File> file =
-                new AtomicReference<File>();
             @Override
             public boolean hasNext() {
-                if (this.file.get() == null) {
-                    File[] files;
-                    try {
-                        files = DefaultStash.this.lock.dir().listFiles();
-                    } catch (java.io.IOException ex) {
-                        throw new IllegalStateException(ex);
-                    }
-                    for (File candidate : files) {
-                        if (FilenameUtils.getName(candidate.getPath())
-                            .startsWith("ntc-")) {
-                            this.file.set(candidate);
-                            break;
-                        }
-                        Logger.debug(
-                            this,
-                            "#hasNext(): %s ignored",
-                            FilenameUtils.getName(candidate.getPath())
-                        );
-                    }
-                    Logger.debug(
-                        this,
-                        "#hasNext(): found %d files, %s is next",
-                        files.length,
-                        this.file.get()
-                    );
-                }
-                return this.file.get() != null;
+                return iterator.hasNext();
             }
             @Override
             public Notice next() {
-                if (!this.hasNext()) {
-                    throw new NoSuchElementException();
-                }
                 Notice notice;
                 byte[] bytes;
-                final File ntc = this.file.getAndSet(null);
+                final File file = iterator.next();
                 try {
-                    bytes = FileUtils.readFileToByteArray(ntc);
+                    bytes = FileUtils.readFileToByteArray(file);
                     notice = Notice.SerializableNotice.deserialize(bytes);
                 } catch (java.io.IOException ex) {
                     throw new IllegalStateException(ex);
                 }
                 Logger.debug(
                     this,
-                    "#next(): loaded %[type]s from %s (%d bytes)",
-                    notice,
-                    FilenameUtils.getName(ntc.getPath()),
+                    "#next(): loaded '%s' from %s (%d bytes)",
+                    new Notice.SerializableNotice(notice),
+                    FilenameUtils.getName(file.getPath()),
                     bytes.length
                 );
                 return notice;
             }
             @Override
             public void remove() {
-                if (this.file.get() == null) {
-                    throw new NoSuchElementException();
-                }
-                final File ntc = this.file.getAndSet(null);
-                ntc.delete();
-                Logger.debug(
-                    this,
-                    "#remove(): deleted %s",
-                    FilenameUtils.getName(ntc.getPath())
-                );
+                throw new UnsupportedOperationException();
             }
         };
+    }
+
+    /**
+     * Get all files in the stash.
+     * @return List of files
+     * @throws IOException If some IO error
+     */
+    private Collection<File> files() throws IOException {
+        final Collection<File> files = new ConcurrentSkipListSet<File>();
+        for (File file : this.lock.dir().listFiles()) {
+            if (FilenameUtils.getName(file.getPath()).startsWith("ntc-")) {
+                files.add(file);
+            }
+        }
+        Logger.debug(
+            this,
+            "#files(): %d files found",
+            files.size()
+        );
+        return files;
     }
 
     /**

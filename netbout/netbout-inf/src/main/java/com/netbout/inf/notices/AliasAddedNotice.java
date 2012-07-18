@@ -27,9 +27,12 @@
 package com.netbout.inf.notices;
 
 import com.netbout.spi.Identity;
+import com.netbout.spi.Urn;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * New alias was added to identity.
@@ -65,6 +68,13 @@ public interface AliasAddedNotice extends IdentityNotice {
                 new IdentityNotice.Serial().nameOf(notice),
                 notice.alias()
             );
+        }
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public Set<Urn> deps(final AliasAddedNotice notice) {
+            return new IdentityNotice.Serial().deps(notice);
         }
         /**
          * {@inheritDoc}

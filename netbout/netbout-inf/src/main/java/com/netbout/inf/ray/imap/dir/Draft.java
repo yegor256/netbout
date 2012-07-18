@@ -109,6 +109,7 @@ final class Draft extends BaseVersion {
         for (Attribute attr : attrs) {
             this.baseline(dest, src, attr);
         }
+        src.stash().copyTo(dest.stash());
         Logger.debug(
             this,
             "#baseline('%s', '%s'): baselined %[list]s in %[ms]s",

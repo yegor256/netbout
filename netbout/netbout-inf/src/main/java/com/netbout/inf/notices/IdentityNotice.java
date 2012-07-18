@@ -71,6 +71,15 @@ public interface IdentityNotice extends Notice {
          * {@inheritDoc}
          */
         @Override
+        public Set<Urn> deps(final IdentityNotice notice) {
+            final Set<Urn> deps = new HashSet<Urn>();
+            deps.add(notice.identity().name());
+            return deps;
+        }
+        /**
+         * {@inheritDoc}
+         */
+        @Override
         public void write(final IdentityNotice notice,
             final DataOutputStream stream) throws IOException {
             stream.writeUTF(notice.identity().name().toString());
