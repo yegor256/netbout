@@ -262,6 +262,7 @@ public final class DefaultDirectory implements Directory {
      */
     @Override
     public void close() throws IOException {
+        this.base.get().stash().close();
         this.base.get().close();
         this.base.set(null);
         this.draft.get().close();

@@ -76,30 +76,29 @@ public interface Notice {
          */
         @Override
         public String toString() {
-            final StringBuilder text = new StringBuilder();
-            text.append(this.nameOf()).append(" ");
+            String txt;
             if (this.origin instanceof MessagePostedNotice) {
-                new MessagePostedNotice.Serial().nameOf(
+                txt = new MessagePostedNotice.Serial().nameOf(
                     MessagePostedNotice.class.cast(this.origin)
                 );
             } else if (this.origin instanceof MessageSeenNotice) {
-                new MessageSeenNotice.Serial().nameOf(
+                txt = new MessageSeenNotice.Serial().nameOf(
                     MessageSeenNotice.class.cast(this.origin)
                 );
             } else if (this.origin instanceof AliasAddedNotice) {
-                new AliasAddedNotice.Serial().nameOf(
+                txt = new AliasAddedNotice.Serial().nameOf(
                     AliasAddedNotice.class.cast(this.origin)
                 );
             } else if (this.origin instanceof BoutRenamedNotice) {
-                new BoutRenamedNotice.Serial().nameOf(
+                txt = new BoutRenamedNotice.Serial().nameOf(
                     BoutRenamedNotice.class.cast(this.origin)
                 );
             } else if (this.origin instanceof KickOffNotice) {
-                new KickOffNotice.Serial().nameOf(
+                txt = new KickOffNotice.Serial().nameOf(
                     KickOffNotice.class.cast(this.origin)
                 );
             } else if (this.origin instanceof JoinNotice) {
-                new JoinNotice.Serial().nameOf(
+                txt = new JoinNotice.Serial().nameOf(
                     JoinNotice.class.cast(this.origin)
                 );
             } else {
@@ -110,7 +109,10 @@ public interface Notice {
                     )
                 );
             }
-            return text.toString();
+            return new StringBuilder().append(this.nameOf())
+                .append(" ")
+                .append(txt)
+                .toString();
         }
         /**
          * Dependencies of this notice.

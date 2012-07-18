@@ -135,9 +135,9 @@ public final class DefaultInfinityTest {
             final Infinity restored = new DefaultInfinity(folder);
             int cycles = 0;
             while (restored.eta(deps) != 0) {
-                TimeUnit.MILLISECONDS.sleep(1);
+                TimeUnit.SECONDS.sleep(1);
                 Logger.debug(this, "eta=%[nano]s", restored.eta(deps));
-                if (++cycles > 1000) {
+                if (++cycles > 15) {
                     throw new IllegalStateException("time out");
                 }
             }

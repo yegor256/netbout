@@ -130,11 +130,17 @@ final class DefaultStash implements Stash {
                             this.file.set(candidate);
                             break;
                         }
+                        Logger.debug(
+                            this,
+                            "#hasNext(): %s ignored",
+                            FilenameUtils.getName(candidate.getPath())
+                        );
                     }
                     Logger.debug(
                         this,
-                        "#hasNext(): found %d files",
-                        files.length
+                        "#hasNext(): found %d files, %s is next",
+                        files.length,
+                        this.file.get()
                     );
                 }
                 return this.file.get() != null;

@@ -56,7 +56,7 @@ final class Baseline extends BaseVersion {
      */
     public Baseline(final Lock lock) throws IOException {
         super(lock);
-        this.istash = new DefaultStash(new File(this.dir(), "stash"));
+        this.istash = new DefaultStash(new File(this.dir(), "_stash"));
         final AtomicInteger failures = new AtomicInteger();
         try {
             new CompositeAuditor().audit(

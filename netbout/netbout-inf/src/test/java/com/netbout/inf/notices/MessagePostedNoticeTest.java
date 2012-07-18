@@ -45,89 +45,28 @@ import org.hamcrest.Matchers;
 import org.junit.Test;
 
 /**
- * Test case of {@link MessageNotice}.
+ * Test case of {@link MessagePostedNotice}.
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class MessageNoticeTest {
+public final class MessagePostedNoticeTest {
 
     /**
-     * MessageNotice can serialize and de-serialize notices.
-     * @throws Exception If there is some problem inside
-     */
-    @Test
-    public void serializesAndDeserializesNotices() throws Exception {
-        final ByteArrayOutputStream output = new ByteArrayOutputStream();
-        final Participant dude = new ParticipantMocker()
-            .mock();
-        final Bout bout = new BoutMocker()
-            .withNumber(MsgMocker.number())
-            .withDate(new Date())
-            .titledAs("some title to serialize")
-            .withParticipant(dude)
-            .mock();
-        final Message message = new MessageMocker()
-            .inBout(bout)
-            .withDate(new Date())
-            .withText("some text to serialize")
-            .mock();
-        new MessageNotice.Serial().write(
-            new MessageNotice() {
-                @Override
-                public Message message() {
-                    return message;
-                }
-            },
-            new DataOutputStream(output)
-        );
-        final MessageNotice restored = new MessageNotice.Serial().read(
-            new DataInputStream(new ByteArrayInputStream(output.toByteArray()))
-        );
-        MatcherAssert.assertThat(restored.message(), Matchers.equalTo(message));
-        MatcherAssert.assertThat(
-            restored.message().number(),
-            Matchers.equalTo(message.number())
-        );
-        MatcherAssert.assertThat(
-            restored.message().bout().number(),
-            Matchers.equalTo(bout.number())
-        );
-        MatcherAssert.assertThat(
-            restored.message().bout().date(),
-            Matchers.equalTo(bout.date())
-        );
-        final Participant found = restored.message().bout()
-            .participants().iterator().next();
-        MatcherAssert.assertThat(
-            found.identity().name(),
-            Matchers.equalTo(dude.identity().name())
-        );
-        MatcherAssert.assertThat(
-            found.leader(),
-            Matchers.equalTo(dude.leader())
-        );
-        MatcherAssert.assertThat(
-            found.confirmed(),
-            Matchers.equalTo(dude.confirmed())
-        );
-    }
-
-    /**
-     * MessageNotice can give correct names to notices.
+     * MessagePostedNotice can give correct names to notices.
      * @throws Exception If there is some problem inside
      */
     @Test
     public void givesCorrectNames() throws Exception {
-        final String first = new MessageNotice.Serial().nameOf(
-            new MessageNotice() {
+        final String first = new MessagePostedNotice.Serial().nameOf(
+            new MessagePostedNotice() {
                 @Override
                 public Message message() {
                     return new MessageMocker().mock();
                 }
             }
         );
-        final String second = new MessageNotice.Serial().nameOf(
-            new MessageNotice() {
+        final String second = new MessagePostedNotice.Serial().nameOf(
+            new MessagePostedNotice() {
                 @Override
                 public Message message() {
                     return new MessageMocker().mock();

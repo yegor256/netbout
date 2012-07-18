@@ -63,4 +63,29 @@ public final class NoticeTest {
         );
     }
 
+    /**
+     * Notice can give correct names to notices.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void givesCorrectNames() throws Exception {
+        final String first = new Notice.SerializableNotice(
+            new MessagePostedNotice() {
+                @Override
+                public Message message() {
+                    return new MessageMocker().mock();
+                }
+            }
+        ).toString();
+        final String second = new Notice.SerializableNotice(
+            new MessagePostedNotice() {
+                @Override
+                public Message message() {
+                    return new MessageMocker().mock();
+                }
+            }
+        ).toString();
+        MatcherAssert.assertThat(first, Matchers.not(Matchers.equalTo(second)));
+    }
+
 }
