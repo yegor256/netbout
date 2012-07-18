@@ -76,6 +76,7 @@ public final class BoutNoticeTest {
         final BoutNotice restored = new BoutNotice.Serial().read(
             new DataInputStream(new ByteArrayInputStream(output.toByteArray()))
         );
+        MatcherAssert.assertThat(restored.bout(), Matchers.equalTo(bout));
         MatcherAssert.assertThat(
             restored.bout().number(),
             Matchers.equalTo(bout.number())

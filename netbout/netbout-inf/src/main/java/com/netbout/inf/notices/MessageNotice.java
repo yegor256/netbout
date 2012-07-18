@@ -92,6 +92,18 @@ public interface MessageNotice extends Notice {
                 public Message message() {
                     return new Message() {
                         @Override
+                        public int hashCode() {
+                            return this.number().hashCode();
+                        }
+                        @Override
+                        public boolean equals(final Object msg) {
+                            return this == msg || (msg instanceof Message
+                                && this.number().equals(
+                                    Message.class.cast(msg).number()
+                                )
+                            );
+                        }
+                        @Override
                         public Long number() {
                             return number;
                         }

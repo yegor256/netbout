@@ -87,6 +87,18 @@ public interface IdentityNotice extends Notice {
         static Identity toIdentity(final Urn name) {
             return new Identity() {
                 @Override
+                public int hashCode() {
+                    return this.name().hashCode();
+                }
+                @Override
+                public boolean equals(final Object dude) {
+                    return this == dude || (dude instanceof Identity
+                        && this.name().equals(
+                            Identity.class.cast(dude).name()
+                        )
+                    );
+                }
+                @Override
                 public Urn name() {
                     return name;
                 }

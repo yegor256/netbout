@@ -64,6 +64,7 @@ public final class IdentityNoticeTest {
         final IdentityNotice restored = new IdentityNotice.Serial().read(
             new DataInputStream(new ByteArrayInputStream(output.toByteArray()))
         );
+        MatcherAssert.assertThat(restored.identity(), Matchers.equalTo(dude));
         MatcherAssert.assertThat(
             restored.identity().name(),
             Matchers.equalTo(dude.name())

@@ -125,6 +125,18 @@ public interface BoutNotice extends Notice {
             bout.set(
                 new Bout() {
                     @Override
+                    public int hashCode() {
+                        return this.number().hashCode();
+                    }
+                    @Override
+                    public boolean equals(final Object bout) {
+                        return this == bout || (bout instanceof Bout
+                            && this.number().equals(
+                                Bout.class.cast(bout).number()
+                            )
+                        );
+                    }
+                    @Override
                     public Long number() {
                         return number;
                     }

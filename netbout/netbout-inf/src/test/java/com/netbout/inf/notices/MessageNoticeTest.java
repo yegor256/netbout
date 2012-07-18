@@ -83,6 +83,7 @@ public final class MessageNoticeTest {
         final MessageNotice restored = new MessageNotice.Serial().read(
             new DataInputStream(new ByteArrayInputStream(output.toByteArray()))
         );
+        MatcherAssert.assertThat(restored.message(), Matchers.equalTo(message));
         MatcherAssert.assertThat(
             restored.message().number(),
             Matchers.equalTo(message.number())
