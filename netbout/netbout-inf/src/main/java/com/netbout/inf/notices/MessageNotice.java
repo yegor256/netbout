@@ -65,6 +65,15 @@ public interface MessageNotice extends Notice {
             stream.writeUTF(notice.message().text());
             stream.writeBoolean(notice.message().seen());
             stream.writeLong(notice.message().date().getTime());
+            new BoutNotice.Serial().write(
+                new BoutNotice() {
+                    @Override
+                    public Bout bout() {
+                        return notice.message().bout();
+                    }
+                },
+                stream
+            );
         }
         /**
          * {@inheritDoc}
@@ -77,6 +86,7 @@ public interface MessageNotice extends Notice {
             final String text = stream.readUTF();
             final Boolean seen = stream.readBoolean();
             final Date date = new Date(stream.readLong());
+            final Bout bout = new BoutNotice.Serial().read(stream).bout();
             return new MessageNotice() {
                 @Override
                 public Message message() {
@@ -107,8 +117,7 @@ public interface MessageNotice extends Notice {
                         }
                         @Override
                         public Bout bout() {
-                            // todo
-                            throw new UnsupportedOperationException();
+                            return bout;
                         }
                     };
                 }
