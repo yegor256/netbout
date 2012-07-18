@@ -26,64 +26,33 @@
  */
 package com.netbout.inf.notices;
 
-import com.netbout.spi.Identity;
+import com.netbout.inf.Notice;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 
 /**
- * New alias was added to identity.
+ * Serializer of notice.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public interface AliasAddedNotice extends IdentityNotice {
+interface Serializer<T extends Notice> {
 
     /**
-     * The identity where alias was added.
-     * @return The identity
+     * Write it to the stream.
+     * @param notice The notice to write
+     * @param stream The stream to write to
+     * @throws IOException If some I/O problem inside
      */
-    Identity identity();
+    void write(T notice, DataOutputStream stream) throws IOException;
 
     /**
-     * The alias.
-     * @return The alias
+     * Read it from the stream.
+     * @param stream The stream to read from
+     * @return The notice
+     * @throws IOException If some I/O problem inside
      */
-    String alias();
-
-    /**
-     * Serializer.
-     */
-    class Serial implements Serializer<AliasAddedNotice> {
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public void write(final AliasAddedNotice notice,
-            final DataOutputStream stream) throws IOException {
-            new IdentityNotice.Serial().write(notice, stream);
-            stream.writeUTF(notice.alias());
-        }
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public AliasAddedNotice read(final DataInputStream stream)
-            throws IOException {
-            final IdentityNotice inotice =
-                new IdentityNotice.Serial().read(stream);
-            final String alias = stream.readUTF();
-            return new AliasAddedNotice() {
-                @Override
-                public Identity identity() {
-                    return inotice.identity();
-                }
-                @Override
-                public String alias() {
-                    return alias;
-                }
-            };
-        }
-    }
+    T read(DataInputStream stream) throws IOException;
 
 }

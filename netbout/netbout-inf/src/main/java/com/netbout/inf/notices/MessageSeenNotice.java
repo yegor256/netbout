@@ -26,6 +26,13 @@
  */
 package com.netbout.inf.notices;
 
+import com.netbout.spi.Bout;
+import com.netbout.spi.Identity;
+import com.netbout.spi.Message;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
+
 /**
  * Message was just seen.
  *
@@ -33,5 +40,41 @@ package com.netbout.inf.notices;
  * @version $Id$
  */
 public interface MessageSeenNotice extends MessageNotice, IdentityNotice {
+
+    /**
+     * Serializer.
+     */
+    class Serial implements Serializer<MessageSeenNotice> {
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public void write(final MessageSeenNotice notice,
+            final DataOutputStream stream) throws IOException {
+            new MessageNotice.Serial().write(notice, stream);
+            new IdentityNotice.Serial().write(notice, stream);
+        }
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public MessageSeenNotice read(final DataInputStream stream)
+            throws IOException {
+            final MessageNotice mnotice =
+                new MessageNotice.Serial().read(stream);
+            final IdentityNotice inotice =
+                new IdentityNotice.Serial().read(stream);
+            return new MessageSeenNotice() {
+                @Override
+                public Message message() {
+                    return mnotice.message();
+                }
+                @Override
+                public Identity identity() {
+                    return inotice.identity();
+                }
+            };
+        }
+    }
 
 }

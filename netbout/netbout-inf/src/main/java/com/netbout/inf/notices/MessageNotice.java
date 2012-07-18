@@ -27,7 +27,14 @@
 package com.netbout.inf.notices;
 
 import com.netbout.inf.Notice;
+import com.netbout.spi.Bout;
+import com.netbout.spi.Identity;
 import com.netbout.spi.Message;
+import com.netbout.spi.Urn;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.util.Date;
 
 /**
  * Message-related notice.
@@ -42,5 +49,71 @@ public interface MessageNotice extends Notice {
      * @return The message
      */
     Message message();
+
+    /**
+     * Serializer.
+     */
+    class Serial implements Serializer<MessageNotice> {
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public void write(final MessageNotice notice,
+            final DataOutputStream stream) throws IOException {
+            stream.writeLong(notice.message().number());
+            stream.writeUTF(notice.message().author().name().toString());
+            stream.writeUTF(notice.message().text());
+            stream.writeBoolean(notice.message().seen());
+            stream.writeLong(notice.message().date().getTime());
+        }
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public MessageNotice read(final DataInputStream stream)
+            throws IOException {
+            final long number = stream.readLong();
+            final Urn author = Urn.create(stream.readUTF());
+            final String text = stream.readUTF();
+            final Boolean seen = stream.readBoolean();
+            final Date date = new Date(stream.readLong());
+            return new MessageNotice() {
+                @Override
+                public Message message() {
+                    return new Message() {
+                        @Override
+                        public Long number() {
+                            return number;
+                        }
+                        @Override
+                        public String text() {
+                            return text;
+                        }
+                        @Override
+                        public Identity author() {
+                            return IdentityNotice.Serial.toIdentity(author);
+                        }
+                        @Override
+                        public Boolean seen() {
+                            return seen;
+                        }
+                        @Override
+                        public Date date() {
+                            return date;
+                        }
+                        @Override
+                        public int compareTo(final Message msg) {
+                            return this.number().compareTo(msg.number());
+                        }
+                        @Override
+                        public Bout bout() {
+                            // todo
+                            throw new UnsupportedOperationException();
+                        }
+                    };
+                }
+            };
+        }
+    }
 
 }

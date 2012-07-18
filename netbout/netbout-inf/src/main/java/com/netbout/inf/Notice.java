@@ -43,6 +43,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
+import java.io.IOException;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
@@ -130,23 +131,42 @@ public interface Notice {
         /**
          * Convert it to bytearray.
          * @return The array
+         * @throws IOException If some error
          */
-        public byte[] serialize() {
+        public byte[] serialize() throws IOException {
             final ByteArrayOutputStream stream = new ByteArrayOutputStream();
             final DataOutputStream data = new DataOutputStream(stream);
             data.writeUTF(this.nameOf());
             if (this.origin instanceof MessagePostedNotice) {
-                new MessagePostedNotice.Serial(this.origin).write(data);
+                new MessagePostedNotice.Serial().write(
+                    MessagePostedNotice.class.cast(this.origin),
+                    data
+                );
             } else if (this.origin instanceof MessageSeenNotice) {
-                new MessageSeenNotice.Serial(this.origin).write(data);
+                new MessageSeenNotice.Serial().write(
+                    MessageSeenNotice.class.cast(this.origin),
+                    data
+                );
             } else if (this.origin instanceof AliasAddedNotice) {
-                new AliasAddedNotice.Serial(this.origin).write(data);
+                new AliasAddedNotice.Serial().write(
+                    AliasAddedNotice.class.cast(this.origin),
+                    data
+                );
             } else if (this.origin instanceof BoutRenamedNotice) {
-                new BoutRenamedNotice.Serial(this.origin).write(data);
+                new BoutRenamedNotice.Serial().write(
+                    BoutRenamedNotice.class.cast(this.origin),
+                    data
+                );
             } else if (this.origin instanceof KickOffNotice) {
-                new KickOffNotice.Serial(this.origin).write(data);
+                new KickOffNotice.Serial().write(
+                    KickOffNotice.class.cast(this.origin),
+                    data
+                );
             } else if (this.origin instanceof JoinNotice) {
-                new JoinNotice.Serial(this.origin).write(data);
+                new JoinNotice.Serial().write(
+                    JoinNotice.class.cast(this.origin),
+                    data
+                );
             } else {
                 throw new IllegalStateException(
                     Logger.format(
@@ -162,8 +182,10 @@ public interface Notice {
          * Convert bytearray to Notice.
          * @param bytes The data
          * @return The notice
+         * @throws IOException If some IO error
          */
-        public static Notice deserialize(final byte[] bytes) {
+        public static Notice deserialize(final byte[] bytes)
+            throws IOException {
             final DataInputStream data = new DataInputStream(
                 new ByteArrayInputStream(bytes)
             );
@@ -171,17 +193,17 @@ public interface Notice {
                 Notice.SerializableNotice.reverse(data.readUTF());
             Notice notice;
             if (type.equals(MessagePostedNotice.class)) {
-                notice = MessagePostedNotice.Serial.read(data);
+                notice = new MessagePostedNotice.Serial().read(data);
             } else if (type.equals(MessageSeenNotice.class)) {
-                notice = MessageSeenNotice.Serial.read(data);
+                notice = new MessageSeenNotice.Serial().read(data);
             } else if (type.equals(AliasAddedNotice.class)) {
-                notice = AliasAddedNotice.Serial.read(data);
+                notice = new AliasAddedNotice.Serial().read(data);
             } else if (type.equals(BoutRenamedNotice.class)) {
-                notice = BoutRenamedNotice.Serial.read(data);
+                notice = new BoutRenamedNotice.Serial().read(data);
             } else if (type.equals(KickOffNotice.class)) {
-                notice = KickOffNotice.Serial.read(data);
+                notice = new KickOffNotice.Serial().read(data);
             } else if (type.equals(JoinNotice.class)) {
-                notice = JoinNotice.Serial.read(data);
+                notice = new JoinNotice.Serial().read(data);
             } else {
                 throw new IllegalStateException(
                     Logger.format(

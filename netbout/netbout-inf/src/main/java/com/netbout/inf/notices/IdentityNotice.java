@@ -27,7 +27,17 @@
 package com.netbout.inf.notices;
 
 import com.netbout.inf.Notice;
+import com.netbout.spi.Bout;
 import com.netbout.spi.Identity;
+import com.netbout.spi.Profile;
+import com.netbout.spi.Urn;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.net.URL;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Notice is related to identity.
@@ -42,5 +52,82 @@ public interface IdentityNotice extends Notice {
      * @return The identity
      */
     Identity identity();
+
+    /**
+     * Serializer.
+     */
+    class Serial implements Serializer<IdentityNotice> {
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public void write(final IdentityNotice notice,
+            final DataOutputStream stream) throws IOException {
+            stream.writeUTF(notice.identity().name().toString());
+        }
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public IdentityNotice read(final DataInputStream stream)
+            throws IOException {
+            final Urn name = Urn.create(stream.readUTF());
+            return new IdentityNotice() {
+                @Override
+                public Identity identity() {
+                    return Serial.toIdentity(name);
+                }
+            };
+        }
+        /**
+         * Create an identity from name.
+         * @param name The name of it
+         * @return The identity
+         */
+        static Identity toIdentity(final Urn name) {
+            return new Identity() {
+                @Override
+                public Urn name() {
+                    return name;
+                }
+                @Override
+                public Profile profile() {
+                    throw new UnsupportedOperationException();
+                }
+                @Override
+                public Set<Identity> friends(final String query) {
+                    throw new UnsupportedOperationException();
+                }
+                @Override
+                public Identity friend(final Urn name) {
+                    throw new UnsupportedOperationException();
+                }
+                @Override
+                public Bout bout(final Long number) {
+                    throw new UnsupportedOperationException();
+                }
+                @Override
+                public Iterable<Bout> inbox(final String query) {
+                    throw new UnsupportedOperationException();
+                }
+                @Override
+                public Bout start() {
+                    throw new UnsupportedOperationException();
+                }
+                @Override
+                public URL authority() {
+                    throw new UnsupportedOperationException();
+                }
+                @Override
+                public Long eta() {
+                    throw new UnsupportedOperationException();
+                }
+                @Override
+                public int compareTo(final Identity identity) {
+                    return name.compareTo(identity.name());
+                }
+            };
+        }
+    }
 
 }

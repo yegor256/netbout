@@ -27,63 +27,47 @@
 package com.netbout.inf.notices;
 
 import com.netbout.spi.Identity;
+import com.netbout.spi.IdentityMocker;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import org.hamcrest.MatcherAssert;
+import org.hamcrest.Matchers;
+import org.junit.Test;
 
 /**
- * New alias was added to identity.
- *
+ * Test case of {@link IdentityNotice}.
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public interface AliasAddedNotice extends IdentityNotice {
+public final class IdentityNoticeTest {
 
     /**
-     * The identity where alias was added.
-     * @return The identity
+     * IdentityNotice can serialize and de-serialize notices.
+     * @throws Exception If there is some problem inside
      */
-    Identity identity();
-
-    /**
-     * The alias.
-     * @return The alias
-     */
-    String alias();
-
-    /**
-     * Serializer.
-     */
-    class Serial implements Serializer<AliasAddedNotice> {
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public void write(final AliasAddedNotice notice,
-            final DataOutputStream stream) throws IOException {
-            new IdentityNotice.Serial().write(notice, stream);
-            stream.writeUTF(notice.alias());
-        }
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public AliasAddedNotice read(final DataInputStream stream)
-            throws IOException {
-            final IdentityNotice inotice =
-                new IdentityNotice.Serial().read(stream);
-            final String alias = stream.readUTF();
-            return new AliasAddedNotice() {
+    @Test
+    public void serializesAndDeserializesNotices() throws Exception {
+        final ByteArrayOutputStream output = new ByteArrayOutputStream();
+        final Identity dude = new IdentityMocker().mock();
+        new IdentityNotice.Serial().write(
+            new IdentityNotice() {
                 @Override
                 public Identity identity() {
-                    return inotice.identity();
+                    return dude;
                 }
-                @Override
-                public String alias() {
-                    return alias;
-                }
-            };
-        }
+            },
+            new DataOutputStream(output)
+        );
+        final IdentityNotice restored = new IdentityNotice.Serial().read(
+            new DataInputStream(new ByteArrayInputStream(output.toByteArray()))
+        );
+        MatcherAssert.assertThat(
+            restored.identity().name(),
+            Matchers.equalTo(dude.name())
+        );
     }
 
 }

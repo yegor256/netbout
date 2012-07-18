@@ -24,47 +24,11 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.inf.notices;
-
-import com.netbout.spi.Bout;
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
 
 /**
- * Bout was just renamed.
+ * Notices, tests.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public interface BoutRenamedNotice extends BoutNotice {
-
-    /**
-     * Serializer.
-     */
-    class Serial implements Serializer<BoutRenamedNotice> {
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public void write(final BoutRenamedNotice notice,
-            final DataOutputStream stream) throws IOException {
-            new BoutNotice.Serial().write(notice, stream);
-        }
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public BoutRenamedNotice read(final DataInputStream stream)
-            throws IOException {
-            final BoutNotice bnotice = new BoutNotice.Serial().read(stream);
-            return new BoutRenamedNotice() {
-                @Override
-                public Bout bout() {
-                    return bnotice.bout();
-                }
-            };
-        }
-    }
-
-}
+package com.netbout.inf.notices;

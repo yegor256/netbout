@@ -183,17 +183,26 @@ public final class BoutMocker {
 
     /**
      * With this participant.
+     * @param dude The participant
+     * @return This object
+     */
+    public BoutMocker withParticipant(final Participant dude) {
+        this.participants.add(dude);
+        return this;
+    }
+
+    /**
+     * With this participant.
      * @param part The identity
      * @return This object
      */
     public BoutMocker withParticipant(final Identity part) {
-        this.participants.add(
+        return this.withParticipant(
             new ParticipantMocker()
                 .inBout(this.bout)
                 .withIdentity(part)
                 .mock()
         );
-        return this;
     }
 
     /**

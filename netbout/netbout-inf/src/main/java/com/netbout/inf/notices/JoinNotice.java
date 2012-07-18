@@ -26,6 +26,12 @@
  */
 package com.netbout.inf.notices;
 
+import com.netbout.spi.Bout;
+import com.netbout.spi.Identity;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
+
 /**
  * Participation in bout was just confirmed.
  *
@@ -33,5 +39,40 @@ package com.netbout.inf.notices;
  * @version $Id$
  */
 public interface JoinNotice extends BoutNotice, IdentityNotice {
+
+    /**
+     * Serializer.
+     */
+    class Serial implements Serializer<JoinNotice> {
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public void write(final JoinNotice notice,
+            final DataOutputStream stream) throws IOException {
+            new BoutNotice.Serial().write(notice, stream);
+            new IdentityNotice.Serial().write(notice, stream);
+        }
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public JoinNotice read(final DataInputStream stream)
+            throws IOException {
+            final BoutNotice bnotice = new BoutNotice.Serial().read(stream);
+            final IdentityNotice inotice =
+                new IdentityNotice.Serial().read(stream);
+            return new JoinNotice() {
+                @Override
+                public Bout bout() {
+                    return bnotice.bout();
+                }
+                @Override
+                public Identity identity() {
+                    return inotice.identity();
+                }
+            };
+        }
+    }
 
 }
