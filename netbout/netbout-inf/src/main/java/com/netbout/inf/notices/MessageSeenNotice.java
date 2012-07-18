@@ -49,6 +49,17 @@ public interface MessageSeenNotice extends MessageNotice, IdentityNotice {
          * {@inheritDoc}
          */
         @Override
+        public String nameOf(final MessageSeenNotice notice) {
+            return String.format(
+                "%s %s",
+                new IdentityNotice.Serial().nameOf(notice),
+                new MessageNotice.Serial().nameOf(notice)
+            );
+        }
+        /**
+         * {@inheritDoc}
+         */
+        @Override
         public void write(final MessageSeenNotice notice,
             final DataOutputStream stream) throws IOException {
             new MessageNotice.Serial().write(notice, stream);

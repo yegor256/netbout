@@ -65,6 +65,16 @@ public interface BoutNotice extends Notice {
          * {@inheritDoc}
          */
         @Override
+        public String nameOf(final BoutNotice notice) {
+            return String.format(
+                "bout:%d",
+                notice.bout().number()
+            );
+        }
+        /**
+         * {@inheritDoc}
+         */
+        @Override
         public void write(final BoutNotice notice,
             final DataOutputStream stream) throws IOException {
             stream.writeLong(notice.bout().number());

@@ -77,20 +77,37 @@ public interface Notice {
         @Override
         public String toString() {
             final StringBuilder text = new StringBuilder();
-            text.append(this.nameOf());
-            if (this.origin instanceof IdentityNotice) {
-                text.append(" w/").append(
-                    IdentityNotice.class.cast(this.origin).identity().name()
+            text.append(this.nameOf()).append(" ");
+            if (this.origin instanceof MessagePostedNotice) {
+                new MessagePostedNotice.Serial().nameOf(
+                    MessagePostedNotice.class.cast(this.origin)
                 );
-            }
-            if (this.origin instanceof BoutNotice) {
-                text.append(" @").append(
-                    BoutNotice.class.cast(this.origin).bout().number()
+            } else if (this.origin instanceof MessageSeenNotice) {
+                new MessageSeenNotice.Serial().nameOf(
+                    MessageSeenNotice.class.cast(this.origin)
                 );
-            }
-            if (this.origin instanceof MessageNotice) {
-                text.append(" at").append(
-                    MessageNotice.class.cast(this.origin).message().number()
+            } else if (this.origin instanceof AliasAddedNotice) {
+                new AliasAddedNotice.Serial().nameOf(
+                    AliasAddedNotice.class.cast(this.origin)
+                );
+            } else if (this.origin instanceof BoutRenamedNotice) {
+                new BoutRenamedNotice.Serial().nameOf(
+                    BoutRenamedNotice.class.cast(this.origin)
+                );
+            } else if (this.origin instanceof KickOffNotice) {
+                new KickOffNotice.Serial().nameOf(
+                    KickOffNotice.class.cast(this.origin)
+                );
+            } else if (this.origin instanceof JoinNotice) {
+                new JoinNotice.Serial().nameOf(
+                    JoinNotice.class.cast(this.origin)
+                );
+            } else {
+                throw new IllegalStateException(
+                    Logger.format(
+                        "unknown type '%[type]s' stored",
+                        this.origin
+                    )
                 );
             }
             return text.toString();

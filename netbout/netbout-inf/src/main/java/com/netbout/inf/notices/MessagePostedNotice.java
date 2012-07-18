@@ -49,6 +49,13 @@ public interface MessagePostedNotice extends MessageNotice {
          * {@inheritDoc}
          */
         @Override
+        public String nameOf(final MessagePostedNotice notice) {
+            return new MessageNotice.Serial().nameOf(notice);
+        }
+        /**
+         * {@inheritDoc}
+         */
+        @Override
         public void write(final MessagePostedNotice notice,
             final DataOutputStream stream) throws IOException {
             new MessageNotice.Serial().write(notice, stream);

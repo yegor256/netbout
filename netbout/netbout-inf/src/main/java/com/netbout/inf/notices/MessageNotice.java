@@ -58,6 +58,16 @@ public interface MessageNotice extends Notice {
          * {@inheritDoc}
          */
         @Override
+        public String nameOf(final MessageNotice notice) {
+            return String.format(
+                "message:%d",
+                notice.message().number()
+            );
+        }
+        /**
+         * {@inheritDoc}
+         */
+        @Override
         public void write(final MessageNotice notice,
             final DataOutputStream stream) throws IOException {
             stream.writeLong(notice.message().number());

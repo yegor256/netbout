@@ -47,6 +47,13 @@ public interface BoutRenamedNotice extends BoutNotice {
          * {@inheritDoc}
          */
         @Override
+        public String nameOf(final BoutRenamedNotice notice) {
+            return new BoutNotice.Serial().nameOf(notice);
+        }
+        /**
+         * {@inheritDoc}
+         */
+        @Override
         public void write(final BoutRenamedNotice notice,
             final DataOutputStream stream) throws IOException {
             new BoutNotice.Serial().write(notice, stream);

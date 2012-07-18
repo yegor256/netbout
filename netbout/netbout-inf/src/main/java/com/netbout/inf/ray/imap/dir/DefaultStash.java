@@ -35,7 +35,9 @@ import java.util.Iterator;
 import java.util.NoSuchElementException;
 import java.util.concurrent.atomic.AtomicReference;
 import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang.StringUtils;
 
 /**
  * Default implementation of {@link Stash}.
@@ -76,7 +78,16 @@ final class DefaultStash implements Stash {
     public void add(Notice notice) throws IOException {
         final Notice.SerializableNotice ser =
             new Notice.SerializableNotice(notice);
-        FileUtils.writeByteArrayToFile(this.file(ser), ser.serialize());
+        final byte[] bytes = ser.serialize();
+        final File file = this.file(ser);
+        FileUtils.writeByteArrayToFile(file, bytes);
+        Logger.debug(
+            this,
+            "#add(%[type]s): saved %d bytes into %s",
+            notice,
+            bytes.length,
+            FilenameUtils.getName(file.getPath())
+        );
     }
 
     /**
@@ -84,7 +95,14 @@ final class DefaultStash implements Stash {
      */
     @Override
     public void remove(Notice notice) throws IOException {
-        this.file(new Notice.SerializableNotice(notice)).delete();
+        final File file = this.file(new Notice.SerializableNotice(notice));
+        file.delete();
+        Logger.debug(
+            this,
+            "#remove(%[type]s): deleted %s",
+            notice,
+            FilenameUtils.getName(file.getPath())
+        );
     }
 
     /**
@@ -99,16 +117,25 @@ final class DefaultStash implements Stash {
                 new AtomicReference<File>();
             @Override
             public boolean hasNext() {
-                if (this.file.get() != null) {
+                if (this.file.get() == null) {
                     File[] files;
                     try {
                         files = DefaultStash.this.lock.dir().listFiles();
                     } catch (java.io.IOException ex) {
                         throw new IllegalStateException(ex);
                     }
-                    if (files.length > 0) {
-                        this.file.set(files[0]);
+                    for (File candidate : files) {
+                        if (FilenameUtils.getName(candidate.getPath())
+                            .startsWith("ntc-")) {
+                            this.file.set(candidate);
+                            break;
+                        }
                     }
+                    Logger.debug(
+                        this,
+                        "#hasNext(): found %d files",
+                        files.length
+                    );
                 }
                 return this.file.get() != null;
             }
@@ -117,20 +144,36 @@ final class DefaultStash implements Stash {
                 if (!this.hasNext()) {
                     throw new NoSuchElementException();
                 }
+                Notice notice;
+                byte[] bytes;
+                final File ntc = this.file.getAndSet(null);
                 try {
-                    return Notice.SerializableNotice.deserialize(
-                        FileUtils.readFileToByteArray(this.file.getAndSet(null))
-                    );
+                    bytes = FileUtils.readFileToByteArray(ntc);
+                    notice = Notice.SerializableNotice.deserialize(bytes);
                 } catch (java.io.IOException ex) {
                     throw new IllegalStateException(ex);
                 }
+                Logger.debug(
+                    this,
+                    "#next(): loaded %[type]s from %s (%d bytes)",
+                    notice,
+                    FilenameUtils.getName(ntc.getPath()),
+                    bytes.length
+                );
+                return notice;
             }
             @Override
             public void remove() {
                 if (this.file.get() == null) {
                     throw new NoSuchElementException();
                 }
-                this.file.get().delete();
+                final File ntc = this.file.getAndSet(null);
+                ntc.delete();
+                Logger.debug(
+                    this,
+                    "#remove(): deleted %s",
+                    FilenameUtils.getName(ntc.getPath())
+                );
             }
         };
     }
@@ -146,8 +189,11 @@ final class DefaultStash implements Stash {
         return new File(
             this.lock.dir(),
             String.format(
-                "%s.ser",
-                Base64.encodeBase64String(notice.toString().getBytes())
+                "ntc-%s.ser",
+                StringUtils.stripEnd(
+                    Base64.encodeBase64String(notice.toString().getBytes()),
+                    "="
+                )
             )
         );
     }

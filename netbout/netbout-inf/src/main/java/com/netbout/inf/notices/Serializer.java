@@ -40,6 +40,13 @@ import java.io.IOException;
 interface Serializer<T extends Notice> {
 
     /**
+     * Create unique name of the notice.
+     * @param notice The notice
+     * @return The name
+     */
+    String nameOf(T notice);
+
+    /**
      * Write it to the stream.
      * @param notice The notice to write
      * @param stream The stream to write to

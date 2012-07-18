@@ -48,6 +48,17 @@ public interface JoinNotice extends BoutNotice, IdentityNotice {
          * {@inheritDoc}
          */
         @Override
+        public String nameOf(final JoinNotice notice) {
+            return String.format(
+                "%s %s",
+                new IdentityNotice.Serial().nameOf(notice),
+                new BoutNotice.Serial().nameOf(notice)
+            );
+        }
+        /**
+         * {@inheritDoc}
+         */
+        @Override
         public void write(final JoinNotice notice,
             final DataOutputStream stream) throws IOException {
             new BoutNotice.Serial().write(notice, stream);

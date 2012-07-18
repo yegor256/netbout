@@ -59,6 +59,17 @@ public interface AliasAddedNotice extends IdentityNotice {
          * {@inheritDoc}
          */
         @Override
+        public String nameOf(final AliasAddedNotice notice) {
+            return String.format(
+                "%s alias:%s",
+                new IdentityNotice.Serial().nameOf(notice),
+                notice.alias()
+            );
+        }
+        /**
+         * {@inheritDoc}
+         */
+        @Override
         public void write(final AliasAddedNotice notice,
             final DataOutputStream stream) throws IOException {
             new IdentityNotice.Serial().write(notice, stream);

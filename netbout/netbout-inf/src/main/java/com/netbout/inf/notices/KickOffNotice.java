@@ -48,6 +48,17 @@ public interface KickOffNotice extends IdentityNotice, BoutNotice {
          * {@inheritDoc}
          */
         @Override
+        public String nameOf(final KickOffNotice notice) {
+            return String.format(
+                "%s %s",
+                new IdentityNotice.Serial().nameOf(notice),
+                new BoutNotice.Serial().nameOf(notice)
+            );
+        }
+        /**
+         * {@inheritDoc}
+         */
+        @Override
         public void write(final KickOffNotice notice,
             final DataOutputStream stream) throws IOException {
             new BoutNotice.Serial().write(notice, stream);

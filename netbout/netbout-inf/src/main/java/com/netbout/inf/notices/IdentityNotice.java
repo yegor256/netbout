@@ -61,6 +61,16 @@ public interface IdentityNotice extends Notice {
          * {@inheritDoc}
          */
         @Override
+        public String nameOf(final IdentityNotice notice) {
+            return String.format(
+                "w/%s",
+                notice.identity().name()
+            );
+        }
+        /**
+         * {@inheritDoc}
+         */
+        @Override
         public void write(final IdentityNotice notice,
             final DataOutputStream stream) throws IOException {
             stream.writeUTF(notice.identity().name().toString());
