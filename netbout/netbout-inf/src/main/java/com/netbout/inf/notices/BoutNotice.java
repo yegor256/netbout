@@ -47,6 +47,7 @@ import java.util.concurrent.atomic.AtomicReference;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
+@SuppressWarnings("PMD.TooManyMethods")
 public interface BoutNotice extends Notice {
 
     /**
@@ -98,8 +99,10 @@ public interface BoutNotice extends Notice {
         }
         /**
          * {@inheritDoc}
+         * @checkstyle JavaNCSS (200 lines)
          */
         @Override
+        @SuppressWarnings("PMD.ExcessiveMethodLength")
         public BoutNotice read(final DataInputStream stream)
             throws IOException {
             final long number = stream.readLong();

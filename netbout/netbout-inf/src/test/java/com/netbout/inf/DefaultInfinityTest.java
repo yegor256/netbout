@@ -53,6 +53,7 @@ import org.junit.Test;
  * @checkstyle MagicNumber (500 lines)
  * @checkstyle ClassDataAbstractionCoupling (500 lines)
  */
+@SuppressWarnings("PMD.DoNotUseThreads")
 public final class DefaultInfinityTest {
 
     /**

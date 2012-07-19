@@ -50,8 +50,11 @@ public interface BoutRenamedNotice extends BoutNotice {
          */
         @Override
         public String nameOf(final BoutRenamedNotice notice) {
-            // name should be really unique
-            return new BoutNotice.Serial().nameOf(notice);
+            return String.format(
+                "%s title:%s",
+                new BoutNotice.Serial().nameOf(notice),
+                notice.bout().title()
+            );
         }
         /**
          * {@inheritDoc}

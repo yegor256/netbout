@@ -52,7 +52,7 @@ public final class InfinityMocker {
      */
     public static void waitFor(final Infinity inf, final Collection<Urn> urns)
         throws InterruptedException {
-        final Urn[] names = urns.toArray(new Urn[0]);
+        final Urn[] names = urns.toArray(new Urn[urns.size()]);
         int cycles = 0;
         while (inf.eta(names) != 0) {
             TimeUnit.SECONDS.sleep(1);

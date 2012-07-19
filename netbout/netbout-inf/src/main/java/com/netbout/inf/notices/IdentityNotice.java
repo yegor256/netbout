@@ -44,6 +44,7 @@ import java.util.Set;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
+@SuppressWarnings("PMD.TooManyMethods")
 public interface IdentityNotice extends Notice {
 
     /**
@@ -98,10 +99,12 @@ public interface IdentityNotice extends Notice {
             };
         }
         /**
-         * Create an identity from name.
+         * Create an identity from name (also used from {@link BoutNotice},
+         * for example).
          * @param name The name of it
          * @return The identity
          */
+        @SuppressWarnings("PMD.DefaultPackage")
         static Identity toIdentity(final Urn name) {
             // @checkstyle AnonInnerLength (100 lines)
             return new Identity() {

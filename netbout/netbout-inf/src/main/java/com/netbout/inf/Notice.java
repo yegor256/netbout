@@ -249,19 +249,24 @@ public interface Notice {
         private String nameOf() {
             String name;
             if (this.origin instanceof MessagePostedNotice) {
-                name = "message posted";
+                name = MessagePostedNotice.class.getName();
             } else if (this.origin instanceof MessageSeenNotice) {
-                name = "message seen";
+                name = MessageSeenNotice.class.getName();
             } else if (this.origin instanceof AliasAddedNotice) {
-                name = "alias added";
+                name = AliasAddedNotice.class.getName();
             } else if (this.origin instanceof BoutRenamedNotice) {
-                name = "bout renamed";
+                name = BoutRenamedNotice.class.getName();
             } else if (this.origin instanceof KickOffNotice) {
-                name = "kicked off";
+                name = KickOffNotice.class.getName();
             } else if (this.origin instanceof JoinNotice) {
-                name = "participation confirmed";
+                name = JoinNotice.class.getName();
             } else {
-                throw new IllegalStateException("unknown type of notice");
+                throw new IllegalStateException(
+                    Logger.format(
+                        "unknown type of notice '%[type]s'",
+                        this.origin
+                    )
+                );
             }
             return name;
         }
@@ -272,20 +277,25 @@ public interface Notice {
          */
         private static Class<? extends Notice> reverse(final String name) {
             Class<? extends Notice> type;
-            if ("message posted".equals(name)) {
+            if (name.equals(MessagePostedNotice.class.getName())) {
                 type = MessagePostedNotice.class;
-            } else if ("message seen".equals(name)) {
+            } else if (name.equals(MessageSeenNotice.class.getName())) {
                 type = MessageSeenNotice.class;
-            } else if ("alias added".equals(name)) {
+            } else if (name.equals(AliasAddedNotice.class.getName())) {
                 type = AliasAddedNotice.class;
-            } else if ("bout renamed".equals(name)) {
+            } else if (name.equals(BoutRenamedNotice.class.getName())) {
                 type = BoutRenamedNotice.class;
-            } else if ("kicked off".equals(name)) {
+            } else if (name.equals(KickOffNotice.class.getName())) {
                 type = KickOffNotice.class;
-            } else if ("participation confirmed".equals(name)) {
+            } else if (name.equals(JoinNotice.class.getName())) {
                 type = JoinNotice.class;
             } else {
-                throw new IllegalStateException("unknown name of notice");
+                throw new IllegalStateException(
+                    String.format(
+                        "unknown mnemo '%s'",
+                        name
+                    )
+                );
             }
             return type;
         }
