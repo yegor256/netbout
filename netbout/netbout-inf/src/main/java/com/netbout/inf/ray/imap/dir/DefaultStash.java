@@ -79,6 +79,11 @@ final class DefaultStash implements Stash {
     @Override
     public void close() throws IOException {
         this.lock.close();
+        Logger.debug(
+            this,
+            "#close(..): closed with %d done notices",
+            this.done.size()
+        );
     }
 
     /**

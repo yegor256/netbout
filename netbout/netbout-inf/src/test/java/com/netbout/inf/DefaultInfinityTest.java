@@ -72,24 +72,19 @@ public final class DefaultInfinityTest {
             .withNumber(MsgMocker.number())
             .inBout(bout)
             .mock();
-        final Urn[] deps = inf.see(
-            new MessagePostedNotice() {
-                @Override
-                public Message message() {
-                    return msg;
+        InfinityMocker.waitFor(
+            inf,
+            inf.see(
+                new MessagePostedNotice() {
+                    @Override
+                    public Message message() {
+                        return msg;
+                    }
                 }
-            }
-        ).toArray(new Urn[0]);
-        int total = 0;
-        while (inf.eta(deps) != 0) {
-            TimeUnit.MILLISECONDS.sleep(1);
-            Logger.debug(this, "eta=%[nano]s", inf.eta(deps));
-            if (++total > 1000) {
-                throw new IllegalStateException("time out");
-            }
-        }
+            )
+        );
         final String query = String.format(
-            "(pos 0)",
+            "(and (equal $number %d) (pos 0))",
             msg.number()
         );
         MatcherAssert.assertThat(
@@ -143,17 +138,9 @@ public final class DefaultInfinityTest {
         svc.shutdown();
         svc.awaitTermination(5, TimeUnit.SECONDS);
         inf.close();
-        final Urn[] deps = authors.toArray(new Urn[0]);
-        for (int attempt = 0; attempt <= 2; ++attempt) {
+        for (int attempt = 0; attempt <= 0; ++attempt) {
             final Infinity restored = new DefaultInfinity(folder);
-            int cycles = 0;
-            while (restored.eta(deps) != 0) {
-                TimeUnit.SECONDS.sleep(1);
-                Logger.debug(this, "eta=%[nano]s", restored.eta(deps));
-                if (++cycles > 15) {
-                    throw new IllegalStateException("time out");
-                }
-            }
+            InfinityMocker.waitFor(restored, authors);
             MatcherAssert.assertThat(
                 restored.messages("(matches 'Jeffrey')"),
                 Matchers.<Long>iterableWithSize(added.get())
@@ -194,21 +181,17 @@ public final class DefaultInfinityTest {
                 .withNumber(MsgMocker.number())
                 .inBout(bout)
                 .mock();
-            final Urn[] deps = inf.see(
-                new MessagePostedNotice() {
-                    @Override
-                    public Message message() {
-                        return msg;
+            InfinityMocker.waitFor(
+                inf,
+                inf.see(
+                    new MessagePostedNotice() {
+                        @Override
+                        public Message message() {
+                            return msg;
+                        }
                     }
-                }
-            ).toArray(new Urn[0]);
-            int total = 0;
-            while (inf.eta(deps) != 0) {
-                TimeUnit.MILLISECONDS.sleep(1);
-                if (++total > 1000) {
-                    throw new IllegalStateException("time out 3");
-                }
-            }
+                )
+            );
         }
         final int threads = 10;
         final CountDownLatch start = new CountDownLatch(1);

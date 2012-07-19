@@ -26,6 +26,10 @@
  */
 package com.netbout.inf;
 
+import com.jcabi.log.Logger;
+import com.netbout.spi.Urn;
+import java.util.Collection;
+import java.util.concurrent.TimeUnit;
 import org.mockito.Mockito;
 
 /**
@@ -39,6 +43,32 @@ public final class InfinityMocker {
      * The object.
      */
     private final transient Infinity infinity = Mockito.mock(Infinity.class);
+
+    /**
+     * Wait for eta of provided URNs.
+     * @param inf The infinity
+     * @param urns The names to wait for
+     * @throws InterruptedException If any
+     */
+    public static void waitFor(final Infinity inf, final Collection<Urn> urns)
+        throws InterruptedException {
+        final Urn[] names = urns.toArray(new Urn[0]);
+        int cycles = 0;
+        while (inf.eta(names) != 0) {
+            TimeUnit.SECONDS.sleep(1);
+            Logger.debug(InfinityMocker.class, "eta=%[nano]s", inf.eta(names));
+            if (++cycles > 15) {
+                throw new IllegalStateException("time out");
+            }
+        }
+        Logger.debug(
+            InfinityMocker.class,
+            "INF is ready (eta=%dns, %d deps, maximum=%d)",
+            inf.eta(names),
+            names.length,
+            inf.maximum()
+        );
+    }
 
     /**
      * Build it.
