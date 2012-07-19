@@ -28,7 +28,6 @@ package com.netbout.inf;
 
 import java.io.Closeable;
 import java.io.IOException;
-import java.util.Iterator;
 
 /**
  * Stash of notices.

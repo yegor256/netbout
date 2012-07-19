@@ -31,12 +31,10 @@ import com.netbout.spi.Bout;
 import com.netbout.spi.BoutMocker;
 import com.netbout.spi.Participant;
 import com.netbout.spi.ParticipantMocker;
-import com.netbout.spi.UrnMocker;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
-import java.io.IOException;
 import java.util.Date;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
@@ -46,6 +44,7 @@ import org.junit.Test;
  * Test case of {@link BoutNotice}.
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
+ * @checkstyle ClassDataAbstractionCoupling (500 lines)
  */
 public final class BoutNoticeTest {
 

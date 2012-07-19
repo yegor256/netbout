@@ -57,6 +57,7 @@ public final class InfinityMocker {
         while (inf.eta(names) != 0) {
             TimeUnit.SECONDS.sleep(1);
             Logger.debug(InfinityMocker.class, "eta=%[nano]s", inf.eta(names));
+            // @checkstyle MagicNumber (1 line)
             if (++cycles > 15) {
                 throw new IllegalStateException("time out");
             }

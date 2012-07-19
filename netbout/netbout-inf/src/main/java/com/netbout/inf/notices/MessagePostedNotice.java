@@ -26,14 +26,11 @@
  */
 package com.netbout.inf.notices;
 
-import com.netbout.spi.Bout;
-import com.netbout.spi.Identity;
 import com.netbout.spi.Message;
 import com.netbout.spi.Urn;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
-import java.util.HashSet;
 import java.util.Set;
 
 /**

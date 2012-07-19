@@ -26,7 +26,6 @@
  */
 package com.netbout.inf;
 
-import com.jcabi.log.Logger;
 import com.jcabi.log.VerboseThreads;
 import com.netbout.inf.notices.MessagePostedNotice;
 import com.netbout.spi.Bout;
@@ -35,7 +34,6 @@ import com.netbout.spi.Message;
 import com.netbout.spi.MessageMocker;
 import com.netbout.spi.Urn;
 import com.netbout.spi.UrnMocker;
-import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentSkipListSet;

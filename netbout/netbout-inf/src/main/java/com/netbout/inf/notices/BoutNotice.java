@@ -31,12 +31,10 @@ import com.netbout.spi.Bout;
 import com.netbout.spi.Identity;
 import com.netbout.spi.Message;
 import com.netbout.spi.Participant;
-import com.netbout.spi.Profile;
 import com.netbout.spi.Urn;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
-import java.net.URL;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashSet;
@@ -115,6 +113,7 @@ public interface BoutNotice extends Notice {
                 final boolean leader = stream.readBoolean();
                 final boolean confirmed = stream.readBoolean();
                 dudes.add(
+                    // @checkstyle AnonInnerLength (50 lines)
                     new Participant() {
                         @Override
                         public Identity identity() {
@@ -144,6 +143,7 @@ public interface BoutNotice extends Notice {
                 );
             }
             bout.set(
+                // @checkstyle AnonInnerLength (100 lines)
                 new Bout() {
                     @Override
                     public int hashCode() {
@@ -152,10 +152,9 @@ public interface BoutNotice extends Notice {
                     @Override
                     public boolean equals(final Object bout) {
                         return this == bout || (bout instanceof Bout
-                            && this.number().equals(
-                                Bout.class.cast(bout).number()
-                            )
-                        );
+                            && this.number()
+                                .equals(Bout.class.cast(bout).number())
+                            );
                     }
                     @Override
                     public Long number() {

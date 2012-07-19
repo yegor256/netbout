@@ -33,14 +33,10 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.Iterator;
-import java.util.NoSuchElementException;
 import java.util.concurrent.ConcurrentSkipListSet;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicReference;
 import org.apache.commons.codec.binary.Base64;
-import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang.CharEncoding;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.StringUtils;
 
 /**
@@ -90,7 +86,7 @@ final class DefaultStash implements Stash {
      * {@inheritDoc}
      */
     @Override
-    public void add(Notice notice) throws IOException {
+    public void add(final Notice notice) throws IOException {
         final Notice.SerializableNotice ser =
             new Notice.SerializableNotice(notice);
         final byte[] bytes = ser.serialize();
@@ -109,7 +105,7 @@ final class DefaultStash implements Stash {
      * {@inheritDoc}
      */
     @Override
-    public void remove(Notice notice) throws IOException {
+    public void remove(final Notice notice) throws IOException {
         this.done.add(this.file(new Notice.SerializableNotice(notice)));
     }
 
@@ -148,6 +144,7 @@ final class DefaultStash implements Stash {
             throw new IllegalStateException(ex);
         }
         final Iterator<File> iterator = files.iterator();
+        // @checkstyle AnonInnerLength (50 lines)
         return new Iterator<Notice>() {
             @Override
             public boolean hasNext() {

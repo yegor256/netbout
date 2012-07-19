@@ -28,24 +28,17 @@ package com.netbout.inf;
 
 import com.jcabi.log.Logger;
 import com.netbout.inf.notices.AliasAddedNotice;
-import com.netbout.inf.notices.BoutNotice;
 import com.netbout.inf.notices.BoutRenamedNotice;
-import com.netbout.inf.notices.IdentityNotice;
 import com.netbout.inf.notices.JoinNotice;
 import com.netbout.inf.notices.KickOffNotice;
-import com.netbout.inf.notices.MessageNotice;
 import com.netbout.inf.notices.MessagePostedNotice;
 import com.netbout.inf.notices.MessageSeenNotice;
-import com.netbout.spi.Bout;
-import com.netbout.spi.Participant;
 import com.netbout.spi.Urn;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
-import java.util.Collections;
-import java.util.HashSet;
 import java.util.Set;
 
 /**
@@ -53,6 +46,7 @@ import java.util.Set;
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
+ * @checkstyle ClassDataAbstractionCoupling (500 lines)
  */
 public interface Notice {
 

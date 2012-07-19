@@ -118,6 +118,7 @@ public interface MessageNotice extends Notice {
             final Boolean seen = stream.readBoolean();
             final Date date = new Date(stream.readLong());
             final Bout bout = new BoutNotice.Serial().read(stream).bout();
+            // @checkstyle AnonInnerLength (100 lines)
             return new MessageNotice() {
                 @Override
                 public Message message() {
@@ -129,10 +130,9 @@ public interface MessageNotice extends Notice {
                         @Override
                         public boolean equals(final Object msg) {
                             return this == msg || (msg instanceof Message
-                                && this.number().equals(
-                                    Message.class.cast(msg).number()
-                                )
-                            );
+                                && this.number()
+                                    .equals(Message.class.cast(msg).number())
+                                );
                         }
                         @Override
                         public Long number() {

@@ -35,7 +35,6 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.URL;
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -94,7 +93,7 @@ public interface IdentityNotice extends Notice {
             return new IdentityNotice() {
                 @Override
                 public Identity identity() {
-                    return Serial.toIdentity(name);
+                    return IdentityNotice.Serial.toIdentity(name);
                 }
             };
         }
@@ -104,6 +103,7 @@ public interface IdentityNotice extends Notice {
          * @return The identity
          */
         static Identity toIdentity(final Urn name) {
+            // @checkstyle AnonInnerLength (100 lines)
             return new Identity() {
                 @Override
                 public int hashCode() {
@@ -112,10 +112,8 @@ public interface IdentityNotice extends Notice {
                 @Override
                 public boolean equals(final Object dude) {
                     return this == dude || (dude instanceof Identity
-                        && this.name().equals(
-                            Identity.class.cast(dude).name()
-                        )
-                    );
+                        && this.name().equals(Identity.class.cast(dude).name())
+                        );
                 }
                 @Override
                 public Urn name() {

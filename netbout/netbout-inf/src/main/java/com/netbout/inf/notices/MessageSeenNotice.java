@@ -26,7 +26,6 @@
  */
 package com.netbout.inf.notices;
 
-import com.netbout.spi.Bout;
 import com.netbout.spi.Identity;
 import com.netbout.spi.Message;
 import com.netbout.spi.Urn;
