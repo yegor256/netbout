@@ -28,7 +28,11 @@ package com.netbout.inf.ray.imap.dir;
 
 import com.netbout.inf.Attribute;
 import com.netbout.inf.MsgMocker;
+import com.netbout.inf.Notice;
+import com.netbout.inf.notices.MessagePostedNotice;
 import com.netbout.inf.ray.imap.Numbers;
+import com.netbout.spi.Message;
+import com.netbout.spi.MessageMocker;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
@@ -167,6 +171,45 @@ public final class DraftTest {
         MatcherAssert.assertThat(
             dest.catalog(attr).seek(value),
             Matchers.greaterThanOrEqualTo(0L)
+        );
+    }
+
+    /**
+     * Draft can baseline itself to a baseline, with stash inside.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void baselinesItselfToBaselineWithStash() throws Exception {
+        final File dir = this.temp.newFolder("foo-57");
+        final Draft draft = new Draft(new Lock(new File(dir, "draft-55")));
+        final Baseline src = new Baseline(new Lock(new File(dir, "src-55")));
+        final Baseline dest = new Baseline(new Lock(new File(dir, "dest-55")));
+        final Message fmsg = new MessageMocker().mock();
+        final Notice first = new MessagePostedNotice() {
+            @Override
+            public Message message() {
+                return fmsg;
+            }
+        };
+        src.stash().add(first);
+        src.stash().remove(first);
+        final Message smsg = new MessageMocker().mock();
+        src.stash().add(
+            new MessagePostedNotice() {
+                @Override
+                public Message message() {
+                    return smsg;
+                }
+            }
+        );
+        draft.baseline(dest, src);
+        draft.close();
+        src.close();
+        MatcherAssert.assertThat(
+            MessagePostedNotice.class.cast(
+                dest.stash().iterator().next()
+            ).message().number(),
+            Matchers.equalTo(smsg.number())
         );
     }
 
