@@ -26,33 +26,29 @@
  */
 package com.netbout.inf;
 
+import java.util.ArrayList;
 import org.mockito.Mockito;
 
 /**
- * Mocker of {@link Ray}.
+ * Mocker of {@link Stash}.
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class RayMocker {
+public final class StashMocker {
 
     /**
      * The object.
      */
-    private final transient Ray ray = Mockito.mock(Ray.class);
+    private final transient Stash stash = Mockito.mock(Stash.class);
 
     /**
      * Build it.
-     * @return The ray
+     * @return The stash
      */
-    public Ray mock() {
-        Mockito.doReturn(new MsgMocker().mock())
-            .when(this.ray).msg(Mockito.anyLong());
-        try {
-            Mockito.doReturn(new StashMocker().mock()).when(this.ray).stash();
-        } catch (java.io.IOException ex) {
-            throw new IllegalStateException(ex);
-        }
-        return this.ray;
+    public Stash mock() {
+        Mockito.doReturn(new ArrayList<Notice>().iterator())
+            .when(this.stash).iterator();
+        return this.stash;
     }
 
 }
