@@ -117,15 +117,16 @@ public final class DefaultInfinityTest {
                 new Runnable() {
                     @Override
                     public void run() {
+                        final Message message = new MessageMocker()
+                            .withText("about Jeffrey")
+                            .withNumber(number)
+                            .mock();
                         authors.addAll(
                             inf.see(
                                 new MessagePostedNotice() {
                                     @Override
                                     public Message message() {
-                                        return new MessageMocker()
-                                            .withText("about Jeffrey")
-                                            .withNumber(number)
-                                            .mock();
+                                        return message;
                                     }
                                 }
                             )
@@ -138,7 +139,7 @@ public final class DefaultInfinityTest {
         svc.shutdown();
         svc.awaitTermination(5, TimeUnit.SECONDS);
         inf.close();
-        for (int attempt = 0; attempt <= 0; ++attempt) {
+        for (int attempt = 0; attempt <= 2; ++attempt) {
             final Infinity restored = new DefaultInfinity(folder);
             InfinityMocker.waitFor(restored, authors);
             MatcherAssert.assertThat(
