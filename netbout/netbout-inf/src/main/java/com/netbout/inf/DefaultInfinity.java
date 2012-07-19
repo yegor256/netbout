@@ -143,7 +143,7 @@ public final class DefaultInfinity implements Infinity {
      * {@inheritDoc}
      */
     @Override
-    public void close() throws java.io.IOException {
+    public void close() throws IOException {
         this.mux.close();
         this.ray.close();
         this.folder.close();
@@ -154,12 +154,16 @@ public final class DefaultInfinity implements Infinity {
      * {@inheritDoc}
      */
     @Override
-    public void flush() throws java.io.IOException {
+    public void flush() throws IOException {
         this.ray.flush();
     }
 
     /**
      * {@inheritDoc}
+     *
+     * <p>We should return ONE in case the Mux is not yet ready and we don't
+     * have any tasks there and no data is in INF. It means that the Infinity
+     * hasn't been intialized yet.
      */
     @Override
     public long eta(final Urn... who) {
@@ -196,7 +200,11 @@ public final class DefaultInfinity implements Infinity {
      */
     @Override
     public Set<Urn> see(final Notice notice) {
-        return this.mux.add(notice);
+        try {
+            return this.mux.add(notice);
+        } catch (IOException ex) {
+            throw new IllegalArgumentException(ex);
+        }
     }
 
 }

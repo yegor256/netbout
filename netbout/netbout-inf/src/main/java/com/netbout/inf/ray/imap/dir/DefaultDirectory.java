@@ -28,6 +28,7 @@ package com.netbout.inf.ray.imap.dir;
 
 import com.jcabi.log.Logger;
 import com.netbout.inf.Attribute;
+import com.netbout.inf.Stash;
 import com.netbout.inf.ray.imap.Directory;
 import com.netbout.inf.ray.imap.Numbers;
 import com.netbout.inf.ray.imap.Reverse;
@@ -261,11 +262,20 @@ public final class DefaultDirectory implements Directory {
      */
     @Override
     public void close() throws IOException {
+        this.base.get().stash().close();
         this.base.get().close();
         this.base.set(null);
         this.draft.get().close();
         this.draft.set(null);
         this.lock.close();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Stash stash() throws IOException {
+        return this.base.get().stash();
     }
 
     /**

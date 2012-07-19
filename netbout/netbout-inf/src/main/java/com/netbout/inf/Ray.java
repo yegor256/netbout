@@ -70,4 +70,11 @@ public interface Ray extends Closeable {
      */
     long maximum();
 
+    /**
+     * Get stash of notices.
+     * @return The stash
+     * @throws IOException If IO problem insde
+     */
+    Stash stash() throws IOException;
+
 }

@@ -27,20 +27,8 @@
 package com.netbout.inf;
 
 import com.jcabi.log.Logger;
-import com.netbout.inf.notices.AliasAddedNotice;
-import com.netbout.inf.notices.BoutNotice;
-import com.netbout.inf.notices.BoutRenamedNotice;
-import com.netbout.inf.notices.IdentityNotice;
-import com.netbout.inf.notices.JoinNotice;
-import com.netbout.inf.notices.KickOffNotice;
-import com.netbout.inf.notices.MessageNotice;
-import com.netbout.inf.notices.MessagePostedNotice;
-import com.netbout.inf.notices.MessageSeenNotice;
-import com.netbout.spi.Bout;
-import com.netbout.spi.Participant;
 import com.netbout.spi.Urn;
-import java.util.Collections;
-import java.util.HashSet;
+import java.io.IOException;
 import java.util.Set;
 
 /**
@@ -94,28 +82,15 @@ final class MuxTask implements Runnable {
         this.store = str;
         this.ray = iray;
         this.ntc = what;
-        final Set<Urn> urns = new HashSet<Urn>();
-        if (what instanceof IdentityNotice) {
-            urns.add(((IdentityNotice) what).identity().name());
-        }
-        if (what instanceof BoutNotice) {
-            urns.addAll(
-                MuxTask.dudesOf(((BoutNotice) what).bout())
-            );
-        }
-        if (what instanceof MessageNotice) {
-            urns.addAll(
-                MuxTask.dudesOf(
-                    ((MessageNotice) what).message().bout()
-                )
-            );
-        }
-        if (urns.isEmpty()) {
-            throw new IllegalArgumentException(
-                Logger.format("empty list of deps in %[type]s", what)
-            );
-        }
-        this.deps = Collections.unmodifiableSet(urns);
+        this.deps = new Notice.SerializableNotice(what).deps();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String toString() {
+        return new Notice.SerializableNotice(this.ntc).toString();
     }
 
     /**
@@ -141,7 +116,11 @@ final class MuxTask implements Runnable {
     @Override
     public void run() {
         this.started = System.nanoTime();
-        this.execute();
+        try {
+            this.execute();
+        } catch (IOException ex) {
+            throw new IllegalArgumentException(ex);
+        }
         this.finished = System.nanoTime();
     }
 
@@ -176,79 +155,18 @@ final class MuxTask implements Runnable {
     }
 
     /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String toString() {
-        final StringBuilder text = new StringBuilder();
-        text.append(MuxTask.nameOf(this.ntc));
-        if (this.ntc instanceof IdentityNotice) {
-            text.append(" w/").append(
-                ((IdentityNotice) this.ntc).identity().name()
-            );
-        }
-        if (this.ntc instanceof BoutNotice) {
-            text.append(" @").append(
-                ((BoutNotice) this.ntc).bout().number()
-            );
-        }
-        if (this.ntc instanceof MessageNotice) {
-            text.append(" at").append(
-                ((MessageNotice) this.ntc).message().number()
-            );
-        }
-        return text.toString();
-    }
-
-    /**
      * Execute it.
+     * @throws IOException If some IO problem
      */
-    private void execute() {
+    private void execute() throws IOException {
         this.store.see(this.ray, this.ntc);
+        this.ray.stash().remove(this.ntc);
         Logger.debug(
             this,
             "#execute(): done \"%s\" in %[nano]s",
             this,
             this.time()
         );
-    }
-
-    /**
-     * Get name of notice.
-     * @param notice The notice to analyze
-     * @return The name
-     */
-    private static String nameOf(final Notice notice) {
-        String name;
-        if (notice instanceof MessagePostedNotice) {
-            name = "message posted";
-        } else if (notice instanceof MessageSeenNotice) {
-            name = "message seen";
-        } else if (notice instanceof AliasAddedNotice) {
-            name = "alias added";
-        } else if (notice instanceof BoutRenamedNotice) {
-            name = "bout renamed";
-        } else if (notice instanceof KickOffNotice) {
-            name = "kicked off";
-        } else if (notice instanceof JoinNotice) {
-            name = "participation confirmed";
-        } else {
-            throw new IllegalStateException("unknown type of notice");
-        }
-        return name;
-    }
-
-    /**
-     * Get list of dudes (names of participants) from the bout.
-     * @param bout The bout to analyze
-     * @return The names
-     */
-    private static Set<Urn> dudesOf(final Bout bout) {
-        final Set<Urn> deps = new HashSet<Urn>();
-        for (Participant dude : bout.participants()) {
-            deps.add(dude.identity().name());
-        }
-        return deps;
     }
 
 }

@@ -27,7 +27,16 @@
 package com.netbout.inf.notices;
 
 import com.netbout.inf.Notice;
+import com.netbout.spi.Bout;
+import com.netbout.spi.Identity;
 import com.netbout.spi.Message;
+import com.netbout.spi.Urn;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Message-related notice.
@@ -35,6 +44,7 @@ import com.netbout.spi.Message;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
+@SuppressWarnings("PMD.TooManyMethods")
 public interface MessageNotice extends Notice {
 
     /**
@@ -42,5 +52,119 @@ public interface MessageNotice extends Notice {
      * @return The message
      */
     Message message();
+
+    /**
+     * Serializer.
+     */
+    class Serial implements Serializer<MessageNotice> {
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public String nameOf(final MessageNotice notice) {
+            return String.format(
+                "message:%d",
+                notice.message().number()
+            );
+        }
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public Set<Urn> deps(final MessageNotice notice) {
+            final Set<Urn> deps = new HashSet<Urn>();
+            deps.addAll(
+                new BoutNotice.Serial().deps(
+                    new BoutNotice() {
+                        @Override
+                        public Bout bout() {
+                            return notice.message().bout();
+                        }
+                    }
+                )
+            );
+            deps.add(notice.message().author().name());
+            return deps;
+        }
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public void write(final MessageNotice notice,
+            final DataOutputStream stream) throws IOException {
+            stream.writeLong(notice.message().number());
+            stream.writeUTF(notice.message().author().name().toString());
+            stream.writeUTF(notice.message().text());
+            stream.writeLong(notice.message().date().getTime());
+            new BoutNotice.Serial().write(
+                new BoutNotice() {
+                    @Override
+                    public Bout bout() {
+                        return notice.message().bout();
+                    }
+                },
+                stream
+            );
+        }
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public MessageNotice read(final DataInputStream stream)
+            throws IOException {
+            final long number = stream.readLong();
+            final Urn author = Urn.create(stream.readUTF());
+            final String text = stream.readUTF();
+            final Date date = new Date(stream.readLong());
+            final Bout bout = new BoutNotice.Serial().read(stream).bout();
+            // @checkstyle AnonInnerLength (100 lines)
+            return new MessageNotice() {
+                @Override
+                public Message message() {
+                    return new Message() {
+                        @Override
+                        public int hashCode() {
+                            return this.number().hashCode();
+                        }
+                        @Override
+                        public boolean equals(final Object msg) {
+                            return this == msg || (msg instanceof Message
+                                && this.number()
+                                    .equals(Message.class.cast(msg).number())
+                                );
+                        }
+                        @Override
+                        public Long number() {
+                            return number;
+                        }
+                        @Override
+                        public String text() {
+                            return text;
+                        }
+                        @Override
+                        public Identity author() {
+                            return IdentityNotice.Serial.toIdentity(author);
+                        }
+                        @Override
+                        public Boolean seen() {
+                            throw new UnsupportedOperationException();
+                        }
+                        @Override
+                        public Date date() {
+                            return date;
+                        }
+                        @Override
+                        public int compareTo(final Message msg) {
+                            return this.number().compareTo(msg.number());
+                        }
+                        @Override
+                        public Bout bout() {
+                            return bout;
+                        }
+                    };
+                }
+            };
+        }
+    }
 
 }

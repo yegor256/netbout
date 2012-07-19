@@ -47,6 +47,11 @@ public final class RayMocker {
     public Ray mock() {
         Mockito.doReturn(new MsgMocker().mock())
             .when(this.ray).msg(Mockito.anyLong());
+        try {
+            Mockito.doReturn(new StashMocker().mock()).when(this.ray).stash();
+        } catch (java.io.IOException ex) {
+            throw new IllegalStateException(ex);
+        }
         return this.ray;
     }
 

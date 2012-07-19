@@ -26,6 +26,15 @@
  */
 package com.netbout.inf.notices;
 
+import com.netbout.spi.Identity;
+import com.netbout.spi.Message;
+import com.netbout.spi.Urn;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.util.HashSet;
+import java.util.Set;
+
 /**
  * Message was just seen.
  *
@@ -33,5 +42,62 @@ package com.netbout.inf.notices;
  * @version $Id$
  */
 public interface MessageSeenNotice extends MessageNotice, IdentityNotice {
+
+    /**
+     * Serializer.
+     */
+    class Serial implements Serializer<MessageSeenNotice> {
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public String nameOf(final MessageSeenNotice notice) {
+            return String.format(
+                "%s %s",
+                new IdentityNotice.Serial().nameOf(notice),
+                new MessageNotice.Serial().nameOf(notice)
+            );
+        }
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public Set<Urn> deps(final MessageSeenNotice notice) {
+            final Set<Urn> deps = new HashSet<Urn>();
+            deps.addAll(new IdentityNotice.Serial().deps(notice));
+            deps.addAll(new MessageNotice.Serial().deps(notice));
+            return deps;
+        }
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public void write(final MessageSeenNotice notice,
+            final DataOutputStream stream) throws IOException {
+            new MessageNotice.Serial().write(notice, stream);
+            new IdentityNotice.Serial().write(notice, stream);
+        }
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public MessageSeenNotice read(final DataInputStream stream)
+            throws IOException {
+            final MessageNotice mnotice =
+                new MessageNotice.Serial().read(stream);
+            final IdentityNotice inotice =
+                new IdentityNotice.Serial().read(stream);
+            return new MessageSeenNotice() {
+                @Override
+                public Message message() {
+                    return mnotice.message();
+                }
+                @Override
+                public Identity identity() {
+                    return inotice.identity();
+                }
+            };
+        }
+    }
 
 }

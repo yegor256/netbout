@@ -24,59 +24,50 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.inf;
+package com.netbout.inf.notices;
 
-import com.jcabi.log.Logger;
-import com.netbout.spi.Urn;
-import java.util.Collection;
-import java.util.concurrent.TimeUnit;
-import org.mockito.Mockito;
+import com.netbout.spi.Identity;
+import com.netbout.spi.IdentityMocker;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import org.hamcrest.MatcherAssert;
+import org.hamcrest.Matchers;
+import org.junit.Test;
 
 /**
- * Mocker of {@link Infinity}.
+ * Test case of {@link IdentityNotice}.
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class InfinityMocker {
+public final class IdentityNoticeTest {
 
     /**
-     * The object.
+     * IdentityNotice can serialize and de-serialize notices.
+     * @throws Exception If there is some problem inside
      */
-    private final transient Infinity infinity = Mockito.mock(Infinity.class);
-
-    /**
-     * Wait for eta of provided URNs.
-     * @param inf The infinity
-     * @param urns The names to wait for
-     * @throws InterruptedException If any
-     */
-    public static void waitFor(final Infinity inf, final Collection<Urn> urns)
-        throws InterruptedException {
-        final Urn[] names = urns.toArray(new Urn[urns.size()]);
-        int cycles = 0;
-        while (inf.eta(names) != 0) {
-            TimeUnit.SECONDS.sleep(1);
-            Logger.debug(InfinityMocker.class, "eta=%[nano]s", inf.eta(names));
-            // @checkstyle MagicNumber (1 line)
-            if (++cycles > 15) {
-                throw new IllegalStateException("time out");
-            }
-        }
-        Logger.debug(
-            InfinityMocker.class,
-            "INF is ready (eta=%dns, %d deps, maximum=%d)",
-            inf.eta(names),
-            names.length,
-            inf.maximum()
+    @Test
+    public void serializesAndDeserializesNotices() throws Exception {
+        final ByteArrayOutputStream output = new ByteArrayOutputStream();
+        final Identity dude = new IdentityMocker().mock();
+        new IdentityNotice.Serial().write(
+            new IdentityNotice() {
+                @Override
+                public Identity identity() {
+                    return dude;
+                }
+            },
+            new DataOutputStream(output)
         );
-    }
-
-    /**
-     * Build it.
-     * @return The infinity
-     */
-    public Infinity mock() {
-        return this.infinity;
+        final IdentityNotice restored = new IdentityNotice.Serial().read(
+            new DataInputStream(new ByteArrayInputStream(output.toByteArray()))
+        );
+        MatcherAssert.assertThat(restored.identity(), Matchers.equalTo(dude));
+        MatcherAssert.assertThat(
+            restored.identity().name(),
+            Matchers.equalTo(dude.name())
+        );
     }
 
 }

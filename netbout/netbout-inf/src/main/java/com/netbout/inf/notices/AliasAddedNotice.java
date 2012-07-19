@@ -27,6 +27,11 @@
 package com.netbout.inf.notices;
 
 import com.netbout.spi.Identity;
+import com.netbout.spi.Urn;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.util.Set;
 
 /**
  * New alias was added to identity.
@@ -47,5 +52,58 @@ public interface AliasAddedNotice extends IdentityNotice {
      * @return The alias
      */
     String alias();
+
+    /**
+     * Serializer.
+     */
+    class Serial implements Serializer<AliasAddedNotice> {
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public String nameOf(final AliasAddedNotice notice) {
+            return String.format(
+                "%s alias:%s",
+                new IdentityNotice.Serial().nameOf(notice),
+                notice.alias()
+            );
+        }
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public Set<Urn> deps(final AliasAddedNotice notice) {
+            return new IdentityNotice.Serial().deps(notice);
+        }
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public void write(final AliasAddedNotice notice,
+            final DataOutputStream stream) throws IOException {
+            new IdentityNotice.Serial().write(notice, stream);
+            stream.writeUTF(notice.alias());
+        }
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public AliasAddedNotice read(final DataInputStream stream)
+            throws IOException {
+            final IdentityNotice inotice =
+                new IdentityNotice.Serial().read(stream);
+            final String alias = stream.readUTF();
+            return new AliasAddedNotice() {
+                @Override
+                public Identity identity() {
+                    return inotice.identity();
+                }
+                @Override
+                public String alias() {
+                    return alias;
+                }
+            };
+        }
+    }
 
 }

@@ -134,6 +134,9 @@ class BaseVersion implements Closeable {
                 continue;
             }
             final String name = FilenameUtils.getName(file.getPath());
+            if (name.charAt(0) == '_') {
+                continue;
+            }
             if (!name.matches("[a-z][a-z0-9\\-]+")) {
                 throw new IOException(
                     String.format(

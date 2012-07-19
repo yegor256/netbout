@@ -27,6 +27,7 @@
 package com.netbout.inf.ray.imap;
 
 import com.netbout.inf.Attribute;
+import com.netbout.inf.Stash;
 import java.io.Closeable;
 import java.io.IOException;
 
@@ -80,5 +81,12 @@ public interface Directory extends Closeable {
      * @throws IOException If some I/O problem inside
      */
     void baseline() throws IOException;
+
+    /**
+     * Get stash.
+     * @return The stash to use
+     * @throws IOException If IO problem insde
+     */
+    Stash stash() throws IOException;
 
 }

@@ -24,59 +24,51 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.inf;
+package com.netbout.inf.notices;
 
-import com.jcabi.log.Logger;
+import com.netbout.inf.Notice;
 import com.netbout.spi.Urn;
-import java.util.Collection;
-import java.util.concurrent.TimeUnit;
-import org.mockito.Mockito;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.util.Set;
 
 /**
- * Mocker of {@link Infinity}.
+ * Serializer of notice.
+ *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class InfinityMocker {
+interface Serializer<T extends Notice> {
 
     /**
-     * The object.
+     * Create unique name of the notice.
+     * @param notice The notice
+     * @return The name
      */
-    private final transient Infinity infinity = Mockito.mock(Infinity.class);
+    String nameOf(T notice);
 
     /**
-     * Wait for eta of provided URNs.
-     * @param inf The infinity
-     * @param urns The names to wait for
-     * @throws InterruptedException If any
+     * Get dependencies of this notice.
+     * @param notice The notice
+     * @return Names of deps
      */
-    public static void waitFor(final Infinity inf, final Collection<Urn> urns)
-        throws InterruptedException {
-        final Urn[] names = urns.toArray(new Urn[urns.size()]);
-        int cycles = 0;
-        while (inf.eta(names) != 0) {
-            TimeUnit.SECONDS.sleep(1);
-            Logger.debug(InfinityMocker.class, "eta=%[nano]s", inf.eta(names));
-            // @checkstyle MagicNumber (1 line)
-            if (++cycles > 15) {
-                throw new IllegalStateException("time out");
-            }
-        }
-        Logger.debug(
-            InfinityMocker.class,
-            "INF is ready (eta=%dns, %d deps, maximum=%d)",
-            inf.eta(names),
-            names.length,
-            inf.maximum()
-        );
-    }
+    Set<Urn> deps(T notice);
 
     /**
-     * Build it.
-     * @return The infinity
+     * Write it to the stream.
+     * @param notice The notice to write
+     * @param stream The stream to write to
+     * @throws IOException If some I/O problem inside
      */
-    public Infinity mock() {
-        return this.infinity;
-    }
+    void write(T notice, DataOutputStream stream) throws IOException;
+
+    /**
+     * Read it from the stream.
+     * @param stream The stream to read from
+     * @return The notice
+     * @throws IOException If some I/O problem inside
+     */
+    T read(DataInputStream stream) throws IOException;
 
 }

@@ -26,7 +26,6 @@
  */
 package com.netbout.inf;
 
-import com.jcabi.log.Logger;
 import com.jcabi.log.VerboseThreads;
 import com.netbout.inf.notices.MessagePostedNotice;
 import com.netbout.spi.Bout;
@@ -35,11 +34,14 @@ import com.netbout.spi.Message;
 import com.netbout.spi.MessageMocker;
 import com.netbout.spi.Urn;
 import com.netbout.spi.UrnMocker;
+import java.util.Set;
 import java.util.concurrent.Callable;
+import java.util.concurrent.ConcurrentSkipListSet;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;
@@ -51,6 +53,7 @@ import org.junit.Test;
  * @checkstyle MagicNumber (500 lines)
  * @checkstyle ClassDataAbstractionCoupling (500 lines)
  */
+@SuppressWarnings("PMD.DoNotUseThreads")
 public final class DefaultInfinityTest {
 
     /**
@@ -68,24 +71,19 @@ public final class DefaultInfinityTest {
             .withNumber(MsgMocker.number())
             .inBout(bout)
             .mock();
-        final Urn[] deps = inf.see(
-            new MessagePostedNotice() {
-                @Override
-                public Message message() {
-                    return msg;
+        InfinityMocker.waitFor(
+            inf,
+            inf.see(
+                new MessagePostedNotice() {
+                    @Override
+                    public Message message() {
+                        return msg;
+                    }
                 }
-            }
-        ).toArray(new Urn[0]);
-        int total = 0;
-        while (inf.eta(deps) != 0) {
-            TimeUnit.MILLISECONDS.sleep(1);
-            Logger.debug(this, "eta=%[nano]s", inf.eta(deps));
-            if (++total > 1000) {
-                throw new IllegalStateException("time out");
-            }
-        }
+            )
+        );
         final String query = String.format(
-            "(pos 0)",
+            "(and (equal $number %d) (pos 0))",
             msg.number()
         );
         MatcherAssert.assertThat(
@@ -104,36 +102,48 @@ public final class DefaultInfinityTest {
     public void restoresItselfFromFileSystem() throws Exception {
         final Folder folder = new FolderMocker().mock();
         final Infinity inf = new DefaultInfinity(folder);
-        final Bout bout = new BoutMocker()
-            .withParticipant(new UrnMocker().mock())
-            .mock();
-        final Message msg = new MessageMocker()
-            .withText("Jeffrey Lebowski, \u0443\u0440\u0430! How are you?")
-            .withNumber(MsgMocker.number())
-            .inBout(bout)
-            .mock();
-        final Urn[] deps = inf.see(
-            new MessagePostedNotice() {
-                @Override
-                public Message message() {
-                    return msg;
+        final int total = 100;
+        final Set<Urn> authors = new ConcurrentSkipListSet<Urn>();
+        final ExecutorService svc = Executors.newFixedThreadPool(
+            Runtime.getRuntime().availableProcessors(),
+            new VerboseThreads()
+        );
+        final AtomicInteger added = new AtomicInteger();
+        final long start = MsgMocker.number();
+        for (int pos = 0; pos < total; ++pos) {
+            final long number = start + pos;
+            svc.submit(
+                new Runnable() {
+                    @Override
+                    public void run() {
+                        final Message message = new MessageMocker()
+                            .withText("about Jeffrey")
+                            .withNumber(number)
+                            .mock();
+                        authors.addAll(
+                            inf.see(
+                                new MessagePostedNotice() {
+                                    @Override
+                                    public Message message() {
+                                        return message;
+                                    }
+                                }
+                            )
+                        );
+                        added.incrementAndGet();
+                    }
                 }
-            }
-        ).toArray(new Urn[0]);
-        int total = 0;
-        while (inf.eta(deps) != 0) {
-            TimeUnit.MILLISECONDS.sleep(1);
-            if (++total > 1000) {
-                throw new IllegalStateException("time out 2");
-            }
+            );
         }
-        inf.flush();
+        svc.shutdown();
+        svc.awaitTermination(5, TimeUnit.SECONDS);
         inf.close();
         for (int attempt = 0; attempt <= 2; ++attempt) {
             final Infinity restored = new DefaultInfinity(folder);
+            InfinityMocker.waitFor(restored, authors);
             MatcherAssert.assertThat(
                 restored.messages("(matches 'Jeffrey')"),
-                Matchers.<Long>iterableWithSize(Matchers.greaterThan(0))
+                Matchers.<Long>iterableWithSize(added.get())
             );
             restored.close();
         }
@@ -171,21 +181,17 @@ public final class DefaultInfinityTest {
                 .withNumber(MsgMocker.number())
                 .inBout(bout)
                 .mock();
-            final Urn[] deps = inf.see(
-                new MessagePostedNotice() {
-                    @Override
-                    public Message message() {
-                        return msg;
+            InfinityMocker.waitFor(
+                inf,
+                inf.see(
+                    new MessagePostedNotice() {
+                        @Override
+                        public Message message() {
+                            return msg;
+                        }
                     }
-                }
-            ).toArray(new Urn[0]);
-            int total = 0;
-            while (inf.eta(deps) != 0) {
-                TimeUnit.MILLISECONDS.sleep(1);
-                if (++total > 1000) {
-                    throw new IllegalStateException("time out 3");
-                }
-            }
+                )
+            );
         }
         final int threads = 10;
         final CountDownLatch start = new CountDownLatch(1);

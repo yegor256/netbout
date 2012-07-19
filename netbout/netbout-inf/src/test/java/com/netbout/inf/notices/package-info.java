@@ -24,59 +24,11 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.inf;
-
-import com.jcabi.log.Logger;
-import com.netbout.spi.Urn;
-import java.util.Collection;
-import java.util.concurrent.TimeUnit;
-import org.mockito.Mockito;
 
 /**
- * Mocker of {@link Infinity}.
+ * Notices, tests.
+ *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class InfinityMocker {
-
-    /**
-     * The object.
-     */
-    private final transient Infinity infinity = Mockito.mock(Infinity.class);
-
-    /**
-     * Wait for eta of provided URNs.
-     * @param inf The infinity
-     * @param urns The names to wait for
-     * @throws InterruptedException If any
-     */
-    public static void waitFor(final Infinity inf, final Collection<Urn> urns)
-        throws InterruptedException {
-        final Urn[] names = urns.toArray(new Urn[urns.size()]);
-        int cycles = 0;
-        while (inf.eta(names) != 0) {
-            TimeUnit.SECONDS.sleep(1);
-            Logger.debug(InfinityMocker.class, "eta=%[nano]s", inf.eta(names));
-            // @checkstyle MagicNumber (1 line)
-            if (++cycles > 15) {
-                throw new IllegalStateException("time out");
-            }
-        }
-        Logger.debug(
-            InfinityMocker.class,
-            "INF is ready (eta=%dns, %d deps, maximum=%d)",
-            inf.eta(names),
-            names.length,
-            inf.maximum()
-        );
-    }
-
-    /**
-     * Build it.
-     * @return The infinity
-     */
-    public Infinity mock() {
-        return this.infinity;
-    }
-
-}
+package com.netbout.inf.notices;

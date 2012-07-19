@@ -26,6 +26,13 @@
  */
 package com.netbout.inf.notices;
 
+import com.netbout.spi.Message;
+import com.netbout.spi.Urn;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.util.Set;
+
 /**
  * New message was just posted.
  *
@@ -33,5 +40,48 @@ package com.netbout.inf.notices;
  * @version $Id$
  */
 public interface MessagePostedNotice extends MessageNotice {
+
+    /**
+     * Serializer.
+     */
+    class Serial implements Serializer<MessagePostedNotice> {
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public String nameOf(final MessagePostedNotice notice) {
+            return new MessageNotice.Serial().nameOf(notice);
+        }
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public Set<Urn> deps(final MessagePostedNotice notice) {
+            return new MessageNotice.Serial().deps(notice);
+        }
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public void write(final MessagePostedNotice notice,
+            final DataOutputStream stream) throws IOException {
+            new MessageNotice.Serial().write(notice, stream);
+        }
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public MessagePostedNotice read(final DataInputStream stream)
+            throws IOException {
+            final MessageNotice mnotice =
+                new MessageNotice.Serial().read(stream);
+            return new MessagePostedNotice() {
+                @Override
+                public Message message() {
+                    return mnotice.message();
+                }
+            };
+        }
+    }
 
 }

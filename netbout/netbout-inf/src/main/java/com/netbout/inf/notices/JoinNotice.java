@@ -26,6 +26,15 @@
  */
 package com.netbout.inf.notices;
 
+import com.netbout.spi.Bout;
+import com.netbout.spi.Identity;
+import com.netbout.spi.Urn;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.util.HashSet;
+import java.util.Set;
+
 /**
  * Participation in bout was just confirmed.
  *
@@ -33,5 +42,61 @@ package com.netbout.inf.notices;
  * @version $Id$
  */
 public interface JoinNotice extends BoutNotice, IdentityNotice {
+
+    /**
+     * Serializer.
+     */
+    class Serial implements Serializer<JoinNotice> {
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public String nameOf(final JoinNotice notice) {
+            return String.format(
+                "%s %s",
+                new IdentityNotice.Serial().nameOf(notice),
+                new BoutNotice.Serial().nameOf(notice)
+            );
+        }
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public Set<Urn> deps(final JoinNotice notice) {
+            final Set<Urn> deps = new HashSet<Urn>();
+            deps.addAll(new IdentityNotice.Serial().deps(notice));
+            deps.addAll(new BoutNotice.Serial().deps(notice));
+            return deps;
+        }
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public void write(final JoinNotice notice,
+            final DataOutputStream stream) throws IOException {
+            new BoutNotice.Serial().write(notice, stream);
+            new IdentityNotice.Serial().write(notice, stream);
+        }
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public JoinNotice read(final DataInputStream stream)
+            throws IOException {
+            final BoutNotice bnotice = new BoutNotice.Serial().read(stream);
+            final IdentityNotice inotice =
+                new IdentityNotice.Serial().read(stream);
+            return new JoinNotice() {
+                @Override
+                public Bout bout() {
+                    return bnotice.bout();
+                }
+                @Override
+                public Identity identity() {
+                    return inotice.identity();
+                }
+            };
+        }
+    }
 
 }

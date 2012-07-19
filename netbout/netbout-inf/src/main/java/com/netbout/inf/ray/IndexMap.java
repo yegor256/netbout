@@ -27,6 +27,7 @@
 package com.netbout.inf.ray;
 
 import com.netbout.inf.Attribute;
+import com.netbout.inf.Stash;
 import java.io.Closeable;
 import java.io.IOException;
 
@@ -59,5 +60,12 @@ public interface IndexMap extends Closeable {
      * @throws IOException If IO problem insde
      */
     void flush() throws IOException;
+
+    /**
+     * Get stash.
+     * @return The stash to use
+     * @throws IOException If IO problem insde
+     */
+    Stash stash() throws IOException;
 
 }
