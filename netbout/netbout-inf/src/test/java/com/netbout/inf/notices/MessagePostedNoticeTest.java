@@ -33,6 +33,7 @@ import com.netbout.spi.Message;
 import com.netbout.spi.MessageMocker;
 import com.netbout.spi.Participant;
 import com.netbout.spi.ParticipantMocker;
+import com.netbout.spi.Urn;
 import com.netbout.spi.UrnMocker;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -74,6 +75,42 @@ public final class MessagePostedNoticeTest {
             }
         );
         MatcherAssert.assertThat(first, Matchers.not(Matchers.equalTo(second)));
+    }
+
+    /**
+     * MessagePostedNotice can preserve deps.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void preservesDepsAfterSerialization() throws Exception {
+        final ByteArrayOutputStream output = new ByteArrayOutputStream();
+        final Bout bout = new BoutMocker()
+            .withParticipant(new ParticipantMocker().mock())
+            .mock();
+        final Message message = new MessageMocker()
+            .inBout(bout)
+            .mock();
+        final MessagePostedNotice notice = new MessagePostedNotice() {
+            @Override
+            public Message message() {
+                return message;
+            }
+        };
+        new MessagePostedNotice.Serial().write(
+            notice,
+            new DataOutputStream(output)
+        );
+        final MessagePostedNotice restored = new MessagePostedNotice.Serial()
+            .read(
+                new DataInputStream(new ByteArrayInputStream(output.toByteArray()))
+            );
+        MatcherAssert.assertThat(
+            new MessagePostedNotice.Serial().deps(restored),
+            Matchers.contains(
+                new MessagePostedNotice.Serial().deps(notice)
+                    .toArray(new Urn[0])
+            )
+        );
     }
 
 }
