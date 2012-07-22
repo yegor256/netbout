@@ -33,7 +33,6 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
 import java.util.concurrent.ConcurrentMap;
@@ -42,6 +41,9 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * Simple implementation of {@link Reverse}.
+ *
+ * <p>The class is public because it is used in
+ * {@link com.netbout.inf.ray.imap.ReversiveIndex}.
  *
  * <p>The class is thread-safe, except {@link #load(InputStream)}
  * and {@link #save(OutputStream)} methods.
@@ -173,7 +175,7 @@ public final class SimpleReverse implements Reverse {
      * @param numbers All numbers we should see for this value
      */
     public void audit(final Audit audit, final String value,
-        final Collection<Long> numbers) {
+        final Iterable<Long> numbers) {
         for (Long number : numbers) {
             if (!this.map.containsKey(number)) {
                 audit.problem(

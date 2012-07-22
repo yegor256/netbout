@@ -30,7 +30,6 @@ import com.netbout.inf.Lattice;
 import com.netbout.inf.Term;
 import java.util.BitSet;
 import java.util.Collection;
-import java.util.SortedSet;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
@@ -72,17 +71,20 @@ public final class LatticeBuilder {
 
     /**
      * Fill lattice with this reverse-ordered set of numbers.
-     * @param numbers The numbers to use (in reverse order, starting with the
-     *  biggest number in the set
+     * @param feeder The numbers to use
      * @return This object
      */
-    public LatticeBuilder fill(final Collection<Long> numbers) {
+    public LatticeBuilder fill(final Feeder feeder) {
         synchronized (this.started) {
             this.main.clear(0, BitsetLattice.BITS);
             this.reverse.clear(0, BitsetLattice.BITS);
             long previous = Long.MAX_VALUE;
             long delta = 0;
-            for (Long num : numbers) {
+            while (true) {
+                final long num = feeder.next();
+                if (num == 0) {
+                    break;
+                }
                 if (num == previous) {
                     throw new LatticeException(
                         "duplicate numbers not allowed"
@@ -221,11 +223,10 @@ public final class LatticeBuilder {
     /**
      * Update status for this particular message, according to other msgs.
      * @param number The number of message
-     * @param numbers Where it is happening
+     * @param range Where it is happening
      * @return This object
      */
-    public LatticeBuilder update(final long number,
-        final SortedSet<Long> numbers) {
+    public LatticeBuilder update(final long number, final Range range) {
         if (!this.started.get()) {
             throw new LatticeException(
                 "can't call #set(), start with always(), fill(), or never()"
@@ -239,11 +240,9 @@ public final class LatticeBuilder {
             } else {
                 right = 0L;
             }
-            final Collection<Long> window = numbers
-                .tailSet(BitsetLattice.msg(bit))
-                .headSet(right);
-            this.main.set(bit, !window.isEmpty());
-            this.reverse.set(bit, window.size() < BitsetLattice.SIZE);
+            final int window = range.window(BitsetLattice.msg(bit), right);
+            this.main.set(bit, window > 0);
+            this.reverse.set(bit, window < BitsetLattice.SIZE);
         }
         return this;
     }

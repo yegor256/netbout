@@ -33,6 +33,7 @@ import com.rexsl.test.SimpleXml;
 import com.rexsl.test.XmlDocument;
 import java.lang.reflect.Method;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.concurrent.atomic.AtomicLong;
@@ -106,7 +107,21 @@ public final class BitsetLatticeTest {
                 numbers.add(Long.valueOf(parts[pos]));
             }
         }
-        return new LatticeBuilder().fill(numbers).build();
+        final Iterator<Long> iterator = numbers.iterator();
+        return new LatticeBuilder().fill(
+            new Feeder() {
+                @Override
+                public long next() {
+                    long next;
+                    if (iterator.hasNext()) {
+                        next = iterator.next();
+                    } else {
+                        next = 0L;
+                    }
+                    return next;
+                }
+            }
+        ).build();
     }
 
     /**

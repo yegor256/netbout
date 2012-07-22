@@ -49,16 +49,16 @@ public final class InfinityMocker {
      * @param inf The infinity
      * @param urns The names to wait for
      * @throws InterruptedException If any
+     * @checkstyle MagicNumber (20 lines)
      */
     public static void waitFor(final Infinity inf, final Collection<Urn> urns)
         throws InterruptedException {
         final Urn[] names = urns.toArray(new Urn[urns.size()]);
         int cycles = 0;
         while (inf.eta(names) != 0) {
-            TimeUnit.SECONDS.sleep(1);
+            TimeUnit.MILLISECONDS.sleep(50);
             Logger.debug(InfinityMocker.class, "eta=%[nano]s", inf.eta(names));
-            // @checkstyle MagicNumber (1 line)
-            if (++cycles > 15) {
+            if (++cycles > 100) {
                 throw new IllegalStateException("time out");
             }
         }

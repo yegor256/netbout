@@ -61,7 +61,7 @@ public final class DefaultDirectoryTest {
         final Directory dir = new DefaultDirectory(
             new File(this.temp.newFolder("foo"), "/some/directory")
         );
-        final Numbers numbers = new SimpleNumbers();
+        final Numbers numbers = new FastNumbers();
         final long msg = MsgMocker.number();
         numbers.add(msg);
         numbers.add(msg - 1);
@@ -69,7 +69,7 @@ public final class DefaultDirectoryTest {
         final String value = "some value to use";
         dir.save(attr, value, numbers);
         dir.baseline();
-        final Numbers restored = new SimpleNumbers();
+        final Numbers restored = new FastNumbers();
         dir.load(attr, value, restored);
         MatcherAssert.assertThat(restored.next(msg), Matchers.equalTo(msg - 1));
     }

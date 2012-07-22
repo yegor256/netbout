@@ -24,54 +24,25 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.inf.ray.imap;
-
-import com.netbout.inf.MsgMocker;
-import com.netbout.inf.ray.imap.dir.FastNumbers;
-import java.util.Random;
+package com.netbout.inf.lattice;
 
 /**
- * Mocker of {@link Numbers}.
+ * Range finder.
+ *
+ * <p>Implementation doesn't need to be thread-safe.
+ *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class NumbersMocker {
+public interface Range {
 
     /**
-     * The randomizer.
+     * Calculate how many numbrers we have between these two values (first one
+     * inclusive, second one exclusive).
+     * @param head Biggest number include
+     * @param tail Smallest number to exclude
+     * @return Number of numbers in between
      */
-    private final transient Random random = new Random();
-
-    /**
-     * Total number of messages.
-     * @checkstyle MagicNumber (2 lines)
-     */
-    private transient int maximum = 10;
-
-    /**
-     * Total amount of messages to have there.
-     * @param max Total number of messages
-     * @return This object
-     */
-    public NumbersMocker withMaximum(final int max) {
-        this.maximum = max;
-        return this;
-    }
-
-    /**
-     * Build it.
-     * @return The numbers
-     */
-    public Numbers mock() {
-        final Numbers numbers = new FastNumbers();
-        int total = this.maximum;
-        if (total > 0) {
-            total = this.random.nextInt(total) + 1;
-        }
-        for (int num = 0; num < total; ++num) {
-            numbers.add(MsgMocker.number());
-        }
-        return numbers;
-    }
+    int window(long head, long tail);
 
 }

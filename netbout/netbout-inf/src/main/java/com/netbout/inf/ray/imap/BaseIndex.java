@@ -29,7 +29,7 @@ package com.netbout.inf.ray.imap;
 import com.jcabi.log.Logger;
 import com.netbout.inf.Attribute;
 import com.netbout.inf.Lattice;
-import com.netbout.inf.ray.imap.dir.SimpleNumbers;
+import com.netbout.inf.ray.imap.dir.FastNumbers;
 import java.io.IOException;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -67,7 +67,7 @@ class BaseIndex implements FlushableIndex {
     /**
      * Numbers that has expiration date (least recently used).
      */
-    private static final class LruNumbers extends SimpleNumbers {
+    private static final class LruNumbers extends FastNumbers {
         /**
          * When was it accessed last time.
          */
@@ -85,7 +85,7 @@ class BaseIndex implements FlushableIndex {
         public boolean expired() {
             return System.currentTimeMillis() - this.time.get()
                 // @checkstyle MagicNumber (1 line)
-                > 10 * 60 * 1000;
+                > 60 * 60 * 1000;
         }
     }
 

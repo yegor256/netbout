@@ -164,7 +164,7 @@ final class Catalog {
         long found = Long.MIN_VALUE;
         int hops = 0;
         while (left < right) {
-            final long pos = left + (right - left) / 2;
+            final long pos = (right + left) >>> 1;
             data.seek(pos * Catalog.Item.SIZE);
             final int hash = data.readInt();
             if (hash == target) {

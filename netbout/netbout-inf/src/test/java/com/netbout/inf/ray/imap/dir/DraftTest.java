@@ -134,7 +134,7 @@ public final class DraftTest {
             new RandomAccessFile(dest.data(attr), "r");
         data.seek(pos);
         final InputStream istream = Channels.newInputStream(data.getChannel());
-        final Numbers restored = new SimpleNumbers();
+        final Numbers restored = new FastNumbers();
         restored.load(istream);
         istream.close();
         MatcherAssert.assertThat(
@@ -221,7 +221,7 @@ public final class DraftTest {
      */
     private static void save(final File file, final long... nums)
         throws Exception {
-        final Numbers numbers = new SimpleNumbers();
+        final Numbers numbers = new FastNumbers();
         for (long num : nums) {
             numbers.add(num);
         }

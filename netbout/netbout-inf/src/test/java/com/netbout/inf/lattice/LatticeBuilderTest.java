@@ -35,6 +35,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
 import java.util.SortedSet;
@@ -71,14 +72,18 @@ public final class LatticeBuilderTest {
             final SortedSet<Long> numbers = LatticeBuilderTest.numbers(nums);
             final LatticeBuilder builder = new LatticeBuilder().never();
             for (Long number : LatticeBuilderTest.shuffle(numbers)) {
-                builder.update(number, numbers);
+                builder.update(number, LatticeBuilderTest.range(numbers));
             }
             MatcherAssert.assertThat(
-                new LatticeBuilder().fill(numbers).build(),
+                new LatticeBuilder().fill(
+                    LatticeBuilderTest.feeder(numbers)
+                ).build(),
                 Matchers.equalTo(builder.build())
             );
             MatcherAssert.assertThat(
-                new LatticeBuilder().fill(numbers).revert().build(),
+                new LatticeBuilder().fill(
+                    LatticeBuilderTest.feeder(numbers)
+                ).revert().build(),
                 Matchers.equalTo(builder.revert().build())
             );
         }
@@ -104,11 +109,13 @@ public final class LatticeBuilderTest {
             numbers.addAll(Arrays.asList(sample));
             final LatticeBuilder builder = new LatticeBuilder().never();
             for (Long number : numbers) {
-                builder.update(number, numbers);
+                builder.update(number, LatticeBuilderTest.range(numbers));
             }
             MatcherAssert.assertThat(
                 new LatticeBuilder().copy(
-                    new LatticeBuilder().fill(numbers).build()
+                    new LatticeBuilder().fill(
+                        LatticeBuilderTest.feeder(numbers)
+                    ).build()
                 ).revert().build(),
                 Matchers.equalTo(builder.revert().build())
             );
@@ -129,10 +136,12 @@ public final class LatticeBuilderTest {
         }
         final LatticeBuilder builder = new LatticeBuilder().never();
         for (Long number : numbers) {
-            builder.update(number, numbers);
+            builder.update(number, LatticeBuilderTest.range(numbers));
         }
         MatcherAssert.assertThat(
-            new LatticeBuilder().fill(numbers).revert().build(),
+            new LatticeBuilder().fill(
+                LatticeBuilderTest.feeder(numbers)
+            ).revert().build(),
             Matchers.equalTo(builder.revert().build())
         );
     }
@@ -143,9 +152,15 @@ public final class LatticeBuilderTest {
      */
     @Test(expected = LatticeException.class)
     public void throwsWhenZeroMesageNumber() throws Exception {
-        new LatticeBuilder()
-            .never()
-            .update(0, new TreeSet<Long>(Collections.reverseOrder()));
+        new LatticeBuilder().never().update(
+            0L,
+            new Range() {
+                @Override
+                public int window(final long head, final long tail) {
+                    return 0;
+                }
+            }
+        );
     }
 
     /**
@@ -154,12 +169,15 @@ public final class LatticeBuilderTest {
      */
     @Test(expected = LatticeException.class)
     public void throwsWhenMaxMesageNumber() throws Exception {
-        new LatticeBuilder()
-            .always()
-            .update(
-                Long.MAX_VALUE,
-                new TreeSet<Long>(Collections.reverseOrder())
-            );
+        new LatticeBuilder().always().update(
+            Long.MAX_VALUE,
+            new Range() {
+                @Override
+                public int window(final long head, final long tail) {
+                    return 0;
+                }
+            }
+        );
     }
 
     /**
@@ -225,13 +243,16 @@ public final class LatticeBuilderTest {
         final LatticeBuilder builder = new LatticeBuilder().never();
         final SortedSet<Long> numbers =
             new TreeSet<Long>(Collections.reverseOrder());
-        builder.update(1L, numbers);
-        builder.update(BitsetLattice.BITS * BitsetLattice.SIZE, numbers);
+        builder.update(1L, LatticeBuilderTest.range(numbers));
+        builder.update(
+            BitsetLattice.BITS * BitsetLattice.SIZE,
+            LatticeBuilderTest.range(numbers)
+        );
         final Random random = new Random();
         for (int retry = 0; retry < 100; ++retry) {
             builder.update(
                 random.nextInt(BitsetLattice.BITS * BitsetLattice.SIZE - 1) + 1,
-                numbers
+                LatticeBuilderTest.range(numbers)
             );
         }
     }
@@ -251,9 +272,9 @@ public final class LatticeBuilderTest {
             @Override
             public Void call() throws Exception {
                 start.await();
-                builder.fill(numbers);
+                builder.fill(LatticeBuilderTest.feeder(numbers));
                 for (Long number : LatticeBuilderTest.shuffle(numbers)) {
-                    builder.update(number, numbers);
+                    builder.update(number, LatticeBuilderTest.range(numbers));
                 }
                 latch.countDown();
                 return null;
@@ -268,7 +289,9 @@ public final class LatticeBuilderTest {
         latch.await(1, TimeUnit.SECONDS);
         svc.shutdown();
         MatcherAssert.assertThat(
-            new LatticeBuilder().fill(numbers).build(),
+            new LatticeBuilder().fill(
+                LatticeBuilderTest.feeder(numbers)
+            ).build(),
             Matchers.equalTo(builder.build())
         );
     }
@@ -283,8 +306,9 @@ public final class LatticeBuilderTest {
         final Cursor cursor = new CursorMocker()
             .withMsg(Long.MAX_VALUE)
             .mock();
-        new LatticeBuilder().fill(LatticeBuilderTest.numbers(10))
-            .build().correct(cursor, shifter);
+        new LatticeBuilder().fill(
+            LatticeBuilderTest.feeder(LatticeBuilderTest.numbers(10))
+        ).build().correct(cursor, shifter);
         Mockito.verify(shifter)
             .shift(Mockito.any(Cursor.class), Mockito.anyLong());
     }
@@ -296,7 +320,7 @@ public final class LatticeBuilderTest {
     @Test
     public void copiesLatticeWithAllNumbers() throws Exception {
         final Lattice lattice = new LatticeBuilder()
-            .fill(LatticeBuilderTest.numbers(10))
+            .fill(LatticeBuilderTest.feeder(LatticeBuilderTest.numbers(10)))
             .build();
         MatcherAssert.assertThat(
             lattice,
@@ -310,8 +334,9 @@ public final class LatticeBuilderTest {
      */
     @Test
     public void revertsLatticeWithAllNumbers() throws Exception {
-        final LatticeBuilder builder =
-            new LatticeBuilder().fill(LatticeBuilderTest.numbers(5));
+        final LatticeBuilder builder = new LatticeBuilder().fill(
+            LatticeBuilderTest.feeder(LatticeBuilderTest.numbers(5))
+        );
         final Lattice.Shifter shifter = Mockito.mock(Lattice.Shifter.class);
         final Cursor cursor = new CursorMocker()
             .withMsg(Long.MAX_VALUE)
@@ -348,6 +373,41 @@ public final class LatticeBuilderTest {
         final List<Long> list = new ArrayList<Long>(numbers);
         Collections.shuffle(list);
         return list;
+    }
+
+    /**
+     * Create range.
+     * @param numbers The numbers to order randomly
+     * @return Range
+     */
+    private static Range range(final SortedSet<Long> numbers) {
+        return new Range() {
+            @Override
+            public int window(final long head, final long tail) {
+                return numbers.tailSet(head).headSet(tail).size();
+            }
+        };
+    }
+
+    /**
+     * Create feeder.
+     * @param numbers The numbers to order randomly
+     * @return Feeder
+     */
+    private static Feeder feeder(final SortedSet<Long> numbers) {
+        final Iterator<Long> iterator = numbers.iterator();
+        return new Feeder() {
+            @Override
+            public long next() {
+                long next;
+                if (iterator.hasNext()) {
+                    next = iterator.next();
+                } else {
+                    next = 0L;
+                }
+                return next;
+            }
+        };
     }
 
 }

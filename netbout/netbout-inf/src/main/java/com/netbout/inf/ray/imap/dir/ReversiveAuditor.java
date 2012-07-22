@@ -89,7 +89,7 @@ final class ReversiveAuditor implements Auditor {
         final long start = System.currentTimeMillis();
         int count = 0;
         final Iterator<Catalog.Item> items = base.catalog(attr).iterator();
-        final SimpleNumbers numbers = new SimpleNumbers();
+        final FastNumbers numbers = new FastNumbers();
         final RandomAccessFile data =
             new RandomAccessFile(base.data(attr), "r");
         try {

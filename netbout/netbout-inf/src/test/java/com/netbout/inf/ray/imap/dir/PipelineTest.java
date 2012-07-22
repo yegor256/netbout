@@ -109,7 +109,7 @@ public final class PipelineTest {
             new RandomAccessFile(dest.data(attr), "r");
         data.seek(pos);
         final InputStream istream = Channels.newInputStream(data.getChannel());
-        final Numbers restored = new SimpleNumbers();
+        final Numbers restored = new FastNumbers();
         restored.load(istream);
         istream.close();
         MatcherAssert.assertThat(

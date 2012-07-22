@@ -28,7 +28,7 @@ package com.netbout.inf.ray.imap;
 
 import com.netbout.inf.Attribute;
 import com.netbout.inf.Lattice;
-import com.netbout.inf.ray.imap.dir.SimpleNumbers;
+import com.netbout.inf.ray.imap.dir.FastNumbers;
 import java.io.IOException;
 
 /**
@@ -55,7 +55,7 @@ final class NumbersIndex implements FlushableIndex {
     /**
      * All numbers.
      */
-    private final transient Numbers numbers = new SimpleNumbers();
+    private final transient Numbers numbers = new FastNumbers();
 
     /**
      * Public ctor.

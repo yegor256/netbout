@@ -29,9 +29,8 @@ package com.netbout.inf.ray;
 import com.netbout.inf.Cursor;
 import com.netbout.inf.Lattice;
 import com.netbout.inf.Term;
+import com.netbout.inf.lattice.Feeder;
 import com.netbout.inf.lattice.LatticeBuilder;
-import java.util.Arrays;
-import java.util.TreeSet;
 
 /**
  * Picker term.
@@ -101,9 +100,22 @@ final class PickerTerm implements Term {
      */
     @Override
     public Lattice lattice() {
-        return new LatticeBuilder()
-            .fill(new TreeSet<Long>(Arrays.asList(this.number)))
-            .build();
+        return new LatticeBuilder().fill(
+            new Feeder() {
+                private transient boolean done;
+                @Override
+                public long next() {
+                    long next;
+                    if (this.done) {
+                        next = 0L;
+                    } else {
+                        next = PickerTerm.this.number;
+                        this.done = true;
+                    }
+                    return next;
+                }
+            }
+        ).build();
     }
 
     /**

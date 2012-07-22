@@ -40,7 +40,6 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
-import java.util.concurrent.TimeUnit;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;
@@ -102,15 +101,7 @@ public final class InfinityTest {
         final Infinity inf = new DefaultInfinity(folder);
         final Urn[] array = new Urn[0];
         for (XmlDocument see : xml.nodes("see")) {
-            final Urn[] deps = inf.see(this.notice(see)).toArray(array);
-            int total = 0;
-            while (inf.eta(deps) != 0) {
-                TimeUnit.MILLISECONDS.sleep(1);
-                // @checkstyle MagicNumber (1 line)
-                if (++total > 1000) {
-                    throw new IllegalStateException("time out 2");
-                }
-            }
+            InfinityMocker.waitFor(inf, inf.see(this.notice(see)));
         }
         inf.flush();
         inf.close();

@@ -24,43 +24,22 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.inf.ray.imap.dir;
-
-import com.netbout.inf.MsgMocker;
-import com.netbout.inf.ray.imap.Numbers;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.InputStream;
-import org.hamcrest.MatcherAssert;
-import org.hamcrest.Matchers;
-import org.junit.Test;
+package com.netbout.inf.lattice;
 
 /**
- * Test case of {@link SimpleNumbers}.
+ * Feeder of sorted numbers.
+ *
+ * <p>Implementation doesn't need to be thread-safe.
+ *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class SimpleNumbersTest {
+public interface Feeder {
 
     /**
-     * SimpleNumbers can save to stream and restore.
-     * @throws Exception If there is some problem inside
+     * Get next number or ZERO if it's the end.
+     * @return Next number
      */
-    @Test
-    public void savesAndRestores() throws Exception {
-        final Numbers numbers = new SimpleNumbers();
-        final long msg = MsgMocker.number();
-        numbers.add(msg);
-        numbers.add(msg - 1);
-        MatcherAssert.assertThat(numbers.next(msg), Matchers.equalTo(msg - 1));
-        final ByteArrayOutputStream ostream = new ByteArrayOutputStream();
-        numbers.save(ostream);
-        final byte[] data = ostream.toByteArray();
-        final Numbers restored = new SimpleNumbers();
-        final InputStream istream = new ByteArrayInputStream(data);
-        restored.load(istream);
-        MatcherAssert.assertThat(restored.next(msg), Matchers.equalTo(msg - 1));
-        MatcherAssert.assertThat(restored.next(msg - 1), Matchers.equalTo(0L));
-    }
+    long next();
 
 }
