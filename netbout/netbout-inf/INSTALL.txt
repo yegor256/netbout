@@ -49,7 +49,7 @@ Install NFS server
 Configure /etc/exports with:
 
     $ sudo vi /etc/exports
-    $ add "/home/ubuntu/inf *(rw,insecure,all_squash,anonuid=219,anongid=497)"
+    $ add "/home/ubuntu/inf *(rw,insecure,all_squash,async,anonuid=219,anongid=497)"
 
 Create tomcat7 group and user:
 

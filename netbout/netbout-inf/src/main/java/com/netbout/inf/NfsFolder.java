@@ -67,6 +67,12 @@ final class NfsFolder implements Folder {
                 "#NfsFolder(%s): created a directory",
                 path
             );
+        } else {
+            Logger.info(
+                this,
+                "#NfsFolder(%s): using existing directory",
+                path
+            );
         }
         this.directory = path;
     }
