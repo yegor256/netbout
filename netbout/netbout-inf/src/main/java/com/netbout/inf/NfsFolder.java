@@ -101,7 +101,7 @@ final class NfsFolder implements Folder {
      */
     @Override
     public File path() throws IOException {
-        if (!this.mounted()) {
+        if (this.directory.getPath().startsWith("/mnt") && !this.mounted()) {
             this.mount();
         }
         return this.directory;
