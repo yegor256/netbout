@@ -61,12 +61,11 @@ final class NfsFolder implements Folder {
      * @throws IOException If some error inside
      */
     public NfsFolder(final File path) throws IOException {
-        if (!path.exists() || !path.isDirectory()) {
-            throw new IOException(
-                String.format(
-                    "%s doesn't exist or is not a directory",
-                    path
-                )
+        if (path.mkdirs()) {
+            Logger.info(
+                this,
+                "#NfsFolder(%s): created a directory",
+                path
             );
         }
         this.directory = path;
