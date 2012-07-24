@@ -47,6 +47,7 @@ import org.apache.commons.lang.CharEncoding;
  * @author Krzysztof Krason (Krzysztof.Krason@gmail.com)
  * @version $Id$
  */
+@SuppressWarnings("PMD.TooManyMethods")
 final class NfsFolder implements Folder {
 
     /**
