@@ -565,6 +565,7 @@
                                         <Netbout-PopPort>${pop3.port}</Netbout-PopPort>
                                         <Netbout-SecurityKey>${security.key}</Netbout-SecurityKey>
                                         <Netbout-SuperSecret>${security.secret}</Netbout-SuperSecret>
+                                        <Netbout-InfMount>/mnt/inf</Netbout-InfMount>
                                     </manifestEntries>
                                 </archive>
                             </configuration>
@@ -655,6 +656,7 @@
                                             <Netbout-PopPort>995</Netbout-PopPort>
                                             <Netbout-SecurityKey>-test-security-key</Netbout-SecurityKey>
                                             <Netbout-SuperSecret>-super-secret</Netbout-SuperSecret>
+                                            <Netbout-InfMount>${project.build.directory}/catapult-InfMount</Netbout-InfMount>
                                         </manifestEntries>
                                     </archive>
                                 </configuration>

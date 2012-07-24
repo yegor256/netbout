@@ -31,6 +31,7 @@ import com.netbout.ih.StageFarm;
 import com.netbout.inf.functors.DefaultStore;
 import com.netbout.inf.ray.MemRay;
 import com.netbout.spi.Urn;
+import com.rexsl.core.Manifests;
 import java.io.File;
 import java.io.IOException;
 import java.util.Set;
@@ -70,7 +71,7 @@ public final class DefaultInfinity implements Infinity {
      * @throws IOException If some IO problem
      */
     public DefaultInfinity() throws IOException {
-        this(new NfsFolder(new File("/mnt/inf")));
+        this(new NfsFolder(new File(Manifests.read("Netbout-InfMount"))));
     }
 
     /**

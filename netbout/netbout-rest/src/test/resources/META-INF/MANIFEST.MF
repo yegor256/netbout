@@ -17,7 +17,4 @@ Netbout-PopHost: pop.gmail.com
 Netbout-PopPort: 995
 Netbout-SecurityKey: -test-security-key
 Netbout-SuperSecret: -super-secret
-Netbout-AwsKey: -key
-Netbout-AwsSecret: -secret
-Netbout-EbsVolume: v-1
-Netbout-EC2Directory: INF-for-REST
+Netbout-InfMount: ./target/temp-InfMount
