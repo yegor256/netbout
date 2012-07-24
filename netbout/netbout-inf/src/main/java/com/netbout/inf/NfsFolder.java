@@ -46,6 +46,7 @@ import org.apache.commons.lang.CharEncoding;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @author Krzysztof Krason (Krzysztof.Krason@gmail.com)
  * @version $Id$
+ * @checkstyle MultipleStringLiterals (500 lines)
  */
 @SuppressWarnings("PMD.TooManyMethods")
 final class NfsFolder implements Folder {
@@ -82,8 +83,9 @@ final class NfsFolder implements Folder {
      */
     @Override
     public void close() throws IOException {
-        // @checkstyle MultipleStringLiterals (1 line)
-        this.exec("umount", this.directory);
+        if (this.directory.getPath().startsWith("/mnt")) {
+            this.exec("umount", this.directory);
+        }
     }
 
     /**
@@ -94,7 +96,6 @@ final class NfsFolder implements Folder {
         final StringBuilder text = new StringBuilder();
         text.append(String.format("directory: %s\n", this.directory));
         try {
-            // @checkstyle MultipleStringLiterals (1 line)
             text.append(this.exec("mount"));
         } catch (IOException ex) {
             text.append(Logger.format("%[exception]s", ex));
@@ -119,7 +120,6 @@ final class NfsFolder implements Folder {
      * @throws IOException If some IO problem inside
      */
     private boolean mounted() throws IOException {
-        // @checkstyle MultipleStringLiterals (1 line)
         final String output = this.exec("mount");
         final boolean mounted = output.contains(this.directory.getPath());
         if (mounted) {
