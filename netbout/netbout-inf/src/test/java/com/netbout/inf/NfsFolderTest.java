@@ -26,6 +26,7 @@
  */
 package com.netbout.inf;
 
+import java.io.File;
 import java.net.URL;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
@@ -84,7 +85,7 @@ public final class NfsFolderTest {
     @Test(expected = java.io.IOException.class)
     public void throwsWhenPemIsAbsent() throws Exception {
         Assume.assumeThat(this.pem, Matchers.nullValue());
-        new NfsFolder(this.temp.newFolder("xx")).path();
+        new NfsFolder(new File("/mnt/something")).path();
     }
 
 }
