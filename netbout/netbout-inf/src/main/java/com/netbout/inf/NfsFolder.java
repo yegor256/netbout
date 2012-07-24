@@ -31,7 +31,6 @@ import com.jcraft.jsch.ChannelExec;
 import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.Session;
 import java.io.ByteArrayOutputStream;
-import java.io.Closeable;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
@@ -78,7 +77,7 @@ final class NfsFolder implements Folder {
     @Override
     public void close() throws IOException {
         // @checkstyle MultipleStringLiterals (1 line)
-        this.exec("sudo", "-S", "umount", this.directory);
+        this.exec("umount", this.directory);
     }
 
     /**
@@ -139,13 +138,10 @@ final class NfsFolder implements Folder {
      * @see <a href="http://serverfault.com/questions/376455">why chown</a>
      */
     private void mount() throws IOException {
+        this.exec("yum", "--assumeyes", "install", "nfs-utils");
         this.exec(
-            "sudo", "-S",
-            "yum", "--assumeyes", "install", "nfs-utils", "nfs-utils-lib"
-        );
-        this.exec(
-            "sudo", "-S",
-            "mount", "inf.netbout.com:/home/ubuntu/inf",
+            "mount",
+            "inf.netbout.com:/home/ubuntu/inf",
             this.directory.getPath()
         );
     }
@@ -260,12 +256,13 @@ final class NfsFolder implements Folder {
      */
     private String command(final Object... args) {
         final StringBuilder command = new StringBuilder();
+        command.append("sudo -S");
         for (Object arg : args) {
             command.append(" '")
                 .append(arg.toString().replace("'", "\\'"))
                 .append("' ");
         }
-        return command.toString().trim();
+        return command.toString();
     }
 
     /**

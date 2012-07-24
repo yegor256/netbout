@@ -41,7 +41,7 @@ public interface Folder extends Closeable {
     /**
      * Get its full path.
      * @return The path
-     * @throws IOException
+     * @throws IOException If some IO problem inside
      */
     File path() throws IOException;
 

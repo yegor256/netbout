@@ -565,10 +565,6 @@
                                         <Netbout-PopPort>${pop3.port}</Netbout-PopPort>
                                         <Netbout-SecurityKey>${security.key}</Netbout-SecurityKey>
                                         <Netbout-SuperSecret>${security.secret}</Netbout-SuperSecret>
-                                        <Netbout-EbsVolume>${ebs.volume}</Netbout-EbsVolume>
-                                        <Netbout-AwsKey>${aws.key}</Netbout-AwsKey>
-                                        <Netbout-AwsSecret>${aws.secret}</Netbout-AwsSecret>
-                                        <Netbout-EC2Directory>ec2-volume</Netbout-EC2Directory>
                                     </manifestEntries>
                                 </archive>
                             </configuration>
@@ -659,10 +655,6 @@
                                             <Netbout-PopPort>995</Netbout-PopPort>
                                             <Netbout-SecurityKey>-test-security-key</Netbout-SecurityKey>
                                             <Netbout-SuperSecret>-super-secret</Netbout-SuperSecret>
-                                            <Netbout-EbsVolume>volume</Netbout-EbsVolume>
-                                            <Netbout-AwsKey>-key</Netbout-AwsKey>
-                                            <Netbout-AwsSecret>-secret</Netbout-AwsSecret>
-                                            <Netbout-EC2Directory>INF-for-Tomcat7-2</Netbout-EC2Directory>
                                         </manifestEntries>
                                     </archive>
                                 </configuration>
