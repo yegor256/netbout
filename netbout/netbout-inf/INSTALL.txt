@@ -70,7 +70,7 @@ Restart NFS:
 Just to test, go to any other EC2 server and mount this disc:
 
     $ sudo apt-get install nfs-common
-    $ sudo yum install nfs-utils nfs-utils-lib
+    $ sudo yum --assumeyes install nfs-utils nfs-utils-lib
     $ sudo mkdir /mnt/inf
     $ sudo mount inf.netbout.com:/home/ubuntu/inf /mnt/inf
 

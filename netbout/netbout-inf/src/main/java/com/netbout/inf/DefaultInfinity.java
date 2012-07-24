@@ -28,7 +28,6 @@ package com.netbout.inf;
 
 import com.jcabi.log.Logger;
 import com.netbout.ih.StageFarm;
-import com.netbout.inf.ebs.EbsVolume;
 import com.netbout.inf.functors.DefaultStore;
 import com.netbout.inf.ray.MemRay;
 import com.netbout.spi.Urn;
@@ -71,7 +70,7 @@ public final class DefaultInfinity implements Infinity {
      * @throws IOException If some IO problem
      */
     public DefaultInfinity() throws IOException {
-        this(new EbsVolume());
+        this(new NfsFolder(new File("/mnt/inf")));
     }
 
     /**

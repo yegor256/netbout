@@ -24,7 +24,7 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.inf.ebs;
+package com.netbout.inf;
 
 import com.jcabi.log.Logger;
 import com.jcraft.jsch.ChannelExec;
@@ -40,7 +40,7 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.CharEncoding;
 
 /**
- * Directory for EBS volume.
+ * NFS mounted directory.
  *
  * <p>The class is immutable and thread-safe.
  *
@@ -48,8 +48,7 @@ import org.apache.commons.lang.CharEncoding;
  * @author Krzysztof Krason (Krzysztof.Krason@gmail.com)
  * @version $Id$
  */
-@SuppressWarnings("PMD.TooManyMethods")
-final class EbsDirectory implements Closeable {
+final class NfsFolder implements Folder {
 
     /**
      * Mounting directory.
@@ -57,26 +56,20 @@ final class EbsDirectory implements Closeable {
     private final transient File directory;
 
     /**
-     * Our host.
-     */
-    private final transient String host;
-
-    /**
      * Public ctor.
-     * @param path Directory
+     * @param path Directory, where to mount locally
+     * @throws IOException If some error inside
      */
-    public EbsDirectory(final File path) {
-        this(path, "localhost");
-    }
-
-    /**
-     * Public ctor.
-     * @param path Directory
-     * @param hst The host where we're working
-     */
-    public EbsDirectory(final File path, final String hst) {
+    public NfsFolder(final File path) throws IOException {
+        if (!path.exists() || !path.isDirectory()) {
+            throw new IOException(
+                String.format(
+                    "%s doesn't exist or is not a directory",
+                    path
+                )
+            );
+        }
         this.directory = path;
-        this.host = hst;
     }
 
     /**
@@ -89,13 +82,12 @@ final class EbsDirectory implements Closeable {
     }
 
     /**
-     * Some stats to show.
-     * @return The text
+     * {@inheritDoc}
      */
-    public String statistics() {
+    @Override
+    public String toString() {
         final StringBuilder text = new StringBuilder();
         text.append(String.format("directory: %s\n", this.directory));
-        text.append(String.format("host: %s\n", this.host));
         try {
             // @checkstyle MultipleStringLiterals (1 line)
             text.append(this.exec("mount"));
@@ -106,24 +98,12 @@ final class EbsDirectory implements Closeable {
     }
 
     /**
-     * The path.
-     * @return File
+     * {@inheritDoc}
      */
-    public File path() {
-        if (!this.directory.exists()) {
-            if (this.directory.mkdirs()) {
-                Logger.info(
-                    this,
-                    "#path(): directory '%s' created",
-                    this.directory
-                );
-            } else {
-                Logger.info(
-                    this,
-                    "#path(): directory '%s' already exists",
-                    this.directory
-                );
-            }
+    @Override
+    public File path() throws IOException {
+        if (!this.mounted()) {
+            this.mount();
         }
         return this.directory;
     }
@@ -133,21 +113,21 @@ final class EbsDirectory implements Closeable {
      * @return Yes or no?
      * @throws IOException If some IO problem inside
      */
-    public boolean mounted() throws IOException {
+    private boolean mounted() throws IOException {
         // @checkstyle MultipleStringLiterals (1 line)
         final String output = this.exec("mount");
-        final boolean mounted = output.contains(this.path().getPath());
+        final boolean mounted = output.contains(this.directory.getPath());
         if (mounted) {
             Logger.info(
                 this,
                 "#mounted(): '%s' is already mounted",
-                this.path()
+                this.directory
             );
         } else {
             Logger.info(
                 this,
                 "#mounted(): '%s' is not mounted yet",
-                this.path()
+                this.directory
             );
         }
         return mounted;
@@ -155,40 +135,18 @@ final class EbsDirectory implements Closeable {
 
     /**
      * Mount this device to our directory.
-     * @param device Name of device to mount
      * @throws IOException If some IO problem inside
      * @see <a href="http://serverfault.com/questions/376455">why chown</a>
      */
-    public void mount(final String device) throws IOException {
-        FileUtils.deleteQuietly(this.directory);
-        final String output = this.exec(
-            "sudo",
-            "-S",
-            "mount",
-            "-t",
-            "ext3",
-            device,
-            this.path()
-        );
-        Logger.info(
-            this,
-            "#mount(%s): mounted as %s:\n%s",
-            device,
-            this.path(),
-            output
+    private void mount() throws IOException {
+        this.exec(
+            "sudo", "-S",
+            "yum", "--assumeyes", "install", "nfs-utils", "nfs-utils-lib"
         );
         this.exec(
-            "sudo",
-            "-S",
-            "chown",
-            "tomcat7.tomcat7",
-            this.path()
-        );
-        Logger.info(
-            this,
-            "#mount(%s): permission changed for %s",
-            device,
-            this.path()
+            "sudo", "-S",
+            "mount", "inf.netbout.com:/home/ubuntu/inf",
+            this.directory.getPath()
         );
     }
 
@@ -284,12 +242,12 @@ final class EbsDirectory implements Closeable {
                     }
                     @Override
                     public void log(final int level, final String msg) {
-                        Logger.info(EbsDirectory.class, "%s", msg);
+                        Logger.info(NfsFolder.this.getClass(), "%s", msg);
                     }
                 }
             );
             jsch.addIdentity(this.key().getPath());
-            return jsch.getSession("ec2-user", this.host);
+            return jsch.getSession("ec2-user", "localhost");
         } catch (com.jcraft.jsch.JSchException ex) {
             throw new IOException(ex);
         }

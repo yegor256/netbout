@@ -24,7 +24,7 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.inf.ebs;
+package com.netbout.inf;
 
 import java.net.URL;
 import org.hamcrest.MatcherAssert;
@@ -35,11 +35,11 @@ import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
 /**
- * Test case of {@link EbsDirectory}.
+ * Test case of {@link NfsFolder}.
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class EbsDirectoryTest {
+public final class NfsFolderTest {
 
     /**
      * Temporary folder.
@@ -52,14 +52,14 @@ public final class EbsDirectoryTest {
      * PEM file.
      */
     private final transient URL pem =
-        EbsDirectoryTest.class.getResource("ebs.pem");
+        NfsFolderTest.class.getResource("ebs.pem");
 
     /**
-     * EbsDirectory can check status through SSH.
+     * NfsFolder can check status through SSH.
      *
      * <p>In order to run this test you should add "ebs.pem" key to your
      * "~/.m2/settings.xml", to the right profile. And then execute Maven:
-     * "mvn -Dci -Pnetbout test -Dtest=EbsDirectoryTest". Should work, if the
+     * "mvn -Dci -Pnetbout test -Dtest=NfsFolderTest". Should work, if the
      * key you pointed to is correct. Yes, "ebs.pem" property should point
      * to the file you should download first from Amazon IAM (it has to have
      * full access to EBS/EC2).
@@ -70,24 +70,21 @@ public final class EbsDirectoryTest {
     @org.junit.Ignore
     public void checksMountingStatusThroughSsh() throws Exception {
         Assume.assumeThat(this.pem, Matchers.notNullValue());
-        final EbsDirectory dir = new EbsDirectory(
-            this.temp.newFolder("a"),
-            "ec2-23-20-63-25.compute-1.amazonaws.com"
-        );
+        final NfsFolder folder = new NfsFolder(this.temp.newFolder("a"));
         MatcherAssert.assertThat(
-            dir.mounted(),
-            Matchers.equalTo(false)
+            folder.path(),
+            Matchers.notNullValue()
         );
     }
 
     /**
-     * EbsDirectory can throw exception when PEM is absent.
+     * NfsFolder can throw exception when PEM is absent.
      * @throws Exception If there is some problem inside
      */
     @Test(expected = java.io.IOException.class)
     public void throwsWhenPemIsAbsent() throws Exception {
         Assume.assumeThat(this.pem, Matchers.nullValue());
-        new EbsDirectory(this.temp.newFolder("xx")).mounted();
+        new NfsFolder(this.temp.newFolder("xx")).path();
     }
 
 }

@@ -28,6 +28,7 @@ package com.netbout.inf;
 
 import java.io.Closeable;
 import java.io.File;
+import java.io.IOException;
 
 /**
  * Folder in file system.
@@ -40,7 +41,8 @@ public interface Folder extends Closeable {
     /**
      * Get its full path.
      * @return The path
+     * @throws IOException
      */
-    File path();
+    File path() throws IOException;
 
 }
