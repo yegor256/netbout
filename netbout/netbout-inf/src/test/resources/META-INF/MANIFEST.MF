@@ -1,4 +1,1 @@
-Netbout-AwsKey: -key
-Netbout-AwsSecret: -secret
-Netbout-EbsVolume: v-1
-Netbout-EC2Directory: INF
+Netbout-InfMount: ./target/temp-InfMount
