@@ -1,3 +1,0 @@
-Netbout-AwsKey: -key
-Netbout-AwsSecret: -secret
-Netbout-EbsVolume: v-1
