@@ -97,48 +97,30 @@ public final class DefaultInfinity implements Infinity {
      */
     @Override
     public String toString() {
-        final StringBuilder text = new StringBuilder();
-        text.append(String.format("maximum(): %s\n", this.maximum()))
-            .append(Logger.format("%[type]s stats:\n", this.mux))
-            .append(this.mux)
-            .append(Logger.format("\n\nStore stats:\n", this.store))
-            .append(this.store)
-            .append(Logger.format("\n\n%[type]s stats:\n", this.folder))
-            .append(this.folder)
-            .append(Logger.format("\n\n%[type]s stats:\n", this.ray))
-            .append(this.ray)
-            .append("\n\njava.lang.Runtime:\n")
-            .append(
-                String.format(
-                    "  availableProcessors(): %d\n",
-                    Runtime.getRuntime().availableProcessors()
-                )
+        return Logger.format(
+            // @checkstyle LineLength (2 lines)
+            "maximum(): %d\n%[type]s:\n%s\n%[type]s:\n%s\n%[type]s:\n%s\n%[type]s:\n%s\n"
+            + "Runtime:\n  availableProcessors(): %d\n  freeMemory(): %s\n  maxMemory(): %s\n  totalMemory(): %s",
+            this.maximum(),
+            this.mux,
+            this.mux,
+            this.store,
+            this.store,
+            this.folder,
+            this.folder,
+            this.ray,
+            this.ray,
+            Runtime.getRuntime().availableProcessors(),
+            FileUtils.byteCountToDisplaySize(
+                Runtime.getRuntime().freeMemory()
+            ),
+            FileUtils.byteCountToDisplaySize(
+                Runtime.getRuntime().maxMemory()
+            ),
+            FileUtils.byteCountToDisplaySize(
+                Runtime.getRuntime().totalMemory()
             )
-            .append(
-                String.format(
-                    "  freeMemory(): %s\n",
-                    FileUtils.byteCountToDisplaySize(
-                        Runtime.getRuntime().freeMemory()
-                    )
-                )
-            )
-            .append(
-                String.format(
-                    "  maxMemory(): %s\n",
-                    FileUtils.byteCountToDisplaySize(
-                        Runtime.getRuntime().maxMemory()
-                    )
-                )
-            )
-            .append(
-                String.format(
-                    "  totalMemory(): %s\n",
-                    FileUtils.byteCountToDisplaySize(
-                        Runtime.getRuntime().totalMemory()
-                    )
-                )
-            );
-        return text.toString();
+        );
     }
 
     /**
