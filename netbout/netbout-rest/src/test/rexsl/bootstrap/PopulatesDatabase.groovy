@@ -35,6 +35,7 @@ import com.rexsl.core.Manifests
 import com.jcabi.log.Logger
 import java.security.SecureRandom
 
+def start = System.currentTimeMillis()
 def urlFile = new File(rexsl.basedir, 'jdbc.txt')
 if (urlFile.exists()) {
     Manifests.inject('Netbout-JdbcUrl', urlFile.text.trim())
@@ -84,4 +85,9 @@ calendar.add(Calendar.YEAR, -5)
 queries.each { query ->
     new JdbcSession(Database.source()).sql(query).update()
 }
-Logger.info(this, 'Test database is ready (%d queries)', queries.size())
+Logger.info(
+    this,
+    'Test database is ready (%d queries) in %[ms]s',
+    queries.size(),
+    System.currentTimeMillis() - start
+)
