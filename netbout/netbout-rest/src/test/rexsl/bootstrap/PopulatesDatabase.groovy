@@ -87,8 +87,7 @@ queries.each { query ->
 }
 Logger.info(
     this,
-    'Test database at %s is ready (%d queries) in %[ms]s',
-    Manifests.read('Netbout-JdbcUrl'),
+    'Test database is ready (%d queries) in %[ms]s',
     queries.size(),
     System.currentTimeMillis() - start
 )
