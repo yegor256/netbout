@@ -78,6 +78,13 @@ public final class EtaAssertion implements AssertionPolicy {
                 );
                 throw new AssertionError();
             }
+        } else if (response.getStatus() == HttpURLConnection.HTTP_UNAVAILABLE) {
+            this.eta = 1L;
+            Logger.warn(
+                this,
+                "assertThat(..): service is temporary unavailable"
+            );
+            throw new AssertionError();
         }
     }
 
