@@ -99,11 +99,13 @@ public final class DefaultInfinity implements Infinity {
     public String toString() {
         final StringBuilder text = new StringBuilder();
         text.append(String.format("maximum(): %s\n", this.maximum()))
-            .append("Mux stats:\n")
+            .append(Logger.format("%[type]s stats:\n", this.mux))
             .append(this.mux)
-            .append("\n\nStore stats:\n")
+            .append(Logger.format("\n\nStore stats:\n", this.store))
             .append(this.store)
-            .append("\n\nRay stats:\n")
+            .append(Logger.format("\n\n%[type]s stats:\n", this.folder))
+            .append(this.folder)
+            .append(Logger.format("\n\n%[type]s stats:\n", this.ray))
             .append(this.ray)
             .append("\n\njava.lang.Runtime:\n")
             .append(

@@ -66,13 +66,13 @@ final class NfsFolder implements Folder {
             Logger.info(
                 this,
                 "#NfsFolder(%s): created a directory",
-                path
+                path.getAbsolutePath()
             );
         } else {
             Logger.info(
                 this,
                 "#NfsFolder(%s): using existing directory",
-                path
+                path.getAbsolutePath()
             );
         }
         this.directory = path;
@@ -94,7 +94,12 @@ final class NfsFolder implements Folder {
     @Override
     public String toString() {
         final StringBuilder text = new StringBuilder();
-        text.append(String.format("directory: %s\n", this.directory));
+        text.append(
+            String.format(
+                "directory: %s\n",
+                this.directory.getAbsolutePath()
+            )
+        );
         try {
             text.append(this.exec("mount"));
         } catch (IOException ex) {
