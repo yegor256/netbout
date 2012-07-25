@@ -98,7 +98,8 @@ public final class DefaultInfinity implements Infinity {
     @Override
     public String toString() {
         return Logger.format(
-            // @checkstyle LineLength (2 lines)
+            // @checkstyle LineLength (3 lines)
+            // @checkstyle StringLiteralsConcatenation (2 lines)
             "maximum(): %d\n%[type]s:\n%s\n%[type]s:\n%s\n%[type]s:\n%s\n%[type]s:\n%s\n"
             + "Runtime:\n  availableProcessors(): %d\n  freeMemory(): %s\n  maxMemory(): %s\n  totalMemory(): %s",
             this.maximum(),
