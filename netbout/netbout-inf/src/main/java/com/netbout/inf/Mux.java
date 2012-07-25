@@ -291,7 +291,7 @@ final class Mux implements Closeable {
             this.service.shutdownNow();
             Thread.currentThread().interrupt();
         }
-        Logger.debug(
+        Logger.info(
             this,
             "#close(): %d remained in the queue",
             this.queue.size()

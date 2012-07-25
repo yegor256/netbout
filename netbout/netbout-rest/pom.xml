@@ -643,7 +643,7 @@
                                             <Netbout-FbSecret>secret</Netbout-FbSecret>
                                             <Netbout-JdbcDriver>com.mysql.jdbc.Driver</Netbout-JdbcDriver>
                                             <!-- see http://dev.mysql.com/doc/refman/5.0/en/connector-j-reference-configuration-properties.html -->
-                                            <Netbout-JdbcUrl>jdbc:mysql://test-db.netbout.com:3306/netbout-test?useUnicode=true&amp;characterEncoding=utf-8&amp;useGmtMillisForDatetimes=true&amp;useJDBCCompliantTimezoneShift=true&amp;useLegacyDatetimeCode=false&amp;useTimezone=true&amp;serverTimezone=UTC</Netbout-JdbcUrl>
+                                            <Netbout-JdbcUrl>jdbc:mysql://test-db.netbout.com:3306/netbout-test-catapult?useUnicode=true&amp;characterEncoding=utf-8&amp;useGmtMillisForDatetimes=true&amp;useJDBCCompliantTimezoneShift=true&amp;useLegacyDatetimeCode=false&amp;useTimezone=true&amp;serverTimezone=UTC</Netbout-JdbcUrl>
                                             <Netbout-JdbcUser>netbout-test</Netbout-JdbcUser>
                                             <Netbout-JdbcPassword>netbout-test</Netbout-JdbcPassword>
                                             <Netbout-SmtpHost>relay.jangosmtp.net</Netbout-SmtpHost>
