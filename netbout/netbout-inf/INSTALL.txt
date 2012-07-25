@@ -1,0 +1,76 @@
+Copyright (c) 2009-2012, Netbout.com
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without
+modification, are PROHIBITED without prior written permission from
+the author. This product may NOT be used anywhere and on any computer
+except the server platform of netBout Inc. located at www.netbout.com.
+Federal copyright law prohibits unauthorized reproduction by any means
+and imposes fines up to $25,000 for violation. If you received
+this code occasionally and without intent to use it, please report this
+incident to the author by email.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+"AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
+ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
+OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
+SUCH DAMAGE.
+
+---
+
+Create an instance through AWS web panel (type=t1.micro)
+
+Set it to security group "netbout"
+
+Open ports 32771, 2049, and 111 (using security group)
+
+Update NS record in Route53 for inf.netbout.com with a newly created IP address
+
+Login to this new machine:
+
+    $ ssh -i netbout.pem ubuntu@inf.netbout.com
+
+Make directory for INF files:
+
+    $ mkdir /home/ubuntu/inf
+
+Install NFS server
+    http://serverfault.com/questions/410588
+
+    $ sudo apt-get install nfs-kernel-server
+
+Configure /etc/exports with:
+
+    $ sudo vi /etc/exports
+    $ add "/home/ubuntu/inf *(rw,insecure,all_squash,async,anonuid=219,anongid=497)"
+
+Create tomcat7 group and user:
+
+    $ sudo addgroup -gid 497 tomcat7
+    $ sudo adduser -uid 219 -ingroup tomcat7 --no-create-home --disabled-password --disabled-login tomcat7
+
+Make sure that ElasticBeansTalk still has 219 as UID of tomcat7 and 497 as his GID
+    (you can check it on any EBT machine in /etc/passwd)
+
+Change ownership of INF directory:
+
+    $ chown -R tomcat7.tomcat7 /home/ubuntu/inf
+
+Restart NFS:
+
+    $ sudo exportfs -r
+
+Just to test, go to any other EC2 server and mount this disc:
+
+    $ sudo apt-get install nfs-common
+    $ sudo yum --assumeyes install nfs-utils nfs-utils-lib
+    $ sudo mkdir /mnt/inf
+    $ sudo mount inf.netbout.com:/home/ubuntu/inf /mnt/inf
+

@@ -61,7 +61,11 @@ public final class FolderMocker {
      */
     public FolderMocker withPath(final File dir) {
         dir.mkdirs();
-        Mockito.doReturn(dir).when(this.folder).path();
+        try {
+            Mockito.doReturn(dir).when(this.folder).path();
+        } catch (java.io.IOException ex) {
+            throw new IllegalStateException(ex);
+        }
         return this;
     }
 

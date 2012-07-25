@@ -63,13 +63,15 @@ final class Mux implements Closeable {
     /**
      * How often to flush, in ms.
      */
-    private static final long PERIOD = 5 * 60 * 1000;
+    private static final long PERIOD = 15 * 60 * 1000;
 
     /**
-     * How many threads to use.
+     * How many threads to use (more than the number of processors, because
+     * most of the time in every MuxTask will spent on I/O operations, like
+     * getting data from the database).
      */
     private static final int THREADS =
-        Runtime.getRuntime().availableProcessors();
+        Runtime.getRuntime().availableProcessors() * 8;
 
     /**
      * The ray.
@@ -115,7 +117,8 @@ final class Mux implements Closeable {
         new ArrayList<ScheduledFuture>(Mux.THREADS);
 
     /**
-     * Semaphore.
+     * Semaphore, that holds locks for every actively working task (and
+     * doesn't allow new tasks to start if there are not enough locks).
      */
     private final transient Semaphore semaphore = new Semaphore(Mux.THREADS);
 
@@ -288,7 +291,7 @@ final class Mux implements Closeable {
             this.service.shutdownNow();
             Thread.currentThread().interrupt();
         }
-        Logger.debug(
+        Logger.info(
             this,
             "#close(): %d remained in the queue",
             this.queue.size()

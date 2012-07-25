@@ -34,10 +34,9 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.concurrent.ConcurrentSkipListSet;
-import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.codec.binary.Base32;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.lang.StringUtils;
 
 /**
  * Default implementation of {@link Stash}.
@@ -209,9 +208,8 @@ final class DefaultStash implements Stash {
             this.lock.dir(),
             String.format(
                 "ntc-%s.ser",
-                StringUtils.stripEnd(
-                    Base64.encodeBase64String(notice.toString().getBytes()),
-                    "="
+                new Base32(true).encodeToString(
+                    notice.toString().getBytes()
                 )
             )
         );

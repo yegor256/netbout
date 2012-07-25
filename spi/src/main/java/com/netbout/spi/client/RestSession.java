@@ -136,6 +136,7 @@ public final class RestSession {
             .build(identity.toString(), secret);
         final String token = RestTester.start(uri)
             .get("authorization")
+            .assertThat(new EtaAssertion())
             .assertStatus(HttpURLConnection.HTTP_SEE_OTHER)
             .assertHeader(
                 this.AUTH_HEADER,

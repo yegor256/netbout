@@ -36,6 +36,7 @@ import com.netbout.spi.Identity;
 import com.netbout.spi.UnreachableUrnException;
 import com.netbout.spi.Urn;
 import java.io.IOException;
+import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.concurrent.atomic.AtomicReference;
 import javax.ws.rs.WebApplicationException;
@@ -123,7 +124,7 @@ final class LazyHub implements Hub {
     private Hub origin() {
         if (this.ref.get() == null) {
             throw new WebApplicationException(
-                Response.ok().entity(
+                Response.status(HttpURLConnection.HTTP_UNAVAILABLE).entity(
                     new VelocityPage("com/netbout/servlets/wait.html.vm").set(
                         "message",
                         Logger.format(

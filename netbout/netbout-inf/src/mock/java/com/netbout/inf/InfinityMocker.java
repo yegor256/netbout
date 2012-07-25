@@ -56,10 +56,15 @@ public final class InfinityMocker {
         final Urn[] names = urns.toArray(new Urn[urns.size()]);
         int cycles = 0;
         while (inf.eta(names) != 0) {
-            TimeUnit.MILLISECONDS.sleep(50);
+            TimeUnit.MILLISECONDS.sleep(100);
             Logger.debug(InfinityMocker.class, "eta=%[nano]s", inf.eta(names));
-            if (++cycles > 100) {
-                throw new IllegalStateException("time out");
+            if (++cycles > 500) {
+                throw new IllegalStateException(
+                    String.format(
+                        "time out after %d 100ms cycles of waiting",
+                        cycles
+                    )
+                );
             }
         }
         Logger.debug(

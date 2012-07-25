@@ -28,10 +28,10 @@ package com.netbout.inf;
 
 import com.jcabi.log.Logger;
 import com.netbout.ih.StageFarm;
-import com.netbout.inf.ebs.EbsVolume;
 import com.netbout.inf.functors.DefaultStore;
 import com.netbout.inf.ray.MemRay;
 import com.netbout.spi.Urn;
+import com.rexsl.core.Manifests;
 import java.io.File;
 import java.io.IOException;
 import java.util.Set;
@@ -71,7 +71,7 @@ public final class DefaultInfinity implements Infinity {
      * @throws IOException If some IO problem
      */
     public DefaultInfinity() throws IOException {
-        this(new EbsVolume());
+        this(new NfsFolder(new File(Manifests.read("Netbout-InfMount"))));
     }
 
     /**
@@ -97,46 +97,31 @@ public final class DefaultInfinity implements Infinity {
      */
     @Override
     public String toString() {
-        final StringBuilder text = new StringBuilder();
-        text.append(String.format("maximum(): %s\n", this.maximum()))
-            .append("Mux stats:\n")
-            .append(this.mux)
-            .append("\n\nStore stats:\n")
-            .append(this.store)
-            .append("\n\nRay stats:\n")
-            .append(this.ray)
-            .append("\n\njava.lang.Runtime:\n")
-            .append(
-                String.format(
-                    "  availableProcessors(): %d\n",
-                    Runtime.getRuntime().availableProcessors()
-                )
+        return Logger.format(
+            // @checkstyle LineLength (3 lines)
+            // @checkstyle StringLiteralsConcatenation (2 lines)
+            "maximum(): %d\n%[type]s:\n%s\n%[type]s:\n%s\n%[type]s:\n%s\n%[type]s:\n%s\n"
+            + "Runtime:\n  availableProcessors(): %d\n  freeMemory(): %s\n  maxMemory(): %s\n  totalMemory(): %s",
+            this.maximum(),
+            this.mux,
+            this.mux,
+            this.store,
+            this.store,
+            this.folder,
+            this.folder,
+            this.ray,
+            this.ray,
+            Runtime.getRuntime().availableProcessors(),
+            FileUtils.byteCountToDisplaySize(
+                Runtime.getRuntime().freeMemory()
+            ),
+            FileUtils.byteCountToDisplaySize(
+                Runtime.getRuntime().maxMemory()
+            ),
+            FileUtils.byteCountToDisplaySize(
+                Runtime.getRuntime().totalMemory()
             )
-            .append(
-                String.format(
-                    "  freeMemory(): %s\n",
-                    FileUtils.byteCountToDisplaySize(
-                        Runtime.getRuntime().freeMemory()
-                    )
-                )
-            )
-            .append(
-                String.format(
-                    "  maxMemory(): %s\n",
-                    FileUtils.byteCountToDisplaySize(
-                        Runtime.getRuntime().maxMemory()
-                    )
-                )
-            )
-            .append(
-                String.format(
-                    "  totalMemory(): %s\n",
-                    FileUtils.byteCountToDisplaySize(
-                        Runtime.getRuntime().totalMemory()
-                    )
-                )
-            );
-        return text.toString();
+        );
     }
 
     /**

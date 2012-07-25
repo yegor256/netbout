@@ -23,25 +23,13 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
- */
-package com.netbout.inf.ebs;
-
-import org.junit.Test;
-
-/**
- * Test case of {@link EbsDevice}.
+ *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class EbsDeviceTest {
+package com.netbout.rest.rexsl.bootstrap
 
-    /**
-     * EbsDevice can return a valid directory, even when there is no AWS at all.
-     * @throws Exception If there is some problem inside
-     */
-    @Test(expected = com.amazonaws.AmazonClientException.class)
-    public void attachesAndMounts() throws Exception {
-        new EbsDevice("fake-instance", "fake-volume").name();
-    }
+import com.rexsl.core.Manifests
+import org.apache.commons.io.FileUtils
 
-}
+FileUtils.deleteDirectory(new File(Manifests.read('Netbout-InfMount')))
