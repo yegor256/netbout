@@ -94,6 +94,14 @@ final class NfsFolder implements Folder {
      * {@inheritDoc}
      */
     @Override
+    public boolean isWritable() throws IOException {
+        return true;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public String toString() {
         final StringBuilder text = new StringBuilder();
         text.append(

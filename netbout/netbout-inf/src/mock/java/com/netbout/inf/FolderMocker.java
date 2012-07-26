@@ -74,6 +74,11 @@ public final class FolderMocker {
      * @return The predicate
      */
     public Folder mock() {
+        try {
+            Mockito.doReturn(true).when(this.folder).isWritable();
+        } catch (java.io.IOException ex) {
+            throw new IllegalStateException(ex);
+        }
         return this.folder;
     }
 
