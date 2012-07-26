@@ -458,6 +458,7 @@
                             <applicationName>netbout</applicationName>
                             <applicationDescription>netbout</applicationDescription>
                             <cnamePrefix>netbout</cnamePrefix>
+                            <daysToKeep>10</daysToKeep>
                             <environmentName>netbout</environmentName>
                             <s3Bucket>webapps.netbout.com</s3Bucket>
                             <s3Key>${beanstalk.app}</s3Key>
