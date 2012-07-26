@@ -137,10 +137,17 @@ final class Mux implements Closeable {
     public Mux(final Ray iray, final Store str) throws IOException {
         this.ray = iray;
         this.store = str;
+        int count = 0;
         for (Notice notice : this.ray.stash()) {
             this.add(notice);
             this.ray.stash().remove(notice);
+            ++count;
         }
+        Logger.info(
+            this,
+            "#Mux(..): restored %d notices from stash",
+            count
+        );
         // @checkstyle AnonInnerLength (30 lines)
         final Runnable runnable = new Runnable() {
             @Override
