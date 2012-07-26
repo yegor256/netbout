@@ -486,6 +486,21 @@
                                     <optionName>InstanceType</optionName>
                                     <value>m1.small</value>
                                 </optionSetting>
+                                <optionSetting>
+                                    <namespace>aws:elasticbeanstalk:container:tomcat:jvmoptions</namespace>
+                                    <optionName>XX:MaxPermSize</optionName>
+                                    <value>512m</value>
+                                </optionSetting>
+                                <optionSetting>
+                                    <namespace>aws:elasticbeanstalk:container:tomcat:jvmoptions</namespace>
+                                    <optionName>Xmx</optionName>
+                                    <value>2048m</value>
+                                </optionSetting>
+                                <optionSetting>
+                                    <namespace>aws:autoscaling:launchconfiguration</namespace>
+                                    <optionName>EC2KeyName</optionName>
+                                    <value>netbout</value>
+                                </optionSetting>
                             </optionSettings>
                         </configuration>
                         <executions>
