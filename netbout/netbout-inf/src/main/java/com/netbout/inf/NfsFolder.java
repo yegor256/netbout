@@ -71,23 +71,32 @@ final class NfsFolder implements Folder {
      * Public ctor.
      * @param path Directory, where to mount locally
      * @throws IOException If some error inside
+     * @checkstyle ExecutableStatementCount (100 lines)
      */
     public NfsFolder(final File path) throws IOException {
-        if (path.mkdirs()) {
+        this.directory = path;
+        if (this.directory.mkdirs()) {
             Logger.info(
                 this,
                 "#NfsFolder(%s): created a directory",
-                path.getAbsolutePath()
+                this.directory.getAbsolutePath()
             );
         } else {
             Logger.info(
                 this,
                 "#NfsFolder(%s): using existing directory",
-                path.getAbsolutePath()
+                this.directory.getAbsolutePath()
             );
         }
-        final File master = new File(path, NfsFolder.MASTER);
-        final File yield = new File(path, NfsFolder.YIELD);
+        if (this.directory.getPath().startsWith("/mnt")) {
+            if (!this.mounted()) {
+                this.mount();
+            }
+        } else {
+            Logger.info(this, "#path(): mount is not required");
+        }
+        final File master = new File(this.directory, NfsFolder.MASTER);
+        final File yield = new File(this.directory, NfsFolder.YIELD);
         FileUtils.writeStringToFile(
             yield,
             InetAddress.getLocalHost().getHostAddress()
@@ -109,7 +118,7 @@ final class NfsFolder implements Folder {
             Logger.info(
                 this,
                 "#NfsFolder(%s): waiting for '%s' to yield",
-                path,
+                this.directory,
                 marker
             );
         }
@@ -118,7 +127,6 @@ final class NfsFolder implements Folder {
             InetAddress.getLocalHost().getHostAddress()
         );
         yield.delete();
-        this.directory = path;
     }
 
     /**
@@ -175,13 +183,6 @@ final class NfsFolder implements Folder {
      */
     @Override
     public File path() throws IOException {
-        if (this.directory.getPath().startsWith("/mnt")) {
-            if (!this.mounted()) {
-                this.mount();
-            }
-        } else {
-            Logger.info(this, "#path(): mount is not required");
-        }
         return this.directory;
     }
 
