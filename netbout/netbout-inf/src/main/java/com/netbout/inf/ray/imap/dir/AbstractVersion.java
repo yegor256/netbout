@@ -37,14 +37,14 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 
 /**
- * Sub-directory with documents.
+ * Abstract sub-directory with documents.
  *
  * <p>Class is thread-safe.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-class BaseVersion implements Closeable {
+abstract class AbstractVersion implements Closeable {
 
     /**
      * Lock on the directory.
@@ -56,7 +56,7 @@ class BaseVersion implements Closeable {
      * @param lck The directory where to work
      * @throws IOException If some I/O problem inside
      */
-    public BaseVersion(final Lock lck) throws IOException {
+    public AbstractVersion(final Lock lck) throws IOException {
         this.lock = lck;
     }
 
@@ -85,8 +85,8 @@ class BaseVersion implements Closeable {
      */
     @Override
     public final boolean equals(final Object ver) {
-        return this == ver || (ver instanceof BaseVersion
-            && BaseVersion.class.cast(ver).lock.equals(this.lock));
+        return this == ver || (ver instanceof AbstractVersion
+            && AbstractVersion.class.cast(ver).lock.equals(this.lock));
     }
 
     /**
@@ -117,6 +117,7 @@ class BaseVersion implements Closeable {
      */
     @Override
     public final void close() throws IOException {
+        this.closeDeps();
         this.lock.close();
         Logger.debug(this, "#close(): closed");
     }
@@ -159,5 +160,11 @@ class BaseVersion implements Closeable {
     protected final File dir() throws IOException {
         return this.lock.dir();
     }
+
+    /**
+     * Close all dependencies.
+     * @throws IOException If some I/O problem inside
+     */
+    protected abstract void closeDeps() throws IOException;
 
 }

@@ -42,7 +42,7 @@ import org.apache.commons.io.FileUtils;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-final class Baseline extends BaseVersion {
+final class Baseline extends AbstractVersion {
 
     /**
      * Stash.
@@ -122,6 +122,14 @@ final class Baseline extends BaseVersion {
      */
     public Stash stash() throws IOException {
         return this.istash;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void closeDeps() throws IOException {
+        this.istash.close();
     }
 
 }

@@ -42,7 +42,7 @@ import org.apache.commons.io.FileUtils;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-final class Draft extends BaseVersion {
+final class Draft extends AbstractVersion {
 
     /**
      * Public ctor.
@@ -118,6 +118,14 @@ final class Draft extends BaseVersion {
             attrs,
             System.currentTimeMillis() - start
         );
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void closeDeps() throws IOException {
+        // nothing to do
     }
 
     /**
