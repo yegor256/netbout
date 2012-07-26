@@ -465,6 +465,28 @@
                             <versionLabel>${beanstalk.app}</versionLabel>
                             <daysToKeep>10</daysToKeep>
                             <dryRun>false</dryRun>
+                            <optionSettings>
+                                <optionSetting>
+                                    <namespace>aws:autoscaling:launchconfiguration</namespace>
+                                    <optionName>SecurityGroups</optionName>
+                                    <value>netbout</value>
+                                </optionSetting>
+                                <optionSetting>
+                                    <namespace>aws:autoscaling:asg</namespace>
+                                    <optionName>MinSize</optionName>
+                                    <value>1</value>
+                                </optionSetting>
+                                <optionSetting>
+                                    <namespace>aws:autoscaling:asg</namespace>
+                                    <optionName>MaxSize</optionName>
+                                    <value>1</value>
+                                </optionSetting>
+                                <optionSetting>
+                                    <namespace>aws:autoscaling:launchconfiguration</namespace>
+                                    <optionName>InstanceType</optionName>
+                                    <value>m1.small</value>
+                                </optionSetting>
+                            </optionSettings>
                         </configuration>
                         <executions>
                             <execution>
