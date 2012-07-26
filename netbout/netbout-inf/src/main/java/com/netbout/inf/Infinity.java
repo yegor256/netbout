@@ -28,7 +28,6 @@ package com.netbout.inf;
 
 import com.netbout.spi.Urn;
 import java.io.Closeable;
-import java.io.IOException;
 import java.util.Set;
 
 /**
@@ -41,7 +40,8 @@ public interface Infinity extends Closeable {
 
     /**
      * How long do we need to wait before sending requests?
-     * @param who Who is asking
+     * @param who Who is asking (empty list means that we need information
+     *  for the entire Infinity, not any particular URN)
      * @return Estimated number of nanoseconds
      */
     long eta(Urn... who);
@@ -59,12 +59,6 @@ public interface Infinity extends Closeable {
      * @return Maximum number of the message seen so far
      */
     long maximum();
-
-    /**
-     * Flush content to disc.
-     * @throws IOException If fails
-     */
-    void flush() throws IOException;
 
     /**
      * Send this notice to infinity.

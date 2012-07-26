@@ -28,6 +28,7 @@ package com.netbout.inf;
 
 import com.jcabi.log.Logger;
 import com.netbout.spi.Urn;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.concurrent.TimeUnit;
 import org.mockito.Mockito;
@@ -43,6 +44,15 @@ public final class InfinityMocker {
      * The object.
      */
     private final transient Infinity infinity = Mockito.mock(Infinity.class);
+
+    /**
+     * Wait for eta of this infinity.
+     * @param inf The infinity
+     * @throws InterruptedException If any
+     */
+    public static void waitFor(final Infinity inf) throws InterruptedException {
+        InfinityMocker.waitFor(inf, new ArrayList<Urn>());
+    }
 
     /**
      * Wait for eta of provided URNs.

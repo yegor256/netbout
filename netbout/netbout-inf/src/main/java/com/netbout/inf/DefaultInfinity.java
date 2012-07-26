@@ -137,14 +137,6 @@ public final class DefaultInfinity implements Infinity {
 
     /**
      * {@inheritDoc}
-     */
-    @Override
-    public void flush() throws IOException {
-        this.ray.flush();
-    }
-
-    /**
-     * {@inheritDoc}
      *
      * <p>We should return ONE in case the Mux is not yet ready and we don't
      * have any tasks there and no data is in INF. It means that the Infinity

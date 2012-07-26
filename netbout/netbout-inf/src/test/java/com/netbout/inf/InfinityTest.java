@@ -32,7 +32,6 @@ import com.netbout.spi.Bout;
 import com.netbout.spi.BoutMocker;
 import com.netbout.spi.Message;
 import com.netbout.spi.MessageMocker;
-import com.netbout.spi.Urn;
 import com.netbout.spi.UrnMocker;
 import com.rexsl.test.SimpleXml;
 import com.rexsl.test.XmlDocument;
@@ -72,6 +71,7 @@ public final class InfinityTest {
         );
         for (XmlDocument scene : xml.nodes("/scenario/scene")) {
             final Infinity inf = this.prepare(scene);
+            InfinityMocker.waitFor(inf);
             for (XmlDocument query : scene.nodes("query")) {
                 final String nums = query.xpath("messages/text()").get(0);
                 for (int retry = 0; retry < 1; ++retry) {
@@ -99,11 +99,9 @@ public final class InfinityTest {
     private Infinity prepare(final XmlDocument xml) throws Exception {
         final Folder folder = new FolderMocker().mock();
         final Infinity inf = new DefaultInfinity(folder);
-        final Urn[] array = new Urn[0];
         for (XmlDocument see : xml.nodes("see")) {
-            InfinityMocker.waitFor(inf, inf.see(this.notice(see)));
+            inf.see(this.notice(see));
         }
-        inf.flush();
         inf.close();
         return new DefaultInfinity(folder);
     }
