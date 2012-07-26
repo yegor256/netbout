@@ -145,7 +145,7 @@ final class Mux implements Closeable {
         }
         Logger.info(
             this,
-            "#Mux(..): restored %d notices from stash",
+            "#Mux(..): restored %d notice(s) from stash",
             count
         );
         // @checkstyle AnonInnerLength (30 lines)
@@ -188,9 +188,15 @@ final class Mux implements Closeable {
      */
     public long eta(final Urn... who) {
         long eta = 0L;
-        for (Urn urn : who) {
-            if (this.dependants.containsKey(urn)) {
-                eta += this.dependants.get(urn).get();
+        if (who.length > 0) {
+            for (Urn urn : who) {
+                if (this.dependants.containsKey(urn)) {
+                    eta += this.dependants.get(urn).get();
+                }
+            }
+        } else {
+            for (AtomicLong val : this.dependants.values()) {
+                eta += val.get();
             }
         }
         if (eta > 0 && this.stats.getN() > 0) {

@@ -453,7 +453,7 @@
                     <plugin>
                         <groupId>br.com.ingenieux</groupId>
                         <artifactId>beanstalk-maven-plugin</artifactId>
-                        <version since="15 Aug 2011">0.2.5</version>
+                        <version since="26 Jul 2012">0.2.7-RC5</version>
                         <configuration>
                             <applicationName>netbout</applicationName>
                             <applicationDescription>netbout</applicationDescription>
@@ -464,6 +464,29 @@
                             <versionLabel>${beanstalk.app}</versionLabel>
                             <daysToKeep>10</daysToKeep>
                             <dryRun>false</dryRun>
+                            <versionsToKeep>10</versionsToKeep>
+                            <optionSettings>
+                                <optionSetting>
+                                    <namespace>aws:autoscaling:launchconfiguration</namespace>
+                                    <optionName>SecurityGroups</optionName>
+                                    <value>netbout</value>
+                                </optionSetting>
+                                <optionSetting>
+                                    <namespace>aws:autoscaling:asg</namespace>
+                                    <optionName>MinSize</optionName>
+                                    <value>1</value>
+                                </optionSetting>
+                                <optionSetting>
+                                    <namespace>aws:autoscaling:asg</namespace>
+                                    <optionName>MaxSize</optionName>
+                                    <value>1</value>
+                                </optionSetting>
+                                <optionSetting>
+                                    <namespace>aws:autoscaling:launchconfiguration</namespace>
+                                    <optionName>InstanceType</optionName>
+                                    <value>m1.small</value>
+                                </optionSetting>
+                            </optionSettings>
                         </configuration>
                         <executions>
                             <execution>
@@ -471,8 +494,9 @@
                                 <goals>
                                     <goal>upload-source-bundle</goal>
                                     <goal>create-application-version</goal>
-                                    <goal>update-environment</goal>
-                                    <goal>clean-previous-versions</goal>
+                                    <goal>replace-environment</goal>
+                                    <!-- @see https://github.com/ingenieux/beanstalker/issues/15 -->
+                                    <!-- <goal>clean-previous-versions</goal> -->
                                 </goals>
                             </execution>
                         </executions>

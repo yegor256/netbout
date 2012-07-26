@@ -109,6 +109,14 @@ public final class DefaultStore implements Store {
     }
 
     /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String toString() {
+        return Logger.format("with functors %[list]s", this.functors.keySet());
+    }
+
+    /**
      * Discover all predicates.
      * @return List of pointers to predicates
      */

@@ -32,6 +32,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.lang.management.ManagementFactory;
 import java.nio.channels.FileChannel;
 import java.nio.channels.FileLock;
 import org.apache.commons.io.FileUtils;
@@ -85,13 +86,18 @@ final class Lock implements Closeable {
         if (file.exists()) {
             Logger.warn(
                 this,
-                "#Lock('%s'): trying to clean a dirty lock '$s'",
+                "#Lock('%s'): trying to clean a dirty lock '%s'",
                 FilenameUtils.getName(this.directory.getPath()),
                 FileUtils.readFileToString(file)
             );
         }
         this.stream = new FileOutputStream(file);
-        new PrintStream(this.stream).println("locked");
+        new PrintStream(this.stream).println(
+            String.format(
+                "locked by %s",
+                ManagementFactory.getRuntimeMXBean().getName()
+            )
+        );
         this.channel = this.stream.getChannel();
         try {
             this.filelock = this.channel.lock();

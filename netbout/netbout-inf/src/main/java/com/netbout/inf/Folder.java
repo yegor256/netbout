@@ -45,4 +45,11 @@ public interface Folder extends Closeable {
      */
     File path() throws IOException;
 
+    /**
+     * Is it writable?
+     * @return TRUE if we can write to the folder
+     * @throws IOException If some IO problem inside
+     */
+    boolean isWritable() throws IOException;
+
 }

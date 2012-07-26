@@ -33,6 +33,7 @@ import com.jcraft.jsch.Session;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.net.InetAddress;
 import java.net.URL;
 import java.util.concurrent.TimeUnit;
 import org.apache.commons.io.FileUtils;
@@ -52,6 +53,16 @@ import org.apache.commons.lang.CharEncoding;
 final class NfsFolder implements Folder {
 
     /**
+     * Name of master marker.
+     */
+    private static final String MASTER = "master.txt";
+
+    /**
+     * Name of a yield request marker.
+     */
+    private static final String YIELD = "yield.txt";
+
+    /**
      * Mounting directory.
      */
     private final transient File directory;
@@ -60,22 +71,62 @@ final class NfsFolder implements Folder {
      * Public ctor.
      * @param path Directory, where to mount locally
      * @throws IOException If some error inside
+     * @checkstyle ExecutableStatementCount (100 lines)
      */
     public NfsFolder(final File path) throws IOException {
-        if (path.mkdirs()) {
+        this.directory = path;
+        if (this.directory.mkdirs()) {
             Logger.info(
                 this,
                 "#NfsFolder(%s): created a directory",
-                path.getAbsolutePath()
+                this.directory.getAbsolutePath()
             );
         } else {
             Logger.info(
                 this,
                 "#NfsFolder(%s): using existing directory",
-                path.getAbsolutePath()
+                this.directory.getAbsolutePath()
             );
         }
-        this.directory = path;
+        if (this.directory.getPath().startsWith("/mnt")) {
+            if (!this.mounted()) {
+                this.mount();
+            }
+        } else {
+            Logger.info(this, "#path(): mount is not required");
+        }
+        final File master = new File(this.directory, NfsFolder.MASTER);
+        final File yield = new File(this.directory, NfsFolder.YIELD);
+        FileUtils.writeStringToFile(
+            yield,
+            InetAddress.getLocalHost().getHostAddress()
+        );
+        while (master.exists()) {
+            try {
+                // @checkstyle MagicNumber (1 line)
+                TimeUnit.MILLISECONDS.sleep(100);
+            } catch (InterruptedException ex) {
+                Thread.currentThread().interrupt();
+                throw new IllegalStateException(ex);
+            }
+            String marker;
+            try {
+                marker = FileUtils.readFileToString(master);
+            } catch (java.io.FileNotFoundException ex) {
+                break;
+            }
+            Logger.info(
+                this,
+                "#NfsFolder(%s): waiting for '%s' to yield",
+                this.directory,
+                marker
+            );
+        }
+        FileUtils.writeStringToFile(
+            master,
+            InetAddress.getLocalHost().getHostAddress()
+        );
+        yield.delete();
     }
 
     /**
@@ -88,6 +139,23 @@ final class NfsFolder implements Folder {
         } else {
             Logger.info(this, "#close(): no umount required");
         }
+        new File(this.directory, NfsFolder.MASTER).delete();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean isWritable() throws IOException {
+        final File yield = new File(this.directory, NfsFolder.YIELD);
+        if (yield.exists()) {
+            Logger.info(
+                this,
+                "#isWritable(): yield request '%s'",
+                FileUtils.readFileToString(yield)
+            );
+        }
+        return !yield.exists();
     }
 
     /**
@@ -115,13 +183,6 @@ final class NfsFolder implements Folder {
      */
     @Override
     public File path() throws IOException {
-        if (this.directory.getPath().startsWith("/mnt")) {
-            if (!this.mounted()) {
-                this.mount();
-            }
-        } else {
-            Logger.info(this, "#path(): mount is not required");
-        }
         return this.directory;
     }
 

@@ -27,6 +27,8 @@
 package com.netbout.inf;
 
 import com.jcabi.log.Logger;
+import com.jcabi.log.VerboseRunnable;
+import com.jcabi.log.VerboseThreads;
 import com.netbout.ih.StageFarm;
 import com.netbout.inf.functors.DefaultStore;
 import com.netbout.inf.ray.MemRay;
@@ -35,6 +37,9 @@ import com.rexsl.core.Manifests;
 import java.io.File;
 import java.io.IOException;
 import java.util.Set;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 import org.apache.commons.io.FileUtils;
 
 /**
@@ -44,6 +49,7 @@ import org.apache.commons.io.FileUtils;
  * @version $Id$
  * @checkstyle ClassDataAbstractionCoupling (500 lines)
  */
+@SuppressWarnings("PMD.DoNotUseThreads")
 public final class DefaultInfinity implements Infinity {
 
     /**
@@ -67,6 +73,12 @@ public final class DefaultInfinity implements Infinity {
     private final transient Ray ray;
 
     /**
+     * Running service.
+     */
+    private final transient ScheduledExecutorService service =
+        Executors.newSingleThreadScheduledExecutor(new VerboseThreads("inf"));
+
+    /**
      * Public ctor.
      * @throws IOException If some IO problem
      */
@@ -83,6 +95,25 @@ public final class DefaultInfinity implements Infinity {
         this.folder = fldr;
         this.ray = new MemRay(new File(this.folder.path(), "ray"));
         this.mux = new Mux(this.ray, this.store);
+        this.service.scheduleWithFixedDelay(
+            new VerboseRunnable(
+                new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            if (!DefaultInfinity.this.folder.isWritable()
+                                && DefaultInfinity.this.mux.eta() == 0L) {
+                                DefaultInfinity.this.folder.close();
+                            }
+                        } catch (IOException ex) {
+                            throw new IllegalArgumentException(ex);
+                        }
+                    }
+                },
+                true
+            ),
+            1L, 1L, TimeUnit.SECONDS
+        );
         StageFarm.register(this);
         Logger.info(
             this,
@@ -137,14 +168,6 @@ public final class DefaultInfinity implements Infinity {
 
     /**
      * {@inheritDoc}
-     */
-    @Override
-    public void flush() throws IOException {
-        this.ray.flush();
-    }
-
-    /**
-     * {@inheritDoc}
      *
      * <p>We should return ONE in case the Mux is not yet ready and we don't
      * have any tasks there and no data is in INF. It means that the Infinity
@@ -186,6 +209,9 @@ public final class DefaultInfinity implements Infinity {
     @Override
     public Set<Urn> see(final Notice notice) {
         try {
+            if (!this.folder.isWritable()) {
+                throw new IllegalStateException("Folder is not writable");
+            }
             return this.mux.add(notice);
         } catch (IOException ex) {
             throw new IllegalArgumentException(ex);

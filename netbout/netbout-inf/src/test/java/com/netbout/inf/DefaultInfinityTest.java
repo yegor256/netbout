@@ -32,11 +32,8 @@ import com.netbout.spi.Bout;
 import com.netbout.spi.BoutMocker;
 import com.netbout.spi.Message;
 import com.netbout.spi.MessageMocker;
-import com.netbout.spi.Urn;
 import com.netbout.spi.UrnMocker;
-import java.util.Set;
 import java.util.concurrent.Callable;
-import java.util.concurrent.ConcurrentSkipListSet;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -103,7 +100,6 @@ public final class DefaultInfinityTest {
         final Folder folder = new FolderMocker().mock();
         final Infinity inf = new DefaultInfinity(folder);
         final int total = 100;
-        final Set<Urn> authors = new ConcurrentSkipListSet<Urn>();
         final ExecutorService svc = Executors.newFixedThreadPool(
             Runtime.getRuntime().availableProcessors(),
             new VerboseThreads()
@@ -120,15 +116,13 @@ public final class DefaultInfinityTest {
                             .withText("about Jeffrey")
                             .withNumber(number)
                             .mock();
-                        authors.addAll(
-                            inf.see(
-                                new MessagePostedNotice() {
-                                    @Override
-                                    public Message message() {
-                                        return message;
-                                    }
+                        inf.see(
+                            new MessagePostedNotice() {
+                                @Override
+                                public Message message() {
+                                    return message;
                                 }
-                            )
+                            }
                         );
                         added.incrementAndGet();
                     }
@@ -140,7 +134,7 @@ public final class DefaultInfinityTest {
         inf.close();
         for (int attempt = 0; attempt <= 2; ++attempt) {
             final Infinity restored = new DefaultInfinity(folder);
-            InfinityMocker.waitFor(restored, authors);
+            InfinityMocker.waitFor(restored);
             MatcherAssert.assertThat(
                 restored.messages("(matches 'Jeffrey')"),
                 Matchers.<Long>iterableWithSize(added.get())
@@ -181,18 +175,16 @@ public final class DefaultInfinityTest {
                 .withNumber(MsgMocker.number())
                 .inBout(bout)
                 .mock();
-            InfinityMocker.waitFor(
-                inf,
-                inf.see(
-                    new MessagePostedNotice() {
-                        @Override
-                        public Message message() {
-                            return msg;
-                        }
+            inf.see(
+                new MessagePostedNotice() {
+                    @Override
+                    public Message message() {
+                        return msg;
                     }
-                )
+                }
             );
         }
+        InfinityMocker.waitFor(inf);
         final int threads = 10;
         final CountDownLatch start = new CountDownLatch(1);
         final CountDownLatch latch = new CountDownLatch(threads);

@@ -24,62 +24,56 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.inf;
+package com.netbout.inf.functors;
 
-import java.io.File;
-import java.util.Random;
-import org.mockito.Mockito;
+import com.netbout.inf.Store;
+import org.hamcrest.MatcherAssert;
+import org.hamcrest.Matchers;
+import org.junit.Test;
 
 /**
- * Mocker of {@link Folder}.
+ * Test case of {@link DefaultStore}.
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
+ * @checkstyle ClassDataAbstractionCoupling (500 lines)
  */
-public final class FolderMocker {
+@SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
+public final class DefaultStoreTest {
 
     /**
-     * The object.
+     * DefaultStore can get key functors.
+     * @throws Exception If there is some problem inside
      */
-    private final transient Folder folder = Mockito.mock(Folder.class);
+    @Test
+    public void findsKeyFunctors() throws Exception {
+        final String[] names = new String[] {
+            "and",
+            "or",
+            "not",
+            "bundled",
+            "equal",
+            "talks-with",
+            "unique",
+            "from",
+            "limit",
+            "unbundled",
+        };
+        final Store store = new DefaultStore();
+        for (String name : names) {
+            MatcherAssert.assertThat(store.get(name), Matchers.notNullValue());
+        }
+    }
 
     /**
-     * Public ctor.
+     * DefaultStore can convert itselt to string.
+     * @throws Exception If there is some problem inside
      */
-    public FolderMocker() {
-        this.withPath(
-            new File(
-                System.getProperty("java.io.tmpdir"),
-                String.format("FolderMocker-%d", new Random().nextLong())
-            )
+    @Test
+    public void convertsItseltToString() throws Exception {
+        MatcherAssert.assertThat(
+            new DefaultStore(),
+            Matchers.hasToString(Matchers.notNullValue())
         );
-    }
-
-    /**
-     * With this path.
-     * @param dir The path
-     * @return This object
-     */
-    public FolderMocker withPath(final File dir) {
-        dir.mkdirs();
-        try {
-            Mockito.doReturn(dir).when(this.folder).path();
-        } catch (java.io.IOException ex) {
-            throw new IllegalStateException(ex);
-        }
-        return this;
-    }
-
-    /**
-     * Build it.
-     * @return The predicate
-     */
-    public Folder mock() {
-        try {
-            Mockito.doReturn(true).when(this.folder).isWritable();
-        } catch (java.io.IOException ex) {
-            throw new IllegalStateException(ex);
-        }
-        return this.folder;
     }
 
 }
