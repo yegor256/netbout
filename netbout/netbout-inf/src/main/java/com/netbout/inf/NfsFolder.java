@@ -33,6 +33,7 @@ import com.jcraft.jsch.Session;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.net.InetAddress;
 import java.net.URL;
 import java.util.concurrent.TimeUnit;
 import org.apache.commons.io.FileUtils;
@@ -50,6 +51,16 @@ import org.apache.commons.lang.CharEncoding;
  */
 @SuppressWarnings("PMD.TooManyMethods")
 final class NfsFolder implements Folder {
+
+    /**
+     * Name of master marker.
+     */
+    private static final String MASTER = "master.txt";
+
+    /**
+     * Name of a yield request marker.
+     */
+    private static final String YIELD = "yield.txt";
 
     /**
      * Mounting directory.
@@ -75,6 +86,38 @@ final class NfsFolder implements Folder {
                 path.getAbsolutePath()
             );
         }
+        final File master = new File(path, NfsFolder.MASTER);
+        final File yield = new File(path, NfsFolder.YIELD);
+        FileUtils.writeStringToFile(
+            yield,
+            InetAddress.getLocalHost().getHostAddress()
+        );
+        while (master.exists()) {
+            try {
+                // @checkstyle MagicNumber (1 line)
+                TimeUnit.MILLISECONDS.sleep(100);
+            } catch (InterruptedException ex) {
+                Thread.currentThread().interrupt();
+                throw new IllegalStateException(ex);
+            }
+            String marker;
+            try {
+                marker = FileUtils.readFileToString(master);
+            } catch (java.io.FileNotFoundException ex) {
+                break;
+            }
+            Logger.info(
+                this,
+                "#NfsFolder(%s): waiting for '%s' to yield",
+                path,
+                marker
+            );
+        }
+        FileUtils.writeStringToFile(
+            master,
+            InetAddress.getLocalHost().getHostAddress()
+        );
+        yield.delete();
         this.directory = path;
     }
 
@@ -88,6 +131,7 @@ final class NfsFolder implements Folder {
         } else {
             Logger.info(this, "#close(): no umount required");
         }
+        new File(this.directory, NfsFolder.MASTER).delete();
     }
 
     /**
@@ -95,7 +139,15 @@ final class NfsFolder implements Folder {
      */
     @Override
     public boolean isWritable() throws IOException {
-        return true;
+        final File yield = new File(this.directory, NfsFolder.YIELD);
+        if (yield.exists()) {
+            Logger.info(
+                this,
+                "#isWritable(): yield request '%s'",
+                FileUtils.readFileToString(yield)
+            );
+        }
+        return !yield.exists();
     }
 
     /**

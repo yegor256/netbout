@@ -26,8 +26,11 @@
  */
 package com.netbout.inf;
 
+import com.jcabi.log.VerboseRunnable;
 import java.io.File;
 import java.net.URL;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicReference;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Assume;
@@ -40,6 +43,7 @@ import org.junit.rules.TemporaryFolder;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
+@SuppressWarnings("PMD.DoNotUseThreads")
 public final class NfsFolderTest {
 
     /**
@@ -86,6 +90,42 @@ public final class NfsFolderTest {
     public void throwsWhenPemIsAbsent() throws Exception {
         Assume.assumeThat(this.pem, Matchers.nullValue());
         new NfsFolder(new File("/mnt/something")).path();
+    }
+
+    /**
+     * NfsFolder can yield to another NfsFolder.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void yieldsToAnotherNfsFolder() throws Exception {
+        final File dir = this.temp.newFolder("foo");
+        final Folder first = new NfsFolder(dir);
+        MatcherAssert.assertThat(first.isWritable(), Matchers.is(true));
+        final AtomicReference<Folder> second = new AtomicReference<Folder>();
+        new Thread(
+            new VerboseRunnable(
+                new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            second.set(new NfsFolder(dir));
+                        } catch (java.io.IOException ex) {
+                            throw new IllegalArgumentException(ex);
+                        }
+                    }
+                }
+            )
+        ).start();
+        while (first.isWritable()) {
+            // @checkstyle MagicNumber (1 line)
+            TimeUnit.MILLISECONDS.sleep(50);
+        }
+        first.close();
+        while (second.get() == null) {
+            TimeUnit.MILLISECONDS.sleep(1);
+        }
+        MatcherAssert.assertThat(second.get().isWritable(), Matchers.is(true));
+        second.get().close();
     }
 
 }
