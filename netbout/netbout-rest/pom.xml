@@ -458,13 +458,13 @@
                             <applicationName>netbout</applicationName>
                             <applicationDescription>netbout</applicationDescription>
                             <cnamePrefix>netbout</cnamePrefix>
-                            <daysToKeep>10</daysToKeep>
                             <environmentName>netbout</environmentName>
                             <s3Bucket>webapps.netbout.com</s3Bucket>
                             <s3Key>${beanstalk.app}</s3Key>
                             <versionLabel>${beanstalk.app}</versionLabel>
                             <daysToKeep>10</daysToKeep>
                             <dryRun>false</dryRun>
+                            <versionsToKeep>10</versionsToKeep>
                             <optionSettings>
                                 <optionSetting>
                                     <namespace>aws:autoscaling:launchconfiguration</namespace>
@@ -495,7 +495,8 @@
                                     <goal>upload-source-bundle</goal>
                                     <goal>create-application-version</goal>
                                     <goal>replace-environment</goal>
-                                    <goal>clean-previous-versions</goal>
+                                    <!-- @see https://github.com/ingenieux/beanstalker/issues/15 -->
+                                    <!-- <goal>clean-previous-versions</goal> -->
                                 </goals>
                             </execution>
                         </executions>
