@@ -85,20 +85,26 @@ final class Lock implements Closeable {
         if (file.exists()) {
             Logger.warn(
                 this,
-                "#Lock('%s'): trying to clean a dirty lock...",
-                FilenameUtils.getName(this.directory.getPath())
+                "#Lock('%s'): trying to clean a dirty lock '$s'",
+                FilenameUtils.getName(this.directory.getPath()),
+                FileUtils.readFileToString(file)
             );
         }
         this.stream = new FileOutputStream(file);
         new PrintStream(this.stream).println("locked");
         this.channel = this.stream.getChannel();
-        FileLock lck = null;
         try {
-            lck = this.channel.lock();
+            this.filelock = this.channel.lock();
         } catch (java.nio.channels.OverlappingFileLockException ex) {
             throw new IOException(ex);
-        } finally {
-            this.filelock = lck;
+        }
+        if (!this.filelock.isValid()) {
+            throw new IOException(
+                String.format(
+                    "lock of %s failed, the directory is still unlocked",
+                    this.directory
+                )
+            );
         }
         Logger.debug(
             this,
@@ -161,7 +167,12 @@ final class Lock implements Closeable {
      */
     public File dir() throws IOException {
         if (!this.filelock.isValid()) {
-            throw new IOException("closed lock");
+            throw new IOException(
+                String.format(
+                    "lock of %s is already closed, can't return dir()",
+                    this.directory
+                )
+            );
         }
         return this.directory;
     }
