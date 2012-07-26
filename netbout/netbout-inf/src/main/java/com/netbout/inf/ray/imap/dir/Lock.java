@@ -85,20 +85,18 @@ final class Lock implements Closeable {
         if (file.exists()) {
             Logger.warn(
                 this,
-                "#Lock('%s'): trying to clean a dirty lock...",
-                FilenameUtils.getName(this.directory.getPath())
+                "#Lock('%s'): trying to clean a dirty lock '$s'",
+                FilenameUtils.getName(this.directory.getPath()),
+                FileUtils.readFileToString(file)
             );
         }
         this.stream = new FileOutputStream(file);
         new PrintStream(this.stream).println("locked");
         this.channel = this.stream.getChannel();
-        FileLock lck = null;
         try {
-            lck = this.channel.lock();
+            this.filelock = this.channel.lock();
         } catch (java.nio.channels.OverlappingFileLockException ex) {
             throw new IOException(ex);
-        } finally {
-            this.filelock = lck;
         }
         Logger.debug(
             this,
