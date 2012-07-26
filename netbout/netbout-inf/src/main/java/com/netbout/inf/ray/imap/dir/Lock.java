@@ -160,7 +160,8 @@ final class Lock implements Closeable {
         new File(this.directory, Lock.NAME).delete();
         Logger.debug(
             this,
-            "#close(): '/%s' unlocked by %s",
+            "#close(): '/%s/%s' unlocked by %s",
+            FilenameUtils.getName(this.directory.getParent()),
             FilenameUtils.getName(this.directory.getPath()),
             super.toString()
         );
