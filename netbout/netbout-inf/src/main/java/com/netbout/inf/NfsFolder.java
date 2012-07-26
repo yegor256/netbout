@@ -203,7 +203,7 @@ final class NfsFolder implements Folder {
      */
     private void mount() throws IOException {
         this.exec("yum", "--assumeyes", "install", "nfs-utils");
-        this.exec("mkdir", this.directory.getPath());
+        this.exec("mkdir", "-p", this.directory.getPath());
         this.exec(
             "mount",
             "inf.netbout.com:/home/ubuntu/inf",
