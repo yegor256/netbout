@@ -98,6 +98,14 @@ final class Lock implements Closeable {
         } catch (java.nio.channels.OverlappingFileLockException ex) {
             throw new IOException(ex);
         }
+        if (!this.filelock.isValid()) {
+            throw new IOException(
+                String.format(
+                    "lock of %s failed, the directory is still unlocked",
+                    this.directory
+                )
+            );
+        }
         Logger.debug(
             this,
             "#Lock('/%s/%s'): locked by %s",
@@ -159,7 +167,12 @@ final class Lock implements Closeable {
      */
     public File dir() throws IOException {
         if (!this.filelock.isValid()) {
-            throw new IOException("closed lock");
+            throw new IOException(
+                String.format(
+                    "lock of %s is already closed, can't return dir()",
+                    this.directory
+                )
+            );
         }
         return this.directory;
     }
