@@ -470,6 +470,7 @@
                                 <phase>deploy</phase>
                                 <goals>
                                     <goal>upload-source-bundle</goal>
+                                    <goal>create-application-version</goal>
                                     <goal>replace-environment</goal>
                                     <goal>clean-previous-versions</goal>
                                 </goals>
