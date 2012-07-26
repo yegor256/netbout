@@ -71,23 +71,9 @@ final class NfsFolder implements Folder {
      * Public ctor.
      * @param path Directory, where to mount locally
      * @throws IOException If some error inside
-     * @checkstyle ExecutableStatementCount (100 lines)
      */
     public NfsFolder(final File path) throws IOException {
         this.directory = path;
-        if (this.directory.mkdirs()) {
-            Logger.info(
-                this,
-                "#NfsFolder(%s): created a directory",
-                this.directory.getAbsolutePath()
-            );
-        } else {
-            Logger.info(
-                this,
-                "#NfsFolder(%s): using existing directory",
-                this.directory.getAbsolutePath()
-            );
-        }
         if (this.directory.getPath().startsWith("/mnt")) {
             if (!this.mounted()) {
                 this.mount();
@@ -217,6 +203,7 @@ final class NfsFolder implements Folder {
      */
     private void mount() throws IOException {
         this.exec("yum", "--assumeyes", "install", "nfs-utils");
+        this.exec("mkdir", this.directory.getPath());
         this.exec(
             "mount",
             "inf.netbout.com:/home/ubuntu/inf",
