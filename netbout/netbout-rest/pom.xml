@@ -484,7 +484,7 @@
                                 <optionSetting>
                                     <namespace>aws:autoscaling:launchconfiguration</namespace>
                                     <optionName>InstanceType</optionName>
-                                    <value>m1.small</value>
+                                    <value>m1.medium</value>
                                 </optionSetting>
                                 <optionSetting>
                                     <namespace>aws:elasticbeanstalk:container:tomcat:jvmoptions</namespace>
@@ -505,11 +505,6 @@
                                     <namespace>aws:elasticbeanstalk:application</namespace>
                                     <optionName>Application Healthcheck URL</optionName>
                                     <value>/g</value>
-                                </optionSetting>
-                                <optionSetting>
-                                    <namespace>aws:elasticbeanstalk:sns:topics</namespace>
-                                    <optionName>Notification Endpoint</optionName>
-                                    <value>yegor@netbout.com</value>
                                 </optionSetting>
                             </optionSettings>
                         </configuration>
