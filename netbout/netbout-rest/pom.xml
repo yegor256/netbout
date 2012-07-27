@@ -690,6 +690,7 @@
                                             <arg value="--force"/>
                                             <arg value="--skip-name-resolve"/>
                                         </exec>
+                                        <delete file="${project.build.directory}/catapult-mysql.sock" quiet="true"/>
                                         <exec executable="mysqld" spawn="true">
                                             <arg value="--bind-address=localhost"/>
                                             <arg value="--general_log"/>
