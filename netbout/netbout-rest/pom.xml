@@ -680,7 +680,9 @@
                                 </goals>
                                 <configuration>
                                     <target>
+                                        <delete dir="${project.build.directory}/catapult-mysql" quiet="true"/>
                                         <mkdir dir="${project.build.directory}/catapult-mysql"/>
+                                        <delete dir="${project.build.directory}/catapult-mysql-temp" quiet="true"/>
                                         <mkdir dir="${project.build.directory}/catapult-mysql-temp"/>
                                         <exec executable="mysql_install_db" failonerror="true">
                                             <arg value="--basedir=/usr/local/mysql-bin"/>
