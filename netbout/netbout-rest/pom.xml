@@ -654,7 +654,7 @@
                         <version since="2 Dec 2011">1.7</version>
                         <executions>
                             <execution>
-                                <id>reserve-tomcat-port</id>
+                                <id>reserve-catapult-ports</id>
                                 <phase>generate-test-resources</phase>
                                 <goals>
                                     <goal>reserve-network-port</goal>
@@ -662,7 +662,76 @@
                                 <configuration>
                                     <portNames>
                                         <portName>catapult.port</portName>
+                                        <portName>mysql.port.catapult</portName>
                                     </portNames>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <artifactId>maven-antrun-plugin</artifactId>
+                        <version since="2 Dec 2011">1.7</version>
+                        <executions>
+                            <execution>
+                                <id>start-mysql</id>
+                                <phase>pre-integration-test</phase>
+                                <goals>
+                                    <goal>run</goal>
+                                </goals>
+                                <configuration>
+                                    <target>
+                                        <mkdir dir="${project.build.directory}/catapult-mysql"/>
+                                        <mkdir dir="${project.build.directory}/catapult-mysql-temp"/>
+                                        <exec executable="mysql_install_db" failonerror="true">
+                                            <arg value="--basedir=/usr/local/mysql-bin"/>
+                                            <arg value="--datadir=${project.build.directory}/catapult-mysql"/>
+                                            <arg value="--force"/>
+                                            <arg value="--skip-name-resolve"/>
+                                        </exec>
+                                        <exec executable="mysqld" spawn="true">
+                                            <arg value="--bind-address=localhost"/>
+                                            <arg value="--general_log"/>
+                                            <arg value="--general_log_file=${project.build.directory}/catapult-mysql.log"/>
+                                            <arg value="--log_error=${project.build.directory}/catapult-mysql.log"/>
+                                            <arg value="--log_warnings"/>
+                                            <arg value="--binlog-ignore-db=test"/>
+                                            <arg value="--datadir=${project.build.directory}/catapult-mysql"/>
+                                            <arg value="--tmpdir=${project.build.directory}/catapult-mysql-temp"/>
+                                            <arg value="--socket=${project.build.directory}/catapult-mysql.sock"/>
+                                            <arg value="--skip-networking"/>
+                                            <arg value="--pid-file=${project.build.directory}/catapult-mysql.pid"/>
+                                            <arg value="--port=${mysql.port.catapult}"/>
+                                        </exec>
+                                        <waitfor maxwait="30" maxwaitunit="second">
+                                            <available file="${project.build.directory}/catapult-mysql.sock"/>
+                                        </waitfor>
+                                        <echo message="MySQL is ready at localhost:${mysql.port.catapult}" />
+                                        <!-- <input>press Enter to continue...</input> -->
+                                        <exec executable="mysql" failonerror="true"
+                                            inputstring="CREATE DATABASE catapult;">
+                                            <arg value="--port=${mysql.port.catapult}"/>
+                                            <arg value="--user=root"/>
+                                            <arg value="--socket=${project.build.directory}/catapult-mysql.sock"/>
+                                        </exec>
+                                    </target>
+                                </configuration>
+                            </execution>
+                            <execution>
+                                <id>stop-mysql</id>
+                                <phase>post-integration-test</phase>
+                                <goals>
+                                    <goal>run</goal>
+                                </goals>
+                                <configuration>
+                                    <target>
+                                        <exec executable="mysqladmin" failonerror="true">
+                                            <arg value="--port=${mysql.port.catapult}"/>
+                                            <arg value="--user=root"/>
+                                            <arg value="--socket=${project.build.directory}/catapult-mysql.sock"/>
+                                            <arg value="shutdown"/>
+                                        </exec>
+                                        <echo message="MySQL is shutdown"/>
+                                    </target>
                                 </configuration>
                             </execution>
                         </executions>
@@ -687,9 +756,9 @@
                                             <Netbout-FbSecret>secret</Netbout-FbSecret>
                                             <Netbout-JdbcDriver>com.mysql.jdbc.Driver</Netbout-JdbcDriver>
                                             <!-- see http://dev.mysql.com/doc/refman/5.0/en/connector-j-reference-configuration-properties.html -->
-                                            <Netbout-JdbcUrl>jdbc:mysql://test-db.netbout.com:3306/netbout-test?useUnicode=true&amp;characterEncoding=utf-8&amp;useGmtMillisForDatetimes=true&amp;useJDBCCompliantTimezoneShift=true&amp;useLegacyDatetimeCode=false&amp;useTimezone=true&amp;serverTimezone=UTC</Netbout-JdbcUrl>
-                                            <Netbout-JdbcUser>netbout-test</Netbout-JdbcUser>
-                                            <Netbout-JdbcPassword>netbout-test</Netbout-JdbcPassword>
+                                            <Netbout-JdbcUrl>jdbc:mysql://localhost:${mysql.port.catapult}/catapult?useUnicode=true&amp;characterEncoding=utf-8&amp;useGmtMillisForDatetimes=true&amp;useJDBCCompliantTimezoneShift=true&amp;useLegacyDatetimeCode=false&amp;useTimezone=true&amp;serverTimezone=UTC</Netbout-JdbcUrl>
+                                            <Netbout-JdbcUser>root</Netbout-JdbcUser>
+                                            <Netbout-JdbcPassword></Netbout-JdbcPassword>
                                             <Netbout-SmtpHost>relay.jangosmtp.net</Netbout-SmtpHost>
                                             <Netbout-SmtpPort>2525</Netbout-SmtpPort>
                                             <Netbout-SmtpUser>yegor256</Netbout-SmtpUser>
