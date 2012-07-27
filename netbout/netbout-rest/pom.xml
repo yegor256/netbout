@@ -702,11 +702,10 @@
                                             <arg value="--pid-file=${project.build.directory}/catapult-mysql.pid"/>
                                             <arg value="--port=${mysql.port.catapult}"/>
                                         </exec>
-                                        <waitfor maxwait="30" maxwaitunit="second">
+                                        <waitfor maxwait="60" maxwaitunit="second">
                                             <available file="${project.build.directory}/catapult-mysql.sock"/>
                                         </waitfor>
                                         <echo message="MySQL is ready at localhost:${mysql.port.catapult}" />
-                                        <!-- <input>press Enter to continue...</input> -->
                                         <exec executable="mysql" failonerror="true"
                                             inputstring="CREATE DATABASE catapult;">
                                             <arg value="--port=${mysql.port.catapult}"/>
