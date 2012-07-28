@@ -671,6 +671,13 @@
                     <plugin>
                         <artifactId>maven-antrun-plugin</artifactId>
                         <version since="2 Dec 2011">1.7</version>
+                        <dependencies>
+                            <dependency>
+                                <groupId>mysql</groupId>
+                                <artifactId>mysql-connector-java</artifactId>
+                                <version since="6 May 2012">5.1.20</version>
+                            </dependency>
+                        </dependencies>
                         <executions>
                             <execution>
                                 <id>start-mysql</id>
@@ -701,7 +708,6 @@
                                             <arg value="--datadir=${project.build.directory}/catapult-mysql"/>
                                             <arg value="--tmpdir=${project.build.directory}/catapult-mysql-temp"/>
                                             <arg value="--socket=${project.build.directory}/catapult-mysql.sock"/>
-                                            <arg value="--skip-networking"/>
                                             <arg value="--pid-file=${project.build.directory}/catapult-mysql.pid"/>
                                             <arg value="--port=${mysql.port.catapult}"/>
                                         </exec>
@@ -715,6 +721,9 @@
                                             <arg value="--user=root"/>
                                             <arg value="--socket=${project.build.directory}/catapult-mysql.sock"/>
                                         </exec>
+                                        <sql driver="com.mysql.jdbc.Driver"
+                                            url="jdbc:mysql://localhost:${mysql.port.catapult}/catapult"
+                                            userid="root" password="" print="true">SHOW TABLES</sql>
                                     </target>
                                 </configuration>
                             </execution>
