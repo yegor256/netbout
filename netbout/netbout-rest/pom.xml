@@ -687,6 +687,17 @@
                                 </goals>
                                 <configuration>
                                     <target>
+                                        <!-- see http://stackoverflow.com/questions/3510673 -->
+                                        <exec executable="sh" failonerror="true" outputproperty="expired">
+                                            <arg value="-c"/>
+                                            <arg value="ps aux | grep '[c]atapult-mysql.sock' | awk '{print $2}'"/>
+                                        </exec>
+                                        <echo message="expired mysql daemons: ${expired}"/>
+                                        <exec executable="kill" failonerror="false">
+                                            <arg value="-s"/>
+                                            <arg value="KILL"/>
+                                            <arg value="${expired}"/>
+                                        </exec>
                                         <delete dir="${project.build.directory}/catapult-mysql" quiet="true"/>
                                         <mkdir dir="${project.build.directory}/catapult-mysql"/>
                                         <delete dir="${project.build.directory}/catapult-mysql-temp" quiet="true"/>
