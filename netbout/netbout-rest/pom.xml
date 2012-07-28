@@ -392,6 +392,22 @@
                         <skip>true</skip>
                     </configuration>
                 </plugin>
+                <plugin>
+                    <artifactId>maven-antrun-plugin</artifactId>
+                    <version since="2 Dec 2011">1.7</version>
+                    <dependencies>
+                        <dependency>
+                            <groupId>mysql</groupId>
+                            <artifactId>mysql-connector-java</artifactId>
+                            <version since="6 May 2012">5.1.20</version>
+                        </dependency>
+                    </dependencies>
+                </plugin>
+                <plugin>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>build-helper-maven-plugin</artifactId>
+                    <version since="2 Dec 2011">1.7</version>
+                </plugin>
             </plugins>
         </pluginManagement>
         <plugins>
@@ -410,6 +426,115 @@
                             <goal>check</goal>
                             <goal>package</goal>
                         </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>build-helper-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>reserve-mysql-port</id>
+                        <phase>generate-test-resources</phase>
+                        <goals>
+                            <goal>reserve-network-port</goal>
+                        </goals>
+                        <configuration>
+                            <portNames>
+                                <portName>mysql.port</portName>
+                            </portNames>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>start-mysql</id>
+                        <phase>pre-integration-test</phase>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <configuration>
+                            <target>
+                                <!-- see http://stackoverflow.com/questions/3510673 -->
+                                <exec executable="sh" failonerror="true" outputproperty="expired">
+                                    <arg value="-c"/>
+                                    <arg value="ps aux | grep '[r]est-mysql.sock' | awk '{print $2}'"/>
+                                </exec>
+                                <echo message="expired mysql daemons: ${expired}"/>
+                                <exec executable="kill" failonerror="false">
+                                    <arg value="-s"/>
+                                    <arg value="KILL"/>
+                                    <arg value="${expired}"/>
+                                </exec>
+                                <delete dir="${project.build.directory}/rest-mysql" quiet="true"/>
+                                <mkdir dir="${project.build.directory}/rest-mysql"/>
+                                <delete dir="${project.build.directory}/rest-mysql-temp" quiet="true"/>
+                                <mkdir dir="${project.build.directory}/rest-mysql-temp"/>
+                                <exec executable="mysql_install_db" failonerror="true">
+                                    <arg value="--basedir=/usr/local/mysql-bin"/>
+                                    <arg value="--datadir=${project.build.directory}/rest-mysql"/>
+                                    <arg value="--force"/>
+                                    <arg value="--skip-name-resolve"/>
+                                </exec>
+                                <delete file="${project.build.directory}/rest-mysql.sock" quiet="true"/>
+                                <exec executable="mysqld" spawn="true">
+                                    <arg value="--bind-address=localhost"/>
+                                    <arg value="--general_log"/>
+                                    <arg value="--general_log_file=${project.build.directory}/rest-mysql.log"/>
+                                    <arg value="--log_error=${project.build.directory}/rest-mysql.log"/>
+                                    <arg value="--log_warnings"/>
+                                    <arg value="--binlog-ignore-db=netbout-test"/>
+                                    <arg value="--datadir=${project.build.directory}/rest-mysql"/>
+                                    <arg value="--tmpdir=${project.build.directory}/rest-mysql-temp"/>
+                                    <arg value="--socket=${project.build.directory}/rest-mysql.sock"/>
+                                    <arg value="--pid-file=${project.build.directory}/rest-mysql.pid"/>
+                                    <arg value="--port=${mysql.port}"/>
+                                </exec>
+                                <waitfor maxwait="60" maxwaitunit="second">
+                                    <available file="${project.build.directory}/rest-mysql.sock"/>
+                                </waitfor>
+                                <echo message="MySQL is ready at localhost:${mysql.port}" />
+                                <exec executable="mysqladmin" failonerror="true">
+                                    <arg value="--port=${mysql.port}"/>
+                                    <arg value="--user=root"/>
+                                    <arg value="--socket=${project.build.directory}/rest-mysql.sock"/>
+                                    <arg value="password"/>
+                                    <arg value="root"/>
+                                </exec>
+                                <exec executable="mysql" failonerror="true"
+                                    inputstring="CREATE DATABASE netbout;">
+                                    <arg value="--port=${mysql.port}"/>
+                                    <arg value="--user=root"/>
+                                    <arg value="--password=root"/>
+                                    <arg value="--socket=${project.build.directory}/rest-mysql.sock"/>
+                                </exec>
+                                <sql driver="com.mysql.jdbc.Driver"
+                                    url="jdbc:mysql://localhost:${mysql.port}/netbout"
+                                    userid="root" password="root" print="true">SHOW TABLES</sql>
+                            </target>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>stop-mysql</id>
+                        <phase>post-integration-test</phase>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <configuration>
+                            <target>
+                                <exec executable="mysqladmin" failonerror="true">
+                                    <arg value="--port=${mysql.port}"/>
+                                    <arg value="--user=root"/>
+                                    <arg value="--password=root"/>
+                                    <arg value="--socket=${project.build.directory}/rest-mysql.sock"/>
+                                    <arg value="shutdown"/>
+                                </exec>
+                                <echo message="MySQL is shutdown"/>
+                            </target>
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>
@@ -651,7 +776,6 @@
                     <plugin>
                         <groupId>org.codehaus.mojo</groupId>
                         <artifactId>build-helper-maven-plugin</artifactId>
-                        <version since="2 Dec 2011">1.7</version>
                         <executions>
                             <execution>
                                 <id>reserve-catapult-ports</id>
@@ -670,17 +794,9 @@
                     </plugin>
                     <plugin>
                         <artifactId>maven-antrun-plugin</artifactId>
-                        <version since="2 Dec 2011">1.7</version>
-                        <dependencies>
-                            <dependency>
-                                <groupId>mysql</groupId>
-                                <artifactId>mysql-connector-java</artifactId>
-                                <version since="6 May 2012">5.1.20</version>
-                            </dependency>
-                        </dependencies>
                         <executions>
                             <execution>
-                                <id>start-mysql</id>
+                                <id>start-catapult-mysql</id>
                                 <phase>pre-integration-test</phase>
                                 <goals>
                                     <goal>run</goal>
@@ -715,7 +831,7 @@
                                             <arg value="--general_log_file=${project.build.directory}/catapult-mysql.log"/>
                                             <arg value="--log_error=${project.build.directory}/catapult-mysql.log"/>
                                             <arg value="--log_warnings"/>
-                                            <arg value="--binlog-ignore-db=test"/>
+                                            <arg value="--binlog-ignore-db=catapult"/>
                                             <arg value="--datadir=${project.build.directory}/catapult-mysql"/>
                                             <arg value="--tmpdir=${project.build.directory}/catapult-mysql-temp"/>
                                             <arg value="--socket=${project.build.directory}/catapult-mysql.sock"/>
@@ -739,7 +855,7 @@
                                 </configuration>
                             </execution>
                             <execution>
-                                <id>stop-mysql</id>
+                                <id>stop-catapult-mysql</id>
                                 <phase>post-integration-test</phase>
                                 <goals>
                                     <goal>run</goal>
