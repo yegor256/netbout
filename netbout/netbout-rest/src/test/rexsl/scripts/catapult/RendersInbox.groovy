@@ -30,7 +30,6 @@
 package com.netbout.rest.rexsl.scripts.catapult
 
 import com.netbout.spi.Urn
-import com.netbout.spi.client.EtaAssertion
 import com.netbout.spi.client.RestSession
 import com.netbout.spi.client.RestUriBuilder
 import com.netbout.spi.text.SecureString
@@ -50,7 +49,6 @@ RestTester.start(RestUriBuilder.from(starter).build())
     .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_XML)
     .get('read home page')
     .assertStatus(HttpURLConnection.HTTP_OK)
-    .assertThat(new EtaAssertion())
     .rel('/page/links/link[@rel="profile"]/@href')
     .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_XML)
     .get('read profile')
@@ -60,10 +58,20 @@ RestTester.start(RestUriBuilder.from(starter).build())
 
 def name = new Urn('urn:netbout:bobby')
 def bobby = new RestSession(home).authenticate(name, new SecureString(name).toString())
+RestTester.start(RestUriBuilder.from(bobby).build())
+    .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_XML)
+    .get('read home page of Bobby')
+    .assertStatus(HttpURLConnection.HTTP_OK)
+    .rel('/page/links/link[@rel="start"]/@href')
+    .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_XML)
+    .get('start new bout for Bobby')
+    .assertStatus(HttpURLConnection.HTTP_SEE_OTHER)
+    .follow()
+    .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_XML)
+    .get('read bout page')
+    .assertStatus(HttpURLConnection.HTTP_OK)
+    .rel('/page/links/link[@rel="post"]/@href')
+    .post('post new message', 'text=hello')
+    .assertStatus(HttpURLConnection.HTTP_SEE_OTHER)
 def bout = bobby.start()
 bout.rename('Catapult inbox testing')
-
-RestTester.start(RestUriBuilder.from(bobby))
-    .header(HttpHeaders.ACCEPT, MediaType.TEXT_HTML)
-    .get('read inbox of a user')
-    .assertStatus(HttpURLConnection.HTTP_OK)
