@@ -459,7 +459,7 @@
                         <configuration>
                             <target>
                                 <ant antfile="${basedir}/src/test/ant/mysql.xml" target="start">
-                                    <property name="database" value="rest" />
+                                    <property name="database" value="netbout" />
                                     <property name="port" value="${mysql.port.rest}" />
                                     <property name="directory" value="${project.build.directory}" />
                                 </ant>
@@ -475,7 +475,7 @@
                         <configuration>
                             <target>
                                 <ant antfile="${basedir}/src/test/ant/mysql.xml" target="stop">
-                                    <property name="database" value="rest" />
+                                    <property name="database" value="netbout" />
                                     <property name="port" value="${mysql.port.rest}" />
                                     <property name="directory" value="${project.build.directory}" />
                                 </ant>
