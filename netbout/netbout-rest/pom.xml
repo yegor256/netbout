@@ -441,7 +441,7 @@
                         </goals>
                         <configuration>
                             <portNames>
-                                <portName>mysql.port</portName>
+                                <portName>mysql.port.rest</portName>
                             </portNames>
                         </configuration>
                     </execution>
@@ -489,7 +489,7 @@
                                         </not>
                                     </condition>
                                 </fail>
-                                <echo message="starting MySQL ${mysql.version} at localhost:${mysql.port}..." />
+                                <echo message="starting MySQL ${mysql.version} at localhost:${mysql.port.rest}..." />
                                 <exec dir="/usr/local/mysql-bin" executable="./bin/mysqld" spawn="true">
                                     <arg value="--basedir=/usr/local/mysql-bin"/>
                                     <arg value="--general_log"/>
@@ -501,9 +501,9 @@
                                     <arg value="--tmpdir=${project.build.directory}/rest-mysql-temp"/>
                                     <arg value="--socket=${project.build.directory}/rest-mysql.sock"/>
                                     <arg value="--pid-file=${project.build.directory}/rest-mysql.pid"/>
-                                    <arg value="--port=${mysql.port}"/>
+                                    <arg value="--port=${mysql.port.rest}"/>
                                 </exec>
-                                <waitfor maxwait="60" maxwaitunit="second" timeoutproperty="mysql.timeout">
+                                <waitfor maxwait="180" maxwaitunit="second" timeoutproperty="mysql.timeout">
                                     <available file="${project.build.directory}/rest-mysql.sock"/>
                                 </waitfor>
                                 <fail message="MySQL server is not up">
@@ -511,9 +511,9 @@
                                         <isset property="mysql.timeout"/>
                                     </condition>
                                 </fail>
-                                <echo message="MySQL is ready at localhost:${mysql.port}" />
+                                <echo message="MySQL is ready at localhost:${mysql.port.rest}" />
                                 <exec dir="/usr/local/mysql-bin" executable="./bin/mysqladmin" failonerror="true">
-                                    <arg value="--port=${mysql.port}"/>
+                                    <arg value="--port=${mysql.port.rest}"/>
                                     <arg value="--user=root"/>
                                     <arg value="--socket=${project.build.directory}/rest-mysql.sock"/>
                                     <arg value="password"/>
@@ -521,13 +521,13 @@
                                 </exec>
                                 <exec dir="/usr/local/mysql-bin" executable="./bin/mysql" failonerror="true"
                                     inputstring="CREATE DATABASE netbout;">
-                                    <arg value="--port=${mysql.port}"/>
+                                    <arg value="--port=${mysql.port.rest}"/>
                                     <arg value="--user=root"/>
                                     <arg value="--password=root"/>
                                     <arg value="--socket=${project.build.directory}/rest-mysql.sock"/>
                                 </exec>
                                 <sql driver="com.mysql.jdbc.Driver"
-                                    url="jdbc:mysql://localhost:${mysql.port}/netbout"
+                                    url="jdbc:mysql://localhost:${mysql.port.rest}/netbout"
                                     userid="root" password="root" print="true">SHOW TABLES</sql>
                             </target>
                         </configuration>
@@ -541,7 +541,7 @@
                         <configuration>
                             <target>
                                 <exec executable="mysqladmin" failonerror="true">
-                                    <arg value="--port=${mysql.port}"/>
+                                    <arg value="--port=${mysql.port.rest}"/>
                                     <arg value="--user=root"/>
                                     <arg value="--password=root"/>
                                     <arg value="--socket=${project.build.directory}/rest-mysql.sock"/>
@@ -851,7 +851,7 @@
                                             <arg value="--pid-file=${project.build.directory}/catapult-mysql.pid"/>
                                             <arg value="--port=${mysql.port.catapult}"/>
                                         </exec>
-                                        <waitfor maxwait="60" maxwaitunit="second">
+                                        <waitfor maxwait="180" maxwaitunit="second">
                                             <available file="${project.build.directory}/catapult-mysql.sock"/>
                                         </waitfor>
                                         <echo message="MySQL is ready at localhost:${mysql.port.catapult}" />

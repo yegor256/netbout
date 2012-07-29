@@ -4,7 +4,7 @@ Netbout-Revision: 123
 Netbout-FbId: 555
 Netbout-FbSecret: secret
 Netbout-JdbcDriver: com.mysql.jdbc.Driver
-Netbout-JdbcUrl: jdbc:mysql://localhost:${mysql.port}/netbout?useUnicode=true&characterEncoding=utf-8
+Netbout-JdbcUrl: jdbc:mysql://localhost:${mysql.port.rest}/netbout?useUnicode=true&characterEncoding=utf-8
 Netbout-JdbcUser: root
 Netbout-JdbcPassword: root
 Netbout-SmtpHost: relay.jangosmtp.net
