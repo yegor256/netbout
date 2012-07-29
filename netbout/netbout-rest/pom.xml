@@ -709,6 +709,9 @@
                                     <manifest>
                                         <mainClass>com.rexsl.standalone.RexslMain</mainClass>
                                     </manifest>
+                                    <manifestEntries>
+                                        <Netbout-Version>${project.version}-stage</Netbout-Version>
+                                    </manifestEntries>
                                 </archive>
                             </configuration>
                         </plugin>

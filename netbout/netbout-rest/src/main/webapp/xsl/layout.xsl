@@ -134,6 +134,14 @@
     </xsl:template>
 
     <xsl:template match="version">
+        <xsl:if test="contains(version, '-stage')">
+            <div style="width: 100%; height: 100%; display: table; position: fixed;">
+                <div style="text-align: center; vertical-align: middle; display: table-cell; color: #eee;">
+                    <p style="font-size: 12em;">STAGE</p>
+                    <p style="font-size: 5em;">This is a staging server,<br/>with temporary testing data.</p>
+                </div>
+            </div>
+        </xsl:if>
         <div id="version">
             <xsl:text>r</xsl:text>
             <xsl:value-of select="revision"/>
