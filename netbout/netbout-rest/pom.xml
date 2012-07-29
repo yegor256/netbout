@@ -475,8 +475,6 @@
                                 <exec executable="mysql_install_db" failonerror="true">
                                     <arg value="--basedir=/usr/local/mysql-bin"/>
                                     <arg value="--datadir=${project.build.directory}/rest-mysql"/>
-                                    <arg value="--force"/>
-                                    <arg value="--skip-name-resolve"/>
                                 </exec>
                                 <delete file="${project.build.directory}/rest-mysql.sock" quiet="true"/>
                                 <exec executable="mysqld" spawn="true">
@@ -819,8 +817,6 @@
                                         <exec executable="mysql_install_db" failonerror="true">
                                             <arg value="--basedir=/usr/local/mysql-bin"/>
                                             <arg value="--datadir=${project.build.directory}/catapult-mysql"/>
-                                            <arg value="--force"/>
-                                            <arg value="--skip-name-resolve"/>
                                         </exec>
                                         <delete file="${project.build.directory}/catapult-mysql.sock" quiet="true"/>
                                         <exec executable="mysqld" spawn="true">
