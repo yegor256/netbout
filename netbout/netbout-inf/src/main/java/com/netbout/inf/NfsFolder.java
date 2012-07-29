@@ -33,8 +33,10 @@ import com.jcraft.jsch.Session;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.lang.management.ManagementFactory;
 import java.net.InetAddress;
 import java.net.URL;
+import java.util.Date;
 import java.util.concurrent.TimeUnit;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.CharEncoding;
@@ -81,38 +83,7 @@ final class NfsFolder implements Folder {
         } else {
             Logger.info(this, "#path(): mount is not required");
         }
-        final File master = new File(this.directory, NfsFolder.MASTER);
-        final File yield = new File(this.directory, NfsFolder.YIELD);
-        FileUtils.writeStringToFile(
-            yield,
-            InetAddress.getLocalHost().getHostAddress()
-        );
-        while (master.exists()) {
-            try {
-                // @checkstyle MagicNumber (1 line)
-                TimeUnit.MILLISECONDS.sleep(100);
-            } catch (InterruptedException ex) {
-                Thread.currentThread().interrupt();
-                throw new IllegalStateException(ex);
-            }
-            String marker;
-            try {
-                marker = FileUtils.readFileToString(master);
-            } catch (java.io.FileNotFoundException ex) {
-                break;
-            }
-            Logger.info(
-                this,
-                "#NfsFolder(%s): waiting for '%s' to yield",
-                this.directory,
-                marker
-            );
-        }
-        FileUtils.writeStringToFile(
-            master,
-            InetAddress.getLocalHost().getHostAddress()
-        );
-        yield.delete();
+        this.obtain();
     }
 
     /**
@@ -344,6 +315,80 @@ final class NfsFolder implements Folder {
         FileUtils.copyURLToFile(key, file);
         FileUtils.forceDeleteOnExit(file);
         return file;
+    }
+
+    /**
+     * Make sure the directory belongs to us.
+     * @throws IOException If some error inside
+     */
+    private void obtain() throws IOException {
+        final File master = new File(this.directory, NfsFolder.MASTER);
+        final File yield = new File(this.directory, NfsFolder.YIELD);
+        FileUtils.writeStringToFile(yield, NfsFolder.marker());
+        long changed = System.currentTimeMillis();
+        String before = "";
+        int cycle = 0;
+        while (master.exists()) {
+            String marker;
+            try {
+                marker = FileUtils.readFileToString(master);
+            } catch (java.io.FileNotFoundException ex) {
+                break;
+            }
+            this.sleep(++cycle, marker);
+            if (!marker.equals(before)) {
+                before = marker;
+                changed = System.currentTimeMillis();
+            }
+            // @checkstyle MagicNumber (1 line)
+            if (System.currentTimeMillis() - changed > 15 * 1000) {
+                Logger.info(
+                    this,
+                    "#obtain(): abandoned folder %s (over %[ms]s)",
+                    this.directory,
+                    System.currentTimeMillis() - changed
+                );
+                break;
+            }
+        }
+        FileUtils.writeStringToFile(master, NfsFolder.marker());
+        yield.delete();
+    }
+
+    /**
+     * Marker to write to yield and master files.
+     * @return The text
+     * @throws IOException If some error inside
+     */
+    private static String marker() throws IOException {
+        return String.format(
+            "on %tc by %s/%s",
+            new Date(),
+            InetAddress.getLocalHost().getHostAddress(),
+            ManagementFactory.getRuntimeMXBean().getName()
+        );
+    }
+
+    /**
+     * Sleep at certain waiting cycle.
+     * @param cycle Cycle of waiting
+     * @param marker The value of the marker we're waiting for
+     */
+    private void sleep(final int cycle, final String marker) {
+        try {
+            // @checkstyle MagicNumber (1 line)
+            TimeUnit.MILLISECONDS.sleep(cycle * 250);
+        } catch (InterruptedException ex) {
+            Thread.currentThread().interrupt();
+            throw new IllegalStateException(ex);
+        }
+        Logger.info(
+            this,
+            "#sleep(#%d): waiting for '%s' to yield at %s",
+            cycle,
+            marker,
+            this.directory
+        );
     }
 
 }
