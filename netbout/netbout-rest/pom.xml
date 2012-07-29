@@ -472,12 +472,12 @@
                                 <mkdir dir="${project.build.directory}/rest-mysql"/>
                                 <delete dir="${project.build.directory}/rest-mysql-temp" quiet="true"/>
                                 <mkdir dir="${project.build.directory}/rest-mysql-temp"/>
-                                <exec executable="mysql_install_db" failonerror="true">
+                                <delete file="${project.build.directory}/rest-mysql.sock" quiet="true"/>
+                                <exec executable="/usr/local/mysql-bin/scripts/mysql_install_db" failonerror="true">
                                     <arg value="--basedir=/usr/local/mysql-bin"/>
                                     <arg value="--datadir=${project.build.directory}/rest-mysql"/>
                                 </exec>
-                                <delete file="${project.build.directory}/rest-mysql.sock" quiet="true"/>
-                                <exec executable="mysqld" spawn="true">
+                                <exec executable="/usr/local/mysql-bin/bin/mysqld" spawn="true">
                                     <arg value="--bind-address=localhost"/>
                                     <arg value="--general_log"/>
                                     <arg value="--general_log_file=${project.build.directory}/rest-mysql.log"/>
@@ -494,14 +494,14 @@
                                     <available file="${project.build.directory}/rest-mysql.sock"/>
                                 </waitfor>
                                 <echo message="MySQL is ready at localhost:${mysql.port}" />
-                                <exec executable="mysqladmin" failonerror="true">
+                                <exec executable="/usr/local/mysql-bin/bin/mysqladmin" failonerror="true">
                                     <arg value="--port=${mysql.port}"/>
                                     <arg value="--user=root"/>
                                     <arg value="--socket=${project.build.directory}/rest-mysql.sock"/>
                                     <arg value="password"/>
                                     <arg value="root"/>
                                 </exec>
-                                <exec executable="mysql" failonerror="true"
+                                <exec executable="/usr/local/mysql-bin/bin/mysql" failonerror="true"
                                     inputstring="CREATE DATABASE netbout;">
                                     <arg value="--port=${mysql.port}"/>
                                     <arg value="--user=root"/>
@@ -814,12 +814,12 @@
                                         <mkdir dir="${project.build.directory}/catapult-mysql"/>
                                         <delete dir="${project.build.directory}/catapult-mysql-temp" quiet="true"/>
                                         <mkdir dir="${project.build.directory}/catapult-mysql-temp"/>
-                                        <exec executable="mysql_install_db" failonerror="true">
+                                        <exec executable="/usr/local/mysql-bin/scripts/mysql_install_db" failonerror="true">
                                             <arg value="--basedir=/usr/local/mysql-bin"/>
                                             <arg value="--datadir=${project.build.directory}/catapult-mysql"/>
                                         </exec>
                                         <delete file="${project.build.directory}/catapult-mysql.sock" quiet="true"/>
-                                        <exec executable="mysqld" spawn="true">
+                                        <exec executable="/usr/local/mysql-bin/bin/mysqld" spawn="true">
                                             <arg value="--bind-address=localhost"/>
                                             <arg value="--general_log"/>
                                             <arg value="--general_log_file=${project.build.directory}/catapult-mysql.log"/>
@@ -836,7 +836,7 @@
                                             <available file="${project.build.directory}/catapult-mysql.sock"/>
                                         </waitfor>
                                         <echo message="MySQL is ready at localhost:${mysql.port.catapult}" />
-                                        <exec executable="mysql" failonerror="true"
+                                        <exec executable="/usr/local/mysql-bin/bin/mysql" failonerror="true"
                                             inputstring="CREATE DATABASE catapult;">
                                             <arg value="--port=${mysql.port.catapult}"/>
                                             <arg value="--user=root"/>
