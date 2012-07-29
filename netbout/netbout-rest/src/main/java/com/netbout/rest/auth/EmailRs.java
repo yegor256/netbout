@@ -115,9 +115,7 @@ public final class EmailRs extends BaseRs {
         Identity identity;
         try {
             identity = new ResolvedIdentity(
-                this.uriInfo().getBaseUriBuilder()
-                    .clone().path("/email")
-                    .build().toURL(),
+                this.base().path("/email").build().toURL(),
                 iname
             );
             identity.profile().setPhoto(

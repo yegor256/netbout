@@ -105,9 +105,7 @@ public final class NbRs extends BaseRs {
         Identity identity;
         try {
             identity = new ResolvedIdentity(
-                this.uriInfo().getBaseUriBuilder()
-                    .clone().path("/nb")
-                    .build().toURL(),
+                this.base().path("/nb").build().toURL(),
                 iname
             );
             identity.profile().setPhoto(
