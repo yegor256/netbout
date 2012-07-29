@@ -347,36 +347,6 @@
             <version netbout="yes">2.0-SNAPSHOT</version>
             <scope>runtime</scope>
         </dependency>
-        <dependency>
-            <groupId>com.woquo</groupId>
-            <artifactId>woquo-umpa</artifactId>
-            <version since="9 Jan 2012">1.0-SNAPSHOT</version>
-            <scope>runtime</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.woquo</groupId>
-            <artifactId>woquo-nebo-helper</artifactId>
-            <version since="9 Jan 2012">1.0-SNAPSHOT</version>
-            <scope>runtime</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.woquo</groupId>
-            <artifactId>woquo-mentor-helper</artifactId>
-            <version since="9 Jan 2012">1.0-SNAPSHOT</version>
-            <scope>runtime</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.woquo</groupId>
-            <artifactId>woquo-board-helper</artifactId>
-            <version since="9 Jan 2012">1.0-SNAPSHOT</version>
-            <scope>runtime</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.caybo</groupId>
-            <artifactId>caybo</artifactId>
-            <version since="9 Jan 2012">1.0-SNAPSHOT</version>
-            <scope>runtime</scope>
-        </dependency>
     </dependencies>
 
     <build>
@@ -551,10 +521,292 @@
             </build>
         </profile>
         <profile>
-            <id>deploy-to-amazon-elastic-beanstalk</id>
+            <id>package-for-and-test-with-tomcat</id>
             <activation>
-                <property><name>beanstalk</name></property>
+                <property>
+                    <name>!skipTests</name>
+                </property>
             </activation>
+            <properties>
+                <catapult.warName>${project.build.finalName}-catapult</catapult.warName>
+                <!--
+                @todo #160 If you change this path to something different from
+                 "/" there will be many problems with paths of XSL and CSS files.
+                 It's definitely a defect and should be fixed either in netbout
+                 project or in rexsl.
+                -->
+                <catapult.context>/</catapult.context>
+            </properties>
+            <build>
+                <pluginManagement>
+                    <plugins>
+                        <plugin>
+                            <groupId>com.rexsl</groupId>
+                            <artifactId>rexsl-maven-plugin</artifactId>
+                            <configuration>
+                                <systemPropertyVariables>
+                                    <catapult.home>http://localhost:${catapult.port}${catapult.context}</catapult.home>
+                                </systemPropertyVariables>
+                            </configuration>
+                        </plugin>
+                    </plugins>
+                </pluginManagement>
+                <plugins>
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>build-helper-maven-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>reserve-catapult-ports</id>
+                                <phase>generate-test-resources</phase>
+                                <goals>
+                                    <goal>reserve-network-port</goal>
+                                </goals>
+                                <configuration>
+                                    <portNames>
+                                        <portName>catapult.port</portName>
+                                        <portName>mysql.port.catapult</portName>
+                                    </portNames>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <artifactId>maven-antrun-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>start-catapult-mysql</id>
+                                <phase>pre-integration-test</phase>
+                                <goals>
+                                    <goal>run</goal>
+                                </goals>
+                                <configuration>
+                                    <target>
+                                        <ant antfile="${basedir}/src/test/ant/mysql.xml" target="start">
+                                            <property name="database" value="catapult" />
+                                            <property name="port" value="${mysql.port.catapult}" />
+                                            <property name="directory" value="${project.build.directory}" />
+                                        </ant>
+                                    </target>
+                                </configuration>
+                            </execution>
+                            <execution>
+                                <id>stop-catapult-mysql</id>
+                                <phase>post-integration-test</phase>
+                                <goals>
+                                    <goal>run</goal>
+                                </goals>
+                                <configuration>
+                                    <target>
+                                        <ant antfile="${basedir}/src/test/ant/mysql.xml" target="stop">
+                                            <property name="database" value="catapult" />
+                                            <property name="port" value="${mysql.port.catapult}" />
+                                            <property name="directory" value="${project.build.directory}" />
+                                        </ant>
+                                    </target>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <artifactId>maven-war-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>war-for-catapult</id>
+                                <phase>pre-integration-test</phase>
+                                <goals>
+                                    <goal>war</goal>
+                                </goals>
+                                <configuration>
+                                    <warName>${catapult.warName}</warName>
+                                    <archive>
+                                        <manifestEntries>
+                                            <Netbout-FbId>123456</Netbout-FbId>
+                                            <Netbout-FbSecret>secret</Netbout-FbSecret>
+                                            <Netbout-JdbcDriver>com.mysql.jdbc.Driver</Netbout-JdbcDriver>
+                                            <Netbout-JdbcUrl>jdbc:mysql://localhost:${mysql.port.catapult}/catapult?useUnicode=true&amp;characterEncoding=utf-8&amp;useGmtMillisForDatetimes=true&amp;useJDBCCompliantTimezoneShift=true&amp;useLegacyDatetimeCode=false&amp;useTimezone=true&amp;serverTimezone=UTC</Netbout-JdbcUrl>
+                                            <Netbout-JdbcUser>root</Netbout-JdbcUser>
+                                            <Netbout-JdbcPassword>root</Netbout-JdbcPassword>
+                                            <Netbout-SmtpHost>relay.jangosmtp.net</Netbout-SmtpHost>
+                                            <Netbout-SmtpPort>2525</Netbout-SmtpPort>
+                                            <Netbout-SmtpUser>yegor256</Netbout-SmtpUser>
+                                            <Netbout-SmtpPassword>201448CX</Netbout-SmtpPassword>
+                                            <Netbout-PopUser>test@netbout.com</Netbout-PopUser>
+                                            <Netbout-PopPassword>netbout-test</Netbout-PopPassword>
+                                            <Netbout-PopHost>pop.gmail.com</Netbout-PopHost>
+                                            <Netbout-PopPort>995</Netbout-PopPort>
+                                            <Netbout-SecurityKey>-key</Netbout-SecurityKey>
+                                            <Netbout-SuperSecret>-secret</Netbout-SuperSecret>
+                                            <Netbout-InfMount>${project.build.directory}/catapult-InfMount</Netbout-InfMount>
+                                        </manifestEntries>
+                                    </archive>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.tomcat.maven</groupId>
+                        <artifactId>tomcat7-maven-plugin</artifactId>
+                        <version since="7 Feb 2012">2.0-beta-1</version>
+                        <configuration>
+                            <systemProperties>
+                                <log4j.configuration>file:${basedir}/src/test/resources/log4j-tomcat.properties</log4j.configuration>
+                            </systemProperties>
+                            <contextFile>${basedir}/src/test/catapult/context.xml</contextFile>
+                            <fork>true</fork>
+                            <path>${catapult.context}</path>
+                            <port>${catapult.port}</port>
+                            <uriEncoding>UTF-8</uriEncoding>
+                            <useSeparateTomcatClassLoader>true</useSeparateTomcatClassLoader>
+                            <warDirectory>${project.build.directory}/${catapult.warName}.war</warDirectory>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <id>start-embedded-tomcat</id>
+                                <phase>pre-integration-test</phase>
+                                <goals>
+                                    <goal>run-war-only</goal>
+                                </goals>
+                            </execution>
+                            <execution>
+                                <id>stop-embedded-tomcat</id>
+                                <phase>post-integration-test</phase>
+                                <goals>
+                                    <goal>shutdown</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <id>netbout-stage</id>
+            <dependencies>
+                <dependency>
+                    <groupId>com.rexsl</groupId>
+                    <artifactId>rexsl-standalone</artifactId>
+                    <version>${rexsl.version}</version>
+                    <classifier>bin</classifier>
+                    <scope>runtime</scope>
+                </dependency>
+            </dependencies>
+            <build>
+                <pluginManagement>
+                    <plugins>
+                        <plugin>
+                            <artifactId>maven-war-plugin</artifactId>
+                            <configuration>
+                                <overlays>
+                                    <overlay>
+                                        <groupId>com.rexsl</groupId>
+                                        <artifactId>rexsl-standalone</artifactId>
+                                        <classifier>bin</classifier>
+                                        <type>jar</type>
+                                    </overlay>
+                                </overlays>
+                                <archive>
+                                    <manifest>
+                                        <mainClass>com.rexsl.standalone.RexslMain</mainClass>
+                                    </manifest>
+                                </archive>
+                            </configuration>
+                        </plugin>
+                    </plugins>
+                </pluginManagement>
+                <plugins>
+                    <plugin>
+                        <artifactId>maven-antrun-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>deploy-to-heroku</id>
+                                <phase>deploy</phase>
+                                <goals>
+                                    <goal>run</goal>
+                                </goals>
+                                <configuration>
+                                    <target>
+                                        <exec dir="${project.build.directory}" executable="git">
+                                            <arg value="clone"/>
+                                            <arg value="git@heroku.com:netbout-stage.git"/>
+                                            <arg value="heroku"/>
+                                        </exec>
+                                        <copy file="${project.build.directory}/${project.build.finalName}.war"
+                                            tofile="${project.build.directory}/heroku/netbout.war"
+                                            overwrite="true"/>
+                                        <echo message="web: java -jar ./netbout.war ${PORT}" append="false"
+                                            file="${project.build.directory}/heroku/Procfile"/>
+                                        <echo file="${project.build.directory}/heroku/pom.xml" append="false"><![CDATA[
+                                            <project xmlns="http://maven.apache.org/POM/4.0.0"
+                                                xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+                                                    http://maven.apache.org/xsd/maven-4.0.0.xsd">
+                                                <modelVersion>4.0.0</modelVersion>
+                                                <groupId>com.netbout</groupId>
+                                                <artifactId>netbout-stage</artifactId>
+                                                <version>${project.version}</version>
+                                                <packaging>pom</packaging>
+                                                <name>${project.name}</name>
+                                                <description>rev.${build.number}</description>
+                                            </project>
+                                        ]]></echo>
+                                        <exec dir="${project.build.directory}/heroku" executable="git">
+                                            <arg value="add"/>
+                                            <arg value="."/>
+                                        </exec>
+                                        <exec dir="${project.build.directory}/heroku" executable="git">
+                                            <arg value="commit"/>
+                                            <arg value="-a"/>
+                                            <arg value="-m"/>
+                                            <arg value="rev.${build.number}"/>
+                                        </exec>
+                                        <exec dir="${project.build.directory}/heroku" executable="git">
+                                            <arg value="push"/>
+                                            <arg value="origin"/>
+                                            <arg value="master"/>
+                                        </exec>
+                                    </target>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <id>netbout-production</id>
+            <dependencies>
+                <dependency>
+                    <groupId>com.woquo</groupId>
+                    <artifactId>woquo-umpa</artifactId>
+                    <version since="9 Jan 2012">1.0-SNAPSHOT</version>
+                    <scope>runtime</scope>
+                </dependency>
+                <dependency>
+                    <groupId>com.woquo</groupId>
+                    <artifactId>woquo-nebo-helper</artifactId>
+                    <version since="9 Jan 2012">1.0-SNAPSHOT</version>
+                    <scope>runtime</scope>
+                </dependency>
+                <dependency>
+                    <groupId>com.woquo</groupId>
+                    <artifactId>woquo-mentor-helper</artifactId>
+                    <version since="9 Jan 2012">1.0-SNAPSHOT</version>
+                    <scope>runtime</scope>
+                </dependency>
+                <dependency>
+                    <groupId>com.woquo</groupId>
+                    <artifactId>woquo-board-helper</artifactId>
+                    <version since="9 Jan 2012">1.0-SNAPSHOT</version>
+                    <scope>runtime</scope>
+                </dependency>
+                <dependency>
+                    <groupId>com.caybo</groupId>
+                    <artifactId>caybo</artifactId>
+                    <version since="9 Jan 2012">1.0-SNAPSHOT</version>
+                    <scope>runtime</scope>
+                </dependency>
+            </dependencies>
             <properties>
                 <beanstalk.app>${project.build.finalName}-${build.number}.${project.packaging}</beanstalk.app>
             </properties>
@@ -687,202 +939,6 @@
                                 <phase>deploy</phase>
                                 <goals>
                                     <goal>update-distribution</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-        <profile>
-            <id>deploy-to-heroku</id>
-            <activation>
-                <property><name>heroku</name></property>
-            </activation>
-            <dependencies>
-                <dependency>
-                    <groupId>com.rexsl</groupId>
-                    <artifactId>rexsl-standalone</artifactId>
-                    <version>${rexsl.version}</version>
-                    <classifier>bin</classifier>
-                    <scope>runtime</scope>
-                </dependency>
-            </dependencies>
-            <build>
-                <pluginManagement>
-                    <plugins>
-                        <plugin>
-                            <artifactId>maven-war-plugin</artifactId>
-                            <configuration>
-                                <overlays>
-                                    <overlay>
-                                        <groupId>com.rexsl</groupId>
-                                        <artifactId>rexsl-standalone</artifactId>
-                                        <classifier>bin</classifier>
-                                        <type>jar</type>
-                                    </overlay>
-                                </overlays>
-                                <archive>
-                                    <manifest>
-                                        <mainClass>com.rexsl.standalone.RexslMain</mainClass>
-                                    </manifest>
-                                </archive>
-                            </configuration>
-                        </plugin>
-                    </plugins>
-                </pluginManagement>
-            </build>
-        </profile>
-        <profile>
-            <id>catapult</id>
-            <activation>
-                <property>
-                    <name>!skipTests</name>
-                </property>
-            </activation>
-            <properties>
-                <catapult.warName>${project.build.finalName}-catapult</catapult.warName>
-                <fb.id>123456789</fb.id>
-                <fb.secret>secret</fb.secret>
-                <mysql.host>localhost</mysql.host>
-                <mysql.port>${mysql.port.catapult}</mysql.port>
-                <mysql.database>catapult</mysql.database>
-                <mysql.user>root</mysql.user>
-                <mysql.password>root</mysql.password>
-                <smtp.host>relay.jangosmtp.net</smtp.host>
-                <smtp.port>2525</smtp.port>
-                <smtp.user>yegor256</smtp.user>
-                <smtp.password>201448CX</smtp.password>
-                <pop3.user>test@netbout.com</pop3.user>
-                <pop3.password>netbout-test</pop3.password>
-                <pop3.host>pop.gmail.com</pop3.host>
-                <pop3.port>995</pop3.port>
-                <security.key>-test-security-key</security.key>
-                <security.secret>-super-secret</security.secret>
-                <inf.path>${project.build.directory}/catapult-InfMount</inf.path>
-                <!--
-                @todo #160 If you change this path to something different from
-                 "/" there will be many problems with paths of XSL and CSS files.
-                 It's definitely a defect and should be fixed either in netbout
-                 project or in rexsl.
-                -->
-                <catapult.context>/</catapult.context>
-            </properties>
-            <build>
-                <pluginManagement>
-                    <plugins>
-                        <plugin>
-                            <groupId>com.rexsl</groupId>
-                            <artifactId>rexsl-maven-plugin</artifactId>
-                            <configuration>
-                                <systemPropertyVariables>
-                                    <catapult.home>http://localhost:${catapult.port}${catapult.context}</catapult.home>
-                                </systemPropertyVariables>
-                            </configuration>
-                        </plugin>
-                    </plugins>
-                </pluginManagement>
-                <plugins>
-                    <plugin>
-                        <groupId>org.codehaus.mojo</groupId>
-                        <artifactId>build-helper-maven-plugin</artifactId>
-                        <executions>
-                            <execution>
-                                <id>reserve-catapult-ports</id>
-                                <phase>generate-test-resources</phase>
-                                <goals>
-                                    <goal>reserve-network-port</goal>
-                                </goals>
-                                <configuration>
-                                    <portNames>
-                                        <portName>catapult.port</portName>
-                                        <portName>mysql.port.catapult</portName>
-                                    </portNames>
-                                </configuration>
-                            </execution>
-                        </executions>
-                    </plugin>
-                    <plugin>
-                        <artifactId>maven-antrun-plugin</artifactId>
-                        <executions>
-                            <execution>
-                                <id>start-catapult-mysql</id>
-                                <phase>pre-integration-test</phase>
-                                <goals>
-                                    <goal>run</goal>
-                                </goals>
-                                <configuration>
-                                    <target>
-                                        <ant antfile="${basedir}/src/test/ant/mysql.xml" target="start">
-                                            <property name="database" value="catapult" />
-                                            <property name="port" value="${mysql.port.catapult}" />
-                                            <property name="directory" value="${project.build.directory}" />
-                                        </ant>
-                                    </target>
-                                </configuration>
-                            </execution>
-                            <execution>
-                                <id>stop-catapult-mysql</id>
-                                <phase>post-integration-test</phase>
-                                <goals>
-                                    <goal>run</goal>
-                                </goals>
-                                <configuration>
-                                    <target>
-                                        <ant antfile="${basedir}/src/test/ant/mysql.xml" target="stop">
-                                            <property name="database" value="catapult" />
-                                            <property name="port" value="${mysql.port.catapult}" />
-                                            <property name="directory" value="${project.build.directory}" />
-                                        </ant>
-                                    </target>
-                                </configuration>
-                            </execution>
-                        </executions>
-                    </plugin>
-                    <plugin>
-                        <artifactId>maven-war-plugin</artifactId>
-                        <executions>
-                            <execution>
-                                <id>war-for-catapult</id>
-                                <phase>pre-integration-test</phase>
-                                <goals>
-                                    <goal>war</goal>
-                                </goals>
-                                <configuration>
-                                    <warName>${catapult.warName}</warName>
-                                </configuration>
-                            </execution>
-                        </executions>
-                    </plugin>
-                    <plugin>
-                        <groupId>org.apache.tomcat.maven</groupId>
-                        <artifactId>tomcat7-maven-plugin</artifactId>
-                        <version since="7 Feb 2012">2.0-beta-1</version>
-                        <configuration>
-                            <systemProperties>
-                                <log4j.configuration>file:${basedir}/src/test/resources/log4j-tomcat.properties</log4j.configuration>
-                            </systemProperties>
-                            <contextFile>${basedir}/src/test/catapult/context.xml</contextFile>
-                            <fork>true</fork>
-                            <path>${catapult.context}</path>
-                            <port>${catapult.port}</port>
-                            <uriEncoding>UTF-8</uriEncoding>
-                            <useSeparateTomcatClassLoader>true</useSeparateTomcatClassLoader>
-                            <warDirectory>${project.build.directory}/${catapult.warName}.war</warDirectory>
-                        </configuration>
-                        <executions>
-                            <execution>
-                                <id>start-embedded-tomcat</id>
-                                <phase>pre-integration-test</phase>
-                                <goals>
-                                    <goal>run-war-only</goal>
-                                </goals>
-                            </execution>
-                            <execution>
-                                <id>stop-embedded-tomcat</id>
-                                <phase>post-integration-test</phase>
-                                <goals>
-                                    <goal>shutdown</goal>
                                 </goals>
                             </execution>
                         </executions>

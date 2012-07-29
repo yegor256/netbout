@@ -156,7 +156,9 @@ public final class FacebookRs extends BaseRs {
         throws IOException {
         final User fbuser = this.user(code);
         final Identity resolved = new ResolvedIdentity(
-            UriBuilder.fromUri("http://www.netbout.com/fb").build().toURL(),
+            this.uriInfo().getBaseUriBuilder()
+                .clone().path("/fb")
+                .build().toURL(),
             new Urn(this.NAMESPACE, fbuser.getId())
         );
         resolved.profile().setPhoto(
