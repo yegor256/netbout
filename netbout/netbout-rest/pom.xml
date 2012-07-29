@@ -476,10 +476,10 @@
                                 <delete file="${project.build.directory}/rest-mysql.log" quiet="true"/>
                                 <exec dir="/usr/local/mysql-bin" executable="./scripts/mysql_install_db" failonerror="true">
                                     <arg value="--no-defaults"/>
-                                    <arg value="--basedir=/usr/local/mysql-bin"/>
+                                    <arg value="--basedir=."/>
                                     <arg value="--datadir=${project.build.directory}/rest-mysql"/>
                                 </exec>
-                                <exec executable="/usr/local/mysql-bin/bin/mysqld" failonerror="true" outputproperty="mysql.version">
+                                <exec dir="/usr/local/mysql-bin" executable="./bin/mysqld" failonerror="true" outputproperty="mysql.version">
                                     <arg value="--version"/>
                                 </exec>
                                 <fail message="invalid version of MySQL server installed">
@@ -491,7 +491,7 @@
                                 </fail>
                                 <echo message="starting MySQL ${mysql.version} at localhost:${mysql.port.rest}..." />
                                 <exec dir="/usr/local/mysql-bin" executable="./bin/mysqld" spawn="true">
-                                    <arg value="--basedir=/usr/local/mysql-bin"/>
+                                    <arg value="--basedir=."/>
                                     <arg value="--general_log"/>
                                     <arg value="--general_log_file=${project.build.directory}/rest-mysql.log"/>
                                     <arg value="--log_error=${project.build.directory}/rest-mysql.log"/>
@@ -834,12 +834,12 @@
                                         <mkdir dir="${project.build.directory}/catapult-mysql-temp"/>
                                         <exec executable="/usr/local/mysql-bin/scripts/mysql_install_db" failonerror="true">
                                             <arg value="--no-defaults"/>
-                                            <arg value="--basedir=/usr/local/mysql-bin"/>
+                                            <arg value="--basedir=."/>
                                             <arg value="--datadir=${project.build.directory}/catapult-mysql"/>
                                         </exec>
                                         <delete file="${project.build.directory}/catapult-mysql.sock" quiet="true"/>
                                         <exec dir="/usr/local/mysql-bin" executable="./bin/mysqld" spawn="true">
-                                            <arg value="--basedir=/usr/local/mysql-bin"/>
+                                            <arg value="--basedir=."/>
                                             <arg value="--general_log"/>
                                             <arg value="--general_log_file=${project.build.directory}/catapult-mysql.log"/>
                                             <arg value="--log_error=${project.build.directory}/catapult-mysql.log"/>
