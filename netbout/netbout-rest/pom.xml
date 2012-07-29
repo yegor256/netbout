@@ -475,6 +475,7 @@
                                 <delete file="${project.build.directory}/rest-mysql.sock" quiet="true"/>
                                 <delete file="${project.build.directory}/rest-mysql.log" quiet="true"/>
                                 <exec dir="/usr/local/mysql-bin" executable="./scripts/mysql_install_db" failonerror="true">
+                                    <arg value="--no-defaults"/>
                                     <arg value="--basedir=/usr/local/mysql-bin"/>
                                     <arg value="--datadir=${project.build.directory}/rest-mysql"/>
                                 </exec>
@@ -832,6 +833,7 @@
                                         <delete dir="${project.build.directory}/catapult-mysql-temp" quiet="true"/>
                                         <mkdir dir="${project.build.directory}/catapult-mysql-temp"/>
                                         <exec executable="/usr/local/mysql-bin/scripts/mysql_install_db" failonerror="true">
+                                            <arg value="--no-defaults"/>
                                             <arg value="--basedir=/usr/local/mysql-bin"/>
                                             <arg value="--datadir=${project.build.directory}/catapult-mysql"/>
                                         </exec>
