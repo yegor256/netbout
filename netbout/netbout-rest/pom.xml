@@ -66,6 +66,7 @@
     </repositories>
 
     <properties>
+        <!-- MySQL 5.5 has to be installed at this folder -->
         <mysql.dir>/usr/local/mysql-bin</mysql.dir>
     </properties>
 
