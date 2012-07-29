@@ -447,7 +447,7 @@
                                             <arg value="--no-auth-cache"/>
                                             <arg value="--quiet"/>
                                             <arg value="--non-interactive"/>
-                                            <arg value="svn://svn.netbout.com/netbout/tags/netbout-${tag.new}/netbout"/>
+                                            <arg value="svn://svn.netbout.com/netbout/tags/netbout-${tag.new}"/>
                                             <arg value="${tag.new}"/>
                                         </exec>
                                         <exec dir="${project.build.directory}/${tag.new}" executable="mvn" failonerror="true">
