@@ -35,6 +35,7 @@ import com.netbout.spi.client.RestUriBuilder
 import com.netbout.spi.text.SecureString
 import com.rexsl.core.Manifests
 import com.rexsl.test.RestTester
+import java.net.URI
 import javax.ws.rs.core.HttpHeaders
 import javax.ws.rs.core.MediaType
 import javax.ws.rs.core.UriBuilder
@@ -58,20 +59,24 @@ RestTester.start(RestUriBuilder.from(starter).build())
 
 def name = new Urn('urn:netbout:bobby')
 def bobby = new RestSession(home).authenticate(name, new SecureString(name).toString())
-RestTester.start(RestUriBuilder.from(bobby).build())
-    .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_XML)
-    .get('read home page of Bobby')
-    .assertStatus(HttpURLConnection.HTTP_OK)
-    .rel('/page/links/link[@rel="start"]/@href')
-    .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_XML)
-    .get('start new bout for Bobby')
-    .assertStatus(HttpURLConnection.HTTP_SEE_OTHER)
-    .follow()
-    .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_XML)
-    .get('read bout page')
-    .assertStatus(HttpURLConnection.HTTP_OK)
-    .rel('/page/links/link[@rel="post"]/@href')
-    .post('post new message', 'text=hello')
-    .assertStatus(HttpURLConnection.HTTP_SEE_OTHER)
+this.prepare(RestUriBuilder.from(bobby).build())
 def bout = bobby.start()
 bout.rename('Catapult inbox testing')
+
+private void prepare(URI path) {
+    RestTester.start(path)
+        .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_XML)
+        .get('read home page of Bobby')
+        .assertStatus(HttpURLConnection.HTTP_OK)
+        .rel('/page/links/link[@rel="start"]/@href')
+        .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_XML)
+        .get('start new bout for Bobby')
+        .assertStatus(HttpURLConnection.HTTP_SEE_OTHER)
+        .follow()
+        .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_XML)
+        .get('read bout page')
+        .assertStatus(HttpURLConnection.HTTP_OK)
+        .rel('/page/links/link[@rel="post"]/@href')
+        .post('post new message', 'text=hello')
+        .assertStatus(HttpURLConnection.HTTP_SEE_OTHER)
+}

@@ -128,4 +128,19 @@ public final class NfsFolderTest {
         second.get().close();
     }
 
+    /**
+     * NfsFolder can start after a cancelled folder.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void startsAfterCancelledNfsFolder() throws Exception {
+        final File dir = this.temp.newFolder("foo-3");
+        final Folder first = new NfsFolder(dir);
+        MatcherAssert.assertThat(first.isWritable(), Matchers.is(true));
+        final Folder second = new NfsFolder(dir);
+        MatcherAssert.assertThat(second.isWritable(), Matchers.is(true));
+        first.close();
+        second.close();
+    }
+
 }
