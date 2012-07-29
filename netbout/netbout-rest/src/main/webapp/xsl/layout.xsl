@@ -68,7 +68,11 @@
                 </link>
                 <link rel="icon" type="image/gif">
                     <xsl:attribute name="href">
-                        <xsl:text>http://cdn.netbout.com/favicon.ico?</xsl:text>
+                        <xsl:text>http://cdn.netbout.com/favicon</xsl:text>
+                        <xsl:if test="contains(name, '-stage')">
+                            <xsl:text>-stage</xsl:text>
+                        </xsl:if>
+                        <xsl:text>.ico?</xsl:text>
                         <xsl:value-of select="/page/version/revision"/>
                     </xsl:attribute>
                 </link>
