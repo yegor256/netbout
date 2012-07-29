@@ -860,16 +860,24 @@
                                             <available file="${project.build.directory}/catapult-mysql.sock"/>
                                         </waitfor>
                                         <echo message="MySQL is ready at localhost:${mysql.port.catapult}" />
+                                        <exec dir="${mysql.dir}" executable="./bin/mysqladmin" failonerror="true">
+                                            <arg value="--port=${mysql.port.rest}"/>
+                                            <arg value="--user=root"/>
+                                            <arg value="--password=root"/>
+                                            <arg value="--socket=${project.build.directory}/rest-mysql.sock"/>
+                                            <arg value="password"/>
+                                            <arg value="root"/>
+                                        </exec>
                                         <exec dir="${mysql.dir}" executable="./bin/mysql" failonerror="true"
                                             inputstring="CREATE DATABASE catapult;">
                                             <arg value="--port=${mysql.port.catapult}"/>
                                             <arg value="--user=root"/>
-                                            <arg value="--password="/>
+                                            <arg value="--password=root"/>
                                             <arg value="--socket=${project.build.directory}/catapult-mysql.sock"/>
                                         </exec>
                                         <sql driver="com.mysql.jdbc.Driver"
                                             url="jdbc:mysql://localhost:${mysql.port.catapult}/catapult"
-                                            userid="root" password="" print="true">SHOW TABLES</sql>
+                                            userid="root" password="root" print="true">SHOW TABLES</sql>
                                     </target>
                                 </configuration>
                             </execution>
@@ -884,6 +892,7 @@
                                         <exec executable="mysqladmin" failonerror="true">
                                             <arg value="--port=${mysql.port.catapult}"/>
                                             <arg value="--user=root"/>
+                                            <arg value="--password=root"/>
                                             <arg value="--socket=${project.build.directory}/catapult-mysql.sock"/>
                                             <arg value="shutdown"/>
                                         </exec>
@@ -915,7 +924,7 @@
                                             <!-- see http://dev.mysql.com/doc/refman/5.0/en/connector-j-reference-configuration-properties.html -->
                                             <Netbout-JdbcUrl>jdbc:mysql://localhost:${mysql.port.catapult}/catapult?useUnicode=true&amp;characterEncoding=utf-8&amp;useGmtMillisForDatetimes=true&amp;useJDBCCompliantTimezoneShift=true&amp;useLegacyDatetimeCode=false&amp;useTimezone=true&amp;serverTimezone=UTC</Netbout-JdbcUrl>
                                             <Netbout-JdbcUser>root</Netbout-JdbcUser>
-                                            <Netbout-JdbcPassword></Netbout-JdbcPassword>
+                                            <Netbout-JdbcPassword>root</Netbout-JdbcPassword>
                                             <Netbout-SmtpHost>relay.jangosmtp.net</Netbout-SmtpHost>
                                             <Netbout-SmtpPort>2525</Netbout-SmtpPort>
                                             <Netbout-SmtpUser>yegor256</Netbout-SmtpUser>
