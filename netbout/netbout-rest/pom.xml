@@ -385,6 +385,33 @@
                 <plugin>
                     <artifactId>maven-war-plugin</artifactId>
                     <version since="2 Dec 2010">2.1</version>
+                    <configuration>
+                        <warSourceExcludes>js/**, css/**, xsl/**</warSourceExcludes>
+                        <archive>
+                            <manifestEntries>
+                                <Netbout-Revision>${build.number}</Netbout-Revision>
+                                <Netbout-Version>${project.version}</Netbout-Version>
+                                <Netbout-Date>${maven.build.timestamp}</Netbout-Date>
+                                <Netbout-FbId>${fb.id}</Netbout-FbId>
+                                <Netbout-FbSecret>${fb.secret}</Netbout-FbSecret>
+                                <Netbout-JdbcDriver>com.mysql.jdbc.Driver</Netbout-JdbcDriver>
+                                <Netbout-JdbcUrl>jdbc:mysql://${mysql.host}:${mysql.port}/${mysql.database}?useUnicode=true&amp;characterEncoding=utf-8&amp;useGmtMillisForDatetimes=true&amp;useJDBCCompliantTimezoneShift=true&amp;useLegacyDatetimeCode=false&amp;useTimezone=true&amp;serverTimezone=UTC</Netbout-JdbcUrl>
+                                <Netbout-JdbcUser>${mysql.user}</Netbout-JdbcUser>
+                                <Netbout-JdbcPassword>${mysql.password}</Netbout-JdbcPassword>
+                                <Netbout-SmtpHost>${smtp.host}</Netbout-SmtpHost>
+                                <Netbout-SmtpPort>${smtp.port}</Netbout-SmtpPort>
+                                <Netbout-SmtpUser>${smtp.user}</Netbout-SmtpUser>
+                                <Netbout-SmtpPassword>${smtp.password}</Netbout-SmtpPassword>
+                                <Netbout-PopUser>${pop3.user}</Netbout-PopUser>
+                                <Netbout-PopPassword>${pop3.password}</Netbout-PopPassword>
+                                <Netbout-PopHost>${pop3.host}</Netbout-PopHost>
+                                <Netbout-PopPort>${pop3.port}</Netbout-PopPort>
+                                <Netbout-SecurityKey>${security.key}</Netbout-SecurityKey>
+                                <Netbout-SuperSecret>${security.secret}</Netbout-SuperSecret>
+                                <Netbout-InfMount>${inf.path}</Netbout-InfMount>
+                            </manifestEntries>
+                        </archive>
+                    </configuration>
                 </plugin>
                 <plugin>
                     <artifactId>maven-deploy-plugin</artifactId>
@@ -430,6 +457,29 @@
                 </executions>
             </plugin>
             <plugin>
+                <!--
+                This plugin will collect current build number
+                from Subversion and save it into Maven property "build.number".
+                -->
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>buildnumber-maven-plugin</artifactId>
+                <version since="21 Mar 2012">1.0-beta-4</version>
+                <executions>
+                    <execution>
+                        <phase>generate-resources</phase>
+                        <goals>
+                            <goal>create</goal>
+                        </goals>
+                        <configuration>
+                            <buildNumberPropertyName>build.number</buildNumberPropertyName>
+                            <doCheck>false</doCheck>
+                            <doUpdate>false</doUpdate>
+                            <getRevisionOnlyOnce>true</getRevisionOnlyOnce>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>build-helper-maven-plugin</artifactId>
                 <executions>
@@ -447,80 +497,69 @@
                     </execution>
                 </executions>
             </plugin>
-            <plugin>
-                <artifactId>maven-antrun-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>start-mysql</id>
-                        <phase>pre-integration-test</phase>
-                        <goals>
-                            <goal>run</goal>
-                        </goals>
-                        <configuration>
-                            <target>
-                                <ant antfile="${basedir}/src/test/ant/mysql.xml" target="start">
-                                    <property name="database" value="netbout" />
-                                    <property name="port" value="${mysql.port.rest}" />
-                                    <property name="directory" value="${project.build.directory}" />
-                                </ant>
-                            </target>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>stop-mysql</id>
-                        <phase>post-integration-test</phase>
-                        <goals>
-                            <goal>run</goal>
-                        </goals>
-                        <configuration>
-                            <target>
-                                <ant antfile="${basedir}/src/test/ant/mysql.xml" target="stop">
-                                    <property name="database" value="netbout" />
-                                    <property name="port" value="${mysql.port.rest}" />
-                                    <property name="directory" value="${project.build.directory}" />
-                                </ant>
-                            </target>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
         </plugins>
     </build>
 
     <profiles>
         <profile>
-            <id>continuous-integration</id>
+            <id>internal-mysql</id>
             <activation>
-                <property><name>ci</name></property>
+                <property>
+                    <name>!skipTests</name>
+                </property>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <artifactId>maven-antrun-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>start-mysql</id>
+                                <phase>pre-integration-test</phase>
+                                <goals>
+                                    <goal>run</goal>
+                                </goals>
+                                <configuration>
+                                    <target>
+                                        <ant antfile="${basedir}/src/test/ant/mysql.xml" target="start">
+                                            <property name="database" value="netbout" />
+                                            <property name="port" value="${mysql.port.rest}" />
+                                            <property name="directory" value="${project.build.directory}" />
+                                        </ant>
+                                    </target>
+                                </configuration>
+                            </execution>
+                            <execution>
+                                <id>stop-mysql</id>
+                                <phase>post-integration-test</phase>
+                                <goals>
+                                    <goal>run</goal>
+                                </goals>
+                                <configuration>
+                                    <target>
+                                        <ant antfile="${basedir}/src/test/ant/mysql.xml" target="stop">
+                                            <property name="database" value="netbout" />
+                                            <property name="port" value="${mysql.port.rest}" />
+                                            <property name="directory" value="${project.build.directory}" />
+                                        </ant>
+                                    </target>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <id>deploy-to-amazon-elastic-beanstalk</id>
+            <activation>
+                <property><name>beanstalk</name></property>
             </activation>
             <properties>
                 <beanstalk.app>${project.build.finalName}-${build.number}.${project.packaging}</beanstalk.app>
             </properties>
             <build>
                 <plugins>
-                    <plugin>
-                        <!--
-                        This plugin will collect current build number
-                        from Subversion and save it into Maven property "build.number".
-                        -->
-                        <groupId>org.codehaus.mojo</groupId>
-                        <artifactId>buildnumber-maven-plugin</artifactId>
-                        <version since="21 Mar 2012">1.0-beta-4</version>
-                        <executions>
-                            <execution>
-                                <phase>generate-resources</phase>
-                                <goals>
-                                    <goal>create</goal>
-                                </goals>
-                                <configuration>
-                                    <buildNumberPropertyName>build.number</buildNumberPropertyName>
-                                    <doCheck>false</doCheck>
-                                    <doUpdate>false</doUpdate>
-                                    <getRevisionOnlyOnce>true</getRevisionOnlyOnce>
-                                </configuration>
-                            </execution>
-                        </executions>
-                    </plugin>
                     <plugin>
                         <groupId>br.com.ingenieux</groupId>
                         <artifactId>beanstalk-maven-plugin</artifactId>
@@ -653,35 +692,40 @@
                         </executions>
                     </plugin>
                 </plugins>
+            </build>
+        </profile>
+        <profile>
+            <id>deploy-to-heroku</id>
+            <activation>
+                <property><name>heroku</name></property>
+            </activation>
+            <dependencies>
+                <dependency>
+                    <groupId>com.rexsl</groupId>
+                    <artifactId>rexsl-standalone</artifactId>
+                    <version>${rexsl.version}</version>
+                    <classifier>bin</classifier>
+                    <scope>runtime</scope>
+                </dependency>
+            </dependencies>
+            <build>
                 <pluginManagement>
                     <plugins>
                         <plugin>
                             <artifactId>maven-war-plugin</artifactId>
                             <configuration>
-                                <warSourceExcludes>js/**, css/**, xsl/**</warSourceExcludes>
+                                <overlays>
+                                    <overlay>
+                                        <groupId>com.rexsl</groupId>
+                                        <artifactId>rexsl-standalone</artifactId>
+                                        <classifier>bin</classifier>
+                                        <type>jar</type>
+                                    </overlay>
+                                </overlays>
                                 <archive>
-                                    <manifestEntries>
-                                        <Netbout-Revision>${build.number}</Netbout-Revision>
-                                        <Netbout-Version>${project.version}</Netbout-Version>
-                                        <Netbout-Date>${maven.build.timestamp}</Netbout-Date>
-                                        <Netbout-FbId>${fb.id}</Netbout-FbId>
-                                        <Netbout-FbSecret>${fb.secret}</Netbout-FbSecret>
-                                        <Netbout-JdbcDriver>com.mysql.jdbc.Driver</Netbout-JdbcDriver>
-                                        <Netbout-JdbcUrl>jdbc:mysql://${mysql.host}:${mysql.port}/${mysql.database}?useUnicode=true&amp;characterEncoding=utf-8&amp;useGmtMillisForDatetimes=true&amp;useJDBCCompliantTimezoneShift=true&amp;useLegacyDatetimeCode=false&amp;useTimezone=true&amp;serverTimezone=UTC</Netbout-JdbcUrl>
-                                        <Netbout-JdbcUser>${mysql.user}</Netbout-JdbcUser>
-                                        <Netbout-JdbcPassword>${mysql.password}</Netbout-JdbcPassword>
-                                        <Netbout-SmtpHost>${smtp.host}</Netbout-SmtpHost>
-                                        <Netbout-SmtpPort>${smtp.port}</Netbout-SmtpPort>
-                                        <Netbout-SmtpUser>${smtp.user}</Netbout-SmtpUser>
-                                        <Netbout-SmtpPassword>${smtp.password}</Netbout-SmtpPassword>
-                                        <Netbout-PopUser>${pop3.user}</Netbout-PopUser>
-                                        <Netbout-PopPassword>${pop3.password}</Netbout-PopPassword>
-                                        <Netbout-PopHost>${pop3.host}</Netbout-PopHost>
-                                        <Netbout-PopPort>${pop3.port}</Netbout-PopPort>
-                                        <Netbout-SecurityKey>${security.key}</Netbout-SecurityKey>
-                                        <Netbout-SuperSecret>${security.secret}</Netbout-SuperSecret>
-                                        <Netbout-InfMount>/mnt/inf</Netbout-InfMount>
-                                    </manifestEntries>
+                                    <manifest>
+                                        <mainClass>com.rexsl.standalone.RexslMain</mainClass>
+                                    </manifest>
                                 </archive>
                             </configuration>
                         </plugin>
@@ -692,10 +736,30 @@
         <profile>
             <id>catapult</id>
             <activation>
-                <file><exists>pom.xml</exists></file>
+                <property>
+                    <name>!skipTests</name>
+                </property>
             </activation>
             <properties>
                 <catapult.warName>${project.build.finalName}-catapult</catapult.warName>
+                <fb.id>123456789</fb.id>
+                <fb.secret>secret</fb.secret>
+                <mysql.host>localhost</mysql.host>
+                <mysql.port>${mysql.port.catapult}</mysql.port>
+                <mysql.database>catapult</mysql.database>
+                <mysql.user>root</mysql.user>
+                <mysql.password>root</mysql.password>
+                <smtp.host>relay.jangosmtp.net</smtp.host>
+                <smtp.port>2525</smtp.port>
+                <smtp.user>yegor256</smtp.user>
+                <smtp.password>201448CX</smtp.password>
+                <pop3.user>test@netbout.com</pop3.user>
+                <pop3.password>netbout-test</pop3.password>
+                <pop3.host>pop.gmail.com</pop3.host>
+                <pop3.port>995</pop3.port>
+                <security.key>-test-security-key</security.key>
+                <security.secret>-super-secret</security.secret>
+                <inf.path>${project.build.directory}/catapult-InfMount</inf.path>
                 <!--
                 @todo #160 If you change this path to something different from
                  "/" there will be many problems with paths of XSL and CSS files.
@@ -786,31 +850,6 @@
                                 </goals>
                                 <configuration>
                                     <warName>${catapult.warName}</warName>
-                                    <archive>
-                                        <manifestEntries>
-                                            <Netbout-Revision>555</Netbout-Revision>
-                                            <Netbout-Version>${project.version}</Netbout-Version>
-                                            <Netbout-Date>${maven.build.timestamp}</Netbout-Date>
-                                            <Netbout-FbId>12345</Netbout-FbId>
-                                            <Netbout-FbSecret>secret</Netbout-FbSecret>
-                                            <Netbout-JdbcDriver>com.mysql.jdbc.Driver</Netbout-JdbcDriver>
-                                            <!-- see http://dev.mysql.com/doc/refman/5.0/en/connector-j-reference-configuration-properties.html -->
-                                            <Netbout-JdbcUrl>jdbc:mysql://localhost:${mysql.port.catapult}/catapult?useUnicode=true&amp;characterEncoding=utf-8&amp;useGmtMillisForDatetimes=true&amp;useJDBCCompliantTimezoneShift=true&amp;useLegacyDatetimeCode=false&amp;useTimezone=true&amp;serverTimezone=UTC</Netbout-JdbcUrl>
-                                            <Netbout-JdbcUser>root</Netbout-JdbcUser>
-                                            <Netbout-JdbcPassword>root</Netbout-JdbcPassword>
-                                            <Netbout-SmtpHost>relay.jangosmtp.net</Netbout-SmtpHost>
-                                            <Netbout-SmtpPort>2525</Netbout-SmtpPort>
-                                            <Netbout-SmtpUser>yegor256</Netbout-SmtpUser>
-                                            <Netbout-SmtpPassword>201448CX</Netbout-SmtpPassword>
-                                            <Netbout-PopUser>test@netbout.com</Netbout-PopUser>
-                                            <Netbout-PopPassword>netbout-test</Netbout-PopPassword>
-                                            <Netbout-PopHost>pop.gmail.com</Netbout-PopHost>
-                                            <Netbout-PopPort>995</Netbout-PopPort>
-                                            <Netbout-SecurityKey>-test-security-key</Netbout-SecurityKey>
-                                            <Netbout-SuperSecret>-super-secret</Netbout-SuperSecret>
-                                            <Netbout-InfMount>${project.build.directory}/catapult-InfMount</Netbout-InfMount>
-                                        </manifestEntries>
-                                    </archive>
                                 </configuration>
                             </execution>
                         </executions>
