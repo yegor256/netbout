@@ -102,10 +102,13 @@ public final class SecureString {
     private static byte[] xor(final byte[] input) {
         final byte[] output = new byte[input.length];
         final byte[] secret = Manifests.read("Netbout-SecurityKey").getBytes();
+        if (secret.length == 0) {
+            throw new IllegalStateException("empty security key");
+        }
         int spos = 0;
-        for (int pos = 0; pos < input.length; pos += 1) {
+        for (int pos = 0; pos < input.length; ++pos) {
             output[pos] = (byte) (input[pos] ^ secret[spos]);
-            spos += 1;
+            ++spos;
             if (spos >= secret.length) {
                 spos = 0;
             }
@@ -122,7 +125,7 @@ public final class SecureString {
         final StringBuilder text = new StringBuilder();
         int buffer = 0;
         int bits = 0;
-        for (int pos = 0; pos < input.length; pos += 1) {
+        for (int pos = 0; pos < input.length; ++pos) {
             buffer = (buffer << 8) | (0xFF & input[pos]);
             bits += 8;
             while (bits >= 5) {

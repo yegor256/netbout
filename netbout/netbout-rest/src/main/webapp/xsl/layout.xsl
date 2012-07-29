@@ -68,7 +68,11 @@
                 </link>
                 <link rel="icon" type="image/gif">
                     <xsl:attribute name="href">
-                        <xsl:text>http://cdn.netbout.com/favicon.ico?</xsl:text>
+                        <xsl:text>http://cdn.netbout.com/favicon</xsl:text>
+                        <xsl:if test="contains(name, '-stage')">
+                            <xsl:text>-stage</xsl:text>
+                        </xsl:if>
+                        <xsl:text>.ico?</xsl:text>
                         <xsl:value-of select="/page/version/revision"/>
                     </xsl:attribute>
                 </link>
@@ -77,6 +81,11 @@
             <body>
                 <xsl:apply-templates select="version" />
                 <div id="cap">
+                    <xsl:if test="contains(name, '-stage')">
+                        <xsl:attribute name="style">
+                            background-color: #fcc;
+                        </xsl:attribute>
+                    </xsl:if>
                     <div id="incap">
                         <xsl:call-template name="cap" />
                     </div>
@@ -134,8 +143,17 @@
     </xsl:template>
 
     <xsl:template match="version">
+        <xsl:if test="contains(name, '-stage')">
+            <div style="width: 100%; height: 100%; display: table; position: fixed;">
+                <div style="text-align: center; vertical-align: middle; display: table-cell; color: #eee;">
+                    <p style="font-size: 12em;">STAGE</p>
+                    <p style="font-size: 5em;">This is a staging server,<br/>with temporary testing data.</p>
+                </div>
+            </div>
+        </xsl:if>
         <div id="version">
-            <xsl:text>r</xsl:text>
+            <xsl:value-of select="name"/>
+            <xsl:text> r</xsl:text>
             <xsl:value-of select="revision"/>
             <xsl:text> </xsl:text>
             <xsl:call-template name="millis">
