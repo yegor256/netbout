@@ -463,7 +463,7 @@
                                     <arg value="-c"/>
                                     <arg value="ps aux | grep '[r]est-mysql.sock' | awk '{print $2}'"/>
                                 </exec>
-                                <echo message="expired mysql daemons: ${expired}"/>
+                                <echo message="expired mysqld processes: ${expired}"/>
                                 <exec executable="kill" failonerror="false">
                                     <arg value="-s"/>
                                     <arg value="KILL"/>
@@ -808,7 +808,7 @@
                                             <arg value="-c"/>
                                             <arg value="ps aux | grep '[c]atapult-mysql.sock' | awk '{print $2}'"/>
                                         </exec>
-                                        <echo message="expired mysql daemons: ${expired}"/>
+                                        <echo message="expired mysqld processes: '${expired}'"/>
                                         <exec executable="kill" failonerror="false">
                                             <arg value="-s"/>
                                             <arg value="KILL"/>
