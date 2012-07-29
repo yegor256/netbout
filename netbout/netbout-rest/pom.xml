@@ -65,11 +65,6 @@
         </repository>
     </repositories>
 
-    <properties>
-        <!-- MySQL 5.5 has to be installed at this folder -->
-        <mysql.dir>/usr/local/mysql-bin</mysql.dir>
-    </properties>
-
     <dependencies>
         <dependency>
             <!-- this one has to stay on top of others, and remain in "compile"
@@ -463,77 +458,11 @@
                         </goals>
                         <configuration>
                             <target>
-                                <!-- see http://stackoverflow.com/questions/3510673 -->
-                                <exec executable="sh" failonerror="true" outputproperty="expired">
-                                    <arg value="-c"/>
-                                    <arg value="ps aux | grep '[r]est-mysql.sock' | awk '{print $2}'"/>
-                                </exec>
-                                <echo message="expired mysqld processes: '${expired}'"/>
-                                <exec executable="sh" failonerror="false">
-                                    <arg value="-c"/>
-                                    <arg value="kill -s KILL ${expired}"/>
-                                </exec>
-                                <delete dir="${project.build.directory}/rest-mysql" quiet="true"/>
-                                <mkdir dir="${project.build.directory}/rest-mysql"/>
-                                <delete dir="${project.build.directory}/rest-mysql-temp" quiet="true"/>
-                                <mkdir dir="${project.build.directory}/rest-mysql-temp"/>
-                                <delete file="${project.build.directory}/rest-mysql.sock" quiet="true"/>
-                                <delete file="${project.build.directory}/rest-mysql.log" quiet="true"/>
-                                <exec dir="${mysql.dir}" executable="./scripts/mysql_install_db" failonerror="true">
-                                    <arg value="--no-defaults"/>
-                                    <arg value="--basedir=."/>
-                                    <arg value="--datadir=${project.build.directory}/rest-mysql"/>
-                                </exec>
-                                <exec dir="${mysql.dir}" executable="./bin/mysqld" failonerror="true" outputproperty="mysql.version">
-                                    <arg value="--version"/>
-                                </exec>
-                                <fail message="invalid version of MySQL server installed">
-                                    <condition>
-                                        <not>
-                                            <contains string="${mysql.version}" substring="Ver 5.5"/>
-                                        </not>
-                                    </condition>
-                                </fail>
-                                <echo message="starting MySQL ${mysql.version} at localhost:${mysql.port.rest}..." />
-                                <exec dir="${mysql.dir}" executable="./bin/mysqld" spawn="true">
-                                    <arg value="--basedir=."/>
-                                    <arg value="--general_log"/>
-                                    <arg value="--general_log_file=${project.build.directory}/rest-mysql.log"/>
-                                    <arg value="--log_error=${project.build.directory}/rest-mysql.log"/>
-                                    <arg value="--log_warnings"/>
-                                    <arg value="--binlog-ignore-db=netbout"/>
-                                    <arg value="--datadir=${project.build.directory}/rest-mysql"/>
-                                    <arg value="--tmpdir=${project.build.directory}/rest-mysql-temp"/>
-                                    <arg value="--socket=${project.build.directory}/rest-mysql.sock"/>
-                                    <arg value="--pid-file=${project.build.directory}/rest-mysql.pid"/>
-                                    <arg value="--port=${mysql.port.rest}"/>
-                                </exec>
-                                <waitfor maxwait="180" maxwaitunit="second" timeoutproperty="mysql.timeout">
-                                    <available file="${project.build.directory}/rest-mysql.sock"/>
-                                </waitfor>
-                                <fail message="MySQL server is not up">
-                                    <condition>
-                                        <isset property="mysql.timeout"/>
-                                    </condition>
-                                </fail>
-                                <echo message="MySQL is ready at localhost:${mysql.port.rest}" />
-                                <exec dir="${mysql.dir}" executable="./bin/mysqladmin" failonerror="true">
-                                    <arg value="--port=${mysql.port.rest}"/>
-                                    <arg value="--user=root"/>
-                                    <arg value="--socket=${project.build.directory}/rest-mysql.sock"/>
-                                    <arg value="password"/>
-                                    <arg value="root"/>
-                                </exec>
-                                <exec dir="${mysql.dir}" executable="./bin/mysql" failonerror="true"
-                                    inputstring="CREATE DATABASE netbout;">
-                                    <arg value="--port=${mysql.port.rest}"/>
-                                    <arg value="--user=root"/>
-                                    <arg value="--password=root"/>
-                                    <arg value="--socket=${project.build.directory}/rest-mysql.sock"/>
-                                </exec>
-                                <sql driver="com.mysql.jdbc.Driver"
-                                    url="jdbc:mysql://localhost:${mysql.port.rest}/netbout"
-                                    userid="root" password="root" print="true">SHOW TABLES</sql>
+                                <ant antfile="${basedir}/src/test/ant/mysql.xml" target="start">
+                                    <property name="database" value="netbout" />
+                                    <property name="port" value="${mysql.port.rest}" />
+                                    <property name="directory" value="${project.build.directory}" />
+                                </ant>
                             </target>
                         </configuration>
                     </execution>
@@ -545,14 +474,11 @@
                         </goals>
                         <configuration>
                             <target>
-                                <exec executable="mysqladmin" failonerror="true">
-                                    <arg value="--port=${mysql.port.rest}"/>
-                                    <arg value="--user=root"/>
-                                    <arg value="--password=root"/>
-                                    <arg value="--socket=${project.build.directory}/rest-mysql.sock"/>
-                                    <arg value="shutdown"/>
-                                </exec>
-                                <echo message="MySQL is shutdown"/>
+                                <ant antfile="${basedir}/src/test/ant/mysql.xml" target="stop">
+                                    <property name="database" value="netbout" />
+                                    <property name="port" value="${mysql.port.rest}" />
+                                    <property name="directory" value="${project.build.directory}" />
+                                </ant>
                             </target>
                         </configuration>
                     </execution>
@@ -823,53 +749,11 @@
                                 </goals>
                                 <configuration>
                                     <target>
-                                        <!-- see http://stackoverflow.com/questions/3510673 -->
-                                        <exec executable="sh" failonerror="true" outputproperty="expired">
-                                            <arg value="-c"/>
-                                            <arg value="ps aux | grep '[c]atapult-mysql.sock' | awk '{print $2}'"/>
-                                        </exec>
-                                        <echo message="expired catapult mysqld processes: '${expired}'"/>
-                                        <exec executable="sh" failonerror="false">
-                                            <arg value="-c"/>
-                                            <arg value="kill -s KILL ${expired}"/>
-                                        </exec>
-                                        <delete dir="${project.build.directory}/catapult-mysql" quiet="true"/>
-                                        <mkdir dir="${project.build.directory}/catapult-mysql"/>
-                                        <delete dir="${project.build.directory}/catapult-mysql-temp" quiet="true"/>
-                                        <mkdir dir="${project.build.directory}/catapult-mysql-temp"/>
-                                        <exec dir="${mysql.dir}" executable="./scripts/mysql_install_db" failonerror="true">
-                                            <arg value="--no-defaults"/>
-                                            <arg value="--basedir=."/>
-                                            <arg value="--datadir=${project.build.directory}/catapult-mysql"/>
-                                        </exec>
-                                        <delete file="${project.build.directory}/catapult-mysql.sock" quiet="true"/>
-                                        <exec dir="${mysql.dir}" executable="./bin/mysqld" spawn="true">
-                                            <arg value="--basedir=."/>
-                                            <arg value="--general_log"/>
-                                            <arg value="--general_log_file=${project.build.directory}/catapult-mysql.log"/>
-                                            <arg value="--log_error=${project.build.directory}/catapult-mysql.log"/>
-                                            <arg value="--log_warnings"/>
-                                            <arg value="--binlog-ignore-db=catapult"/>
-                                            <arg value="--datadir=${project.build.directory}/catapult-mysql"/>
-                                            <arg value="--tmpdir=${project.build.directory}/catapult-mysql-temp"/>
-                                            <arg value="--socket=${project.build.directory}/catapult-mysql.sock"/>
-                                            <arg value="--pid-file=${project.build.directory}/catapult-mysql.pid"/>
-                                            <arg value="--port=${mysql.port.catapult}"/>
-                                        </exec>
-                                        <waitfor maxwait="180" maxwaitunit="second">
-                                            <available file="${project.build.directory}/catapult-mysql.sock"/>
-                                        </waitfor>
-                                        <echo message="MySQL is ready at localhost:${mysql.port.catapult}" />
-                                        <exec dir="${mysql.dir}" executable="./bin/mysql" failonerror="true"
-                                            inputstring="CREATE DATABASE catapult;">
-                                            <arg value="--port=${mysql.port.catapult}"/>
-                                            <arg value="--user=root"/>
-                                            <arg value="--password="/>
-                                            <arg value="--socket=${project.build.directory}/catapult-mysql.sock"/>
-                                        </exec>
-                                        <sql driver="com.mysql.jdbc.Driver"
-                                            url="jdbc:mysql://localhost:${mysql.port.catapult}/catapult"
-                                            userid="root" password="" print="true">SHOW TABLES</sql>
+                                        <ant antfile="${basedir}/src/test/ant/mysql.xml" target="start">
+                                            <property name="database" value="catapult" />
+                                            <property name="port" value="${mysql.port.catapult}" />
+                                            <property name="directory" value="${project.build.directory}" />
+                                        </ant>
                                     </target>
                                 </configuration>
                             </execution>
@@ -881,13 +765,11 @@
                                 </goals>
                                 <configuration>
                                     <target>
-                                        <exec executable="mysqladmin" failonerror="true">
-                                            <arg value="--port=${mysql.port.catapult}"/>
-                                            <arg value="--user=root"/>
-                                            <arg value="--socket=${project.build.directory}/catapult-mysql.sock"/>
-                                            <arg value="shutdown"/>
-                                        </exec>
-                                        <echo message="MySQL is shutdown"/>
+                                        <ant antfile="${basedir}/src/test/ant/mysql.xml" target="stop">
+                                            <property name="database" value="catapult" />
+                                            <property name="port" value="${mysql.port.catapult}" />
+                                            <property name="directory" value="${project.build.directory}" />
+                                        </ant>
                                     </target>
                                 </configuration>
                             </execution>
@@ -915,7 +797,7 @@
                                             <!-- see http://dev.mysql.com/doc/refman/5.0/en/connector-j-reference-configuration-properties.html -->
                                             <Netbout-JdbcUrl>jdbc:mysql://localhost:${mysql.port.catapult}/catapult?useUnicode=true&amp;characterEncoding=utf-8&amp;useGmtMillisForDatetimes=true&amp;useJDBCCompliantTimezoneShift=true&amp;useLegacyDatetimeCode=false&amp;useTimezone=true&amp;serverTimezone=UTC</Netbout-JdbcUrl>
                                             <Netbout-JdbcUser>root</Netbout-JdbcUser>
-                                            <Netbout-JdbcPassword></Netbout-JdbcPassword>
+                                            <Netbout-JdbcPassword>root</Netbout-JdbcPassword>
                                             <Netbout-SmtpHost>relay.jangosmtp.net</Netbout-SmtpHost>
                                             <Netbout-SmtpPort>2525</Netbout-SmtpPort>
                                             <Netbout-SmtpUser>yegor256</Netbout-SmtpUser>

@@ -1,0 +1,121 @@
+<?xml version="1.0"?>
+<!--
+ * Copyright (c) 2009-2012, Netbout.com
+ * All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are PROHIBITED without prior written permission from
+ * the author. This product may NOT be used anywhere and on any computer
+ * except the server platform of netBout Inc. located at www.netbout.com.
+ * Federal copyright law prohibits unauthorized reproduction by any means
+ * and imposes fines up to $25,000 for violation. If you received
+ * this code occasionally and without intent to use it, please report this
+ * incident to the author by email: privacy@netbout.com.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+ * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+ * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+ * A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+ * OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+ * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+ * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
+ * ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+ * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
+ * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
+ * SUCH DAMAGE.
+ *
+ * @author Yegor Bugayenko (yegor@netbout.com)
+ * @version $Id$
+ -->
+<project name="mysql">
+
+    <!-- MySQL 5.5 has to be installed at this folder -->
+    <property name="mysql.dir" value="/usr/local/mysql-bin"/>
+
+    <target name="start">
+        <!-- see http://stackoverflow.com/questions/3510673 -->
+        <exec executable="sh" failonerror="true" outputproperty="expired">
+            <arg value="-c"/>
+            <arg value="ps aux | grep '[m]ysql-${database}.sock' | awk '{print $2}'"/>
+        </exec>
+        <echo message="expired '${database}' mysqld processes: '${expired}'"/>
+        <exec executable="sh" failonerror="false">
+            <arg value="-c"/>
+            <arg value="kill -s KILL ${expired}"/>
+        </exec>
+        <delete dir="${directory}/mysql-${database}" quiet="true"/>
+        <mkdir dir="${directory}/mysql-${database}"/>
+        <delete dir="${directory}/mysql-${database}-temp" quiet="true"/>
+        <mkdir dir="${directory}/mysql-${database}-temp"/>
+        <delete file="${directory}/mysql-${database}.sock" quiet="true"/>
+        <delete file="${directory}/mysql-${database}.log" quiet="true"/>
+        <exec dir="${mysql.dir}" executable="./scripts/mysql_install_db" failonerror="true">
+            <arg value="--no-defaults"/>
+            <arg value="--basedir=."/>
+            <arg value="--datadir=${directory}/mysql-${database}"/>
+        </exec>
+        <exec dir="${mysql.dir}" executable="./bin/mysqld" failonerror="true" outputproperty="version">
+            <arg value="--version"/>
+        </exec>
+        <fail message="invalid version '${version}' of MySQL server installed">
+            <condition>
+                <not>
+                    <contains string="${version}" substring="Ver 5.5"/>
+                </not>
+            </condition>
+        </fail>
+        <echo message="starting MySQL ${mysql.version} at localhost:${mysql.port.rest}..." />
+        <exec dir="${mysql.dir}" executable="./bin/mysqld" spawn="true">
+            <arg value="--basedir=."/>
+            <arg value="--general_log"/>
+            <arg value="--general_log_file=${directory}/mysql-${database}.log"/>
+            <arg value="--log_error=${directory}/mysql-${database}.log"/>
+            <arg value="--log_warnings"/>
+            <arg value="--binlog-ignore-db=${database}"/>
+            <arg value="--datadir=${directory}/mysql-${database}"/>
+            <arg value="--tmpdir=${directory}/mysql-${database}-temp"/>
+            <arg value="--socket=${directory}/mysql-${database}.sock"/>
+            <arg value="--pid-file=${directory}/mysql-${database}.pid"/>
+            <arg value="--port=${port}"/>
+        </exec>
+        <waitfor maxwait="60" maxwaitunit="second" timeoutproperty="timeout">
+            <available file="${directory}/mysql-${database}.sock"/>
+        </waitfor>
+        <fail message="MySQL server for '${database}' is not up">
+            <condition>
+                <isset property="timeout"/>
+            </condition>
+        </fail>
+        <echo message="MySQL '${database}' is ready at localhost:${port}" />
+        <exec dir="${mysql.dir}" executable="./bin/mysqladmin" failonerror="true">
+            <arg value="--port=${port}"/>
+            <arg value="--user=root"/>
+            <arg value="--socket=${directory}/mysql-${database}.sock"/>
+            <arg value="password"/>
+            <arg value="root"/>
+        </exec>
+        <exec dir="${mysql.dir}" executable="./bin/mysql" failonerror="true"
+            inputstring="CREATE DATABASE ${database};">
+            <arg value="--port=${port}"/>
+            <arg value="--user=root"/>
+            <arg value="--password=root"/>
+            <arg value="--socket=${directory}/mysql-${database}.sock"/>
+        </exec>
+        <sql driver="com.mysql.jdbc.Driver"
+            url="jdbc:mysql://localhost:${port}/${database}"
+            userid="root" password="root" print="true">SHOW TABLES</sql>
+    </target>
+
+    <target name="stop">
+        <exec dir="${mysql.dir}" executable="./bin/mysqladmin" failonerror="true">
+            <arg value="--port=${port}"/>
+            <arg value="--user=root"/>
+            <arg value="--password=root"/>
+            <arg value="--socket=${directory}/mysql-${database}.sock"/>
+            <arg value="shutdown"/>
+        </exec>
+        <echo message="MySQL of '${database}' is shutdown"/>
+    </target>
+
+</project>
