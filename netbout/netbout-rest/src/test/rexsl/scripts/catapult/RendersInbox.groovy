@@ -35,7 +35,6 @@ import com.netbout.spi.client.RestUriBuilder
 import com.netbout.spi.text.SecureString
 import com.rexsl.core.Manifests
 import com.rexsl.test.RestTester
-import java.net.URI
 import javax.ws.rs.core.HttpHeaders
 import javax.ws.rs.core.MediaType
 import javax.ws.rs.core.UriBuilder
