@@ -65,6 +65,10 @@
         </repository>
     </repositories>
 
+    <properties>
+        <mysql.dir>/usr/local/mysql-bin</mysql.dir>
+    </properties>
+
     <dependencies>
         <dependency>
             <!-- this one has to stay on top of others, and remain in "compile"
@@ -474,12 +478,12 @@
                                 <mkdir dir="${project.build.directory}/rest-mysql-temp"/>
                                 <delete file="${project.build.directory}/rest-mysql.sock" quiet="true"/>
                                 <delete file="${project.build.directory}/rest-mysql.log" quiet="true"/>
-                                <exec dir="/usr/local/mysql-bin" executable="./scripts/mysql_install_db" failonerror="true">
+                                <exec dir="${mysql.dir}" executable="./scripts/mysql_install_db" failonerror="true">
                                     <arg value="--no-defaults"/>
                                     <arg value="--basedir=."/>
                                     <arg value="--datadir=${project.build.directory}/rest-mysql"/>
                                 </exec>
-                                <exec dir="/usr/local/mysql-bin" executable="./bin/mysqld" failonerror="true" outputproperty="mysql.version">
+                                <exec dir="${mysql.dir}" executable="./bin/mysqld" failonerror="true" outputproperty="mysql.version">
                                     <arg value="--version"/>
                                 </exec>
                                 <fail message="invalid version of MySQL server installed">
@@ -490,7 +494,7 @@
                                     </condition>
                                 </fail>
                                 <echo message="starting MySQL ${mysql.version} at localhost:${mysql.port.rest}..." />
-                                <exec dir="/usr/local/mysql-bin" executable="./bin/mysqld" spawn="true">
+                                <exec dir="${mysql.dir}" executable="./bin/mysqld" spawn="true">
                                     <arg value="--basedir=."/>
                                     <arg value="--general_log"/>
                                     <arg value="--general_log_file=${project.build.directory}/rest-mysql.log"/>
@@ -512,14 +516,14 @@
                                     </condition>
                                 </fail>
                                 <echo message="MySQL is ready at localhost:${mysql.port.rest}" />
-                                <exec dir="/usr/local/mysql-bin" executable="./bin/mysqladmin" failonerror="true">
+                                <exec dir="${mysql.dir}" executable="./bin/mysqladmin" failonerror="true">
                                     <arg value="--port=${mysql.port.rest}"/>
                                     <arg value="--user=root"/>
                                     <arg value="--socket=${project.build.directory}/rest-mysql.sock"/>
                                     <arg value="password"/>
                                     <arg value="root"/>
                                 </exec>
-                                <exec dir="/usr/local/mysql-bin" executable="./bin/mysql" failonerror="true"
+                                <exec dir="${mysql.dir}" executable="./bin/mysql" failonerror="true"
                                     inputstring="CREATE DATABASE netbout;">
                                     <arg value="--port=${mysql.port.rest}"/>
                                     <arg value="--user=root"/>
@@ -832,13 +836,13 @@
                                         <mkdir dir="${project.build.directory}/catapult-mysql"/>
                                         <delete dir="${project.build.directory}/catapult-mysql-temp" quiet="true"/>
                                         <mkdir dir="${project.build.directory}/catapult-mysql-temp"/>
-                                        <exec executable="/usr/local/mysql-bin/scripts/mysql_install_db" failonerror="true">
+                                        <exec dir="${mysql.dir}" executable="./scripts/mysql_install_db" failonerror="true">
                                             <arg value="--no-defaults"/>
                                             <arg value="--basedir=."/>
                                             <arg value="--datadir=${project.build.directory}/catapult-mysql"/>
                                         </exec>
                                         <delete file="${project.build.directory}/catapult-mysql.sock" quiet="true"/>
-                                        <exec dir="/usr/local/mysql-bin" executable="./bin/mysqld" spawn="true">
+                                        <exec dir="${mysql.dir}" executable="./bin/mysqld" spawn="true">
                                             <arg value="--basedir=."/>
                                             <arg value="--general_log"/>
                                             <arg value="--general_log_file=${project.build.directory}/catapult-mysql.log"/>
@@ -855,7 +859,7 @@
                                             <available file="${project.build.directory}/catapult-mysql.sock"/>
                                         </waitfor>
                                         <echo message="MySQL is ready at localhost:${mysql.port.catapult}" />
-                                        <exec dir="/usr/local/mysql-bin" executable="./bin/mysql" failonerror="true"
+                                        <exec dir="${mysql.dir}" executable="./bin/mysql" failonerror="true"
                                             inputstring="CREATE DATABASE catapult;">
                                             <arg value="--port=${mysql.port.catapult}"/>
                                             <arg value="--user=root"/>
