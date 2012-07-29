@@ -77,6 +77,11 @@
             <body>
                 <xsl:apply-templates select="version" />
                 <div id="cap">
+                    <xsl:if test="contains(name, '-stage')">
+                        <xsl:attribute name="style">
+                            background-color: #fcc;
+                        </xsl:attribute>
+                    </xsl:if>
                     <div id="incap">
                         <xsl:call-template name="cap" />
                     </div>
