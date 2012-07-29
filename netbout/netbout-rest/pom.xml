@@ -464,10 +464,9 @@
                                     <arg value="ps aux | grep '[r]est-mysql.sock' | awk '{print $2}'"/>
                                 </exec>
                                 <echo message="expired mysqld processes: '${expired}'"/>
-                                <exec executable="kill" failonerror="false">
-                                    <arg value="-s"/>
-                                    <arg value="KILL"/>
-                                    <arg value="${expired}"/>
+                                <exec executable="sh" failonerror="false">
+                                    <arg value="-c"/>
+                                    <arg value="kill -s KILL ${expired}"/>
                                 </exec>
                                 <delete dir="${project.build.directory}/rest-mysql" quiet="true"/>
                                 <mkdir dir="${project.build.directory}/rest-mysql"/>
@@ -809,10 +808,9 @@
                                             <arg value="ps aux | grep '[c]atapult-mysql.sock' | awk '{print $2}'"/>
                                         </exec>
                                         <echo message="expired catapult mysqld processes: '${expired}'"/>
-                                        <exec executable="kill" failonerror="false">
-                                            <arg value="-s"/>
-                                            <arg value="KILL"/>
-                                            <arg value="${expired}"/>
+                                        <exec executable="sh" failonerror="false">
+                                            <arg value="-c"/>
+                                            <arg value="kill -s KILL ${expired}"/>
                                         </exec>
                                         <delete dir="${project.build.directory}/catapult-mysql" quiet="true"/>
                                         <mkdir dir="${project.build.directory}/catapult-mysql"/>
