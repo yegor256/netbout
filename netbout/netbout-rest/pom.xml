@@ -714,7 +714,7 @@
                                             <Netbout-PopPassword>netbout-test</Netbout-PopPassword>
                                             <Netbout-PopHost>pop.gmail.com</Netbout-PopHost>
                                             <Netbout-PopPort>995</Netbout-PopPort>
-                                            <Netbout-SecurityKey>-key</Netbout-SecurityKey>
+                                            <Netbout-SecurityKey>-test-security-key</Netbout-SecurityKey>
                                             <Netbout-SuperSecret>-secret</Netbout-SuperSecret>
                                             <Netbout-InfMount>${project.build.directory}/catapult-InfMount</Netbout-InfMount>
                                         </manifestEntries>
