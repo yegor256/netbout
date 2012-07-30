@@ -384,12 +384,6 @@
                     </configuration>
                 </plugin>
                 <plugin>
-                    <artifactId>maven-deploy-plugin</artifactId>
-                    <configuration>
-                        <skip>true</skip>
-                    </configuration>
-                </plugin>
-                <plugin>
                     <artifactId>maven-antrun-plugin</artifactId>
                     <version since="2 Dec 2011">1.7</version>
                     <dependencies>
@@ -804,6 +798,28 @@
                 </pluginManagement>
                 <plugins>
                     <plugin>
+                        <artifactId>maven-resources-plugin</artifactId>
+                        <version since="29 Jul 2012">2.5</version>
+                        <executions>
+                            <execution>
+                                <id>copy-heroku-resources</id>
+                                <phase>process-resources</phase>
+                                <goals>
+                                    <goal>copy-resources</goal>
+                                </goals>
+                                <configuration>
+                                    <outputDirectory>${project.build.directory}/heroku-resources</outputDirectory>
+                                    <resources>
+                                        <resource>
+                                            <directory>${basedir}/src/main/heroku</directory>
+                                            <filtering>true</filtering>
+                                        </resource>
+                                    </resources>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
                         <artifactId>maven-antrun-plugin</artifactId>
                         <executions>
                             <execution>
@@ -819,25 +835,12 @@
                                             <arg value="git@heroku.com:netbout-stage.git"/>
                                             <arg value="heroku"/>
                                         </exec>
-                                        <copy file="${project.build.directory}/${project.build.finalName}.war"
-                                            tofile="${project.build.directory}/heroku/netbout.war"
-                                            overwrite="true"/>
-                                        <echo message="web: java -jar ./netbout.war ${PORT}" append="false"
-                                            file="${project.build.directory}/heroku/Procfile"/>
-                                        <echo file="${project.build.directory}/heroku/pom.xml" append="false"><![CDATA[
-                                            <project xmlns="http://maven.apache.org/POM/4.0.0"
-                                                xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-                                                xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
-                                                    http://maven.apache.org/xsd/maven-4.0.0.xsd">
-                                                <modelVersion>4.0.0</modelVersion>
-                                                <groupId>com.netbout</groupId>
-                                                <artifactId>netbout-stage</artifactId>
-                                                <version>${project.version}</version>
-                                                <packaging>pom</packaging>
-                                                <name>${project.name}</name>
-                                                <description>rev.${build.number}</description>
-                                            </project>
-                                        ]]></echo>
+                                        <copy file="${maven.settings}"
+                                            todir="${project.build.directory}/heroku"
+                                            overwrite="true" />
+                                        <copy todir="${project.build.directory}/heroku" overwrite="true">
+                                            <fileset dir="${project.build.directory}/heroku-resources"/>
+                                        </copy>
                                         <exec dir="${project.build.directory}/heroku" executable="git" failonerror="true">
                                             <arg value="add"/>
                                             <arg value="."/>
