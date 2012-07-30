@@ -760,7 +760,7 @@
             </build>
         </profile>
         <profile>
-            <id>netbout-stage</id>
+            <id>netbout-test</id>
             <dependencies>
                 <dependency>
                     <groupId>com.rexsl</groupId>
@@ -768,6 +768,20 @@
                     <version>${rexsl.version}</version>
                     <classifier>bin</classifier>
                     <scope>runtime</scope>
+                    <exclusions>
+                        <exclusion>
+                            <groupId>org.slf4j</groupId>
+                            <artifactId>slf4j-api</artifactId>
+                        </exclusion>
+                        <exclusion>
+                            <groupId>commons-lang</groupId>
+                            <artifactId>commons-lang</artifactId>
+                        </exclusion>
+                        <exclusion>
+                            <groupId>org.mortbay.jetty</groupId>
+                            <artifactId>servlet-api</artifactId>
+                        </exclusion>
+                    </exclusions>
                 </dependency>
             </dependencies>
             <build>
@@ -789,7 +803,7 @@
                                         <mainClass>com.rexsl.standalone.RexslMain</mainClass>
                                     </manifest>
                                     <manifestEntries>
-                                        <Netbout-Version>${project.version}-stage</Netbout-Version>
+                                        <Netbout-Version>${project.version}</Netbout-Version>
                                     </manifestEntries>
                                 </archive>
                             </configuration>
@@ -832,7 +846,7 @@
                                     <target>
                                         <exec dir="${project.build.directory}" executable="git" failonerror="true">
                                             <arg value="clone"/>
-                                            <arg value="git@heroku.com:netbout-stage.git"/>
+                                            <arg value="git@heroku.com:netbout-test.git"/>
                                             <arg value="heroku"/>
                                         </exec>
                                         <copy file="${maven.settings}"
