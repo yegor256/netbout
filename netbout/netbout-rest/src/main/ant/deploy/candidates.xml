@@ -30,7 +30,7 @@
  -->
 <project name="candidates">
 
-    <target name="main" description="attempting to deploy all release candidates">
+    <target name="deploy" description="attempting to deploy all release candidates">
 
         <taskdef resource="net/sf/antcontrib/antcontrib.properties"
             classpathref="maven.plugin.classpath"/>

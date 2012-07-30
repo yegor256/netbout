@@ -501,13 +501,17 @@
                                     <goal>run</goal>
                                 </goals>
                                 <configuration>
-                                    <target>
+                                    <target description="deploy to production and staging envs">
                                         <ant dir="${basedir}" antfile="${basedir}/src/main/ant/deploy/production.xml"
-                                            inheritRefs="true">
+                                            inheritRefs="true" target="deploy">
+                                            <property name="svn.username" value="${svn.username}" />
+                                            <property name="svn.password" value="${svn.password}" />
                                             <property name="maven.settings" value="${maven.settings}" />
                                         </ant>
                                         <ant dir="${basedir}" antfile="${basedir}/src/main/ant/deploy/candidates.xml"
-                                            inheritRefs="true">
+                                            inheritRefs="true" target="deploy">
+                                            <property name="svn.username" value="${svn.username}" />
+                                            <property name="svn.password" value="${svn.password}" />
                                             <property name="maven.settings" value="${maven.settings}" />
                                         </ant>
                                     </target>

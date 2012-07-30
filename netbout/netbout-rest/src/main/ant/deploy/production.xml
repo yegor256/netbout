@@ -30,7 +30,7 @@
  -->
 <project name="production">
 
-    <target name="main" description="attempting to deploy new stable version to production">
+    <target name="deploy" description="attempting to deploy new stable version to production">
 
         <taskdef resource="net/sf/antcontrib/antcontrib.properties"
             classpathref="maven.plugin.classpath"/>
