@@ -760,7 +760,7 @@
             </build>
         </profile>
         <profile>
-            <id>netbout-stage</id>
+            <id>netbout-test</id>
             <dependencies>
                 <dependency>
                     <groupId>com.rexsl</groupId>
@@ -803,7 +803,7 @@
                                         <mainClass>com.rexsl.standalone.RexslMain</mainClass>
                                     </manifest>
                                     <manifestEntries>
-                                        <Netbout-Version>${project.version}-stage</Netbout-Version>
+                                        <Netbout-Version>${project.version}</Netbout-Version>
                                     </manifestEntries>
                                 </archive>
                             </configuration>
@@ -846,7 +846,7 @@
                                     <target>
                                         <exec dir="${project.build.directory}" executable="git" failonerror="true">
                                             <arg value="clone"/>
-                                            <arg value="git@heroku.com:netbout-stage.git"/>
+                                            <arg value="git@heroku.com:netbout-test.git"/>
                                             <arg value="heroku"/>
                                         </exec>
                                         <copy file="${maven.settings}"
