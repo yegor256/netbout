@@ -392,6 +392,17 @@
                             <artifactId>mysql-connector-java</artifactId>
                             <version since="6 May 2012">5.1.20</version>
                         </dependency>
+                        <dependency>
+                            <groupId>ant-contrib</groupId>
+                            <artifactId>ant-contrib</artifactId>
+                            <version>1.0b3</version>
+                            <exclusions>
+                                <exclusion>
+                                    <groupId>ant</groupId>
+                                    <artifactId>ant</artifactId>
+                                </exclusion>
+                            </exclusions>
+                        </dependency>
                     </dependencies>
                 </plugin>
                 <plugin>
@@ -466,86 +477,43 @@
 
     <profiles>
         <profile>
-            <id>deploy-to-beanstalk</id>
+            <id>deploy-to-environments</id>
             <activation>
                 <property>
-                    <name>!beanstalk</name>
+                    <name>!sub-deploying</name>
                 </property>
             </activation>
             <build>
                 <plugins>
                     <plugin>
+                        <artifactId>maven-deploy-plugin</artifactId>
+                        <configuration>
+                            <skip>true</skip>
+                        </configuration>
+                    </plugin>
+                    <plugin>
                         <artifactId>maven-antrun-plugin</artifactId>
                         <executions>
                             <execution>
-                                <id>deploy-to-beanstalk</id>
+                                <id>deploy-to-environments</id>
                                 <phase>deploy</phase>
                                 <goals>
                                     <goal>run</goal>
                                 </goals>
                                 <configuration>
                                     <target>
-                                        <taskdef resource="net/sf/antcontrib/antcontrib.properties"
-                                            classpathref="maven.plugin.classpath"/>
-                                        <exec executable="sh" outputproperty="tag.current">
-                                            <arg value="-c"/>
-                                            <arg value="curl -s -H Accept:application/xml http://www.netbout.com/g | xmllint --xpath '//name/text()' -"/>
-                                        </exec>
-                                        <echo message="currently deployed: '${tag.current}'" />
-                                        <exec dir="${basedir}" executable="sh" failonerror="true" outputproperty="tag.new">
-                                            <arg value="-c"/>
-                                            <arg value="svn ls ^/tags | grep netbout\- | tail -1 | sed 's/\///' | sed 's/netbout-//'"/>
-                                        </exec>
-                                        <echo message="ready for deployment: '${tag.new}'" />
-                                        <if>
-                                            <equals arg1="${tag.current}" arg2="${tag.new}" />
-                                            <then>
-                                                <echo message="version ${tag.current} is the latest, no need to deploy" />
-                                            </then>
-                                            <else>
-                                                <echo message="replacing '${tag.current}' with '${tag.new}'..." />
-                                                <exec dir="${project.build.directory}" executable="svn" failonerror="true">
-                                                    <arg value="checkout"/>
-                                                    <arg value="--username"/>
-                                                    <arg value="${svn.username}"/>
-                                                    <arg value="--password"/>
-                                                    <arg value="${svn.password}"/>
-                                                    <arg value="--no-auth-cache"/>
-                                                    <arg value="--quiet"/>
-                                                    <arg value="--non-interactive"/>
-                                                    <arg value="svn://svn.netbout.com/netbout/tags/netbout-${tag.new}"/>
-                                                    <arg value="${tag.new}"/>
-                                                </exec>
-                                                <exec dir="${project.build.directory}/${tag.new}" executable="mvn" failonerror="true">
-                                                    <arg value="-Pnetbout-production"/>
-                                                    <arg value="-DskipTests"/>
-                                                    <arg value="-Dbeanstalk"/>
-                                                    <arg value="--errors"/>
-                                                    <arg value="--update-snapshots"/>
-                                                    <arg value="--settings"/>
-                                                    <arg value="${maven.settings}"/>
-                                                    <arg value="clean"/>
-                                                    <arg value="deploy"/>
-                                                </exec>
-                                            </else>
-                                        </if>
+                                        <ant dir="${basedir}" antfile="${basedir}/src/main/ant/deploy/production.xml"
+                                            inheritRefs="true">
+                                            <property name="maven.settings" value="${maven.settings}" />
+                                        </ant>
+                                        <ant dir="${basedir}" antfile="${basedir}/src/main/ant/deploy/candidates.xml"
+                                            inheritRefs="true">
+                                            <property name="maven.settings" value="${maven.settings}" />
+                                        </ant>
                                     </target>
                                 </configuration>
                             </execution>
                         </executions>
-                        <dependencies>
-                            <dependency>
-                                <groupId>ant-contrib</groupId>
-                                <artifactId>ant-contrib</artifactId>
-                                <version>1.0b3</version>
-                                <exclusions>
-                                    <exclusion>
-                                        <groupId>ant</groupId>
-                                        <artifactId>ant</artifactId>
-                                    </exclusion>
-                                </exclusions>
-                            </dependency>
-                        </dependencies>
                     </plugin>
                 </plugins>
             </build>
