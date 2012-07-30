@@ -47,7 +47,7 @@
             <arg value="${maven.settings}"/>
             <arg value="beanstalk:describe-environments"/>
         </exec>
-        <echo message="live EBT applications: '${apps}'" />
+        <echo message="not implemented yet..." />
 
     </target>
 
