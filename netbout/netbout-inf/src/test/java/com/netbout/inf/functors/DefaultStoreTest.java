@@ -48,15 +48,18 @@ public final class DefaultStoreTest {
     public void findsKeyFunctors() throws Exception {
         final String[] names = new String[] {
             "and",
-            "or",
-            "not",
             "bundled",
             "equal",
-            "talks-with",
-            "unique",
             "from",
             "limit",
+            "matches",
+            "not",
+            "ns",
+            "or",
+            "pos",
+            "talks-with",
             "unbundled",
+            "unique",
         };
         final Store store = new DefaultStore();
         for (String name : names) {

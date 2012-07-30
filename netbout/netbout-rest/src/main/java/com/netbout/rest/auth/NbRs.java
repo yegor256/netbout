@@ -96,7 +96,12 @@ public final class NbRs extends BaseRs {
             if (!SecureString.valueOf(secret).text().equals(iname.toString())) {
                 throw new LoginRequiredException(
                     this,
-                    String.format("Wrong secret '%s' for '%s'", secret, iname)
+                    String.format(
+                        "Wrong secret '%s' (%s) for '%s'",
+                        secret,
+                        SecureString.valueOf(secret).text(),
+                        iname
+                    )
                 );
             }
         } catch (com.netbout.spi.text.StringDecryptionException ex) {
@@ -105,7 +110,7 @@ public final class NbRs extends BaseRs {
         Identity identity;
         try {
             identity = new ResolvedIdentity(
-                new URL("http://www.netbout.com/nb"),
+                this.base().path("/nb").build().toURL(),
                 iname
             );
             identity.profile().setPhoto(

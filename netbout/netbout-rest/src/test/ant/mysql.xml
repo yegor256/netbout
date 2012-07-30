@@ -65,7 +65,7 @@
                 </not>
             </condition>
         </fail>
-        <echo message="starting MySQL ${mysql.version} at localhost:${mysql.port.rest}..." />
+        <echo message="starting MySQL ${version} at localhost:${mysql.port.rest}..." />
         <exec dir="${mysql.dir}" executable="./bin/mysqld" spawn="true">
             <arg value="--basedir=."/>
             <arg value="--general_log"/>

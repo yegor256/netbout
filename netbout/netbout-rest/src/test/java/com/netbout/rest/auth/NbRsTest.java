@@ -59,9 +59,7 @@ public final class NbRsTest {
             Matchers.allOf(
                 XhtmlMatchers.hasXPath("//identity[alias='hh']"),
                 XhtmlMatchers.hasXPath("//identity[name='urn:netbout:hh']"),
-                XhtmlMatchers.hasXPath(
-                    "//identity[authority='http://www.netbout.com/nb']"
-                )
+                XhtmlMatchers.hasXPath("//identity[contains(authority,'/nb')]")
             )
         );
     }
