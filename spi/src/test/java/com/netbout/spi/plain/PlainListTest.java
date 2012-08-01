@@ -92,7 +92,7 @@ public final class PlainListTest {
      * @throws Exception If there is some problem inside
      */
     @Test
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({ "unchecked", "rawtypes" })
     public void convertsInBothWays() throws Exception {
         final String sep = ", ";
         final String original = StringUtils.join(this.list, sep);

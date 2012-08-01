@@ -63,7 +63,7 @@ public final class SecureString {
      */
     @Override
     public String toString() {
-        return this.pack(this.xor(this.raw.getBytes()));
+        return SecureString.pack(SecureString.xor(this.raw.getBytes()));
     }
 
     /**

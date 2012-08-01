@@ -69,9 +69,9 @@ public final class IdentityMocker {
         this.belongsTo("http://localhost/set-by-IdentityMocker");
         this.withProfile(new ProfileMocker().mock());
         Mockito.doAnswer(
-            new Answer() {
+            new Answer<Bout>() {
                 @Override
-                public Object answer(final InvocationOnMock invocation) {
+                public Bout answer(final InvocationOnMock invocation) {
                     final Long num = Math.abs(new Random().nextLong());
                     final Bout bout = new BoutMocker().withNumber(num).mock();
                     IdentityMocker.this.withBout(num, bout);
@@ -80,9 +80,9 @@ public final class IdentityMocker {
             }
         ).when(this.identity).start();
         Mockito.doAnswer(
-            new Answer() {
+            new Answer<List<Bout>>() {
                 @Override
-                public Object answer(final InvocationOnMock invocation) {
+                public List<Bout> answer(final InvocationOnMock invocation) {
                     final List<Bout> inbox = new ArrayList<Bout>(
                         IdentityMocker.this.bouts.values()
                     );
@@ -93,9 +93,9 @@ public final class IdentityMocker {
         ).when(this.identity).inbox(Mockito.anyString());
         try {
             Mockito.doAnswer(
-                new Answer() {
+                new Answer<Bout>() {
                     @Override
-                    public Object answer(final InvocationOnMock invocation) {
+                    public Bout answer(final InvocationOnMock invocation) {
                         final Long num = (Long) invocation.getArguments()[0];
                         final Bout bout = IdentityMocker.this.bouts.get(num);
                         if (bout == null) {
@@ -183,9 +183,9 @@ public final class IdentityMocker {
      */
     public IdentityMocker withInbox(final String query, final Long[] nums) {
         Mockito.doAnswer(
-            new Answer() {
+            new Answer<List<Bout>>() {
                 @Override
-                public Object answer(final InvocationOnMock invocation) {
+                public List<Bout> answer(final InvocationOnMock invocation) {
                     final List<Bout> inbox = new ArrayList<Bout>();
                     for (Long num : nums) {
                         inbox.add(IdentityMocker.this.bouts.get(num));

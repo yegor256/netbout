@@ -63,6 +63,7 @@ final class DomContext implements NamespaceContext {
      * {@inheritDoc}
      */
     @Override
+    @SuppressWarnings("rawtypes")
     public Iterator getPrefixes(final String uri) {
         throw new UnsupportedOperationException();
     }

@@ -59,7 +59,7 @@ public final class TokenMocker {
     public TokenMocker() {
         this.withMnemo("some-test-mnemo");
         Mockito.doAnswer(
-            new Answer() {
+            new Answer<Object>() {
                 public Object answer(final InvocationOnMock invocation) {
                     final int pos = (Integer) invocation.getArguments()[0];
                     return TokenMocker.this.args.get(pos);

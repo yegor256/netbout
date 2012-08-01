@@ -55,7 +55,7 @@ public final class PlainUrn implements Plain<Urn> {
      * @param text The text presentation
      */
     public PlainUrn(final String text) {
-        this.urn = Urn.create(text.substring(this.PREFIX.length()));
+        this.urn = Urn.create(text.substring(PlainUrn.PREFIX.length()));
     }
 
     /**
@@ -107,7 +107,7 @@ public final class PlainUrn implements Plain<Urn> {
     public String toString() {
         return String.format(
             "%s%s",
-            this.PREFIX,
+            PlainUrn.PREFIX,
             this.urn.toString()
         );
     }

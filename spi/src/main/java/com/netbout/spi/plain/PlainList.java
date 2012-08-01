@@ -82,7 +82,7 @@ public final class PlainList<T> implements Plain<List<T>> {
         for (String element : PlainList.unpack(text)) {
             parts.add((T) PlainBuilder.fromText(element).value());
         }
-        return new PlainList(parts);
+        return new PlainList<T>(parts);
     }
 
     /**
@@ -119,7 +119,7 @@ public final class PlainList<T> implements Plain<List<T>> {
         for (T element : this.list) {
             parts.add(PlainBuilder.fromObject(element).toString());
         }
-        return this.pack(parts);
+        return PlainList.pack(parts);
     }
 
     /**

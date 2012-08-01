@@ -58,7 +58,7 @@ public final class PlainVoid implements Plain<Void> {
      */
     @Override
     public int hashCode() {
-        return this.MNEMO.hashCode();
+        return PlainVoid.MNEMO.hashCode();
     }
 
     /**
@@ -82,7 +82,7 @@ public final class PlainVoid implements Plain<Void> {
      */
     @Override
     public String toString() {
-        return this.MNEMO;
+        return PlainVoid.MNEMO;
     }
 
 }

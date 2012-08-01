@@ -97,8 +97,11 @@ public final class EtaAssertion implements AssertionPolicy {
         if (this.eta > 0) {
             again = true;
             final long delay = Math.min(
-                Math.max(this.eta * attempt, this.MIN_DELAY * attempt * 2),
-                this.MAX_DELAY
+                Math.max(
+                    this.eta * attempt,
+                    EtaAssertion.MIN_DELAY * attempt * 2
+                ),
+                EtaAssertion.MAX_DELAY
             );
             Logger.warn(
                 this,
