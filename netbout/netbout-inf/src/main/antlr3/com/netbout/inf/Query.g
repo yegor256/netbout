@@ -43,7 +43,7 @@ query returns [PredicateAtom ret] throws InvalidSyntaxException
     ;
 
 predicate returns [PredicateAtom ret] throws InvalidSyntaxException
-    @init { final List<Atom> atoms = new LinkedList<Atom>(); }
+    @init { final List<Atom<?>> atoms = new LinkedList<Atom<?>>(); }
     :
     '('
     NAME
@@ -55,7 +55,7 @@ predicate returns [PredicateAtom ret] throws InvalidSyntaxException
     { $ret = new PredicateAtom($NAME.text, atoms, this.store.get($NAME.text)); }
     ;
 
-atom returns [Atom ret] throws InvalidSyntaxException
+atom returns [Atom<?> ret] throws InvalidSyntaxException
     :
     predicate
     { $ret = $predicate.ret; }

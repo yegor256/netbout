@@ -51,11 +51,11 @@ final class Pos implements Functor {
      * {@inheritDoc}
      */
     @Override
-    public Term build(final Ray ray, final List<Atom> atoms)
+    public Term build(final Ray ray, final List<Atom<?>> atoms)
         throws InvalidSyntaxException {
         return new Conjunction().build(
             ray,
-            Arrays.<Atom>asList(
+            Arrays.<Atom<?>>asList(
                 new PredicateAtom(
                     "from",
                     atoms,
@@ -63,7 +63,7 @@ final class Pos implements Functor {
                 ),
                 new PredicateAtom(
                     "limit",
-                    Arrays.asList(new Atom[] {new NumberAtom(1L)}),
+                    Arrays.asList(new Atom<?>[] {new NumberAtom(1L)}),
                     new Limit()
                 )
             )

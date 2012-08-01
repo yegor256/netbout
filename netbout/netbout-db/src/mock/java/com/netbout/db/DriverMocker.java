@@ -54,8 +54,8 @@ public final class DriverMocker {
     public DriverMocker(final String mnemo) {
         try {
             Mockito.doAnswer(
-                new Answer() {
-                    public Object answer(final InvocationOnMock invocation) {
+                new Answer<Boolean>() {
+                    public Boolean answer(final InvocationOnMock invocation) {
                         final String url =
                             (String) invocation.getArguments()[0];
                         return url.startsWith(String.format("jdbc:%s:", mnemo));
@@ -63,8 +63,9 @@ public final class DriverMocker {
                 }
             ).when(this.driver).acceptsURL(Mockito.anyString());
             Mockito.doAnswer(
-                new Answer() {
-                    public Object answer(final InvocationOnMock invocation) {
+                new Answer<DriverPropertyInfo[]>() {
+                    public DriverPropertyInfo[] answer(
+                        final InvocationOnMock invocation) {
                         final Properties props =
                             (Properties) invocation.getArguments()[0];
                         final DriverPropertyInfo[] info =

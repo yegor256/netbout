@@ -50,7 +50,7 @@ final class Equal implements Functor {
      * {@inheritDoc}
      */
     @Override
-    public Term build(final Ray ray, final List<Atom> atoms)
+    public Term build(final Ray ray, final List<Atom<?>> atoms)
         throws InvalidSyntaxException {
         if (!atoms.get(0).getClass().equals(VariableAtom.class)) {
             throw new InvalidSyntaxException("first arg should be a variable");

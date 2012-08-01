@@ -62,8 +62,8 @@ public final class TxBuilderMocker {
             .inBout(Mockito.any(Bout.class));
         Mockito.doReturn(this.builder).when(this.builder).noCache();
         Mockito.doAnswer(
-            new Answer() {
-                public Object answer(final InvocationOnMock invocation) {
+            new Answer<TxBuilder>() {
+                public TxBuilder answer(final InvocationOnMock invocation) {
                     if (TxBuilderMocker.this.value == null) {
                         TxBuilderMocker.this.value =
                             invocation.getArguments()[0];
@@ -73,7 +73,7 @@ public final class TxBuilderMocker {
             }
         ).when(this.builder).asDefault(Mockito.anyObject());
         Mockito.doAnswer(
-            new Answer() {
+            new Answer<Object>() {
                 public Object answer(final InvocationOnMock invocation) {
                     if (TxBuilderMocker.this.value == null) {
                         throw new IllegalStateException(

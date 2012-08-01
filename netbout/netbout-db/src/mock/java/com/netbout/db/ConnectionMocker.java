@@ -54,15 +54,15 @@ public final class ConnectionMocker {
     public ConnectionMocker() {
         try {
             Mockito.doAnswer(
-                new Answer() {
-                    public Object answer(final InvocationOnMock invocation) {
+                new Answer<Boolean>() {
+                    public Boolean answer(final InvocationOnMock invocation) {
                         return false;
                     }
                 }
             ).when(this.connection).isClosed();
             Mockito.doAnswer(
-                new Answer() {
-                    public Object answer(final InvocationOnMock invocation) {
+                new Answer<Boolean>() {
+                    public Boolean answer(final InvocationOnMock invocation) {
                         return false;
                     }
                 }

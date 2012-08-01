@@ -51,10 +51,10 @@ final class Disjunction implements Functor {
      * {@inheritDoc}
      */
     @Override
-    public Term build(final Ray ray, final List<Atom> atoms)
+    public Term build(final Ray ray, final List<Atom<?>> atoms)
         throws InvalidSyntaxException {
         final Collection<Term> terms = new ArrayList<Term>(atoms.size());
-        for (Atom atom : atoms) {
+        for (Atom<?> atom : atoms) {
             terms.add(PredicateAtom.class.cast(atom).term(ray));
         }
         return ray.builder().or(terms);

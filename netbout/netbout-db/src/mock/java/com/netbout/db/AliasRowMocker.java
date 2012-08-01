@@ -59,7 +59,7 @@ public final class AliasRowMocker {
         this.identity = name;
         this.alias = String.format(
             "Captain William Bones no.%d",
-            Math.abs(this.RANDOM.nextLong())
+            Math.abs(AliasRowMocker.RANDOM.nextLong())
         );
     }
 
