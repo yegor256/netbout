@@ -509,6 +509,8 @@
                             <Xlint/>
                             <Werror/>
                             <Xlint:-path/>
+                            <!-- @see https://blogs.oracle.com/darcy/entry/bootclasspath_older_source -->
+                            <Xlint:-options/>
                         </compilerArguments>
                         <testExcludes>
                             <exclude>**/package-info.java</exclude>
