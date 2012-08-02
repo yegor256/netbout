@@ -76,7 +76,7 @@ final class NfsFolder implements Folder {
      */
     public NfsFolder(final File path) throws IOException {
         this.directory = path;
-        if (this.directory.getPath().startsWith("/mnt")) {
+        if ("/mnt/inf".equals(this.directory.getPath())) {
             Logger.info(
                 this,
                 "#NfsFolder('%s'): mount is required",
@@ -100,7 +100,7 @@ final class NfsFolder implements Folder {
      */
     @Override
     public void close() throws IOException {
-        if (this.directory.getPath().startsWith("/mnt")) {
+        if ("/mnt/inf".equals(this.directory.getPath())) {
             this.exec("umount", this.directory);
         } else {
             Logger.info(this, "#close(): no umount required");
