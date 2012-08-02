@@ -51,7 +51,7 @@ public final class StatsFarmTest {
     public void rendersStageXml() throws Exception {
         final Bus bus = new BusMocker().mock();
         final StatsFarm farm = new StatsFarm();
-        farm.register(new DefaultHub(bus, new InfinityMocker().mock()));
+        StatsFarm.register(new DefaultHub(bus, new InfinityMocker().mock()));
         final Identity identity = new IdentityMocker().mock();
         farm.init(identity);
         final String xml = farm.renderStageXml(
