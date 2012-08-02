@@ -77,11 +77,20 @@ final class NfsFolder implements Folder {
     public NfsFolder(final File path) throws IOException {
         this.directory = path;
         if (this.directory.getPath().startsWith("/mnt")) {
+            Logger.info(
+                this,
+                "#NfsFolder('%s'): mount is required",
+                this.directory
+            );
             if (!this.mounted()) {
                 this.mount();
             }
         } else {
-            Logger.info(this, "#path(): mount is not required");
+            Logger.info(
+                this,
+                "#NfsFolder('%s'): mount is not required",
+                this.directory
+            );
         }
         this.obtain();
     }
