@@ -925,6 +925,11 @@
                                     <optionName>Application Healthcheck URL</optionName>
                                     <value>/g</value>
                                 </optionSetting>
+                                <optionSetting>
+                                    <namespace>aws:autoscaling:asg</namespace>
+                                    <optionName>Custom Availability Zones</optionName>
+                                    <value>us-east-1d</value>
+                                </optionSetting>
                             </optionSettings>
                         </configuration>
                         <executions>
