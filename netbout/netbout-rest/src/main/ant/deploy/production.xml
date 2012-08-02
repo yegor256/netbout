@@ -41,9 +41,20 @@
         </exec>
         <echo message="currently deployed: '${tag.current}'" />
 
-        <exec dir="${basedir}" executable="sh" failonerror="true" outputproperty="tag.new">
+        <exec dir="${basedir}" executable="svn" failonerror="true" outputproperty="tags">
+            <arg value="ls"/>
+            <arg value="--username"/>
+            <arg value="${svn.username}"/>
+            <arg value="--password"/>
+            <arg value="${svn.password}"/>
+            <arg value="--no-auth-cache"/>
+            <arg value="--non-interactive"/>
+            <arg value="svn://svn.netbout.com/netbout/tags"/>
+        </exec>
+
+        <exec dir="${basedir}" executable="sh" failonerror="true" outputproperty="tag.new" inputstring="${tags}">
             <arg value="-c"/>
-            <arg value="svn ls ^/tags | grep netbout\- | tail -1 | sed 's/\///' | sed 's/netbout-//'"/>
+            <arg value="grep netbout\- | tail -1 | sed 's/\///' | sed 's/netbout-//'"/>
         </exec>
         <echo message="ready for deployment: '${tag.new}'" />
 
