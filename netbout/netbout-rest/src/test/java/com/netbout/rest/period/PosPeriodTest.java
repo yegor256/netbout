@@ -46,8 +46,9 @@ public final class PosPeriodTest {
      */
     @Test
     public void concumesDatesAndReturnsTitle() throws Exception {
-        final Period period = PosPeriod.parse("").next(this.date("2008-08-24"));
-        period.add(this.date("2008-08-22"));
+        final Period period = PosPeriod.parse("")
+            .next(PosPeriodTest.date("2008-08-24"));
+        period.add(PosPeriodTest.date("2008-08-22"));
         MatcherAssert.assertThat(
             period.title(),
             Matchers.notNullValue()
@@ -60,7 +61,8 @@ public final class PosPeriodTest {
      */
     @Test
     public void serializesToStringAndBack() throws Exception {
-        final Period period = PosPeriod.parse("").next(this.date("2007-04-14"));
+        final Period period = PosPeriod.parse("")
+            .next(PosPeriodTest.date("2007-04-14"));
         final String text = period.toString();
         MatcherAssert.assertThat(
             PeriodsBuilder.parse(text, 0L),
@@ -74,7 +76,8 @@ public final class PosPeriodTest {
      */
     @Test
     public void explainsItselfToString() throws Exception {
-        final Period period = PosPeriod.parse("").next(this.date("2005-03-14"));
+        final Period period = PosPeriod.parse("")
+            .next(PosPeriodTest.date("2005-03-14"));
         MatcherAssert.assertThat(period.explain(), Matchers.notNullValue());
     }
 
@@ -84,10 +87,11 @@ public final class PosPeriodTest {
      */
     @Test
     public void fitsNewDatesCorrectly() throws Exception {
-        final Period period = PosPeriod.parse("").next(this.date("2011-03-20"));
+        final Period period = PosPeriod.parse("")
+            .next(PosPeriodTest.date("2011-03-20"));
         MatcherAssert.assertThat(
             "new date fits in",
-            period.fits(this.date("2011-03-18"))
+            period.fits(PosPeriodTest.date("2011-03-18"))
         );
     }
 
@@ -98,15 +102,17 @@ public final class PosPeriodTest {
     @Test
     public void rejectsDateOnOverflow() throws Exception {
         final Period period = PosPeriod.parse("", Period.MAX)
-            .next(this.date("2011-05-01"));
+            .next(PosPeriodTest.date("2011-05-01"));
         for (long day = Period.MAX; day > 0; day -= 1) {
-            final Date date = this.date(String.format("2011-03-%02d", day));
+            final Date date = PosPeriodTest.date(
+                String.format("2011-03-%02d", day)
+            );
             MatcherAssert.assertThat("fits in", period.fits(date));
             period.add(date);
         }
         MatcherAssert.assertThat(
             "overflow detected",
-            !period.fits(this.date("2011-04-01"))
+            !period.fits(PosPeriodTest.date("2011-04-01"))
         );
     }
 

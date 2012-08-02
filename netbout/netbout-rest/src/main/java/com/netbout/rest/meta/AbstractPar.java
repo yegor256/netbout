@@ -88,10 +88,10 @@ abstract class AbstractPar implements Par {
     public void push(final String line) {
         final String trimmed = line.replaceAll("\\p{Cntrl}+", "");
         if ((trimmed.isEmpty() && this.pos != 0)
-            || (this.pre && !trimmed.startsWith(this.PREFIX))) {
+            || (this.pre && !trimmed.startsWith(AbstractPar.PREFIX))) {
             this.closed = true;
         } else {
-            if (trimmed.startsWith(this.PREFIX) && this.pos == 0) {
+            if (trimmed.startsWith(AbstractPar.PREFIX) && this.pos == 0) {
                 this.pre = true;
             } else if (trimmed.startsWith("* ") && this.pos == 0) {
                 this.bullets = true;
@@ -185,7 +185,7 @@ abstract class AbstractPar implements Par {
             this.text.append('\n');
         }
         if (this.pre) {
-            this.text.append(line.substring(this.PREFIX.length()));
+            this.text.append(line.substring(AbstractPar.PREFIX.length()));
             ++this.pos;
         } else if (this.bullets) {
             this.text.append(this.format(line.substring(2)));

@@ -94,7 +94,7 @@ final class AnchorEmail {
         throws BrokenAnchorException {
         try {
             final String[] parts = SecureString.valueOf(hash).text()
-                .split(Pattern.quote(this.SEPARATOR), 2);
+                .split(Pattern.quote(AnchorEmail.SEPARATOR), 2);
             if (parts.length != 2) {
                 throw new BrokenAnchorException("Invalid text inside hash");
             }
@@ -128,7 +128,7 @@ final class AnchorEmail {
             String.format(
                 "%d%s%s",
                 this.where.number(),
-                this.SEPARATOR,
+                AnchorEmail.SEPARATOR,
                 this.receiver.name()
             )
         ).toString();

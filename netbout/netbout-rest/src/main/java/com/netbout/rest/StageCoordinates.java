@@ -171,7 +171,7 @@ public final class StageCoordinates {
         return String.format(
             "%s%s%s",
             new SecureString(this.stage()),
-            this.SEPARATOR,
+            StageCoordinates.SEPARATOR,
             new SecureString(this.place())
         );
     }

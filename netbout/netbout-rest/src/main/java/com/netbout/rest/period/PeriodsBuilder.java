@@ -164,7 +164,7 @@ public final class PeriodsBuilder {
      * @throws PeriodViolationException If this date violates the rules
      */
     public boolean show(final Date date) throws PeriodViolationException {
-        if (this.slide >= this.MAX_LINKS) {
+        if (this.slide >= PeriodsBuilder.MAX_LINKS) {
             throw new IllegalArgumentException("don't forget to call #more()");
         }
         this.position += 1;
@@ -179,7 +179,7 @@ public final class PeriodsBuilder {
                 this.total -= 1;
                 this.periods.add(
                     this.link(
-                        this.REL_MORE,
+                        PeriodsBuilder.REL_MORE,
                         String.format(
                             "%s (%d)",
                             this.period.title(),
@@ -222,8 +222,8 @@ public final class PeriodsBuilder {
      */
     public boolean more() {
         boolean more = true;
-        if (this.slide >= this.MAX_LINKS) {
-            this.periods.add(this.link(this.REL_EARLIEST, "earlier"));
+        if (this.slide >= PeriodsBuilder.MAX_LINKS) {
+            this.periods.add(this.link(PeriodsBuilder.REL_EARLIEST, "earlier"));
             more = false;
         }
         Logger.debug(
@@ -241,8 +241,10 @@ public final class PeriodsBuilder {
      * @return Links
      */
     public List<Link> links() {
-        if (this.slide > 0 && this.slide < this.MAX_LINKS) {
-            this.periods.add(this.link(this.REL_MORE, this.period.title()));
+        if (this.slide > 0 && this.slide < PeriodsBuilder.MAX_LINKS) {
+            this.periods.add(
+                this.link(PeriodsBuilder.REL_MORE, this.period.title())
+            );
         }
         return this.periods;
     }
