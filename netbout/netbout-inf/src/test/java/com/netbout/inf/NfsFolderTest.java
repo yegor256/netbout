@@ -89,7 +89,7 @@ public final class NfsFolderTest {
     @Test(expected = java.io.IOException.class)
     public void throwsWhenPemIsAbsent() throws Exception {
         Assume.assumeThat(this.pem, Matchers.nullValue());
-        new NfsFolder(new File("/mnt/something")).path();
+        new NfsFolder(new File("/mnt/inf")).path();
     }
 
     /**
