@@ -68,6 +68,7 @@
         <echo message="starting MySQL ${version} at localhost:${mysql.port.rest}..." />
         <exec dir="${mysql.dir}" executable="./bin/mysqld" spawn="true">
             <arg value="--basedir=."/>
+            <arg value="--lc-messages-dir=./share"/>
             <arg value="--general_log"/>
             <arg value="--general_log_file=${directory}/mysql-${database}.log"/>
             <arg value="--log_error=${directory}/mysql-${database}.log"/>
