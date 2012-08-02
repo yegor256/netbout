@@ -58,8 +58,8 @@ public final class UrnResolverMocker {
      * Public ctor.
      */
     public UrnResolverMocker() {
-        final Answer answer = new Answer() {
-            public Object answer(final InvocationOnMock invocation) {
+        final Answer<URL> answer = new Answer<URL>() {
+            public URL answer(final InvocationOnMock invocation) {
                 final Urn urn = (Urn) invocation.getArguments()[0];
                 final String nid = urn.nid();
                 if (!UrnResolverMocker.this.namespaces.containsKey(nid)) {

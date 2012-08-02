@@ -146,7 +146,7 @@ public final class DomParser {
             final String namespace = this.parse()
                 .getDocumentElement()
                 .getNamespaceURI();
-            belongs = namespace != null && this.matches(urn, namespace);
+            belongs = namespace != null && DomParser.matches(urn, namespace);
         }
         return belongs;
     }
@@ -196,7 +196,7 @@ public final class DomParser {
             .split(space);
         String found = null;
         for (int pos = 0; pos < parts.length; pos += 1) {
-            if (this.matches(namespace, parts[pos])) {
+            if (DomParser.matches(namespace, parts[pos])) {
                 if (pos + 1 >= parts.length) {
                     throw new DomValidationException(
                         String.format(
@@ -310,10 +310,10 @@ public final class DomParser {
                 namespace.pure()
             );
             root.setAttributeNS(
-                this.XSI_NAMESPACE,
+                DomParser.XSI_NAMESPACE,
                 "xsi:schemaLocation",
                 root.getAttributeNS(
-                    this.XSI_NAMESPACE,
+                    DomParser.XSI_NAMESPACE,
                     "schemaLocation"
                 ).replace(namespace.toString(), namespace.pure().toString())
             );

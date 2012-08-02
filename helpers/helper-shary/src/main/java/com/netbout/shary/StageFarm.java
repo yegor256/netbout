@@ -107,7 +107,7 @@ public final class StageFarm implements IdentityAware {
         if (this.identity.name().equals(stage)) {
             final Bout bout = this.identity.bout(number);
             final Stage data = new Stage(place);
-            data.add(this.extend(author, this.documents(bout)));
+            data.add(this.extend(author, StageFarm.documents(bout)));
             xml = new JaxbPrinter(data).print();
         }
         return xml;
@@ -150,7 +150,7 @@ public final class StageFarm implements IdentityAware {
         throws Exception {
         String dest = null;
         if (this.identity.name().equals(stage)) {
-            final Slip slip = this.slip(author, body);
+            final Slip slip = StageFarm.slip(author, body);
             if (slip.getName().isEmpty() || slip.getRawUri().isEmpty()) {
                 dest = "empty-args";
             } else if (slip.getRawUri().matches("(http|s3)://.*")) {
@@ -203,7 +203,7 @@ public final class StageFarm implements IdentityAware {
         if (this.identity.name().equals(stage)) {
             final String[] parts = path.split(":", 2);
             final Bout bout = this.identity.bout(number);
-            final Collection<SharedDoc> docs = this.documents(bout);
+            final Collection<SharedDoc> docs = StageFarm.documents(bout);
             SharedDoc found = null;
             for (SharedDoc doc : docs) {
                 if (doc.getName().equals(parts[1])) {

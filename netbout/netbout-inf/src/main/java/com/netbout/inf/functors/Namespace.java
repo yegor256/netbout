@@ -59,7 +59,7 @@ final class Namespace implements Functor {
      * {@inheritDoc}
      */
     @Override
-    public Term build(final Ray ray, final List<Atom> atoms) {
+    public Term build(final Ray ray, final List<Atom<?>> atoms) {
         return ray.builder().matcher(
             Namespace.ATTR,
             TextAtom.class.cast(atoms.get(0)).value()

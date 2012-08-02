@@ -85,8 +85,8 @@ public final class CursorMocker {
      */
     public CursorMocker shiftTo(final Cursor crsr) {
         Mockito.doAnswer(
-            new Answer() {
-                public Object answer(final InvocationOnMock invocation) {
+            new Answer<Cursor>() {
+                public Cursor answer(final InvocationOnMock invocation) {
                     return crsr;
                 }
             }

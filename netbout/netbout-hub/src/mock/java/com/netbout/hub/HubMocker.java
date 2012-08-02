@@ -27,6 +27,7 @@
 package com.netbout.hub;
 
 import com.netbout.bus.BusMocker;
+import com.netbout.bus.TxBuilder;
 import com.netbout.spi.Identity;
 import com.netbout.spi.IdentityMocker;
 import com.netbout.spi.Urn;
@@ -56,8 +57,8 @@ public final class HubMocker {
      */
     public HubMocker() {
         Mockito.doAnswer(
-            new Answer() {
-                public Object answer(final InvocationOnMock invocation) {
+            new Answer<TxBuilder>() {
+                public TxBuilder answer(final InvocationOnMock invocation) {
                     final String mnemo = (String) invocation.getArguments()[0];
                     return HubMocker.this.bmocker.mock().make(mnemo);
                 }
@@ -65,8 +66,8 @@ public final class HubMocker {
         ).when(this.hub).make(Mockito.anyString());
         try {
             Mockito.doAnswer(
-                new Answer() {
-                    public Object answer(final InvocationOnMock invocation) {
+                new Answer<Identity>() {
+                    public Identity answer(final InvocationOnMock invocation) {
                         final Urn name = (Urn) invocation.getArguments()[0];
                         return new IdentityMocker().namedAs(name).mock();
                     }
@@ -77,8 +78,8 @@ public final class HubMocker {
         }
         this.withUrnResolver(new UrnResolverMocker().mock());
         Mockito.doAnswer(
-            new Answer() {
-                public Object answer(final InvocationOnMock invocation) {
+            new Answer<Identity>() {
+                public Identity answer(final InvocationOnMock invocation) {
                     return (Identity) invocation.getArguments()[0];
                 }
             }

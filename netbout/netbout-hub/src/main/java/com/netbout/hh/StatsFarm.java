@@ -142,25 +142,26 @@ public final class StatsFarm implements IdentityAware {
         final Urn stage, final String place) throws Exception {
         String xml = null;
         if (this.identity.name().equals(stage)) {
-            xml = new JaxbPrinter(new Stage(this.hub.toString())).print();
+            xml = new JaxbPrinter(new Stage(StatsFarm.hub.toString())).print();
             for (String part : place.split("\\s*,\\s*")) {
                 if (!part.matches("\\d+")) {
                     continue;
                 }
                 final Long mnum = Long.valueOf(part);
-                final Long bnum = this.hub.make("get-bout-of-message")
+                final Long bnum = StatsFarm.hub.make("get-bout-of-message")
                     .synchronously()
                     .arg(mnum)
                     .exec();
-                final List<Urn> dudes = this.hub.make("get-bout-participants")
+                final List<Urn> dudes = StatsFarm.hub
+                    .make("get-bout-participants")
                     .synchronously()
                     .arg(bnum)
                     .exec();
-                final Message msg = this.hub
+                final Message msg = StatsFarm.hub
                     .identity(dudes.get(0))
                     .bout(bnum)
                     .message(mnum);
-                this.hub.infinity().see(
+                StatsFarm.hub.infinity().see(
                     new MessagePostedNotice() {
                         @Override
                         public Message message() {

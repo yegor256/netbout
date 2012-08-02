@@ -149,7 +149,7 @@ public final class RoutineFarm {
         final InternetAddress email) throws javax.mail.MessagingException {
         boolean success = false;
         try {
-            new AnchorEmail(email, this.hub)
+            new AnchorEmail(email, RoutineFarm.hub)
                 .bout()
                 .post(new EmailMessage(message).text());
             success = true;

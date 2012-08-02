@@ -65,7 +65,9 @@ public final class PlainDate implements Plain<Date> {
      */
     public PlainDate(final String text) {
         this.date = new Date(
-            this.FORMATTER.parseMillis(text.substring(this.PREFIX.length()))
+            PlainDate.FORMATTER.parseMillis(
+                text.substring(PlainDate.PREFIX.length())
+            )
         );
     }
 
@@ -118,8 +120,8 @@ public final class PlainDate implements Plain<Date> {
     public String toString() {
         return String.format(
             "%s%s",
-            this.PREFIX,
-            this.FORMATTER.print(this.date.getTime())
+            PlainDate.PREFIX,
+            PlainDate.FORMATTER.print(this.date.getTime())
         );
     }
 

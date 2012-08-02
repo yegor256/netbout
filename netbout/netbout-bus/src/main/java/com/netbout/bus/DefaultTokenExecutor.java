@@ -283,7 +283,7 @@ final class DefaultTokenExecutor implements TokenExecutor, StatsProvider {
          */
         public boolean isDone() {
             return this.nano != null
-                && this.nano >= this.MIN_NANOSEC
+                && this.nano >= DefaultTokenExecutor.Bill.MIN_NANOSEC
                 && this.helper != null
                 && this.number != null;
         }

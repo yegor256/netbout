@@ -110,7 +110,7 @@ public final class EmailFarm implements IdentityAware {
         throws Exception {
         final Bout bout = this.identity.bout(bnum);
         final Message message = bout.message(mnum);
-        final Boolean visible = this.hub.make("is-message-visible")
+        final Boolean visible = EmailFarm.hub.make("is-message-visible")
             .synchronously()
             .inBout(bout)
             .arg(bout.number())
@@ -120,7 +120,9 @@ public final class EmailFarm implements IdentityAware {
             .exec();
         if (visible) {
             for (Participant participant : bout.participants()) {
-                if (!this.NID.equals(participant.identity().name().nid())) {
+                if (!EmailFarm.NID.equals(
+                    participant.identity().name().nid()
+                )) {
                     continue;
                 }
                 if (message.author().equals(participant.identity())) {
@@ -141,9 +143,11 @@ public final class EmailFarm implements IdentityAware {
     public List<Urn> findIdentitiesByKeyword(final Urn who,
         final String keyword) {
         List<Urn> urns = null;
-        if (keyword.matches(this.EMAIL_REGEX)) {
+        if (keyword.matches(EmailFarm.EMAIL_REGEX)) {
             urns = new ArrayList<Urn>();
-            urns.add(new Urn(this.NID, keyword.toLowerCase(Locale.ENGLISH)));
+            urns.add(
+                new Urn(EmailFarm.NID, keyword.toLowerCase(Locale.ENGLISH))
+            );
         }
         return urns;
     }
@@ -156,7 +160,7 @@ public final class EmailFarm implements IdentityAware {
     @Operation("get-aliases-of-identity")
     public List<String> getAliasesOfIdentity(final Urn name) {
         List<String> aliases = null;
-        if (this.NID.equals(name.nid())) {
+        if (EmailFarm.NID.equals(name.nid())) {
             aliases = new ArrayList<String>();
             aliases.add(name.nss());
         }
@@ -218,7 +222,7 @@ public final class EmailFarm implements IdentityAware {
      */
     private String textOf(final Message message) {
         final String text = message.text();
-        final String render = this.hub.make("pre-render-message")
+        final String render = EmailFarm.hub.make("pre-render-message")
             .synchronously()
             .inBout(message.bout())
             .arg(message.bout().number())

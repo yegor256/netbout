@@ -51,7 +51,7 @@ final class Unbundled implements Functor {
      * {@inheritDoc}
      */
     @Override
-    public Term build(final Ray ray, final List<Atom> atoms) {
+    public Term build(final Ray ray, final List<Atom<?>> atoms) {
         final Long bout = NumberAtom.class.cast(atoms.get(0)).value();
         final Cursor cursor = ray.cursor().shift(this.matcher(ray, bout));
         Term term;

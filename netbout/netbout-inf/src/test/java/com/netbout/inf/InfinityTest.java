@@ -113,7 +113,7 @@ public final class InfinityTest {
      * @throws Exception If there is some problem inside
      */
     private Notice notice(final XmlDocument xml) throws Exception {
-        final Class type = Class.forName(xml.xpath("@notice").get(0));
+        final Class<?> type = Class.forName(xml.xpath("@notice").get(0));
         final Properties props = this.properties(xml);
         Notice notice;
         if (type.equals(MessagePostedNotice.class)) {

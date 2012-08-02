@@ -69,8 +69,8 @@ public final class BoutMgrMocker {
             .when(this.mgr).create(Mockito.any(Urn.class));
         try {
             Mockito.doAnswer(
-                new Answer() {
-                    public Object answer(final InvocationOnMock invocation) {
+                new Answer<BoutDt>() {
+                    public BoutDt answer(final InvocationOnMock invocation) {
                         final Long num = (Long) invocation.getArguments()[0];
                         return new BoutDtMocker()
                             .withNumber(num)

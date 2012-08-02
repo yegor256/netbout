@@ -262,9 +262,8 @@ final class NfsFolder implements Folder {
      */
     private Session session() throws IOException {
         try {
-            final JSch jsch = new JSch();
-            jsch.setConfig("StrictHostKeyChecking", "no");
-            jsch.setLogger(
+            JSch.setConfig("StrictHostKeyChecking", "no");
+            JSch.setLogger(
                 new com.jcraft.jsch.Logger() {
                     @Override
                     public boolean isEnabled(final int level) {
@@ -278,6 +277,7 @@ final class NfsFolder implements Folder {
                     }
                 }
             );
+            final JSch jsch = new JSch();
             jsch.addIdentity(this.key().getPath());
             return jsch.getSession("ec2-user", "localhost");
         } catch (com.jcraft.jsch.JSchException ex) {

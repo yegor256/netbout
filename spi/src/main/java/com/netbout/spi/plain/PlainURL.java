@@ -56,7 +56,7 @@ public final class PlainURL implements Plain<URL> {
      */
     public PlainURL(final String text) {
         try {
-            this.url = new URL(text.substring(this.PREFIX.length()));
+            this.url = new URL(text.substring(PlainURL.PREFIX.length()));
         } catch (java.net.MalformedURLException ex) {
             throw new IllegalArgumentException(ex);
         }
@@ -111,7 +111,7 @@ public final class PlainURL implements Plain<URL> {
     public String toString() {
         return String.format(
             "%s%s",
-            this.PREFIX,
+            PlainURL.PREFIX,
             this.url.toString()
         );
     }

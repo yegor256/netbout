@@ -58,7 +58,7 @@ public final class PredicateAtom implements Atom<String> {
     /**
      * List of atoms.
      */
-    private final transient List<Atom> args;
+    private final transient List<Atom<?>> args;
 
     /**
      * Public ctor.
@@ -66,10 +66,10 @@ public final class PredicateAtom implements Atom<String> {
      * @param atoms Arguments
      * @param fnctr The functor
      */
-    public PredicateAtom(final String txt, final List<Atom> atoms,
+    public PredicateAtom(final String txt, final List<Atom<?>> atoms,
         final Functor fnctr) {
         this.name = txt;
-        this.args = new ArrayList<Atom>(atoms);
+        this.args = new ArrayList<Atom<?>>(atoms);
         this.functor = fnctr;
     }
 

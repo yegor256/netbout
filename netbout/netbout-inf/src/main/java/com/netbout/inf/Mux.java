@@ -113,8 +113,8 @@ final class Mux implements Closeable {
     /**
      * Futures running.
      */
-    private final transient Collection<ScheduledFuture> futures =
-        new ArrayList<ScheduledFuture>(Mux.THREADS);
+    private final transient Collection<ScheduledFuture<?>> futures =
+        new ArrayList<ScheduledFuture<?>>(Mux.THREADS);
 
     /**
      * Semaphore, that holds locks for every actively working task (and
@@ -283,7 +283,7 @@ final class Mux implements Closeable {
      */
     @Override
     public void close() {
-        for (ScheduledFuture future : this.futures) {
+        for (ScheduledFuture<?> future : this.futures) {
             future.cancel(true);
         }
         this.service.shutdown();

@@ -139,11 +139,11 @@ public final class RestSession {
             .assertThat(new EtaAssertion())
             .assertStatus(HttpURLConnection.HTTP_SEE_OTHER)
             .assertHeader(
-                this.AUTH_HEADER,
+                RestSession.AUTH_HEADER,
                 Matchers.not(Matchers.<String>emptyIterable())
             )
             .getHeaders()
-            .getFirst(this.AUTH_HEADER);
+            .getFirst(RestSession.AUTH_HEADER);
         Logger.debug(
             this,
             "#fetch('%s', '%s'): '%s' authenticated us as '%s'",

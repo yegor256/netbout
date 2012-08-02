@@ -63,7 +63,7 @@ public final class ProfileMocker {
         this.withPhoto("http://localhost/set-by-ProfileMocker.png");
         this.withLocale(Locale.ENGLISH);
         Mockito.doAnswer(
-            new Answer() {
+            new Answer<Object>() {
                 @Override
                 public Object answer(final InvocationOnMock invocation) {
                     return new HashSet<String>(ProfileMocker.this.aliases);

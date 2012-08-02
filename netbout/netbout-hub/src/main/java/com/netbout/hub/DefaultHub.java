@@ -169,7 +169,7 @@ public final class DefaultHub implements PowerHub {
      */
     @Override
     public void close() throws IOException {
-        for (ScheduledFuture cron : this.crons) {
+        for (ScheduledFuture<?> cron : this.crons) {
             cron.cancel(true);
         }
         this.service.shutdown();

@@ -145,9 +145,10 @@ public final class HubProfile implements Profile {
                 final URL url = this.hub.make("get-identity-photo")
                     .synchronously()
                     .arg(this.person.name())
-                    .asDefault(this.DEFAULT_PHOTO)
+                    .asDefault(HubProfile.DEFAULT_PHOTO)
                     .exec();
-                this.iphoto = new PhotoProxy(this.DEFAULT_PHOTO).normalize(url);
+                this.iphoto = new PhotoProxy(HubProfile.DEFAULT_PHOTO)
+                    .normalize(url);
             }
             return this.iphoto;
         }
@@ -160,7 +161,8 @@ public final class HubProfile implements Profile {
     public void setPhoto(final URL url) {
         final URL previous = this.iphoto;
         synchronized (this.person) {
-            this.iphoto = new PhotoProxy(this.DEFAULT_PHOTO).normalize(url);
+            this.iphoto = new PhotoProxy(HubProfile.DEFAULT_PHOTO)
+                .normalize(url);
         }
         this.hub.make("identity-mentioned")
             .synchronously()

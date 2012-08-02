@@ -69,7 +69,7 @@ public final class LogList {
         final StringBuilder text = new StringBuilder();
         for (Object event : ListUtils.union(this.list, WebAppender.get())) {
             text.append(StringEscapeUtils.escapeXml(event.toString()))
-                .append(this.SEP);
+                .append(LogList.SEP);
         }
         return new SecureString(text.toString()).toString();
     }
@@ -82,7 +82,7 @@ public final class LogList {
         try {
             final String[] events = StringUtils.splitPreserveAllTokens(
                 SecureString.valueOf(text).text(),
-                this.SEP
+                LogList.SEP
             );
             for (String event : events) {
                 this.list.add(StringEscapeUtils.unescapeXml(event));
