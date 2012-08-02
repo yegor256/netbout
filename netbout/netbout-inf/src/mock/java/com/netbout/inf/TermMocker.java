@@ -58,8 +58,8 @@ public final class TermMocker {
      */
     public TermMocker shiftTo(final Cursor cursor) {
         Mockito.doAnswer(
-            new Answer() {
-                public Object answer(final InvocationOnMock invocation) {
+            new Answer<Cursor>() {
+                public Cursor answer(final InvocationOnMock invocation) {
                     return cursor;
                 }
             }

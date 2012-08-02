@@ -58,7 +58,7 @@ public final class PosTest {
         final Pos functor = new Pos();
         final Term term = functor.build(
             ray,
-            Arrays.<Atom>asList(new NumberAtom(0L))
+            Arrays.<Atom<?>>asList(new NumberAtom(0L))
         );
         Cursor cursor = ray.cursor().shift(term);
         MatcherAssert.assertThat(
@@ -82,7 +82,7 @@ public final class PosTest {
         final Pos functor = new Pos();
         final Term term = functor.build(
             ray,
-            Arrays.<Atom>asList(new NumberAtom(1L))
+            Arrays.<Atom<?>>asList(new NumberAtom(1L))
         );
         Cursor cursor = ray.cursor().shift(term);
         MatcherAssert.assertThat(

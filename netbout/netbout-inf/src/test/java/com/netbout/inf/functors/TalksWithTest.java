@@ -83,7 +83,7 @@ public final class TalksWithTest {
             ray.cursor().shift(
                 functor.build(
                     ray,
-                    Arrays.<Atom>asList(new TextAtom(author.toString()))
+                    Arrays.<Atom<?>>asList(new TextAtom(author.toString()))
                 )
             ).msg().number(),
             Matchers.equalTo(msg)

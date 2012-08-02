@@ -73,7 +73,7 @@ public final class MatchesTest {
             ray.cursor().shift(
                 functor.build(
                     ray,
-                    Arrays.<Atom>asList(new TextAtom("dude"))
+                    Arrays.<Atom<?>>asList(new TextAtom("dude"))
                 )
             ).msg().number(),
             Matchers.equalTo(msg)
@@ -82,7 +82,7 @@ public final class MatchesTest {
             ray.cursor().shift(
                 functor.build(
                     ray,
-                    Arrays.<Atom>asList(new TextAtom(""))
+                    Arrays.<Atom<?>>asList(new TextAtom(""))
                 )
             ).msg().number(),
             Matchers.equalTo(msg)

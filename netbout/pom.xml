@@ -615,6 +615,9 @@
                             <Xlint:-path/>
                             <!-- @see https://blogs.oracle.com/darcy/entry/bootclasspath_older_source -->
                             <Xlint:-options/>
+                            <!-- @see http://netbeans.org/bugzilla/show_bug.cgi?format=multiple&id=208666 -->
+                            <!-- this is to avoid a problem with ANTLR and JDK7 -->
+                            <Xlint:-classfile/>
                         </compilerArguments>
                         <testExcludes>
                             <exclude>**/package-info.java</exclude>

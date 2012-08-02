@@ -49,7 +49,7 @@ public final class StageFarmTest {
         final StageFarm farm = new StageFarm();
         final Identity identity = new IdentityMocker().mock();
         farm.init(identity);
-        farm.register(new InfinityMocker().mock());
+        StageFarm.register(new InfinityMocker().mock());
         final String xml = farm.renderStageXml(
             1L, identity.name(), identity.name(), ""
         );
