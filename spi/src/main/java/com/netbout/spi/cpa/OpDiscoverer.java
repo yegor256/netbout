@@ -114,7 +114,7 @@ final class OpDiscoverer {
     private ConcurrentMap<String, HelpTarget> retrieve(final Reflections ref) {
         final ConcurrentMap<String, HelpTarget> targets =
             new ConcurrentHashMap<String, HelpTarget>();
-        for (Class tfarm : ref.getTypesAnnotatedWith(Farm.class)) {
+        for (Class<?> tfarm : ref.getTypesAnnotatedWith(Farm.class)) {
             Logger.debug(
                 this,
                 "#discover(..): @Farm found at '%s'",

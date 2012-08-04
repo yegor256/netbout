@@ -79,7 +79,7 @@ public final class BundledTest {
         }
         final Term term = new Bundled().build(
             ray,
-            Arrays.asList(new Atom[0])
+            Arrays.asList(new Atom<?>[0])
         );
         MatcherAssert.assertThat(
             ray.cursor().shift(term).msg().number(),

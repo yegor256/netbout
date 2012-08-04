@@ -57,7 +57,7 @@ public final class FromTest {
         final From functor = new From();
         final Term term = functor.build(
             ray,
-            Arrays.<Atom>asList(new NumberAtom(0L))
+            Arrays.<Atom<?>>asList(new NumberAtom(0L))
         );
         MatcherAssert.assertThat(
             ray.cursor().shift(term).msg().number(),
@@ -77,7 +77,7 @@ public final class FromTest {
         final From functor = new From();
         final Term term = functor.build(
             ray,
-            Arrays.<Atom>asList(new NumberAtom(1L))
+            Arrays.<Atom<?>>asList(new NumberAtom(1L))
         );
         MatcherAssert.assertThat(
             ray.cursor().shift(term).end(),

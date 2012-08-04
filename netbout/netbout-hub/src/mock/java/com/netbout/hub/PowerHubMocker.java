@@ -27,6 +27,8 @@
 package com.netbout.hub;
 
 import com.netbout.bus.BusMocker;
+import com.netbout.bus.TxBuilder;
+import com.netbout.inf.Infinity;
 import com.netbout.inf.InfinityMocker;
 import com.netbout.spi.Identity;
 import com.netbout.spi.IdentityMocker;
@@ -57,16 +59,16 @@ public final class PowerHubMocker {
      */
     public PowerHubMocker() {
         Mockito.doAnswer(
-            new Answer() {
-                public Object answer(final InvocationOnMock invocation) {
+            new Answer<TxBuilder>() {
+                public TxBuilder answer(final InvocationOnMock invocation) {
                     final String mnemo = (String) invocation.getArguments()[0];
                     return PowerHubMocker.this.bmocker.mock().make(mnemo);
                 }
             }
         ).when(this.hub).make(Mockito.anyString());
         Mockito.doAnswer(
-            new Answer() {
-                public Object answer(final InvocationOnMock invocation) {
+            new Answer<Infinity>() {
+                public Infinity answer(final InvocationOnMock invocation) {
                     return new InfinityMocker().mock();
                 }
             }
@@ -75,8 +77,8 @@ public final class PowerHubMocker {
         this.withBoutMgr(new BoutMgrMocker().mock());
         try {
             Mockito.doAnswer(
-                new Answer() {
-                    public Object answer(final InvocationOnMock invocation) {
+                new Answer<Identity>() {
+                    public Identity answer(final InvocationOnMock invocation) {
                         final Urn name = (Urn) invocation.getArguments()[0];
                         return new IdentityMocker().namedAs(name).mock();
                     }
@@ -86,8 +88,8 @@ public final class PowerHubMocker {
             throw new IllegalArgumentException(ex);
         }
         Mockito.doAnswer(
-            new Answer() {
-                public Object answer(final InvocationOnMock invocation) {
+            new Answer<Identity>() {
+                public Identity answer(final InvocationOnMock invocation) {
                     return (Identity) invocation.getArguments()[0];
                 }
             }

@@ -68,7 +68,16 @@
                 </link>
                 <link rel="icon" type="image/gif">
                     <xsl:attribute name="href">
-                        <xsl:text>http://cdn.netbout.com/favicon.ico?</xsl:text>
+                        <xsl:text>http://cdn.netbout.com/favicon</xsl:text>
+                        <xsl:choose>
+                            <xsl:when test="contains(/page/version/name, '-SNAPSHOT')">
+                                <xsl:text>-test</xsl:text>
+                            </xsl:when>
+                            <xsl:when test="contains(/page/version/name, '-RC')">
+                                <xsl:text>-stage</xsl:text>
+                            </xsl:when>
+                        </xsl:choose>
+                        <xsl:text>.ico?</xsl:text>
                         <xsl:value-of select="/page/version/revision"/>
                     </xsl:attribute>
                 </link>
@@ -134,8 +143,25 @@
     </xsl:template>
 
     <xsl:template match="version">
+        <xsl:if test="contains(name, '-SNAPSHOT') or contains(name, '-RC')">
+            <div style="width: 100%; height: 100%; display: table; position: fixed;">
+                <div style="text-align: center; vertical-align: middle; display: table-cell;">
+                    <xsl:choose>
+                        <xsl:when test="contains(/page/version/name, '-SNAPSHOT')">
+                            <p style="font-size: 12em;">TEST</p>
+                            <p style="font-size: 5em;">This is a testing server.</p>
+                        </xsl:when>
+                        <xsl:when test="contains(/page/version/name, '-RC')">
+                            <p style="font-size: 12em;">STAGE</p>
+                            <p style="font-size: 5em;">This is a staging server,<br/>with temporary testing data.</p>
+                        </xsl:when>
+                    </xsl:choose>
+                </div>
+            </div>
+        </xsl:if>
         <div id="version">
-            <xsl:text>r</xsl:text>
+            <xsl:value-of select="name"/>
+            <xsl:text> r</xsl:text>
             <xsl:value-of select="revision"/>
             <xsl:text> </xsl:text>
             <xsl:call-template name="millis">

@@ -73,7 +73,7 @@ public final class BoutMocker {
         Mockito.doReturn(this.participants).when(this.bout).participants();
         try {
             Mockito.doAnswer(
-                new Answer() {
+                new Answer<Object>() {
                     public Object answer(final InvocationOnMock invocation) {
                         final Long num = (Long) invocation.getArguments()[0];
                         return BoutMocker.this.messages.get(num.intValue());
@@ -150,7 +150,7 @@ public final class BoutMocker {
      */
     public BoutMocker messageOn(final String mask, final String text) {
         Mockito.doAnswer(
-            new Answer() {
+            new Answer<Object>() {
                 public Object answer(final InvocationOnMock invocation) {
                     final List<Message> msgs = new ArrayList<Message>();
                     msgs.add(new MessageMocker().withText(text).mock());

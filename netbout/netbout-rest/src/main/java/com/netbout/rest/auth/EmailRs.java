@@ -115,7 +115,7 @@ public final class EmailRs extends BaseRs {
         Identity identity;
         try {
             identity = new ResolvedIdentity(
-                new URL("http://www.netbout.com/email"),
+                this.base().path("/email").build().toURL(),
                 iname
             );
             identity.profile().setPhoto(

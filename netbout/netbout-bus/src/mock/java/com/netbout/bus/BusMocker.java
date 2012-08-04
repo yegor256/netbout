@@ -47,8 +47,8 @@ public final class BusMocker {
      */
     public BusMocker() {
         Mockito.doAnswer(
-            new Answer() {
-                public Object answer(final InvocationOnMock invocation) {
+            new Answer<TxBuilder>() {
+                public TxBuilder answer(final InvocationOnMock invocation) {
                     return new TxBuilderMocker().mock();
                 }
             }

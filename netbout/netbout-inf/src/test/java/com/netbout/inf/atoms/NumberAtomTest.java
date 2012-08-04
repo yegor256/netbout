@@ -44,7 +44,7 @@ public final class NumberAtomTest {
      */
     @Test
     public void encapsulatesText() throws Exception {
-        final Atom atom = new NumberAtom(2L);
+        final Atom<?> atom = new NumberAtom(2L);
         MatcherAssert.assertThat(
             atom.toString(),
             Matchers.equalTo("2")

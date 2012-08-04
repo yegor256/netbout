@@ -87,7 +87,7 @@ final class HelpTarget {
      */
     @SuppressWarnings("PMD.AvoidCatchingThrowable")
     public void execute(final Token token) {
-        final Object[] params = this.converted(
+        final Object[] params = HelpTarget.converted(
             token,
             this.method.getParameterTypes()
         );
@@ -107,7 +107,7 @@ final class HelpTarget {
                 Logger.format(
                     "Failed to call \"%s\" with %[list]s",
                     this.method.toGenericString(),
-                    this.typesOf(params)
+                    HelpTarget.typesOf(params)
                 ),
                 ex
             );
@@ -117,7 +117,7 @@ final class HelpTarget {
                 Logger.format(
                     "Exception in \"%s\" with %[list]s",
                     this.method.toGenericString(),
-                    this.typesOf(params)
+                    HelpTarget.typesOf(params)
                 ),
                 ex
             );
@@ -148,8 +148,8 @@ final class HelpTarget {
      * @param objects Objects
      * @return Array of their types
      */
-    private static Class[] typesOf(final Object[] objects) {
-        final Class[] types = new Class[objects.length];
+    private static Class<?>[] typesOf(final Object[] objects) {
+        final Class<?>[] types = new Class<?>[objects.length];
         for (int pos = 0; pos < objects.length; pos += 1) {
             types[pos] = objects[pos].getClass();
         }

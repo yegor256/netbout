@@ -110,6 +110,7 @@
             https://s3.amazonaws.com/netbout.maven/snapshot
             -->
             <id>netbout.s3</id>
+            <uniqueVersion>false</uniqueVersion>
             <url>s3://repo.netbout.com/snapshot</url>
         </snapshotRepository>
         <repository>
@@ -118,6 +119,7 @@
             https://s3.amazonaws.com/netbout.maven/release
             -->
             <id>netbout.s3</id>
+            <uniqueVersion>false</uniqueVersion>
             <url>s3://repo.netbout.com/release</url>
         </repository>
         <site>
@@ -611,6 +613,11 @@
                             <Xlint/>
                             <Werror/>
                             <Xlint:-path/>
+                            <!-- @see https://blogs.oracle.com/darcy/entry/bootclasspath_older_source -->
+                            <Xlint:-options/>
+                            <!-- @see http://netbeans.org/bugzilla/show_bug.cgi?format=multiple&id=208666 -->
+                            <!-- this is to avoid a problem with ANTLR and JDK7 -->
+                            <Xlint:-classfile/>
                         </compilerArguments>
                         <testExcludes>
                             <exclude>**/package-info.java</exclude>

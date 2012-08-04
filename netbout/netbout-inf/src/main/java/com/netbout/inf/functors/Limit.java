@@ -52,7 +52,7 @@ final class Limit implements Functor {
      * {@inheritDoc}
      */
     @Override
-    public Term build(final Ray ray, final List<Atom> atoms) {
+    public Term build(final Ray ray, final List<Atom<?>> atoms) {
         return new LimitTerm(ray, NumberAtom.class.cast(atoms.get(0)).value());
     }
 

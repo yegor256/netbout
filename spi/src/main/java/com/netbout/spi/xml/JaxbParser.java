@@ -106,7 +106,7 @@ public final class JaxbParser {
      * @param type The type we're expecting
      * @return The same document
      */
-    private static Document clear(final Document dom, final Class type) {
+    private static Document clear(final Document dom, final Class<?> type) {
         final Urn required = JaxbPrinter.namespace(type);
         if (!required.isEmpty()) {
             final String actual = dom.getDocumentElement().getNamespaceURI();

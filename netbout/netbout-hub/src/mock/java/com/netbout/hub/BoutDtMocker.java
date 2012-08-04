@@ -68,8 +68,8 @@ public final class BoutDtMocker {
         this.bout = mock;
         Mockito.doReturn(this.participants).when(this.bout).getParticipants();
         Mockito.doAnswer(
-            new Answer() {
-                public Object answer(final InvocationOnMock invocation) {
+            new Answer<ParticipantDt>() {
+                public ParticipantDt answer(final InvocationOnMock invocation) {
                     final Urn name = (Urn) invocation.getArguments()[0];
                     final ParticipantDt dude = new ParticipantDtMocker()
                         .withIdentity(name)

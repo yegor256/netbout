@@ -100,9 +100,9 @@ final class EmailMessage {
         final String raw = this.raw();
         final StringBuilder text = new StringBuilder();
         boolean found = false;
-        for (String line : raw.split(Pattern.quote(this.CRLF))) {
+        for (String line : raw.split(Pattern.quote(EmailMessage.CRLF))) {
             final String polished = line.replaceAll("[\\s\r\t]+", " ").trim();
-            for (Pattern pattern : this.STOPPERS) {
+            for (Pattern pattern : EmailMessage.STOPPERS) {
                 if (pattern.matcher(polished).matches()) {
                     found = true;
                     break;

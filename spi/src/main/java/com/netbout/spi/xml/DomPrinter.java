@@ -80,7 +80,7 @@ public final class DomPrinter {
     public String print() {
         final StringWriter writer = new StringWriter();
         try {
-            final Transformer transformer = this.FACTORY.newTransformer();
+            final Transformer transformer = DomPrinter.FACTORY.newTransformer();
             transformer.setOutputProperty(OutputKeys.INDENT, "yes");
             transformer.transform(
                 new DOMSource(this.element),

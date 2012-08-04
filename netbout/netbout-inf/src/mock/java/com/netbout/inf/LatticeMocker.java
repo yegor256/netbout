@@ -48,7 +48,7 @@ public final class LatticeMocker {
      */
     public Lattice mock() {
         Mockito.doAnswer(
-            new Answer() {
+            new Answer<Object>() {
                 public Object answer(final InvocationOnMock invocation) {
                     return invocation.getArguments()[0];
                 }

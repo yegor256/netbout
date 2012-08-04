@@ -33,7 +33,7 @@
     <!-- MySQL 5.5 has to be installed at this folder -->
     <property name="mysql.dir" value="/usr/local/mysql-bin"/>
 
-    <target name="start">
+    <target name="start" description="starting MySQL server">
         <!-- see http://stackoverflow.com/questions/3510673 -->
         <exec executable="sh" failonerror="true" outputproperty="expired">
             <arg value="-c"/>
@@ -65,9 +65,10 @@
                 </not>
             </condition>
         </fail>
-        <echo message="starting MySQL ${mysql.version} at localhost:${mysql.port.rest}..." />
+        <echo message="starting MySQL ${version} at localhost:${mysql.port.rest}..." />
         <exec dir="${mysql.dir}" executable="./bin/mysqld" spawn="true">
             <arg value="--basedir=."/>
+            <arg value="--lc-messages-dir=./share"/>
             <arg value="--general_log"/>
             <arg value="--general_log_file=${directory}/mysql-${database}.log"/>
             <arg value="--log_error=${directory}/mysql-${database}.log"/>
@@ -107,7 +108,7 @@
             userid="root" password="root" print="true">SHOW TABLES</sql>
     </target>
 
-    <target name="stop">
+    <target name="stop" description="stopping MySQL server">
         <exec dir="${mysql.dir}" executable="./bin/mysqladmin" failonerror="true">
             <arg value="--port=${port}"/>
             <arg value="--user=root"/>

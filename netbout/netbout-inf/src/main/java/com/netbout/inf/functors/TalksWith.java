@@ -60,7 +60,7 @@ final class TalksWith implements Functor {
      * {@inheritDoc}
      */
     @Override
-    public Term build(final Ray ray, final List<Atom> atoms) {
+    public Term build(final Ray ray, final List<Atom<?>> atoms) {
         return ray.builder().matcher(
             TalksWith.ATTR,
             TextAtom.class.cast(atoms.get(0)).value()

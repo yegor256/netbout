@@ -1,0 +1,97 @@
+<?xml version="1.0"?>
+<!--
+ * Copyright (c) 2009-2012, Netbout.com
+ * All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are PROHIBITED without prior written permission from
+ * the author. This product may NOT be used anywhere and on any computer
+ * except the server platform of netBout Inc. located at www.netbout.com.
+ * Federal copyright law prohibits unauthorized reproduction by any means
+ * and imposes fines up to $25,000 for violation. If you received
+ * this code occasionally and without intent to use it, please report this
+ * incident to the author by email: privacy@netbout.com.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+ * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+ * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+ * A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+ * OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+ * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+ * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
+ * ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+ * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
+ * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
+ * SUCH DAMAGE.
+ *
+ * @author Yegor Bugayenko (yegor@netbout.com)
+ * @version $Id$
+ -->
+<project name="production">
+
+    <target name="deploy" description="attempting to deploy new stable version to production">
+
+        <taskdef resource="net/sf/antcontrib/antcontrib.properties"
+            classpathref="maven.plugin.classpath"/>
+
+        <exec executable="sh" outputproperty="tag.current">
+            <arg value="-c"/>
+            <arg value="curl -s -H Accept:application/xml http://www.netbout.com/g | xmllint --xpath '//name/text()' -"/>
+        </exec>
+        <echo message="currently deployed: '${tag.current}'" />
+
+        <exec dir="${basedir}" executable="svn" failonerror="true" outputproperty="tags">
+            <arg value="ls"/>
+            <arg value="--username"/>
+            <arg value="${svn.username}"/>
+            <arg value="--password"/>
+            <arg value="${svn.password}"/>
+            <arg value="--no-auth-cache"/>
+            <arg value="--non-interactive"/>
+            <arg value="svn://svn.netbout.com/netbout/tags"/>
+        </exec>
+
+        <exec dir="${basedir}" executable="sh" failonerror="true" outputproperty="tag.new" inputstring="${tags}">
+            <arg value="-c"/>
+            <arg value="grep netbout\- | tail -1 | sed 's/\///' | sed 's/netbout-//'"/>
+        </exec>
+        <echo message="ready for deployment: '${tag.new}'" />
+
+        <if>
+            <equals arg1="${tag.current}" arg2="${tag.new}" />
+            <then>
+                <echo message="version ${tag.current} is the latest, no need to deploy" />
+            </then>
+            <else>
+                <echo message="replacing '${tag.current}' with '${tag.new}'..." />
+                <exec dir="${basedir}/target" executable="svn" failonerror="true">
+                    <arg value="checkout"/>
+                    <arg value="--username"/>
+                    <arg value="${svn.username}"/>
+                    <arg value="--password"/>
+                    <arg value="${svn.password}"/>
+                    <arg value="--no-auth-cache"/>
+                    <arg value="--quiet"/>
+                    <arg value="--non-interactive"/>
+                    <arg value="svn://svn.netbout.com/netbout/tags/netbout-${tag.new}"/>
+                    <arg value="${tag.new}"/>
+                </exec>
+                <exec dir="${basedir}/target/${tag.new}" executable="mvn" failonerror="true">
+                    <arg value="-Pnetbout-production"/>
+                    <arg value="-DskipTests"/>
+                    <arg value="-Dbeanstalk"/>
+                    <arg value="-Dsub-deploying"/>
+                    <arg value="--errors"/>
+                    <arg value="--update-snapshots"/>
+                    <arg value="--settings"/>
+                    <arg value="${maven.settings}"/>
+                    <arg value="clean"/>
+                    <arg value="deploy"/>
+                </exec>
+            </else>
+        </if>
+
+    </target>
+
+</project>

@@ -220,7 +220,7 @@ public final class Slip {
         util.registerMimeDetector(
             "eu.medsea.mimeutil.detector.ExtensionMimeDetector"
         );
-        return util.getMostSpecificMimeType(
+        return MimeUtil2.getMostSpecificMimeType(
             util.getMimeTypes(this.uri)
         ).toString();
     }

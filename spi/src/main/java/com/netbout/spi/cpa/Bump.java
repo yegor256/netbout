@@ -66,7 +66,7 @@ final class Bump {
         int retry = 0;
         while (this.identity.eta() > 0) {
             ++retry;
-            if (System.nanoTime() - start > this.MAX_NANO) {
+            if (System.nanoTime() - start > Bump.MAX_NANO) {
                 throw new IllegalArgumentException(
                     String.format(
                         "Identity %s still not ready",

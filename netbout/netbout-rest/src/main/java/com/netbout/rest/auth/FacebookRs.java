@@ -85,7 +85,7 @@ public final class FacebookRs extends BaseRs {
             .status(Response.Status.SEE_OTHER)
             .location(
                 this.base().path("/auth")
-                    .queryParam("identity", new Urn(this.NAMESPACE, ""))
+                    .queryParam("identity", new Urn(FacebookRs.NAMESPACE, ""))
                     .queryParam("secret", "{fbcode}")
                     .build(code)
             )
@@ -109,14 +109,14 @@ public final class FacebookRs extends BaseRs {
                 "'identity' and 'secret' query params are mandatory"
             );
         }
-        if (!this.NAMESPACE.equals(iname.nid())) {
+        if (!FacebookRs.NAMESPACE.equals(iname.nid())) {
             throw new LoginRequiredException(
                 this,
                 String.format(
                     "NID '%s' is not correct in '%s', '%s' expected",
                     iname.nid(),
                     iname,
-                    this.NAMESPACE
+                    FacebookRs.NAMESPACE
                 )
             );
         }
@@ -156,8 +156,8 @@ public final class FacebookRs extends BaseRs {
         throws IOException {
         final User fbuser = this.user(code);
         final Identity resolved = new ResolvedIdentity(
-            UriBuilder.fromUri("http://www.netbout.com/fb").build().toURL(),
-            new Urn(this.NAMESPACE, fbuser.getId())
+            this.base().path("/fb").build().toURL(),
+            new Urn(FacebookRs.NAMESPACE, fbuser.getId())
         );
         resolved.profile().setPhoto(
             UriBuilder

@@ -44,7 +44,7 @@ public final class VariableAtomTest {
      */
     @Test
     public void encapsulatesText() throws Exception {
-        final Atom atom = VariableAtom.BOUT_NUMBER;
+        final Atom<?> atom = VariableAtom.BOUT_NUMBER;
         MatcherAssert.assertThat(
             atom.toString(),
             Matchers.equalTo("$bout.number")

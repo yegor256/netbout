@@ -75,7 +75,7 @@ public final class JaxbPrinter {
      * @return The document
      */
     public String print(final String suffix) {
-        final Urn namespace = this.namespace(this.object.getClass());
+        final Urn namespace = JaxbPrinter.namespace(this.object.getClass());
         if (namespace.isEmpty() && !suffix.isEmpty()) {
             throw new IllegalArgumentException(
                 Logger.format(
@@ -96,7 +96,7 @@ public final class JaxbPrinter {
      */
     public String print(final Urn required) {
         final Document dom = this.marshall();
-        final Urn namespace = this.namespace(this.object.getClass());
+        final Urn namespace = JaxbPrinter.namespace(this.object.getClass());
         if (!namespace.isEmpty()) {
             if (!namespace.equals(required)) {
                 DomParser.rename(
@@ -142,7 +142,7 @@ public final class JaxbPrinter {
      * Convert object to DOM document.
      * @return The document
      */
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({ "unchecked", "rawtypes" })
     private Document marshall() {
         JAXBContext ctx;
         try {
@@ -263,7 +263,7 @@ public final class JaxbPrinter {
             name = tannot.name();
         }
         QName qname;
-        final Urn namespace = this.namespace(this.object.getClass());
+        final Urn namespace = JaxbPrinter.namespace(this.object.getClass());
         if (namespace.isEmpty()) {
             qname = new QName("", name);
         } else {

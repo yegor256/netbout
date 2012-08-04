@@ -61,7 +61,7 @@ public final class HelperMocker {
     public HelperMocker() {
         Mockito.doReturn(this.ops.keySet()).when(this.helper).supports();
         Mockito.doAnswer(
-            new Answer() {
+            new Answer<Object>() {
                 @Override
                 public Object answer(final InvocationOnMock invocation) {
                     final Token token = (Token) invocation.getArguments()[0];
@@ -73,7 +73,7 @@ public final class HelperMocker {
                             )
                         );
                     }
-                    return true;
+                    return null;
                 }
             }
         ).when(this.helper).execute(Mockito.any(Token.class));

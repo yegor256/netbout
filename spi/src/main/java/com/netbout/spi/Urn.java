@@ -97,7 +97,7 @@ public final class Urn implements Comparable<Urn>, Serializable {
         if (text == null) {
             throw new IllegalArgumentException("Text can't be NULL");
         }
-        if (!text.matches(this.REGEX)) {
+        if (!text.matches(Urn.REGEX)) {
             throw new URISyntaxException(text, "Invalid format of URN");
         }
         this.uri = new URI(text);
@@ -119,8 +119,8 @@ public final class Urn implements Comparable<Urn>, Serializable {
         this.uri = URI.create(
             String.format(
                 "%s%s%s%2$s%s",
-                this.PREFIX,
-                this.SEP,
+                Urn.PREFIX,
+                Urn.SEP,
                 nid,
                 Urn.encode(nss)
             )
@@ -234,7 +234,7 @@ public final class Urn implements Comparable<Urn>, Serializable {
      * @return Yes of no
      */
     public boolean isEmpty() {
-        return this.EMPTY.equals(this.nid());
+        return Urn.EMPTY.equals(this.nid());
     }
 
     /**
@@ -341,7 +341,7 @@ public final class Urn implements Comparable<Urn>, Serializable {
     private String segment(final int pos) {
         return StringUtils.splitPreserveAllTokens(
             this.uri.toString(),
-            this.SEP,
+            Urn.SEP,
             // @checkstyle MagicNumber (1 line)
             3
         )[pos];

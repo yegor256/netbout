@@ -49,7 +49,7 @@ final class Negation implements Functor {
      * {@inheritDoc}
      */
     @Override
-    public Term build(final Ray ray, final List<Atom> atoms)
+    public Term build(final Ray ray, final List<Atom<?>> atoms)
         throws InvalidSyntaxException {
         if (atoms.size() != 1) {
             throw new InvalidSyntaxException(

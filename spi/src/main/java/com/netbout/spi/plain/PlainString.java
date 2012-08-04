@@ -123,7 +123,11 @@ public final class PlainString implements Plain<String> {
      */
     @Override
     public String toString() {
-        return String.format("%s%s%1$s", this.QUOTE, this.encode(this.ivalue));
+        return String.format(
+            "%s%s%1$s",
+            PlainString.QUOTE,
+            PlainString.encode(this.ivalue)
+        );
     }
 
     /**

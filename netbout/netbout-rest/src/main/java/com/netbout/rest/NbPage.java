@@ -115,7 +115,7 @@ public class NbPage extends BasePage<NbPage, NbResource> {
         this.append(new JaxbBundle("auth", new Cryptor().encrypt(identity)));
         this.link(new Link("logout", "/g/out"));
         this.link(new Link("profile", "/pf"));
-        if (this.trusted(identity)) {
+        if (NbPage.trusted(identity)) {
             this.link(new Link("start", "/s"));
         } else {
             this.link(new Link("re-login", "/g/re"));

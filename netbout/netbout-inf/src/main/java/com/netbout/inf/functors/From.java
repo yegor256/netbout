@@ -56,7 +56,7 @@ final class From implements Functor {
      * numbers from zero. Thus, if you want to see everything provide ZERO here.
      */
     @Override
-    public Term build(final Ray ray, final List<Atom> atoms) {
+    public Term build(final Ray ray, final List<Atom<?>> atoms) {
         return new FromTerm(
             ray,
             NumberAtom.class.cast(atoms.get(0)).value()

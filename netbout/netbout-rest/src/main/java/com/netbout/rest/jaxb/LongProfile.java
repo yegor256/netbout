@@ -90,7 +90,7 @@ public final class LongProfile {
     public Collection<Link> getLocales() {
         final Locale current = this.viewer.profile().locale();
         final Collection<Link> links = new LinkedList<Link>();
-        for (Locale locale : this.available()) {
+        for (Locale locale : LongProfile.available()) {
             links.add(
                 new Link(
                     "locale",
@@ -119,7 +119,7 @@ public final class LongProfile {
      * @param text The locale as a text.
      */
     public void setLocale(final String text) {
-        this.viewer.profile().setLocale(this.toLocale(text));
+        this.viewer.profile().setLocale(LongProfile.toLocale(text));
     }
 
     /**

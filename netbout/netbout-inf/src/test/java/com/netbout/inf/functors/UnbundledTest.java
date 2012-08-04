@@ -78,7 +78,7 @@ public final class UnbundledTest {
         }
         final Term term = new Unbundled().build(
             ray,
-            Arrays.asList(new Atom[] {new NumberAtom(bnum)})
+            Arrays.asList(new Atom<?>[] {new NumberAtom(bnum)})
         );
         MatcherAssert.assertThat(
             ray.cursor().shift(term).end(),
@@ -96,7 +96,7 @@ public final class UnbundledTest {
         final long bnum = MsgMocker.number();
         final Term term = new Unbundled().build(
             ray,
-            Arrays.asList(new Atom[] {new NumberAtom(bnum)})
+            Arrays.asList(new Atom<?>[] {new NumberAtom(bnum)})
         );
         MatcherAssert.assertThat(
             ray.cursor().shift(term).end(),
