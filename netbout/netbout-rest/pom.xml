@@ -760,6 +760,12 @@
                                 </archive>
                             </configuration>
                         </plugin>
+                        <plugin>
+                                   <artifactId>maven-deploy-plugin</artifactId>
+                                   <configuration>
+                                     <skip>true</skip>
+                                   </configuration>
+                                 </plugin>
                     </plugins>
                 </pluginManagement>
                 <plugins>
@@ -796,9 +802,11 @@
                                 </goals>
                                 <configuration>
                                     <target>
-                                        <echo file="${project.build.directory}/heroku.sh">
-                                            /usr/bin/ssh -i '${heroku.pem}' $@
-                                        </echo>
+                                        <echo file="${project.build.directory}/heroku.sh"><![CDATA[
+                                            /usr/bin/ssh -o UserKnownHostsFile=/dev/null \
+                                                -o StrictHostKeyChecking=no \
+                                                -i '${heroku.pem}' $@
+                                        ]]></echo>
                                         <chmod file="${project.build.directory}/heroku.sh" perm="a+x"/>
                                         <exec dir="${project.build.directory}" executable="git" failonerror="true">
                                             <arg value="clone"/>
