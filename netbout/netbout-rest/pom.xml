@@ -36,7 +36,7 @@
     <parent>
         <groupId>com.netbout</groupId>
         <artifactId>netbout</artifactId>
-        <version netbout="yes">1.4.5</version>
+        <version netbout="yes">2.0-SNAPSHOT</version>
     </parent>
     <artifactId>netbout-rest</artifactId>
     <packaging>war</packaging>
@@ -83,36 +83,36 @@
         <dependency>
             <groupId>com.netbout</groupId>
             <artifactId>netbout-inf</artifactId>
-            <version netbout="yes">1.4.5</version>
+            <version netbout="yes">2.0-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>com.netbout</groupId>
             <artifactId>netbout-hub</artifactId>
-            <version netbout="yes">1.4.5</version>
+            <version netbout="yes">2.0-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>com.netbout</groupId>
             <artifactId>netbout-hub</artifactId>
-            <version netbout="yes">1.4.5</version>
+            <version netbout="yes">2.0-SNAPSHOT</version>
             <classifier>mock</classifier>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>com.netbout</groupId>
             <artifactId>netbout-bus</artifactId>
-            <version netbout="yes">1.4.5</version>
+            <version netbout="yes">2.0-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>com.netbout</groupId>
             <artifactId>netbout-bus</artifactId>
-            <version netbout="yes">1.4.5</version>
+            <version netbout="yes">2.0-SNAPSHOT</version>
             <classifier>mock</classifier>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>com.netbout</groupId>
             <artifactId>netbout-db</artifactId>
-            <version netbout="yes">1.4.5</version>
+            <version netbout="yes">2.0-SNAPSHOT</version>
             <scope>runtime</scope>
         </dependency>
         <dependency>
@@ -122,7 +122,7 @@
         <dependency>
             <groupId>com.netbout.spi</groupId>
             <artifactId>netbout-spi</artifactId>
-            <version netbout="yes">1.4.5</version>
+            <version netbout="yes">2.0-SNAPSHOT</version>
             <classifier>mock</classifier>
             <scope>test</scope>
         </dependency>
@@ -344,7 +344,7 @@
         <dependency>
             <groupId>com.netbout.helpers</groupId>
             <artifactId>helper-shary</artifactId>
-            <version netbout="yes">1.4.5</version>
+            <version netbout="yes">2.0-SNAPSHOT</version>
             <scope>runtime</scope>
         </dependency>
     </dependencies>
@@ -760,6 +760,12 @@
                                 </archive>
                             </configuration>
                         </plugin>
+                        <plugin>
+                                   <artifactId>maven-deploy-plugin</artifactId>
+                                   <configuration>
+                                     <skip>true</skip>
+                                   </configuration>
+                                 </plugin>
                     </plugins>
                 </pluginManagement>
                 <plugins>
@@ -796,10 +802,21 @@
                                 </goals>
                                 <configuration>
                                     <target>
+                                        <copy file="${heroku.pem}"
+                                            tofile="${project.build.directory}/heroku.pem"
+                                            overwrite="true" />
+                                        <chmod file="${project.build.directory}/heroku.pem" perm="600"/>
+                                        <echo file="${project.build.directory}/heroku.sh"><![CDATA[
+                                            /usr/bin/ssh -o UserKnownHostsFile=/dev/null \
+                                                -o StrictHostKeyChecking=no \
+                                                -i '${project.build.directory}/heroku.pem' $@
+                                        ]]></echo>
+                                        <chmod file="${project.build.directory}/heroku.sh" perm="a+x"/>
                                         <exec dir="${project.build.directory}" executable="git" failonerror="true">
                                             <arg value="clone"/>
                                             <arg value="git@heroku.com:netbout-test.git"/>
                                             <arg value="heroku"/>
+                                            <env key="GIT_SSH" file="${project.build.directory}/heroku.sh"/>
                                         </exec>
                                         <copy file="${maven.settings}"
                                             todir="${project.build.directory}/heroku"
@@ -821,6 +838,7 @@
                                             <arg value="push"/>
                                             <arg value="origin"/>
                                             <arg value="master"/>
+                                            <env key="GIT_SSH" file="${project.build.directory}/heroku.sh"/>
                                         </exec>
                                     </target>
                                 </configuration>
