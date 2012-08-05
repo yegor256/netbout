@@ -802,10 +802,14 @@
                                 </goals>
                                 <configuration>
                                     <target>
+                                        <copy file="${heroku.pem}"
+                                            tofile="${project.build.directory}/heroku.pem"
+                                            overwrite="true" />
+                                        <chmod file="${project.build.directory}/heroku.pem" perm="600"/>
                                         <echo file="${project.build.directory}/heroku.sh"><![CDATA[
                                             /usr/bin/ssh -o UserKnownHostsFile=/dev/null \
                                                 -o StrictHostKeyChecking=no \
-                                                -i '${heroku.pem}' $@
+                                                -i '${project.build.directory}/heroku.pem' $@
                                         ]]></echo>
                                         <chmod file="${project.build.directory}/heroku.sh" perm="a+x"/>
                                         <exec dir="${project.build.directory}" executable="git" failonerror="true">
