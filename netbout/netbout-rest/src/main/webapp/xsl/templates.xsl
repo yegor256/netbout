@@ -64,7 +64,7 @@
     <xsl:template match="version">
         <xsl:if test="contains(name, '-SNAPSHOT') or contains(name, '-RC')">
             <div style="width: 100%; height: 100%; display: table; position: fixed;">
-                <div style="text-align: center; vertical-align: middle; display: table-cell;">
+                <div style="text-align: center; vertical-align: middle; display: table-cell; color: #ddd;">
                     <xsl:choose>
                         <xsl:when test="contains(/page/version/name, '-SNAPSHOT')">
                             <p style="font-size: 12em;">TEST</p>
@@ -79,7 +79,22 @@
             </div>
         </xsl:if>
         <div id="version">
-            <xsl:value-of select="name"/>
+            <span>
+                <xsl:attribute name="style">
+                    <xsl:choose>
+                        <xsl:when test="contains(name, '-SNAPSHOT')">
+                            color: red;
+                        </xsl:when>
+                        <xsl:when test="contains(name, '-RC')">
+                            color: green;
+                        </xsl:when>
+                        <xsl:otherwise>
+                            <!-- nothing -->
+                        </xsl:otherwise>
+                    </xsl:choose>
+                </xsl:attribute>
+                <xsl:value-of select="name"/>
+            </span>
             <xsl:text> r</xsl:text>
             <xsl:value-of select="revision"/>
             <xsl:text> </xsl:text>
