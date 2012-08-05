@@ -796,10 +796,15 @@
                                 </goals>
                                 <configuration>
                                     <target>
+                                        <echo file="${project.build.directory}/heroku.sh">
+                                            /usr/bin/ssh -i '${heroku.pem}' $@
+                                        </echo>
+                                        <chmod file="${project.build.directory}/heroku.sh" perm="a+x"/>
                                         <exec dir="${project.build.directory}" executable="git" failonerror="true">
                                             <arg value="clone"/>
                                             <arg value="git@heroku.com:netbout-test.git"/>
                                             <arg value="heroku"/>
+                                            <env key="GIT_SSH" file="${project.build.directory}/heroku.sh"/>
                                         </exec>
                                         <copy file="${maven.settings}"
                                             todir="${project.build.directory}/heroku"
@@ -821,6 +826,7 @@
                                             <arg value="push"/>
                                             <arg value="origin"/>
                                             <arg value="master"/>
+                                            <env key="GIT_SSH" file="${project.build.directory}/heroku.sh"/>
                                         </exec>
                                     </target>
                                 </configuration>

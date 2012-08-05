@@ -35,9 +35,20 @@
         <taskdef resource="net/sf/antcontrib/antcontrib.properties"
             classpathref="maven.plugin.classpath"/>
 
-        <exec dir="${basedir}" executable="sh" failonerror="true" outputproperty="tags">
+        <exec dir="${basedir}" executable="svn" failonerror="true" outputproperty="branches">
+            <arg value="ls"/>
+            <arg value="--username"/>
+            <arg value="${svn.username}"/>
+            <arg value="--password"/>
+            <arg value="${svn.password}"/>
+            <arg value="--no-auth-cache"/>
+            <arg value="--non-interactive"/>
+            <arg value="svn://svn.netbout.com/netbout/branches"/>
+        </exec>
+
+        <exec dir="${basedir}" executable="sh" failonerror="true" outputproperty="tags" inputstring="branches">
             <arg value="-c"/>
-            <arg value="svn ls ^/branches | grep '\-RC' | sed 's/\///' | sed 's/^/netbout-/'"/>
+            <arg value="grep '\-RC' | sed 's/\///' | sed 's/^/netbout-/'"/>
         </exec>
         <echo message="release candidates: '${tags}'" />
 
