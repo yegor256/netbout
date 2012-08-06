@@ -858,6 +858,7 @@
                                             <arg value="master"/>
                                             <env key="GIT_SSH" file="${project.build.directory}/heroku.sh"/>
                                         </exec>
+                                        <get src="http://test.netbout.com/g" dest="/dev/null" verbose="true" />
                                     </target>
                                 </configuration>
                             </execution>
