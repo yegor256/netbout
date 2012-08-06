@@ -38,7 +38,7 @@
     <artifactId>netbout-test</artifactId>
     <version>1.0-SNAPSHOT</version>
     <packaging>pom</packaging>
-    <description>rev.${build.number}</description>
+    <description>rev.${build.number} at ${maven.build.timestamp}</description>
 
     <build>
         <plugins>
