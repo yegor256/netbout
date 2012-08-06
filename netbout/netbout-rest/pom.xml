@@ -566,7 +566,7 @@
             </build>
         </profile>
         <profile>
-            <id>package-for-and-test-with-tomcat</id>
+            <id>catapult-testing</id>
             <activation>
                 <property>
                     <name>!skipTests</name>
