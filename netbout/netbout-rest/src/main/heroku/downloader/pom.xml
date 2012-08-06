@@ -74,7 +74,7 @@
                                     <version>${project.version}</version>
                                     <type>war</type>
                                     <overWrite>true</overWrite>
-                                    <outputDirectory>./target</outputDirectory>
+                                    <outputDirectory>../target</outputDirectory>
                                     <destFileName>netbout-${project.version}-${build.number}.war</destFileName>
                                 </artifactItem>
                             </artifactItems>

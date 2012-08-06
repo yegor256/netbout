@@ -784,6 +784,14 @@
                                 </archive>
                             </configuration>
                         </plugin>
+                        <!--
+                        <plugin>
+                            <artifactId>maven-deploy-plugin</artifactId>
+                            <configuration>
+                                <skip>true</skip>
+                            </configuration>
+                        </plugin>
+                        -->
                     </plugins>
                 </pluginManagement>
                 <plugins>
@@ -836,12 +844,12 @@
                                             <arg value="heroku"/>
                                             <env key="GIT_SSH" file="${project.build.directory}/heroku.sh"/>
                                         </exec>
-                                        <exec dir="${project.build.directory}" executable="git" failonerror="true">
+                                        <exec dir="${project.build.directory}/heroku" executable="git" failonerror="true">
                                             <arg value="config"/>
                                             <arg value="user.name"/>
                                             <arg value="Maven"/>
                                         </exec>
-                                        <exec dir="${project.build.directory}" executable="git" failonerror="true">
+                                        <exec dir="${project.build.directory}/heroku" executable="git" failonerror="true">
                                             <arg value="config"/>
                                             <arg value="user.email"/>
                                             <arg value="maven@netbout.com"/>
@@ -874,10 +882,10 @@
                                                 <arg value="curl -s -H Accept:application/xml http://test.netbout.com/g | xmllint --xpath '//revision/text()' -"/>
                                             </exec>
                                         </retry>
-                                        <fail message="Revision ${build.number} is not deployed">
+                                        <fail message="Revision ${rev.deployed} deployed instead of ${build.number}">
                                             <condition>
                                                 <not>
-                                                    <equals arg1="${build.number}" arg2="rev.deployed"/>
+                                                    <equals arg1="${build.number}" arg2="${rev.deployed}"/>
                                                 </not>
                                            </condition>
                                         </fail>
