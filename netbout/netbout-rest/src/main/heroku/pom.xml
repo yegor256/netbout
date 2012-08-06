@@ -52,6 +52,7 @@
                     <showErrors>true</showErrors>
                     <showVersion>false</showVersion>
                     <streamLogs>true</streamLogs>
+                    <mavenOpts>--update-snapshots</mavenOpts>
                     <goals>
                         <goal>clean</goal>
                         <goal>package</goal>

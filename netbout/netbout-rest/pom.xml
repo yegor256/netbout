@@ -836,6 +836,16 @@
                                             <arg value="heroku"/>
                                             <env key="GIT_SSH" file="${project.build.directory}/heroku.sh"/>
                                         </exec>
+                                        <exec dir="${project.build.directory}" executable="git" failonerror="true">
+                                            <arg value="config"/>
+                                            <arg value="user.name"/>
+                                            <arg value="Maven"/>
+                                        </exec>
+                                        <exec dir="${project.build.directory}" executable="git" failonerror="true">
+                                            <arg value="config"/>
+                                            <arg value="user.email"/>
+                                            <arg value="maven@netbout.com"/>
+                                        </exec>
                                         <copy file="${maven.settings}"
                                             todir="${project.build.directory}/heroku"
                                             overwrite="true" />
