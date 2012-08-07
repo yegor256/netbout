@@ -573,7 +573,6 @@
                 </property>
             </activation>
             <properties>
-                <catapult.warName>${project.build.finalName}-catapult</catapult.warName>
                 <!--
                 @todo #160 If you change this path to something different from
                  "/" there will be many problems with paths of XSL and CSS files.
@@ -663,7 +662,7 @@
                                     <goal>war</goal>
                                 </goals>
                                 <configuration>
-                                    <warName>${catapult.warName}</warName>
+                                    <classifier>catapult</classifier>
                                     <archive>
                                         <manifestEntries>
                                             <Netbout-FbId>123456</Netbout-FbId>
@@ -703,7 +702,7 @@
                             <port>${catapult.port}</port>
                             <uriEncoding>UTF-8</uriEncoding>
                             <useSeparateTomcatClassLoader>true</useSeparateTomcatClassLoader>
-                            <warDirectory>${project.build.directory}/${catapult.warName}.war</warDirectory>
+                            <warDirectory>${project.build.directory}/${project.build.finalName}-catapult.war</warDirectory>
                         </configuration>
                         <executions>
                             <execution>
