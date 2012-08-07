@@ -366,9 +366,9 @@
                         <artifactId>maven-assembly-plugin</artifactId>
                         <dependencies>
                             <dependency>
-                                <groupId>com.ymock</groupId>
-                                <artifactId>ymock-tk</artifactId>
-                                <version since="26 Dec 2011">1.0.4</version>
+                                <groupId>com.jcabi</groupId>
+                                <artifactId>jcabi-assembly</artifactId>
+                                <version since="5 Aug 2012">0.1.9</version>
                             </dependency>
                         </dependencies>
                         <executions>
@@ -380,11 +380,7 @@
                                 </goals>
                                 <configuration>
                                     <descriptorRefs>
-                                        <!--
-                                        This descriptor is in ymock-tk sub-module, which is in classpath of this plugin.
-                                        @see http://maven.apache.org/plugins/maven-assembly-plugin/examples/sharing-descriptors.html
-                                        -->
-                                        <descriptorRef>ymock-sources</descriptorRef>
+                                        <descriptorRef>jcabi-sources</descriptorRef>
                                     </descriptorRefs>
                                 </configuration>
                             </execution>

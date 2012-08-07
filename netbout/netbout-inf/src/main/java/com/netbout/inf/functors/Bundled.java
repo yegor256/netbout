@@ -33,8 +33,12 @@ import com.netbout.inf.Functor;
 import com.netbout.inf.Lattice;
 import com.netbout.inf.Ray;
 import com.netbout.inf.Term;
+import com.netbout.inf.atoms.VariableAtom;
 import com.netbout.inf.lattice.LatticeBuilder;
+import com.netbout.inf.notices.JoinNotice;
+import com.netbout.inf.notices.KickOffNotice;
 import com.netbout.inf.notices.MessagePostedNotice;
+import com.netbout.spi.Bout;
 import com.netbout.spi.Message;
 import com.netbout.spi.Participant;
 import com.netbout.spi.Urn;
@@ -75,6 +79,40 @@ final class Bundled implements Functor {
             ray.builder().picker(notice.message().number()),
             BundledAttribute.VALUE,
             Bundled.marker(notice.message())
+        );
+    }
+
+    /**
+     * Notice when participant removed.
+     * @param ray The ray
+     * @param notice The notice
+     */
+    @Noticable
+    public void see(final Ray ray, final KickOffNotice notice) {
+        ray.cursor().replace(
+            ray.builder().matcher(
+                VariableAtom.BOUT_NUMBER.attribute(),
+                notice.bout().number().toString()
+            ),
+            BundledAttribute.VALUE,
+            Bundled.marker(notice.bout())
+        );
+    }
+
+    /**
+     * Notice when new participant joined.
+     * @param ray The ray
+     * @param notice The notice
+     */
+    @Noticable
+    public void see(final Ray ray, final JoinNotice notice) {
+        ray.cursor().replace(
+            ray.builder().matcher(
+                VariableAtom.BOUT_NUMBER.attribute(),
+                notice.bout().number().toString()
+            ),
+            BundledAttribute.VALUE,
+            Bundled.marker(notice.bout())
         );
     }
 
@@ -169,16 +207,25 @@ final class Bundled implements Functor {
     }
 
     /**
-     * Create marker from a message.
-     * @param message The message
+     * Create marker from bout.
+     * @param bout The bout
      * @return Marker
      */
-    private static String marker(final Message message) {
+    private static String marker(final Bout bout) {
         final Set<Urn> names = new TreeSet<Urn>();
-        for (Participant dude : message.bout().participants()) {
+        for (Participant dude : bout.participants()) {
             names.add(dude.identity().name());
         }
         return Logger.format("%[list]s", names);
+    }
+
+    /**
+     * Get the first message from the bout.
+     * @param bout The bout
+     * @return First message
+     */
+    private static String marker(final Message message) {
+        return Bundled.marker(message.bout());
     }
 
 }

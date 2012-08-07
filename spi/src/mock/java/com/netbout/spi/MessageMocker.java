@@ -50,7 +50,8 @@ public final class MessageMocker {
      * Public ctor.
      */
     public MessageMocker() {
-        this.withNumber(Math.abs(new Random().nextLong()));
+        // @checkstyle MagicNumber (1 line)
+        this.withNumber(new Random().nextInt(1024) + 128L);
         this.withAuthor(new UrnMocker().mock());
         this.withText("some text");
         this.withDate(new Date());

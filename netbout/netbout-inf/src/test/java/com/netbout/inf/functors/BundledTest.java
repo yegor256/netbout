@@ -40,6 +40,8 @@ import com.netbout.spi.Identity;
 import com.netbout.spi.IdentityMocker;
 import com.netbout.spi.Message;
 import com.netbout.spi.MessageMocker;
+import com.netbout.spi.Urn;
+import com.netbout.spi.UrnMocker;
 import java.util.Arrays;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
@@ -101,24 +103,39 @@ public final class BundledTest {
     @Test
     public void findsBundledMessagesAfterJoinAndKickoff() throws Exception {
         final Ray ray = new MemRay(new FolderMocker().mock().path());
-        final Bout first = new BoutMocker().mock();
-        final Bout second = new BoutMocker().mock();
+        final Urn dude = new UrnMocker().mock();
+        final Bout first = new BoutMocker()
+            .withParticipant(dude)
+            .mock();
+        final long fmsg = MsgMocker.number();
+        final Bout second = new BoutMocker()
+            .withParticipant(dude)
+            .mock();
+        final long smsg = fmsg + 1;
         final Bundled functor = new Bundled();
+        ray.msg(fmsg);
         functor.see(
             ray,
             new MessagePostedNotice() {
                 @Override
                 public Message message() {
-                    return new MessageMocker().inBout(first).mock();
+                    return new MessageMocker()
+                        .withNumber(fmsg)
+                        .inBout(first)
+                        .mock();
                 }
             }
         );
+        ray.msg(smsg);
         functor.see(
             ray,
             new MessagePostedNotice() {
                 @Override
                 public Message message() {
-                    return new MessageMocker().inBout(second).mock();
+                    return new MessageMocker()
+                        .withNumber(smsg)
+                        .inBout(second)
+                        .mock();
                 }
             }
         );
@@ -131,7 +148,9 @@ public final class BundledTest {
                 }
                 @Override
                 public Identity identity() {
-                    return new IdentityMocker().mock();
+                    return new IdentityMocker()
+                        .namedAs(new UrnMocker().mock())
+                        .mock();
                 }
             }
         );
@@ -141,11 +160,11 @@ public final class BundledTest {
         );
         MatcherAssert.assertThat(
             ray.cursor().shift(term).msg().number(),
-            Matchers.equalTo(msg)
+            Matchers.equalTo(smsg)
         );
         MatcherAssert.assertThat(
-            ray.cursor().shift(term).end(),
-            Matchers.equalTo(false)
+            ray.cursor().shift(term).msg().number(),
+            Matchers.equalTo(fmsg)
         );
     }
 
