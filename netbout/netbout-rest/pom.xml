@@ -438,15 +438,17 @@
                 -->
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>buildnumber-maven-plugin</artifactId>
-                <version since="21 Mar 2012">1.0-beta-4</version>
+                <version since="5 Aug 2012">1.1</version>
                 <executions>
                     <execution>
                         <phase>generate-resources</phase>
                         <goals>
                             <goal>create</goal>
+                            <goal>create-timestamp</goal>
                         </goals>
                         <configuration>
                             <buildNumberPropertyName>build.number</buildNumberPropertyName>
+                            <timestampPropertyName>timestamp.number</timestampPropertyName>
                             <doCheck>false</doCheck>
                             <doUpdate>false</doUpdate>
                             <getRevisionOnlyOnce>true</getRevisionOnlyOnce>
@@ -785,6 +787,7 @@
                             </configuration>
                         </plugin>
                         <!--
+                        delete me when heroku deployment works perfectly
                         <plugin>
                             <artifactId>maven-deploy-plugin</artifactId>
                             <configuration>
