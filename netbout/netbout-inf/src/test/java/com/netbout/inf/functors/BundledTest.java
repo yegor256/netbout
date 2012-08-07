@@ -113,7 +113,20 @@ public final class BundledTest {
             .mock();
         final long smsg = fmsg + 1;
         final Bundled functor = new Bundled();
+        final Equal equal = new Equal();
         ray.msg(fmsg);
+        equal.see(
+            ray,
+            new MessagePostedNotice() {
+                @Override
+                public Message message() {
+                    return new MessageMocker()
+                        .withNumber(fmsg)
+                        .inBout(first)
+                        .mock();
+                }
+            }
+        );
         functor.see(
             ray,
             new MessagePostedNotice() {
@@ -127,6 +140,18 @@ public final class BundledTest {
             }
         );
         ray.msg(smsg);
+        equal.see(
+            ray,
+            new MessagePostedNotice() {
+                @Override
+                public Message message() {
+                    return new MessageMocker()
+                        .withNumber(smsg)
+                        .inBout(second)
+                        .mock();
+                }
+            }
+        );
         functor.see(
             ray,
             new MessagePostedNotice() {
@@ -144,13 +169,14 @@ public final class BundledTest {
             new JoinNotice() {
                 @Override
                 public Bout bout() {
-                    return first;
+                    return new BoutMocker()
+                        .withNumber(first.number())
+                        .withParticipant(new UrnMocker().mock())
+                        .mock();
                 }
                 @Override
                 public Identity identity() {
-                    return new IdentityMocker()
-                        .namedAs(new UrnMocker().mock())
-                        .mock();
+                    return new IdentityMocker().mock();
                 }
             }
         );
