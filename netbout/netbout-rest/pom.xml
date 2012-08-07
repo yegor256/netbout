@@ -573,7 +573,6 @@
                 </property>
             </activation>
             <properties>
-                <catapult.warName>${project.build.finalName}-catapult</catapult.warName>
                 <!--
                 @todo #160 If you change this path to something different from
                  "/" there will be many problems with paths of XSL and CSS files.
@@ -663,7 +662,8 @@
                                     <goal>war</goal>
                                 </goals>
                                 <configuration>
-                                    <warName>${catapult.warName}</warName>
+                                    <classifier>catapult</classifier>
+                                    <primaryArtifact>false</primaryArtifact>
                                     <archive>
                                         <manifestEntries>
                                             <Netbout-FbId>123456</Netbout-FbId>
@@ -703,7 +703,7 @@
                             <port>${catapult.port}</port>
                             <uriEncoding>UTF-8</uriEncoding>
                             <useSeparateTomcatClassLoader>true</useSeparateTomcatClassLoader>
-                            <warDirectory>${project.build.directory}/${catapult.warName}.war</warDirectory>
+                            <warDirectory>${project.build.directory}/${project.build.finalName}-catapult.war</warDirectory>
                         </configuration>
                         <executions>
                             <execution>
@@ -784,6 +784,14 @@
                                 </archive>
                             </configuration>
                         </plugin>
+                        <!--
+                        <plugin>
+                            <artifactId>maven-deploy-plugin</artifactId>
+                            <configuration>
+                                <skip>true</skip>
+                            </configuration>
+                        </plugin>
+                        -->
                     </plugins>
                 </pluginManagement>
                 <plugins>
@@ -836,6 +844,16 @@
                                             <arg value="heroku"/>
                                             <env key="GIT_SSH" file="${project.build.directory}/heroku.sh"/>
                                         </exec>
+                                        <exec dir="${project.build.directory}/heroku" executable="git" failonerror="true">
+                                            <arg value="config"/>
+                                            <arg value="user.name"/>
+                                            <arg value="Maven"/>
+                                        </exec>
+                                        <exec dir="${project.build.directory}/heroku" executable="git" failonerror="true">
+                                            <arg value="config"/>
+                                            <arg value="user.email"/>
+                                            <arg value="maven@netbout.com"/>
+                                        </exec>
                                         <copy file="${maven.settings}"
                                             todir="${project.build.directory}/heroku"
                                             overwrite="true" />
@@ -858,14 +876,16 @@
                                             <arg value="master"/>
                                             <env key="GIT_SSH" file="${project.build.directory}/heroku.sh"/>
                                         </exec>
-                                        <exec executable="sh" outputproperty="rev.deployed" failonerror="true">
-                                            <arg value="-c"/>
-                                            <arg value="curl -s -H Accept:application/xml http://test.netbout.com/g | xmllint --xpath '//revision/text()' -"/>
-                                        </exec>
-                                        <fail message="Revision ${build.number} is not deployed">
+                                        <retry retrycount="5">
+                                            <exec executable="sh" outputproperty="rev.deployed" failonerror="true">
+                                                <arg value="-c"/>
+                                                <arg value="curl -s -H Accept:application/xml http://test.netbout.com/g | xmllint --xpath '//revision/text()' -"/>
+                                            </exec>
+                                        </retry>
+                                        <fail message="Revision ${rev.deployed} deployed instead of ${build.number}">
                                             <condition>
                                                 <not>
-                                                    <equals arg1="${build.number}" arg2="rev.deployed"/>
+                                                    <equals arg1="${build.number}" arg2="${rev.deployed}"/>
                                                 </not>
                                            </condition>
                                         </fail>
