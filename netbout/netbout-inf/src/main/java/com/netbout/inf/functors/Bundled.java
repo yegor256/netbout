@@ -220,9 +220,9 @@ final class Bundled implements Functor {
     }
 
     /**
-     * Get the first message from the bout.
-     * @param bout The bout
-     * @return First message
+     * Get marker from message.
+     * @param message The message
+     * @return The marker
      */
     private static String marker(final Message message) {
         return Bundled.marker(message.bout());
