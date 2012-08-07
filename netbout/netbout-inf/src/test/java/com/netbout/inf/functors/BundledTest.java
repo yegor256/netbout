@@ -31,10 +31,13 @@ import com.netbout.inf.FolderMocker;
 import com.netbout.inf.MsgMocker;
 import com.netbout.inf.Ray;
 import com.netbout.inf.Term;
+import com.netbout.inf.notices.JoinNotice;
 import com.netbout.inf.notices.MessagePostedNotice;
 import com.netbout.inf.ray.MemRay;
 import com.netbout.spi.Bout;
 import com.netbout.spi.BoutMocker;
+import com.netbout.spi.Identity;
+import com.netbout.spi.IdentityMocker;
 import com.netbout.spi.Message;
 import com.netbout.spi.MessageMocker;
 import java.util.Arrays;
@@ -88,6 +91,61 @@ public final class BundledTest {
         MatcherAssert.assertThat(
             ray.cursor().shift(term).end(),
             Matchers.equalTo(true)
+        );
+    }
+
+    /**
+     * Bundled can change bundle marker on join and kickoff.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void findsBundledMessagesAfterJoinAndKickoff() throws Exception {
+        final Ray ray = new MemRay(new FolderMocker().mock().path());
+        final Bout first = new BoutMocker().mock();
+        final Bout second = new BoutMocker().mock();
+        final Bundled functor = new Bundled();
+        functor.see(
+            ray,
+            new MessagePostedNotice() {
+                @Override
+                public Message message() {
+                    return new MessageMocker().inBout(first).mock();
+                }
+            }
+        );
+        functor.see(
+            ray,
+            new MessagePostedNotice() {
+                @Override
+                public Message message() {
+                    return new MessageMocker().inBout(second).mock();
+                }
+            }
+        );
+        functor.see(
+            ray,
+            new JoinNotice() {
+                @Override
+                public Bout bout() {
+                    return first;
+                }
+                @Override
+                public Identity identity() {
+                    return new IdentityMocker().mock();
+                }
+            }
+        );
+        final Term term = new Bundled().build(
+            ray,
+            Arrays.asList(new Atom<?>[0])
+        );
+        MatcherAssert.assertThat(
+            ray.cursor().shift(term).msg().number(),
+            Matchers.equalTo(msg)
+        );
+        MatcherAssert.assertThat(
+            ray.cursor().shift(term).end(),
+            Matchers.equalTo(false)
         );
     }
 
