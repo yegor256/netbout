@@ -663,6 +663,7 @@
                                 </goals>
                                 <configuration>
                                     <classifier>catapult</classifier>
+                                    <primaryArtifact>false</primaryArtifact>
                                     <archive>
                                         <manifestEntries>
                                             <Netbout-FbId>123456</Netbout-FbId>
