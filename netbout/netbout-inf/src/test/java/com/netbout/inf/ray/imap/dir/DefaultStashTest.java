@@ -95,4 +95,19 @@ public final class DefaultStashTest {
         );
     }
 
+    /**
+     * DefaultStash can convert itself to string.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void convertsItselfToString() throws Exception {
+        final Stash stash = new DefaultStash(
+            this.temp.newFolder("foo-55")
+        );
+        MatcherAssert.assertThat(
+            stash,
+            Matchers.hasToString(Matchers.notNullValue())
+        );
+    }
+
 }

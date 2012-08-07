@@ -46,6 +46,7 @@ import org.apache.commons.io.FilenameUtils;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
+@SuppressWarnings("PMD.TooManyMethods")
 final class DefaultStash implements Stash {
 
     /**
@@ -66,6 +67,23 @@ final class DefaultStash implements Stash {
      */
     public DefaultStash(final File path) throws IOException {
         this.lock = new Lock(path);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String toString() {
+        try {
+            return String.format(
+                "%d files in %s, %d of them are done",
+                this.files().size(),
+                this.lock,
+                this.done.size()
+            );
+        } catch (java.io.IOException ex) {
+            throw new IllegalStateException(ex);
+        }
     }
 
     /**
