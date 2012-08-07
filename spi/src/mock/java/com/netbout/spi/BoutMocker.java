@@ -84,7 +84,8 @@ public final class BoutMocker {
             throw new IllegalStateException(ex);
         }
         this.titledAs("some random text");
-        this.withNumber(Math.abs(new Random().nextLong()));
+        // @checkstyle MagicNumber (1 line)
+        this.withNumber(new Random().nextInt(1024) + 128L);
         this.withDate(new Date());
     }
 

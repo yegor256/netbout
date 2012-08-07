@@ -95,4 +95,19 @@ public final class DefaultDirectoryTest {
         MatcherAssert.assertThat(restored.get(msg), Matchers.equalTo(value));
     }
 
+    /**
+     * DefaultDirectory can convert itself to string.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void convertsItselfToString() throws Exception {
+        final Directory dir = new DefaultDirectory(
+            this.temp.newFolder("bar-88")
+        );
+        MatcherAssert.assertThat(
+            dir,
+            Matchers.hasToString(Matchers.notNullValue())
+        );
+    }
+
 }

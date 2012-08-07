@@ -126,6 +126,7 @@ public final class DefaultDirectory implements Directory {
                     FileUtils.sizeOfDirectory(this.lock.dir())
                 )
             );
+            text.append(this.stash().toString());
         } catch (java.io.IOException ex) {
             throw new IllegalStateException(ex);
         }
