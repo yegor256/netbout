@@ -509,7 +509,7 @@
             </build>
         </profile>
         <profile>
-            <id>internal-mysql</id>
+            <id>mysql</id>
             <activation>
                 <property>
                     <name>!skipTests</name>
