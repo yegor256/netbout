@@ -29,6 +29,7 @@ package com.netbout.rest.auth;
 import com.netbout.hub.UrnResolver;
 import com.netbout.hub.UrnResolverMocker;
 import com.netbout.spi.Urn;
+import com.rexsl.core.Manifests;
 import com.rexsl.test.ContainerMocker;
 import java.util.Locale;
 import javax.ws.rs.core.HttpHeaders;
@@ -47,13 +48,26 @@ public final class AuthMediatorTest {
     /**
      * AuthMediator can load facebook identity.
      * @throws Exception If there is some problem inside
+     * @todo #452 If you set secret to some UTF-8 string the test will fail.
+     *  Looks like the problem is in REXSL ContainerMocker.
      */
     @Test
     public void authenticatesFacebookIdentity() throws Exception {
+        final String secret = "some-super-secret";
         final Urn iname = new Urn(FacebookRs.NAMESPACE, "1234567");
         final String photo = "http://localhost/some-pic.png";
         final ContainerMocker container = new ContainerMocker()
             .expectMethod(Matchers.equalTo("GET"))
+            .expectRequestUri(Matchers.equalTo("/"))
+            .expectParam(
+                "identity",
+                Matchers.equalTo(new Urn(FacebookRs.NAMESPACE, "").toString())
+            )
+            .expectParam("secret", Matchers.equalTo(secret))
+            .expectParam(
+                "version",
+                Matchers.equalTo(Manifests.read("Netbout-Version"))
+            )
             .expectHeader(
                 HttpHeaders.ACCEPT,
                 Matchers.containsString(MediaType.APPLICATION_XML)
@@ -74,7 +88,7 @@ public final class AuthMediatorTest {
             .resolveAs(FacebookRs.NAMESPACE, container.home().toURL())
             .mock();
         final RemoteIdentity identity = new AuthMediator(resolver)
-            .authenticate(new Urn(FacebookRs.NAMESPACE, ""), "secret-1");
+            .authenticate(new Urn(FacebookRs.NAMESPACE, ""), secret);
         MatcherAssert.assertThat(identity.name(), Matchers.equalTo(iname));
         MatcherAssert.assertThat(
             identity.profile().photo().toString(),
