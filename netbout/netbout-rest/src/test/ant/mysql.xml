@@ -80,7 +80,7 @@
             <arg value="--pid-file=${directory}/mysql-${database}.pid"/>
             <arg value="--port=${port}"/>
         </exec>
-        <waitfor maxwait="60" maxwaitunit="second" timeoutproperty="timeout">
+        <waitfor maxwait="180" maxwaitunit="second" timeoutproperty="timeout">
             <available file="${directory}/mysql-${database}.sock"/>
         </waitfor>
         <fail message="MySQL server for '${database}' is not up">
