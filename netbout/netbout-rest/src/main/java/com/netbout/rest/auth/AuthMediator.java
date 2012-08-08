@@ -29,6 +29,7 @@ package com.netbout.rest.auth;
 import com.jcabi.log.Logger;
 import com.netbout.hub.UrnResolver;
 import com.netbout.spi.Urn;
+import com.rexsl.core.Manifests;
 import com.sun.jersey.api.client.Client;
 import java.io.IOException;
 import java.net.URI;
@@ -109,7 +110,8 @@ public final class AuthMediator {
         final URI uri = UriBuilder.fromUri(entry.toString())
             .queryParam("identity", "{iname}")
             .queryParam("secret", "{secret}")
-            .build(iname, secret);
+            .queryParam("version", "{version}")
+            .build(iname, secret, Manifests.read("Netbout-Version"));
         try {
             remote = this.load(uri);
         } catch (IOException ex) {
