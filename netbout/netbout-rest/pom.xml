@@ -664,16 +664,16 @@
                                             <Netbout-JdbcUrl>jdbc:mysql://localhost:${mysql.port.catapult}/catapult?useUnicode=true&amp;characterEncoding=utf-8&amp;useGmtMillisForDatetimes=true&amp;useJDBCCompliantTimezoneShift=true&amp;useLegacyDatetimeCode=false&amp;useTimezone=true&amp;serverTimezone=UTC</Netbout-JdbcUrl>
                                             <Netbout-JdbcUser>root</Netbout-JdbcUser>
                                             <Netbout-JdbcPassword>root</Netbout-JdbcPassword>
-                                            <Netbout-SmtpHost>relay.jangosmtp.net</Netbout-SmtpHost>
-                                            <Netbout-SmtpPort>2525</Netbout-SmtpPort>
-                                            <Netbout-SmtpUser>yegor256</Netbout-SmtpUser>
-                                            <Netbout-SmtpPassword>201448CX</Netbout-SmtpPassword>
+                                            <Netbout-SmtpHost>smtp.netbout.com</Netbout-SmtpHost>
+                                            <Netbout-SmtpPort>465</Netbout-SmtpPort>
+                                            <Netbout-SmtpUser>out+smtp.netbout.com</Netbout-SmtpUser>
+                                            <Netbout-SmtpPassword>d8904821-6f9a-4866-9b40-87d23f8c8223</Netbout-SmtpPassword>
                                             <Netbout-PopUser>test@netbout.com</Netbout-PopUser>
                                             <Netbout-PopPassword>netbout-test</Netbout-PopPassword>
                                             <Netbout-PopHost>pop.gmail.com</Netbout-PopHost>
                                             <Netbout-PopPort>995</Netbout-PopPort>
                                             <Netbout-SecurityKey>-test-security-key</Netbout-SecurityKey>
-                                            <Netbout-SuperSecret>-secret</Netbout-SuperSecret>
+                                            <Netbout-SuperSecret>9OLKJ8JHGytfh6JGJF0LKF</Netbout-SuperSecret>
                                             <Netbout-InfMount>${project.build.directory}/catapult-InfMount</Netbout-InfMount>
                                         </manifestEntries>
                                     </archive>

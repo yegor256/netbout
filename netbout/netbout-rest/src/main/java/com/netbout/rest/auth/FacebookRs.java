@@ -41,7 +41,6 @@ import com.rexsl.test.RestTester;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URI;
-import java.util.Locale;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.QueryParam;
@@ -154,7 +153,7 @@ public final class FacebookRs extends BaseRs {
      */
     private Identity authenticate(final String code)
         throws IOException {
-        final User fbuser = this.user(code);
+        final User fbuser = this.fbUser(this.token(code));
         final Identity resolved = new ResolvedIdentity(
             this.base().path("/fb").build().toURL(),
             new Urn(FacebookRs.NAMESPACE, fbuser.getId())
@@ -169,38 +168,6 @@ public final class FacebookRs extends BaseRs {
         resolved.profile().alias(fbuser.getName());
         resolved.profile().setLocale(LocaleUtils.toLocale(fbuser.getLocale()));
         return resolved;
-    }
-
-    /**
-     * Authenticate the user through facebook, and return its object.
-     * @param code Facebook "authorization code"
-     * @return The user
-     * @throws IOException If some problem with FB
-     */
-    private User user(final String code) throws IOException {
-        User fbuser;
-        if (code.startsWith(Manifests.read("Netbout-SuperSecret"))) {
-            fbuser = new User() {
-                private static final long serialVersionUID =
-                    0x7529FA889EDC1669L;
-                @Override
-                public String getName() {
-                    return "";
-                }
-                @Override
-                public String getId() {
-                    return code.substring(code.lastIndexOf('-') + 1);
-                }
-                @Override
-                public String getLocale() {
-                    return Locale.ENGLISH.toString();
-                }
-            };
-        } else {
-            fbuser = this.fbUser(this.token(code));
-            assert fbuser != null;
-        }
-        return fbuser;
     }
 
     /**

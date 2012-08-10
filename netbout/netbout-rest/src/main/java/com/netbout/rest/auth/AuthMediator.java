@@ -34,7 +34,6 @@ import com.sun.jersey.api.client.Client;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URL;
-import java.util.Locale;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.UriBuilder;
 
@@ -67,38 +66,6 @@ public final class AuthMediator {
      * @throws IOException If some problem with FB
      */
     public RemoteIdentity authenticate(final Urn iname, final String secret)
-        throws IOException {
-        RemoteIdentity remote;
-        if (iname.isEmpty() && "localhost".equals(secret)) {
-            remote = this.stub(iname);
-        } else {
-            remote = this.remote(iname, secret);
-        }
-        return remote;
-    }
-
-    /**
-     * Authenticate as a local stub.
-     * @param iname Identity name
-     * @return Identity
-     */
-    private RemoteIdentity stub(final Urn iname) {
-        final RemoteIdentity identity = new RemoteIdentity();
-        identity.setAuthority("http://www.netbout.com/nb");
-        identity.setName(iname.toString());
-        identity.setPhoto("http://cdn.netbout.com/unknown.png");
-        identity.setLocale(Locale.ENGLISH.toString());
-        return identity;
-    }
-
-    /**
-     * Authenticate as remote identity.
-     * @param iname Identity name
-     * @param secret Secret word
-     * @return Identity
-     * @throws IOException If some problem
-     */
-    private RemoteIdentity remote(final Urn iname, final String secret)
         throws IOException {
         RemoteIdentity remote;
         URL entry;
