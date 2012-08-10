@@ -43,7 +43,7 @@ Manifests.append(new File(rexsl.basedir, 'src/test/resources/META-INF/MANIFEST.M
 
 def home = new URI(System.getProperty('catapult.home'))
 
-def starter = new RestSession(home).authenticate(new Urn(), 'localhost')
+def starter = new RestSession(home, '9OLKJ8JHGytfh6JGJF0LKF').authenticate(new Urn(), '')
 def text = 'netbout=' + UriBuilder.fromUri(home).path('/nb').build()
 RestTester.start(RestUriBuilder.from(starter).build())
     .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_XML)

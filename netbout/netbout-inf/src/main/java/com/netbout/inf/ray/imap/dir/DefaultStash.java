@@ -142,6 +142,7 @@ final class DefaultStash implements Stash {
             );
             ++count;
         }
+        this.done.clear();
         Logger.debug(
             this,
             "#copyTo(..): copied %d files",

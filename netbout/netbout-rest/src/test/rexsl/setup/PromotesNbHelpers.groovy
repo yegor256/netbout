@@ -36,7 +36,9 @@ import javax.ws.rs.core.UriBuilder
 import org.hamcrest.MatcherAssert
 import org.hamcrest.Matchers
 
-def starter = new RestExpert(new RestSession(rexsl.home).authenticate(new Urn(), 'localhost'))
+def starter = new RestExpert(
+    new RestSession(rexsl.home, 'UY7lgj8POjfh7J').authenticate(new Urn(), '')
+)
 def mandatory = [
     'test' : '/mock-auth',
     'facebook': '/fb',

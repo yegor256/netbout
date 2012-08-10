@@ -62,6 +62,11 @@ public final class RestSession {
     public static final String AUTH_PARAM = "auth";
 
     /**
+     * Super user authentication query param.
+     */
+    public static final String SUDO_PARAM = "sudo";
+
+    /**
      * Name of the user authentication cookie.
      */
     public static final String AUTH_COOKIE = "netbout";
@@ -92,10 +97,16 @@ public final class RestSession {
     private final transient URI home;
 
     /**
+     * Super user secret word.
+     */
+    private final transient String sudo;
+
+    /**
      * Public ctor.
      * @param uri Home URI
+     * @param secret Super user secret
      */
-    public RestSession(final URI uri) {
+    public RestSession(final URI uri, final String secret) {
         if (!uri.isAbsolute()) {
             throw new IllegalArgumentException(
                 Logger.format(
@@ -104,7 +115,16 @@ public final class RestSession {
                 )
             );
         }
+        this.sudo = secret;
         this.home = UriBuilder.fromUri(uri).path("/").build();
+    }
+
+    /**
+     * Public ctor.
+     * @param uri Home URI
+     */
+    public RestSession(final URI uri) {
+        this(uri, "");
     }
 
     /**
@@ -129,11 +149,7 @@ public final class RestSession {
      * @return The URL
      */
     private String fetch(final Urn identity, final String secret) {
-        final URI uri = UriBuilder.fromUri(this.home)
-            .path("/auth")
-            .queryParam("identity", "{identity}")
-            .queryParam("secret", "{secret}")
-            .build(identity.toString(), secret);
+        final URI uri = this.uri(identity, secret);
         final String token = RestTester.start(uri)
             .get("authorization")
             .assertThat(new EtaAssertion())
@@ -153,6 +169,26 @@ public final class RestSession {
             token
         );
         return token;
+    }
+
+    /**
+     * Create auth URI.
+     * @param identity Name of the identity
+     * @param secret The secret word to use
+     * @return The URI
+     */
+    private URI uri(final Urn identity, final String secret) {
+        URI uri = UriBuilder.fromUri(this.home)
+            .path("/auth")
+            .queryParam("identity", "{identity}")
+            .queryParam("secret", "{secret}")
+            .build(identity.toString(), secret);
+        if (!this.sudo.isEmpty()) {
+            uri = UriBuilder.fromUri(uri)
+                .queryParam(RestSession.SUDO_PARAM, "{sudo}")
+                .build(this.sudo);
+        }
+        return uri;
     }
 
 }

@@ -35,6 +35,7 @@ import com.netbout.spi.Identity;
 import com.netbout.spi.Urn;
 import com.netbout.spi.client.RestSession;
 import com.netbout.spi.text.SecureString;
+import com.rexsl.core.Manifests;
 import com.rexsl.misc.CookieBuilder;
 import com.rexsl.page.PageBuilder;
 import java.net.URI;
@@ -58,6 +59,11 @@ public final class AuthRs extends BaseRs {
      * The URL to go next.
      */
     private transient URI forward;
+
+    /**
+     * It's a super-user mode.
+     */
+    private transient boolean sudo;
 
     /**
      * Set goto URI.
@@ -87,6 +93,26 @@ public final class AuthRs extends BaseRs {
     }
 
     /**
+     * Set SUDO mode.
+     * @param secret Secret code of a super user
+     */
+    @QueryParam(RestSession.SUDO_PARAM)
+    public void setSudo(final String secret) {
+        if (secret != null) {
+            if (secret.equals(Manifests.read("Netbout-SuperSecret"))) {
+                this.sudo = true;
+            } else {
+                throw new IllegalArgumentException(
+                    String.format(
+                        "wrong secret code of a super user: '%s'",
+                        secret
+                    )
+                );
+            }
+        }
+    }
+
+    /**
      * Authentication page.
      * @param iname Identity name
      * @param secret Secret word
@@ -99,13 +125,24 @@ public final class AuthRs extends BaseRs {
     public Response auth(@QueryParam("identity") final Urn iname,
         @QueryParam("secret") final String secret,
         @QueryParam("goto") @DefaultValue("/") final String path) {
-        if (iname == null || secret == null) {
+        if (iname == null) {
             throw new LoginRequiredException(
                 this,
-                "'identity' and 'secret' query params are mandatory"
+                "'identity' query param is mandatory"
             );
         }
-        final Identity identity = this.identity(iname, secret);
+        Identity identity;
+        if (this.sudo) {
+            identity = this.bypass(iname);
+        } else {
+            if (iname == null) {
+                throw new LoginRequiredException(
+                    this,
+                    "'secret' query param is mandatory"
+                );
+            }
+            identity = this.identity(iname, secret);
+        }
         URI location;
         if (this.forward == null) {
             location = this.base().path(path).build();
@@ -187,6 +224,20 @@ public final class AuthRs extends BaseRs {
             throw new LoginRequiredException(this, ex);
         }
         return identity;
+    }
+
+    /**
+     * Bypass authentication and return an identity.
+     * @param iname Identity name
+     * @return Identity
+     */
+    private Identity bypass(final Urn iname) {
+        try {
+            return this.hub().identity(iname);
+        } catch (com.netbout.spi.UnreachableUrnException ex) {
+            Logger.warn(this, "sudo %[exception]s", ex);
+            throw new LoginRequiredException(this, ex);
+        }
     }
 
 }

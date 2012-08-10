@@ -62,7 +62,7 @@
     </xsl:template>
 
     <xsl:template match="version">
-        <xsl:if test="contains(name, '-SNAPSHOT') or contains(name, '-RC') or contains(name, '-LOCAL')">
+        <xsl:if test="contains(name, '-')">
             <div style="position: fixed; left: 0px; bottom: 0px; color: gray;
                 font-size: 5em; text-align: left;">
                 <xsl:value-of select="name"/>

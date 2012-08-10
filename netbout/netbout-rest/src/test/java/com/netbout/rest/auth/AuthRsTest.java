@@ -32,6 +32,7 @@ import com.netbout.spi.Identity;
 import com.netbout.spi.IdentityMocker;
 import com.netbout.spi.Urn;
 import com.netbout.spi.UrnMocker;
+import com.rexsl.core.Manifests;
 import com.rexsl.test.ContainerMocker;
 import java.net.HttpURLConnection;
 import javax.ws.rs.core.HttpHeaders;
@@ -102,6 +103,22 @@ public final class AuthRsTest {
             .withNamespaceURL(container.home().toURL())
             .mock(AuthRs.class);
         rest.auth(new Urn("foo", "test"), "", "/path-to-go");
+    }
+
+    /**
+     * AuthRs can authenticate without facebook, with super code.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void authenticatesWithSuperCode() throws Exception {
+        final Urn name = Urn.create("urn:test:123456789");
+        final AuthRs rest = new NbResourceMocker().mock(AuthRs.class);
+        rest.setSudo(Manifests.read("Netbout-SuperSecret"));
+        final Response response = rest.auth(name, null, "/");
+        MatcherAssert.assertThat(
+            response.getStatus(),
+            Matchers.equalTo(HttpURLConnection.HTTP_SEE_OTHER)
+        );
     }
 
 }
