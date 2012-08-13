@@ -1,1 +1,1 @@
-web: java -jar ./target/netbout-${project.version}-${build.number}.war ${PORT}
+web: java -Xmx512m -jar ./target/netbout-${project.version}-${build.number}.war ${PORT}
