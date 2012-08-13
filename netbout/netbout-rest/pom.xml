@@ -714,6 +714,25 @@
                             </execution>
                         </executions>
                     </plugin>
+                    <plugin>
+                        <groupId>com.lazerycode.jmeter</groupId>
+                        <artifactId>jmeter-maven-plugin</artifactId>
+                        <version since="10 Aug 2012">1.4.1</version>
+                        <configuration>
+                            <propertiesUser>
+                                <port>${catapult.port}</port>
+                            </propertiesUser>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <id>jmeter-tests</id>
+                                <phase>integration-test</phase>
+                                <goals>
+                                    <goal>jmeter</goal>
+                                </goals>
+                           </execution>
+                        </executions>
+                    </plugin>
                 </plugins>
             </build>
         </profile>
