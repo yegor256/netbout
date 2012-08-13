@@ -66,7 +66,7 @@ final class BigText {
      * @throws IOException If cant write
      */
     public void write(final DataOutputStream stream) throws IOException {
-        final byte[] bytes = text.getBytes(CharEncoding.UTF_8);
+        final byte[] bytes = this.text.getBytes(CharEncoding.UTF_8);
         stream.writeInt(bytes.length);
         for (byte data : bytes) {
             stream.writeByte(data);
@@ -76,6 +76,7 @@ final class BigText {
     /**
      * Read text from stream.
      * @param stream Stream to read from
+     * @return New instance of this class, with text inside
      * @throws IOException If cant write
      */
     public static BigText read(final DataInputStream stream)
