@@ -38,6 +38,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.util.Date;
+import org.apache.commons.lang.RandomStringUtils;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;
@@ -134,6 +135,33 @@ public final class MessageNoticeTest {
             }
         );
         MatcherAssert.assertThat(first, Matchers.not(Matchers.equalTo(second)));
+    }
+
+    /**
+     * MessageNotice can serialize a notice with huge text.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void serializesAndDeserializesWithHugeText() throws Exception {
+        // @checkstyle MagicNumber (1 line)
+        final String text = RandomStringUtils.random(128 * 1024);
+        final ByteArrayOutputStream output = new ByteArrayOutputStream();
+        new MessageNotice.Serial().write(
+            new MessageNotice() {
+                @Override
+                public Message message() {
+                    return new MessageMocker().withText(text).mock();
+                }
+            },
+            new DataOutputStream(output)
+        );
+        final MessageNotice restored = new MessageNotice.Serial().read(
+            new DataInputStream(new ByteArrayInputStream(output.toByteArray()))
+        );
+        MatcherAssert.assertThat(
+            restored.message().text(),
+            Matchers.equalTo(text)
+        );
     }
 
 }
