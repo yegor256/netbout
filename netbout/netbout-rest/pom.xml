@@ -522,7 +522,7 @@
                         <executions>
                             <execution>
                                 <id>start-mysql</id>
-                                <phase>pre-integration-test</phase>
+                                <phase>process-test-resources</phase>
                                 <goals>
                                     <goal>run</goal>
                                 </goals>
@@ -684,7 +684,7 @@
                     <plugin>
                         <groupId>org.apache.tomcat.maven</groupId>
                         <artifactId>tomcat7-maven-plugin</artifactId>
-                        <version since="7 Feb 2012">2.0-beta-1</version>
+                        <version since="10 Aug 2012">2.0-beta-1</version>
                         <configuration>
                             <systemProperties>
                                 <log4j.configuration>file:${basedir}/src/test/resources/log4j-tomcat.properties</log4j.configuration>
@@ -712,6 +712,26 @@
                                     <goal>shutdown</goal>
                                 </goals>
                             </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>com.lazerycode.jmeter</groupId>
+                        <artifactId>jmeter-maven-plugin</artifactId>
+                        <version since="10 Aug 2012">1.4.1</version>
+                        <configuration>
+                            <propertiesUser>
+                                <port>${catapult.port}</port>
+                            </propertiesUser>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <id>jmeter-tests</id>
+                                <!-- @todo #430 they dont work for some reason -->
+                                <phase>never-integration-test</phase>
+                                <goals>
+                                    <goal>jmeter</goal>
+                                </goals>
+                           </execution>
                         </executions>
                     </plugin>
                 </plugins>

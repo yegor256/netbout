@@ -94,7 +94,7 @@ public interface MessageNotice extends Notice {
             final DataOutputStream stream) throws IOException {
             stream.writeLong(notice.message().number());
             stream.writeUTF(notice.message().author().name().toString());
-            stream.writeUTF(notice.message().text());
+            new BigText(notice.message().text()).write(stream);
             stream.writeLong(notice.message().date().getTime());
             new BoutNotice.Serial().write(
                 new BoutNotice() {
@@ -114,7 +114,7 @@ public interface MessageNotice extends Notice {
             throws IOException {
             final long number = stream.readLong();
             final Urn author = Urn.create(stream.readUTF());
-            final String text = stream.readUTF();
+            final String text = BigText.read(stream).toString();
             final Date date = new Date(stream.readLong());
             final Bout bout = new BoutNotice.Serial().read(stream).bout();
             // @checkstyle AnonInnerLength (100 lines)
