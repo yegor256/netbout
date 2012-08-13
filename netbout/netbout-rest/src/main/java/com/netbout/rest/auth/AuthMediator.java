@@ -67,6 +67,11 @@ public final class AuthMediator {
      */
     public RemoteIdentity authenticate(final Urn iname, final String secret)
         throws IOException {
+        if (iname == null || secret == null) {
+            throw new IllegalArgumentException(
+                "iname and secret are mandatory arguments"
+            );
+        }
         RemoteIdentity remote;
         URL entry;
         try {
