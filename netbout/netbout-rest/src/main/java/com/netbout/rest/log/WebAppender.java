@@ -101,6 +101,7 @@ public final class WebAppender extends AppenderSkeleton {
      *
      * @see LogList#LogList
      */
+    @SuppressWarnings("PMD.DefaultPackage")
     static void start() {
         WebAppender.EVENTS.put(
             Thread.currentThread().getName(),
@@ -113,6 +114,7 @@ public final class WebAppender extends AppenderSkeleton {
      * @return The list of events
      * @see LogList#events()
      */
+    @SuppressWarnings("PMD.DefaultPackage")
     static List<String> get() {
         return WebAppender.EVENTS.get(Thread.currentThread().getName());
     }
