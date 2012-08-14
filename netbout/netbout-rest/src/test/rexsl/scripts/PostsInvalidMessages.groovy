@@ -41,7 +41,7 @@ import javax.ws.rs.core.Response
 def nancy = new RestSession(rexsl.home).authenticate(new Urn('urn:test:nancy'), '')
 def bout = nancy.start()
 
-['', '<invalid-xml'].each {
+['', '<invalid-xml', '<root><broken-xml-document></root>'].each {
     RestTester.start(RestUriBuilder.from(bout))
         .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_XML)
         .get('read bout front page')
