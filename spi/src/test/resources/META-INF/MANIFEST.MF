@@ -1,1 +1,3 @@
 Netbout-SecurityKey: test-security-key
+Netbout-Version: 1.0-TEST
+Netbout-Revision: 12345

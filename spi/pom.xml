@@ -583,12 +583,43 @@
                         </testExcludes>
                     </configuration>
                 </plugin>
+                <plugin>
+                    <artifactId>maven-jar-plugin</artifactId>
+                    <version since="5 Dec 2011">2.3.2</version>
+                    <configuration>
+                        <archive>
+                            <manifestEntries>
+                                <Netbout-Revision>${build.number}</Netbout-Revision>
+                                <Netbout-Version>${project.version}</Netbout-Version>
+                                <Netbout-Date>${maven.build.timestamp}</Netbout-Date>
+                            </manifestEntries>
+                        </archive>
+                    </configuration>
+                </plugin>
             </plugins>
         </pluginManagement>
         <plugins>
             <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>buildnumber-maven-plugin</artifactId>
+                <version since="5 Aug 2012">1.1</version>
+                <executions>
+                    <execution>
+                        <phase>generate-resources</phase>
+                        <goals>
+                            <goal>create</goal>
+                        </goals>
+                        <configuration>
+                            <buildNumberPropertyName>build.number</buildNumberPropertyName>
+                            <doCheck>false</doCheck>
+                            <doUpdate>false</doUpdate>
+                            <getRevisionOnlyOnce>true</getRevisionOnlyOnce>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
                 <artifactId>maven-jar-plugin</artifactId>
-                <version since="5 Dec 2011">2.3.2</version>
                 <executions>
                     <execution>
                         <id>mock-artifact</id>
