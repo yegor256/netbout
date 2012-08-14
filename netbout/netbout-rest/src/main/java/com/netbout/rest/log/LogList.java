@@ -88,6 +88,9 @@ public final class LogList {
                 LogList.SEP
             );
             for (String event : events) {
+                if (event.isEmpty()) {
+                    continue;
+                }
                 this.list.add(StringEscapeUtils.unescapeXml(event));
             }
         } catch (com.netbout.spi.text.StringDecryptionException ex) {
