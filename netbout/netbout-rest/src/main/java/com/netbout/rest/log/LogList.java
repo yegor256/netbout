@@ -69,16 +69,17 @@ public final class LogList {
     @Override
     public String toString() {
         final StringBuilder text = new StringBuilder();
-        for (Object event : ListUtils.union(this.list, WebAppender.get())) {
-            text.append(StringEscapeUtils.escapeXml(event.toString()))
+        for (String event : this.events()) {
+            text.append(StringEscapeUtils.escapeXml(event))
                 .append(LogList.SEP);
         }
         return new SecureString(text.toString()).toString();
     }
 
     /**
-     * Append events from text.
-     * @param text The text
+     * Append events from packed text.
+     * @param text The text with packed log events inside
+     * @see BaseRs#setLog(String)
      */
     public void append(final String text) {
         try {

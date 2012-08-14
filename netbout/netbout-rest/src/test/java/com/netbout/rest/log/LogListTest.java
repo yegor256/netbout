@@ -26,9 +26,14 @@
  */
 package com.netbout.rest.log;
 
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
+import org.apache.log4j.SimpleLayout;
+import org.apache.log4j.spi.LoggingEvent;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;
+import org.mockito.Mockito;
 
 /**
  * Test case for {@link LogList}.
@@ -46,6 +51,35 @@ public final class LogListTest {
         MatcherAssert.assertThat(
             new LogList().toString(),
             Matchers.equalTo("")
+        );
+    }
+
+    /**
+     * LogList pack texts into one string.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void packsEventsIntoOneString() throws Exception {
+        final String message = "How are you doing, dude?";
+        final LogList first = new LogList();
+        final LoggingEvent event = Mockito.mock(LoggingEvent.class);
+        Mockito.doReturn(Thread.currentThread().getName())
+            .when(event).getThreadName();
+        Mockito.doReturn(message).when(event).getMessage();
+        Mockito.doReturn(message).when(event).getRenderedMessage();
+        Mockito.doReturn(Level.INFO).when(event).getLevel();
+        final WebAppender appender = new WebAppender();
+        appender.setLayout(new SimpleLayout());
+        appender.append(event);
+        final String packed = first.toString();
+        final LogList second = new LogList();
+        second.append(packed);
+        MatcherAssert.assertThat(
+            second.events(),
+            Matchers.allOf(
+                Matchers.<String>iterableWithSize(1),
+                Matchers.<String>hasItem(String.format("INFO - %s\n", message))
+            )
         );
     }
 
