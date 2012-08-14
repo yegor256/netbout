@@ -1,1 +1,1 @@
-web: java -Xmx512m -jar ./target/netbout-${project.version}-${build.number}.war ${PORT}
+web: java -Xfuture -enableassertions -Xmx128m -jar ./target/netbout-${project.version}-${build.number}.war ${PORT}
