@@ -37,6 +37,8 @@ import org.apache.commons.lang.StringUtils;
 /**
  * List of log events.
  *
+ * <p>The class is used in {@link BaseRs#log()}.
+ *
  * <p>The class is NOT thread-safe.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)

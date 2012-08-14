@@ -37,6 +37,12 @@ import org.apache.log4j.spi.LoggingEvent;
 /**
  * Global web log appender.
  *
+ * <p>This class is used by LOG4J and is configured in
+ * {@code log4j.properties}. It just saves all log events into a static
+ * variable and holds them there forever, until {@link #start()} is
+ * called. Actually, this class only consumes events and let {@link LogList} to
+ * retrieve them when necessary.
+ *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
@@ -90,9 +96,12 @@ public final class WebAppender extends AppenderSkeleton {
     }
 
     /**
-     * Start recording events for this thread.
+     * Start recording events for this thread (called only by
+     * {@link LogList} ctor).
+     *
+     * @see LogList#LogList
      */
-    public static void start() {
+    static void start() {
         WebAppender.EVENTS.put(
             Thread.currentThread().getName(),
             new LinkedList<String>()
@@ -102,8 +111,9 @@ public final class WebAppender extends AppenderSkeleton {
     /**
      * Get all recorded events, for current thread.
      * @return The list of events
+     * @see LogList#events()
      */
-    public static List<String> get() {
+    static List<String> get() {
         return WebAppender.EVENTS.get(Thread.currentThread().getName());
     }
 
