@@ -76,12 +76,13 @@ public final class SimpleReverse implements Reverse {
     public String get(final long msg) throws Reverse.ValueNotFoundException {
         String value = null;
         final long start = System.currentTimeMillis();
+        int cycle = 0;
         while (true) {
             value = this.map.get(msg);
             if (value != null) {
                 break;
             }
-            if (System.currentTimeMillis() - start > 10) {
+            if (System.currentTimeMillis() - start > 5000) {
                 throw new Reverse.ValueNotFoundException(
                     Logger.format(
                         // @checkstyle LineLength (1 line)
@@ -93,7 +94,7 @@ public final class SimpleReverse implements Reverse {
                 );
             }
             try {
-                TimeUnit.MILLISECONDS.sleep(1);
+                TimeUnit.MILLISECONDS.sleep(++cycle * 5);
             } catch (InterruptedException ex) {
                 Thread.currentThread().interrupt();
                 throw new IllegalStateException(ex);
