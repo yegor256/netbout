@@ -37,6 +37,8 @@ import org.apache.commons.lang.StringUtils;
 /**
  * List of log events.
  *
+ * <p>The class is used in {@link BaseRs#log()}.
+ *
  * <p>The class is NOT thread-safe.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
@@ -67,16 +69,17 @@ public final class LogList {
     @Override
     public String toString() {
         final StringBuilder text = new StringBuilder();
-        for (Object event : ListUtils.union(this.list, WebAppender.get())) {
-            text.append(StringEscapeUtils.escapeXml(event.toString()))
+        for (String event : this.events()) {
+            text.append(StringEscapeUtils.escapeXml(event))
                 .append(LogList.SEP);
         }
         return new SecureString(text.toString()).toString();
     }
 
     /**
-     * Append events from text.
-     * @param text The text
+     * Append events from packed text.
+     * @param text The text with packed log events inside
+     * @see BaseRs#setLog(String)
      */
     public void append(final String text) {
         try {
@@ -85,6 +88,9 @@ public final class LogList {
                 LogList.SEP
             );
             for (String event : events) {
+                if (event.isEmpty()) {
+                    continue;
+                }
                 this.list.add(StringEscapeUtils.unescapeXml(event));
             }
         } catch (com.netbout.spi.text.StringDecryptionException ex) {

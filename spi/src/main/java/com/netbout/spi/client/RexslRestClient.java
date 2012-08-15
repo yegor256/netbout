@@ -29,6 +29,7 @@
  */
 package com.netbout.spi.client;
 
+import com.rexsl.core.Manifests;
 import com.rexsl.test.RestTester;
 import com.rexsl.test.TestClient;
 import com.rexsl.test.TestResponse;
@@ -177,7 +178,11 @@ final class RexslRestClient implements RestClient {
      * @return The name
      */
     private String agent() {
-        return "Netbout/1.0";
+        return String.format(
+            "Netbout/%s-%s",
+            Manifests.read("Netbout-Version"),
+            Manifests.read("Netbout-Revision")
+        );
     }
 
 }

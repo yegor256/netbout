@@ -25,7 +25,7 @@
  * SUCH DAMAGE.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
- * @version $Id$
+ * @version $Id: PostsInvalidMessages.groovy 3219 2012-08-14 10:54:12Z yegor@tpc2.com $
  */
 package com.netbout.rest.rexsl.scripts
 
@@ -36,19 +36,29 @@ import com.netbout.spi.client.RestUriBuilder
 import com.rexsl.test.RestTester
 import javax.ws.rs.core.HttpHeaders
 import javax.ws.rs.core.MediaType
-import javax.ws.rs.core.Response
 
-def nancy = new RestSession(rexsl.home).authenticate(new Urn('urn:test:nancy'), '')
-def bout = nancy.start()
+def andre = new RestSession(rexsl.home).authenticate(new Urn('urn:test:andre'), '')
+def bout = andre.start()
 
-['', '<invalid-xml', '<root><broken-xml-document></root>'].each {
-    RestTester.start(RestUriBuilder.from(bout))
-        .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_XML)
-        .get('read bout front page')
-        .assertStatus(HttpURLConnection.HTTP_OK)
-        .assertThat(new EtaAssertion())
-        .rel('/page/links/link[@rel="post"]/@href')
-        .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_FORM_URLENCODED)
-        .post('posts message to the bout', 'text=' + URLEncoder.encode(it))
-        .assertStatus(Response.Status.TEMPORARY_REDIRECT.statusCode)
-}
+RestTester.start(RestUriBuilder.from(bout))
+    .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_XML)
+    .get('read bout front page')
+    .assertStatus(HttpURLConnection.HTTP_OK)
+    .assertThat(new EtaAssertion())
+    .rel('/page/links/link[@rel="post"]/@href')
+    .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_FORM_URLENCODED)
+    .post('posts message to the bout', 'text=' + URLEncoder.encode('how are you?'))
+    .assertStatus(HttpURLConnection.HTTP_SEE_OTHER)
+    .follow()
+    .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_XML)
+    .get('read bout page again')
+    .assertXPath('/page/bout/messages[count(message) = 1]')
+    .assertXPath('/page/bout/messages/message[text="how are you?"]')
+    .assertXPath('/page/bout/messages/message[@seen="true"]')
+    .assertXPath('/page/bout/messages/message[author="urn:test:andre"]')
+    .assertXPath('/page/bout/messages/message/when')
+    .assertXPath('/page/bout/messages/message/date')
+    .assertXPath('/page/bout/messages/message/number')
+    .assertXPath('/page/bout/messages/message/render')
+    .assertXPath('/page/log[count(event) > 0]')
+    .assertXPath('/page/log[count(event[.=""]) = 0]')
