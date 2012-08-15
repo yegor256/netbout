@@ -77,7 +77,9 @@ public final class LogListTest {
             second.events(),
             Matchers.allOf(
                 Matchers.<String>iterableWithSize(1),
-                Matchers.<String>hasItem(String.format("INFO - %s\n", message))
+                Matchers.everyItem(
+                    Matchers.equalTo(String.format("INFO - %s\n", message))
+                )
             )
         );
     }

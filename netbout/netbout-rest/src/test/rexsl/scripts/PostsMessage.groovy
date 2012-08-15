@@ -36,7 +36,6 @@ import com.netbout.spi.client.RestUriBuilder
 import com.rexsl.test.RestTester
 import javax.ws.rs.core.HttpHeaders
 import javax.ws.rs.core.MediaType
-import javax.ws.rs.core.Response
 
 def andre = new RestSession(rexsl.home).authenticate(new Urn('urn:test:andre'), '')
 def bout = andre.start()
