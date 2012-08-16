@@ -726,19 +726,42 @@
                         </executions>
                     </plugin>
                     <plugin>
+                        <artifactId>maven-dependency-plugin</artifactId>
+                        <configuration>
+                            <overWriteReleases>false</overWriteReleases>
+                            <overWriteSnapshots>true</overWriteSnapshots>
+                            <outputDirectory>${project.build.directory}/jmeter/lib</outputDirectory>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <id>copy-artifacts-for-jmeter</id>
+                                <phase>process-test-resources</phase>
+                                <goals>
+                                    <goal>copy-dependencies</goal>
+                                </goals>
+                           </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
                         <groupId>com.lazerycode.jmeter</groupId>
                         <artifactId>jmeter-maven-plugin</artifactId>
                         <version since="10 Aug 2012">1.4.1</version>
                         <configuration>
+                            <!-- <propertiesJMeter>
+                                <search_paths>${project.build.directory}/jmeter-lib/</search_paths>
+                            </propertiesJMeter> -->
                             <propertiesUser>
                                 <port>${catapult.port}</port>
+                                <threads>5</threads>
+                                <loops>5</loops>
+                                <rampup>10</rampup>
                             </propertiesUser>
                         </configuration>
                         <executions>
                             <execution>
                                 <id>jmeter-tests</id>
                                 <!-- @todo #430 they dont work for some reason -->
-                                <phase>never-integration-test</phase>
+                                <phase>test</phase>
                                 <goals>
                                     <goal>jmeter</goal>
                                 </goals>
