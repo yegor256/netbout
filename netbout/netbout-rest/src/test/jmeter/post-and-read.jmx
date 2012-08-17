@@ -2,68 +2,35 @@
 <jmeterTestPlan version="1.2" properties="2.3">
     <hashTree>
         <TestPlan guiclass="TestPlanGui" testclass="TestPlan" testname="post &amp; read" enabled="true">
-            <stringProp name="TestPlan.comments"></stringProp>
             <boolProp name="TestPlan.functional_mode">false</boolProp>
             <boolProp name="TestPlan.serialize_threadgroups">false</boolProp>
-            <elementProp name="TestPlan.user_defined_variables" elementType="Arguments" guiclass="ArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
-                <collectionProp name="Arguments.arguments" />
-            </elementProp>
-            <stringProp name="TestPlan.user_define_classpath"></stringProp>
         </TestPlan>
         <hashTree>
-            <Arguments guiclass="ArgumentsPanel" testclass="Arguments" testname="vars" enabled="true">
-                <collectionProp name="Arguments.arguments">
-                    <elementProp name="port" elementType="Argument">
-                        <stringProp name="Argument.name">port</stringProp>
-                        <stringProp name="Argument.value">9099</stringProp>
-                        <stringProp name="Argument.desc">HTTP port</stringProp>
-                        <stringProp name="Argument.metadata">=</stringProp>
-                    </elementProp>
-                    <elementProp name="threads" elementType="Argument">
-                        <stringProp name="Argument.name">threads</stringProp>
-                        <stringProp name="Argument.value">1</stringProp>
-                        <stringProp name="Argument.desc">How many threads in parallel</stringProp>
-                        <stringProp name="Argument.metadata">=</stringProp>
-                    </elementProp>
-                    <elementProp name="loops" elementType="Argument">
-                        <stringProp name="Argument.name">loops</stringProp>
-                        <stringProp name="Argument.value">1</stringProp>
-                        <stringProp name="Argument.desc">How many loops</stringProp>
-                        <stringProp name="Argument.metadata">=</stringProp>
-                    </elementProp>
-                    <elementProp name="rampup" elementType="Argument">
-                        <stringProp name="Argument.name">rampup</stringProp>
-                        <stringProp name="Argument.value">1</stringProp>
-                        <stringProp name="Argument.desc">Seconds for ramp-up</stringProp>
-                        <stringProp name="Argument.metadata">=</stringProp>
-                    </elementProp>
-                </collectionProp>
-            </Arguments>
-            <hashTree />
             <ThreadGroup guiclass="ThreadGroupGui" testclass="ThreadGroup" testname="threads" enabled="true">
                 <stringProp name="ThreadGroup.on_sample_error">continue</stringProp>
                 <elementProp name="ThreadGroup.main_controller" elementType="LoopController" guiclass="LoopControlPanel" testclass="LoopController" testname="Loop Controller" enabled="true">
                     <boolProp name="LoopController.continue_forever">false</boolProp>
-                    <stringProp name="LoopController.loops">${loops}</stringProp>
+                    <stringProp name="LoopController.loops">2</stringProp>
                 </elementProp>
-                <stringProp name="ThreadGroup.num_threads">${threads}</stringProp>
-                <stringProp name="ThreadGroup.ramp_time">${rampup}</stringProp>
-                <boolProp name="ThreadGroup.scheduler">false</boolProp>
-                <stringProp name="ThreadGroup.duration"></stringProp>
-                <stringProp name="ThreadGroup.delay"></stringProp>
-                <longProp name="ThreadGroup.start_time">1344873065000</longProp>
-                <longProp name="ThreadGroup.end_time">1344873065000</longProp>
+                <stringProp name="ThreadGroup.num_threads">100</stringProp>
+                <stringProp name="ThreadGroup.ramp_time">5</stringProp>
             </ThreadGroup>
             <hashTree>
                 <BeanShellSampler guiclass="BeanShellSamplerGui" testclass="BeanShellSampler" testname="beanshell" enabled="true">
                     <stringProp name="BeanShellSampler.query">
-                        home = URI.create("http://localhost:" + vars.get("port"));
-                        jeme = new com.netbout.spi.client.RestSession(home)
-                            .authenticate(new com.netbout.spi.Urn("urn:test:jeme"), "");
-                        bout = jeme.start();
-                        bout.rename("new name of bout");
-                        bout.post("what's up?");
-                        log.info("posted to bout #" + bout.number());
+                        import com.netbout.spi.Urn;
+                        import com.netbout.spi.client.RestSession;
+                        try {
+                            home = URI.create("http://localhost:" + props.get("port"));
+                            log.info("home URI: " + home);
+                            user = new RestSession(home).authenticate(new Urn("urn:test:jmeter"), "");
+                            bout = user.start();
+                            bout.rename("new bout for JMeter");
+                            bout.post("what's up?");
+                        } catch (Throwable ex) {
+                            log.error(ex.getMessage());
+                            IsSuccess = false;
+                        }
                     </stringProp>
                     <stringProp name="BeanShellSampler.filename"></stringProp>
                     <stringProp name="BeanShellSampler.parameters"></stringProp>
@@ -71,70 +38,6 @@
                 </BeanShellSampler>
                 <hashTree />
             </hashTree>
-            <ResultCollector guiclass="TableVisualizer" testclass="ResultCollector" testname="results" enabled="true">
-                <boolProp name="ResultCollector.error_logging">false</boolProp>
-                <objProp>
-                    <name>saveConfig</name>
-                    <value class="SampleSaveConfiguration">
-                        <time>true</time>
-                        <latency>true</latency>
-                        <timestamp>true</timestamp>
-                        <success>true</success>
-                        <label>true</label>
-                        <code>true</code>
-                        <message>true</message>
-                        <threadName>true</threadName>
-                        <dataType>true</dataType>
-                        <encoding>false</encoding>
-                        <assertions>true</assertions>
-                        <subresults>true</subresults>
-                        <responseData>false</responseData>
-                        <samplerData>false</samplerData>
-                        <xml>true</xml>
-                        <fieldNames>false</fieldNames>
-                        <responseHeaders>false</responseHeaders>
-                        <requestHeaders>false</requestHeaders>
-                        <responseDataOnError>false</responseDataOnError>
-                        <saveAssertionResultsFailureMessage>false</saveAssertionResultsFailureMessage>
-                        <assertionsResultsToSave>0</assertionsResultsToSave>
-                        <bytes>true</bytes>
-                    </value>
-                </objProp>
-                <stringProp name="filename"></stringProp>
-            </ResultCollector>
-            <hashTree />
-            <ResultCollector guiclass="GraphVisualizer" testclass="ResultCollector" testname="Graph Results" enabled="true">
-                <boolProp name="ResultCollector.error_logging">false</boolProp>
-                <objProp>
-                    <name>saveConfig</name>
-                    <value class="SampleSaveConfiguration">
-                        <time>true</time>
-                        <latency>true</latency>
-                        <timestamp>true</timestamp>
-                        <success>true</success>
-                        <label>true</label>
-                        <code>true</code>
-                        <message>true</message>
-                        <threadName>true</threadName>
-                        <dataType>true</dataType>
-                        <encoding>false</encoding>
-                        <assertions>true</assertions>
-                        <subresults>true</subresults>
-                        <responseData>false</responseData>
-                        <samplerData>false</samplerData>
-                        <xml>true</xml>
-                        <fieldNames>false</fieldNames>
-                        <responseHeaders>false</responseHeaders>
-                        <requestHeaders>false</requestHeaders>
-                        <responseDataOnError>false</responseDataOnError>
-                        <saveAssertionResultsFailureMessage>false</saveAssertionResultsFailureMessage>
-                        <assertionsResultsToSave>0</assertionsResultsToSave>
-                        <bytes>true</bytes>
-                    </value>
-                </objProp>
-                <stringProp name="filename"></stringProp>
-            </ResultCollector>
-            <hashTree />
         </hashTree>
     </hashTree>
 </jmeterTestPlan>

@@ -387,7 +387,6 @@
                 </plugin>
                 <plugin>
                     <artifactId>maven-antrun-plugin</artifactId>
-                    <version since="2 Dec 2011">1.7</version>
                     <dependencies>
                         <dependency>
                             <groupId>mysql</groupId>
@@ -653,6 +652,43 @@
                                     </target>
                                 </configuration>
                             </execution>
+                            <execution>
+                                <id>jmeter</id>
+                                <phase>integration-test</phase>
+                                <goals>
+                                    <goal>run</goal>
+                                </goals>
+                                <configuration>
+                                    <target>
+                                        <property name="maven.classpath" refid="maven.test.classpath"/>
+                                        <propertyfile file="${project.build.directory}/jmeter.props">
+                                            <entry key="user.classpath" value="${maven.classpath}"/>
+                                            <entry key="port" value="${catapult.port}"/>
+                                        </propertyfile>
+                                        <apply executable="jmeter" failonerror="true">
+                                            <arg value="--nongui"/>
+                                            <arg value="--addprop"/>
+                                            <arg value="${project.build.directory}/jmeter.props"/>
+                                            <arg value="--jmeterlogfile"/>
+                                            <arg value="${project.build.directory}/jmeter.log"/>
+                                            <arg value="--loglevel"/>
+                                            <arg value="jmeter=DEBUG"/>
+                                            <arg value="--testfile"/>
+                                            <fileset dir="${basedir}/src/test/jmeter">
+                                                <patternset>
+                                                    <include name="**/*.jmx"/>
+                                                </patternset>
+                                            </fileset>
+                                        </apply>
+                                        <fail message="ERROR found in JMeter log">
+                                            <condition>
+                                                <resourcecontains resource="${project.build.directory}/jmeter.log"
+                                                    substring="ERROR - "/>
+                                            </condition>
+                                        </fail>
+                                    </target>
+                                </configuration>
+                            </execution>
                         </executions>
                     </plugin>
                     <plugin>
@@ -725,49 +761,6 @@
                             </execution>
                         </executions>
                     </plugin>
-                    <plugin>
-                        <artifactId>maven-dependency-plugin</artifactId>
-                        <configuration>
-                            <overWriteReleases>false</overWriteReleases>
-                            <overWriteSnapshots>true</overWriteSnapshots>
-                            <outputDirectory>${project.build.directory}/jmeter/lib</outputDirectory>
-                        </configuration>
-                        <executions>
-                            <execution>
-                                <id>copy-artifacts-for-jmeter</id>
-                                <phase>process-test-resources</phase>
-                                <goals>
-                                    <goal>copy-dependencies</goal>
-                                </goals>
-                           </execution>
-                        </executions>
-                    </plugin>
-                    <plugin>
-                        <groupId>com.lazerycode.jmeter</groupId>
-                        <artifactId>jmeter-maven-plugin</artifactId>
-                        <version since="10 Aug 2012">1.4.1</version>
-                        <configuration>
-                            <!-- <propertiesJMeter>
-                                <search_paths>${project.build.directory}/jmeter-lib/</search_paths>
-                            </propertiesJMeter> -->
-                            <propertiesUser>
-                                <port>${catapult.port}</port>
-                                <threads>5</threads>
-                                <loops>5</loops>
-                                <rampup>10</rampup>
-                            </propertiesUser>
-                        </configuration>
-                        <executions>
-                            <execution>
-                                <id>jmeter-tests</id>
-                                <!-- @todo #430 they dont work for some reason -->
-                                <phase>test</phase>
-                                <goals>
-                                    <goal>jmeter</goal>
-                                </goals>
-                           </execution>
-                        </executions>
-                    </plugin>
                 </plugins>
             </build>
         </profile>
@@ -830,15 +823,6 @@
                                 </archive>
                             </configuration>
                         </plugin>
-                        <!--
-                        delete me when heroku deployment works perfectly
-                        <plugin>
-                            <artifactId>maven-deploy-plugin</artifactId>
-                            <configuration>
-                                <skip>true</skip>
-                            </configuration>
-                        </plugin>
-                        -->
                     </plugins>
                 </pluginManagement>
                 <plugins>
