@@ -298,7 +298,6 @@
             </plugin>
             <plugin>
                 <artifactId>maven-antrun-plugin</artifactId>
-                <version since="2 Dec 2011">1.7</version>
                 <executions>
                     <execution>
                         <id>copy-EBS-pem-file</id>
