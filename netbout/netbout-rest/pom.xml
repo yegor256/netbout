@@ -680,7 +680,7 @@
                                                 </patternset>
                                             </fileset>
                                         </apply>
-                                        <fail message="ERROR found in JMeter log">
+                                        <fail message="ERROR found in ${project.build.directory}/jmeter.log">
                                             <condition>
                                                 <resourcecontains resource="${project.build.directory}/jmeter.log"
                                                     substring="ERROR - "/>
