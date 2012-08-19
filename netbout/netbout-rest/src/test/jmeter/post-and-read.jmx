@@ -23,7 +23,7 @@
                         try {
                             home = URI.create("http://localhost:" + props.get("port"));
                             log.info("home URI: " + home);
-                            user = new RestSession(home).authenticate(new Urn("urn:test:jmeter"), "");
+                            user = new RestSession(home, "9OLKJ8JHGytfh6JGJF0LKF").authenticate(new Urn("urn:netbout:jmeter"), "");
                             bout = user.start();
                             bout.rename("new bout for JMeter");
                             bout.post("what's up?");

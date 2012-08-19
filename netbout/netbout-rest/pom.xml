@@ -661,14 +661,14 @@
                                 <configuration>
                                     <target>
                                         <property name="maven.classpath" refid="maven.test.classpath"/>
-                                        <propertyfile file="${project.build.directory}/jmeter.props">
+                                        <propertyfile file="${project.build.directory}/jmeter.properties">
                                             <entry key="user.classpath" value="${maven.classpath}"/>
                                             <entry key="port" value="${catapult.port}"/>
                                         </propertyfile>
                                         <apply executable="jmeter" failonerror="true">
                                             <arg value="--nongui"/>
                                             <arg value="--addprop"/>
-                                            <arg value="${project.build.directory}/jmeter.props"/>
+                                            <arg value="${project.build.directory}/jmeter.properties"/>
                                             <arg value="--jmeterlogfile"/>
                                             <arg value="${project.build.directory}/jmeter.log"/>
                                             <arg value="--loglevel"/>
