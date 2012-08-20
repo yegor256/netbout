@@ -687,6 +687,8 @@
                                         </apply>
                                         <loadfile property="log" srcFile="${project.build.directory}/jmeter.log"/>
                                         <echo>${log}</echo>
+                                        <loadfile property="log4j" srcFile="${project.build.directory}/jmeter-log4j.log"/>
+                                        <echo>${log4j}</echo>
                                         <fail message="ERROR found in ${project.build.directory}/jmeter.log">
                                             <condition>
                                                 <resourcecontains resource="${project.build.directory}/jmeter.log"

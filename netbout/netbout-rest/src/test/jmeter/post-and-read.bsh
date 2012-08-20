@@ -40,10 +40,9 @@ try {
     bout.invite(friend);
     friend.bout(bout.number()).confirm();
     friend.bout(bout.number()).post(new LoremIpsum().getWords(100, random.nextInt(49) + 1));
-    friend.bout(bout.number()).leave();
     bout.post(new LoremIpsum().getWords(100, random.nextInt(49) + 1));
     log.info("posted to bout #" + bout.number());
 } catch (Throwable ex) {
-    log.error(ex.getMessage());
+    log.error(ex.getClass().getName() + ": " + ex.getMessage());
     IsSuccess = false;
 }

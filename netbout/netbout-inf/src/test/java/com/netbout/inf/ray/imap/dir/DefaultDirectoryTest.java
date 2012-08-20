@@ -30,6 +30,7 @@ import com.jcabi.log.VerboseRunnable;
 import com.jcabi.log.VerboseThreads;
 import com.netbout.inf.Attribute;
 import com.netbout.inf.MsgMocker;
+import com.netbout.inf.Stash;
 import com.netbout.inf.notices.MessagePostedNotice;
 import com.netbout.inf.ray.imap.Directory;
 import com.netbout.inf.ray.imap.Numbers;
@@ -38,6 +39,7 @@ import com.netbout.spi.Message;
 import com.netbout.spi.MessageMocker;
 import de.svenjacobs.loremipsum.LoremIpsum;
 import java.io.File;
+import java.util.concurrent.Callable;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -162,33 +164,24 @@ public final class DefaultDirectoryTest {
             Executors.newFixedThreadPool(threads, new VerboseThreads());
         for (int thread = 0; thread < threads; ++thread) {
             svc.submit(
-                new VerboseRunnable(
-                    // @checkstyle AnonInnerLength (50 lines)
-                    new Runnable() {
-                        @Override
-                        public void run() {
-                            try {
-                                start.await();
-                            } catch (InterruptedException ex) {
-                                Thread.currentThread().interrupt();
-                                throw new IllegalStateException(ex);
+                // @checkstyle AnonInnerLength (50 lines)
+                new Callable<Void>() {
+                    @Override
+                    public Void call() throws Exception {
+                        final Stash stash = dir.stash();
+                        start.await();
+                        stash.add(
+                            new MessagePostedNotice() {
+                                @Override
+                                public Message message() {
+                                    return new MessageMocker().mock();
+                                }
                             }
-                            try {
-                                dir.stash().add(
-                                    new MessagePostedNotice() {
-                                        @Override
-                                        public Message message() {
-                                            return new MessageMocker().mock();
-                                        }
-                                    }
-                                );
-                            } catch (java.io.IOException ex) {
-                                throw new IllegalStateException(ex);
-                            }
-                            latch.countDown();
-                        }
+                        );
+                        latch.countDown();
+                        return null;
                     }
-                )
+                }
             );
         }
         start.countDown();
