@@ -672,7 +672,7 @@
                                             <arg value="--jmeterlogfile"/>
                                             <arg value="${project.build.directory}/jmeter.log"/>
                                             <arg value="--loglevel"/>
-                                            <arg value="jmeter=DEBUG"/>
+                                            <arg value="jmeter=INFO"/>
                                             <arg value="--testfile"/>
                                             <fileset dir="${basedir}/src/test/jmeter">
                                                 <patternset>
