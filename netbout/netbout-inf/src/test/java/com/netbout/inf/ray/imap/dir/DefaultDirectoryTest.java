@@ -38,7 +38,6 @@ import com.netbout.spi.Message;
 import com.netbout.spi.MessageMocker;
 import de.svenjacobs.loremipsum.LoremIpsum;
 import java.io.File;
-import java.util.concurrent.Callable;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -54,7 +53,9 @@ import org.junit.rules.TemporaryFolder;
  * Test case of {@link DefaultDirectory}.
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
+ * @checkstyle ClassDataAbstractionCoupling (500 lines)
  */
+@SuppressWarnings("PMD.DoNotUseThreads")
 public final class DefaultDirectoryTest {
 
     /**
@@ -127,6 +128,7 @@ public final class DefaultDirectoryTest {
      * @throws Exception If there is some problem inside
      */
     @Test
+    @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
     public void resolvesMultiThreadedCalledToStash() throws Exception {
         final Directory dir = new DefaultDirectory(this.temp.newFolder("xx"));
         final Numbers numbers = new FastNumbers();
@@ -161,6 +163,7 @@ public final class DefaultDirectoryTest {
         for (int thread = 0; thread < threads; ++thread) {
             svc.submit(
                 new VerboseRunnable(
+                    // @checkstyle AnonInnerLength (50 lines)
                     new Runnable() {
                         @Override
                         public void run() {
