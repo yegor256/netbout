@@ -724,6 +724,7 @@
                                             <Netbout-SecurityKey>-test-security-key</Netbout-SecurityKey>
                                             <Netbout-SuperSecret>9OLKJ8JHGytfh6JGJF0LKF</Netbout-SuperSecret>
                                             <Netbout-InfMount>${project.build.directory}/catapult-InfMount</Netbout-InfMount>
+                                            <Netbout-InfDelay>5000</Netbout-InfDelay>
                                         </manifestEntries>
                                     </archive>
                                 </configuration>

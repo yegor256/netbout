@@ -30,6 +30,7 @@ import com.jcabi.log.Logger;
 import com.jcabi.log.VerboseRunnable;
 import com.jcabi.log.VerboseThreads;
 import com.netbout.spi.Urn;
+import com.rexsl.core.Manifests;
 import java.io.Closeable;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -63,7 +64,7 @@ final class Mux implements Closeable {
     /**
      * How often to flush, in ms.
      */
-    private static final long PERIOD = 15 * 60 * 1000;
+    private static final long PERIOD = Mux.delay();
 
     /**
      * How many threads to use (more than the number of processors, because
@@ -329,6 +330,22 @@ final class Mux implements Closeable {
                 }
             }
         }
+    }
+
+    /**
+     * How long to wait, in ms, between flushes to disc.
+     * @return Time in milliseconds
+     */
+    private static long delay() {
+        long delay;
+        final String prop = "Netbout-InfDelay";
+        if (Manifests.exists(prop)) {
+            delay = Long.valueOf(Manifests.read(prop));
+        } else {
+            // @checkstyle MagicNumber (1 line)
+            delay = 15 * 60 * 1000L;
+        }
+        return delay;
     }
 
 }
