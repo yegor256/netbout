@@ -58,6 +58,7 @@ import org.apache.commons.io.FilenameUtils;
  * @version $Id$
  * @checkstyle ClassDataAbstractionCoupling (500 lines)
  */
+@SuppressWarnings("PMD.TooManyMethods")
 public final class DefaultDirectory implements Directory {
 
     /**
@@ -279,6 +280,7 @@ public final class DefaultDirectory implements Directory {
      */
     @Override
     public Stash stash() throws IOException {
+        // @checkstyle AnonInnerLength (50 lines)
         return new Stash() {
             @Override
             public void add(final Notice notice) throws IOException {
