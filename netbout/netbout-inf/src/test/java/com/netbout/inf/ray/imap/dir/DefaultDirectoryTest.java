@@ -26,12 +26,24 @@
  */
 package com.netbout.inf.ray.imap.dir;
 
+import com.jcabi.log.VerboseRunnable;
+import com.jcabi.log.VerboseThreads;
 import com.netbout.inf.Attribute;
 import com.netbout.inf.MsgMocker;
+import com.netbout.inf.notices.MessagePostedNotice;
 import com.netbout.inf.ray.imap.Directory;
 import com.netbout.inf.ray.imap.Numbers;
 import com.netbout.inf.ray.imap.Reverse;
+import com.netbout.spi.Message;
+import com.netbout.spi.MessageMocker;
+import de.svenjacobs.loremipsum.LoremIpsum;
 import java.io.File;
+import java.util.concurrent.Callable;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Rule;
@@ -108,6 +120,81 @@ public final class DefaultDirectoryTest {
             dir,
             Matchers.hasToString(Matchers.notNullValue())
         );
+    }
+
+    /**
+     * DefaultDirectory can protect itself from thread-unsafety.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void resolvesMultiThreadedCalledToStash() throws Exception {
+        final Directory dir = new DefaultDirectory(this.temp.newFolder("xx"));
+        final Numbers numbers = new FastNumbers();
+        final long msg = MsgMocker.number();
+        numbers.add(msg);
+        numbers.add(msg - 1);
+        final Attribute attr = new Attribute("some-attr-value-to-test");
+        final String value = new LoremIpsum().getWords();
+        dir.save(attr, value, numbers);
+        final int threads = 50;
+        final ScheduledExecutorService routine =
+            Executors.newSingleThreadScheduledExecutor(new VerboseThreads());
+        routine.scheduleWithFixedDelay(
+            new VerboseRunnable(
+                new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            dir.baseline();
+                        } catch (java.io.IOException ex) {
+                            throw new IllegalStateException(ex);
+                        }
+                    }
+                }
+            ),
+            0, 1, TimeUnit.NANOSECONDS
+        );
+        final CountDownLatch start = new CountDownLatch(1);
+        final CountDownLatch latch = new CountDownLatch(threads);
+        final ExecutorService svc =
+            Executors.newFixedThreadPool(threads, new VerboseThreads());
+        for (int thread = 0; thread < threads; ++thread) {
+            svc.submit(
+                new VerboseRunnable(
+                    new Runnable() {
+                        @Override
+                        public void run() {
+                            try {
+                                start.await();
+                            } catch (InterruptedException ex) {
+                                Thread.currentThread().interrupt();
+                                throw new IllegalStateException(ex);
+                            }
+                            try {
+                                dir.stash().add(
+                                    new MessagePostedNotice() {
+                                        @Override
+                                        public Message message() {
+                                            return new MessageMocker().mock();
+                                        }
+                                    }
+                                );
+                            } catch (java.io.IOException ex) {
+                                throw new IllegalStateException(ex);
+                            }
+                            latch.countDown();
+                        }
+                    }
+                )
+            );
+        }
+        start.countDown();
+        routine.shutdown();
+        MatcherAssert.assertThat(
+            latch.await(1, TimeUnit.SECONDS),
+            Matchers.is(true)
+        );
+        svc.shutdown();
     }
 
 }

@@ -29,6 +29,8 @@
  */
 package com.netbout.rest.rexsl.setup
 
+import com.jcabi.log.Logger
+
 [
     '/com/netbout/inf/DefaultInfinity.class',
     '/com/netbout/hub/DefaultHub.class',
@@ -36,4 +38,5 @@ package com.netbout.rest.rexsl.setup
     if (this.class.getResource(name) == null) {
         throw new IllegalStateException("class ${name} not found in classpath")
     }
+    Logger.info(this, 'class %s is available in classpath', name)
 }

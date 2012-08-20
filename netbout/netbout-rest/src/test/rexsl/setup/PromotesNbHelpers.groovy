@@ -29,6 +29,7 @@
  */
 package com.netbout.rest.rexsl.setup
 
+import com.jcabi.log.Logger
 import com.netbout.spi.Urn
 import com.netbout.spi.client.RestExpert
 import com.netbout.spi.client.RestSession
@@ -64,4 +65,5 @@ MatcherAssert.assertThat(
     new RestExpert(
         new RestSession(rexsl.home).authenticate(new Urn(it.key), '')
     ).promote(new URL(it.value))
+    Logger.info(this, '%s promoted to helper at %s', it.key, it.value)
 }

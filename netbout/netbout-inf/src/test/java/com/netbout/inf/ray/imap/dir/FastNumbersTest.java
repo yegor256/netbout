@@ -326,7 +326,10 @@ public final class FastNumbersTest {
             svc.submit(task);
         }
         start.countDown();
-        latch.await(1, TimeUnit.SECONDS);
+        MatcherAssert.assertThat(
+            latch.await(1, TimeUnit.MINUTES),
+            Matchers.is(true)
+        );
         svc.shutdown();
     }
 
