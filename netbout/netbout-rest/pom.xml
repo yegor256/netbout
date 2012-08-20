@@ -670,6 +670,7 @@
                                             <entry key="port" value="${catapult.port}"/>
                                         </propertyfile>
                                         <apply executable="jmeter" failonerror="true">
+                                            <arg value="-Dlog4j.configuration=file:${basedir}/src/test/jmeter/log4j.properties"/>
                                             <arg value="--nongui"/>
                                             <arg value="--addprop"/>
                                             <arg value="${project.build.directory}/jmeter.properties"/>
@@ -743,6 +744,7 @@
                             <systemProperties>
                                 <log4j.configuration>file:${basedir}/src/test/resources/log4j-tomcat.properties</log4j.configuration>
                             </systemProperties>
+                            <tomcatLoggingFile>${basedir}/src/test/catapult/logging.properties</tomcatLoggingFile>
                             <contextFile>${basedir}/src/test/catapult/context.xml</contextFile>
                             <fork>true</fork>
                             <path>${catapult.context}</path>
