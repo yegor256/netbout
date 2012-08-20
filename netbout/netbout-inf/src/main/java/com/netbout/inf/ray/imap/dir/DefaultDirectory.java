@@ -28,6 +28,7 @@ package com.netbout.inf.ray.imap.dir;
 
 import com.jcabi.log.Logger;
 import com.netbout.inf.Attribute;
+import com.netbout.inf.Notice;
 import com.netbout.inf.Stash;
 import com.netbout.inf.ray.imap.Directory;
 import com.netbout.inf.ray.imap.Numbers;
@@ -43,6 +44,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.RandomAccessFile;
 import java.nio.channels.Channels;
+import java.util.Iterator;
 import java.util.concurrent.atomic.AtomicReference;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
@@ -277,9 +279,45 @@ public final class DefaultDirectory implements Directory {
      */
     @Override
     public Stash stash() throws IOException {
-        synchronized (this.lock) {
-            return this.base.get().stash();
-        }
+        return new Stash() {
+            @Override
+            public void add(final Notice notice) throws IOException {
+                synchronized (DefaultDirectory.this.lock) {
+                    this.stash().add(notice);
+                }
+            }
+            @Override
+            public void remove(final Notice notice) throws IOException {
+                synchronized (DefaultDirectory.this.lock) {
+                    this.stash().remove(notice);
+                }
+            }
+            @Override
+            public void copyTo(final Stash stash) throws IOException {
+                synchronized (DefaultDirectory.this.lock) {
+                    this.stash().copyTo(stash);
+                }
+            }
+            @Override
+            public Iterator<Notice> iterator() {
+                synchronized (DefaultDirectory.this.lock) {
+                    try {
+                        return this.stash().iterator();
+                    } catch (java.io.IOException ex) {
+                        throw new IllegalStateException(ex);
+                    }
+                }
+            }
+            @Override
+            public void close() throws IOException {
+                synchronized (DefaultDirectory.this.lock) {
+                    this.stash().close();
+                }
+            }
+            private Stash stash() throws IOException {
+                return DefaultDirectory.this.base.get().stash();
+            }
+        };
     }
 
     /**

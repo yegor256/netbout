@@ -39,12 +39,17 @@ import com.netbout.spi.Message;
 import com.netbout.spi.MessageMocker;
 import de.svenjacobs.loremipsum.LoremIpsum;
 import java.io.File;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.concurrent.Callable;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.Semaphore;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Rule;
@@ -143,18 +148,23 @@ public final class DefaultDirectoryTest {
         final int threads = 50;
         final ScheduledExecutorService routine =
             Executors.newSingleThreadScheduledExecutor(new VerboseThreads());
+        final AtomicInteger errors = new AtomicInteger();
+        final Semaphore sem = new Semaphore(1);
         routine.scheduleWithFixedDelay(
             new VerboseRunnable(
-                new Runnable() {
+                new Callable<Void>() {
                     @Override
-                    public void run() {
+                    public Void call() throws Exception {
+                        sem.acquire();
                         try {
                             dir.baseline();
-                        } catch (java.io.IOException ex) {
-                            throw new IllegalStateException(ex);
+                        } finally {
+                            sem.release();
                         }
+                        return null;
                     }
-                }
+                },
+                true
             ),
             0, 1, TimeUnit.NANOSECONDS
         );
@@ -162,35 +172,43 @@ public final class DefaultDirectoryTest {
         final CountDownLatch latch = new CountDownLatch(threads);
         final ExecutorService svc =
             Executors.newFixedThreadPool(threads, new VerboseThreads());
+        final Collection<Future<?>> futures = new ArrayList<Future<?>>(threads);
         for (int thread = 0; thread < threads; ++thread) {
-            svc.submit(
-                // @checkstyle AnonInnerLength (50 lines)
-                new Callable<Void>() {
-                    @Override
-                    public Void call() throws Exception {
-                        final Stash stash = dir.stash();
-                        start.await();
-                        stash.add(
-                            new MessagePostedNotice() {
-                                @Override
-                                public Message message() {
-                                    return new MessageMocker().mock();
+            futures.add(
+                svc.submit(
+                    // @checkstyle AnonInnerLength (50 lines)
+                    new Callable<Void>() {
+                        @Override
+                        public Void call() throws Exception {
+                            final Stash stash = dir.stash();
+                            start.await();
+                            stash.add(
+                                new MessagePostedNotice() {
+                                    @Override
+                                    public Message message() {
+                                        return new MessageMocker().mock();
+                                    }
                                 }
-                            }
-                        );
-                        latch.countDown();
-                        return null;
+                            );
+                            latch.countDown();
+                            return null;
+                        }
                     }
-                }
+                )
             );
         }
         start.countDown();
+        for (Future<?> future : futures) {
+            future.get();
+        }
+        svc.shutdown();
+        sem.acquire();
         routine.shutdown();
         MatcherAssert.assertThat(
             latch.await(1, TimeUnit.SECONDS),
             Matchers.is(true)
         );
-        svc.shutdown();
+        MatcherAssert.assertThat(errors.get(), Matchers.equalTo(0));
     }
 
 }
