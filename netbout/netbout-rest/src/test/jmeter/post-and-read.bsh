@@ -25,24 +25,30 @@
  * SUCH DAMAGE.
  */
 
+import com.jcabi.log.Logger;
 import com.netbout.spi.Urn;
 import com.netbout.spi.client.RestSession;
 import de.svenjacobs.loremipsum.LoremIpsum;
 import java.util.Random;
 
+// from Catapult/Tomcat configuration in pom.xml
+sudo = "9OLKJ8JHGytfh6JGJF0LKF";
+
 try {
     random = new Random();
     home = URI.create("http://localhost:" + props.get("port"));
-    user = new RestSession(home, "9OLKJ8JHGytfh6JGJF0LKF").authenticate(new Urn("urn:netbout:jmeter"), "");
-    friend = new RestSession(home, "9OLKJ8JHGytfh6JGJF0LKF").authenticate(new Urn("urn:netbout:jmeter-friend"), "");
+    user = new RestSession(home, sudo).authenticate(new Urn("urn:netbout:jmeter"), "");
+    friend = new RestSession(home, sudo).authenticate(new Urn("urn:netbout:friend"), "");
     bout = user.start();
     bout.rename(new LoremIpsum().getWords(10, random.nextInt(49) + 1));
     bout.invite(friend);
-    friend.bout(bout.number()).confirm();
-    friend.bout(bout.number()).post(new LoremIpsum().getWords(100, random.nextInt(49) + 1));
+    number = bout.number();
+    friend.bout(number).confirm();
+    friend.bout(number).post(new LoremIpsum().getWords(100, random.nextInt(49) + 1));
+    friend.bout(number).leave();
     bout.post(new LoremIpsum().getWords(100, random.nextInt(49) + 1));
     log.info("posted to bout #" + bout.number());
 } catch (Throwable ex) {
-    log.error(ex.getClass().getName() + ": " + ex.getMessage());
+    log.error(Logger.format("%[exception]s", new Object[] {ex}));
     IsSuccess = false;
 }

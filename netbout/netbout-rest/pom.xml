@@ -668,14 +668,13 @@
                                         <propertyfile file="${project.build.directory}/jmeter.properties">
                                             <entry key="user.classpath" value="${maven.classpath}"/>
                                             <entry key="port" value="${catapult.port}"/>
+                                            <entry key="log_file" value="${project.build.directory}/jmeter.log"/>
                                         </propertyfile>
                                         <apply executable="jmeter" failonerror="true">
                                             <arg value="-Dlog4j.configuration=file:${basedir}/src/test/jmeter/log4j.properties"/>
                                             <arg value="--nongui"/>
                                             <arg value="--addprop"/>
                                             <arg value="${project.build.directory}/jmeter.properties"/>
-                                            <arg value="--jmeterlogfile"/>
-                                            <arg value="${project.build.directory}/jmeter.log"/>
                                             <arg value="--loglevel"/>
                                             <arg value="jmeter=INFO"/>
                                             <arg value="--testfile"/>
@@ -685,10 +684,6 @@
                                                 </patternset>
                                             </fileset>
                                         </apply>
-                                        <loadfile property="log" srcFile="${project.build.directory}/jmeter.log"/>
-                                        <echo>${log}</echo>
-                                        <loadfile property="log4j" srcFile="${project.build.directory}/jmeter-log4j.log"/>
-                                        <echo>${log4j}</echo>
                                         <fail message="ERROR found in ${project.build.directory}/jmeter.log">
                                             <condition>
                                                 <resourcecontains resource="${project.build.directory}/jmeter.log"
