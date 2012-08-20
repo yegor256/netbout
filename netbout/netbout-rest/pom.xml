@@ -1024,6 +1024,21 @@
                                     <optionName>Custom Availability Zones</optionName>
                                     <value>us-east-1d</value>
                                 </optionSetting>
+                                <optionSetting>
+                                    <namespace>aws:elb:loadbalancer</namespace>
+                                    <optionName>LoadBalancerHTTPPort</optionName>
+                                    <value>80</value>
+                                </optionSetting>
+                                <optionSetting>
+                                    <namespace>aws:elb:loadbalancer</namespace>
+                                    <optionName>LoadBalancerHTTPSPort</optionName>
+                                    <value>443</value>
+                                </optionSetting>
+                                <optionSetting>
+                                    <namespace>aws:elb:loadbalancer</namespace>
+                                    <optionName>SSLCertificateId</optionName>
+                                    <value>arn:aws:iam::019644334823:server-certificate/netbout</value>
+                                </optionSetting>
                             </optionSettings>
                         </configuration>
                         <executions>
