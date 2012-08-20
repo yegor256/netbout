@@ -75,6 +75,11 @@ final class Mux implements Closeable {
         Runtime.getRuntime().availableProcessors() * 8;
 
     /**
+     * Total semaphores.
+     */
+    private static final int SEMAPHORES = Mux.THREADS * 2;
+
+    /**
      * The ray.
      */
     private final transient Ray ray;
@@ -121,7 +126,7 @@ final class Mux implements Closeable {
      * Semaphore, that holds locks for every actively working task (and
      * doesn't allow new tasks to start if there are not enough locks).
      */
-    private final transient Semaphore semaphore = new Semaphore(Mux.THREADS);
+    private final transient Semaphore semaphore = new Semaphore(Mux.SEMAPHORES);
 
     /**
      * When {@link #flush()} was called last time.
@@ -216,7 +221,7 @@ final class Mux implements Closeable {
      * @throws IOException If some IO problem inside
      */
     public Set<Urn> add(final Notice notice) throws IOException {
-        this.ray.stash().add(notice);
+        this.stash(notice);
         final MuxTask task = new MuxTask(notice, this.ray, this.store);
         final Set<Urn> deps = new HashSet<Urn>();
         if (this.queue.contains(task)) {
@@ -314,18 +319,22 @@ final class Mux implements Closeable {
 
     /**
      * Flush mux to disc.
+     *
+     * <p>Before flushing we "acquire" all semaphores, to prevent any changes
+     * to the Mux during this flushing period.
+     *
      * @throws InterruptedException If interrupted
      */
     private void flush() throws InterruptedException {
         synchronized (this.flushed) {
             if (System.currentTimeMillis() - this.flushed.get() > Mux.PERIOD) {
-                this.semaphore.acquire(Mux.THREADS);
+                this.semaphore.acquire(Mux.SEMAPHORES);
                 try {
                     this.ray.flush();
                 } catch (java.io.IOException ex) {
                     throw new IllegalArgumentException(ex);
                 } finally {
-                    this.semaphore.release(Mux.THREADS);
+                    this.semaphore.release(Mux.SEMAPHORES);
                     this.flushed.set(System.currentTimeMillis());
                 }
             }
@@ -346,6 +355,22 @@ final class Mux implements Closeable {
             delay = 15 * 60 * 1000L;
         }
         return delay;
+    }
+
+    /**
+     * Stash this notice.
+     * @param notice The notice to process
+     * @throws IOException If some IO problem inside
+     */
+    private void stash(final Notice notice) throws IOException {
+        try {
+            Mux.this.semaphore.acquire();
+            this.ray.stash().add(notice);
+        } catch (InterruptedException ex) {
+            Thread.currentThread().interrupt();
+        } finally {
+            Mux.this.semaphore.release();
+        }
     }
 
 }

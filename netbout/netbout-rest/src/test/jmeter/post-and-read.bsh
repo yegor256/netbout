@@ -33,11 +33,11 @@ import java.util.Random;
 try {
     random = new Random();
     home = URI.create("http://localhost:" + props.get("port"));
-    log.info("home URI: " + home);
     user = new RestSession(home, "9OLKJ8JHGytfh6JGJF0LKF").authenticate(new Urn("urn:netbout:jmeter"), "");
     bout = user.start();
-    bout.rename(new LoremIpsum().getWords(10, random.nextInt(50) + 1));
-    bout.post(new LoremIpsum().getWords(100, random.nextInt(50) + 1));
+    bout.rename(new LoremIpsum().getWords(10, random.nextInt(49) + 1));
+    bout.post(new LoremIpsum().getWords(100, random.nextInt(49) + 1));
+    log.info("posted to bout #" + bout.number());
 } catch (Throwable ex) {
     log.error(ex.getMessage());
     IsSuccess = false;

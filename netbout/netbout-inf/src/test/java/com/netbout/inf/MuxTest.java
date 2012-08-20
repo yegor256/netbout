@@ -30,9 +30,7 @@ import com.netbout.inf.notices.MessagePostedNotice;
 import com.netbout.spi.BoutMocker;
 import com.netbout.spi.Message;
 import com.netbout.spi.MessageMocker;
-import com.netbout.spi.Urn;
 import com.netbout.spi.UrnMocker;
-import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
@@ -58,9 +56,8 @@ public final class MuxTest {
             new RayMocker().mock(),
             new StoreMocker().mock()
         );
-        final Urn name = new UrnMocker().mock();
-        final CountDownLatch latch = new CountDownLatch(100);
-        for (int idx = 0; idx < latch.getCount(); idx += 1) {
+        // @checkstyle MagicNumber (1 line)
+        for (int idx = 0; idx < 50; idx += 1) {
             mux.add(
                 new MessagePostedNotice() {
                     @Override
@@ -74,8 +71,14 @@ public final class MuxTest {
                 }
             );
         }
-        latch.await(1, TimeUnit.SECONDS);
-        MatcherAssert.assertThat(mux.eta(name), Matchers.equalTo(0L));
+        int cycle = 0;
+        while (mux.eta() != 0) {
+            TimeUnit.MILLISECONDS.sleep(1);
+            // @checkstyle MagicNumber (1 line)
+            if (++cycle > 1000) {
+                throw new IllegalStateException("time out");
+            }
+        }
         mux.close();
     }
 
