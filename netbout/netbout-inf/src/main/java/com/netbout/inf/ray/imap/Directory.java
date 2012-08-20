@@ -78,10 +78,6 @@ public interface Directory extends Closeable {
     /**
      * Baseline existing version (if we loose power right after this operation
      * this version will be loaded after reboot).
-     *
-     * <p>This method must NOT be thread-safe, but it should take into
-     * account a possibility of {@link #stash()} call during its execution.
-     *
      * @throws IOException If some I/O problem inside
      */
     void baseline() throws IOException;

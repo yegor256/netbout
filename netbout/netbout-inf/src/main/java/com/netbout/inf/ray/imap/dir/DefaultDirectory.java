@@ -236,26 +236,28 @@ public final class DefaultDirectory implements Directory {
      */
     @Override
     public void baseline() throws IOException {
-        try {
-            final String version = this.versions.draft();
-            final Baseline candidate = new Baseline(
-                new Lock(new File(this.lock.dir(), version))
+        synchronized (this.lock) {
+            try {
+                final String version = this.versions.draft();
+                final Baseline candidate = new Baseline(
+                    new Lock(new File(this.lock.dir(), version))
+                );
+                this.draft.get().baseline(candidate, this.base.get());
+                this.base.get().close();
+                this.base.get().expire();
+                this.base.set(candidate);
+                this.draft.get().close();
+                this.draft.get().expire();
+                this.versions.rebase(version);
+            } finally {
+                this.versions.clear();
+            }
+            this.draft.set(
+                new Draft(
+                    new Lock(new File(this.lock.dir(), this.versions.draft()))
+                )
             );
-            this.draft.get().baseline(candidate, this.base.get());
-            this.base.get().close();
-            this.base.get().expire();
-            this.base.set(candidate);
-            this.draft.get().close();
-            this.draft.get().expire();
-            this.versions.rebase(version);
-        } finally {
-            this.versions.clear();
         }
-        this.draft.set(
-            new Draft(
-                new Lock(new File(this.lock.dir(), this.versions.draft()))
-            )
-        );
     }
 
     /**
@@ -275,7 +277,9 @@ public final class DefaultDirectory implements Directory {
      */
     @Override
     public Stash stash() throws IOException {
-        return this.base.get().stash();
+        synchronized (this.lock) {
+            return this.base.get().stash();
+        }
     }
 
     /**
