@@ -72,7 +72,7 @@ final class Mux implements Closeable {
      * getting data from the database).
      */
     private static final int THREADS =
-        Runtime.getRuntime().availableProcessors() * 8;
+        Runtime.getRuntime().availableProcessors() * 2;
 
     /**
      * Total semaphores.
