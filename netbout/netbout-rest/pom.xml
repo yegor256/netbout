@@ -900,7 +900,9 @@
                                         </copy>
                                         <exec dir="${project.build.directory}/heroku" executable="git" failonerror="true">
                                             <arg value="add"/>
-                                            <arg value="."/>
+                                            <arg value="./pom.xml"/>
+                                            <arg value="./Procfile"/>
+                                            <arg value="./downloader/pom.xml"/>
                                         </exec>
                                         <exec dir="${project.build.directory}/heroku" executable="git" failonerror="true">
                                             <arg value="commit"/>
