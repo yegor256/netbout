@@ -78,7 +78,11 @@
                 <isset property="timeout"/>
             </condition>
         </fail>
-        <loadfile srcfile="${directory}/mysql-${database}.pid" property="pid" />
+        <loadfile srcfile="${directory}/mysql-${database}.pid" property="pid">
+            <filterchain>
+                <striplinebreaks/>
+            </filterchain>
+        </loadfile>
         <echo message="MySQL '${database}' is ready at 'localhost:${port}', pid: '${pid}'" />
         <exec dir="${mysql.dir}" spawn="true" executable="sh">
             <arg value="-c"/>
@@ -104,7 +108,11 @@
     </target>
 
     <target name="stop" description="stopping MySQL server">
-        <loadfile srcfile="${directory}/mysql-${database}.pid" property="pid" />
+        <loadfile srcfile="${directory}/mysql-${database}.pid" property="pid">
+            <filterchain>
+                <striplinebreaks/>
+            </filterchain>
+        </loadfile>
         <exec dir="${mysql.dir}" executable="./bin/mysqladmin" failonerror="true">
             <arg value="--port=${port}"/>
             <arg value="--user=root"/>
