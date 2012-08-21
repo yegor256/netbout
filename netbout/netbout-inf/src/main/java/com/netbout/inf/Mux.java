@@ -320,6 +320,10 @@ final class Mux implements Closeable {
      * <p>Before flushing we "acquire" all semaphores, to prevent any changes
      * to the Mux during this flushing period.
      *
+     * <p>The method is synchronized in order to avoid simultaneous execution
+     * of it in a few threads. The first call will check time and it if's
+     * suitable will do the flushing and will RESET the time marker.
+     *
      * @throws InterruptedException If interrupted
      */
     private void flush() throws InterruptedException {

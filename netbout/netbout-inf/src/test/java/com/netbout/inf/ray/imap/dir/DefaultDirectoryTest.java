@@ -62,7 +62,9 @@ import org.junit.rules.TemporaryFolder;
  * @version $Id$
  * @checkstyle ClassDataAbstractionCoupling (500 lines)
  */
-@SuppressWarnings("PMD.DoNotUseThreads")
+@SuppressWarnings({
+    "PMD.DoNotUseThreads", "PMD.AvoidInstantiatingObjectsInLoops"
+})
 public final class DefaultDirectoryTest {
 
     /**
@@ -136,8 +138,7 @@ public final class DefaultDirectoryTest {
      * @checkstyle ExecutableStatementCount (50 lines)
      */
     @Test
-    @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
-    public void resolvesMultiThreadedCalledToStash() throws Exception {
+    public void resolvesMultiThreadedCallsToStash() throws Exception {
         final Directory dir = new DefaultDirectory(this.temp.newFolder("xx"));
         final Numbers numbers = new FastNumbers();
         final long msg = MsgMocker.number();
@@ -190,6 +191,77 @@ public final class DefaultDirectoryTest {
                                         return new MessageMocker().mock();
                                     }
                                 }
+                            );
+                            latch.countDown();
+                            return null;
+                        }
+                    }
+                )
+            );
+        }
+        start.countDown();
+        for (Future<?> future : futures) {
+            future.get();
+        }
+        svc.shutdown();
+        sem.acquire();
+        routine.shutdown();
+        MatcherAssert.assertThat(
+            latch.await(1, TimeUnit.SECONDS),
+            Matchers.is(true)
+        );
+        MatcherAssert.assertThat(errors.get(), Matchers.equalTo(0));
+    }
+
+    /**
+     * DefaultDirectory can protect itself from thread-unsafety.
+     * @throws Exception If there is some problem inside
+     * @checkstyle ExecutableStatementCount (50 lines)
+     */
+    @Test
+    public void resolvesMultiThreadedCallsToSave() throws Exception {
+        final Directory dir = new DefaultDirectory(this.temp.newFolder("zz"));
+        final ScheduledExecutorService routine =
+            Executors.newSingleThreadScheduledExecutor(new VerboseThreads());
+        final AtomicInteger errors = new AtomicInteger();
+        final Semaphore sem = new Semaphore(1);
+        routine.scheduleWithFixedDelay(
+            new VerboseRunnable(
+                new Callable<Void>() {
+                    @Override
+                    public Void call() throws Exception {
+                        sem.acquire();
+                        try {
+                            dir.baseline();
+                        } finally {
+                            sem.release();
+                        }
+                        return null;
+                    }
+                },
+                true
+            ),
+            0, 1, TimeUnit.NANOSECONDS
+        );
+        final int threads = 50;
+        final CountDownLatch start = new CountDownLatch(1);
+        final CountDownLatch latch = new CountDownLatch(threads);
+        final ExecutorService svc =
+            Executors.newFixedThreadPool(threads, new VerboseThreads());
+        final Collection<Future<?>> futures = new ArrayList<Future<?>>(threads);
+        for (int thread = 0; thread < threads; ++thread) {
+            futures.add(
+                svc.submit(
+                    // @checkstyle AnonInnerLength (50 lines)
+                    new Callable<Void>() {
+                        @Override
+                        public Void call() throws Exception {
+                            final Stash stash = dir.stash();
+                            start.await();
+                            dir.save(
+                                new Attribute("attr-x"),
+                                "value-x",
+                                new FastNumbers()
                             );
                             latch.countDown();
                             return null;
