@@ -38,10 +38,13 @@ try {
     random = new Random();
     home = URI.create("http://localhost:" + props.get("port"));
     user = new RestSession(home, sudo).authenticate(new Urn("urn:netbout:jmeter"), "");
-    friend = new RestSession(home, sudo).authenticate(new Urn("urn:netbout:friend"), "");
+    friend = new RestSession(home, sudo).authenticate(
+        new Urn("urn:netbout:friend-" + random.nextInt(500)), ""
+    );
     bout = user.start();
     bout.rename(new LoremIpsum().getWords(10, random.nextInt(49) + 1));
     bout.invite(friend);
+    bout.post(new LoremIpsum().getWords(100, random.nextInt(49) + 1));
     number = bout.number();
     friend.bout(number).confirm();
     friend.bout(number).post(new LoremIpsum().getWords(100, random.nextInt(49) + 1));

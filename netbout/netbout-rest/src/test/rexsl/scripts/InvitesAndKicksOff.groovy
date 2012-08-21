@@ -41,7 +41,7 @@ def random = new RestSession(rexsl.home).authenticate(
 )
 
 def bout = jeff.start()
-bout.post('hi there')
+bout.post('inviting and kicking off others')
 def number = bout.number()
 bout.invite(random)
 random.bout(number).confirm()
