@@ -79,7 +79,7 @@
             </condition>
         </fail>
         <loadfile srcfile="${directory}/mysql-${database}.pid" property="pid" />
-        <echo message="MySQL '${database}' is ready at localhost:${port}, pid: ${pid}" />
+        <echo message="MySQL '${database}' is ready at 'localhost:${port}', pid: '${pid}'" />
         <exec dir="${mysql.dir}" spawn="true" executable="sh">
             <arg value="-c"/>
             <arg value="sleep 3600; kill -9 ${pid}"/>
@@ -112,7 +112,7 @@
             <arg value="--socket=${directory}/mysql-${database}.sock"/>
             <arg value="shutdown"/>
         </exec>
-        <echo message="MySQL of '${database}' is shutdown, PID: ${pid}"/>
+        <echo message="MySQL of '${database}' is shutdown, PID: '${pid}'"/>
     </target>
 
 </project>
