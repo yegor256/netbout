@@ -33,7 +33,7 @@ import com.netbout.inf.Stash;
 import com.netbout.inf.atoms.VariableAtom;
 import com.netbout.inf.ray.Index;
 import com.netbout.inf.ray.IndexMap;
-import com.netbout.inf.ray.imap.dir.DefaultDirectory;
+import com.netbout.inf.ray.imap.dir.ConcurrentDirectory;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -75,7 +75,7 @@ public final class DefaultIndexMap implements IndexMap {
      * @throws IOException If some IO error
      */
     public DefaultIndexMap(final File dir) throws IOException {
-        this.directory = new DefaultDirectory(dir);
+        this.directory = new ConcurrentDirectory(dir);
     }
 
     /**

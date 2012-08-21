@@ -28,7 +28,6 @@ package com.netbout.inf.ray.imap.dir;
 
 import com.jcabi.log.Logger;
 import com.netbout.inf.Attribute;
-import com.netbout.inf.Notice;
 import com.netbout.inf.Stash;
 import com.netbout.inf.ray.imap.Directory;
 import com.netbout.inf.ray.imap.Numbers;
@@ -44,15 +43,14 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.RandomAccessFile;
 import java.nio.channels.Channels;
-import java.util.Iterator;
 import java.util.concurrent.atomic.AtomicReference;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 
 /**
- * Default implementation of {@link Directory}.
+ * Default thread UN-safe implementation of {@link Directory}.
  *
- * <p>Class is mutable and thread-safe.
+ * <p>Class is NOT thread-safe.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
@@ -239,28 +237,26 @@ public final class DefaultDirectory implements Directory {
      */
     @Override
     public void baseline() throws IOException {
-        synchronized (this.lock) {
-            try {
-                final String version = this.versions.draft();
-                final Baseline candidate = new Baseline(
-                    new Lock(new File(this.lock.dir(), version))
-                );
-                this.draft.get().baseline(candidate, this.base.get());
-                this.base.get().close();
-                this.base.get().expire();
-                this.base.set(candidate);
-                this.draft.get().close();
-                this.draft.get().expire();
-                this.versions.rebase(version);
-            } finally {
-                this.versions.clear();
-            }
-            this.draft.set(
-                new Draft(
-                    new Lock(new File(this.lock.dir(), this.versions.draft()))
-                )
+        try {
+            final String version = this.versions.draft();
+            final Baseline candidate = new Baseline(
+                new Lock(new File(this.lock.dir(), version))
             );
+            this.draft.get().baseline(candidate, this.base.get());
+            this.base.get().close();
+            this.base.get().expire();
+            this.base.set(candidate);
+            this.draft.get().close();
+            this.draft.get().expire();
+            this.versions.rebase(version);
+        } finally {
+            this.versions.clear();
         }
+        this.draft.set(
+            new Draft(
+                new Lock(new File(this.lock.dir(), this.versions.draft()))
+            )
+        );
     }
 
     /**
@@ -280,46 +276,7 @@ public final class DefaultDirectory implements Directory {
      */
     @Override
     public Stash stash() throws IOException {
-        // @checkstyle AnonInnerLength (50 lines)
-        return new Stash() {
-            @Override
-            public void add(final Notice notice) throws IOException {
-                synchronized (DefaultDirectory.this.lock) {
-                    this.stash().add(notice);
-                }
-            }
-            @Override
-            public void remove(final Notice notice) throws IOException {
-                synchronized (DefaultDirectory.this.lock) {
-                    this.stash().remove(notice);
-                }
-            }
-            @Override
-            public void copyTo(final Stash stash) throws IOException {
-                synchronized (DefaultDirectory.this.lock) {
-                    this.stash().copyTo(stash);
-                }
-            }
-            @Override
-            public Iterator<Notice> iterator() {
-                synchronized (DefaultDirectory.this.lock) {
-                    try {
-                        return this.stash().iterator();
-                    } catch (java.io.IOException ex) {
-                        throw new IllegalStateException(ex);
-                    }
-                }
-            }
-            @Override
-            public void close() throws IOException {
-                synchronized (DefaultDirectory.this.lock) {
-                    this.stash().close();
-                }
-            }
-            private Stash stash() throws IOException {
-                return DefaultDirectory.this.base.get().stash();
-            }
-        };
+        return this.base.get().stash();
     }
 
     /**

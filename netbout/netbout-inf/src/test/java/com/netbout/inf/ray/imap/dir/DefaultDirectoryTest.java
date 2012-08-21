@@ -26,30 +26,12 @@
  */
 package com.netbout.inf.ray.imap.dir;
 
-import com.jcabi.log.VerboseRunnable;
-import com.jcabi.log.VerboseThreads;
 import com.netbout.inf.Attribute;
 import com.netbout.inf.MsgMocker;
-import com.netbout.inf.Stash;
-import com.netbout.inf.notices.MessagePostedNotice;
 import com.netbout.inf.ray.imap.Directory;
 import com.netbout.inf.ray.imap.Numbers;
 import com.netbout.inf.ray.imap.Reverse;
-import com.netbout.spi.Message;
-import com.netbout.spi.MessageMocker;
-import de.svenjacobs.loremipsum.LoremIpsum;
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.concurrent.Callable;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.Semaphore;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicInteger;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Rule;
@@ -62,9 +44,6 @@ import org.junit.rules.TemporaryFolder;
  * @version $Id$
  * @checkstyle ClassDataAbstractionCoupling (500 lines)
  */
-@SuppressWarnings({
-    "PMD.DoNotUseThreads", "PMD.AvoidInstantiatingObjectsInLoops"
-})
 public final class DefaultDirectoryTest {
 
     /**
@@ -130,158 +109,6 @@ public final class DefaultDirectoryTest {
             dir,
             Matchers.hasToString(Matchers.notNullValue())
         );
-    }
-
-    /**
-     * DefaultDirectory can protect itself from thread-unsafety.
-     * @throws Exception If there is some problem inside
-     * @checkstyle ExecutableStatementCount (50 lines)
-     */
-    @Test
-    public void resolvesMultiThreadedCallsToStash() throws Exception {
-        final Directory dir = new DefaultDirectory(this.temp.newFolder("xx"));
-        final Numbers numbers = new FastNumbers();
-        final long msg = MsgMocker.number();
-        numbers.add(msg);
-        numbers.add(msg - 1);
-        final Attribute attr = new Attribute("some-attr-value-to-test");
-        final String value = new LoremIpsum().getWords();
-        dir.save(attr, value, numbers);
-        final int threads = Runtime.getRuntime().availableProcessors() * 25;
-        final ScheduledExecutorService routine =
-            Executors.newSingleThreadScheduledExecutor(new VerboseThreads());
-        final AtomicInteger errors = new AtomicInteger();
-        final Semaphore sem = new Semaphore(1);
-        routine.scheduleWithFixedDelay(
-            new VerboseRunnable(
-                new Callable<Void>() {
-                    @Override
-                    public Void call() throws Exception {
-                        sem.acquire();
-                        try {
-                            dir.baseline();
-                        } finally {
-                            sem.release();
-                        }
-                        return null;
-                    }
-                },
-                true
-            ),
-            0, 1, TimeUnit.NANOSECONDS
-        );
-        final CountDownLatch start = new CountDownLatch(1);
-        final CountDownLatch latch = new CountDownLatch(threads);
-        final ExecutorService svc =
-            Executors.newFixedThreadPool(threads, new VerboseThreads());
-        final Collection<Future<?>> futures = new ArrayList<Future<?>>(threads);
-        for (int thread = 0; thread < threads; ++thread) {
-            futures.add(
-                svc.submit(
-                    // @checkstyle AnonInnerLength (50 lines)
-                    new Callable<Void>() {
-                        @Override
-                        public Void call() throws Exception {
-                            final Stash stash = dir.stash();
-                            start.await();
-                            stash.add(
-                                new MessagePostedNotice() {
-                                    @Override
-                                    public Message message() {
-                                        return new MessageMocker().mock();
-                                    }
-                                }
-                            );
-                            latch.countDown();
-                            return null;
-                        }
-                    }
-                )
-            );
-        }
-        start.countDown();
-        for (Future<?> future : futures) {
-            future.get();
-        }
-        svc.shutdown();
-        sem.acquire();
-        routine.shutdown();
-        MatcherAssert.assertThat(
-            latch.await(1, TimeUnit.SECONDS),
-            Matchers.is(true)
-        );
-        MatcherAssert.assertThat(errors.get(), Matchers.equalTo(0));
-    }
-
-    /**
-     * DefaultDirectory can protect itself from thread-unsafety.
-     * @throws Exception If there is some problem inside
-     * @checkstyle ExecutableStatementCount (50 lines)
-     */
-    @Test
-    public void resolvesMultiThreadedCallsToSave() throws Exception {
-        final Directory dir = new DefaultDirectory(this.temp.newFolder("zz"));
-        final ScheduledExecutorService routine =
-            Executors.newSingleThreadScheduledExecutor(new VerboseThreads());
-        final AtomicInteger errors = new AtomicInteger();
-        final Semaphore sem = new Semaphore(1);
-        routine.scheduleWithFixedDelay(
-            new VerboseRunnable(
-                new Callable<Void>() {
-                    @Override
-                    public Void call() throws Exception {
-                        sem.acquire();
-                        try {
-                            dir.baseline();
-                        } finally {
-                            sem.release();
-                        }
-                        return null;
-                    }
-                },
-                true
-            ),
-            0, 1, TimeUnit.NANOSECONDS
-        );
-        final int threads = Runtime.getRuntime().availableProcessors() * 25;
-        final CountDownLatch start = new CountDownLatch(1);
-        final CountDownLatch latch = new CountDownLatch(threads);
-        final ExecutorService svc =
-            Executors.newFixedThreadPool(threads, new VerboseThreads());
-        final Collection<Future<?>> futures = new ArrayList<Future<?>>(threads);
-        for (int thread = 0; thread < threads; ++thread) {
-            futures.add(
-                svc.submit(
-                    // @checkstyle AnonInnerLength (50 lines)
-                    new Callable<Void>() {
-                        @Override
-                        public Void call() throws Exception {
-                            final Stash stash = dir.stash();
-                            start.await();
-                            dir.save(
-                                new Attribute("attr-x"),
-                                "value-x",
-                                new FastNumbers()
-                            );
-                            latch.countDown();
-                            return null;
-                        }
-                    }
-                )
-            );
-        }
-        start.countDown();
-        for (Future<?> future : futures) {
-            future.get();
-        }
-        svc.shutdown();
-        sem.acquire();
-        routine.shutdown();
-        MatcherAssert.assertThat(
-            latch.await(1, TimeUnit.SECONDS),
-            Matchers.is(true)
-        );
-        MatcherAssert.assertThat(errors.get(), Matchers.equalTo(0));
     }
 
 }
