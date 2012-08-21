@@ -10,31 +10,17 @@
                 <stringProp name="ThreadGroup.on_sample_error">continue</stringProp>
                 <elementProp name="ThreadGroup.main_controller" elementType="LoopController" guiclass="LoopControlPanel" testclass="LoopController" testname="Loop Controller" enabled="true">
                     <boolProp name="LoopController.continue_forever">false</boolProp>
-                    <stringProp name="LoopController.loops">2</stringProp>
+                    <stringProp name="LoopController.loops">1</stringProp>
                 </elementProp>
-                <stringProp name="ThreadGroup.num_threads">100</stringProp>
-                <stringProp name="ThreadGroup.ramp_time">5</stringProp>
+                <stringProp name="ThreadGroup.num_threads">50</stringProp>
+                <stringProp name="ThreadGroup.ramp_time">15</stringProp>
             </ThreadGroup>
             <hashTree>
                 <BeanShellSampler guiclass="BeanShellSamplerGui" testclass="BeanShellSampler" testname="beanshell" enabled="true">
-                    <stringProp name="BeanShellSampler.query">
-                        import com.netbout.spi.Urn;
-                        import com.netbout.spi.client.RestSession;
-                        try {
-                            home = URI.create("http://localhost:" + props.get("port"));
-                            log.info("home URI: " + home);
-                            user = new RestSession(home, "9OLKJ8JHGytfh6JGJF0LKF").authenticate(new Urn("urn:netbout:jmeter"), "");
-                            bout = user.start();
-                            bout.rename("new bout for JMeter");
-                            bout.post("what's up?");
-                        } catch (Throwable ex) {
-                            log.error(ex.getMessage());
-                            IsSuccess = false;
-                        }
-                    </stringProp>
-                    <stringProp name="BeanShellSampler.filename"></stringProp>
+                    <stringProp name="BeanShellSampler.query"></stringProp>
+                    <stringProp name="BeanShellSampler.filename">./src/test/jmeter/post-and-read.bsh</stringProp>
                     <stringProp name="BeanShellSampler.parameters"></stringProp>
-                    <boolProp name="BeanShellSampler.resetInterpreter">false</boolProp>
+                    <boolProp name="BeanShellSampler.resetInterpreter">true</boolProp>
                 </BeanShellSampler>
                 <hashTree />
             </hashTree>

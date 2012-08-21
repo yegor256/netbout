@@ -281,6 +281,13 @@
                 <version since="19 Sep 2011">1.2.16</version>
                 <scope>test</scope>
             </dependency>
+            <dependency>
+                <!-- Generator of random texts. -->
+                <groupId>de.sven-jacobs</groupId>
+                <artifactId>loremipsum</artifactId>
+                <version since="20 Aug 2012">1.0</version>
+                <scope>test</scope>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 

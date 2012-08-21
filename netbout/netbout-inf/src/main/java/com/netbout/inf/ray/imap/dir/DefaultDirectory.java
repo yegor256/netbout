@@ -48,14 +48,15 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 
 /**
- * Default implementation of {@link Directory}.
+ * Default thread UN-safe implementation of {@link Directory}.
  *
- * <p>Class is mutable and thread-safe.
+ * <p>Class is NOT thread-safe.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  * @checkstyle ClassDataAbstractionCoupling (500 lines)
  */
+@SuppressWarnings("PMD.TooManyMethods")
 public final class DefaultDirectory implements Directory {
 
     /**

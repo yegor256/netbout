@@ -332,6 +332,10 @@
             <artifactId>commons-io</artifactId>
         </dependency>
         <dependency>
+            <groupId>de.sven-jacobs</groupId>
+            <artifactId>loremipsum</artifactId>
+        </dependency>
+        <dependency>
             <groupId>com.netbout.helpers</groupId>
             <artifactId>helper-shary</artifactId>
             <version netbout="yes">2.0-SNAPSHOT</version>
@@ -666,13 +670,14 @@
                                             <entry key="port" value="${catapult.port}"/>
                                         </propertyfile>
                                         <apply executable="jmeter" failonerror="true">
+                                            <arg value="-Dlog4j.configuration=file:${basedir}/src/test/jmeter/log4j.properties"/>
                                             <arg value="--nongui"/>
-                                            <arg value="--addprop"/>
-                                            <arg value="${project.build.directory}/jmeter.properties"/>
                                             <arg value="--jmeterlogfile"/>
                                             <arg value="${project.build.directory}/jmeter.log"/>
+                                            <arg value="--addprop"/>
+                                            <arg value="${project.build.directory}/jmeter.properties"/>
                                             <arg value="--loglevel"/>
-                                            <arg value="jmeter=DEBUG"/>
+                                            <arg value="jmeter=INFO"/>
                                             <arg value="--testfile"/>
                                             <fileset dir="${basedir}/src/test/jmeter">
                                                 <patternset>
@@ -680,8 +685,6 @@
                                                 </patternset>
                                             </fileset>
                                         </apply>
-                                        <loadfile property="log" srcFile="${project.build.directory}/jmeter.log"/>
-                                        <echo>${log}</echo>
                                         <fail message="ERROR found in ${project.build.directory}/jmeter.log">
                                             <condition>
                                                 <resourcecontains resource="${project.build.directory}/jmeter.log"
@@ -724,6 +727,7 @@
                                             <Netbout-SecurityKey>-test-security-key</Netbout-SecurityKey>
                                             <Netbout-SuperSecret>9OLKJ8JHGytfh6JGJF0LKF</Netbout-SuperSecret>
                                             <Netbout-InfMount>${project.build.directory}/catapult-InfMount</Netbout-InfMount>
+                                            <Netbout-InfDelay>5000</Netbout-InfDelay>
                                         </manifestEntries>
                                     </archive>
                                 </configuration>
@@ -738,6 +742,7 @@
                             <systemProperties>
                                 <log4j.configuration>file:${basedir}/src/test/resources/log4j-tomcat.properties</log4j.configuration>
                             </systemProperties>
+                            <tomcatLoggingFile>${basedir}/src/test/catapult/logging.properties</tomcatLoggingFile>
                             <contextFile>${basedir}/src/test/catapult/context.xml</contextFile>
                             <fork>true</fork>
                             <path>${catapult.context}</path>
@@ -895,7 +900,9 @@
                                         </copy>
                                         <exec dir="${project.build.directory}/heroku" executable="git" failonerror="true">
                                             <arg value="add"/>
-                                            <arg value="."/>
+                                            <arg value="./pom.xml"/>
+                                            <arg value="./Procfile"/>
+                                            <arg value="./downloader/pom.xml"/>
                                         </exec>
                                         <exec dir="${project.build.directory}/heroku" executable="git" failonerror="true">
                                             <arg value="commit"/>
@@ -1023,6 +1030,21 @@
                                     <namespace>aws:autoscaling:asg</namespace>
                                     <optionName>Custom Availability Zones</optionName>
                                     <value>us-east-1d</value>
+                                </optionSetting>
+                                <optionSetting>
+                                    <namespace>aws:elb:loadbalancer</namespace>
+                                    <optionName>LoadBalancerHTTPPort</optionName>
+                                    <value>80</value>
+                                </optionSetting>
+                                <optionSetting>
+                                    <namespace>aws:elb:loadbalancer</namespace>
+                                    <optionName>LoadBalancerHTTPSPort</optionName>
+                                    <value>443</value>
+                                </optionSetting>
+                                <optionSetting>
+                                    <namespace>aws:elb:loadbalancer</namespace>
+                                    <optionName>SSLCertificateId</optionName>
+                                    <value>arn:aws:iam::019644334823:server-certificate/netbout</value>
                                 </optionSetting>
                             </optionSettings>
                         </configuration>

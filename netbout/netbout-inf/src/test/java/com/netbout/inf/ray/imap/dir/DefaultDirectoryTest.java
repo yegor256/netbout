@@ -42,6 +42,7 @@ import org.junit.rules.TemporaryFolder;
  * Test case of {@link DefaultDirectory}.
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
+ * @checkstyle ClassDataAbstractionCoupling (500 lines)
  */
 public final class DefaultDirectoryTest {
 

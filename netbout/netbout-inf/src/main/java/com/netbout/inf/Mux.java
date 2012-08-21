@@ -30,6 +30,7 @@ import com.jcabi.log.Logger;
 import com.jcabi.log.VerboseRunnable;
 import com.jcabi.log.VerboseThreads;
 import com.netbout.spi.Urn;
+import com.rexsl.core.Manifests;
 import java.io.Closeable;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -63,7 +64,7 @@ final class Mux implements Closeable {
     /**
      * How often to flush, in ms.
      */
-    private static final long PERIOD = 15 * 60 * 1000;
+    private static final long PERIOD = Mux.delay();
 
     /**
      * How many threads to use (more than the number of processors, because
@@ -71,7 +72,7 @@ final class Mux implements Closeable {
      * getting data from the database).
      */
     private static final int THREADS =
-        Runtime.getRuntime().availableProcessors() * 8;
+        Runtime.getRuntime().availableProcessors() * 2;
 
     /**
      * The ray.
@@ -137,17 +138,12 @@ final class Mux implements Closeable {
     public Mux(final Ray iray, final Store str) throws IOException {
         this.ray = iray;
         this.store = str;
-        int count = 0;
+        int stashed = 0;
         for (Notice notice : this.ray.stash()) {
             this.add(notice);
             this.ray.stash().remove(notice);
-            ++count;
+            ++stashed;
         }
-        Logger.info(
-            this,
-            "#Mux(..): restored %d notice(s) from stash",
-            count
-        );
         // @checkstyle AnonInnerLength (30 lines)
         final Runnable runnable = new Runnable() {
             @Override
@@ -179,6 +175,13 @@ final class Mux implements Closeable {
                 )
             );
         }
+        Logger.info(
+            this,
+            "#Mux(..): %d notice(s) from stash, %d threads, %[ms]s delay",
+            stashed,
+            Mux.THREADS,
+            Mux.PERIOD
+        );
     }
 
     /**
@@ -313,6 +316,14 @@ final class Mux implements Closeable {
 
     /**
      * Flush mux to disc.
+     *
+     * <p>Before flushing we "acquire" all semaphores, to prevent any changes
+     * to the Mux during this flushing period.
+     *
+     * <p>The method is synchronized in order to avoid simultaneous execution
+     * of it in a few threads. The first call will check time and it if's
+     * suitable will do the flushing and will RESET the time marker.
+     *
      * @throws InterruptedException If interrupted
      */
     private void flush() throws InterruptedException {
@@ -329,6 +340,22 @@ final class Mux implements Closeable {
                 }
             }
         }
+    }
+
+    /**
+     * How long to wait, in ms, between flushes to disc.
+     * @return Time in milliseconds
+     */
+    private static long delay() {
+        long delay;
+        final String prop = "Netbout-InfDelay";
+        if (Manifests.exists(prop)) {
+            delay = Long.valueOf(Manifests.read(prop));
+        } else {
+            // @checkstyle MagicNumber (1 line)
+            delay = 15 * 60 * 1000L;
+        }
+        return delay;
     }
 
 }

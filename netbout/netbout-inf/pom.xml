@@ -179,6 +179,10 @@
             <version since="4 Dec 2011">r03</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>de.sven-jacobs</groupId>
+            <artifactId>loremipsum</artifactId>
+        </dependency>
     </dependencies>
 
     <profiles>

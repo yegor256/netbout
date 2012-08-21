@@ -36,7 +36,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * Participation in bout was just confirmed.
+ * Participation in bout was started (new participant was added to bout).
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$

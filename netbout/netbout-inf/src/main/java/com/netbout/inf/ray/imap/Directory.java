@@ -34,7 +34,9 @@ import java.io.IOException;
 /**
  * Directory with files.
  *
- * <p>Implementation must be thread-safe.
+ * <p>Implementation must be thread-safe for {@link #baseline()} and
+ * {@link #stash()} methods. There is a guarantee that others won't be called
+ * in parallel with these two.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
