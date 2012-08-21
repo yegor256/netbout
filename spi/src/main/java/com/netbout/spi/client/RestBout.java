@@ -161,7 +161,7 @@ final class RestBout implements Bout {
             .get("reading 'rename' rel link")
             .assertStatus(HttpURLConnection.HTTP_OK)
             .assertXPath("/page/links/link[@rel='rename']")
-            .rel("bout.rename(..)")
+            .rel("rename")
             .post(String.format("renaming bout to '%s'", text), "title", text)
             .assertStatus(HttpURLConnection.HTTP_SEE_OTHER);
     }
