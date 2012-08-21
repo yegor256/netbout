@@ -13,7 +13,7 @@
                     <stringProp name="LoopController.loops">1</stringProp>
                 </elementProp>
                 <stringProp name="ThreadGroup.num_threads">50</stringProp>
-                <stringProp name="ThreadGroup.ramp_time">5</stringProp>
+                <stringProp name="ThreadGroup.ramp_time">15</stringProp>
             </ThreadGroup>
             <hashTree>
                 <BeanShellSampler guiclass="BeanShellSamplerGui" testclass="BeanShellSampler" testname="beanshell" enabled="true">
