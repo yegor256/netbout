@@ -147,7 +147,7 @@ public final class DefaultDirectoryTest {
         final Attribute attr = new Attribute("some-attr-value-to-test");
         final String value = new LoremIpsum().getWords();
         dir.save(attr, value, numbers);
-        final int threads = 50;
+        final int threads = Runtime.getRuntime().availableProcessors() * 25;
         final ScheduledExecutorService routine =
             Executors.newSingleThreadScheduledExecutor(new VerboseThreads());
         final AtomicInteger errors = new AtomicInteger();
@@ -243,7 +243,7 @@ public final class DefaultDirectoryTest {
             ),
             0, 1, TimeUnit.NANOSECONDS
         );
-        final int threads = 50;
+        final int threads = Runtime.getRuntime().availableProcessors() * 25;
         final CountDownLatch start = new CountDownLatch(1);
         final CountDownLatch latch = new CountDownLatch(threads);
         final ExecutorService svc =
