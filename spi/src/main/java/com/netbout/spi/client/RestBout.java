@@ -114,7 +114,7 @@ final class RestBout implements Bout {
     @Override
     public Long number() {
         final String num = this.client
-            .get("reading bout number")
+            .get("bout.number()")
             .assertStatus(HttpURLConnection.HTTP_OK)
             .assertXPath("/page/bout")
             .xpath("/page/bout/number/text()")
@@ -128,7 +128,7 @@ final class RestBout implements Bout {
     @Override
     public Date date() {
         final String date = this.client
-            .get("reading bout creation date")
+            .get("bout.date()")
             .assertStatus(HttpURLConnection.HTTP_OK)
             .assertXPath("/page/bout/date")
             .xpath("/page/bout/date/text()")
@@ -146,7 +146,7 @@ final class RestBout implements Bout {
     @Override
     public String title() {
         return this.client
-            .get("reading bout title")
+            .get("bout.title()")
             .assertStatus(HttpURLConnection.HTTP_OK)
             .xpath("/page/bout/title/text()")
             .get(0);
@@ -161,7 +161,7 @@ final class RestBout implements Bout {
             .get("reading 'rename' rel link")
             .assertStatus(HttpURLConnection.HTTP_OK)
             .assertXPath("/page/links/link[@rel='rename']")
-            .rel("rename")
+            .rel("bout.rename(..)")
             .post(String.format("renaming bout to '%s'", text), "title", text)
             .assertStatus(HttpURLConnection.HTTP_SEE_OTHER);
     }
@@ -173,7 +173,7 @@ final class RestBout implements Bout {
     @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
     public Collection<Participant> participants() {
         final List<String> names = this.client
-            .get("reading names of bout participants")
+            .get("bout.participants()")
             .assertStatus(HttpURLConnection.HTTP_OK)
             .assertXPath("/page/bout/participants")
             .xpath("/page/bout/participants/participant/identity/text()");
@@ -229,7 +229,7 @@ final class RestBout implements Bout {
     public Iterable<Message> messages(final String query) {
         final RestResponse response = this.client
             .queryParam(RestSession.QUERY_PARAM, query)
-            .get("reading numbers of bout messages");
+            .get("bout.messages(..)");
         final List<String> nums = response
             .assertStatus(HttpURLConnection.HTTP_OK)
             .assertXPath("/page/bout/messages")
@@ -265,7 +265,7 @@ final class RestBout implements Bout {
             .assertStatus(HttpURLConnection.HTTP_OK)
             .assertXPath("/page/links/link[@rel='join']")
             .rel("join")
-            .get("joining the bout")
+            .get("bout.confirm()")
             .assertStatus(HttpURLConnection.HTTP_SEE_OTHER);
     }
 
@@ -279,7 +279,7 @@ final class RestBout implements Bout {
             .assertStatus(HttpURLConnection.HTTP_OK)
             .assertXPath("/page/links/link[@rel='leave']")
             .rel("leave")
-            .get("leaving the bout")
+            .get("bout.leave()")
             .assertStatus(HttpURLConnection.HTTP_SEE_OTHER);
     }
 
@@ -293,7 +293,7 @@ final class RestBout implements Bout {
             .assertStatus(HttpURLConnection.HTTP_OK)
             .assertXPath("/page/links/link[@rel='post']")
             .rel("post")
-            .post("posting new message to the bout", "text", text)
+            .post("bout.post(..)", "text", text)
             .assertStatus(HttpURLConnection.HTTP_SEE_OTHER)
             .header("Message-number");
         return new RestMessage(this.client.copy(), Long.valueOf(num));
