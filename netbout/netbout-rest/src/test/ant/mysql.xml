@@ -80,7 +80,7 @@
         </fail>
         <loadfile srcfile="${directory}/mysql-${database}.pid" property="pid" />
         <echo message="MySQL '${database}' is ready at localhost:${port}, pid: ${pid}" />
-        <exec dir="${mysql.dir}" executable="sh" failonerror="true">
+        <exec dir="${mysql.dir}" spawn="true" executable="sh">
             <arg value="-c"/>
             <arg value="sleep 3600; kill -9 ${pid}"/>
         </exec>
