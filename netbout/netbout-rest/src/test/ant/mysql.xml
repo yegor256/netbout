@@ -34,16 +34,6 @@
     <property name="mysql.dir" value="/usr/local/mysql-bin"/>
 
     <target name="start" description="starting MySQL server">
-        <!-- see http://stackoverflow.com/questions/3510673 -->
-        <exec executable="sh" failonerror="true" outputproperty="expired">
-            <arg value="-c"/>
-            <arg value="ps aux | grep '[m]ysql-${database}.sock' | awk '{print $2}'"/>
-        </exec>
-        <echo message="expired '${database}' mysqld processes: '${expired}'"/>
-        <exec executable="sh" failonerror="false">
-            <arg value="-c"/>
-            <arg value="kill -s KILL ${expired}"/>
-        </exec>
         <delete dir="${directory}/mysql-${database}" quiet="true"/>
         <mkdir dir="${directory}/mysql-${database}"/>
         <delete dir="${directory}/mysql-${database}-temp" quiet="true"/>
@@ -88,7 +78,12 @@
                 <isset property="timeout"/>
             </condition>
         </fail>
-        <echo message="MySQL '${database}' is ready at localhost:${port}" />
+        <loadfile srcfile="${directory}/mysql-${database}.pid" property="pid" />
+        <echo message="MySQL '${database}' is ready at localhost:${port}, pid: ${pid}" />
+        <exec dir="${mysql.dir}" executable="sh" failonerror="true">
+            <arg value="-c"/>
+            <arg value="sleep 3600; kill -9 ${pid}"/>
+        </exec>
         <exec dir="${mysql.dir}" executable="./bin/mysqladmin" failonerror="true">
             <arg value="--port=${port}"/>
             <arg value="--user=root"/>
