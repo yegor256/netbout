@@ -31,6 +31,8 @@ import com.netbout.spi.client.RestSession;
 import de.svenjacobs.loremipsum.LoremIpsum;
 import java.util.Random;
 
+log.info("post-and-read start...");
+
 // from Catapult/Tomcat configuration in pom.xml
 sudo = "9OLKJ8JHGytfh6JGJF0LKF";
 

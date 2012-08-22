@@ -31,6 +31,8 @@ import com.netbout.spi.client.RestSession;
 import de.svenjacobs.loremipsum.LoremIpsum;
 import java.util.Random;
 
+log.info("invite-and-kickoff start...");
+
 // from Catapult/Tomcat configuration in pom.xml
 sudo = "9OLKJ8JHGytfh6JGJF0LKF";
 
@@ -38,14 +40,20 @@ try {
     random = new Random();
     home = URI.create("http://localhost:" + props.get("port"));
     user = new RestSession(home, sudo).authenticate(new Urn("urn:netbout:jmeter"), "");
-    friend = new RestSession(home, sudo).authenticate(
+    buddy = new RestSession(home, sudo).authenticate(
         new Urn("urn:netbout:buddy-" + random.nextInt(500)), ""
     );
-    bout = user.bout(3L);
-    bout.rename(new LoremIpsum().getWords(10, random.nextInt(49) + 1));
-    bout.invite(friend);
-    bout.post(new LoremIpsum().getWords(100, random.nextInt(49) + 1));
-    friend.bout(3L).leave();
+    bouts = user.inbox("(equal $bout.number 4)").iterator();
+    if (bouts.hasNext()) {
+        bout = bouts.next();
+        bout.rename(new LoremIpsum().getWords(10, random.nextInt(49) + 1));
+        bout.invite(buddy);
+        bout.post(new LoremIpsum().getWords(100, random.nextInt(49) + 1));
+        buddy.bout(bout.number()).leave();
+        log.info("manipulated in bout " + bout.number());
+    } else {
+        log.info("still waiting for the first available bout");
+    }
 } catch (Throwable ex) {
     log.error(Logger.format("%[exception]s", new Object[] {ex}));
     IsSuccess = false;
