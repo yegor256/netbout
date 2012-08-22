@@ -49,7 +49,6 @@ public final class LoginRs extends BaseRs {
      * @see <a href="http://developers.facebook.com/docs/authentication/">facebook.com</a>
      */
     @GET
-    @SuppressWarnings("PMD.EmptyCatchBlock")
     public Response login() {
         final UriBuilder fburi = UriBuilder.fromUri(
             UriBuilder
@@ -58,7 +57,7 @@ public final class LoginRs extends BaseRs {
                 .queryParam("redirect_uri", "{uri}")
                 .build(
                     Manifests.read("Netbout-FbId"),
-                    this.base().path("/fb/back").build()
+                    this.base().path("/fb/back").scheme("https").build()
                 )
         );
         return new PageBuilder()

@@ -186,7 +186,7 @@ public final class FacebookRs extends BaseRs {
             .queryParam("code", "{code}")
             .build(
                 Manifests.read("Netbout-FbId"),
-                this.base().path("/fb/back").build(),
+                this.base().path("/fb/back").scheme("https").build(),
                 Manifests.read("Netbout-FbSecret"),
                 code
             );
