@@ -22,6 +22,12 @@
                     <stringProp name="BeanShellSampler.parameters"></stringProp>
                     <boolProp name="BeanShellSampler.resetInterpreter">true</boolProp>
                 </BeanShellSampler>
+                <BeanShellSampler guiclass="BeanShellSamplerGui" testclass="BeanShellSampler" testname="beanshell" enabled="true">
+                    <stringProp name="BeanShellSampler.query"></stringProp>
+                    <stringProp name="BeanShellSampler.filename">./src/test/jmeter/invite-and-kickoff.bsh</stringProp>
+                    <stringProp name="BeanShellSampler.parameters"></stringProp>
+                    <boolProp name="BeanShellSampler.resetInterpreter">true</boolProp>
+                </BeanShellSampler>
                 <hashTree />
             </hashTree>
         </hashTree>

@@ -110,6 +110,7 @@ public class BaseRs extends BaseResource implements NbResource {
 
     /**
      * {@inheritDoc}
+     *
      * @see http://java.net/jira/browse/JERSEY-1081
      */
     @Override
