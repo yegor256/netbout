@@ -65,7 +65,7 @@ public final class BaseRsTest {
      * BaseRs can forward to HTTPS, when necessary.
      * @throws Exception If there is some problem inside
      */
-    @Test(expected = ForwardException.class)
+    @Test(expected = javax.ws.rs.WebApplicationException.class)
     public void forwardsToHttps() throws Exception {
         final URI uri = new URI("http://test.netbout.com:32435/foo");
         final UriInfo info = new UriInfoMocker()

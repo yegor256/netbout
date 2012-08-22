@@ -36,7 +36,9 @@ import com.rexsl.page.BaseResource;
 import javax.servlet.ServletContext;
 import javax.ws.rs.CookieParam;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Context;
+import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
 
 /**
@@ -86,8 +88,9 @@ public class BaseRs extends BaseResource implements NbResource {
      */
     @Override
     public final Identity identity() {
+        Identity identity;
         try {
-            return new Cryptor().decrypt(this.ihub, this.icookie);
+            identity = new Cryptor().decrypt(this.ihub, this.icookie);
         } catch (DecryptionException ex) {
             Logger.debug(
                 this,
@@ -98,6 +101,18 @@ public class BaseRs extends BaseResource implements NbResource {
             );
             throw new LoginRequiredException(this, ex);
         }
+        if (!"https".equals(this.uriInfo().getBaseUri().getScheme())
+            && !"localhost".equals(this.uriInfo().getBaseUri().getHost())) {
+            throw new WebApplicationException(
+                Response.status(Response.Status.TEMPORARY_REDIRECT).location(
+                    this.uriInfo().getRequestUriBuilder()
+                        .clone()
+                        .scheme("https")
+                        .build()
+                ).build()
+            );
+        }
+        return identity;
     }
 
     /**
