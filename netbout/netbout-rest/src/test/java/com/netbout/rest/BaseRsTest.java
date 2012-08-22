@@ -26,6 +26,7 @@
  */
 package com.netbout.rest;
 
+import com.netbout.spi.IdentityMocker;
 import com.rexsl.page.UriInfoMocker;
 import java.net.URI;
 import javax.ws.rs.core.UriInfo;
@@ -58,6 +59,23 @@ public final class BaseRsTest {
             rest.base().build(),
             Matchers.equalTo(uri)
         );
+    }
+
+    /**
+     * BaseRs can forward to HTTPS, when necessary.
+     * @throws Exception If there is some problem inside
+     */
+    @Test(expected = ForwardException.class)
+    public void forwardsToHttps() throws Exception {
+        final URI uri = new URI("http://test.netbout.com:32435/foo");
+        final UriInfo info = new UriInfoMocker()
+            .withRequestUri(uri)
+            .mock();
+        final BaseRs rest = new NbResourceMocker()
+            .withUriInfo(info)
+            .mock(BaseRs.class);
+        rest.setCookie(new Cryptor().encrypt(new IdentityMocker().mock()));
+        rest.identity();
     }
 
 }
