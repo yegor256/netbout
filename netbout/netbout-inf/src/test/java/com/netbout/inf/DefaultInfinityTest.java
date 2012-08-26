@@ -26,6 +26,7 @@
  */
 package com.netbout.inf;
 
+import com.jcabi.log.VerboseRunnable;
 import com.jcabi.log.VerboseThreads;
 import com.netbout.inf.notices.MessagePostedNotice;
 import com.netbout.spi.Bout;
@@ -205,10 +206,13 @@ public final class DefaultInfinityTest {
         final ExecutorService svc =
             Executors.newFixedThreadPool(threads, new VerboseThreads());
         for (int thread = 0; thread < threads; ++thread) {
-            svc.submit(task);
+            svc.submit(new VerboseRunnable(task, true));
         }
         start.countDown();
-        latch.await(1, TimeUnit.SECONDS);
+        MatcherAssert.assertThat(
+            latch.await(1, TimeUnit.MINUTES),
+            Matchers.is(true)
+        );
         svc.shutdown();
         inf.close();
     }
