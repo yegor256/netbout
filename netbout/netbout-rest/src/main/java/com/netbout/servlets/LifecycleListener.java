@@ -56,7 +56,7 @@ public final class LifecycleListener implements ServletContextListener {
      * {@inheritDoc}
      *
      * <p>These attributes is used later in
-     * {@link com.netbout.rest.AbstractRs#setServletContext(ServletContext)}.
+     * {@link com.netbout.rest.BaseRs#setServletContext(ServletContext)}.
      */
     @Override
     public void contextInitialized(final ServletContextEvent event) {
