@@ -50,7 +50,7 @@ public final class BaseRsTest {
     public void buildsBaseUri() throws Exception {
         final URI uri = new URI("http://test.netbout.com:324/");
         final UriInfo info = new UriInfoMocker()
-            .withRequestUri(uri)
+            .withBaseUri(uri)
             .mock();
         final BaseRs rest = new NbResourceMocker()
             .withUriInfo(info)
@@ -69,7 +69,7 @@ public final class BaseRsTest {
     public void forwardsToHttps() throws Exception {
         final URI uri = new URI("http://test.netbout.com:32435/foo");
         final UriInfo info = new UriInfoMocker()
-            .withRequestUri(uri)
+            .withBaseUri(uri)
             .mock();
         final BaseRs rest = new NbResourceMocker()
             .withUriInfo(info)
