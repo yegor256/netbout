@@ -36,6 +36,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Iterator;
 import java.util.concurrent.Semaphore;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Concurrent implementation of {@link Directory}.
@@ -236,7 +237,14 @@ public final class ConcurrentDirectory implements Directory {
      */
     private void acquire(final int num) {
         try {
-            this.semaphore.acquire(num);
+            if (!this.semaphore.tryAcquire(num, 1, TimeUnit.MINUTES)) {
+                throw new IllegalStateException(
+                    String.format(
+                        "all threads are busy in %s",
+                        this
+                    )
+                );
+            }
         } catch (InterruptedException ex) {
             Thread.currentThread().interrupt();
             throw new IllegalStateException(ex);

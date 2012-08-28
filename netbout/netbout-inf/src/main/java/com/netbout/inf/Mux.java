@@ -155,7 +155,11 @@ final class Mux implements Closeable {
             public Void call() throws Exception {
                 try {
                     Mux.this.flush();
-                    Mux.this.semaphore.acquire();
+                    if (!Mux.this.semaphore.tryAcquire(1, TimeUnit.MINUTES)) {
+                        throw new IllegalArgumentException(
+                            "all Mux threads are busy, can't process next one"
+                        );
+                    }
                     final MuxTask task =
                         Mux.this.queue.poll(1, TimeUnit.MINUTES);
                     if (task != null) {
@@ -339,7 +343,12 @@ final class Mux implements Closeable {
     private void flush() throws InterruptedException {
         synchronized (this.flushed) {
             if (System.currentTimeMillis() - this.flushed.get() > Mux.PERIOD) {
-                this.semaphore.acquire(Mux.THREADS);
+                if (!this.semaphore
+                    .tryAcquire(Mux.THREADS, 1, TimeUnit.MINUTES)) {
+                    throw new IllegalArgumentException(
+                        "all Mux threads are busy for more than a minute"
+                    );
+                }
                 try {
                     this.ray.flush();
                 } catch (java.io.IOException ex) {
