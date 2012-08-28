@@ -59,7 +59,6 @@ public final class MuxTest {
      * @throws Exception If there is some problem inside
      */
     @Test
-    @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
     public void runsTasksInParallel() throws Exception {
         final Ray ray = new RayMocker().mock();
         final Store store = new StoreMocker().mock();

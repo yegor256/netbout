@@ -132,6 +132,10 @@ final class Mux implements Closeable {
 
     /**
      * Public ctor.
+     *
+     * <p>We don't report exceptions in the runnable, mostly in order to
+     * avoid garbage messages in log.
+     *
      * @param iray The ray to use
      * @param str The store to use
      * @throws IOException If some I/O problem inside
