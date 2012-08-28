@@ -73,7 +73,7 @@ public final class MuxTest {
                 }
             }
         ).when(store).see(Mockito.eq(ray), Mockito.any(Notice.class));
-        final int threads = Runtime.getRuntime().availableProcessors();
+        final int threads = Runtime.getRuntime().availableProcessors() * 10;
         final ScheduledExecutorService svc =
             Executors.newScheduledThreadPool(threads, new VerboseThreads());
         final Runnable runnable = new VerboseRunnable(

@@ -112,7 +112,7 @@ final class DefaultStash implements Stash {
         Logger.debug(
             this,
             "#add('%s'): saved %d bytes into %s",
-            new Notice.SerializableNotice(notice),
+            ser,
             bytes.length,
             FilenameUtils.getName(file.getPath())
         );
@@ -123,7 +123,16 @@ final class DefaultStash implements Stash {
      */
     @Override
     public void remove(final Notice notice) throws IOException {
-        this.done.add(this.file(new Notice.SerializableNotice(notice)));
+        final Notice.SerializableNotice ser =
+            new Notice.SerializableNotice(notice);
+        final File file = this.file(new Notice.SerializableNotice(notice));
+        this.done.add(file);
+        Logger.debug(
+            this,
+            "#remove('%s'): deleted %s",
+            ser,
+            FilenameUtils.getName(file.getPath())
+        );
     }
 
     /**
@@ -133,9 +142,6 @@ final class DefaultStash implements Stash {
     public void copyTo(final Stash stash) throws IOException {
         int count = 0;
         for (File file : this.files()) {
-            if (this.done.contains(file)) {
-                continue;
-            }
             FileUtils.copyFileToDirectory(
                 file,
                 DefaultStash.class.cast(stash).lock.dir()
@@ -203,6 +209,9 @@ final class DefaultStash implements Stash {
     private Collection<File> files() throws IOException {
         final Collection<File> files = new ConcurrentSkipListSet<File>();
         for (File file : this.lock.dir().listFiles()) {
+            if (this.done.contains(file)) {
+                continue;
+            }
             if (FilenameUtils.getName(file.getPath()).startsWith("ntc-")) {
                 files.add(file);
             }
