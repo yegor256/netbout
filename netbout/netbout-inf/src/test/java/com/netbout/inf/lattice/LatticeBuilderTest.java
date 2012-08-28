@@ -265,7 +265,7 @@ public final class LatticeBuilderTest {
     public void createsLatticeInMultipleThreads() throws Exception {
         final SortedSet<Long> numbers = LatticeBuilderTest.numbers(10);
         final LatticeBuilder builder = new LatticeBuilder();
-        final int threads = 10;
+        final int threads = Runtime.getRuntime().availableProcessors();
         final CountDownLatch start = new CountDownLatch(1);
         final CountDownLatch latch = new CountDownLatch(threads);
         final Callable<?> task = new Callable<Void>() {

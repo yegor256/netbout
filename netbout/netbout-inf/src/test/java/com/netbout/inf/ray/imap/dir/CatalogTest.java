@@ -158,7 +158,7 @@ public final class CatalogTest {
         }
         Collections.sort(items);
         catalog.create(items.iterator());
-        final int threads = 10;
+        final int threads = Runtime.getRuntime().availableProcessors();
         final CountDownLatch start = new CountDownLatch(1);
         final CountDownLatch latch = new CountDownLatch(threads);
         final Callable<?> task = new Callable<Void>() {

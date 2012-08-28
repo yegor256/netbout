@@ -303,7 +303,7 @@ public final class FastNumbersTest {
     @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
     public void searchesInParallelThreads() throws Exception {
         final Numbers numbers = new FastNumbers();
-        final int threads = 50;
+        final int threads = Runtime.getRuntime().availableProcessors();
         final CountDownLatch start = new CountDownLatch(1);
         final CountDownLatch latch = new CountDownLatch(threads);
         final Callable<?> task = new Callable<Void>() {

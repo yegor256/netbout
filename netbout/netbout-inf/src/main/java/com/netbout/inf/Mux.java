@@ -161,6 +161,8 @@ final class Mux implements Closeable {
                         }
                         Mux.this.stats.addValue(time);
                     }
+                } catch (InterruptedException ex) {
+                    Thread.currentThread().interrupt();
                 } finally {
                     Mux.this.semaphore.release();
                 }
