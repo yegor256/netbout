@@ -974,7 +974,7 @@
                     <plugin>
                         <groupId>br.com.ingenieux</groupId>
                         <artifactId>beanstalk-maven-plugin</artifactId>
-                        <version since="26 Jul 2012">0.2.7-RC5</version>
+                        <version since="27 Aug 2012">0.2.7-RC6</version>
                         <configuration>
                             <applicationName>netbout</applicationName>
                             <applicationDescription>netbout</applicationDescription>
@@ -1056,8 +1056,7 @@
                                     <goal>upload-source-bundle</goal>
                                     <goal>create-application-version</goal>
                                     <goal>replace-environment</goal>
-                                    <!-- @see https://github.com/ingenieux/beanstalker/issues/15 -->
-                                    <!-- <goal>clean-previous-versions</goal> -->
+                                    <goal>clean-previous-versions</goal>
                                 </goals>
                             </execution>
                         </executions>

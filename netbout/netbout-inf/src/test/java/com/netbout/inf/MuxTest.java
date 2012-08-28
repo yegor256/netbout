@@ -26,6 +26,7 @@
  */
 package com.netbout.inf;
 
+import com.jcabi.log.Logger;
 import com.jcabi.log.VerboseRunnable;
 import com.jcabi.log.VerboseThreads;
 import com.netbout.inf.notices.MessagePostedNotice;
@@ -73,7 +74,7 @@ public final class MuxTest {
                 }
             }
         ).when(store).see(Mockito.eq(ray), Mockito.any(Notice.class));
-        final int threads = Runtime.getRuntime().availableProcessors() * 10;
+        final int threads = Runtime.getRuntime().availableProcessors() * 50;
         final ScheduledExecutorService svc =
             Executors.newScheduledThreadPool(threads, new VerboseThreads());
         final Runnable runnable = new VerboseRunnable(
@@ -97,27 +98,18 @@ public final class MuxTest {
             },
             true
         );
-        for (int thread = 0; thread < threads; ++thread) {
-            svc.scheduleWithFixedDelay(runnable, 0, 1L, TimeUnit.NANOSECONDS);
-        }
+        svc.scheduleAtFixedRate(runnable, 0, 1L, TimeUnit.MILLISECONDS);
         TimeUnit.SECONDS.sleep(1);
         svc.shutdown();
-        int cycle = 0;
-        while (mux.eta() != 0) {
-            TimeUnit.MILLISECONDS.sleep(1);
-            // @checkstyle MagicNumber (1 line)
-            if (++cycle > 1000) {
-                throw new IllegalStateException("time out");
-            }
-        }
+        MuxTest.waitFor(mux);
         mux.close();
         MatcherAssert.assertThat(
             received.get(),
             Matchers.equalTo(pushed.get())
         );
         MatcherAssert.assertThat(
-            received.get(),
-            Matchers.greaterThan(threads)
+            pushed.get(),
+            Matchers.greaterThan(0)
         );
     }
 
@@ -131,6 +123,70 @@ public final class MuxTest {
             new Mux(new RayMocker().mock(), new StoreMocker().mock()),
             Matchers.hasToString(Matchers.notNullValue())
         );
+    }
+
+    /**
+     * Mux can accept many notices.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
+    public void acceptsManyNotices() throws Exception {
+        final Ray ray = new RayMocker().mock();
+        final Store store = new StoreMocker().mock();
+        final Mux mux = new Mux(ray, store);
+        final AtomicInteger received = new AtomicInteger();
+        Mockito.doAnswer(
+            new Answer<Void>() {
+                public Void answer(final InvocationOnMock invocation) {
+                    received.incrementAndGet();
+                    return null;
+                }
+            }
+        ).when(store).see(Mockito.eq(ray), Mockito.any(Notice.class));
+        final int total = 1000;
+        for (int num = 0; num < total; ++num) {
+            mux.add(
+                new MessagePostedNotice() {
+                    @Override
+                    public Message message() {
+                        return new MessageMocker().inBout(
+                            new BoutMocker().withParticipant(
+                                new UrnMocker().mock()
+                            ).mock()
+                        ).mock();
+                    }
+                }
+            );
+        }
+        MuxTest.waitFor(mux);
+        mux.close();
+        MatcherAssert.assertThat(
+            received.get(),
+            Matchers.equalTo(total)
+        );
+    }
+
+    /**
+     * Wait for eta of zero.
+     * @param mux The mux
+     * @throws InterruptedException If any
+     * @checkstyle MagicNumber (20 lines)
+     */
+    private static void waitFor(final Mux mux) throws InterruptedException {
+        int cycles = 0;
+        while (mux.eta() != 0) {
+            TimeUnit.MILLISECONDS.sleep(100);
+            Logger.debug(MuxTest.class, "eta=%[nano]s", mux.eta());
+            if (++cycles > 500) {
+                throw new IllegalStateException(
+                    String.format(
+                        "time out after %d 100ms cycles of waiting",
+                        cycles
+                    )
+                );
+            }
+        }
     }
 
 }
