@@ -26,15 +26,24 @@
  */
 package com.netbout.inf;
 
+import com.jcabi.log.VerboseRunnable;
+import com.jcabi.log.VerboseThreads;
 import com.netbout.inf.notices.MessagePostedNotice;
 import com.netbout.spi.BoutMocker;
 import com.netbout.spi.Message;
 import com.netbout.spi.MessageMocker;
 import com.netbout.spi.UrnMocker;
+import java.util.concurrent.Callable;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;
+import org.mockito.Mockito;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
 
 /**
  * Test case of {@link Mux}.
@@ -52,25 +61,48 @@ public final class MuxTest {
     @Test
     @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
     public void runsTasksInParallel() throws Exception {
-        final Mux mux = new Mux(
-            new RayMocker().mock(),
-            new StoreMocker().mock()
-        );
-        // @checkstyle MagicNumber (1 line)
-        for (int idx = 0; idx < 50; idx += 1) {
-            mux.add(
-                new MessagePostedNotice() {
-                    @Override
-                    public Message message() {
-                        return new MessageMocker().inBout(
-                            new BoutMocker().withParticipant(
-                                new UrnMocker().mock()
-                            ).mock()
-                        ).mock();
-                    }
+        final Ray ray = new RayMocker().mock();
+        final Store store = new StoreMocker().mock();
+        final Mux mux = new Mux(ray, store);
+        final AtomicInteger received = new AtomicInteger();
+        final AtomicInteger pushed = new AtomicInteger();
+        Mockito.doAnswer(
+            new Answer<Void>() {
+                public Void answer(final InvocationOnMock invocation) {
+                    received.incrementAndGet();
+                    return null;
                 }
-            );
+            }
+        ).when(store).see(Mockito.eq(ray), Mockito.any(Notice.class));
+        final int threads = Runtime.getRuntime().availableProcessors() * 4;
+        final ScheduledExecutorService svc =
+            Executors.newScheduledThreadPool(threads, new VerboseThreads());
+        final Runnable runnable = new VerboseRunnable(
+            new Callable<Void>() {
+                public Void call() throws Exception {
+                    mux.add(
+                        new MessagePostedNotice() {
+                            @Override
+                            public Message message() {
+                                return new MessageMocker().inBout(
+                                    new BoutMocker().withParticipant(
+                                        new UrnMocker().mock()
+                                    ).mock()
+                                ).mock();
+                            }
+                        }
+                    );
+                    pushed.incrementAndGet();
+                    return null;
+                }
+            },
+            true
+        );
+        for (int thread = 0; thread < threads; ++thread) {
+            svc.scheduleWithFixedDelay(runnable, 0, 1L, TimeUnit.NANOSECONDS);
         }
+        TimeUnit.SECONDS.sleep(1);
+        svc.shutdown();
         int cycle = 0;
         while (mux.eta() != 0) {
             TimeUnit.MILLISECONDS.sleep(1);
@@ -80,6 +112,14 @@ public final class MuxTest {
             }
         }
         mux.close();
+        MatcherAssert.assertThat(
+            received.get(),
+            Matchers.equalTo(pushed.get())
+        );
+        MatcherAssert.assertThat(
+            received.get(),
+            Matchers.greaterThan(threads)
+        );
     }
 
     /**

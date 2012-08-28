@@ -38,6 +38,7 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.Executors;
@@ -145,32 +146,31 @@ final class Mux implements Closeable {
             ++stashed;
         }
         // @checkstyle AnonInnerLength (30 lines)
-        final Runnable runnable = new Runnable() {
+        final Callable<?> callable = new Callable<Void>() {
             @Override
-            public void run() {
+            public Void call() throws Exception {
                 try {
                     Mux.this.flush();
                     Mux.this.semaphore.acquire();
                     final MuxTask task =
                         Mux.this.queue.poll(1, TimeUnit.MINUTES);
                     if (task != null) {
-                        task.run();
+                        final double time = task.call();
                         for (Urn who : task.dependants()) {
                             Mux.this.dependants.get(who).decrementAndGet();
                         }
-                        Mux.this.stats.addValue((double) task.time());
+                        Mux.this.stats.addValue(time);
                     }
-                } catch (InterruptedException ex) {
-                    Thread.currentThread().interrupt();
                 } finally {
                     Mux.this.semaphore.release();
                 }
+                return null;
             }
         };
         for (int thread = 0; thread < Mux.THREADS; ++thread) {
             this.futures.add(
                 this.service.scheduleWithFixedDelay(
-                    new VerboseRunnable(runnable, true),
+                    new VerboseRunnable(callable, true),
                     0L, 1L, TimeUnit.NANOSECONDS
                 )
             );
@@ -291,13 +291,12 @@ final class Mux implements Closeable {
         }
         this.service.shutdown();
         try {
-            // @checkstyle MagicNumber (1 line)
-            if (this.service.awaitTermination(10, TimeUnit.SECONDS)) {
+            if (this.service.awaitTermination(1, TimeUnit.SECONDS)) {
                 Logger.debug(this, "#close(): shutdown() succeeded");
             } else {
                 Logger.warn(this, "#close(): shutdown() failed");
                 this.service.shutdownNow();
-                if (this.service.awaitTermination(1, TimeUnit.MINUTES)) {
+                if (this.service.awaitTermination(1, TimeUnit.SECONDS)) {
                     Logger.info(this, "#close(): shutdownNow() succeeded");
                 } else {
                     Logger.error(this, "#close(): failed to stop threads");
@@ -306,6 +305,11 @@ final class Mux implements Closeable {
         } catch (InterruptedException ex) {
             this.service.shutdownNow();
             Thread.currentThread().interrupt();
+            Logger.warn(
+                this,
+                "#close(): shutdownNow() due to %[exception]s",
+                ex
+            );
         }
         Logger.info(
             this,

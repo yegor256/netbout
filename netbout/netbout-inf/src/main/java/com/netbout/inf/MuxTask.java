@@ -28,8 +28,8 @@ package com.netbout.inf;
 
 import com.jcabi.log.Logger;
 import com.netbout.spi.Urn;
-import java.io.IOException;
 import java.util.Set;
+import java.util.concurrent.Callable;
 
 /**
  * The task to review one notice.
@@ -40,7 +40,7 @@ import java.util.Set;
  * @version $Id$
  */
 @SuppressWarnings("PMD.DoNotUseThreads")
-final class MuxTask implements Runnable {
+final class MuxTask implements Callable<Double> {
 
     /**
      * The store with predicates.
@@ -51,16 +51,6 @@ final class MuxTask implements Runnable {
      * The ray.
      */
     private final transient Ray ray;
-
-    /**
-     * When started.
-     */
-    private transient long started;
-
-    /**
-     * When finished (or ZERO if still running).
-     */
-    private transient long finished;
 
     /**
      * The notice.
@@ -114,14 +104,18 @@ final class MuxTask implements Runnable {
      * {@inheritDoc}
      */
     @Override
-    public void run() {
-        this.started = System.nanoTime();
-        try {
-            this.execute();
-        } catch (IOException ex) {
-            throw new IllegalArgumentException(ex);
-        }
-        this.finished = System.nanoTime();
+    public Double call() throws Exception {
+        final long start = System.nanoTime();
+        this.store.see(this.ray, this.ntc);
+        this.ray.stash().remove(this.ntc);
+        final long time = System.nanoTime() - start;
+        Logger.debug(
+            this,
+            "#call(): done \"%s\" in %[nano]s",
+            this,
+            time
+        );
+        return Double.valueOf(time);
     }
 
     /**
@@ -133,40 +127,11 @@ final class MuxTask implements Runnable {
     }
 
     /**
-     * Get its execution time.
-     * @return Time in nanoseconds
-     */
-    public long time() {
-        long time;
-        if (this.finished == 0L) {
-            time = System.nanoTime() - this.started;
-        } else {
-            time = this.finished - this.started;
-        }
-        return time;
-    }
-
-    /**
      * Get names of all people waiting for the completion of this task.
      * @return Names
      */
     public Set<Urn> dependants() {
         return this.deps;
-    }
-
-    /**
-     * Execute it.
-     * @throws IOException If some IO problem
-     */
-    private void execute() throws IOException {
-        this.store.see(this.ray, this.ntc);
-        this.ray.stash().remove(this.ntc);
-        Logger.debug(
-            this,
-            "#execute(): done \"%s\" in %[nano]s",
-            this,
-            this.time()
-        );
     }
 
 }
