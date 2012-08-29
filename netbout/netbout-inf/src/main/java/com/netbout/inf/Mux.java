@@ -28,6 +28,7 @@ package com.netbout.inf;
 
 import com.jcabi.log.Logger;
 import com.jcabi.log.VerboseRunnable;
+import com.jcabi.log.VerboseThreads;
 import com.netbout.spi.Urn;
 import com.rexsl.core.Manifests;
 import java.io.Closeable;
@@ -56,9 +57,7 @@ import org.apache.commons.math.stat.descriptive.DescriptiveStatistics;
  * @version $Id$
  * @checkstyle ClassDataAbstractionCoupling (500 lines)
  */
-@SuppressWarnings({
-    "PMD.DoNotUseThreads", "PMD.AvoidInstantiatingObjectsInLoops"
-})
+@SuppressWarnings("PMD.DoNotUseThreads")
 final class Mux implements Closeable {
 
     /**
@@ -90,7 +89,7 @@ final class Mux implements Closeable {
     private final transient ScheduledExecutorService service =
         Executors.newScheduledThreadPool(
             Mux.THREADS,
-            new PatronizedThreads("mux")
+            new VerboseThreads("mux")
         );
 
     /**
@@ -130,6 +129,12 @@ final class Mux implements Closeable {
         new AtomicLong(System.currentTimeMillis());
 
     /**
+     * Patronized runnables.
+     */
+    private final transient PatronizedRunnables patronized =
+        new PatronizedRunnables();
+
+    /**
      * Public ctor.
      *
      * <p>We don't report exceptions in the runnable, mostly in order to
@@ -149,37 +154,20 @@ final class Mux implements Closeable {
             ++stashed;
         }
         // @checkstyle AnonInnerLength (30 lines)
-        final Callable<?> callable = new Callable<Void>() {
-            @Override
-            public Void call() throws Exception {
-                try {
-                    Mux.this.flush();
-                    if (!Mux.this.semaphore.tryAcquire(1, TimeUnit.MINUTES)) {
-                        throw new IllegalArgumentException(
-                            "all Mux threads are busy, can't process next one"
-                        );
-                    }
-                    final MuxTask task =
-                        Mux.this.queue.poll(1, TimeUnit.MINUTES);
-                    if (task != null) {
-                        final double time = task.call();
-                        for (Urn who : task.dependants()) {
-                            Mux.this.dependants.get(who).decrementAndGet();
-                        }
-                        Mux.this.stats.addValue(time);
-                    }
-                } catch (InterruptedException ex) {
-                    Thread.currentThread().interrupt();
-                } finally {
-                    Mux.this.semaphore.release();
+        final Runnable runnable = new VerboseRunnable(
+            new Callable<Void>() {
+                @Override
+                public Void call() throws Exception {
+                    Mux.this.dispatch();
+                    return null;
                 }
-                return null;
-            }
-        };
+            },
+            true
+        );
         for (int thread = 0; thread < Mux.THREADS; ++thread) {
             this.futures.add(
                 this.service.scheduleWithFixedDelay(
-                    new VerboseRunnable(callable, true),
+                    this.patronized.patronize(runnable),
                     0L, 1L, TimeUnit.NANOSECONDS
                 )
             );
@@ -226,6 +214,7 @@ final class Mux implements Closeable {
      * @return Who should wait for its processing
      * @throws IOException If some IO problem inside
      */
+    @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
     public Set<Urn> add(final Notice notice) throws IOException {
         this.ray.stash().add(notice);
         final MuxTask task = new MuxTask(notice, this.ray, this.store);
@@ -320,6 +309,7 @@ final class Mux implements Closeable {
                 ex
             );
         }
+        this.patronized.close();
         Logger.info(
             this,
             "#close(): %d remained in the queue",
@@ -336,17 +326,15 @@ final class Mux implements Closeable {
      * <p>The method is synchronized in order to avoid simultaneous execution
      * of it in a few threads. The first call will check time and it if's
      * suitable will do the flushing and will RESET the time marker.
-     *
-     * @throws InterruptedException If interrupted
      */
-    private void flush() throws InterruptedException {
+    private void flush() {
         synchronized (this.flushed) {
             if (System.currentTimeMillis() - this.flushed.get() > Mux.PERIOD) {
-                if (!this.semaphore
-                    .tryAcquire(Mux.THREADS, 1, TimeUnit.MINUTES)) {
-                    throw new IllegalArgumentException(
-                        "all Mux threads are busy for more than a minute"
-                    );
+                try {
+                    this.semaphore.acquire(Mux.THREADS);
+                } catch (InterruptedException ex) {
+                    Thread.currentThread().interrupt();
+                    throw new IllegalArgumentException(ex);
                 }
                 try {
                     this.ray.flush();
@@ -374,6 +362,28 @@ final class Mux implements Closeable {
             delay = 15 * 60 * 1000L;
         }
         return delay;
+    }
+
+    /**
+     * Dispatch the next task.
+     * @throws Exception If something goes wrong
+     */
+    private void dispatch() throws Exception {
+        this.flush();
+        if (this.semaphore.tryAcquire(1, TimeUnit.SECONDS)) {
+            try {
+                final MuxTask task = this.queue.poll(1, TimeUnit.SECONDS);
+                if (task != null) {
+                    final double time = task.call();
+                    for (Urn who : task.dependants()) {
+                        this.dependants.get(who).decrementAndGet();
+                    }
+                    this.stats.addValue(time);
+                }
+            } finally {
+                this.semaphore.release();
+            }
+        }
     }
 
 }
