@@ -68,7 +68,9 @@ public final class MuxTest {
         final AtomicInteger pushed = new AtomicInteger();
         Mockito.doAnswer(
             new Answer<Void>() {
-                public Void answer(final InvocationOnMock invocation) {
+                public Void answer(final InvocationOnMock invocation)
+                    throws Exception {
+                    TimeUnit.SECONDS.sleep(1);
                     received.incrementAndGet();
                     return null;
                 }

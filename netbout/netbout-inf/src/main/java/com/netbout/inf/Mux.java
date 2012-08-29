@@ -28,7 +28,6 @@ package com.netbout.inf;
 
 import com.jcabi.log.Logger;
 import com.jcabi.log.VerboseRunnable;
-import com.jcabi.log.VerboseThreads;
 import com.netbout.spi.Urn;
 import com.rexsl.core.Manifests;
 import java.io.Closeable;
@@ -91,7 +90,7 @@ final class Mux implements Closeable {
     private final transient ScheduledExecutorService service =
         Executors.newScheduledThreadPool(
             Mux.THREADS,
-            new VerboseThreads("mux")
+            new PatronizedThreads("mux")
         );
 
     /**
