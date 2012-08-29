@@ -29,6 +29,8 @@ package com.netbout.inf;
 import com.jcabi.log.Logger;
 import com.jcabi.log.VerboseRunnable;
 import com.jcabi.log.VerboseThreads;
+import java.util.Collection;
+import java.util.LinkedList;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.Executors;
@@ -116,15 +118,26 @@ final class PatronizedThreads implements ThreadFactory {
     private void patronize() {
         // @checkstyle MagicNumber (1 line)
         final long threshold = System.currentTimeMillis() - 500;
-        int slow = 0;
+        final Collection<String> slow = new LinkedList<String>();
         for (ConcurrentMap.Entry<Thread, Long> entry
             : this.started.entrySet()) {
             if (entry.getValue() < threshold) {
-                ++slow;
+                slow.add(
+                    Logger.format(
+                        "over %[ms]s at %s",
+                        System.currentTimeMillis() - entry.getValue(),
+                        entry.getKey().getState()
+                    )
+                );
             }
         }
-        if (slow > 0) {
-            Logger.warn(this, "#patronize(): %d slow threads", slow);
+        if (!slow.isEmpty()) {
+            Logger.warn(
+                this,
+                "#patronize(): %d slow threads: %[list]s",
+                slow.size(),
+                slow
+            );
         }
     }
 
