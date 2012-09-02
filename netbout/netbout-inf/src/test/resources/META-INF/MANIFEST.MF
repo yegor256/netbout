@@ -1,1 +1,2 @@
 Netbout-InfMount: ./target/temp-InfMount
+Netbout-InfDelay: 1000

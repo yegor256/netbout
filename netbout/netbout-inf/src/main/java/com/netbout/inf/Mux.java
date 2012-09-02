@@ -153,7 +153,6 @@ final class Mux implements Closeable {
             this.ray.stash().remove(notice);
             ++stashed;
         }
-        // @checkstyle AnonInnerLength (30 lines)
         final Runnable runnable = new VerboseRunnable(
             new Callable<Void>() {
                 @Override
@@ -370,19 +369,23 @@ final class Mux implements Closeable {
      */
     private void dispatch() throws Exception {
         this.flush();
-        if (this.semaphore.tryAcquire(1, TimeUnit.SECONDS)) {
-            try {
-                final MuxTask task = this.queue.poll(1, TimeUnit.SECONDS);
-                if (task != null) {
-                    final double time = task.call();
-                    for (Urn who : task.dependants()) {
-                        this.dependants.get(who).decrementAndGet();
+        try {
+            if (this.semaphore.tryAcquire(1, TimeUnit.SECONDS)) {
+                try {
+                    final MuxTask task = this.queue.poll(1, TimeUnit.SECONDS);
+                    if (task != null) {
+                        final double time = task.call();
+                        for (Urn who : task.dependants()) {
+                            this.dependants.get(who).decrementAndGet();
+                        }
+                        this.stats.addValue(time);
                     }
-                    this.stats.addValue(time);
+                } finally {
+                    this.semaphore.release();
                 }
-            } finally {
-                this.semaphore.release();
             }
+        } catch (InterruptedException ex) {
+            Thread.currentThread().interrupt();
         }
     }
 

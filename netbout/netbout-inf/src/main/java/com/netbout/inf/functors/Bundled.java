@@ -162,28 +162,28 @@ final class Bundled implements Functor {
                     BundledAttribute.VALUE
                 );
                 if (this.terms.containsKey(marker)) {
-                    throw new IllegalStateException(
-                        String.format(
-                            // @checkstyle LineLength (1 line)
-                            "marker '%s' at %s has already been seen in %s among %d others, shifted from %s by %s",
-                            marker,
-                            shifted,
-                            this.terms.get(marker),
-                            this.terms.size(),
-                            cursor,
-                            term
+                    Logger.warn(
+                        this,
+                        // @checkstyle LineLength (1 line)
+                        "marker '%s' at %s has already been seen in %s among %d others, shifted from %s by %s",
+                        marker,
+                        shifted,
+                        this.terms.get(marker),
+                        this.terms.size(),
+                        cursor,
+                        term
+                    );
+                } else {
+                    this.terms.put(
+                        marker,
+                        this.ray.builder().not(
+                            this.ray.builder().matcher(
+                                BundledAttribute.VALUE,
+                                marker
+                            )
                         )
                     );
                 }
-                this.terms.put(
-                    marker,
-                    this.ray.builder().not(
-                        this.ray.builder().matcher(
-                            BundledAttribute.VALUE,
-                            marker
-                        )
-                    )
-                );
             }
             return shifted;
         }

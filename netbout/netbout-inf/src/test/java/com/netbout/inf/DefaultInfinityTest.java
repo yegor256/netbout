@@ -102,7 +102,7 @@ public final class DefaultInfinityTest {
         final Infinity inf = new DefaultInfinity(folder);
         final int total = 100;
         final ExecutorService svc = Executors.newFixedThreadPool(
-            Runtime.getRuntime().availableProcessors(),
+            Runtime.getRuntime().availableProcessors() * 5,
             new VerboseThreads()
         );
         final AtomicInteger added = new AtomicInteger();
@@ -186,7 +186,7 @@ public final class DefaultInfinityTest {
             );
         }
         InfinityMocker.waitFor(inf);
-        final int threads = 10;
+        final int threads = Runtime.getRuntime().availableProcessors() * 25;
         final CountDownLatch start = new CountDownLatch(1);
         final CountDownLatch latch = new CountDownLatch(threads);
         final Callable<?> task = new Callable<Void>() {
@@ -194,6 +194,7 @@ public final class DefaultInfinityTest {
             public Void call() throws Exception {
                 start.await();
                 for (int attempt = 0; attempt < 10; ++attempt) {
+                    TimeUnit.MILLISECONDS.sleep(5);
                     MatcherAssert.assertThat(
                         inf.messages("(and (matches 'Jeffrey') (bundled))"),
                         Matchers.<Long>iterableWithSize(Matchers.greaterThan(0))
