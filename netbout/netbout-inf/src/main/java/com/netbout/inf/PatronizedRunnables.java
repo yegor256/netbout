@@ -37,6 +37,7 @@ import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * Factory of {@link Runnable}-s that are being watched.
@@ -82,20 +83,24 @@ final class PatronizedRunnables implements Closeable {
      * @return New one, being patronized
      */
     public Runnable patronize(final Runnable runnable) {
-        return new Runnable() {
-            @Override
-            public void run() {
-                PatronizedRunnables.this.started.put(
-                    runnable,
-                    System.currentTimeMillis()
-                );
-                try {
-                    runnable.run();
-                } finally {
-                    PatronizedRunnables.this.started.remove(runnable);
+        final AtomicReference<Runnable> ref = new AtomicReference<Runnable>();
+        ref.set(
+            new Runnable() {
+                @Override
+                public void run() {
+                    PatronizedRunnables.this.started.put(
+                        ref.get(),
+                        System.currentTimeMillis()
+                    );
+                    try {
+                        runnable.run();
+                    } finally {
+                        PatronizedRunnables.this.started.remove(ref.get());
+                    }
                 }
             }
-        };
+        );
+        return ref.get();
     }
 
     /**
@@ -118,7 +123,8 @@ final class PatronizedRunnables implements Closeable {
             if (entry.getValue() < threshold) {
                 slow.add(
                     Logger.format(
-                        "over %[ms]s",
+                        "%s over %[ms]s",
+                        entry.getKey(),
                         System.currentTimeMillis() - entry.getValue()
                     )
                 );
@@ -127,8 +133,9 @@ final class PatronizedRunnables implements Closeable {
         if (!slow.isEmpty()) {
             Logger.warn(
                 this,
-                "#patronize(): %d slow runnables: %[list]s",
+                "#patronize(): %d of %d runnables are slow: %[list]s",
                 slow.size(),
+                this.started.size(),
                 slow
             );
         }

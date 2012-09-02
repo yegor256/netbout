@@ -100,7 +100,7 @@ final class RexslRestClient implements RestClient {
             .get(message)
             .assertHeader(
                 RestSession.ERROR_HEADER,
-                Matchers.<String>emptyIterable()
+                Matchers.emptyIterableOf(String.class)
             )
             .assertThat(new EtaAssertion());
         return new RexslRestResponse(this, response);
@@ -130,7 +130,7 @@ final class RexslRestClient implements RestClient {
             .post(message, data.toString())
             .assertHeader(
                 RestSession.ERROR_HEADER,
-                Matchers.<String>emptyIterable()
+                Matchers.emptyIterableOf(String.class)
             );
         return new RexslRestResponse(this, response);
     }

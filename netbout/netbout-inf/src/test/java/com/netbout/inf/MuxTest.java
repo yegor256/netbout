@@ -34,6 +34,7 @@ import com.netbout.spi.BoutMocker;
 import com.netbout.spi.Message;
 import com.netbout.spi.MessageMocker;
 import com.netbout.spi.UrnMocker;
+import com.rexsl.core.Manifests;
 import java.util.concurrent.Callable;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -41,6 +42,8 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
@@ -56,12 +59,43 @@ import org.mockito.stubbing.Answer;
 public final class MuxTest {
 
     /**
+     * Snapshot of manifests.
+     */
+    private static byte[] snapshot;
+
+    /**
+     * Pre-configure Mux.
+     */
+    @BeforeClass
+    public static void setupMux() {
+        MuxTest.snapshot = Manifests.snapshot();
+        Manifests.inject("Netbout-InfDelay", "500");
+    }
+
+    /**
+     * Un-configure Mux.
+     */
+    @AfterClass
+    public static void tearDownMux() {
+        Manifests.revert(MuxTest.snapshot);
+    }
+
+    /**
      * Mux can run tasks in parallel.
      * @throws Exception If there is some problem inside
      */
     @Test
     public void runsTasksInParallel() throws Exception {
         final Ray ray = new RayMocker().mock();
+        Mockito.doAnswer(
+            new Answer<Void>() {
+                public Void answer(final InvocationOnMock invocation)
+                    throws Exception {
+                    TimeUnit.MILLISECONDS.sleep(1);
+                    return null;
+                }
+            }
+        ).when(ray).flush();
         final Store store = new StoreMocker().mock();
         final Mux mux = new Mux(ray, store);
         final AtomicInteger received = new AtomicInteger();
@@ -70,7 +104,7 @@ public final class MuxTest {
             new Answer<Void>() {
                 public Void answer(final InvocationOnMock invocation)
                     throws Exception {
-                    TimeUnit.SECONDS.sleep(1);
+                    TimeUnit.MILLISECONDS.sleep(1);
                     received.incrementAndGet();
                     return null;
                 }

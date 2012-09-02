@@ -61,17 +61,17 @@ import org.apache.commons.math.stat.descriptive.DescriptiveStatistics;
 final class Mux implements Closeable {
 
     /**
-     * How often to flush, in ms.
-     */
-    private static final long PERIOD = Mux.delay();
-
-    /**
      * How many threads to use (more than the number of processors, because
      * most of the time in every MuxTask will spent on I/O operations, like
      * getting data from the database).
      */
     private static final int THREADS =
         Runtime.getRuntime().availableProcessors() * 2;
+
+    /**
+     * How often to flush, in ms.
+     */
+    private final transient long period = Mux.delay();
 
     /**
      * The ray.
@@ -176,7 +176,7 @@ final class Mux implements Closeable {
             "#Mux(..): %d notice(s) from stash, %d threads, %[ms]s delay",
             stashed,
             Mux.THREADS,
-            Mux.PERIOD
+            this.period
         );
     }
 
@@ -283,6 +283,12 @@ final class Mux implements Closeable {
      */
     @Override
     public void close() {
+        try {
+            this.semaphore.acquire(Mux.THREADS);
+        } catch (InterruptedException ex) {
+            Thread.currentThread().interrupt();
+            throw new IllegalArgumentException(ex);
+        }
         for (ScheduledFuture<?> future : this.futures) {
             future.cancel(true);
         }
@@ -328,7 +334,8 @@ final class Mux implements Closeable {
      */
     private void flush() {
         synchronized (this.flushed) {
-            if (System.currentTimeMillis() - this.flushed.get() > Mux.PERIOD) {
+            if (System.currentTimeMillis() - this.flushed.get() > this.period) {
+                System.out.println("flush in");
                 try {
                     this.semaphore.acquire(Mux.THREADS);
                 } catch (InterruptedException ex) {
@@ -343,6 +350,7 @@ final class Mux implements Closeable {
                     this.semaphore.release(Mux.THREADS);
                     this.flushed.set(System.currentTimeMillis());
                 }
+                System.out.println("flush out");
             }
         }
     }
