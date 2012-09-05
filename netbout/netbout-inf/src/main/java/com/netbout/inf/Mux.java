@@ -156,9 +156,9 @@ final class Mux implements Closeable {
         final Runnable runnable = new VerboseRunnable(
             new Callable<Void>() {
                 @Override
+                @VerboseRunnable.Interruptable
                 public Void call() throws Exception {
-                    Mux.this.dispatch();
-                    return null;
+                    return Mux.this.dispatch();
                 }
             },
             true
@@ -282,13 +282,14 @@ final class Mux implements Closeable {
      * @see <a href="http://docs.oracle.com/javase/6/docs/api/java/util/concurrent/ExecutorService.html">Example</a>
      */
     @Override
-    public void close() {
+    public void close() throws IOException {
         try {
             this.semaphore.acquire(Mux.THREADS);
         } catch (InterruptedException ex) {
             Thread.currentThread().interrupt();
-            throw new IllegalArgumentException(ex);
+            throw new IOException(ex);
         }
+        System.out.println("all threads are mine");
         for (ScheduledFuture<?> future : this.futures) {
             future.cancel(true);
         }
@@ -331,8 +332,10 @@ final class Mux implements Closeable {
      * <p>The method is synchronized in order to avoid simultaneous execution
      * of it in a few threads. The first call will check time and it if's
      * suitable will do the flushing and will RESET the time marker.
+     *
+     * @throws Exception If some error inside
      */
-    private void flush() {
+    private void flush() throws Exception {
         synchronized (this.flushed) {
             if (System.currentTimeMillis() - this.flushed.get() > this.period) {
                 System.out.println("flush in");

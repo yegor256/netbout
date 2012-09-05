@@ -87,15 +87,6 @@ public final class MuxTest {
     @Test
     public void runsTasksInParallel() throws Exception {
         final Ray ray = new RayMocker().mock();
-        Mockito.doAnswer(
-            new Answer<Void>() {
-                public Void answer(final InvocationOnMock invocation)
-                    throws Exception {
-                    TimeUnit.MILLISECONDS.sleep(1);
-                    return null;
-                }
-            }
-        ).when(ray).flush();
         final Store store = new StoreMocker().mock();
         final Mux mux = new Mux(ray, store);
         final AtomicInteger received = new AtomicInteger();
@@ -104,7 +95,6 @@ public final class MuxTest {
             new Answer<Void>() {
                 public Void answer(final InvocationOnMock invocation)
                     throws Exception {
-                    TimeUnit.MILLISECONDS.sleep(1);
                     received.incrementAndGet();
                     return null;
                 }

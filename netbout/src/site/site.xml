@@ -41,9 +41,9 @@
     </skin>
 
     <bannerLeft>
-        <name>netBout</name>
-        <src>http://www.netbout.com/images/logo.png</src>
-        <href>http://www.netbout.com/</href>
+        <name>Netbout</name>
+        <src>http://cdn.netbout.com/logo.png</src>
+        <href>http://maven.netbout.com/</href>
     </bannerLeft>
 
     <poweredBy>
@@ -53,7 +53,7 @@
 
     <body>
         <head>
-            <link href="http://www.netbout.com/favicon.gif" rel="shortcut icon" />
+            <link href="http://cdn.netbout.com/favicon.gif" rel="shortcut icon" />
             <link href="/css/site.css" rel="stylesheet" type="text/css" />
             <link type="text/css"
                 href="http://google-code-prettify.googlecode.com/svn/trunk/src/prettify.css"
@@ -94,6 +94,8 @@
         </links>
         <menu name="Overview">
             <item name="Introduction" href="index.html" />
+            <item name="JavaDoc" href="apidocs/index.html" />
+            <item name="Test Coverage" href="cobertura/index.html" />
         </menu>
         <menu ref="modules" />
         <menu ref="reports" />

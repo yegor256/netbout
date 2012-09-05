@@ -26,13 +26,13 @@
  * SUCH DAMAGE.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
- * @version $Id$
+ * @version $Id: site.xml 3297 2012-09-02 10:57:37Z yegor@tpc2.com $
  -->
 <project xmlns="http://maven.apache.org/DECORATION/1.0.0"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://maven.apache.org/DECORATION/1.0.0
     http://maven.apache.org/xsd/decoration-1.0.0.xsd"
-    name="netbout-hub">
+    name="netbout-bus">
 
     <body>
         <menu ref="parent" />

@@ -87,6 +87,10 @@ final class PatronizedRunnables implements Closeable {
         ref.set(
             new Runnable() {
                 @Override
+                public String toString() {
+                    return runnable.toString();
+                }
+                @Override
                 public void run() {
                     PatronizedRunnables.this.started.put(
                         ref.get(),
