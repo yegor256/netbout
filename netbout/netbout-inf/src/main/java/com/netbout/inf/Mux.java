@@ -154,10 +154,9 @@ final class Mux implements Closeable {
             ++stashed;
         }
         final Runnable runnable = new VerboseRunnable(
-            new Callable<Void>() {
+            new Callable<Boolean>() {
                 @Override
-                @VerboseRunnable.Interruptable
-                public Void call() throws Exception {
+                public Boolean call() throws Exception {
                     return Mux.this.dispatch();
                 }
             },
@@ -289,7 +288,6 @@ final class Mux implements Closeable {
             Thread.currentThread().interrupt();
             throw new IOException(ex);
         }
-        System.out.println("all threads are mine");
         for (ScheduledFuture<?> future : this.futures) {
             future.cancel(true);
         }
@@ -338,22 +336,13 @@ final class Mux implements Closeable {
     private void flush() throws Exception {
         synchronized (this.flushed) {
             if (System.currentTimeMillis() - this.flushed.get() > this.period) {
-                System.out.println("flush in");
-                try {
-                    this.semaphore.acquire(Mux.THREADS);
-                } catch (InterruptedException ex) {
-                    Thread.currentThread().interrupt();
-                    throw new IllegalArgumentException(ex);
-                }
+                this.semaphore.acquire(Mux.THREADS);
                 try {
                     this.ray.flush();
-                } catch (java.io.IOException ex) {
-                    throw new IllegalArgumentException(ex);
                 } finally {
                     this.semaphore.release(Mux.THREADS);
                     this.flushed.set(System.currentTimeMillis());
                 }
-                System.out.println("flush out");
             }
         }
     }
@@ -376,11 +365,13 @@ final class Mux implements Closeable {
 
     /**
      * Dispatch the next task.
+     * @return TRUE if something was dispatched or FALSE if it's a waste call
      * @throws Exception If something goes wrong
      */
-    private void dispatch() throws Exception {
-        this.flush();
+    private boolean dispatch() throws Exception {
+        boolean dispatched = false;
         try {
+            this.flush();
             if (this.semaphore.tryAcquire(1, TimeUnit.SECONDS)) {
                 try {
                     final MuxTask task = this.queue.poll(1, TimeUnit.SECONDS);
@@ -390,6 +381,7 @@ final class Mux implements Closeable {
                             this.dependants.get(who).decrementAndGet();
                         }
                         this.stats.addValue(time);
+                        dispatched = true;
                     }
                 } finally {
                     this.semaphore.release();
@@ -398,6 +390,7 @@ final class Mux implements Closeable {
         } catch (InterruptedException ex) {
             Thread.currentThread().interrupt();
         }
+        return dispatched;
     }
 
 }

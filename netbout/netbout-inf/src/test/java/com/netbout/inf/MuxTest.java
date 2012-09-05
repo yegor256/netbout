@@ -36,6 +36,8 @@ import com.netbout.spi.MessageMocker;
 import com.netbout.spi.UrnMocker;
 import com.rexsl.core.Manifests;
 import java.util.concurrent.Callable;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -81,16 +83,15 @@ public final class MuxTest {
     }
 
     /**
-     * Mux can run tasks in parallel.
+     * Mux can accept notices from parallel sources.
      * @throws Exception If there is some problem inside
      */
     @Test
-    public void runsTasksInParallel() throws Exception {
+    public void acceptsNoticesInParallel() throws Exception {
         final Ray ray = new RayMocker().mock();
         final Store store = new StoreMocker().mock();
         final Mux mux = new Mux(ray, store);
         final AtomicInteger received = new AtomicInteger();
-        final AtomicInteger pushed = new AtomicInteger();
         Mockito.doAnswer(
             new Answer<Void>() {
                 public Void answer(final InvocationOnMock invocation)
@@ -101,11 +102,14 @@ public final class MuxTest {
             }
         ).when(store).see(Mockito.eq(ray), Mockito.any(Notice.class));
         final int threads = Runtime.getRuntime().availableProcessors() * 50;
-        final ScheduledExecutorService svc =
-            Executors.newScheduledThreadPool(threads, new VerboseThreads());
+        final ExecutorService svc =
+            Executors.newFixedThreadPool(threads, new VerboseThreads());
+        final CountDownLatch start = new CountDownLatch(1);
+        final CountDownLatch done = new CountDownLatch(threads);
         final Runnable runnable = new VerboseRunnable(
             new Callable<Void>() {
                 public Void call() throws Exception {
+                    start.await(1, TimeUnit.SECONDS);
                     mux.add(
                         new MessagePostedNotice() {
                             @Override
@@ -118,25 +122,21 @@ public final class MuxTest {
                             }
                         }
                     );
-                    pushed.incrementAndGet();
+                    done.countDown();
                     return null;
                 }
             },
             true
         );
-        svc.scheduleAtFixedRate(runnable, 0, 1L, TimeUnit.MILLISECONDS);
-        TimeUnit.SECONDS.sleep(1);
-        svc.shutdown();
+        for (int thread = 0; thread < threads; ++thread) {
+            svc.submit(runnable);
+        }
+        start.countDown();
+        done.await(1, TimeUnit.MINUTES);
         MuxTest.waitFor(mux);
+        svc.shutdown();
         mux.close();
-        MatcherAssert.assertThat(
-            received.get(),
-            Matchers.equalTo(pushed.get())
-        );
-        MatcherAssert.assertThat(
-            pushed.get(),
-            Matchers.greaterThan(0)
-        );
+        MatcherAssert.assertThat(received.get(), Matchers.equalTo(threads));
     }
 
     /**
