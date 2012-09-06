@@ -120,7 +120,7 @@ final class PatronizedRunnables implements Closeable {
      */
     private void patronize() {
         // @checkstyle MagicNumber (1 line)
-        final long threshold = System.currentTimeMillis() - 500;
+        final long threshold = System.currentTimeMillis() - 5000;
         final Collection<String> slow = new LinkedList<String>();
         for (ConcurrentMap.Entry<Runnable, Long> entry
             : this.started.entrySet()) {

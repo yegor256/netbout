@@ -119,8 +119,12 @@ final class Mux implements Closeable {
     /**
      * Semaphore, that holds locks for every actively working task (and
      * doesn't allow new tasks to start if there are not enough locks).
+     *
+     * <p>What's important is that the semaphore has to "fair", because
+     * sometimes we need one flag from it, sometimes all.
      */
-    private final transient Semaphore semaphore = new Semaphore(Mux.THREADS);
+    private final transient Semaphore semaphore =
+        new Semaphore(Mux.THREADS, true);
 
     /**
      * When {@link #flush()} was called last time.
