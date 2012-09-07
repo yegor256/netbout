@@ -41,7 +41,7 @@ try {
     home = URI.create("http://localhost:" + props.get("port"));
     user = new RestSession(home, sudo).authenticate(new Urn("urn:netbout:jmeter"), "");
     friend = new RestSession(home, sudo).authenticate(
-        new Urn("urn:netbout:friend-" + random.nextInt(500)), ""
+        new Urn("urn:netbout:friend-" + ctx.getThread().getThreadNum()), ""
     );
     bout = user.start();
     bout.rename(new LoremIpsum().getWords(10, random.nextInt(49) + 1));
