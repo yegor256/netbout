@@ -41,6 +41,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicLong;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.AfterClass;
@@ -56,8 +57,13 @@ import org.mockito.stubbing.Answer;
  * @version $Id$
  * @checkstyle ClassDataAbstractionCoupling (500 lines)
  */
-@SuppressWarnings({ "PMD.DoNotUseThreads", "PMD.TestClassWithoutTestCases" })
+@SuppressWarnings({ "PMD.DoNotUseThreads", "PMD.TooManyMethods" })
 public final class MuxTest {
+
+    /**
+     * Test-wide incrementor.
+     */
+    private static final AtomicLong NUMBER = new AtomicLong();
 
     /**
      * Snapshot of manifests.
@@ -87,7 +93,7 @@ public final class MuxTest {
      */
     @Test
     public void acceptsNoticesInParallel() throws Exception {
-        final Ray ray = new RayMocker().mock();
+        final Ray ray = MuxTest.slowRay(2);
         final Store store = new StoreMocker().mock();
         final Mux mux = new Mux(ray, store);
         final AtomicInteger received = new AtomicInteger();
@@ -109,18 +115,7 @@ public final class MuxTest {
             new Callable<Void>() {
                 public Void call() throws Exception {
                     start.await(1, TimeUnit.SECONDS);
-                    mux.add(
-                        new MessagePostedNotice() {
-                            @Override
-                            public Message message() {
-                                return new MessageMocker().inBout(
-                                    new BoutMocker().withParticipant(
-                                        new UrnMocker().mock()
-                                    ).mock()
-                                ).mock();
-                            }
-                        }
-                    );
+                    MuxTest.pushTo(mux);
                     done.countDown();
                     return null;
                 }
@@ -155,9 +150,8 @@ public final class MuxTest {
      * @throws Exception If there is some problem inside
      */
     @Test
-    @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
     public void acceptsManyNotices() throws Exception {
-        final Ray ray = new RayMocker().mock();
+        final Ray ray = MuxTest.slowRay(2);
         final Store store = new StoreMocker().mock();
         final Mux mux = new Mux(ray, store);
         final AtomicInteger received = new AtomicInteger();
@@ -169,20 +163,9 @@ public final class MuxTest {
                 }
             }
         ).when(store).see(Mockito.eq(ray), Mockito.any(Notice.class));
-        final int total = 1000;
+        final int total = 100;
         for (int num = 0; num < total; ++num) {
-            mux.add(
-                new MessagePostedNotice() {
-                    @Override
-                    public Message message() {
-                        return new MessageMocker().inBout(
-                            new BoutMocker().withParticipant(
-                                new UrnMocker().mock()
-                            ).mock()
-                        ).mock();
-                    }
-                }
-            );
+            MuxTest.pushTo(mux);
         }
         MuxTest.waitFor(mux);
         mux.close();
@@ -190,6 +173,35 @@ public final class MuxTest {
             received.get(),
             Matchers.equalTo(total)
         );
+    }
+
+    /**
+     * Mux can accept and process notices asynchronously.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void acceptsAndProcessesNoticesAsynchronously() throws Exception {
+        final Ray ray = MuxTest.slowRay(25);
+        final Store store = new StoreMocker().mock();
+        final Mux mux = new Mux(ray, store);
+        final AtomicInteger received = new AtomicInteger();
+        Mockito.doAnswer(
+            new Answer<Void>() {
+                public Void answer(final InvocationOnMock invocation) {
+                    received.incrementAndGet();
+                    return null;
+                }
+            }
+        ).when(store).see(Mockito.eq(ray), Mockito.any(Notice.class));
+        final int total = 100;
+        for (int num = 0; num < total; ++num) {
+            MuxTest.pushTo(mux);
+        }
+        MatcherAssert.assertThat(
+            received.get(),
+            Matchers.lessThan(total)
+        );
+        mux.close();
     }
 
     /**
@@ -212,6 +224,54 @@ public final class MuxTest {
                 );
             }
         }
+    }
+
+    /**
+     * Create slow Ray.
+     * @param seconds How many seconds to sleep on every flush
+     * @return Ray, slow
+     * @throws Exception If there is some problem inside
+     */
+    private static Ray slowRay(final int seconds) throws Exception {
+        final Ray ray = new RayMocker().mock();
+        Mockito.doAnswer(
+            new Answer<Void>() {
+                public Void answer(final InvocationOnMock invocation)
+                    throws Exception {
+                    TimeUnit.SECONDS.sleep(seconds);
+                    Logger.debug(
+                        this,
+                        "#answer(): flushed after %dsec of sleep",
+                        seconds
+                    );
+                    return null;
+                }
+            }
+        ).when(ray).flush();
+        return ray;
+    }
+
+    /**
+     * Add new notice to the Mux.
+     * @param mux The mux
+     * @throws Exception If there is some problem inside
+     */
+    private static void pushTo(final Mux mux) throws Exception {
+        mux.add(
+            new MessagePostedNotice() {
+                @Override
+                public Message message() {
+                    return new MessageMocker()
+                        .withNumber(MuxTest.NUMBER.incrementAndGet())
+                        .inBout(
+                            new BoutMocker()
+                                .withNumber(MuxTest.NUMBER.incrementAndGet())
+                                .withParticipant(new UrnMocker().mock())
+                                .mock()
+                        ).mock();
+                }
+            }
+        );
     }
 
 }
