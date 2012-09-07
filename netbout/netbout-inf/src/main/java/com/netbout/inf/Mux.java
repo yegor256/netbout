@@ -136,7 +136,7 @@ final class Mux implements Closeable {
      * Patronized runnables.
      */
     private final transient PatronizedRunnables patronized =
-        new PatronizedRunnables();
+        new PatronizedRunnables(1000L);
 
     /**
      * Public ctor.

@@ -725,6 +725,7 @@
                                             <Netbout-PopHost>pop.gmail.com</Netbout-PopHost>
                                             <Netbout-PopPort>995</Netbout-PopPort>
                                             <Netbout-SecurityKey>-test-security-key</Netbout-SecurityKey>
+                                            <!-- don't change it, it's used in jmeter tests and ReXSL tests -->
                                             <Netbout-SuperSecret>9OLKJ8JHGytfh6JGJF0LKF</Netbout-SuperSecret>
                                             <Netbout-InfMount>${project.build.directory}/catapult-InfMount</Netbout-InfMount>
                                             <Netbout-InfDelay>5000</Netbout-InfDelay>

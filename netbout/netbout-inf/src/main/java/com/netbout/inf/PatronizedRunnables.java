@@ -49,6 +49,11 @@ import java.util.concurrent.atomic.AtomicReference;
 final class PatronizedRunnables implements Closeable {
 
     /**
+     * Threshold in milliseconds.
+     */
+    private final transient long threshold;
+
+    /**
      * When execution was started in each runnable.
      */
     private final transient ConcurrentMap<Runnable, Long> started =
@@ -62,8 +67,10 @@ final class PatronizedRunnables implements Closeable {
 
     /**
      * Public ctor.
+     * @param thr The threshold in milliseconds
      */
-    public PatronizedRunnables() {
+    public PatronizedRunnables(final long thr) {
+        this.threshold = thr;
         this.service.scheduleWithFixedDelay(
             new VerboseRunnable(
                 new Runnable() {
@@ -120,11 +127,11 @@ final class PatronizedRunnables implements Closeable {
      */
     private void patronize() {
         // @checkstyle MagicNumber (1 line)
-        final long threshold = System.currentTimeMillis() - 5000;
+        final long max = System.currentTimeMillis() - this.threshold;
         final Collection<String> slow = new LinkedList<String>();
         for (ConcurrentMap.Entry<Runnable, Long> entry
             : this.started.entrySet()) {
-            if (entry.getValue() < threshold) {
+            if (entry.getValue() < max) {
                 slow.add(
                     Logger.format(
                         "%s over %[ms]s",
