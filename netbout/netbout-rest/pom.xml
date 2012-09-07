@@ -541,7 +541,7 @@
                                     <goal>run</goal>
                                 </goals>
                                 <configuration>
-                                    <target>
+                                    <target description="start MySQL for ReXSL tests">
                                         <ant antfile="${basedir}/src/test/ant/mysql.xml" target="start">
                                             <property name="database" value="netbout" />
                                             <property name="port" value="${mysql.port.rest}" />
@@ -557,7 +557,7 @@
                                     <goal>run</goal>
                                 </goals>
                                 <configuration>
-                                    <target>
+                                    <target description="stop MySQL for ReXSL tests">
                                         <ant antfile="${basedir}/src/test/ant/mysql.xml" target="stop">
                                             <property name="database" value="netbout" />
                                             <property name="port" value="${mysql.port.rest}" />
@@ -631,7 +631,7 @@
                                     <goal>run</goal>
                                 </goals>
                                 <configuration>
-                                    <target>
+                                    <target description="start MySQL for ReXSL/catapult tests">
                                         <ant antfile="${basedir}/src/test/ant/mysql.xml" target="start">
                                             <property name="database" value="catapult" />
                                             <property name="port" value="${mysql.port.catapult}" />
@@ -647,7 +647,7 @@
                                     <goal>run</goal>
                                 </goals>
                                 <configuration>
-                                    <target>
+                                    <target description="stop MySQL for ReXSL/catapult tests">
                                         <ant antfile="${basedir}/src/test/ant/mysql.xml" target="stop">
                                             <property name="database" value="catapult" />
                                             <property name="port" value="${mysql.port.catapult}" />
@@ -663,7 +663,7 @@
                                     <goal>run</goal>
                                 </goals>
                                 <configuration>
-                                    <target>
+                                    <target description="run JMeter with performance BeanShell tests">
                                         <property name="maven.classpath" refid="maven.test.classpath"/>
                                         <propertyfile file="${project.build.directory}/jmeter.properties">
                                             <entry key="user.classpath" value="${maven.classpath}"/>
@@ -866,7 +866,7 @@
                                     <goal>run</goal>
                                 </goals>
                                 <configuration>
-                                    <target>
+                                    <target description="deploy test version to Heroku.com">
                                         <copy file="${heroku.pem}"
                                             tofile="${project.build.directory}/heroku.pem"
                                             overwrite="true" />
