@@ -41,7 +41,7 @@ try {
     home = URI.create("http://localhost:" + props.get("port"));
     user = new RestSession(home, sudo).authenticate(new Urn("urn:netbout:jmeter"), "");
     buddy = new RestSession(home, sudo).authenticate(
-        new Urn("urn:netbout:buddy-" + random.nextInt(500)), ""
+        new Urn("urn:netbout:buddy-" + ctx.getThread().getThreadNum()), ""
     );
     bouts = user.inbox("(equal $bout.number 4)").iterator();
     if (bouts.hasNext()) {

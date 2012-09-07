@@ -101,13 +101,14 @@ public class BaseRs extends BaseResource implements NbResource {
             );
             throw new LoginRequiredException(this, ex);
         }
-        if (!"https".equals(this.uriInfo().getBaseUri().getScheme())
+        final String https = "https";
+        if (!https.equals(this.uriInfo().getBaseUri().getScheme())
             && !"localhost".equals(this.uriInfo().getBaseUri().getHost())) {
             throw new WebApplicationException(
                 Response.status(Response.Status.TEMPORARY_REDIRECT).location(
                     this.uriInfo().getRequestUriBuilder()
                         .clone()
-                        .scheme("https")
+                        .scheme(https)
                         .build()
                 ).build()
             );
