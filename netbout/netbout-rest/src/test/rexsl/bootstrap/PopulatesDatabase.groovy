@@ -57,9 +57,10 @@ new File(rexsl.basedir, 'src/test/rexsl/start.sql').text.split('\n').each { text
 // let's create a big amount of bouts and messages for one identity
 def calendar = new GregorianCalendar()
 calendar.add(Calendar.YEAR, -5)
-def total = 150 + new Random().nextInt(50)
+def rand = new SecureRandom()
+def total = 150 + rand.nextInt(50)
 (5200..(5200 - total)).each {
-    calendar.add(Calendar.MINUTE, -new SecureRandom().nextInt(120))
+    calendar.add(Calendar.MINUTE, -rand.nextInt(120))
     def date = String.format('%tF', calendar.time)
     queries.add(
         'INSERT IGNORE INTO bout (number, title, date) VALUES'
