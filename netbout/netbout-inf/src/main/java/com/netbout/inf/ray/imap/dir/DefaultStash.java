@@ -208,7 +208,13 @@ final class DefaultStash implements Stash {
      */
     private Collection<File> files() throws IOException {
         final Collection<File> files = new ConcurrentSkipListSet<File>();
-        for (File file : this.lock.dir().listFiles()) {
+        final File[] list = this.lock.dir().listFiles();
+        if (list == null) {
+            throw new IOException(
+                String.format("can't list files in %s", this.lock.dir())
+            );
+        }
+        for (File file : list) {
             if (this.done.contains(file)) {
                 continue;
             }

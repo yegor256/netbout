@@ -37,12 +37,10 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.Executors;
-import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.Semaphore;
@@ -95,8 +93,7 @@ final class Mux implements Closeable {
     /**
      * Tasks to execute.
      */
-    private final transient BlockingQueue<MuxTask> queue =
-        new LinkedBlockingQueue<MuxTask>();
+    private final transient MuxQueue queue = new MuxQueue();
 
     /**
      * How many notices every identity has now in pending status.
