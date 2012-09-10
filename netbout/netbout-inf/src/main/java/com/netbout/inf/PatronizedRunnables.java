@@ -124,8 +124,11 @@ final class PatronizedRunnables implements Closeable {
     private void patronize() {
         final Collection<String> slow = new LinkedList<String>();
         for (Thread thread : this.started.keySet()) {
-            final long age =
-                System.currentTimeMillis() - this.started.get(thread);
+            final Long start = this.started.get(thread);
+            if (start == null) {
+                continue;
+            }
+            final long age = System.currentTimeMillis() - start;
             if (age > this.threshold) {
                 slow.add(
                     Logger.format(
