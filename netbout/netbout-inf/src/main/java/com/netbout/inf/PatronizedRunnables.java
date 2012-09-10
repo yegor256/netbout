@@ -42,6 +42,9 @@ import java.util.concurrent.atomic.AtomicReference;
 /**
  * Factory of {@link Runnable}-s that are being watched.
  *
+ * <p>This whole class is a response to a defect in JDK7,
+ * see: http://stackoverflow.com/questions/12349881
+ *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id: Mux.java 3289 2012-08-28 15:02:31Z yegor@tpc2.com $
  */
@@ -56,8 +59,8 @@ final class PatronizedRunnables implements Closeable {
     /**
      * When execution was started in each runnable.
      */
-    private final transient ConcurrentMap<Runnable, Long> started =
-        new ConcurrentHashMap<Runnable, Long>();
+    private final transient ConcurrentMap<Thread, Long> started =
+        new ConcurrentHashMap<Thread, Long>();
 
     /**
      * Running service.
@@ -90,28 +93,22 @@ final class PatronizedRunnables implements Closeable {
      * @return New one, being patronized
      */
     public Runnable patronize(final Runnable runnable) {
-        final AtomicReference<Runnable> ref = new AtomicReference<Runnable>();
-        ref.set(
-            new Runnable() {
-                @Override
-                public String toString() {
-                    return runnable.toString();
-                }
-                @Override
-                public void run() {
-                    PatronizedRunnables.this.started.put(
-                        ref.get(),
-                        System.currentTimeMillis()
+        return new Runnable() {
+            @Override
+            public void run() {
+                PatronizedRunnables.this.started.put(
+                    Thread.currentThread(),
+                    System.currentTimeMillis()
+                );
+                try {
+                    runnable.run();
+                } finally {
+                    PatronizedRunnables.this.started.remove(
+                        Thread.currentThread()
                     );
-                    try {
-                        runnable.run();
-                    } finally {
-                        PatronizedRunnables.this.started.remove(ref.get());
-                    }
                 }
             }
-        );
-        return ref.get();
+        };
     }
 
     /**
@@ -126,30 +123,56 @@ final class PatronizedRunnables implements Closeable {
      * Patronize them all.
      */
     private void patronize() {
-        // @checkstyle MagicNumber (1 line)
-        final long max = System.currentTimeMillis() - this.threshold;
         final Collection<String> slow = new LinkedList<String>();
-        for (ConcurrentMap.Entry<Runnable, Long> entry
-            : this.started.entrySet()) {
-            if (entry.getValue() < max) {
+        for (Thread thread : this.started.keySet()) {
+            final long age =
+                System.currentTimeMillis() - this.started.get(thread);
+            if (age > this.threshold) {
                 slow.add(
                     Logger.format(
-                        "%s over %[ms]s",
-                        entry.getKey(),
-                        System.currentTimeMillis() - entry.getValue()
+                        "%s/%s over %[ms]s",
+                        thread.getName(),
+                        thread.getState(),
+                        age
                     )
                 );
+            }
+            // @checkstyle MagicNumber (1 line)
+            if (age > 5 * 1000
+                && thread.getState().equals(Thread.State.WAITING)) {
+                Logger.warn(
+                    this,
+                    "#patronize(): %s/%s is %[ms]s old, interrupting:\n%s",
+                    thread.getName(),
+                    thread.getState(),
+                    age,
+                    PatronizedRunnables.stack(thread.getStackTrace())
+                );
+                thread.interrupt();
             }
         }
         if (!slow.isEmpty()) {
             Logger.warn(
                 this,
-                "#patronize(): %d of %d runnables are slow: %[list]s",
+                "#patronize(): %d of %d threads are slow: %[list]s",
                 slow.size(),
                 this.started.size(),
                 slow
             );
         }
+    }
+
+    /**
+     * Convert array of stack trace elements to string.
+     * @param elements The elemetns
+     * @return The string
+     */
+    private static String stack(final StackTraceElement[] elements) {
+        final StringBuilder text = new StringBuilder();
+        for (StackTraceElement element : elements) {
+            text.append('\t').append(element.toString()).append('\n');
+        }
+        return text.toString();
     }
 
 }

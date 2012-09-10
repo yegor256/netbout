@@ -31,10 +31,12 @@ import com.netbout.spi.client.RestSession;
 import de.svenjacobs.loremipsum.LoremIpsum;
 import java.util.Random;
 
-log.info("invite-and-kickoff start...");
-
 // from Catapult/Tomcat configuration in pom.xml
 sudo = "9OLKJ8JHGytfh6JGJF0LKF";
+
+String lorem(int words) {
+    return new LoremIpsum().getWords(words, random.nextInt(49) + 1);
+}
 
 try {
     random = new Random();
@@ -43,12 +45,13 @@ try {
     buddy = new RestSession(home, sudo).authenticate(
         new Urn("urn:netbout:buddy-" + ctx.getThread().getThreadNum()), ""
     );
+    // this bout should be created before, in ReXSL tests
     bouts = user.inbox("(equal $bout.number 4)").iterator();
     if (bouts.hasNext()) {
         bout = bouts.next();
-        bout.rename(new LoremIpsum().getWords(10, random.nextInt(49) + 1));
+        bout.rename(lorem(10));
         bout.invite(buddy);
-        bout.post(new LoremIpsum().getWords(100, random.nextInt(49) + 1));
+        bout.post(lorem(1000));
         buddy.bout(bout.number()).leave();
         log.info("manipulated in bout " + bout.number());
     } else {

@@ -47,7 +47,7 @@ public final class EtaAssertion implements AssertionPolicy {
     /**
      * Minimum delay in nanosec.
      */
-    private static final long MIN_DELAY = 5 * 1000L * 1000 * 1000;
+    private static final long MIN_DELAY = 30 * 1000L * 1000 * 1000;
 
     /**
      * Maximum delay in nanosec.
@@ -95,7 +95,7 @@ public final class EtaAssertion implements AssertionPolicy {
             final long delay = Math.min(
                 Math.max(
                     this.eta * attempt,
-                    EtaAssertion.MIN_DELAY * attempt * 2
+                    EtaAssertion.MIN_DELAY * attempt
                 ),
                 EtaAssertion.MAX_DELAY
             );
