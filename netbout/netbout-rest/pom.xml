@@ -918,12 +918,14 @@
                                             <arg value="-m"/>
                                             <arg value="rev.${build.number}"/>
                                         </exec>
-                                        <exec dir="${project.build.directory}/heroku" executable="git" failonerror="true">
-                                            <arg value="push"/>
-                                            <arg value="origin"/>
-                                            <arg value="master"/>
-                                            <env key="GIT_SSH" file="${project.build.directory}/heroku.sh"/>
-                                        </exec>
+                                        <retry retrycount="5">
+                                            <exec dir="${project.build.directory}/heroku" executable="git" failonerror="true">
+                                                <arg value="push"/>
+                                                <arg value="origin"/>
+                                                <arg value="master"/>
+                                                <env key="GIT_SSH" file="${project.build.directory}/heroku.sh"/>
+                                            </exec>
+                                        </retry>
                                         <retry retrycount="5">
                                             <exec executable="sh" outputproperty="rev.deployed" failonerror="true">
                                                 <arg value="-c"/>
