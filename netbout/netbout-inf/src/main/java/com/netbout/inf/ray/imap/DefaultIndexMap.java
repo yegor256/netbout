@@ -8,7 +8,7 @@
  * except the server platform of netBout Inc. located at www.netbout.com.
  * Federal copyright law prohibits unauthorized reproduction by any means
  * and imposes fines up to $25,000 for violation. If you received
- * this code occasionally and without intent to use it, please report this
+ * this code accidentally and without intent to use it, please report this
  * incident to the author by email.
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
@@ -84,17 +84,19 @@ public final class DefaultIndexMap implements IndexMap {
     @Override
     public String toString() {
         final StringBuilder text = new StringBuilder();
+        text.append('{');
         for (Attribute attr : this.map.keySet()) {
             text.append(attr.toString())
-                .append(": ")
+                .append(':')
                 .append(this.map.get(attr).toString())
-                .append("\n");
+                .append(' ');
         }
+        text.append("} ");
         long sizeof = 0L;
         for (FlushableIndex idx : this.map.values()) {
             sizeof += idx.sizeof();
         }
-        return text.append(String.format("total size: %,d\n", sizeof))
+        return text.append(String.format("total size: %,d; ", sizeof))
             .append(this.directory.toString())
             .toString();
     }
@@ -175,7 +177,7 @@ public final class DefaultIndexMap implements IndexMap {
         }
         service.shutdown();
         this.directory.baseline();
-        Logger.info(
+        Logger.debug(
             this,
             "#flush(): saved %d indexes %[list]s to %s in %[ms]s",
             this.map.size(),

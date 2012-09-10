@@ -41,6 +41,7 @@ import java.util.concurrent.TimeUnit;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
+@AssertionPolicy.Quiet
 public final class EtaAssertion implements AssertionPolicy {
 
     /**
@@ -69,22 +70,17 @@ public final class EtaAssertion implements AssertionPolicy {
                 response.xpath("/page/identity/eta/text()").get(0)
             );
             if (this.eta > 0) {
-                Logger.warn(
-                    this,
-                    // @checkstyle LineLength (1 line)
-                    "assertThat(..): ETA=%[nano]s reported for '%s', the page is not ready",
-                    this.eta,
-                    response.xpath("/page/identity/name/text()").get(0)
+                throw new AssertionError(
+                    Logger.format(
+                        "ETA=%[nano]s for '%s', the page is not ready",
+                        this.eta,
+                        response.xpath("/page/identity/name/text()").get(0)
+                    )
                 );
-                throw new AssertionError();
             }
         } else if (response.getStatus() == HttpURLConnection.HTTP_UNAVAILABLE) {
             this.eta = 1L;
-            Logger.warn(
-                this,
-                "assertThat(..): service is temporary unavailable"
-            );
-            throw new AssertionError();
+            throw new AssertionError("service is temporary unavailable");
         }
     }
 
@@ -99,7 +95,7 @@ public final class EtaAssertion implements AssertionPolicy {
             final long delay = Math.min(
                 Math.max(
                     this.eta * attempt,
-                    EtaAssertion.MIN_DELAY * attempt * 2
+                    EtaAssertion.MIN_DELAY * attempt
                 ),
                 EtaAssertion.MAX_DELAY
             );

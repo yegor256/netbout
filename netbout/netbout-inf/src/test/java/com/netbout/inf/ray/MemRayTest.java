@@ -8,7 +8,7 @@
  * except the server platform of netBout Inc. located at www.netbout.com.
  * Federal copyright law prohibits unauthorized reproduction by any means
  * and imposes fines up to $25,000 for violation. If you received
- * this code occasionally and without intent to use it, please report this
+ * this code accidentally and without intent to use it, please report this
  * incident to the author by email.
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
@@ -26,6 +26,8 @@
  */
 package com.netbout.inf.ray;
 
+import com.jcabi.log.VerboseRunnable;
+import com.jcabi.log.VerboseThreads;
 import com.netbout.inf.Attribute;
 import com.netbout.inf.AttributeMocker;
 import com.netbout.inf.Cursor;
@@ -33,6 +35,13 @@ import com.netbout.inf.FolderMocker;
 import com.netbout.inf.MsgMocker;
 import com.netbout.inf.Ray;
 import java.io.File;
+import java.util.concurrent.Callable;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
+import org.apache.commons.lang.RandomStringUtils;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;
@@ -41,6 +50,7 @@ import org.junit.Test;
  * Test case of {@link MemRay}.
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
+ * @checkstyle ClassDataAbstractionCoupling (500 lines)
  */
 public final class MemRayTest {
 
@@ -117,6 +127,60 @@ public final class MemRayTest {
             ray,
             Matchers.hasToString(Matchers.notNullValue())
         );
+    }
+
+    /**
+     * MemRay can make changes in parallel.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    @SuppressWarnings("PMD.DoNotUseThreads")
+    public void makesChangesInParallel() throws Exception {
+        final File dir = new FolderMocker().mock().path();
+        final Ray ray = new MemRay(dir);
+        final long number = MsgMocker.number();
+        ray.msg(number);
+        final AtomicInteger planned = new AtomicInteger(500);
+        final CountDownLatch done = new CountDownLatch(planned.get());
+        final int threads = Runtime.getRuntime().availableProcessors() * 10;
+        final ScheduledExecutorService svc =
+            Executors.newScheduledThreadPool(threads, new VerboseThreads());
+        final Attribute attr = new Attribute("some-attr-77");
+        final Runnable runnable = new VerboseRunnable(
+            // @checkstyle AnonInnerLength (50 lines)
+            new Callable<Void>() {
+                public Void call() throws Exception {
+                    final int len = 50;
+                    if (planned.getAndDecrement() > 0) {
+                        ray.cursor().add(
+                            ray.builder().picker(number),
+                            attr,
+                            RandomStringUtils.random(len)
+                        );
+                        ray.cursor().delete(
+                            ray.builder().picker(number),
+                            attr
+                        );
+                        ray.cursor().replace(
+                            ray.builder().picker(number),
+                            attr,
+                            RandomStringUtils.random(len)
+                        );
+                        done.countDown();
+                    }
+                    return null;
+                }
+            },
+            true
+        );
+        for (int thread = 0; thread < threads; ++thread) {
+            svc.scheduleWithFixedDelay(runnable, 0, 1L, TimeUnit.NANOSECONDS);
+        }
+        MatcherAssert.assertThat(
+            done.await(1, TimeUnit.MINUTES),
+            Matchers.is(true)
+        );
+        svc.shutdown();
     }
 
 }

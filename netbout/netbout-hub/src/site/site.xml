@@ -9,7 +9,7 @@
  * except the server platform of netBout Inc. located at www.netbout.com.
  * Federal copyright law prohibits unauthorized reproduction by any means
  * and imposes fines up to $25,000 for violation. If you received
- * this code occasionally and without intent to use it, please report this
+ * this code accidentally and without intent to use it, please report this
  * incident to the author by email: privacy@netbout.com.
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
@@ -32,12 +32,14 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://maven.apache.org/DECORATION/1.0.0
     http://maven.apache.org/xsd/decoration-1.0.0.xsd"
-    name="netbout-engine">
+    name="netbout-hub">
 
     <body>
         <menu ref="parent" />
         <menu name="Overview">
             <item name="Introduction" href="index.html" />
+            <item name="JavaDoc" href="apidocs/index.html" />
+            <item name="Test Coverage" href="cobertura/index.html" />
         </menu>
         <menu ref="reports" />
     </body>

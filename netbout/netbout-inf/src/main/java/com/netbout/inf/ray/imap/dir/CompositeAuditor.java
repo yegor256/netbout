@@ -8,7 +8,7 @@
  * except the server platform of netBout Inc. located at www.netbout.com.
  * Federal copyright law prohibits unauthorized reproduction by any means
  * and imposes fines up to $25,000 for violation. If you received
- * this code occasionally and without intent to use it, please report this
+ * this code accidentally and without intent to use it, please report this
  * incident to the author by email.
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
@@ -61,7 +61,7 @@ final class CompositeAuditor implements Auditor {
             for (Auditor auditor : auditors) {
                 auditor.audit(base, audit);
             }
-            Logger.info(
+            Logger.debug(
                 this,
                 "#audit('%s', ..): done in %[ms]s",
                 base,

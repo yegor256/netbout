@@ -8,7 +8,7 @@
  * except the server platform of netBout Inc. located at www.netbout.com.
  * Federal copyright law prohibits unauthorized reproduction by any means
  * and imposes fines up to $25,000 for violation. If you received
- * this code occasionally and without intent to use it, please report this
+ * this code accidentally and without intent to use it, please report this
  * incident to the author by email.
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
@@ -34,22 +34,26 @@ import java.util.Random;
 // from Catapult/Tomcat configuration in pom.xml
 sudo = "9OLKJ8JHGytfh6JGJF0LKF";
 
+String lorem(int words) {
+    return new LoremIpsum().getWords(words, random.nextInt(49) + 1);
+}
+
 try {
     random = new Random();
     home = URI.create("http://localhost:" + props.get("port"));
     user = new RestSession(home, sudo).authenticate(new Urn("urn:netbout:jmeter"), "");
     friend = new RestSession(home, sudo).authenticate(
-        new Urn("urn:netbout:friend-" + random.nextInt(500)), ""
+        new Urn("urn:netbout:friend-" + ctx.getThread().getThreadNum()), ""
     );
     bout = user.start();
-    bout.rename(new LoremIpsum().getWords(10, random.nextInt(49) + 1));
+    bout.rename(lorem(10));
     bout.invite(friend);
-    bout.post(new LoremIpsum().getWords(100, random.nextInt(49) + 1));
+    bout.post(lorem(1000));
     number = bout.number();
     friend.bout(number).confirm();
-    friend.bout(number).post(new LoremIpsum().getWords(100, random.nextInt(49) + 1));
+    friend.bout(number).post(lorem(1000));
     friend.bout(number).leave();
-    bout.post(new LoremIpsum().getWords(100, random.nextInt(49) + 1));
+    bout.post(lorem(1000));
     log.info("posted to bout #" + bout.number());
 } catch (Throwable ex) {
     log.error(Logger.format("%[exception]s", new Object[] {ex}));

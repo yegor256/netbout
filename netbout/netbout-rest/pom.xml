@@ -9,7 +9,7 @@
  * except the server platform of netBout Inc. located at www.netbout.com.
  * Federal copyright law prohibits unauthorized reproduction by any means
  * and imposes fines up to $25,000 for violation. If you received
- * this code occasionally and without intent to use it, please report this
+ * this code accidentally and without intent to use it, please report this
  * incident to the author by email: privacy@netbout.com.
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
@@ -541,7 +541,7 @@
                                     <goal>run</goal>
                                 </goals>
                                 <configuration>
-                                    <target>
+                                    <target description="start MySQL for ReXSL tests">
                                         <ant antfile="${basedir}/src/test/ant/mysql.xml" target="start">
                                             <property name="database" value="netbout" />
                                             <property name="port" value="${mysql.port.rest}" />
@@ -557,7 +557,7 @@
                                     <goal>run</goal>
                                 </goals>
                                 <configuration>
-                                    <target>
+                                    <target description="stop MySQL for ReXSL tests">
                                         <ant antfile="${basedir}/src/test/ant/mysql.xml" target="stop">
                                             <property name="database" value="netbout" />
                                             <property name="port" value="${mysql.port.rest}" />
@@ -631,7 +631,7 @@
                                     <goal>run</goal>
                                 </goals>
                                 <configuration>
-                                    <target>
+                                    <target description="start MySQL for ReXSL/catapult tests">
                                         <ant antfile="${basedir}/src/test/ant/mysql.xml" target="start">
                                             <property name="database" value="catapult" />
                                             <property name="port" value="${mysql.port.catapult}" />
@@ -647,7 +647,7 @@
                                     <goal>run</goal>
                                 </goals>
                                 <configuration>
-                                    <target>
+                                    <target description="stop MySQL for ReXSL/catapult tests">
                                         <ant antfile="${basedir}/src/test/ant/mysql.xml" target="stop">
                                             <property name="database" value="catapult" />
                                             <property name="port" value="${mysql.port.catapult}" />
@@ -663,7 +663,7 @@
                                     <goal>run</goal>
                                 </goals>
                                 <configuration>
-                                    <target>
+                                    <target description="run JMeter with performance BeanShell tests">
                                         <property name="maven.classpath" refid="maven.test.classpath"/>
                                         <propertyfile file="${project.build.directory}/jmeter.properties">
                                             <entry key="user.classpath" value="${maven.classpath}"/>
@@ -725,6 +725,7 @@
                                             <Netbout-PopHost>pop.gmail.com</Netbout-PopHost>
                                             <Netbout-PopPort>995</Netbout-PopPort>
                                             <Netbout-SecurityKey>-test-security-key</Netbout-SecurityKey>
+                                            <!-- don't change it, it's used in jmeter tests and ReXSL tests -->
                                             <Netbout-SuperSecret>9OLKJ8JHGytfh6JGJF0LKF</Netbout-SuperSecret>
                                             <Netbout-InfMount>${project.build.directory}/catapult-InfMount</Netbout-InfMount>
                                             <Netbout-InfDelay>5000</Netbout-InfDelay>
@@ -865,7 +866,7 @@
                                     <goal>run</goal>
                                 </goals>
                                 <configuration>
-                                    <target>
+                                    <target description="deploy test version to Heroku.com">
                                         <copy file="${heroku.pem}"
                                             tofile="${project.build.directory}/heroku.pem"
                                             overwrite="true" />
@@ -900,6 +901,7 @@
                                         </copy>
                                         <exec dir="${project.build.directory}/heroku" executable="git" failonerror="true">
                                             <arg value="add"/>
+                                            <arg value="./settings.xml"/>
                                             <arg value="./pom.xml"/>
                                             <arg value="./Procfile"/>
                                             <arg value="./downloader/pom.xml"/>
@@ -973,7 +975,7 @@
                     <plugin>
                         <groupId>br.com.ingenieux</groupId>
                         <artifactId>beanstalk-maven-plugin</artifactId>
-                        <version since="26 Jul 2012">0.2.7-RC5</version>
+                        <version since="27 Aug 2012">0.2.7-RC6</version>
                         <configuration>
                             <applicationName>netbout</applicationName>
                             <applicationDescription>netbout</applicationDescription>
@@ -1055,8 +1057,7 @@
                                     <goal>upload-source-bundle</goal>
                                     <goal>create-application-version</goal>
                                     <goal>replace-environment</goal>
-                                    <!-- @see https://github.com/ingenieux/beanstalker/issues/15 -->
-                                    <!-- <goal>clean-previous-versions</goal> -->
+                                    <goal>clean-previous-versions</goal>
                                 </goals>
                             </execution>
                         </executions>

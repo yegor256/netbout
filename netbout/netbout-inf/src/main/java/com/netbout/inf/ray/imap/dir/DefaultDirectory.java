@@ -8,7 +8,7 @@
  * except the server platform of netBout Inc. located at www.netbout.com.
  * Federal copyright law prohibits unauthorized reproduction by any means
  * and imposes fines up to $25,000 for violation. If you received
- * this code occasionally and without intent to use it, please report this
+ * this code accidentally and without intent to use it, please report this
  * incident to the author by email.
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
@@ -114,20 +114,20 @@ public final class DefaultDirectory implements Directory {
     public String toString() {
         final StringBuilder text = new StringBuilder();
         text.append(this.lock.toString())
-            .append("\nversions: ")
+            .append(", versions: ")
             .append(this.versions.toString())
-            .append("\nbaseline: ")
+            .append(", baseline: ")
             .append(this.base.get().toString())
-            .append("\ndraft: ")
+            .append(", draft: ")
             .append(this.draft.get().toString())
-            .append("\ntotal size: ");
+            .append(", total size: ");
         try {
             text.append(
                 FileUtils.byteCountToDisplaySize(
                     FileUtils.sizeOfDirectory(this.lock.dir())
                 )
             );
-            text.append('\n').append(this.stash().toString());
+            text.append(", ").append(this.stash().toString());
         } catch (java.io.IOException ex) {
             throw new IllegalStateException(ex);
         }

@@ -8,7 +8,7 @@
  * except the server platform of netBout Inc. located at www.netbout.com.
  * Federal copyright law prohibits unauthorized reproduction by any means
  * and imposes fines up to $25,000 for violation. If you received
- * this code occasionally and without intent to use it, please report this
+ * this code accidentally and without intent to use it, please report this
  * incident to the author by email.
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
@@ -56,7 +56,7 @@ public final class LifecycleListener implements ServletContextListener {
      * {@inheritDoc}
      *
      * <p>These attributes is used later in
-     * {@link com.netbout.rest.AbstractRs#setServletContext(ServletContext)}.
+     * {@link com.netbout.rest.BaseRs#setServletContext(ServletContext)}.
      */
     @Override
     public void contextInitialized(final ServletContextEvent event) {

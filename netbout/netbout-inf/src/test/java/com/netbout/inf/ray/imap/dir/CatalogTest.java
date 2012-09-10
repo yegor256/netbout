@@ -8,7 +8,7 @@
  * except the server platform of netBout Inc. located at www.netbout.com.
  * Federal copyright law prohibits unauthorized reproduction by any means
  * and imposes fines up to $25,000 for violation. If you received
- * this code occasionally and without intent to use it, please report this
+ * this code accidentally and without intent to use it, please report this
  * incident to the author by email.
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
@@ -158,7 +158,7 @@ public final class CatalogTest {
         }
         Collections.sort(items);
         catalog.create(items.iterator());
-        final int threads = 10;
+        final int threads = Runtime.getRuntime().availableProcessors();
         final CountDownLatch start = new CountDownLatch(1);
         final CountDownLatch latch = new CountDownLatch(threads);
         final Callable<?> task = new Callable<Void>() {

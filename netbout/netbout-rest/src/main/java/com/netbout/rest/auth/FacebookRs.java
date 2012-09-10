@@ -8,7 +8,7 @@
  * except the server platform of netBout Inc. located at www.netbout.com.
  * Federal copyright law prohibits unauthorized reproduction by any means
  * and imposes fines up to $25,000 for violation. If you received
- * this code occasionally and without intent to use it, please report this
+ * this code accidentally and without intent to use it, please report this
  * incident to the author by email.
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
@@ -186,7 +186,7 @@ public final class FacebookRs extends BaseRs {
             .queryParam("code", "{code}")
             .build(
                 Manifests.read("Netbout-FbId"),
-                this.base().path("/fb/back").build(),
+                this.base().path("/fb/back").scheme("https").build(),
                 Manifests.read("Netbout-FbSecret"),
                 code
             );

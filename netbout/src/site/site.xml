@@ -9,7 +9,7 @@
  * except the server platform of netBout Inc. located at www.netbout.com.
  * Federal copyright law prohibits unauthorized reproduction by any means
  * and imposes fines up to $25,000 for violation. If you received
- * this code occasionally and without intent to use it, please report this
+ * this code accidentally and without intent to use it, please report this
  * incident to the author by email.
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
@@ -41,9 +41,9 @@
     </skin>
 
     <bannerLeft>
-        <name>netBout</name>
-        <src>http://www.netbout.com/images/logo.png</src>
-        <href>http://www.netbout.com/</href>
+        <name>Netbout</name>
+        <src>http://cdn.netbout.com/logo.png</src>
+        <href>http://maven.netbout.com/</href>
     </bannerLeft>
 
     <poweredBy>
@@ -53,7 +53,7 @@
 
     <body>
         <head>
-            <link href="http://www.netbout.com/favicon.gif" rel="shortcut icon" />
+            <link href="http://cdn.netbout.com/favicon.gif" rel="shortcut icon" />
             <link href="/css/site.css" rel="stylesheet" type="text/css" />
             <link type="text/css"
                 href="http://google-code-prettify.googlecode.com/svn/trunk/src/prettify.css"
@@ -94,6 +94,8 @@
         </links>
         <menu name="Overview">
             <item name="Introduction" href="index.html" />
+            <item name="JavaDoc" href="apidocs/index.html" />
+            <item name="Test Coverage" href="cobertura/index.html" />
         </menu>
         <menu ref="modules" />
         <menu ref="reports" />

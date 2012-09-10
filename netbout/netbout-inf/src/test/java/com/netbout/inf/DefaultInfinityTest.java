@@ -8,7 +8,7 @@
  * except the server platform of netBout Inc. located at www.netbout.com.
  * Federal copyright law prohibits unauthorized reproduction by any means
  * and imposes fines up to $25,000 for violation. If you received
- * this code occasionally and without intent to use it, please report this
+ * this code accidentally and without intent to use it, please report this
  * incident to the author by email.
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
@@ -26,6 +26,7 @@
  */
 package com.netbout.inf;
 
+import com.jcabi.log.VerboseRunnable;
 import com.jcabi.log.VerboseThreads;
 import com.netbout.inf.notices.MessagePostedNotice;
 import com.netbout.spi.Bout;
@@ -101,7 +102,7 @@ public final class DefaultInfinityTest {
         final Infinity inf = new DefaultInfinity(folder);
         final int total = 100;
         final ExecutorService svc = Executors.newFixedThreadPool(
-            Runtime.getRuntime().availableProcessors(),
+            Runtime.getRuntime().availableProcessors() * 5,
             new VerboseThreads()
         );
         final AtomicInteger added = new AtomicInteger();
@@ -185,7 +186,7 @@ public final class DefaultInfinityTest {
             );
         }
         InfinityMocker.waitFor(inf);
-        final int threads = 10;
+        final int threads = Runtime.getRuntime().availableProcessors() * 25;
         final CountDownLatch start = new CountDownLatch(1);
         final CountDownLatch latch = new CountDownLatch(threads);
         final Callable<?> task = new Callable<Void>() {
@@ -193,6 +194,7 @@ public final class DefaultInfinityTest {
             public Void call() throws Exception {
                 start.await();
                 for (int attempt = 0; attempt < 10; ++attempt) {
+                    TimeUnit.MILLISECONDS.sleep(5);
                     MatcherAssert.assertThat(
                         inf.messages("(and (matches 'Jeffrey') (bundled))"),
                         Matchers.<Long>iterableWithSize(Matchers.greaterThan(0))
@@ -205,10 +207,13 @@ public final class DefaultInfinityTest {
         final ExecutorService svc =
             Executors.newFixedThreadPool(threads, new VerboseThreads());
         for (int thread = 0; thread < threads; ++thread) {
-            svc.submit(task);
+            svc.submit(new VerboseRunnable(task, true));
         }
         start.countDown();
-        latch.await(1, TimeUnit.SECONDS);
+        MatcherAssert.assertThat(
+            latch.await(1, TimeUnit.MINUTES),
+            Matchers.is(true)
+        );
         svc.shutdown();
         inf.close();
     }

@@ -156,7 +156,7 @@ public final class RestSession {
             .assertStatus(HttpURLConnection.HTTP_SEE_OTHER)
             .assertHeader(
                 RestSession.AUTH_HEADER,
-                Matchers.not(Matchers.<String>emptyIterable())
+                Matchers.not(Matchers.emptyIterableOf(String.class))
             )
             .getHeaders()
             .getFirst(RestSession.AUTH_HEADER);

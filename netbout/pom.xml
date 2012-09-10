@@ -9,7 +9,7 @@
  * except the server platform of netBout Inc. located at www.netbout.com.
  * Federal copyright law prohibits unauthorized reproduction by any means
  * and imposes fines up to $25,000 for violation. If you received
- * this code occasionally and without intent to use it, please report this
+ * this code accidentally and without intent to use it, please report this
  * incident to the author by email.
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
@@ -218,7 +218,7 @@
                 -->
                 <groupId>org.hamcrest</groupId>
                 <artifactId>hamcrest-core</artifactId>
-                <version since="23 Dec 2011">1.2.1</version>
+                <version since="2 Sep 2012">1.3</version>
                 <scope>test</scope>
             </dependency>
             <dependency>
@@ -228,7 +228,7 @@
                 -->
                 <groupId>org.hamcrest</groupId>
                 <artifactId>hamcrest-library</artifactId>
-                <version since="23 Dec 2011">1.2.1</version>
+                <version since="2 Sep 2012">1.3</version>
                 <scope>test</scope>
             </dependency>
             <dependency>
@@ -356,7 +356,7 @@
                 <plugins>
                     <plugin>
                         <artifactId>maven-site-plugin</artifactId>
-                        <version since="17 Nov 2011">3.0</version>
+                        <version since="28 Dec 2010">3.0-beta-3</version>
                         <configuration>
                             <reportPlugins>
                                 <plugin>

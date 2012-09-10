@@ -8,7 +8,7 @@
  * except the server platform of netBout Inc. located at www.netbout.com.
  * Federal copyright law prohibits unauthorized reproduction by any means
  * and imposes fines up to $25,000 for violation. If you received
- * this code occasionally and without intent to use it, please report this
+ * this code accidentally and without intent to use it, please report this
  * incident to the author by email.
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
@@ -112,7 +112,7 @@ final class DefaultStash implements Stash {
         Logger.debug(
             this,
             "#add('%s'): saved %d bytes into %s",
-            new Notice.SerializableNotice(notice),
+            ser,
             bytes.length,
             FilenameUtils.getName(file.getPath())
         );
@@ -123,7 +123,16 @@ final class DefaultStash implements Stash {
      */
     @Override
     public void remove(final Notice notice) throws IOException {
-        this.done.add(this.file(new Notice.SerializableNotice(notice)));
+        final Notice.SerializableNotice ser =
+            new Notice.SerializableNotice(notice);
+        final File file = this.file(new Notice.SerializableNotice(notice));
+        this.done.add(file);
+        Logger.debug(
+            this,
+            "#remove('%s'): deleted %s",
+            ser,
+            FilenameUtils.getName(file.getPath())
+        );
     }
 
     /**
@@ -133,9 +142,6 @@ final class DefaultStash implements Stash {
     public void copyTo(final Stash stash) throws IOException {
         int count = 0;
         for (File file : this.files()) {
-            if (this.done.contains(file)) {
-                continue;
-            }
             FileUtils.copyFileToDirectory(
                 file,
                 DefaultStash.class.cast(stash).lock.dir()
@@ -202,7 +208,16 @@ final class DefaultStash implements Stash {
      */
     private Collection<File> files() throws IOException {
         final Collection<File> files = new ConcurrentSkipListSet<File>();
-        for (File file : this.lock.dir().listFiles()) {
+        final File[] list = this.lock.dir().listFiles();
+        if (list == null) {
+            throw new IOException(
+                String.format("can't list files in %s", this.lock.dir())
+            );
+        }
+        for (File file : list) {
+            if (this.done.contains(file)) {
+                continue;
+            }
             if (FilenameUtils.getName(file.getPath()).startsWith("ntc-")) {
                 files.add(file);
             }

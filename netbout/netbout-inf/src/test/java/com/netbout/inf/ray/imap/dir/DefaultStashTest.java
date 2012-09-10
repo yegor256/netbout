@@ -8,7 +8,7 @@
  * except the server platform of netBout Inc. located at www.netbout.com.
  * Federal copyright law prohibits unauthorized reproduction by any means
  * and imposes fines up to $25,000 for violation. If you received
- * this code occasionally and without intent to use it, please report this
+ * this code accidentally and without intent to use it, please report this
  * incident to the author by email.
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
@@ -26,6 +26,8 @@
  */
 package com.netbout.inf.ray.imap.dir;
 
+import com.jcabi.log.VerboseRunnable;
+import com.jcabi.log.VerboseThreads;
 import com.netbout.inf.MsgMocker;
 import com.netbout.inf.Notice;
 import com.netbout.inf.Stash;
@@ -33,6 +35,11 @@ import com.netbout.inf.notices.MessagePostedNotice;
 import com.netbout.spi.Message;
 import com.netbout.spi.MessageMocker;
 import java.io.File;
+import java.util.concurrent.Callable;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Rule;
@@ -101,13 +108,58 @@ public final class DefaultStashTest {
      */
     @Test
     public void convertsItselfToString() throws Exception {
-        final Stash stash = new DefaultStash(
-            this.temp.newFolder("foo-55")
-        );
+        final Stash stash = new DefaultStash(this.temp.newFolder("foo-55"));
         MatcherAssert.assertThat(
             stash,
             Matchers.hasToString(Matchers.notNullValue())
         );
+    }
+
+    /**
+     * DefaultStash can add and delete in parallel.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    @SuppressWarnings("PMD.DoNotUseThreads")
+    public void addsAndDeletesInParallel() throws Exception {
+        final Stash stash = new DefaultStash(this.temp.newFolder("foo-9"));
+        final int threads = Runtime.getRuntime().availableProcessors() * 10;
+        final CountDownLatch start = new CountDownLatch(1);
+        final CountDownLatch done = new CountDownLatch(threads);
+        final ExecutorService svc =
+            Executors.newFixedThreadPool(threads, new VerboseThreads());
+        final Runnable runnable = new VerboseRunnable(
+            new Callable<Void>() {
+                public Void call() throws Exception {
+                    start.await();
+                    final long number = MsgMocker.number();
+                    final Notice notice = new MessagePostedNotice() {
+                        @Override
+                        public Message message() {
+                            return new MessageMocker()
+                                .withNumber(number)
+                                .mock();
+                        }
+                    };
+                    stash.add(notice);
+                    stash.remove(notice);
+                    done.countDown();
+                    return null;
+                }
+            },
+            true
+        );
+        for (int thread = 0; thread < threads; ++thread) {
+            svc.submit(runnable);
+        }
+        start.countDown();
+        MatcherAssert.assertThat(
+            done.await(1, TimeUnit.MINUTES),
+            Matchers.is(true)
+        );
+        MatcherAssert.assertThat(stash, Matchers.<Notice>emptyIterable());
+        svc.shutdown();
+        stash.close();
     }
 
 }

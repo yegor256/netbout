@@ -8,7 +8,7 @@
  * except the server platform of netBout Inc. located at www.netbout.com.
  * Federal copyright law prohibits unauthorized reproduction by any means
  * and imposes fines up to $25,000 for violation. If you received
- * this code occasionally and without intent to use it, please report this
+ * this code accidentally and without intent to use it, please report this
  * incident to the author by email.
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
@@ -49,7 +49,6 @@ public final class LoginRs extends BaseRs {
      * @see <a href="http://developers.facebook.com/docs/authentication/">facebook.com</a>
      */
     @GET
-    @SuppressWarnings("PMD.EmptyCatchBlock")
     public Response login() {
         final UriBuilder fburi = UriBuilder.fromUri(
             UriBuilder
@@ -58,7 +57,7 @@ public final class LoginRs extends BaseRs {
                 .queryParam("redirect_uri", "{uri}")
                 .build(
                     Manifests.read("Netbout-FbId"),
-                    this.base().path("/fb/back").build()
+                    this.base().path("/fb/back").scheme("https").build()
                 )
         );
         return new PageBuilder()

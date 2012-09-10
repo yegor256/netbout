@@ -16,9 +16,18 @@
                 <stringProp name="ThreadGroup.ramp_time">15</stringProp>
             </ThreadGroup>
             <hashTree>
-                <BeanShellSampler guiclass="BeanShellSamplerGui" testclass="BeanShellSampler" testname="beanshell" enabled="true">
+                <BeanShellSampler guiclass="BeanShellSamplerGui" testclass="BeanShellSampler"
+                    testname="post-and-read" enabled="true">
                     <stringProp name="BeanShellSampler.query"></stringProp>
                     <stringProp name="BeanShellSampler.filename">./src/test/jmeter/post-and-read.bsh</stringProp>
+                    <stringProp name="BeanShellSampler.parameters"></stringProp>
+                    <boolProp name="BeanShellSampler.resetInterpreter">true</boolProp>
+                </BeanShellSampler>
+                <hashTree />
+                <BeanShellSampler guiclass="BeanShellSamplerGui" testclass="BeanShellSampler"
+                    testname="invite-and-kickoff" enabled="true">
+                    <stringProp name="BeanShellSampler.query"></stringProp>
+                    <stringProp name="BeanShellSampler.filename">./src/test/jmeter/invite-and-kickoff.bsh</stringProp>
                     <stringProp name="BeanShellSampler.parameters"></stringProp>
                     <boolProp name="BeanShellSampler.resetInterpreter">true</boolProp>
                 </BeanShellSampler>
