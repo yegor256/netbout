@@ -163,7 +163,7 @@ final class Versions {
                 continue;
             }
             FileUtils.deleteDirectory(folder);
-            Logger.info(this, "#clear(): deleted %s", folder);
+            Logger.debug(this, "#clear(): deleted %s", folder);
         }
     }
 

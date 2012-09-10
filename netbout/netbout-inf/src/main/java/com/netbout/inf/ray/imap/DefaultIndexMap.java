@@ -177,7 +177,7 @@ public final class DefaultIndexMap implements IndexMap {
         }
         service.shutdown();
         this.directory.baseline();
-        Logger.info(
+        Logger.debug(
             this,
             "#flush(): saved %d indexes %[list]s to %s in %[ms]s",
             this.map.size(),
