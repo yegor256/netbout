@@ -84,17 +84,19 @@ public final class DefaultIndexMap implements IndexMap {
     @Override
     public String toString() {
         final StringBuilder text = new StringBuilder();
+        text.append('{');
         for (Attribute attr : this.map.keySet()) {
             text.append(attr.toString())
-                .append(": ")
+                .append(':')
                 .append(this.map.get(attr).toString())
-                .append("\n");
+                .append(' ');
         }
+        text.append("} ");
         long sizeof = 0L;
         for (FlushableIndex idx : this.map.values()) {
             sizeof += idx.sizeof();
         }
-        return text.append(String.format("total size: %,d\n", sizeof))
+        return text.append(String.format("total size: %,d; ", sizeof))
             .append(this.directory.toString())
             .toString();
     }

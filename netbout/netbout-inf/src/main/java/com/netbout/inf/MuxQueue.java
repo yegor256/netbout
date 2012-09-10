@@ -42,7 +42,7 @@ import java.util.concurrent.TimeUnit;
 final class MuxQueue {
 
     /**
-     * Non-synchronized queue.
+     * List of tasks, a synchronized list.
      */
     private final transient List<MuxTask> tasks =
         new CopyOnWriteArrayList<MuxTask>();
@@ -74,15 +74,16 @@ final class MuxQueue {
 
     /**
      * Poll queue head, or NULL in time out.
-     * @param time How many time units to wait for
+     * @param timeout How many time units to wait for
      * @param unit Unit of time
      * @return The task or NULL
      * @throws InterruptedException If interrupted
      */
-    public MuxTask poll(final long time, final TimeUnit unit)
+    public MuxTask poll(final long timeout, final TimeUnit unit)
         throws InterruptedException {
         MuxTask task = null;
-        for (int cycle = 0; cycle < time; ++cycle) {
+        final long max = System.currentTimeMillis() + unit.toMillis(timeout);
+        while (true) {
             synchronized (this.tasks) {
                 if (!this.tasks.isEmpty()) {
                     task = this.tasks.get(0);
@@ -90,7 +91,10 @@ final class MuxQueue {
                     break;
                 }
             }
-            unit.sleep(1);
+            if (System.currentTimeMillis() >= max) {
+                break;
+            }
+            TimeUnit.MILLISECONDS.sleep(1);
         }
         return task;
     }
