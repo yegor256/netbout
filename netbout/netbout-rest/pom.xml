@@ -669,8 +669,8 @@
                                             <entry key="user.classpath" value="${maven.classpath}"/>
                                             <entry key="port" value="${catapult.port}"/>
                                         </propertyfile>
-                                        <apply executable="jmeter" failonerror="true">
-                                            <arg value="-Dlog4j.configuration=file:${basedir}/src/test/jmeter/log4j.properties"/>
+                                        <apply executable="jmeter" failonerror="true" dir="${basedir}">
+                                            <arg value="-Dlog4j.configuration=file:./src/test/jmeter/log4j.properties"/>
                                             <arg value="--nongui"/>
                                             <arg value="--jmeterlogfile"/>
                                             <arg value="${project.build.directory}/jmeter.log"/>
@@ -679,16 +679,22 @@
                                             <arg value="--loglevel"/>
                                             <arg value="jmeter=INFO"/>
                                             <arg value="--testfile"/>
-                                            <fileset dir="${basedir}/src/test/jmeter">
+                                            <fileset dir="./src/test/jmeter">
                                                 <patternset>
                                                     <include name="**/*.jmx"/>
                                                 </patternset>
                                             </fileset>
                                         </apply>
-                                        <fail message="ERROR found in ${project.build.directory}/jmeter.log">
+                                        <exec executable="grep" failonerror="false" outputproperty="errors">
+                                            <arg line="--before-context 5"/>
+                                            <arg line="--after-context 50"/>
+                                            <arg value="ERROR - "/>
+                                            <arg value="${project.build.directory}/jmeter.log"/>
+                                        </exec>
+                                        <echo message="${errors}" />
+                                        <fail message="errors found in jmeter.log">
                                             <condition>
-                                                <resourcecontains resource="${project.build.directory}/jmeter.log"
-                                                    substring="ERROR - "/>
+                                                <length string="${errors}" when="greater" trim="true" length="0"/>
                                             </condition>
                                         </fail>
                                     </target>
