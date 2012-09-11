@@ -425,13 +425,28 @@
                                 </plugin>
                                 <plugin>
                                     <artifactId>maven-javadoc-plugin</artifactId>
-                                    <version since="5 Jun 2011">2.8</version>
+                                    <version since="5 Sep 2012">2.8.1</version>
                                     <configuration>
+                                        <failOnError>true</failOnError>
+                                        <serialwarn>true</serialwarn>
+                                        <windowtitle>
+                                            ${project.name} ${project.version} API
+                                        </windowtitle>
+                                        <quiet>true</quiet>
+                                        <links>
+                                            <link>http://download.oracle.com/javaee/6/api/</link>
+                                        </links>
+                                        <detectLinks>true</detectLinks>
                                         <tags>
                                             <tag>
                                                 <name>todo</name>
                                                 <placement>a</placement>
                                                 <head>To do:</head>
+                                            </tag>
+                                            <tag>
+                                                <name>checkstyle</name>
+                                                <placement>a</placement>
+                                                <head>Suppressed Checkstyle violations:</head>
                                             </tag>
                                         </tags>
                                         <reportSets>

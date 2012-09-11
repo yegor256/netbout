@@ -144,7 +144,10 @@
     </properties>
 
     <repositories>
-        <!-- intentionally empty -->
+        <repository>
+            <id>netbout.snapshots</id>
+            <url>s3://repo.netbout.com/snapshot</url>
+        </repository>
         <repository>
             <id>rexsl.snapshots</id>
             <url>https://oss.sonatype.org/content/repositories/snapshots/</url>
@@ -402,12 +405,27 @@
                                     <artifactId>maven-javadoc-plugin</artifactId>
                                     <version since="5 Jun 2011">2.8</version>
                                     <configuration>
-                                        <stylesheetfile>javadoc/screen.css</stylesheetfile>
+                                        <failOnError>true</failOnError>
+                                        <serialwarn>true</serialwarn>
+                                        <windowtitle>
+                                            ${project.name} ${project.version} API
+                                        </windowtitle>
+                                        <quiet>true</quiet>
+                                        <links>
+                                            <link>http://download.oracle.com/javaee/6/api/</link>
+                                            <link>http://spi.netbout.com/apidocs/</link>
+                                        </links>
+                                        <detectLinks>true</detectLinks>
                                         <tags>
                                             <tag>
                                                 <name>todo</name>
                                                 <placement>a</placement>
                                                 <head>To do:</head>
+                                            </tag>
+                                            <tag>
+                                                <name>checkstyle</name>
+                                                <placement>a</placement>
+                                                <head>Suppressed Checkstyle violations:</head>
                                             </tag>
                                         </tags>
                                         <reportSets>
@@ -418,17 +436,6 @@
                                                 </reports>
                                             </reportSet>
                                         </reportSets>
-                                        <doclet>org.umlgraph.doclet.UmlGraphDoc</doclet>
-                                        <docletArtifact>
-                                            <groupId>org.umlgraph</groupId>
-                                            <artifactId>doclet</artifactId>
-                                            <version>5.1</version>
-                                        </docletArtifact>
-                                        <additionalparam>
-                                            -views
-                                            -all
-                                        </additionalparam>
-                                        <useStandardDocletOptions>true</useStandardDocletOptions>
                                     </configuration>
                                 </plugin>
                                 <plugin>

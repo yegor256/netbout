@@ -54,26 +54,26 @@ public final class Cryptor {
      * @param hub Hub where to get identities
      * @param hash The hash to use
      * @return The name found in it
-     * @throws DecryptionException If we can't decrypt it
+     * @throws Cryptor.DecryptionException If we can't decrypt it
      */
     public Identity decrypt(final Hub hub, final String hash)
-        throws DecryptionException {
+        throws Cryptor.DecryptionException {
         if (hash == null) {
-            throw new DecryptionException("HASH is empty (NULL)");
+            throw new Cryptor.DecryptionException();
         }
         String iname;
         try {
             iname = SecureString.valueOf(hash).text();
         } catch (com.netbout.spi.text.StringDecryptionException ex) {
-            throw new DecryptionException(ex);
+            throw new Cryptor.DecryptionException(ex);
         }
         Identity identity;
         try {
             identity = hub.identity(new Urn(iname));
         } catch (com.netbout.spi.UnreachableUrnException ex) {
-            throw new DecryptionException(ex);
+            throw new Cryptor.DecryptionException(ex);
         } catch (java.net.URISyntaxException ex) {
-            throw new DecryptionException(ex);
+            throw new Cryptor.DecryptionException(ex);
         }
         Logger.debug(
             this,
@@ -85,4 +85,57 @@ public final class Cryptor {
         return identity;
     }
 
+    /**
+     * When decryption can't build an identity.
+     */
+    public static final class DecryptionException extends Exception {
+        /**
+         * Serialization marker.
+         */
+        private static final long serialVersionUID = 0x7529FA789EC21879L;
+        /**
+         * Public ctor.
+         */
+        public DecryptionException() {
+            super("");
+        }
+        /**
+         * Public ctor.
+         * @param cause Cause of it
+         */
+        public DecryptionException(final String cause) {
+            super(cause);
+        }
+        /**
+         * Public ctor.
+         * @param cause Cause of it
+         */
+        public DecryptionException(final Throwable cause) {
+            super(cause);
+            Logger.warn(
+                this,
+                "#DecryptionException('%s'): thrown",
+                cause.getMessage()
+            );
+        }
+        /**
+         * Public ctor.
+         * @param hash The source of problem
+         * @param message Error message
+         * @param args Optional arguments
+         */
+        public DecryptionException(final String hash, final String message,
+            final Object... args) {
+            super(
+                Logger.format("%s [%s]", String.format(message, args), hash)
+            );
+            Logger.warn(
+                this,
+                "#DecryptionException('%s', '%s'): thrown",
+                hash,
+                message
+            );
+        }
+
+    }
 }
