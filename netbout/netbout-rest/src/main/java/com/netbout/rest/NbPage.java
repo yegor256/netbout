@@ -55,6 +55,7 @@ import javax.xml.bind.annotation.XmlRootElement;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  * @checkstyle ClassDataAbstractionCoupling (500 lines)
+ * @checkstyle MultipleStringLiterals (500 lines)
  * @todo #254 Somehow we should specify PORT in the cookie. Without this param
  *  the site doesn't work in localhost:9099 in Chrome. Works fine in Safari,
  *  but not in Chrome. see http://stackoverflow.com/questions/1612177
@@ -63,6 +64,16 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlAccessorType(XmlAccessType.NONE)
 @SuppressWarnings("PMD.TooManyMethods")
 public class NbPage extends BasePage<NbPage, NbResource> {
+
+    /**
+     * Version of the system, to show in header.
+     */
+    private static final String VERSION = String.format(
+        "%s/%s built on %s",
+        Manifests.read("Netbout-Version"),
+        Manifests.read("Netbout-Revision"),
+        Manifests.read("Netbout-Date")
+    );
 
     /**
      * Is this page searcheable?
@@ -239,7 +250,6 @@ public class NbPage extends BasePage<NbPage, NbResource> {
             new JaxbBundle("version")
                 .add("name", Manifests.read("Netbout-Version"))
                 .up()
-                // @checkstyle MultipleStringLiterals (1 line)
                 .add("revision", Manifests.read("Netbout-Revision"))
                 .up()
                 .add("date", Manifests.read("Netbout-Date"))
@@ -257,6 +267,7 @@ public class NbPage extends BasePage<NbPage, NbResource> {
                 );
             }
         }
+        this.builder.header("Netbout-Version", NbPage.VERSION);
     }
 
     /**
