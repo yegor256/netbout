@@ -154,7 +154,7 @@ final class PatronizedRunnables implements Closeable {
             }
         }
         if (!slow.isEmpty()) {
-            Logger.warn(
+            Logger.debug(
                 this,
                 "#patronize(): %d of %d threads are slow: %[list]s",
                 slow.size(),
