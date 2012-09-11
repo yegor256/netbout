@@ -112,7 +112,12 @@ public class NbPage extends BasePage<NbPage, NbResource> {
         } else {
             this.append(new LongIdentity(identity));
         }
-        this.append(new JaxbBundle("auth", new Cryptor().encrypt(identity)));
+        this.append(
+            new JaxbBundle(
+                "auth",
+                new CryptedIdentity(identity).toString()
+            )
+        );
         this.link(new Link("logout", "/g/out"));
         this.link(new Link("profile", "/pf"));
         if (NbPage.trusted(identity)) {
@@ -136,7 +141,7 @@ public class NbPage extends BasePage<NbPage, NbResource> {
             .cookie(
                 new CookieBuilder(this.home().base())
                     .name(RestSession.AUTH_COOKIE)
-                    .value(new Cryptor().encrypt(identity))
+                    .value(new CryptedIdentity(identity).toString())
                     .temporary()
                     .build()
             )

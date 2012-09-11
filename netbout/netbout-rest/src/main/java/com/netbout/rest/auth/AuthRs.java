@@ -28,7 +28,7 @@ package com.netbout.rest.auth;
 
 import com.jcabi.log.Logger;
 import com.netbout.rest.BaseRs;
-import com.netbout.rest.Cryptor;
+import com.netbout.rest.CryptedIdentity;
 import com.netbout.rest.LoginRequiredException;
 import com.netbout.rest.NbPage;
 import com.netbout.spi.Identity;
@@ -160,7 +160,7 @@ public final class AuthRs extends BaseRs {
             )
             .status(Response.Status.SEE_OTHER)
             .location(location)
-            .header(RestSession.AUTH_HEADER, new Cryptor().encrypt(identity))
+            .header(RestSession.AUTH_HEADER, new CryptedIdentity(identity))
             .build();
     }
 

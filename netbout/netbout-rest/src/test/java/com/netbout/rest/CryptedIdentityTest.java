@@ -37,14 +37,14 @@ import org.junit.Test;
 import org.mockito.Mockito;
 
 /**
- * Test case for {@link Cryptor}.
+ * Test case for {@link CryptedIdentity}.
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class CryptorTest {
+public final class CryptedIdentityTest {
 
     /**
-     * Cryptor can encrypt identity and decrypt.
+     * CryptedIdentity can encrypt identity and decrypt.
      * @throws Exception If there is some problem inside
      */
     @Test
@@ -53,16 +53,16 @@ public final class CryptorTest {
         final Identity identity = new IdentityMocker()
             .namedAs(iname)
             .mock();
-        final String hash = new Cryptor().encrypt(identity);
+        final String hash = new CryptedIdentity(identity).toString();
         final Hub hub = Mockito.mock(Hub.class);
         Mockito.doReturn(identity).when(hub).identity(iname);
-        final Identity discovered = new Cryptor().decrypt(hub, hash);
+        final Identity discovered = CryptedIdentity.parse(hub, hash);
         MatcherAssert.assertThat(discovered, Matchers.equalTo(identity));
         Mockito.verify(hub).identity(iname);
     }
 
     /**
-     * Cryptor produces HASH with only alphabetic chars inside.
+     * CryptedIdentity produces HASH with only alphabetic chars inside.
      * @throws Exception If there is some problem inside
      */
     @Test
@@ -70,7 +70,7 @@ public final class CryptorTest {
         final Identity identity = new IdentityMocker()
             .namedAs("urn:foo:hello%40example%2Ecom")
             .mock();
-        final String hash = new Cryptor().encrypt(identity);
+        final String hash = new CryptedIdentity(identity).toString();
         MatcherAssert.assertThat(
             hash.matches("^[\\w=\\+\\./]+$"),
             Matchers.describedAs(hash, Matchers.is(true))
