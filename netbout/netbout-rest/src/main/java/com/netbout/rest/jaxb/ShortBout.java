@@ -205,6 +205,7 @@ public final class ShortBout {
                     "all",
                     this.builder.clone().path("/..")
                         .replaceQueryParam(RestSession.QUERY_PARAM, "{query}")
+                        .queryParam(RestSession.BUNDLE_PARAM, "")
                         .build(query)
                 )
             );
