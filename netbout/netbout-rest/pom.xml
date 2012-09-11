@@ -883,12 +883,14 @@
                                                 -i '${project.build.directory}/heroku.pem' $@
                                         ]]></echo>
                                         <chmod file="${project.build.directory}/heroku.sh" perm="a+x"/>
-                                        <exec dir="${project.build.directory}" executable="git" failonerror="true">
-                                            <arg value="clone"/>
-                                            <arg value="git@heroku.com:netbout-test.git"/>
-                                            <arg value="heroku"/>
-                                            <env key="GIT_SSH" file="${project.build.directory}/heroku.sh"/>
-                                        </exec>
+                                        <retry retrycount="5">
+                                            <exec dir="${project.build.directory}" executable="git" failonerror="true">
+                                                <arg value="clone"/>
+                                                <arg value="git@heroku.com:netbout-test.git"/>
+                                                <arg value="heroku"/>
+                                                <env key="GIT_SSH" file="${project.build.directory}/heroku.sh"/>
+                                            </exec>
+                                        </retry>
                                         <exec dir="${project.build.directory}/heroku" executable="git" failonerror="true">
                                             <arg value="config"/>
                                             <arg value="user.name"/>
