@@ -29,9 +29,13 @@ package com.netbout.rest;
 import com.netbout.spi.IdentityMocker;
 import com.rexsl.page.UriInfoMocker;
 import java.net.URI;
+import javax.ws.rs.core.HttpHeaders;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.core.UriInfo;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
+import org.junit.Assert;
 import org.junit.Test;
 
 /**
@@ -65,11 +69,56 @@ public final class BaseRsTest {
      * BaseRs can forward to HTTPS, when necessary.
      * @throws Exception If there is some problem inside
      */
-    @Test(expected = javax.ws.rs.WebApplicationException.class)
+    @Test
     public void forwardsToHttps() throws Exception {
-        final URI uri = new URI("http://test.netbout.com:32435/foo");
+        final URI uri = new URI("HTTP://test.netbout.com:32435/FOO");
         final UriInfo info = new UriInfoMocker()
             .withBaseUri(uri)
+            .withRequestUri(uri)
+            .mock();
+        final BaseRs rest = new NbResourceMocker()
+            .withUriInfo(info)
+            .mock(BaseRs.class);
+        rest.setCookie(
+            new CryptedIdentity(new IdentityMocker().mock()).toString()
+        );
+        try {
+            rest.identity();
+            Assert.fail("redirection expected");
+        } catch (javax.ws.rs.WebApplicationException ex) {
+            MatcherAssert.assertThat(
+                ex.getResponse(),
+                Matchers.allOf(
+                    Matchers.hasProperty(
+                        "status",
+                        Matchers.equalTo(
+                            Response.Status.TEMPORARY_REDIRECT.getStatusCode()
+                        )
+                    ),
+                    Matchers.hasProperty(
+                        "metadata",
+                        Matchers.hasEntry(
+                            Matchers.equalTo(HttpHeaders.LOCATION),
+                            Matchers.hasItem(
+                                UriBuilder.fromUri(uri).scheme("https").build()
+                            )
+                        )
+                    )
+                )
+            );
+        }
+    }
+
+    /**
+     * BaseRs can avoid forwarding to HTTPS, when not required.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void doesntForwardToHttps() throws Exception {
+        final URI uri = new URI("HTTPS://test.netbout.com:32435/bar");
+        final UriInfo info = new UriInfoMocker()
+            .withBaseUri(uri)
+            .withRequestUri(uri)
             .mock();
         final BaseRs rest = new NbResourceMocker()
             .withUriInfo(info)
