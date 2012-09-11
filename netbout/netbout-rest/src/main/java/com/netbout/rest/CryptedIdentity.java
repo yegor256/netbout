@@ -28,15 +28,9 @@ package com.netbout.rest;
 
 import com.jcabi.log.Logger;
 import com.netbout.hub.Hub;
-import com.netbout.spi.Bout;
-import com.netbout.spi.BoutNotFoundException;
 import com.netbout.spi.Identity;
-import com.netbout.spi.Profile;
-import com.netbout.spi.UnreachableUrnException;
 import com.netbout.spi.Urn;
 import com.netbout.spi.text.SecureString;
-import java.net.URL;
-import java.util.Set;
 
 /**
  * Identity with encrypted {@link #toString()}.
@@ -44,7 +38,7 @@ import java.util.Set;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class CryptedIdentity implements Identity {
+public final class CryptedIdentity {
 
     /**
      * The wrapped identity.
@@ -68,110 +62,13 @@ public final class CryptedIdentity implements Identity {
     }
 
     /**
-     * {@inheritDoc}
-     */
-    @Override
-    public int compareTo(final Identity identity) {
-        return this.idnt.compareTo(identity);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public boolean equals(final Object obj) {
-        return this.idnt.equals(obj);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public int hashCode() {
-        return this.idnt.hashCode();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Long eta() {
-        return this.idnt.eta();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public URL authority() {
-        return this.idnt.authority();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Urn name() {
-        return this.idnt.name();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Bout start() {
-        return this.idnt.start();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Bout bout(final Long number) throws BoutNotFoundException {
-        return this.idnt.bout(number);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Iterable<Bout> inbox(final String query) {
-        return this.idnt.inbox(query);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Profile profile() {
-        return this.idnt.profile();
-    }
-
-    /**
-     * {@inheritDoc}
-     * @checkstyle RedundantThrows (4 lines)
-     */
-    @Override
-    public Identity friend(final Urn name) throws UnreachableUrnException {
-        return this.idnt.friend(name);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Set<Identity> friends(final String keyword) {
-        return this.idnt.friends(keyword);
-    }
-
-    /**
      * Instantiate it from hash and Hub.
      * @param hub Hub where to get identities
      * @param hash The hash to use
      * @return The name found in it
      * @throws CryptedIdentity.DecryptionException If we can't decrypt it
      */
-    public static CryptedIdentity parse(final Hub hub, final String hash)
+    public static Identity parse(final Hub hub, final String hash)
         throws CryptedIdentity.DecryptionException {
         if (hash == null) {
             throw new CryptedIdentity.DecryptionException();
@@ -192,12 +89,12 @@ public final class CryptedIdentity implements Identity {
         }
         Logger.debug(
             CryptedIdentity.class,
-            "#decrypt(%[type]s, %s): identity '%s' found",
+            "#parse(%[type]s, '%s'): identity '%s' found",
             hub,
             hash,
             identity.name()
         );
-        return new CryptedIdentity(identity);
+        return identity;
     }
 
     /**

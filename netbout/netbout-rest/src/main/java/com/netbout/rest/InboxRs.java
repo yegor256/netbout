@@ -92,7 +92,7 @@ public final class InboxRs extends BaseRs {
     @QueryParam(RestSession.BUNDLE_PARAM)
     public void setBundle(final String flag) {
         if (flag != null) {
-            this.bundle = flag.equals("on");
+            this.bundle = "on".equals(flag);
         }
     }
 
