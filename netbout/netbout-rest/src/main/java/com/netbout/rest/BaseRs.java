@@ -33,6 +33,8 @@ import com.netbout.spi.Identity;
 import com.netbout.spi.client.RestSession;
 import com.netbout.spi.text.SecureString;
 import com.rexsl.page.BaseResource;
+import java.net.URI;
+import java.util.Locale;
 import javax.servlet.ServletContext;
 import javax.ws.rs.CookieParam;
 import javax.ws.rs.QueryParam;
@@ -102,8 +104,9 @@ public class BaseRs extends BaseResource implements NbResource {
             throw new LoginRequiredException(this, ex);
         }
         final String https = "https";
-        if (!https.equals(this.uriInfo().getBaseUri().getScheme())
-            && !"localhost".equals(this.uriInfo().getBaseUri().getHost())) {
+        final URI base = this.uriInfo().getBaseUri();
+        if (!https.equals(base.getScheme().toLowerCase(Locale.ENGLISH))
+            && !"localhost".equals(base.getHost())) {
             throw new WebApplicationException(
                 Response.status(Response.Status.TEMPORARY_REDIRECT).location(
                     this.uriInfo().getRequestUriBuilder()
