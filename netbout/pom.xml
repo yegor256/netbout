@@ -144,7 +144,10 @@
     </properties>
 
     <repositories>
-        <!-- intentionally empty -->
+        <repository>
+            <id>netbout.snapshots</id>
+            <url>s3://repo.netbout.com/snapshot</url>
+        </repository>
         <repository>
             <id>rexsl.snapshots</id>
             <url>https://oss.sonatype.org/content/repositories/snapshots/</url>
