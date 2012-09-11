@@ -70,6 +70,11 @@ public final class InboxRs extends BaseRs {
     private transient String query = "";
 
     /**
+     * Use bundle?
+     */
+    private transient boolean bundle = true;
+
+    /**
      * Set filtering keyword.
      * @param keyword The query
      */
@@ -77,6 +82,17 @@ public final class InboxRs extends BaseRs {
     public void setQuery(final String keyword) {
         if (keyword != null) {
             this.query = keyword;
+        }
+    }
+
+    /**
+     * Turn bundling on/off.
+     * @param flag Shall we use bundling?
+     */
+    @QueryParam(RestSession.BUNDLE_PARAM)
+    public void setBundle(final String flag) {
+        if (flag != null) {
+            this.bundle = "on".equals(flag);
         }
     }
 
@@ -203,7 +219,7 @@ public final class InboxRs extends BaseRs {
      */
     private Iterable<Bout> fetch(final Period period) {
         String pred = NetboutUtils.normalize(this.query);
-        if (!pred.startsWith("(unbundled ")) {
+        if (this.bundle) {
             pred = String.format("(and %s (bundled))", pred);
         }
         return this.identity().inbox(period.query(pred));

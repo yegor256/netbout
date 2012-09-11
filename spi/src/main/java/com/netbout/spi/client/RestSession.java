@@ -67,6 +67,11 @@ public final class RestSession {
     public static final String SUDO_PARAM = "sudo";
 
     /**
+     * Bundle turning ON/OFF in inbox.
+     */
+    public static final String BUNDLE_PARAM = "bundle";
+
+    /**
      * Name of the user authentication cookie.
      */
     public static final String AUTH_COOKIE = "netbout";

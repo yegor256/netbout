@@ -155,7 +155,7 @@ public final class NbResourceMocker {
         rest.setHttpHeaders(res.httpHeaders());
         rest.setHttpServletRequest(res.httpServletRequest());
         rest.setProviders(res.providers());
-        rest.setCookie(new Cryptor().encrypt(this.identity));
+        rest.setCookie(new CryptedIdentity(this.identity).toString());
         final ServletContext context = Mockito.mock(ServletContext.class);
         Mockito.doReturn(this.hub).when(context)
             .getAttribute("com.netbout.rest.HUB");

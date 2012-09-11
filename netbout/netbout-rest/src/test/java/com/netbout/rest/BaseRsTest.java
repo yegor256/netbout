@@ -74,7 +74,9 @@ public final class BaseRsTest {
         final BaseRs rest = new NbResourceMocker()
             .withUriInfo(info)
             .mock(BaseRs.class);
-        rest.setCookie(new Cryptor().encrypt(new IdentityMocker().mock()));
+        rest.setCookie(
+            new CryptedIdentity(new IdentityMocker().mock()).toString()
+        );
         rest.identity();
     }
 

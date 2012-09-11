@@ -178,6 +178,7 @@ final class RestIdentity implements Identity {
     public Iterable<Bout> inbox(final String query) {
         final List<String> hrefs = this.client
             .queryParam(RestSession.QUERY_PARAM, query)
+            .queryParam(RestSession.BUNDLE_PARAM, "")
             .get(String.format("reading bouts in the inbox '%s'", query))
             .assertStatus(HttpURLConnection.HTTP_OK)
             .assertXPath("/page/bouts")
@@ -195,10 +196,11 @@ final class RestIdentity implements Identity {
     @Override
     public Bout bout(final Long num) {
         final String href = this.client
+            .queryParam(RestSession.BUNDLE_PARAM, "")
             .queryParam(
                 RestSession.QUERY_PARAM,
                 String.format("(equal $bout.number %d)", num)
-        )
+            )
             .get(String.format("reading href of bout #%d", num))
             .assertStatus(HttpURLConnection.HTTP_OK)
             .assertXPath(String.format("/page/bouts/bout[number='%d']", num))

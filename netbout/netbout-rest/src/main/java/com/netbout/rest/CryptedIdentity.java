@@ -33,51 +33,63 @@ import com.netbout.spi.Urn;
 import com.netbout.spi.text.SecureString;
 
 /**
- * Encrypts and decrypts.
+ * Identity with encrypted {@link #toString()}.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class Cryptor {
+public final class CryptedIdentity {
 
     /**
-     * Encrypt user+identity into text.
-     * @param identity The identity
-     * @return Encrypted string
+     * The wrapped identity.
      */
-    public String encrypt(final Identity identity) {
-        return new SecureString(identity.name()).toString();
+    private final transient Identity idnt;
+
+    /**
+     * Public ctor.
+     * @param identity The identity
+     */
+    public CryptedIdentity(final Identity identity) {
+        this.idnt = identity;
     }
 
     /**
-     * Get identity from hash.
+     * {@inheritDoc}
+     */
+    @Override
+    public String toString() {
+        return new SecureString(this.idnt.name()).toString();
+    }
+
+    /**
+     * Instantiate it from hash and Hub.
      * @param hub Hub where to get identities
      * @param hash The hash to use
      * @return The name found in it
-     * @throws Cryptor.DecryptionException If we can't decrypt it
+     * @throws CryptedIdentity.DecryptionException If we can't decrypt it
      */
-    public Identity decrypt(final Hub hub, final String hash)
-        throws Cryptor.DecryptionException {
+    public static Identity parse(final Hub hub, final String hash)
+        throws CryptedIdentity.DecryptionException {
         if (hash == null) {
-            throw new Cryptor.DecryptionException();
+            throw new CryptedIdentity.DecryptionException();
         }
         String iname;
         try {
             iname = SecureString.valueOf(hash).text();
         } catch (com.netbout.spi.text.StringDecryptionException ex) {
-            throw new Cryptor.DecryptionException(ex);
+            throw new CryptedIdentity.DecryptionException(ex);
         }
         Identity identity;
         try {
             identity = hub.identity(new Urn(iname));
         } catch (com.netbout.spi.UnreachableUrnException ex) {
-            throw new Cryptor.DecryptionException(ex);
+            throw new CryptedIdentity.DecryptionException(ex);
         } catch (java.net.URISyntaxException ex) {
-            throw new Cryptor.DecryptionException(ex);
+            throw new CryptedIdentity.DecryptionException(ex);
         }
         Logger.debug(
-            this,
-            "#decrypt(%[type]s, %s): identity '%s' found",
+            CryptedIdentity.class,
+            "#parse(%[type]s, '%s'): identity '%s' found",
             hub,
             hash,
             identity.name()

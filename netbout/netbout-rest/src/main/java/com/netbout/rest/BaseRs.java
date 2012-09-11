@@ -90,8 +90,8 @@ public class BaseRs extends BaseResource implements NbResource {
     public final Identity identity() {
         Identity identity;
         try {
-            identity = new Cryptor().decrypt(this.ihub, this.icookie);
-        } catch (Cryptor.DecryptionException ex) {
+            identity = CryptedIdentity.parse(this.ihub, this.icookie);
+        } catch (CryptedIdentity.DecryptionException ex) {
             Logger.debug(
                 this,
                 "Decryption failure from %s calling '%s': %[exception]s",
