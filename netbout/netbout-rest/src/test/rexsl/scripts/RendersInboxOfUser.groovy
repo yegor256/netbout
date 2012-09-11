@@ -36,6 +36,7 @@ import com.netbout.spi.client.RestUriBuilder
 import com.rexsl.test.RestTester
 import javax.ws.rs.core.HttpHeaders
 import javax.ws.rs.core.MediaType
+import org.hamcrest.Matchers
 
 def william = new RestSession(rexsl.home).authenticate(new Urn('urn:test:willy'), '')
 def bout = william.start()
@@ -57,3 +58,4 @@ RestTester.start(RestUriBuilder.from(william))
     .assertXPath('/page[@ip]')
     .assertXPath('/page/view[.=""]')
     .assertXPath('/page/bouts/bout/participants/participant')
+    .assertHeader('Netbout-Version', Matchers.notNullValue())
