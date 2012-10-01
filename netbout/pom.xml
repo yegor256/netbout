@@ -145,19 +145,17 @@
 
     <repositories>
         <repository>
-            <id>repo.netbout.com</id>
-            <url>s3://repo.netbout.com/snapshot</url>
-        </repository>
-        <repository>
             <id>oss.sonatype.org</id>
             <url>https://oss.sonatype.org/content/repositories/snapshots/</url>
+        </repository>
+        <repository>
+            <id>repo.netbout.com</id>
+            <url>s3://repo.netbout.com/snapshot</url>
         </repository>
     </repositories>
 
     <pluginRepositories>
-        <!-- intentionally empty -->
         <pluginRepository>
-            <!-- until REXSL is in development -->
             <id>oss.sonatype.org</id>
             <url>https://oss.sonatype.org/content/repositories/snapshots/</url>
         </pluginRepository>
