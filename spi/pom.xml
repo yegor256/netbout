@@ -102,14 +102,12 @@
         <downloadUrl>https://oss.sonatype.org/content/groups/public</downloadUrl>
         <repository>
             <uniqueVersion>false</uniqueVersion>
-            <id>sonatype.nexus</id>
-            <name>Sonatype OSS Repository (for releases)</name>
+            <id>oss.sonatype.org</id>
             <url>https://oss.sonatype.org/service/local/staging/deploy/maven2</url>
         </repository>
         <snapshotRepository>
             <uniqueVersion>false</uniqueVersion>
-            <id>sonatype.nexus</id>
-            <name>Sonatype OSS Repository (for snapshots)</name>
+            <id>oss.sonatype.org</id>
             <url>https://oss.sonatype.org/content/repositories/snapshots</url>
         </snapshotRepository>
         <site>
@@ -137,7 +135,7 @@
         <!-- intentionally empty -->
         <repository>
             <!-- until REXSL is in development -->
-            <id>rexsl.snapshots</id>
+            <id>oss.sonatype.org</id>
             <url>https://oss.sonatype.org/content/repositories/snapshots/</url>
         </repository>
     </repositories>
