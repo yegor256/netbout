@@ -42,7 +42,7 @@
 
     <repositories>
         <repository>
-            <id>netbout.s3</id>
+            <id>repo.netbout.com</id>
             <url>s3://repo.netbout.com/snapshot</url>
         </repository>
     </repositories>

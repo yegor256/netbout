@@ -114,11 +114,11 @@
         </snapshotRepository>
         <site>
             <!--
-            Deploying the site to Amazon S3. "netbout.s3" server details
+            Deploying the site to Amazon S3. "spi.netbout.com" server details
             are defined in "settings.xml" file, provided by continuous integration
             server during build cycle.
             -->
-            <id>netbout.s3</id>
+            <id>spi.netbout.com</id>
             <name>spi.netbout.com Project Site</name>
             <url>s3://spi.netbout.com/</url>
         </site>

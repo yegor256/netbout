@@ -109,7 +109,7 @@
             Use this URL to get artifacts from this repo:
             https://s3.amazonaws.com/netbout.maven/snapshot
             -->
-            <id>netbout.s3</id>
+            <id>repo.netbout.com</id>
             <uniqueVersion>false</uniqueVersion>
             <url>s3://repo.netbout.com/snapshot</url>
         </snapshotRepository>
@@ -118,7 +118,7 @@
             Use this URL to get artifacts from this repo:
             https://s3.amazonaws.com/netbout.maven/release
             -->
-            <id>netbout.s3</id>
+            <id>repo.netbout.com</id>
             <uniqueVersion>false</uniqueVersion>
             <url>s3://repo.netbout.com/release</url>
         </repository>
@@ -126,7 +126,7 @@
             <!--
             Deploying the site to Amazon S3.
             -->
-            <id>netbout.s3</id>
+            <id>maven.netbout.com</id>
             <name>netBout.com Project Site</name>
             <url>s3://maven.netbout.com/</url>
         </site>
