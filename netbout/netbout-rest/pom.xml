@@ -44,14 +44,8 @@
 
     <repositories>
         <repository>
-            <id>woquo.s3</id>
+            <id>repo.woquo.com</id>
             <url>s3://repo.woquo.com/snapshot</url>
-            <releases>
-                <enabled>true</enabled>
-            </releases>
-            <snapshots>
-                <enabled>true</enabled>
-            </snapshots>
         </repository>
     </repositories>
 
