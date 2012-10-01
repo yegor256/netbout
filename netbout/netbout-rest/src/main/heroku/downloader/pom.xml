@@ -42,7 +42,7 @@
 
     <repositories>
         <repository>
-            <id>netbout.s3</id>
+            <id>repo.netbout.com</id>
             <url>s3://repo.netbout.com/snapshot</url>
         </repository>
     </repositories>
@@ -50,9 +50,9 @@
     <build>
         <extensions>
             <extension>
-                <groupId>org.cyclopsgroup</groupId>
-                <artifactId>awss3-maven-wagon</artifactId>
-                <version>0.1</version>
+                <groupId>org.kuali.maven.wagons</groupId>
+                <artifactId>maven-s3-wagon</artifactId>
+                <version since="20 Sep 2012">1.1.14</version>
             </extension>
         </extensions>
         <plugins>
