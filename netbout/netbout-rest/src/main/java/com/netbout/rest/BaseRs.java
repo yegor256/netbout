@@ -113,7 +113,14 @@ public class BaseRs extends BaseResource implements NbResource {
                         .clone()
                         .scheme(https)
                         .build()
-                ).build()
+                ).entity(
+                    String.format(
+                        "base URI '%s' doesn't have '%s' scheme",
+                        base,
+                        https
+                    )
+                )
+                .build()
             );
         }
         return identity;
