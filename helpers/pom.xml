@@ -132,7 +132,7 @@
             <url>s3://repo.netbout.com/snapshot</url>
         </repository>
         <repository>
-            <id>netbout.snapshots</id>
+            <id>oss.sonatype.org</id>
             <url>https://oss.sonatype.org/content/repositories/snapshots/</url>
         </repository>
     </repositories>
