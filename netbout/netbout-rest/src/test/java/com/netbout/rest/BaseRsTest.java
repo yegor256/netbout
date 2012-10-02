@@ -101,6 +101,7 @@ public final class BaseRsTest {
                         Matchers.hasEntry(
                             Matchers.equalTo(HttpHeaders.LOCATION),
                             Matchers.hasItem(
+                                // @checkstyle MultipleStringLiterals (1 line)
                                 UriBuilder.fromUri(uri).scheme("https").build()
                             )
                         )

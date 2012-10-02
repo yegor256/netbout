@@ -297,7 +297,7 @@ public class BaseRs extends BaseResource implements NbResource {
             final List<String> list = this.httpHeaders()
                 .getRequestHeader("x-forwarded-proto");
             if (list != null) {
-                forward = !list.contains(https);
+                forward ^= list.contains(https);
             }
         }
         if (forward) {
