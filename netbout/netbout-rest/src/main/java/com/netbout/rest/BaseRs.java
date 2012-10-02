@@ -106,7 +106,9 @@ public class BaseRs extends BaseResource implements NbResource {
         final String https = "https";
         final URI base = this.uriInfo().getBaseUri();
         if (!https.equals(base.getScheme().toLowerCase(Locale.ENGLISH))
-            && !"localhost".equals(base.getHost())) {
+            && !"localhost".equals(base.getHost())
+            && !this.httpHeaders().getRequestHeader("x-forwarded-proto")
+                .contains(https)) {
             throw new WebApplicationException(
                 Response.status(Response.Status.TEMPORARY_REDIRECT).location(
                     this.uriInfo().getRequestUriBuilder()

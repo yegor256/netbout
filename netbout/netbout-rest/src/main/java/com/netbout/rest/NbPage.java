@@ -207,15 +207,6 @@ public class NbPage extends BasePage<NbPage, NbResource> {
     }
 
     /**
-     * Is this page searcheable?
-     * @return Yes or no
-     */
-    @XmlAttribute
-    public final boolean isSearcheable() {
-        return this.srchbl;
-    }
-
-    /**
      * Can we fully trust this guy or he should re-login?
      * @param identity The person
      * @return Trusted?
@@ -266,6 +257,9 @@ public class NbPage extends BasePage<NbPage, NbResource> {
                         .toString()
                 );
             }
+        }
+        if (this.srchbl) {
+            this.link(new Link("search", "."));
         }
         this.builder.header("Netbout-Version", NbPage.VERSION);
     }
