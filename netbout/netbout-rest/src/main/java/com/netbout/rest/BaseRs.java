@@ -34,6 +34,7 @@ import com.netbout.spi.client.RestSession;
 import com.netbout.spi.text.SecureString;
 import com.rexsl.page.BaseResource;
 import java.net.URI;
+import java.util.List;
 import java.util.Locale;
 import javax.servlet.ServletContext;
 import javax.ws.rs.CookieParam;
@@ -103,29 +104,7 @@ public class BaseRs extends BaseResource implements NbResource {
             );
             throw new LoginRequiredException(this, ex);
         }
-        final String https = "https";
-        final URI base = this.uriInfo().getBaseUri();
-        if (!https.equals(base.getScheme().toLowerCase(Locale.ENGLISH))
-            && !"localhost".equals(base.getHost())
-            && !this.httpHeaders().getRequestHeader("x-forwarded-proto")
-                .contains(https)) {
-            throw new WebApplicationException(
-                Response.status(Response.Status.TEMPORARY_REDIRECT).location(
-                    this.uriInfo().getRequestUriBuilder()
-                        .clone()
-                        .scheme(https)
-                        .build()
-                ).entity(
-                    String.format(
-                        "base URI '%s' doesn't have '%s' scheme",
-                        base,
-                        https
-                    )
-                )
-                .build()
-            );
-        }
-        return identity;
+        return this.secured(identity);
     }
 
     /**
@@ -301,6 +280,45 @@ public class BaseRs extends BaseResource implements NbResource {
             );
         }
         return this.ihub;
+    }
+
+    /**
+     * Confirms that the page is secure and throws forwarding exception if not.
+     * @param identity The identity to secure
+     * @return Secured one
+     */
+    private Identity secured(final Identity identity) {
+        final String https = "https";
+        final URI base = this.uriInfo().getBaseUri();
+        boolean forward =
+            !https.equals(base.getScheme().toLowerCase(Locale.ENGLISH))
+            && !"localhost".equals(base.getHost());
+        if (forward) {
+            final List<String> list = this.httpHeaders()
+                .getRequestHeader("x-forwarded-proto");
+            if (list != null) {
+                forward = !list.contains(https);
+            }
+        }
+        if (forward) {
+            throw new WebApplicationException(
+                Response.status(Response.Status.TEMPORARY_REDIRECT).location(
+                    this.uriInfo().getRequestUriBuilder()
+                        .clone()
+                        .scheme(https)
+                        .build()
+                ).entity(
+                    String.format(
+                        "base URI '%s' doesn't have '%s' scheme for '%s'",
+                        base,
+                        https,
+                        identity
+                    )
+                )
+                .build()
+            );
+        }
+        return identity;
     }
 
 }
