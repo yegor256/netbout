@@ -39,6 +39,7 @@ import com.rexsl.test.XhtmlMatchers;
 import java.io.StringWriter;
 import java.net.URL;
 import javax.servlet.ServletContext;
+import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.UriInfo;
 import javax.xml.bind.Marshaller;
@@ -114,6 +115,16 @@ public final class NbResourceMocker {
      */
     public NbResourceMocker withUriInfo(final UriInfo info) {
         this.resource.withUriInfo(info);
+        return this;
+    }
+
+    /**
+     * With this HTTP headers.
+     * @param headers The headers
+     * @return This object
+     */
+    public NbResourceMocker withHttpHeaders(final HttpHeaders headers) {
+        this.resource.withHttpHeaders(headers);
         return this;
     }
 

@@ -27,6 +27,7 @@
 package com.netbout.rest;
 
 import com.netbout.spi.IdentityMocker;
+import com.rexsl.page.HttpHeadersMocker;
 import com.rexsl.page.UriInfoMocker;
 import java.net.URI;
 import javax.ws.rs.core.HttpHeaders;
@@ -100,6 +101,7 @@ public final class BaseRsTest {
                         Matchers.hasEntry(
                             Matchers.equalTo(HttpHeaders.LOCATION),
                             Matchers.hasItem(
+                                // @checkstyle MultipleStringLiterals (1 line)
                                 UriBuilder.fromUri(uri).scheme("https").build()
                             )
                         )
@@ -122,6 +124,30 @@ public final class BaseRsTest {
             .mock();
         final BaseRs rest = new NbResourceMocker()
             .withUriInfo(info)
+            .mock(BaseRs.class);
+        rest.setCookie(
+            new CryptedIdentity(new IdentityMocker().mock()).toString()
+        );
+        rest.identity();
+    }
+
+    /**
+     * BaseRs can avoid forwarding to HTTPS, when Heroku forward is there.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void doesntForwardToHttpsInHeroku() throws Exception {
+        final URI uri = new URI("http://test.netbout.com:80/heroku");
+        final UriInfo info = new UriInfoMocker()
+            .withBaseUri(uri)
+            .withRequestUri(uri)
+            .mock();
+        final HttpHeaders headers = new HttpHeadersMocker()
+            .withHeader("x-forwarded-proto", "https")
+            .mock();
+        final BaseRs rest = new NbResourceMocker()
+            .withUriInfo(info)
+            .withHttpHeaders(headers)
             .mock(BaseRs.class);
         rest.setCookie(
             new CryptedIdentity(new IdentityMocker().mock()).toString()

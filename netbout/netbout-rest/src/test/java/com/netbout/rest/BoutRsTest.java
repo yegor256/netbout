@@ -82,7 +82,7 @@ public final class BoutRsTest {
                 "/page/links/link[@rel='top']",
                 "/page/links/link[@rel='leave']",
                 "/page/links/link[@rel='post']",
-                "/page[@searcheable='true']",
+                "/page/links/link[@rel='search']",
                 "/page[query='hello']",
                 "/page/bout[view='10-20']"
             )

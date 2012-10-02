@@ -168,10 +168,10 @@
                     </xsl:attribute>
                     <xsl:text> </xsl:text> <!-- for W3C compliance -->
                 </a>
-                <xsl:if test="/page/@searcheable = 'true'">
+                <xsl:if test="/page/links/link[@rel='search']">
                     <form id="search" method="get" role="search">
                         <xsl:attribute name="action">
-                            <xsl:value-of select="/page/links/link[@rel='self']/@href"/>
+                            <xsl:value-of select="/page/links/link[@rel='search']/@href"/>
                         </xsl:attribute>
                         <input name="q" id="search-input"
                             autocomplete="off" size="10" maxlength="120">

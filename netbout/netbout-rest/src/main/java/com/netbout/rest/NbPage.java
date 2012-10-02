@@ -44,7 +44,6 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -207,15 +206,6 @@ public class NbPage extends BasePage<NbPage, NbResource> {
     }
 
     /**
-     * Is this page searcheable?
-     * @return Yes or no
-     */
-    @XmlAttribute
-    public final boolean isSearcheable() {
-        return this.srchbl;
-    }
-
-    /**
      * Can we fully trust this guy or he should re-login?
      * @param identity The person
      * @return Trusted?
@@ -266,6 +256,9 @@ public class NbPage extends BasePage<NbPage, NbResource> {
                         .toString()
                 );
             }
+        }
+        if (this.srchbl) {
+            this.link(new Link("search", "."));
         }
         this.builder.header("Netbout-Version", NbPage.VERSION);
     }
