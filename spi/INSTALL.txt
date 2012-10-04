@@ -100,12 +100,12 @@ How to release new version to Maven Central:
         https://docs.sonatype.org/display/Repository/Sonatype+OSS+Maven+Repository+Usage+Guide#SonatypeOSSMavenRepositoryUsageGuide-8.ReleaseIt
         http://www.sonatype.com/books/nexus-book/reference/staging-sect-managing-plugin.html
 
-    6. Run "mvn -Dci -Pnetbout clean deploy"
+    6. Run "mvn -Dci -Pnetbout-production clean deploy"
 
         Make sure that you have this profile in ~/.m2/settings.xml:
 
           <profile>
-            <id>netbout</id>
+            <id>netbout-production</id>
             <properties>
               <gpg.homedir>/code/gpg/netbout</gpg.homedir>
               <gpg.keyname>...</gpg.keyname>
@@ -113,19 +113,21 @@ How to release new version to Maven Central:
             </properties>
           </profile>
 
-    7. Run "mvn nexus:staging-close"
+    7. Go to oss.sonatype.org:
 
-    8. Run "mvn nexus:staging-promote" (target ID is "releases")
+        1) login,
+        2) close staging repo,
+        3) release staging repo
 
-    9. Copy your branch to tags:
+    8. Copy your branch to tags:
 
         svn cp ^/branches/ticketXX ^/tags/netbout-X.X.X -m "refs #XX - netbout-1.3 released to Maven Central"
 
-    10. Delete the branch or merge it back to trunk (if you did any changes). Don't
+    9. Delete the branch or merge it back to trunk (if you did any changes). Don't
         forget to revert back version number:
 
         find . -name "*.xml" -exec sed -i "" 's|\(\<version netbout\=\"yes\"\>\)1\.3\(\<\/version\>\)|\12.0-SNAPSHOT\2|g' {} \;
 
-    11. Close the ticket as "fixed"
+    10. Close the ticket as "fixed"
 
     That's it
