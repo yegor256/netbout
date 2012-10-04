@@ -61,7 +61,7 @@ Make sure that ElasticBeansTalk still has 219 as UID of tomcat7 and 497 as his G
 
 Change ownership of INF directory:
 
-    $ chown -R tomcat7.tomcat7 /home/ubuntu/inf
+    $ sudo chown -R tomcat7.tomcat7 /home/ubuntu/inf
 
 Restart NFS:
 
