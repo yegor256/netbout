@@ -984,7 +984,7 @@
                     <plugin>
                         <groupId>br.com.ingenieux</groupId>
                         <artifactId>beanstalk-maven-plugin</artifactId>
-                        <version since="27 Aug 2012">0.2.7-RC6</version>
+                        <version since="27 Aug 2012">0.2.7-RC5</version>
                         <configuration>
                             <applicationName>netbout</applicationName>
                             <applicationDescription>netbout</applicationDescription>
