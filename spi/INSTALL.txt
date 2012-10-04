@@ -100,12 +100,12 @@ How to release new version to Maven Central:
         https://docs.sonatype.org/display/Repository/Sonatype+OSS+Maven+Repository+Usage+Guide#SonatypeOSSMavenRepositoryUsageGuide-8.ReleaseIt
         http://www.sonatype.com/books/nexus-book/reference/staging-sect-managing-plugin.html
 
-    6. Run "mvn -Dci -Pnetbout clean deploy"
+    6. Run "mvn -Dci -Pnetbout-production clean deploy"
 
         Make sure that you have this profile in ~/.m2/settings.xml:
 
           <profile>
-            <id>netbout</id>
+            <id>netbout-production</id>
             <properties>
               <gpg.homedir>/code/gpg/netbout</gpg.homedir>
               <gpg.keyname>...</gpg.keyname>
