@@ -42,13 +42,6 @@
     <packaging>war</packaging>
     <name>netbout-rest</name>
 
-    <repositories>
-        <repository>
-            <id>repo.woquo.com</id>
-            <url>s3://repo.woquo.com/snapshot</url>
-        </repository>
-    </repositories>
-
     <dependencies>
         <dependency>
             <!-- this one has to stay on top of others, and remain in "compile"
@@ -774,6 +767,12 @@
         </profile>
         <profile>
             <id>netbout-test</id>
+            <repositories>
+                <repository>
+                    <id>repo.woquo.com</id>
+                    <url>s3://repo.woquo.com/snapshot</url>
+                </repository>
+            </repositories>
             <dependencies>
                 <dependency>
                     <groupId>com.rexsl</groupId>
@@ -945,6 +944,12 @@
         </profile>
         <profile>
             <id>netbout-production</id>
+            <repositories>
+                <repository>
+                    <id>repo.woquo.com</id>
+                    <url>s3://repo.woquo.com/release</url>
+                </repository>
+            </repositories>
             <dependencies>
                 <dependency>
                     <groupId>com.woquo</groupId>
