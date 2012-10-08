@@ -976,9 +976,6 @@
                     <scope>runtime</scope>
                 </dependency>
             </dependencies>
-            <properties>
-                <beanstalk.app>${project.build.finalName}-${build.number}.${project.packaging}</beanstalk.app>
-            </properties>
             <build>
                 <plugins>
                     <plugin>
@@ -989,7 +986,7 @@
                             <server>aws.amazon.com</server>
                             <application>netbout</application>
                             <bucket>webapps.netbout.com</bucket>
-                            <key>${beanstalk.app}</key>
+                            <key>${project.build.finalName}-${build.number}.${project.packaging}</key>
                             <template>netbout</template>
                         </configuration>
                         <executions>
