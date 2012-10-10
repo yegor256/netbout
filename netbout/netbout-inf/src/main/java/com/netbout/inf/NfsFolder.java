@@ -27,19 +27,13 @@
 package com.netbout.inf;
 
 import com.jcabi.log.Logger;
-import com.jcraft.jsch.ChannelExec;
-import com.jcraft.jsch.JSch;
-import com.jcraft.jsch.Session;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.lang.management.ManagementFactory;
 import java.net.InetAddress;
-import java.net.URL;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang.CharEncoding;
 
 /**
  * NFS mounted directory.
@@ -49,9 +43,7 @@ import org.apache.commons.lang.CharEncoding;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @author Krzysztof Krason (Krzysztof.Krason@gmail.com)
  * @version $Id$
- * @checkstyle MultipleStringLiterals (500 lines)
  */
-@SuppressWarnings("PMD.TooManyMethods")
 final class NfsFolder implements Folder {
 
     /**
@@ -65,7 +57,7 @@ final class NfsFolder implements Folder {
     private static final String YIELD = "yield.txt";
 
     /**
-     * Mounting directory.
+     * The directory.
      */
     private final transient File directory;
 
@@ -76,22 +68,6 @@ final class NfsFolder implements Folder {
      */
     public NfsFolder(final File path) throws IOException {
         this.directory = path;
-        if ("/mnt/inf".equals(this.directory.getPath())) {
-            Logger.info(
-                this,
-                "#NfsFolder('%s'): mount is required",
-                this.directory
-            );
-            if (!this.mounted()) {
-                this.mount();
-            }
-        } else {
-            Logger.info(
-                this,
-                "#NfsFolder('%s'): mount is not required",
-                this.directory
-            );
-        }
         this.obtain();
     }
 
@@ -100,11 +76,6 @@ final class NfsFolder implements Folder {
      */
     @Override
     public void close() throws IOException {
-        if ("/mnt/inf".equals(this.directory.getPath())) {
-            this.exec("umount", this.directory);
-        } else {
-            Logger.info(this, "#close(): no umount required");
-        }
         new File(this.directory, NfsFolder.MASTER).delete();
     }
 
@@ -129,19 +100,10 @@ final class NfsFolder implements Folder {
      */
     @Override
     public String toString() {
-        final StringBuilder text = new StringBuilder();
-        text.append(
-            String.format(
-                "directory: %s\n",
-                this.directory.getAbsolutePath()
-            )
+        return String.format(
+            "NfsFolder:%s",
+            this.directory.getAbsolutePath()
         );
-        try {
-            text.append(this.exec("mount"));
-        } catch (IOException ex) {
-            text.append(Logger.format("%[exception]s", ex));
-        }
-        return text.toString();
     }
 
     /**
@@ -150,180 +112,6 @@ final class NfsFolder implements Folder {
     @Override
     public File path() throws IOException {
         return this.directory;
-    }
-
-    /**
-     * The directory is mounted already?
-     * @return Yes or no?
-     * @throws IOException If some IO problem inside
-     */
-    private boolean mounted() throws IOException {
-        final String output = this.exec("mount");
-        final boolean mounted = output.contains(this.directory.getPath());
-        if (mounted) {
-            Logger.info(
-                this,
-                "#mounted(): '%s' is already mounted",
-                this.directory
-            );
-        } else {
-            Logger.info(
-                this,
-                "#mounted(): '%s' is not mounted yet",
-                this.directory
-            );
-        }
-        return mounted;
-    }
-
-    /**
-     * Mount this device to our directory.
-     * @throws IOException If some IO problem inside
-     * @see <a href="http://serverfault.com/questions/376455">why chown</a>
-     */
-    private void mount() throws IOException {
-        this.exec("yum", "--assumeyes", "install", "nfs-utils");
-        this.exec("mkdir", "-p", this.directory.getPath());
-        this.exec(
-            "mount",
-            "inf.netbout.com:/home/ubuntu/inf",
-            this.directory.getPath()
-        );
-    }
-
-    /**
-     * Execute unix command and return it's output as a string.
-     * @param args Arguments of shell command
-     * @return The output as a string (trimmed)
-     * @throws IOException If some IO problem inside
-     */
-    private String exec(final Object... args) throws IOException {
-        try {
-            final Session session = this.session();
-            session.connect();
-            final ChannelExec exec = (ChannelExec) session.openChannel("exec");
-            final String command = this.command(args);
-            exec.setCommand(command);
-            exec.connect();
-            final ByteArrayOutputStream stderr = new ByteArrayOutputStream();
-            final ByteArrayOutputStream stdout = new ByteArrayOutputStream();
-            exec.setErrStream(stderr);
-            exec.setOutputStream(stdout);
-            exec.setInputStream(null);
-            final int code = this.code(exec);
-            if (code != 0) {
-                throw new IOException(
-                    String.format(
-                        "Failed to execute \"%s\" (code=%d): %s",
-                        command,
-                        code,
-                        new String(stderr.toByteArray(), CharEncoding.UTF_8)
-                    )
-                );
-            }
-            final String output = new String(
-                stdout.toByteArray(),
-                CharEncoding.UTF_8
-            );
-            exec.disconnect();
-            session.disconnect();
-            Logger.info(
-                this,
-                "#exec(..): \"%s\"\n  %s",
-                command,
-                output.replace("\n", "\n  ")
-            );
-            return output;
-        } catch (com.jcraft.jsch.JSchException ex) {
-            throw new IOException(ex);
-        }
-    }
-
-    /**
-     * Wait until it's done and return its code.
-     * @param exec The channel
-     * @return The exit code
-     * @throws IOException If some IO problem inside
-     */
-    private int code(final ChannelExec exec) throws IOException {
-        int retry = 0;
-        while (!exec.isClosed()) {
-            ++retry;
-            try {
-                TimeUnit.SECONDS.sleep(retry * 1L);
-            } catch (InterruptedException ex) {
-                Thread.currentThread().interrupt();
-                throw new IOException(ex);
-            }
-            // @checkstyle MagicNumber (1 line)
-            if (retry > 10) {
-                break;
-            }
-            Logger.info(this, "#pause(..): waiting for SSH (retry=%d)", retry);
-        }
-        return exec.getExitStatus();
-    }
-
-    /**
-     * Create and return a session.
-     * @return JSch session
-     * @throws IOException If some IO problem inside
-     */
-    private Session session() throws IOException {
-        try {
-            JSch.setConfig("StrictHostKeyChecking", "no");
-            JSch.setLogger(
-                new com.jcraft.jsch.Logger() {
-                    @Override
-                    public boolean isEnabled(final int level) {
-                        return level == com.jcraft.jsch.Logger.WARN
-                            || level == com.jcraft.jsch.Logger.FATAL
-                            || level == com.jcraft.jsch.Logger.ERROR;
-                    }
-                    @Override
-                    public void log(final int level, final String msg) {
-                        Logger.info(NfsFolder.this.getClass(), "%s", msg);
-                    }
-                }
-            );
-            final JSch jsch = new JSch();
-            jsch.addIdentity(this.key().getPath());
-            return jsch.getSession("ec2-user", "localhost");
-        } catch (com.jcraft.jsch.JSchException ex) {
-            throw new IOException(ex);
-        }
-    }
-
-    /**
-     * Create command.
-     * @param args Arguments of shell command
-     * @return The command
-     */
-    private String command(final Object... args) {
-        final StringBuilder command = new StringBuilder();
-        command.append("sudo -S");
-        for (Object arg : args) {
-            command.append(" '")
-                .append(arg.toString().replace("'", "\\'"))
-                .append("' ");
-        }
-        return command.toString();
-    }
-
-    /**
-     * Get file with secret key.
-     * @return The file
-     * @throws IOException If some IO problem inside
-     */
-    private File key() throws IOException {
-        final File file = File.createTempFile("netbout-ebs", ".pem");
-        final URL key = this.getClass().getResource("ebs.pem");
-        if (key == null) {
-            throw new IOException("PEM not found");
-        }
-        FileUtils.copyURLToFile(key, file);
-        FileUtils.forceDeleteOnExit(file);
-        return file;
     }
 
     /**

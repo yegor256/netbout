@@ -40,6 +40,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.concurrent.atomic.AtomicReference;
 import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.Response;
 
 /**
@@ -132,7 +133,7 @@ final class LazyHub implements Hub {
                             System.currentTimeMillis() - this.started
                         )
                     ).toString()
-                ).build()
+                ).header(HttpHeaders.CACHE_CONTROL, "no-cache").build()
             );
         }
         return this.ref.get();

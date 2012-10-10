@@ -137,10 +137,11 @@ public class NbPage extends BasePage<NbPage, NbResource> {
         }
         this.extend();
         return this.builder
+            .header(HttpHeaders.VARY, "Cookie")
             .header(
                 HttpHeaders.SET_COOKIE,
                 this.nocookie(RestSession.MESSAGE_COOKIE)
-        )
+            )
             .cookie(
                 new CookieBuilder(this.home().base())
                     .name(RestSession.LOG_COOKIE)
