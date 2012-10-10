@@ -374,6 +374,12 @@
                                 <Netbout-InfMount>${inf.path}</Netbout-InfMount>
                             </manifestEntries>
                         </archive>
+                        <webResources>
+                            <resource>
+                                <directory>src/main/ebextensions</directory>
+                                <targetPath>.ebextensions</targetPath>
+                            </resource>
+                        </webResources>
                     </configuration>
                 </plugin>
                 <plugin>
