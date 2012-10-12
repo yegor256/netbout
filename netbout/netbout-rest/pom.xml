@@ -982,137 +982,28 @@
                     <scope>runtime</scope>
                 </dependency>
             </dependencies>
-            <properties>
-                <beanstalk.app>${project.build.finalName}-${build.number}.${project.packaging}</beanstalk.app>
-            </properties>
             <build>
                 <plugins>
                     <plugin>
-                        <groupId>br.com.ingenieux</groupId>
-                        <artifactId>beanstalk-maven-plugin</artifactId>
-                        <version since="27 Aug 2012">0.2.7-RC5</version>
+                        <groupId>com.jcabi</groupId>
+                        <artifactId>jcabi-beanstalk-maven-plugin</artifactId>
+                        <version since="8 Oct 2012">1.0-SNAPSHOT</version>
                         <configuration>
-                            <applicationName>netbout</applicationName>
-                            <applicationDescription>netbout</applicationDescription>
-                            <cnamePrefix>netbout</cnamePrefix>
-                            <environmentName>netbout</environmentName>
-                            <s3Bucket>webapps.netbout.com</s3Bucket>
-                            <s3Key>${beanstalk.app}</s3Key>
-                            <versionLabel>${beanstalk.app}</versionLabel>
-                            <daysToKeep>10</daysToKeep>
-                            <dryRun>false</dryRun>
-                            <versionsToKeep>10</versionsToKeep>
-                            <optionSettings>
-                                <optionSetting>
-                                    <namespace>aws:autoscaling:launchconfiguration</namespace>
-                                    <optionName>SecurityGroups</optionName>
-                                    <value>netbout</value>
-                                </optionSetting>
-                                <optionSetting>
-                                    <namespace>aws:autoscaling:asg</namespace>
-                                    <optionName>MinSize</optionName>
-                                    <value>1</value>
-                                </optionSetting>
-                                <optionSetting>
-                                    <namespace>aws:autoscaling:asg</namespace>
-                                    <optionName>MaxSize</optionName>
-                                    <value>1</value>
-                                </optionSetting>
-                                <optionSetting>
-                                    <namespace>aws:autoscaling:launchconfiguration</namespace>
-                                    <optionName>InstanceType</optionName>
-                                    <value>m1.medium</value>
-                                </optionSetting>
-                                <optionSetting>
-                                    <namespace>aws:elasticbeanstalk:container:tomcat:jvmoptions</namespace>
-                                    <optionName>XX:MaxPermSize</optionName>
-                                    <value>512m</value>
-                                </optionSetting>
-                                <optionSetting>
-                                    <namespace>aws:elasticbeanstalk:container:tomcat:jvmoptions</namespace>
-                                    <optionName>Xmx</optionName>
-                                    <value>2048m</value>
-                                </optionSetting>
-                                <optionSetting>
-                                    <namespace>aws:autoscaling:launchconfiguration</namespace>
-                                    <optionName>EC2KeyName</optionName>
-                                    <value>netbout</value>
-                                </optionSetting>
-                                <optionSetting>
-                                    <namespace>aws:elasticbeanstalk:application</namespace>
-                                    <optionName>Application Healthcheck URL</optionName>
-                                    <value>/g</value>
-                                </optionSetting>
-                                <optionSetting>
-                                    <namespace>aws:autoscaling:asg</namespace>
-                                    <optionName>Custom Availability Zones</optionName>
-                                    <value>us-east-1d</value>
-                                </optionSetting>
-                                <optionSetting>
-                                    <namespace>aws:elb:loadbalancer</namespace>
-                                    <optionName>LoadBalancerHTTPPort</optionName>
-                                    <value>80</value>
-                                </optionSetting>
-                                <optionSetting>
-                                    <namespace>aws:elb:loadbalancer</namespace>
-                                    <optionName>LoadBalancerHTTPSPort</optionName>
-                                    <value>443</value>
-                                </optionSetting>
-                                <optionSetting>
-                                    <namespace>aws:elb:loadbalancer</namespace>
-                                    <optionName>SSLCertificateId</optionName>
-                                    <value>arn:aws:iam::019644334823:server-certificate/netbout</value>
-                                </optionSetting>
-                            </optionSettings>
+                            <server>aws.amazon.com</server>
+                            <name>netbout</name>
+                            <bucket>webapps.netbout.com</bucket>
+                            <key>${project.build.finalName}-${build.number}.${project.packaging}</key>
+                            <template>netbout</template>
                         </configuration>
                         <executions>
                             <execution>
                                 <phase>deploy</phase>
                                 <goals>
-                                    <goal>upload-source-bundle</goal>
-                                    <goal>create-application-version</goal>
-                                    <goal>replace-environment</goal>
-                                    <goal>clean-previous-versions</goal>
+                                    <goal>deploy</goal>
                                 </goals>
                             </execution>
                         </executions>
-                        <dependencies>
-                            <dependency>
-                                <groupId>log4j</groupId>
-                                <artifactId>log4j</artifactId>
-                                <version since="19 Sep 2011">1.2.16</version>
-                            </dependency>
-                            <dependency>
-                                <groupId>com.rexsl</groupId>
-                                <artifactId>rexsl-core</artifactId>
-                                <version>${rexsl.version}</version>
-                            </dependency>
-                        </dependencies>
                     </plugin>
-                    <!-- <plugin>
-                        <artifactId>maven-antrun-plugin</artifactId>
-                        <version since="2 Dec 2011">1.7</version>
-                        <executions>
-                            <execution>
-                                <id>deploy-logging-backend</id>
-                                <phase>deploy</phase>
-                                <goals>
-                                    <goal>run</goal>
-                                </goals>
-                                <configuration>
-                                    <target>
-                                        <ftp server="logs.netbout.com"
-                                            remotedir="."
-                                            userid="${logs.user}"
-                                            password="${logs.password}"
-                                            depends="yes">
-                                            <fileset dir="${basedir}/src/main/php"/>
-                                        </ftp>
-                                    </target>
-                                </configuration>
-                            </execution>
-                        </executions>
-                    </plugin> -->
                     <plugin>
                         <groupId>br.com.ingenieux</groupId>
                         <artifactId>cloudfront-maven-plugin</artifactId>
