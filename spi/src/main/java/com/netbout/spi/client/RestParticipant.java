@@ -67,6 +67,14 @@ final class RestParticipant implements Participant {
      * {@inheritDoc}
      */
     @Override
+    public String toString() {
+        return this.name().toString();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public int compareTo(final Friend friend) {
         return this.name().compareTo(friend.name());
     }

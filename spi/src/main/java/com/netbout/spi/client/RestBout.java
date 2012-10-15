@@ -170,20 +170,8 @@ final class RestBout implements Bout {
      * {@inheritDoc}
      */
     @Override
-    @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
     public Collection<Participant> participants() {
-        final List<String> names = this.client
-            .get("bout.participants()")
-            .assertStatus(HttpURLConnection.HTTP_OK)
-            .assertXPath("/page/bout/participants")
-            .xpath("/page/bout/participants/participant/identity/text()");
-        final List<Participant> dudes = new ArrayList<Participant>();
-        for (String name : names) {
-            dudes.add(
-                new RestParticipant(this.client.copy(), Urn.create(name))
-            );
-        }
-        return Collections.unmodifiableList(dudes);
+        return new RestParticipants(this.client);
     }
 
     /**

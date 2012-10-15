@@ -76,6 +76,10 @@ public final class RestBoutTest {
             .mock();
         final Bout bout = new RestBout(client);
         MatcherAssert.assertThat(
+            bout.participants(),
+            Matchers.hasSize(2)
+        );
+        MatcherAssert.assertThat(
             bout.participants().contains(first),
             Matchers.is(true)
         );

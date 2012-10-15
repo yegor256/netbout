@@ -95,7 +95,7 @@ final class RestIdentity implements Identity {
      */
     @Override
     public String toString() {
-        return String.format("RestIdentity(%s)", this.name());
+        return this.name().toString();
     }
 
     /**

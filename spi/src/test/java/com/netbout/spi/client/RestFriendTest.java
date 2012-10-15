@@ -29,7 +29,7 @@
  */
 package com.netbout.spi.client;
 
-import com.netbout.spi.Identity;
+import com.netbout.spi.Friend;
 import com.netbout.spi.Urn;
 import com.netbout.spi.UrnMocker;
 import org.hamcrest.MatcherAssert;
@@ -37,26 +37,22 @@ import org.hamcrest.Matchers;
 import org.junit.Test;
 
 /**
- * Test case for {@link RestIdentity}.
+ * Test case for {@link RestFriend}.
  * @author Yegor Bugayenko (yegor@netbout.com)
- * @version $Id$
+ * @version $Id: RestFriendTest.java 2159 2012-04-03 05:45:07Z guard $
  */
-public final class RestIdentityTest {
+public final class RestFriendTest {
 
     /**
-     * RestIdentity can fetch a name of identity through REST API.
+     * RestFriend can return a clean name of identity.
      * @throws Exception If there is some problem inside
      */
     @Test
-    public void fetchesNameOfIdentity() throws Exception {
+    public void hasToStringWithCleanImplementation() throws Exception {
         final Urn name = new UrnMocker().mock();
-        final RestClient client = new RestClientMocker()
-            .onXPath("/page/identity/name/text()", name.toString())
-            .mock();
-        final Identity identity = new RestIdentity(client);
-        MatcherAssert.assertThat(identity.name(), Matchers.equalTo(name));
+        final Friend friend = new RestFriend(name);
         MatcherAssert.assertThat(
-            identity,
+            friend,
             Matchers.hasToString(Matchers.equalTo(name.toString()))
         );
     }

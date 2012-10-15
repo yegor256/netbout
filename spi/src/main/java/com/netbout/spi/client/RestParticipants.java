@@ -29,52 +29,86 @@
  */
 package com.netbout.spi.client;
 
-import com.netbout.spi.Friend;
+import com.netbout.spi.Participant;
 import com.netbout.spi.Urn;
+import java.net.HttpURLConnection;
+import java.util.AbstractCollection;
+import java.util.Iterator;
+import java.util.List;
 
 /**
- * Implementation of {@link Friend}, with no connection to REST API.
+ * List of {@link Participant}-s in a {@link Bout}.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
- * @version $Id$
+ * @version $Id: RestParticipant.java 3452 2012-10-15 07:55:58Z yegor@tpc2.com $
  */
-final class RestFriend implements Friend {
+final class RestParticipants extends AbstractCollection<Participant> {
 
     /**
-     * Name of it.
+     * Rest client.
      */
-    private final transient Urn iname;
+    private final transient RestClient client;
 
     /**
      * Public ctor.
-     * @param name The name of it
+     * @param clnt Rest client
      */
-    public RestFriend(final Urn name) {
-        this.iname = name;
+    public RestParticipants(final RestClient clnt) {
+        super();
+        this.client = clnt;
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public String toString() {
-        return this.name().toString();
+    public Iterator<Participant> iterator() {
+        final Iterator<String> names = this.names().iterator();
+        return new Iterator<Participant>() {
+            @Override
+            public Participant next() {
+                return new RestParticipant(
+                    RestParticipants.this.client.copy(),
+                    Urn.create(names.next())
+                );
+            }
+            @Override
+            public boolean hasNext() {
+                return names.hasNext();
+            }
+            @Override
+            public void remove() {
+                throw new UnsupportedOperationException();
+            }
+        };
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public int compareTo(final Friend friend) {
-        return this.iname.compareTo(friend.name());
+    public int size() {
+        return this.names().size();
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public Urn name() {
-        return this.iname;
+    public boolean contains(final Object object) {
+        return this.names().contains(object.toString());
+    }
+
+    /**
+     * Fetch list of names.
+     * @return Names of participants
+     */
+    private List<String> names() {
+        return this.client
+            .get("bout.participants()")
+            .assertStatus(HttpURLConnection.HTTP_OK)
+            .assertXPath("/page/bout/participants")
+            .xpath("/page/bout/participants/participant/identity/text()");
     }
 
 }
