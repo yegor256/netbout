@@ -29,11 +29,13 @@
  */
 package com.netbout.spi.client;
 
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import org.mockito.Mockito;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
 
 /**
  * Mocker of {@link RestClient}.
@@ -55,9 +57,19 @@ public final class RestClientMocker {
      * @return This object
      */
     public RestClientMocker onXPath(final String xpath, final String text) {
-        final List<String> list = new ArrayList<String>();
-        list.add(text);
-        this.paths.put(xpath, list);
+        this.paths.put(xpath, Arrays.asList(text));
+        return this;
+    }
+
+    /**
+     * Return this value on XPath.
+     * @param xpath The xpath
+     * @param texts What to return
+     * @return This object
+     */
+    public RestClientMocker onXPath(final String xpath,
+        final List<String> texts) {
+        this.paths.put(xpath, texts);
         return this;
     }
 
@@ -71,11 +83,25 @@ public final class RestClientMocker {
             .assertXPath(Mockito.anyString());
         Mockito.doReturn(response).when(response)
             .assertStatus(Mockito.anyInt());
-        for (ConcurrentMap.Entry<String, List<String>> entry
-            : this.paths.entrySet()) {
-            Mockito.doReturn(entry.getValue()).when(response)
-                .xpath(entry.getKey());
-        }
+        Mockito.doAnswer(
+            new Answer<List<String>>() {
+                @Override
+                public List<String> answer(final InvocationOnMock inv) {
+                    final String xpath = inv.getArguments()[0].toString();
+                    List<String> found = null;
+                    for (String suffix : RestClientMocker.this.paths.keySet()) {
+                        if (xpath.endsWith(suffix)) {
+                            found = RestClientMocker.this.paths.get(suffix);
+                            break;
+                        }
+                    }
+                    if (found == null) {
+                        return Arrays.asList(new String[] {});
+                    }
+                    return found;
+                }
+            }
+        ).when(response).xpath(Mockito.anyString());
         final RestClient client = Mockito.mock(RestClient.class);
         Mockito.doReturn(response).when(client).get(Mockito.anyString());
         Mockito.doReturn(response).when(client)

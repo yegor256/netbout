@@ -30,7 +30,9 @@
 package com.netbout.spi.client;
 
 import com.netbout.spi.Bout;
+import com.netbout.spi.UrnMocker;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.Locale;
 import org.hamcrest.MatcherAssert;
@@ -59,6 +61,32 @@ public final class RestBoutTest {
             .mock();
         final Bout bout = new RestBout(client);
         MatcherAssert.assertThat(bout.date(), Matchers.equalTo(date));
+    }
+
+    /**
+     * RestBout can fetch a list of participants.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void fetchesListOfParticipants() throws Exception {
+        final String first = new UrnMocker().mock().toString();
+        final String second = new UrnMocker().mock().toString();
+        final RestClient client = new RestClientMocker()
+            .onXPath("ticipant/identity/text()", Arrays.asList(first, second))
+            .mock();
+        final Bout bout = new RestBout(client);
+        MatcherAssert.assertThat(
+            bout.participants().contains(first),
+            Matchers.is(true)
+        );
+        MatcherAssert.assertThat(
+            bout.participants().contains(second),
+            Matchers.is(true)
+        );
+        MatcherAssert.assertThat(
+            bout.participants().contains("bla-bla-bla"),
+            Matchers.is(false)
+        );
     }
 
 }
