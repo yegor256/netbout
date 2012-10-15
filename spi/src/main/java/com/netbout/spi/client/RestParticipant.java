@@ -31,6 +31,7 @@ package com.netbout.spi.client;
 
 import com.netbout.spi.Friend;
 import com.netbout.spi.Participant;
+import com.netbout.spi.Profile;
 import com.netbout.spi.Urn;
 import java.net.HttpURLConnection;
 
@@ -124,6 +125,16 @@ final class RestParticipant implements Participant {
             .rel(this.xpath("", "/link[@rel='kickoff']/@href"))
             .get(String.format("kicking off '%s' participant", this.iname))
             .assertStatus(HttpURLConnection.HTTP_SEE_OTHER);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Profile profile() {
+        throw new UnsupportedOperationException(
+            "Participant#profile() is not implemented yet"
+        );
     }
 
     /**

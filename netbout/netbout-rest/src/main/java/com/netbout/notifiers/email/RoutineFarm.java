@@ -28,6 +28,7 @@ package com.netbout.notifiers.email;
 
 import com.jcabi.log.Logger;
 import com.netbout.hub.Hub;
+import com.netbout.spi.Bout;
 import com.netbout.spi.cpa.Farm;
 import com.netbout.spi.cpa.Operation;
 import com.rexsl.core.Manifests;
@@ -168,7 +169,7 @@ public final class RoutineFarm {
                 message.getFrom()[0],
                 ex.getMessage()
             );
-        } catch (com.netbout.spi.MessagePostException ex) {
+        } catch (Bout.MessagePostException ex) {
             Logger.warn(
                 this,
                 "#process(): message from '%s' failed to post: %[exception]s",

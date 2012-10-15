@@ -32,10 +32,11 @@ import com.netbout.rest.StageCoordinates;
 import com.netbout.rest.period.Period;
 import com.netbout.rest.period.PeriodsBuilder;
 import com.netbout.spi.Bout;
+import com.netbout.spi.Friend;
 import com.netbout.spi.Identity;
 import com.netbout.spi.Message;
-import com.netbout.spi.NetboutUtils;
 import com.netbout.spi.Participant;
+import com.netbout.spi.Query;
 import com.netbout.spi.client.RestSession;
 import com.rexsl.page.Link;
 import java.util.Collection;
@@ -157,7 +158,7 @@ public final class LongBout {
      */
     @XmlElement
     public Date getRecent() {
-        return NetboutUtils.dateOf(this.bout);
+        return new Bout.Smart(this.bout).updated();
     }
 
     /**
@@ -186,8 +187,8 @@ public final class LongBout {
     @XmlElementWrapper(name = "stages")
     public List<ShortStage> getStages() {
         final List<ShortStage> stages = new LinkedList<ShortStage>();
-        for (Identity identity : this.coords.all()) {
-            stages.add(new ShortStage(identity, this.builder.clone()));
+        for (Friend stage : this.coords.all()) {
+            stages.add(new ShortStage(stage, this.builder.clone()));
         }
         return stages;
     }
@@ -220,7 +221,7 @@ public final class LongBout {
         // @checkstyle MagicNumber (1 line)
         final Period period = PeriodsBuilder.parse(this.view, 20L);
         final Iterable<Message> discussion =
-            this.bout.messages(period.query(this.query));
+            this.bout.messages(new Query.Textual(period.query(this.query)));
         final PeriodsBuilder pbld = new PeriodsBuilder(
             period,
             UriBuilder.fromUri(
@@ -271,7 +272,7 @@ public final class LongBout {
         final Collection<LongParticipant> dudes =
             new LinkedList<LongParticipant>();
         final Participant myself =
-            NetboutUtils.participantOf(this.viewer, this.bout);
+            new Bout.Smart(this.bout).participant(this.viewer);
         for (Participant dude : this.bout.participants()) {
             dudes.add(new LongParticipant(dude, this.builder, myself));
         }

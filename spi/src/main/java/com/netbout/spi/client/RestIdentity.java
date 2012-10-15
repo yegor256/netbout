@@ -32,7 +32,7 @@ package com.netbout.spi.client;
 import com.netbout.spi.Bout;
 import com.netbout.spi.Friend;
 import com.netbout.spi.Identity;
-import com.netbout.spi.Profile;
+import com.netbout.spi.OwnProfile;
 import com.netbout.spi.Query;
 import com.netbout.spi.Urn;
 import java.net.HttpURLConnection;
@@ -221,7 +221,13 @@ final class RestIdentity implements Identity {
      */
     @Override
     public Friend friend(final Urn name) {
-        return new RestFriend(name);
+        final Set<Friend> friends = this.friends(name.toString());
+        if (friends.isEmpty()) {
+            throw new IllegalArgumentException(
+                String.format("friend %s not found", name)
+            );
+        }
+        return friends.iterator().next();
     }
 
     /**
@@ -230,20 +236,19 @@ final class RestIdentity implements Identity {
     @Override
     @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
     public Set<Friend> friends(final String mask) {
-        final List<String> names = this.client
+        final RestResponse response = this.client
             .get("reading 'friends' @rel link")
             .assertStatus(HttpURLConnection.HTTP_OK)
             .assertXPath("/page/links/link[@rel='friends']")
             .rel("friends")
             .queryParam("mask", mask)
-            .queryParam("bout", "1")
+            .queryParam("bout", "")
             .get(String.format("reading suggestions for '%s'", mask))
             .assertStatus(HttpURLConnection.HTTP_OK)
             .assertXPath(String.format("/page/mask[.='%s']", mask))
-            .assertXPath("/page/invitees")
-            .xpath("/page/invitees/invitee/name/text()");
+            .assertXPath("/page/invitees");
         final Set<Friend> friends = new HashSet<Friend>();
-        for (String name : names) {
+        for (String name : response.xpath("//invitee/name/text()")) {
             friends.add(new RestFriend(Urn.create(name)));
         }
         return Collections.unmodifiableSet(friends);
@@ -253,14 +258,14 @@ final class RestIdentity implements Identity {
      * {@inheritDoc}
      */
     @Override
-    public Profile profile() {
+    public OwnProfile profile() {
         final String href = this.client
             .get("reading 'profle' @rel link")
             .assertStatus(HttpURLConnection.HTTP_OK)
             .assertXPath("/page/links/link[@rel='profile']")
             .xpath("/page/links/link[@rel='profile']/@href")
             .get(0);
-        return new RestProfile(this.client.copy(href));
+        return new RestOwnProfile(this.client.copy(href));
     }
 
 }

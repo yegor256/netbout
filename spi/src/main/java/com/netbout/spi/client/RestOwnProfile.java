@@ -29,7 +29,7 @@
  */
 package com.netbout.spi.client;
 
-import com.netbout.spi.Profile;
+import com.netbout.spi.OwnProfile;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Collections;
@@ -39,23 +39,23 @@ import java.util.Locale;
 import java.util.Set;
 
 /**
- * The profile of identity.
+ * The profile of {@link Identity}.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
- * @version $Id$
+ * @version $Id: RestProfile.java 2482 2012-05-22 10:18:34Z guard $
  */
-final class RestProfile implements Profile {
+final class RestOwnProfile implements OwnProfile {
 
     /**
-     * Rest client.
+     * REST client.
      */
     private final transient RestClient client;
 
     /**
      * Public ctor.
-     * @param clnt Rest client
+     * @param clnt REST client
      */
-    public RestProfile(final RestClient clnt) {
+    public RestOwnProfile(final RestClient clnt) {
         this.client = clnt;
     }
 
@@ -71,16 +71,6 @@ final class RestProfile implements Profile {
             .xpath("/page/identity/locale/text()")
             .get(0);
         return new Locale(lang);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void setLocale(final Locale locale) {
-        throw new UnsupportedOperationException(
-            "Profile#setLocale() is not implemented yet"
-        );
     }
 
     /**
@@ -105,16 +95,6 @@ final class RestProfile implements Profile {
      * {@inheritDoc}
      */
     @Override
-    public void setPhoto(final URL photo) {
-        throw new UnsupportedOperationException(
-            "Profile#setPhoto() is not implemented yet"
-        );
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
     public Set<String> aliases() {
         final List<String> names = this.client
             .get("reading aliases of identity")
@@ -122,6 +102,26 @@ final class RestProfile implements Profile {
             .assertXPath("/page/identity/aliases")
             .xpath("/page/identity/aliases/alias/text()");
         return Collections.unmodifiableSet(new HashSet<String>(names));
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void setLocale(final Locale locale) {
+        throw new UnsupportedOperationException(
+            "Profile#setLocale() is not implemented yet"
+        );
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void setPhoto(final URL photo) {
+        throw new UnsupportedOperationException(
+            "Profile#setPhoto() is not implemented yet"
+        );
     }
 
     /**

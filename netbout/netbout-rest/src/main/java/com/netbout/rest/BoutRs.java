@@ -29,9 +29,9 @@ package com.netbout.rest;
 import com.netbout.rest.jaxb.Invitee;
 import com.netbout.rest.jaxb.LongBout;
 import com.netbout.spi.Bout;
+import com.netbout.spi.Friend;
 import com.netbout.spi.Identity;
 import com.netbout.spi.Message;
-import com.netbout.spi.NetboutUtils;
 import com.netbout.spi.Urn;
 import com.netbout.spi.client.RestSession;
 import com.rexsl.misc.CookieBuilder;
@@ -220,7 +220,7 @@ public final class BoutRs extends BaseRs {
         Message msg;
         try {
             msg = bout.post(text);
-        } catch (com.netbout.spi.MessagePostException ex) {
+        } catch (Bout.MessagePostException ex) {
             throw new ForwardException(this, this.self(""), ex);
         }
         return new PageBuilder()
@@ -277,9 +277,9 @@ public final class BoutRs extends BaseRs {
         }
         try {
             bout.invite(this.identity().friend(name));
-        } catch (com.netbout.spi.UnreachableUrnException ex) {
+        } catch (Identity.UnreachableUrnException ex) {
             throw new ForwardException(this, this.self(""), ex);
-        } catch (com.netbout.spi.DuplicateInvitationException ex) {
+        } catch (Bout.DuplicateInvitationException ex) {
             throw new ForwardException(this, this.self(""), ex);
         }
         return new PageBuilder()
@@ -334,13 +334,13 @@ public final class BoutRs extends BaseRs {
     @Path("/kickoff")
     @GET
     public Response kickoff(@QueryParam("name") final Urn name) {
-        Identity friend;
+        Friend friend;
         try {
             friend = this.identity().friend(name);
-        } catch (com.netbout.spi.UnreachableUrnException ex) {
+        } catch (Identity.UnreachableUrnException ex) {
             throw new ForwardException(this, this.base(), ex);
         }
-        NetboutUtils.participantOf(friend, this.bout()).kickOff();
+        new Bout.Smart(this.bout()).participant(friend).kickOff();
         return new PageBuilder()
             .build(NbPage.class)
             .init(this)
@@ -368,7 +368,7 @@ public final class BoutRs extends BaseRs {
         Bout bout;
         try {
             bout = identity.bout(this.number);
-        } catch (com.netbout.spi.BoutNotFoundException ex) {
+        } catch (Identity.BoutNotFoundException ex) {
             throw new ForwardException(this, this.base(), ex);
         }
         return bout;
@@ -414,12 +414,12 @@ public final class BoutRs extends BaseRs {
                 )
             )
         );
-        if (NetboutUtils.participantOf(myself, this.bout()).confirmed()) {
+        if (new Bout.Smart(this.bout()).participant(myself).confirmed()) {
             page.link(new Link("post", "./p"));
         } else {
             page.link(new Link("join", "./join"));
         }
-        if (NetboutUtils.participantOf(myself, this.bout()).leader()) {
+        if (new Bout.Smart(this.bout()).participant(myself).leader()) {
             page.link(new Link("rename", "./r"));
         }
         return page;
@@ -433,7 +433,7 @@ public final class BoutRs extends BaseRs {
     private void appendInvitees(final NbPage page) {
         if (this.mask != null) {
             final List<Invitee> invitees = new LinkedList<Invitee>();
-            for (Identity friend : this.identity().friends(this.mask)) {
+            for (Friend friend : this.identity().friends(this.mask)) {
                 invitees.add(new Invitee(friend, this.self("")));
             }
             page.append(new JaxbBundle("mask", this.mask))

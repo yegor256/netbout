@@ -26,8 +26,8 @@
  */
 package com.netbout.rest.jaxb;
 
-import com.netbout.spi.Identity;
-import com.netbout.spi.NetboutUtils;
+import com.netbout.spi.Friend;
+import com.netbout.spi.Profile;
 import java.net.URL;
 import javax.ws.rs.core.UriBuilder;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -49,7 +49,7 @@ public final class Invitee {
     /**
      * The original identity.
      */
-    private final transient Identity identity;
+    private final transient Friend friend;
 
     /**
      * URI builder.
@@ -65,11 +65,11 @@ public final class Invitee {
 
     /**
      * Public ctor.
-     * @param idnt Parent identity to refer to
+     * @param frnd Parent identity to refer to
      * @param bldr Uri builder
      */
-    public Invitee(final Identity idnt, final UriBuilder bldr) {
-        this.identity = idnt;
+    public Invitee(final Friend frnd, final UriBuilder bldr) {
+        this.friend = frnd;
         this.builder = bldr;
     }
 
@@ -82,7 +82,7 @@ public final class Invitee {
         return this.builder
             .path("/i")
             .replaceQueryParam("name", "{name}")
-            .build(this.identity.name())
+            .build(this.friend.name())
             .toString();
     }
 
@@ -92,7 +92,10 @@ public final class Invitee {
      */
     @XmlElement
     public String getAlias() {
-        return NetboutUtils.aliasOf(this.identity);
+        return new Profile.Conventional(this.friend)
+            .aliases()
+            .iterator()
+            .next();
     }
 
     /**
@@ -101,7 +104,7 @@ public final class Invitee {
      */
     @XmlElement
     public String getName() {
-        return this.identity.name().toString();
+        return this.friend.name().toString();
     }
 
     /**
@@ -110,7 +113,7 @@ public final class Invitee {
      */
     @XmlElement
     public URL getPhoto() {
-        return this.identity.profile().photo();
+        return this.friend.profile().photo();
     }
 
 }

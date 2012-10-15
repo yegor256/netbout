@@ -61,7 +61,7 @@ public final class IdentityTest {
     public void canHaveAnAliasMocked() throws Exception {
         final String alias = "some alias";
         final Identity identity = new IdentityMocker()
-            .withProfile(new ProfileMocker().withAlias(alias).mock())
+            .withProfile(new OwnProfileMocker().withAlias(alias).mock())
             .mock();
         MatcherAssert.assertThat(
             new Profile.Conventional(identity).aliases(),

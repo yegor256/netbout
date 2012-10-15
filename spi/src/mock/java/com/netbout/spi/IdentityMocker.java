@@ -67,7 +67,7 @@ public final class IdentityMocker {
     public IdentityMocker() {
         this.namedAs(new UrnMocker().mock());
         this.belongsTo("http://localhost/set-by-IdentityMocker");
-        this.withProfile(new ProfileMocker().mock());
+        this.withProfile(new OwnProfileMocker().mock());
         Mockito.doAnswer(
             new Answer<Bout>() {
                 @Override
@@ -159,7 +159,7 @@ public final class IdentityMocker {
      * @param profile The profile
      * @return This object
      */
-    public IdentityMocker withProfile(final Profile profile) {
+    public IdentityMocker withProfile(final OwnProfile profile) {
         Mockito.doReturn(profile).when(this.identity).profile();
         return this;
     }

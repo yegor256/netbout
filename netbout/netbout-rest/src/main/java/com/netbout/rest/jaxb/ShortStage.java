@@ -26,8 +26,8 @@
  */
 package com.netbout.rest.jaxb;
 
-import com.netbout.spi.Identity;
-import com.netbout.spi.NetboutUtils;
+import com.netbout.spi.Friend;
+import com.netbout.spi.Profile;
 import javax.ws.rs.core.UriBuilder;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -48,7 +48,7 @@ public final class ShortStage {
     /**
      * The name of the identity.
      */
-    private transient Identity identity;
+    private transient Friend identity;
 
     /**
      * URI builder.
@@ -67,7 +67,7 @@ public final class ShortStage {
      * @param stage The identity
      * @param bldr URI builder
      */
-    public ShortStage(final Identity stage, final UriBuilder bldr) {
+    public ShortStage(final Friend stage, final UriBuilder bldr) {
         this.identity = stage;
         this.builder = bldr;
     }
@@ -90,7 +90,10 @@ public final class ShortStage {
      */
     @XmlAttribute
     public String getAlias() {
-        return NetboutUtils.aliasOf(this.identity);
+        return new Profile.Conventional(this.identity)
+            .aliases()
+            .iterator()
+            .next();
     }
 
     /**

@@ -28,6 +28,7 @@ package com.netbout.rest.auth;
 
 import com.jcabi.log.Logger;
 import com.netbout.hub.UrnResolver;
+import com.netbout.spi.Identity;
 import com.netbout.spi.Urn;
 import com.rexsl.core.Manifests;
 import com.sun.jersey.api.client.Client;
@@ -76,7 +77,7 @@ public final class AuthMediator {
         URL entry;
         try {
             entry = this.resolver.authority(iname);
-        } catch (com.netbout.spi.UnreachableUrnException ex) {
+        } catch (Identity.UnreachableUrnException ex) {
             throw new IOException(ex);
         }
         final URI uri = UriBuilder.fromUri(entry.toString())

@@ -27,65 +27,37 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
  * OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.netbout.spi.client;
+package com.netbout.spi;
 
-import com.netbout.spi.Friend;
-import com.netbout.spi.Profile;
-import com.netbout.spi.Urn;
+import java.net.URL;
+import java.util.Locale;
 
 /**
- * Implementation of {@link Friend}, with no connection to REST API.
+ * Profile of {@link Identity}.
+ *
+ * <p>Instances of this interface are thread-safe.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
- * @version $Id$
+ * @version $Id: Profile.java 3458 2012-10-15 11:30:46Z yegor@tpc2.com $
  */
-final class RestFriend implements Friend {
+public interface OwnProfile extends Profile {
 
     /**
-     * Name of it.
+     * Set locale for this identity.
+     * @param locale The language we should speak with this identity
      */
-    private final transient Urn iname;
+    void setLocale(Locale locale);
 
     /**
-     * Public ctor.
-     * @param name The name of it
+     * Set photo of the identity.
+     * @param photo The photo
      */
-    public RestFriend(final Urn name) {
-        this.iname = name;
-    }
+    void setPhoto(URL photo);
 
     /**
-     * {@inheritDoc}
+     * Add new alias.
+     * @param alias The alias
      */
-    @Override
-    public String toString() {
-        return this.name().toString();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public int compareTo(final Friend friend) {
-        return this.iname.compareTo(friend.name());
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Urn name() {
-        return this.iname;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Profile profile() {
-        throw new UnsupportedOperationException(
-            "Friend#profile() is not implemented yet"
-        );
-    }
+    void alias(String alias);
 
 }

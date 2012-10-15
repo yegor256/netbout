@@ -45,4 +45,10 @@ public interface Friend extends Comparable<Friend> {
      */
     Urn name();
 
+    /**
+     * Get profile.
+     * @return The profile of this friend
+     */
+    Profile profile();
+
 }

@@ -82,7 +82,7 @@ public final class CryptedIdentity {
         Identity identity;
         try {
             identity = hub.identity(new Urn(iname));
-        } catch (com.netbout.spi.UnreachableUrnException ex) {
+        } catch (Identity.UnreachableUrnException ex) {
             throw new CryptedIdentity.DecryptionException(ex);
         } catch (java.net.URISyntaxException ex) {
             throw new CryptedIdentity.DecryptionException(ex);

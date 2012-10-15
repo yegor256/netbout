@@ -220,7 +220,7 @@ public final class AuthRs extends BaseRs {
         Identity identity;
         try {
             identity = remote.findIn(this.hub());
-        } catch (com.netbout.spi.UnreachableUrnException ex) {
+        } catch (Identity.UnreachableUrnException ex) {
             throw new LoginRequiredException(this, ex);
         }
         return identity;
@@ -234,7 +234,7 @@ public final class AuthRs extends BaseRs {
     private Identity bypass(final Urn iname) {
         try {
             return this.hub().identity(iname);
-        } catch (com.netbout.spi.UnreachableUrnException ex) {
+        } catch (Identity.UnreachableUrnException ex) {
             Logger.warn(this, "sudo %[exception]s", ex);
             throw new LoginRequiredException(this, ex);
         }

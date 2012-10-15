@@ -29,92 +29,92 @@
  */
 package com.netbout.spi;
 
-import java.util.Date;
-import java.util.Random;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Locale;
 import org.mockito.Mockito;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
 
 /**
- * Mocker of {@link Message}.
+ * Mocker of {@link OwnProfile}.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
- * @version $Id$
+ * @version $Id: OwnProfileMocker.java 3116 2012-08-02 18:28:36Z guard $
  */
-public final class MessageMocker {
+public final class OwnProfileMocker {
 
     /**
-     * Mocked message.
+     * Mocked profile.
      */
-    private final transient Message message = Mockito.mock(Message.class);
+    private final transient OwnProfile profile = Mockito.mock(OwnProfile.class);
+
+    /**
+     * Aliases (should be an array because we use #add(int,String) method.
+     */
+    private final transient List<String> aliases = new ArrayList<String>();
 
     /**
      * Public ctor.
      */
-    public MessageMocker() {
-        // @checkstyle MagicNumber (1 line)
-        this.withNumber(new Random().nextInt(1024) + 128L);
-        this.withAuthor(new UrnMocker().mock());
-        this.withText("some text");
-        this.withDate(new Date());
+    public OwnProfileMocker() {
+        this.withPhoto("http://localhost/set-by-OwnProfileMocker.png");
+        this.withLocale(Locale.ENGLISH);
+        Mockito.doAnswer(
+            new Answer<Object>() {
+                @Override
+                public Object answer(final InvocationOnMock invocation) {
+                    return new HashSet<String>(OwnProfileMocker.this.aliases);
+                }
+            }
+        ).when(this.profile).aliases();
     }
 
     /**
-     * With this number.
-     * @param num The number
+     * With this alias.
+     * @param alias The alias
      * @return This object
      */
-    public MessageMocker withNumber(final Long num) {
-        Mockito.doReturn(num).when(this.message).number();
+    public OwnProfileMocker withAlias(final String alias) {
+        this.aliases.add(0, alias);
         return this;
     }
 
     /**
-     * With this date.
-     * @param date The date
+     * With this locale.
+     * @param locale The locale
      * @return This object
      */
-    public MessageMocker withDate(final Date date) {
-        Mockito.doReturn(date).when(this.message).date();
+    public OwnProfileMocker withLocale(final Locale locale) {
+        Mockito.doReturn(locale).when(this.profile).locale();
         return this;
     }
 
     /**
-     * With this author.
-     * @param name Name of the author
+     * With this photo.
+     * @param photo The photo
      * @return This object
      */
-    public MessageMocker withAuthor(final Urn name) {
-        final Identity author = Mockito.mock(Identity.class);
-        Mockito.doReturn(name).when(author).name();
-        Mockito.doReturn(new OwnProfileMocker().mock()).when(author).profile();
-        Mockito.doReturn(author).when(this.message).author();
-        return this;
-    }
-
-    /**
-     * With this author.
-     * @param name Name of the author
-     * @return This object
-     */
-    public MessageMocker withAuthor(final String name) {
-        return this.withAuthor(Urn.create(name));
-    }
-
-    /**
-     * With this text.
-     * @param text The text
-     * @return This object
-     */
-    public MessageMocker withText(final String text) {
-        Mockito.doReturn(text).when(this.message).text();
+    public OwnProfileMocker withPhoto(final String photo) {
+        try {
+            Mockito.doReturn(new URL(photo)).when(this.profile).photo();
+        } catch (java.net.MalformedURLException ex) {
+            throw new IllegalArgumentException(ex);
+        }
         return this;
     }
 
     /**
      * Mock it.
-     * @return Mocked message
+     * @return Mocked identity
      */
-    public Message mock() {
-        return this.message;
+    public OwnProfile mock() {
+        if (this.aliases.isEmpty()) {
+            this.withAlias("test identity alias set by OwnProfileMocker");
+        }
+        return this.profile;
     }
 
 }

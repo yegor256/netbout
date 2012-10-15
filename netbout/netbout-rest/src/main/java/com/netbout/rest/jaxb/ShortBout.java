@@ -28,8 +28,8 @@ package com.netbout.rest.jaxb;
 
 import com.netbout.spi.Bout;
 import com.netbout.spi.Identity;
-import com.netbout.spi.NetboutUtils;
 import com.netbout.spi.Participant;
+import com.netbout.spi.Query;
 import com.netbout.spi.client.RestSession;
 import com.rexsl.page.JaxbBundle;
 import com.rexsl.page.Link;
@@ -131,7 +131,7 @@ public final class ShortBout {
      */
     @XmlElement
     public Date getRecent() {
-        return NetboutUtils.dateOf(this.bout);
+        return new Bout.Smart(this.bout).updated();
     }
 
     /**
@@ -154,7 +154,7 @@ public final class ShortBout {
         final Collection<LongParticipant> dudes =
             new LinkedList<LongParticipant>();
         final Participant myself =
-            NetboutUtils.participantOf(this.viewer, this.bout);
+            new Bout.Smart(this.bout).participant(this.viewer);
         for (Participant dude : this.bout.participants()) {
             dudes.add(new LongParticipant(dude, this.builder, myself));
         }
@@ -167,7 +167,7 @@ public final class ShortBout {
      */
     @XmlAttribute
     public boolean isUnseen() {
-        return NetboutUtils.isUnread(this.bout);
+        return !new Bout.Smart(this.bout).seen();
     }
 
     /**
@@ -179,15 +179,17 @@ public final class ShortBout {
     @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
     public Collection<Link> getBundled() {
         final Collection<Link> links = new LinkedList<Link>();
-        final String query = String.format(
-            "(unbundled %d)",
-            this.bout.number()
+        final Query query = new Query.Textual(
+            String.format(
+                "(unbundled %d)",
+                this.bout.number()
+            )
         );
         final Iterator<Bout> bouts = this.viewer.inbox(query).iterator();
         // @checkstyle MagicNumber (1 line)
         int max = 5;
         while (bouts.hasNext() && max > 0) {
-            final Bout item = bouts.next();
+            final Bout.Smart item = new Bout.Smart(bouts.next());
             max -= 1;
             final Link link = new Link(
                 "bout",
@@ -196,7 +198,7 @@ public final class ShortBout {
             links.add(
                 link.with(new JaxbBundle("number", item.number()))
                     .with(new JaxbBundle("title", item.title()))
-                    .with(new JaxbBundle("unseen", NetboutUtils.isUnread(item)))
+                    .with(new JaxbBundle("unseen", !item.seen()))
             );
         }
         if (max == 0) {

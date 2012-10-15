@@ -147,6 +147,6 @@ public interface Identity extends Friend {
      * Get profile.
      * @return The profile of this identity
      */
-    Profile profile();
+    OwnProfile profile();
 
 }

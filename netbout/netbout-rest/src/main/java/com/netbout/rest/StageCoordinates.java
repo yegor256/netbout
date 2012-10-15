@@ -28,7 +28,7 @@ package com.netbout.rest;
 
 import com.netbout.hub.Hub;
 import com.netbout.spi.Bout;
-import com.netbout.spi.Identity;
+import com.netbout.spi.Friend;
 import com.netbout.spi.Participant;
 import com.netbout.spi.Urn;
 import com.netbout.spi.text.SecureString;
@@ -51,7 +51,7 @@ public final class StageCoordinates {
     /**
      * List of all stages.
      */
-    private transient Set<Identity> stages;
+    private transient Set<Friend> stages;
 
     /**
      * Name of stage.
@@ -82,7 +82,7 @@ public final class StageCoordinates {
      */
     public StageCoordinates copy() {
         final StageCoordinates coords = new StageCoordinates();
-        coords.stages = new HashSet<Identity>(this.stages);
+        coords.stages = new HashSet<Friend>(this.stages);
         coords.istage = this.istage;
         coords.iplace = this.iplace;
         return coords;
@@ -180,7 +180,7 @@ public final class StageCoordinates {
      * List of all stages, their names.
      * @return The list
      */
-    public Set<Identity> all() {
+    public Set<Friend> all() {
         if (this.stages == null) {
             throw new IllegalStateException("Call #normalize() before #all()");
         }
@@ -196,18 +196,17 @@ public final class StageCoordinates {
         if (this.stages != null) {
             throw new IllegalStateException("Duplicate call to #normalize()");
         }
-        this.stages = new HashSet<Identity>();
+        this.stages = new HashSet<Friend>();
         for (Participant dude : bout.participants()) {
-            final Identity identity = dude.identity();
             final Boolean exists = hub.make("does-stage-exist")
                 .synchronously()
                 .arg(bout.number())
-                .arg(identity.name())
+                .arg(dude.name())
                 .inBout(bout)
                 .asDefault(false)
                 .exec();
             if (exists) {
-                this.stages.add(identity);
+                this.stages.add(dude);
             }
         }
         if (this.istage.isEmpty() && this.stages.size() > 0) {
@@ -223,7 +222,7 @@ public final class StageCoordinates {
      */
     private void discharge() {
         boolean found = false;
-        for (Identity identity : this.stages) {
+        for (Friend identity : this.stages) {
             if (identity.name().equals(this.istage)) {
                 found = true;
                 break;

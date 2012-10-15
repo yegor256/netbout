@@ -38,6 +38,7 @@ import java.util.regex.Pattern;
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id: Identity.java 3452 2012-10-15 07:55:58Z yegor@tpc2.com $
+ * @checkstyle InterfaceIsType (500 lines)
  */
 public interface Query {
 

@@ -27,8 +27,10 @@
 package com.netbout.rest.auth;
 
 import com.netbout.spi.Bout;
+import com.netbout.spi.Friend;
 import com.netbout.spi.Identity;
 import com.netbout.spi.Profile;
+import com.netbout.spi.Query;
 import com.netbout.spi.Urn;
 import java.net.URL;
 import java.util.List;
@@ -97,7 +99,7 @@ final class ResolvedIdentity implements Identity {
      * {@inheritDoc}
      */
     @Override
-    public int compareTo(final Identity identity) {
+    public int compareTo(final Friend identity) {
         throw new UnsupportedOperationException("#compareTo()");
     }
 
@@ -129,7 +131,7 @@ final class ResolvedIdentity implements Identity {
      * {@inheritDoc}
      */
     @Override
-    public List<Bout> inbox(final String query) {
+    public List<Bout> inbox(final Query query) {
         throw new UnsupportedOperationException("#inbox()");
     }
 
@@ -137,7 +139,7 @@ final class ResolvedIdentity implements Identity {
      * {@inheritDoc}
      */
     @Override
-    public Identity friend(final Urn name) {
+    public Friend friend(final Urn name) {
         throw new UnsupportedOperationException("#friend()");
     }
 
@@ -145,7 +147,7 @@ final class ResolvedIdentity implements Identity {
      * {@inheritDoc}
      */
     @Override
-    public Set<Identity> friends(final String keyword) {
+    public Set<Friend> friends(final String keyword) {
         throw new UnsupportedOperationException("#friends()");
     }
 

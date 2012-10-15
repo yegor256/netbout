@@ -28,6 +28,7 @@ package com.netbout.notifiers.email;
 
 import com.netbout.hub.Hub;
 import com.netbout.spi.Bout;
+import com.netbout.spi.Friend;
 import com.netbout.spi.Identity;
 import com.netbout.spi.Urn;
 import com.netbout.spi.text.SecureString;
@@ -56,7 +57,7 @@ final class AnchorEmail {
     /**
      * The recipient.
      */
-    private final transient Identity receiver;
+    private final transient Friend receiver;
 
     /**
      * Where it's happening.
@@ -68,7 +69,7 @@ final class AnchorEmail {
      * @param recipient Who is receiving
      * @param bout Where it's happening
      */
-    public AnchorEmail(final Identity recipient, final Bout bout) {
+    public AnchorEmail(final Friend recipient, final Bout bout) {
         this.receiver = recipient;
         this.where = bout;
     }
@@ -86,7 +87,7 @@ final class AnchorEmail {
 
     /**
      * Public ctor.
-     * @param hash The has we received
+     * @param hash The hash we received
      * @param hub Where this happened
      * @throws BrokenAnchorException If can't parse it
      */
@@ -98,15 +99,16 @@ final class AnchorEmail {
             if (parts.length != 2) {
                 throw new BrokenAnchorException("Invalid text inside hash");
             }
-            this.receiver = hub.identity(new Urn(parts[1]));
-            this.where = this.receiver.bout(Long.valueOf(parts[0]));
+            final Identity identity = hub.identity(new Urn(parts[1]));
+            this.receiver = identity;
+            this.where = identity.bout(Long.valueOf(parts[0]));
         } catch (com.netbout.spi.text.StringDecryptionException ex) {
             throw new BrokenAnchorException(ex);
         } catch (java.net.URISyntaxException ex) {
             throw new BrokenAnchorException(ex);
-        } catch (com.netbout.spi.UnreachableUrnException ex) {
+        } catch (Identity.UnreachableUrnException ex) {
             throw new BrokenAnchorException(ex);
-        } catch (com.netbout.spi.BoutNotFoundException ex) {
+        } catch (Identity.BoutNotFoundException ex) {
             throw new BrokenAnchorException(ex);
         }
     }
@@ -138,7 +140,7 @@ final class AnchorEmail {
      * Who is the person.
      * @return The identity
      */
-    public Identity identity() {
+    public Friend identity() {
         return this.receiver;
     }
 

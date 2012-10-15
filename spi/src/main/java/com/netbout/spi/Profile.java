@@ -51,34 +51,16 @@ public interface Profile {
     Locale locale();
 
     /**
-     * Set locale for this identity.
-     * @param locale The language we should speak with this identity
-     */
-    void setLocale(Locale locale);
-
-    /**
      * Get a photo of this identity.
      * @return The URL of the photo
      */
     URL photo();
 
     /**
-     * Set photo of the identity.
-     * @param photo The photo
-     */
-    void setPhoto(URL photo);
-
-    /**
      * Get all aliases.
      * @return List of all aliases
      */
     Set<String> aliases();
-
-    /**
-     * Add new alias.
-     * @param alias The alias
-     */
-    void alias(String alias);
 
     /**
      * Profile with implemented conventions.
@@ -114,13 +96,6 @@ public interface Profile {
          * {@inheritDoc}
          */
         @Override
-        public void setLocale(final Locale locale) {
-            this.origin.profile().setLocale(locale);
-        }
-        /**
-         * {@inheritDoc}
-         */
-        @Override
         public URL photo() {
             URL photo = this.origin.profile().photo();
             if (photo == null) {
@@ -136,13 +111,6 @@ public interface Profile {
          * {@inheritDoc}
          */
         @Override
-        public void setPhoto(final URL url) {
-            this.origin.profile().setPhoto(url);
-        }
-        /**
-         * {@inheritDoc}
-         */
-        @Override
         public Set<String> aliases() {
             final Profile profile = this.origin.profile();
             assert profile != null : "Profile is NULL";
@@ -152,13 +120,6 @@ public interface Profile {
                 aliases.add(this.origin.name().toString());
             }
             return aliases;
-        }
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public void alias(final String alias) {
-            this.origin.profile().alias(alias);
         }
     }
 

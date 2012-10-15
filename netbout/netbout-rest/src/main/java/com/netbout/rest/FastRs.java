@@ -75,9 +75,9 @@ public final class FastRs extends BaseRs {
             Participant invited;
             try {
                 invited = bout.invite(identity.friend(Urn.create(dude)));
-            } catch (com.netbout.spi.UnreachableUrnException ex) {
+            } catch (Identity.UnreachableUrnException ex) {
                 throw new ForwardException(this, this.base(), ex);
-            } catch (com.netbout.spi.DuplicateInvitationException ex) {
+            } catch (Bout.DuplicateInvitationException ex) {
                 throw new ForwardException(this, this.base(), ex);
             }
             if (Integer.parseInt(leader) == pos) {
@@ -87,7 +87,7 @@ public final class FastRs extends BaseRs {
         }
         try {
             bout.post(message);
-        } catch (com.netbout.spi.MessagePostException ex) {
+        } catch (Bout.MessagePostException ex) {
             throw new ForwardException(this, this.base(), ex);
         }
         return new PageBuilder()
