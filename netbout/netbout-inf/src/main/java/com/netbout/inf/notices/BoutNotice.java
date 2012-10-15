@@ -31,6 +31,7 @@ import com.netbout.spi.Bout;
 import com.netbout.spi.Friend;
 import com.netbout.spi.Message;
 import com.netbout.spi.Participant;
+import com.netbout.spi.Query;
 import com.netbout.spi.Urn;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -78,6 +79,14 @@ public interface BoutNotice extends Notice {
             final Set<Urn> deps = new HashSet<Urn>();
             for (Participant dude : notice.bout().participants()) {
                 deps.add(dude.name());
+            }
+            if (deps.isEmpty()) {
+                throw new IllegalArgumentException(
+                    String.format(
+                        "empty list of participants in %s",
+                        notice.bout()
+                    )
+                );
             }
             return deps;
         }
@@ -129,10 +138,6 @@ public interface BoutNotice extends Notice {
                         @Override
                         public boolean confirmed() {
                             return confirmed;
-                        }
-                        @Override
-                        public Bout bout() {
-                            return bout.get();
                         }
                         @Override
                         public int compareTo(final Friend friend) {
@@ -196,7 +201,7 @@ public interface BoutNotice extends Notice {
                         throw new UnsupportedOperationException();
                     }
                     @Override
-                    public Iterable<Message> messages(final String query) {
+                    public Iterable<Message> messages(final Query query) {
                         throw new UnsupportedOperationException();
                     }
                     @Override

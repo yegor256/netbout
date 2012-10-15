@@ -26,13 +26,8 @@
  */
 package com.netbout.inf.notices;
 
-import com.netbout.inf.MsgMocker;
-import com.netbout.spi.Bout;
-import com.netbout.spi.BoutMocker;
 import com.netbout.spi.Message;
 import com.netbout.spi.MessageMocker;
-import com.netbout.spi.Participant;
-import com.netbout.spi.ParticipantMocker;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
@@ -58,16 +53,7 @@ public final class MessageNoticeTest {
     @Test
     public void serializesAndDeserializesNotices() throws Exception {
         final ByteArrayOutputStream output = new ByteArrayOutputStream();
-        final Participant dude = new ParticipantMocker()
-            .mock();
-        final Bout bout = new BoutMocker()
-            .withNumber(MsgMocker.number())
-            .withDate(new Date())
-            .titledAs("some title to serialize")
-            .withParticipant(dude)
-            .mock();
         final Message message = new MessageMocker()
-            .inBout(bout)
             .withDate(new Date())
             .withText("some text to serialize")
             .mock();
@@ -87,28 +73,6 @@ public final class MessageNoticeTest {
         MatcherAssert.assertThat(
             restored.message().number(),
             Matchers.equalTo(message.number())
-        );
-        MatcherAssert.assertThat(
-            restored.message().bout().number(),
-            Matchers.equalTo(bout.number())
-        );
-        MatcherAssert.assertThat(
-            restored.message().bout().date(),
-            Matchers.equalTo(bout.date())
-        );
-        final Participant found = restored.message().bout()
-            .participants().iterator().next();
-        MatcherAssert.assertThat(
-            found.name(),
-            Matchers.equalTo(dude.name())
-        );
-        MatcherAssert.assertThat(
-            found.leader(),
-            Matchers.equalTo(dude.leader())
-        );
-        MatcherAssert.assertThat(
-            found.confirmed(),
-            Matchers.equalTo(dude.confirmed())
         );
     }
 

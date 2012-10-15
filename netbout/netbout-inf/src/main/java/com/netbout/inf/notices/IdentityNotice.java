@@ -31,6 +31,7 @@ import com.netbout.spi.Bout;
 import com.netbout.spi.Friend;
 import com.netbout.spi.Identity;
 import com.netbout.spi.Profile;
+import com.netbout.spi.Query;
 import com.netbout.spi.Urn;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -140,7 +141,7 @@ public interface IdentityNotice extends Notice {
                     throw new UnsupportedOperationException();
                 }
                 @Override
-                public Iterable<Bout> inbox(final String query) {
+                public Iterable<Bout> inbox(final Query query) {
                     throw new UnsupportedOperationException();
                 }
                 @Override

@@ -27,6 +27,8 @@
 package com.netbout.inf;
 
 import com.netbout.inf.notices.MessagePostedNotice;
+import com.netbout.spi.Bout;
+import com.netbout.spi.BoutMocker;
 import com.netbout.spi.Message;
 import com.netbout.spi.MessageMocker;
 import org.hamcrest.MatcherAssert;
@@ -53,6 +55,10 @@ public final class NoticeTest {
                 public Message message() {
                     return message;
                 }
+                @Override
+                public Bout bout() {
+                    return new BoutMocker().mock();
+                }
             }
         ).serialize();
         MatcherAssert.assertThat(
@@ -69,22 +75,18 @@ public final class NoticeTest {
      */
     @Test
     public void givesCorrectNames() throws Exception {
-        final String first = new Notice.SerializableNotice(
-            new MessagePostedNotice() {
-                @Override
-                public Message message() {
-                    return new MessageMocker().mock();
-                }
+        final MessagePostedNotice notice = new MessagePostedNotice() {
+            @Override
+            public Message message() {
+                return new MessageMocker().mock();
             }
-        ).toString();
-        final String second = new Notice.SerializableNotice(
-            new MessagePostedNotice() {
-                @Override
-                public Message message() {
-                    return new MessageMocker().mock();
-                }
+            @Override
+            public Bout bout() {
+                return new BoutMocker().mock();
             }
-        ).toString();
+        };
+        final String first = new Notice.SerializableNotice(notice).toString();
+        final String second = new Notice.SerializableNotice(notice).toString();
         MatcherAssert.assertThat(first, Matchers.not(Matchers.equalTo(second)));
     }
 

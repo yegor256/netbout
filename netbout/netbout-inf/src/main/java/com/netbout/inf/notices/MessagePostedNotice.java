@@ -26,6 +26,7 @@
  */
 package com.netbout.inf.notices;
 
+import com.netbout.spi.Bout;
 import com.netbout.spi.Message;
 import com.netbout.spi.Urn;
 import java.io.DataInputStream;
@@ -39,7 +40,7 @@ import java.util.Set;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public interface MessagePostedNotice extends MessageNotice {
+public interface MessagePostedNotice extends MessageNotice, BoutNotice {
 
     /**
      * Serializer.
@@ -57,7 +58,7 @@ public interface MessagePostedNotice extends MessageNotice {
          */
         @Override
         public Set<Urn> deps(final MessagePostedNotice notice) {
-            return new MessageNotice.Serial().deps(notice);
+            return new BoutNotice.Serial().deps(notice);
         }
         /**
          * {@inheritDoc}
@@ -65,6 +66,7 @@ public interface MessagePostedNotice extends MessageNotice {
         @Override
         public void write(final MessagePostedNotice notice,
             final DataOutputStream stream) throws IOException {
+            new BoutNotice.Serial().write(notice, stream);
             new MessageNotice.Serial().write(notice, stream);
         }
         /**
@@ -73,9 +75,15 @@ public interface MessagePostedNotice extends MessageNotice {
         @Override
         public MessagePostedNotice read(final DataInputStream stream)
             throws IOException {
+            final BoutNotice bnotice =
+                new BoutNotice.Serial().read(stream);
             final MessageNotice mnotice =
                 new MessageNotice.Serial().read(stream);
             return new MessagePostedNotice() {
+                @Override
+                public Bout bout() {
+                    return bnotice.bout();
+                }
                 @Override
                 public Message message() {
                     return mnotice.message();

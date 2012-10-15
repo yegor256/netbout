@@ -27,6 +27,7 @@
 package com.netbout.inf;
 
 import com.jcabi.log.Logger;
+import com.netbout.spi.Query;
 import java.io.File;
 import java.security.SecureRandom;
 import java.util.Iterator;
@@ -76,7 +77,9 @@ public final class DefaultInfinityProf {
         for (int retry = 0; retry < 1; ++retry) {
             for (String query : queries) {
                 MatcherAssert.assertThat(
-                    this.fetch(inf.messages(query).iterator()),
+                    this.fetch(
+                        inf.messages(new Query.Textual(query)).iterator()
+                    ),
                     Matchers.hasSize(Matchers.greaterThan(0))
                 );
             }

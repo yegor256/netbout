@@ -32,6 +32,7 @@ import com.jcabi.log.VerboseThreads;
 import com.netbout.ih.StageFarm;
 import com.netbout.inf.functors.DefaultStore;
 import com.netbout.inf.ray.MemRay;
+import com.netbout.spi.Query;
 import com.netbout.spi.Urn;
 import com.rexsl.core.Manifests;
 import java.io.File;
@@ -186,7 +187,7 @@ public final class DefaultInfinity implements Infinity {
      * {@inheritDoc}
      */
     @Override
-    public Iterable<Long> messages(final String query)
+    public Iterable<Long> messages(final Query query)
         throws InvalidSyntaxException {
         final Term term = new ParserAdapter(this.store)
             .parse(query)

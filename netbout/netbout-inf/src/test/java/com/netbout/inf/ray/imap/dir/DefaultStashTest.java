@@ -32,6 +32,8 @@ import com.netbout.inf.MsgMocker;
 import com.netbout.inf.Notice;
 import com.netbout.inf.Stash;
 import com.netbout.inf.notices.MessagePostedNotice;
+import com.netbout.spi.Bout;
+import com.netbout.spi.BoutMocker;
 import com.netbout.spi.Message;
 import com.netbout.spi.MessageMocker;
 import java.io.File;
@@ -77,6 +79,10 @@ public final class DefaultStashTest {
                     .withText("some text to index")
                     .withNumber(number)
                     .mock();
+            }
+            @Override
+            public Bout bout() {
+                return new BoutMocker().mock();
             }
         };
         final Stash first = new DefaultStash(dir);
@@ -129,6 +135,7 @@ public final class DefaultStashTest {
         final ExecutorService svc =
             Executors.newFixedThreadPool(threads, new VerboseThreads());
         final Runnable runnable = new VerboseRunnable(
+            // @checkstyle AnonInnerLength (50 lines)
             new Callable<Void>() {
                 public Void call() throws Exception {
                     start.await();
@@ -139,6 +146,10 @@ public final class DefaultStashTest {
                             return new MessageMocker()
                                 .withNumber(number)
                                 .mock();
+                        }
+                        @Override
+                        public Bout bout() {
+                            return new BoutMocker().mock();
                         }
                     };
                     stash.add(notice);

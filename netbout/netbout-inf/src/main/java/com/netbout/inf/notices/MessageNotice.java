@@ -27,7 +27,6 @@
 package com.netbout.inf.notices;
 
 import com.netbout.inf.Notice;
-import com.netbout.spi.Bout;
 import com.netbout.spi.Identity;
 import com.netbout.spi.Message;
 import com.netbout.spi.Urn;
@@ -73,16 +72,6 @@ public interface MessageNotice extends Notice {
         @Override
         public Set<Urn> deps(final MessageNotice notice) {
             final Set<Urn> deps = new HashSet<Urn>();
-            deps.addAll(
-                new BoutNotice.Serial().deps(
-                    new BoutNotice() {
-                        @Override
-                        public Bout bout() {
-                            return notice.message().bout();
-                        }
-                    }
-                )
-            );
             deps.add(notice.message().author().name());
             return deps;
         }
@@ -96,15 +85,6 @@ public interface MessageNotice extends Notice {
             stream.writeUTF(notice.message().author().name().toString());
             new BigText(notice.message().text()).write(stream);
             stream.writeLong(notice.message().date().getTime());
-            new BoutNotice.Serial().write(
-                new BoutNotice() {
-                    @Override
-                    public Bout bout() {
-                        return notice.message().bout();
-                    }
-                },
-                stream
-            );
         }
         /**
          * {@inheritDoc}
@@ -116,7 +96,6 @@ public interface MessageNotice extends Notice {
             final Urn author = Urn.create(stream.readUTF());
             final String text = BigText.read(stream).toString();
             final Date date = new Date(stream.readLong());
-            final Bout bout = new BoutNotice.Serial().read(stream).bout();
             // @checkstyle AnonInnerLength (100 lines)
             return new MessageNotice() {
                 @Override
@@ -156,10 +135,6 @@ public interface MessageNotice extends Notice {
                         @Override
                         public int compareTo(final Message msg) {
                             return this.number().compareTo(msg.number());
-                        }
-                        @Override
-                        public Bout bout() {
-                            return bout;
                         }
                     };
                 }

@@ -27,6 +27,7 @@
 package com.netbout.inf;
 
 import com.netbout.inf.atoms.PredicateAtom;
+import com.netbout.spi.Query;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;
@@ -37,6 +38,7 @@ import org.mockito.Mockito;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
+@SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
 public final class ParserAdapterTest {
 
     /**
@@ -58,7 +60,7 @@ public final class ParserAdapterTest {
         final ParserAdapter builder =
             new ParserAdapter(new StoreMocker().mock());
         for (String query : queries) {
-            builder.parse(query);
+            builder.parse(new Query.Textual(query));
         }
     }
 
@@ -80,7 +82,7 @@ public final class ParserAdapterTest {
         final ParserAdapter builder = new ParserAdapter(store);
         for (String query : queries) {
             try {
-                builder.parse(query);
+                builder.parse(new Query.Textual(query));
                 throw new IllegalArgumentException(
                     String.format("should fail with '%s'", query)
                 );
@@ -103,7 +105,9 @@ public final class ParserAdapterTest {
             new ParserAdapter(new StoreMocker().mock());
         final String text = "\u043F\u0440\u0438\u0432\u0435";
         final PredicateAtom pred = builder.parse(
-            String.format("(and (matches \"%s\" $text) (pos 0))", text)
+            new Query.Textual(
+                String.format("(and (matches \"%s\" $text) (pos 0))", text)
+            )
         );
         MatcherAssert.assertThat(pred, Matchers.notNullValue());
     }
@@ -117,7 +121,7 @@ public final class ParserAdapterTest {
         final ParserAdapter builder =
             new ParserAdapter(new StoreMocker().mock());
         final String text = "\u043F\u0440\u0438\u0432\u0435\u0442";
-        final PredicateAtom pred = builder.parse(text);
+        final PredicateAtom pred = builder.parse(new Query.Textual(text));
         MatcherAssert.assertThat(pred, Matchers.notNullValue());
     }
 

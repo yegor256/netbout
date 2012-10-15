@@ -54,22 +54,18 @@ public final class MessagePostedNoticeTest {
      */
     @Test
     public void givesCorrectNames() throws Exception {
-        final String first = new MessagePostedNotice.Serial().nameOf(
-            new MessagePostedNotice() {
-                @Override
-                public Message message() {
-                    return new MessageMocker().mock();
-                }
+        final MessagePostedNotice notice = new MessagePostedNotice() {
+            @Override
+            public Message message() {
+                return new MessageMocker().mock();
             }
-        );
-        final String second = new MessagePostedNotice.Serial().nameOf(
-            new MessagePostedNotice() {
-                @Override
-                public Message message() {
-                    return new MessageMocker().mock();
-                }
+            @Override
+            public Bout bout() {
+                return new BoutMocker().mock();
             }
-        );
+        };
+        final String first = new MessagePostedNotice.Serial().nameOf(notice);
+        final String second = new MessagePostedNotice.Serial().nameOf(notice);
         MatcherAssert.assertThat(first, Matchers.not(Matchers.equalTo(second)));
     }
 
@@ -83,13 +79,15 @@ public final class MessagePostedNoticeTest {
         final Bout bout = new BoutMocker()
             .withParticipant(new ParticipantMocker().mock())
             .mock();
-        final Message message = new MessageMocker()
-            .inBout(bout)
-            .mock();
+        final Message message = new MessageMocker().mock();
         final MessagePostedNotice notice = new MessagePostedNotice() {
             @Override
             public Message message() {
                 return message;
+            }
+            @Override
+            public Bout bout() {
+                return bout;
             }
         };
         new MessagePostedNotice.Serial().write(

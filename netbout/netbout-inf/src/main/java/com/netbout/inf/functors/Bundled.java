@@ -39,7 +39,6 @@ import com.netbout.inf.notices.JoinNotice;
 import com.netbout.inf.notices.KickOffNotice;
 import com.netbout.inf.notices.MessagePostedNotice;
 import com.netbout.spi.Bout;
-import com.netbout.spi.Message;
 import com.netbout.spi.Participant;
 import com.netbout.spi.Urn;
 import java.util.List;
@@ -78,7 +77,7 @@ final class Bundled implements Functor {
         ray.cursor().replace(
             ray.builder().picker(notice.message().number()),
             BundledAttribute.VALUE,
-            Bundled.marker(notice.message())
+            Bundled.marker(notice.bout())
         );
     }
 
@@ -217,15 +216,6 @@ final class Bundled implements Functor {
             names.add(dude.name());
         }
         return Logger.format("%[list]s", names);
-    }
-
-    /**
-     * Get marker from message.
-     * @param message The message
-     * @return The marker
-     */
-    private static String marker(final Message message) {
-        return Bundled.marker(message.bout());
     }
 
 }

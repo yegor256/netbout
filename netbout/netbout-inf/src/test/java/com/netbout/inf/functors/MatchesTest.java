@@ -33,6 +33,8 @@ import com.netbout.inf.Ray;
 import com.netbout.inf.atoms.TextAtom;
 import com.netbout.inf.notices.MessagePostedNotice;
 import com.netbout.inf.ray.MemRay;
+import com.netbout.spi.Bout;
+import com.netbout.spi.BoutMocker;
 import com.netbout.spi.Message;
 import com.netbout.spi.MessageMocker;
 import java.util.Arrays;
@@ -66,6 +68,10 @@ public final class MatchesTest {
                         .withNumber(msg)
                         .withText("hello, dude!")
                         .mock();
+                }
+                @Override
+                public Bout bout() {
+                    return new BoutMocker().mock();
                 }
             }
         );

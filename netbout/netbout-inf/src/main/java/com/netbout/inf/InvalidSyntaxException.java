@@ -26,6 +26,8 @@
  */
 package com.netbout.inf;
 
+import com.netbout.spi.Query;
+
 /**
  * Invalid syntax in query string.
  *
@@ -62,8 +64,8 @@ public final class InvalidSyntaxException extends Exception {
      * @param query The query that cause this problem
      * @param thr The cause of it
      */
-    public InvalidSyntaxException(final String query, final Throwable thr) {
-        super(query, thr);
+    public InvalidSyntaxException(final Query query, final Throwable thr) {
+        super(query.toString(), thr);
     }
 
 }

@@ -53,7 +53,6 @@ import org.junit.Test;
  * @version $Id$
  * @checkstyle ClassDataAbstractionCoupling (500 lines)
  */
-@SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
 public final class BundledTest {
 
     /**
@@ -69,18 +68,7 @@ public final class BundledTest {
         for (int num = 0; num < 2; ++num) {
             final long number = msg - num;
             ray.msg(number);
-            functor.see(
-                ray,
-                new MessagePostedNotice() {
-                    @Override
-                    public Message message() {
-                        return new MessageMocker()
-                            .withNumber(number)
-                            .inBout(bout)
-                            .mock();
-                    }
-                }
-            );
+            functor.see(ray, BundledTest.notice(number, bout));
         }
         final Term term = new Bundled().build(
             ray,
@@ -115,55 +103,11 @@ public final class BundledTest {
         final Bundled functor = new Bundled();
         final Equal equal = new Equal();
         ray.msg(fmsg);
-        equal.see(
-            ray,
-            new MessagePostedNotice() {
-                @Override
-                public Message message() {
-                    return new MessageMocker()
-                        .withNumber(fmsg)
-                        .inBout(first)
-                        .mock();
-                }
-            }
-        );
-        functor.see(
-            ray,
-            new MessagePostedNotice() {
-                @Override
-                public Message message() {
-                    return new MessageMocker()
-                        .withNumber(fmsg)
-                        .inBout(first)
-                        .mock();
-                }
-            }
-        );
+        equal.see(ray, BundledTest.notice(fmsg, first));
+        functor.see(ray, BundledTest.notice(fmsg, first));
         ray.msg(smsg);
-        equal.see(
-            ray,
-            new MessagePostedNotice() {
-                @Override
-                public Message message() {
-                    return new MessageMocker()
-                        .withNumber(smsg)
-                        .inBout(second)
-                        .mock();
-                }
-            }
-        );
-        functor.see(
-            ray,
-            new MessagePostedNotice() {
-                @Override
-                public Message message() {
-                    return new MessageMocker()
-                        .withNumber(smsg)
-                        .inBout(second)
-                        .mock();
-                }
-            }
-        );
+        equal.see(ray, BundledTest.notice(smsg, second));
+        functor.see(ray, BundledTest.notice(smsg, second));
         functor.see(
             ray,
             new JoinNotice() {
@@ -192,6 +136,27 @@ public final class BundledTest {
             ray.cursor().shift(term).msg().number(),
             Matchers.equalTo(fmsg)
         );
+    }
+
+    /**
+     * Create a message posted notice.
+     * @param num Number of it
+     * @param bout Bout it belongs to
+     * @return The notice
+     */
+    private static MessagePostedNotice notice(final long num, final Bout bout) {
+        return new MessagePostedNotice() {
+            @Override
+            public Message message() {
+                return new MessageMocker()
+                    .withNumber(num)
+                    .mock();
+            }
+            @Override
+            public Bout bout() {
+                return bout;
+            }
+        };
     }
 
 }

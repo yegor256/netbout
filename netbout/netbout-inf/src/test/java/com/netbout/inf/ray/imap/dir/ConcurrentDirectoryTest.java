@@ -35,6 +35,8 @@ import com.netbout.inf.notices.MessagePostedNotice;
 import com.netbout.inf.ray.imap.Directory;
 import com.netbout.inf.ray.imap.Numbers;
 import com.netbout.inf.ray.imap.Reverse;
+import com.netbout.spi.Bout;
+import com.netbout.spi.BoutMocker;
 import com.netbout.spi.Message;
 import com.netbout.spi.MessageMocker;
 import de.svenjacobs.loremipsum.LoremIpsum;
@@ -63,7 +65,10 @@ import org.junit.rules.TemporaryFolder;
  * @checkstyle ClassDataAbstractionCoupling (500 lines)
  */
 @SuppressWarnings({
-    "PMD.DoNotUseThreads", "PMD.AvoidInstantiatingObjectsInLoops"
+    "PMD.DoNotUseThreads",
+    "PMD.AvoidInstantiatingObjectsInLoops",
+    "PMD.TooManyMethods",
+    "PMD.ExcessiveImports"
 })
 public final class ConcurrentDirectoryTest {
 
@@ -189,6 +194,10 @@ public final class ConcurrentDirectoryTest {
                                     @Override
                                     public Message message() {
                                         return new MessageMocker().mock();
+                                    }
+                                    @Override
+                                    public Bout bout() {
+                                        return new BoutMocker().mock();
                                     }
                                 }
                             );

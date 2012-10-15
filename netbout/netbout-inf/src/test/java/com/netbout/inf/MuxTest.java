@@ -30,6 +30,7 @@ import com.jcabi.log.Logger;
 import com.jcabi.log.VerboseRunnable;
 import com.jcabi.log.VerboseThreads;
 import com.netbout.inf.notices.MessagePostedNotice;
+import com.netbout.spi.Bout;
 import com.netbout.spi.BoutMocker;
 import com.netbout.spi.Message;
 import com.netbout.spi.MessageMocker;
@@ -263,12 +264,14 @@ public final class MuxTest {
                 public Message message() {
                     return new MessageMocker()
                         .withNumber(MuxTest.NUMBER.incrementAndGet())
-                        .inBout(
-                            new BoutMocker()
-                                .withNumber(MuxTest.NUMBER.incrementAndGet())
-                                .withParticipant(new UrnMocker().mock())
-                                .mock()
-                        ).mock();
+                        .mock();
+                }
+                @Override
+                public Bout bout() {
+                    return new BoutMocker()
+                        .withNumber(MuxTest.NUMBER.incrementAndGet())
+                        .withParticipant(new UrnMocker().mock())
+                        .mock();
                 }
             }
         );

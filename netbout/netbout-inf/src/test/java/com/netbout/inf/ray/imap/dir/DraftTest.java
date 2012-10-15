@@ -31,6 +31,8 @@ import com.netbout.inf.MsgMocker;
 import com.netbout.inf.Notice;
 import com.netbout.inf.notices.MessagePostedNotice;
 import com.netbout.inf.ray.imap.Numbers;
+import com.netbout.spi.Bout;
+import com.netbout.spi.BoutMocker;
 import com.netbout.spi.Message;
 import com.netbout.spi.MessageMocker;
 import java.io.File;
@@ -190,6 +192,10 @@ public final class DraftTest {
             public Message message() {
                 return fmsg;
             }
+            @Override
+            public Bout bout() {
+                return new BoutMocker().mock();
+            }
         };
         src.stash().add(first);
         src.stash().remove(first);
@@ -199,6 +205,10 @@ public final class DraftTest {
                 @Override
                 public Message message() {
                     return smsg;
+                }
+                @Override
+                public Bout bout() {
+                    return new BoutMocker().mock();
                 }
             }
         );

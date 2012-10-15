@@ -33,6 +33,7 @@ import com.netbout.spi.Bout;
 import com.netbout.spi.BoutMocker;
 import com.netbout.spi.Message;
 import com.netbout.spi.MessageMocker;
+import com.netbout.spi.Query;
 import com.netbout.spi.UrnMocker;
 import java.util.concurrent.Callable;
 import java.util.concurrent.CountDownLatch;
@@ -51,7 +52,7 @@ import org.junit.Test;
  * @checkstyle MagicNumber (500 lines)
  * @checkstyle ClassDataAbstractionCoupling (500 lines)
  */
-@SuppressWarnings("PMD.DoNotUseThreads")
+@SuppressWarnings({ "PMD.DoNotUseThreads", "PMD.TooManyMethods" })
 public final class DefaultInfinityTest {
 
     /**
@@ -67,7 +68,6 @@ public final class DefaultInfinityTest {
         final Message msg = new MessageMocker()
             .withText("some text to index")
             .withNumber(MsgMocker.number())
-            .inBout(bout)
             .mock();
         InfinityMocker.waitFor(
             inf,
@@ -77,6 +77,10 @@ public final class DefaultInfinityTest {
                     public Message message() {
                         return msg;
                     }
+                    @Override
+                    public Bout bout() {
+                        return bout;
+                    }
                 }
             )
         );
@@ -85,7 +89,7 @@ public final class DefaultInfinityTest {
             msg.number()
         );
         MatcherAssert.assertThat(
-            inf.messages(query),
+            inf.messages(new Query.Textual(query)),
             Matchers.<Long>iterableWithSize(1)
         );
         inf.close();
@@ -110,6 +114,7 @@ public final class DefaultInfinityTest {
         for (int pos = 0; pos < total; ++pos) {
             final long number = start + pos;
             svc.submit(
+                // @checkstyle AnonInnerLength (50 lines)
                 new Runnable() {
                     @Override
                     public void run() {
@@ -122,6 +127,12 @@ public final class DefaultInfinityTest {
                                 @Override
                                 public Message message() {
                                     return message;
+                                }
+                                @Override
+                                public Bout bout() {
+                                    return new BoutMocker()
+                                        .withParticipant(new UrnMocker().mock())
+                                        .mock();
                                 }
                             }
                         );
@@ -137,7 +148,7 @@ public final class DefaultInfinityTest {
             final Infinity restored = new DefaultInfinity(folder);
             InfinityMocker.waitFor(restored);
             MatcherAssert.assertThat(
-                restored.messages("(matches 'Jeffrey')"),
+                restored.messages(new Query.Textual("(matches 'Jeffrey')")),
                 Matchers.<Long>iterableWithSize(added.get())
             );
             restored.close();
@@ -174,13 +185,16 @@ public final class DefaultInfinityTest {
             final Message msg = new MessageMocker()
                 .withText("Jeffrey Lebowski, \u0443\u0440\u0430! What's up?")
                 .withNumber(MsgMocker.number())
-                .inBout(bout)
                 .mock();
             inf.see(
                 new MessagePostedNotice() {
                     @Override
                     public Message message() {
                         return msg;
+                    }
+                    @Override
+                    public Bout bout() {
+                        return bout;
                     }
                 }
             );
@@ -196,7 +210,11 @@ public final class DefaultInfinityTest {
                 for (int attempt = 0; attempt < 10; ++attempt) {
                     TimeUnit.MILLISECONDS.sleep(5);
                     MatcherAssert.assertThat(
-                        inf.messages("(and (matches 'Jeffrey') (bundled))"),
+                        inf.messages(
+                            new Query.Textual(
+                                "(and (matches 'Jeffrey') (bundled))"
+                            )
+                        ),
                         Matchers.<Long>iterableWithSize(Matchers.greaterThan(0))
                     );
                 }

@@ -71,8 +71,11 @@ public final class UniqueTest {
                     public Message message() {
                         return new MessageMocker()
                             .withNumber(number)
-                            .inBout(bout)
                             .mock();
+                    }
+                    @Override
+                    public Bout bout() {
+                        return bout;
                     }
                 }
             );

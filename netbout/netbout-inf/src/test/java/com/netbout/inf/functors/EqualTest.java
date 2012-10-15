@@ -62,7 +62,6 @@ public final class EqualTest {
         final Bout bout = new BoutMocker().mock();
         final Message message = new MessageMocker()
             .withNumber(msg)
-            .inBout(bout)
             .mock();
         final Equal functor = new Equal();
         functor.see(
@@ -71,6 +70,10 @@ public final class EqualTest {
                 @Override
                 public Message message() {
                     return message;
+                }
+                @Override
+                public Bout bout() {
+                    return bout;
                 }
             }
         );

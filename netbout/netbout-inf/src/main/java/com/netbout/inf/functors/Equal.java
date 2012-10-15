@@ -77,7 +77,7 @@ final class Equal implements Functor {
         ray.cursor().replace(
             ray.builder().picker(number),
             VariableAtom.BOUT_NUMBER.attribute(),
-            notice.message().bout().number().toString()
+            notice.bout().number().toString()
         );
         ray.cursor().replace(
             ray.builder().picker(number),
