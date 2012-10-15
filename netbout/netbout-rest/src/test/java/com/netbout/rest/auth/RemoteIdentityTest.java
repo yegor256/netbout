@@ -27,7 +27,7 @@
 package com.netbout.rest.auth;
 
 import com.netbout.spi.Identity;
-import com.netbout.spi.NetboutUtils;
+import com.netbout.spi.Profile;
 import com.netbout.spi.Urn;
 import com.netbout.spi.xml.JaxbParser;
 import java.net.URL;
@@ -73,8 +73,8 @@ public final class RemoteIdentityTest {
             Matchers.equalTo(Locale.CHINESE)
         );
         MatcherAssert.assertThat(
-            NetboutUtils.aliasOf(identity),
-            Matchers.equalTo("Johnny")
+            new Profile.Conventional(identity).aliases(),
+            Matchers.hasItem("Johnny")
         );
     }
 

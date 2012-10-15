@@ -29,6 +29,7 @@ package com.netbout.hub.inf;
 import com.netbout.hub.ParticipantDt;
 import com.netbout.spi.Friend;
 import com.netbout.spi.Participant;
+import com.netbout.spi.Profile;
 import com.netbout.spi.Urn;
 
 /**
@@ -106,6 +107,14 @@ public final class InfParticipant implements Participant {
     @Override
     public void consign() {
         throw new UnsupportedOperationException("#consign()");
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Profile profile() {
+        throw new UnsupportedOperationException("#profile()");
     }
 
 }

@@ -30,7 +30,7 @@ import com.netbout.inf.Notice;
 import com.netbout.spi.Bout;
 import com.netbout.spi.Friend;
 import com.netbout.spi.Identity;
-import com.netbout.spi.Profile;
+import com.netbout.spi.OwnProfile;
 import com.netbout.spi.Query;
 import com.netbout.spi.Urn;
 import java.io.DataInputStream;
@@ -125,7 +125,7 @@ public interface IdentityNotice extends Notice {
                     return name;
                 }
                 @Override
-                public Profile profile() {
+                public OwnProfile profile() {
                     throw new UnsupportedOperationException();
                 }
                 @Override

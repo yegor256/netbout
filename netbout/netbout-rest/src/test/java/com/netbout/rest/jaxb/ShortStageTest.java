@@ -27,7 +27,7 @@
 package com.netbout.rest.jaxb;
 
 import com.netbout.spi.IdentityMocker;
-import com.netbout.spi.ProfileMocker;
+import com.netbout.spi.OwnProfileMocker;
 import com.rexsl.test.JaxbConverter;
 import com.rexsl.test.XhtmlMatchers;
 import javax.ws.rs.core.UriBuilder;
@@ -51,7 +51,7 @@ public final class ShortStageTest {
         final ShortStage obj = new ShortStage(
             new IdentityMocker()
                 .namedAs("urn:test:foo")
-                .withProfile(new ProfileMocker().withAlias("foo").mock())
+                .withProfile(new OwnProfileMocker().withAlias("foo").mock())
                 .mock(),
             UriBuilder.fromUri("http://localhost")
         );

@@ -73,13 +73,22 @@ public interface Profile {
         /**
          * Original identity.
          */
-        private final transient Identity origin;
+        private final transient Friend origin;
         /**
          * Public ctor.
-         * @param identity Original identity
+         * @param friend Original identity
          */
-        public Conventional(final Identity identity) {
-            this.origin = identity;
+        public Conventional(final Friend friend) {
+            if (friend.profile() == null) {
+                throw new IllegalStateException(
+                    String.format(
+                        "Profile is NULL in '%s' (%s)",
+                        friend,
+                        friend.name()
+                    )
+                );
+            }
+            this.origin = friend;
         }
         /**
          * {@inheritDoc}
@@ -112,10 +121,18 @@ public interface Profile {
          */
         @Override
         public Set<String> aliases() {
-            final Profile profile = this.origin.profile();
-            assert profile != null : "Profile is NULL";
-            final Set<String> aliases = new HashSet<String>(profile.aliases());
-            assert aliases != null : "Set of aliases in the profile is NULL";
+            final Set<String> aliases = new HashSet<String>(
+                this.origin.profile().aliases()
+            );
+            if (aliases == null) {
+                throw new IllegalStateException(
+                    String.format(
+                        "Set of aliases in the profile is NULL for '%s' (%s)",
+                        this.origin,
+                        this.origin.name()
+                    )
+                );
+            }
             if (aliases.isEmpty()) {
                 aliases.add(this.origin.name().toString());
             }

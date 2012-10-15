@@ -31,7 +31,7 @@ import com.netbout.hub.Hub;
 import com.netbout.spi.Bout;
 import com.netbout.spi.Friend;
 import com.netbout.spi.Identity;
-import com.netbout.spi.Profile;
+import com.netbout.spi.OwnProfile;
 import com.netbout.spi.Query;
 import com.netbout.spi.Urn;
 import java.net.URL;
@@ -201,7 +201,7 @@ public final class RemoteIdentity implements Identity {
      * {@inheritDoc}
      */
     @Override
-    public Profile profile() {
+    public OwnProfile profile() {
         this.validate();
         return this.iprofile;
     }

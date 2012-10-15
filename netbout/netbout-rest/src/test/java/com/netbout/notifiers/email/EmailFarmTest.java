@@ -66,7 +66,7 @@ public final class EmailFarmTest {
             .namedAs("urn:email:yegor%40tpc2%2Ecom")
             .mock();
         final Bout bout = new BoutMocker()
-            .withParticipant(receiver)
+            .withParticipant(receiver.name())
             .titledAs("some bout title")
             .mock();
         Mockito.doReturn(bout).when(identity).bout(Mockito.anyLong());

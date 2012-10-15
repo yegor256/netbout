@@ -30,7 +30,7 @@ import com.jcabi.log.Logger;
 import com.netbout.spi.Bout;
 import com.netbout.spi.Friend;
 import com.netbout.spi.Identity;
-import com.netbout.spi.Profile;
+import com.netbout.spi.OwnProfile;
 import com.netbout.spi.Query;
 import com.netbout.spi.Urn;
 import java.net.URL;
@@ -58,7 +58,7 @@ public final class HubIdentity implements Identity {
     /**
      * The profile.
      */
-    private final transient Profile iprofile;
+    private final transient OwnProfile iprofile;
 
     /**
      * Public ctor.
@@ -189,7 +189,7 @@ public final class HubIdentity implements Identity {
      * {@inheritDoc}
      */
     @Override
-    public Profile profile() {
+    public OwnProfile profile() {
         return this.iprofile;
     }
 

@@ -31,6 +31,7 @@ import com.netbout.spi.Bout;
 import com.netbout.spi.Friend;
 import com.netbout.spi.Message;
 import com.netbout.spi.Participant;
+import com.netbout.spi.Profile;
 import com.netbout.spi.Query;
 import com.netbout.spi.Urn;
 import java.io.DataInputStream;
@@ -149,6 +150,10 @@ public interface BoutNotice extends Notice {
                         }
                         @Override
                         public void consign() {
+                            throw new UnsupportedOperationException();
+                        }
+                        @Override
+                        public Profile profile() {
                             throw new UnsupportedOperationException();
                         }
                     }

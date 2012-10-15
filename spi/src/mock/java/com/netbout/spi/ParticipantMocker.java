@@ -89,6 +89,8 @@ public final class ParticipantMocker {
      * @return Mocked participant
      */
     public Participant mock() {
+        Mockito.doReturn(new ProfileMocker().mock())
+            .when(this.participant).profile();
         return this.participant;
     }
 

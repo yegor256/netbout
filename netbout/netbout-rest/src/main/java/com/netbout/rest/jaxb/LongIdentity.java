@@ -49,7 +49,7 @@ public class LongIdentity {
     /**
      * The identity.
      */
-    private transient Identity person;
+    private final transient Identity person;
 
     /**
      * Public ctor for JAXB.
@@ -81,8 +81,9 @@ public class LongIdentity {
      */
     @XmlElement
     public final String getLocale() {
-        return LongProfile.toLocale(this.person.profile().locale().toString())
-            .toString();
+        return LongProfile.toLocale(
+            this.person.profile().locale().toString()
+        ).toString();
     }
 
     /**

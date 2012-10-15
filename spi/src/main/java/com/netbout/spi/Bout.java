@@ -49,7 +49,7 @@ public interface Bout extends Comparable<Bout> {
 
     /**
      * If this person is already in the bout.
-     * @see Bout#invite(Identity)
+     * @see Bout#invite(Friend)
      */
     class DuplicateInvitationException extends Exception {
         /**
@@ -147,7 +147,7 @@ public interface Bout extends Comparable<Bout> {
      * participants you can use {@link Collection#contains(Object)} method with
      * {@link String}, {@link Friend}, {@link Urn}, {@link Identity}
      * or {@link Participant} as an argument. Actually, no matter what is the
-     * type of the argument, only its {@link toString()} result will matter.
+     * type of the argument, only its {@link #toString()} result will matter.
      *
      * @return The list of them
      */

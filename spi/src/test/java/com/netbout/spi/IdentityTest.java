@@ -167,4 +167,17 @@ public final class IdentityTest {
         );
     }
 
+    /**
+     * IdentityMocker can return non-null profile.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void mocksProfileCorrectly() throws Exception {
+        final Friend friend = new IdentityMocker().mock();
+        MatcherAssert.assertThat(
+            new Profile.Conventional(friend).aliases(),
+            Matchers.not(Matchers.empty())
+        );
+    }
+
 }

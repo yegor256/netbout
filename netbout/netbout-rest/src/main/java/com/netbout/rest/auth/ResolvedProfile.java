@@ -26,7 +26,7 @@
  */
 package com.netbout.rest.auth;
 
-import com.netbout.spi.Profile;
+import com.netbout.spi.OwnProfile;
 import java.net.URL;
 import java.util.Collections;
 import java.util.HashSet;
@@ -39,7 +39,7 @@ import java.util.Set;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-final class ResolvedProfile implements Profile {
+final class ResolvedProfile implements OwnProfile {
 
     /**
      * Locale.

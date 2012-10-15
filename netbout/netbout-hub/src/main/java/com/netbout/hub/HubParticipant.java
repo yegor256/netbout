@@ -28,7 +28,9 @@ package com.netbout.hub;
 
 import com.jcabi.log.Logger;
 import com.netbout.spi.Friend;
+import com.netbout.spi.Identity;
 import com.netbout.spi.Participant;
+import com.netbout.spi.Profile;
 import com.netbout.spi.Urn;
 
 /**
@@ -38,6 +40,11 @@ import com.netbout.spi.Urn;
  * @version $Id$
  */
 public final class HubParticipant implements Participant {
+
+    /**
+     * The hub.
+     */
+    private final transient Hub hub;
 
     /**
      * The data.
@@ -51,10 +58,13 @@ public final class HubParticipant implements Participant {
 
     /**
      * Public ctor.
+     * @param ihub Hub with data
      * @param dat The data
      * @param bdt Bout data
      */
-    public HubParticipant(final ParticipantDt dat, final BoutDt bdt) {
+    public HubParticipant(final Hub ihub,
+        final ParticipantDt dat, final BoutDt bdt) {
+        this.hub = ihub;
         this.data = dat;
         this.boutdt = bdt;
     }
@@ -119,6 +129,18 @@ public final class HubParticipant implements Participant {
     @Override
     public void consign() {
         this.boutdt.setLeader(this.name());
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Profile profile() {
+        try {
+            return this.hub.identity(this.name()).profile();
+        } catch (Identity.UnreachableUrnException ex) {
+            throw new IllegalStateException(ex);
+        }
     }
 
 }

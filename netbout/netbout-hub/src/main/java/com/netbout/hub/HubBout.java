@@ -238,7 +238,7 @@ public final class HubBout implements Bout {
         if (confirm) {
             dude.setConfirmed(true);
         }
-        return new HubParticipant(dude, this.data);
+        return new HubParticipant(this.hub, dude, this.data);
     }
 
     /**

@@ -54,7 +54,10 @@ public final class LongBoutTest {
         final Identity viewer = new IdentityMocker().mock();
         final LongBout obj = new LongBout(
             new HubMocker().mock(),
-            new BoutMocker().withParticipant(viewer).titledAs("foo").mock(),
+            new BoutMocker()
+                .withParticipant(viewer.name())
+                .titledAs("foo")
+                .mock(),
             new StageCoordinatesMocker().mock(),
             "some keyword",
             UriBuilder.fromUri("http://localhost"),

@@ -30,7 +30,7 @@ import com.netbout.spi.Bout;
 import com.netbout.spi.Friend;
 import com.netbout.spi.Helper;
 import com.netbout.spi.Identity;
-import com.netbout.spi.Profile;
+import com.netbout.spi.OwnProfile;
 import com.netbout.spi.Query;
 import com.netbout.spi.Token;
 import com.netbout.spi.Urn;
@@ -151,7 +151,7 @@ final class HelperIdentity implements Identity, Helper {
      * {@inheritDoc}
      */
     @Override
-    public Profile profile() {
+    public OwnProfile profile() {
         return this.identity.profile();
     }
 
