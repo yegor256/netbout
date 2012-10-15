@@ -60,35 +60,6 @@ public final class NetboutUtilsTest {
     }
 
     /**
-     * NetboutUtils can find a participant in bout.
-     * @throws Exception If there is some problem inside
-     */
-    @Test
-    public void findsParticipantInBout() throws Exception {
-        final Urn name = new UrnMocker().mock();
-        final Identity identity = new IdentityMocker().namedAs(name).mock();
-        final Bout bout = new BoutMocker().withParticipant(name).mock();
-        MatcherAssert.assertThat(
-            NetboutUtils.participantOf(identity, bout).identity().name(),
-            Matchers.equalTo(name)
-        );
-    }
-
-    /**
-     * NetboutUtils can check for participation.
-     * @throws Exception If there is some problem inside
-     */
-    @Test
-    public void checksForParticipationInBout() throws Exception {
-        final Urn name = new UrnMocker().mock();
-        final Bout bout = new BoutMocker().withParticipant(name).mock();
-        MatcherAssert.assertThat(
-            "he is in!",
-            NetboutUtils.participatesIn(name, bout)
-        );
-    }
-
-    /**
      * NetboutUtils can normalize a query.
      * @throws Exception If there is some problem inside
      */

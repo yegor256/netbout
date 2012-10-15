@@ -46,6 +46,75 @@ import java.util.Date;
 public interface Bout extends Comparable<Bout> {
 
     /**
+     * If this person is already in the bout.
+     * @see Bout#invite(Identity)
+     */
+    class DuplicateInvitationException extends Exception {
+        /**
+         * Serialization marker.
+         */
+        private static final long serialVersionUID = 0x7526FA7AEBD21470L;
+        /**
+         * Public ctor.
+         * @param cause The cause of the problem
+         */
+        public DuplicateInvitationException(final String cause) {
+            super(cause);
+        }
+    }
+
+    /**
+     * Thowable when message can't be posted.
+     * @see Bout#post(String)
+     */
+    class MessagePostException extends Exception {
+        /**
+         * Serialization marker.
+         */
+        private static final long serialVersionUID = 0x8726FA78BBD21470L;
+        /**
+         * Public ctor.
+         * @param cause The cause of the problem
+         */
+        public MessagePostException(final String cause) {
+            super(cause);
+        }
+        /**
+         * Public ctor.
+         * @param cause The cause of the problem
+         */
+        public MessagePostException(final Throwable cause) {
+            super(cause);
+        }
+        /**
+         * Public ctor.
+         * @param desc Description of the problem
+         * @param cause The cause of the problem
+         */
+        public MessagePostException(final String desc, final Throwable cause) {
+            super(desc, cause);
+        }
+    }
+
+    /**
+     * Thowable when message is not found.
+     * @see Bout#message(Long)
+     */
+    class MessageNotFoundException extends Exception {
+        /**
+         * Serialization marker.
+         */
+        private static final long serialVersionUID = 0x7526FA78EED67470L;
+        /**
+         * Public ctor.
+         * @param num Number of it
+         */
+        public MessageNotFoundException(final Long num) {
+            super(String.format("Message #%d not found", num));
+        }
+    }
+
+    /**
      * Get its unique number.
      * @return The number of the bout
      */
@@ -71,6 +140,13 @@ public interface Bout extends Comparable<Bout> {
 
     /**
      * Get all its participants.
+     *
+     * In order to check whether certain identity belongs to the list of
+     * participants you can use {@link Collection#contains(Object)} method with
+     * {@link String}, {@link Friend}, {@link Urn}, {@link Identity}
+     * or {@link Participant} as an argument. Actually, no matter what is the
+     * type of the argument, only its {@link toString()} result will matter.
+     *
      * @return The list of them
      */
     Collection<Participant> participants();
@@ -89,9 +165,10 @@ public interface Bout extends Comparable<Bout> {
      * Invite new participant.
      * @param identity Identity of the participant
      * @return This new participant
-     * @throws DuplicateInvitationException If this person is already here
+     * @throws Bout.DuplicateInvitationException If this person is already here
      */
-    Participant invite(Identity identity) throws DuplicateInvitationException;
+    Participant invite(Friend identity)
+        throws Bout.DuplicateInvitationException;
 
     /**
      * Get ordered list of all messages of the bout.
@@ -104,16 +181,16 @@ public interface Bout extends Comparable<Bout> {
      * Find message by ID.
      * @param number Number of the message to get
      * @return The message
-     * @throws MessageNotFoundException If not found
+     * @throws Bout.MessageNotFoundException If not found
      */
-    Message message(Long number) throws MessageNotFoundException;
+    Message message(Long number) throws Bout.MessageNotFoundException;
 
     /**
      * Post a new message.
      * @param text The text of the new message
      * @return The message just posted
-     * @throws MessagePostException If can't post it for some reason
+     * @throws Bout.MessagePostException If can't post it for some reason
      */
-    Message post(String text) throws MessagePostException;
+    Message post(String text) throws Bout.MessagePostException;
 
 }

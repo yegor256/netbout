@@ -91,11 +91,9 @@ public final class BoutTest {
      */
     @Test
     public void canAssignParticipantsToBout() throws Exception {
-        final Urn name = new UrnMocker().mock();
-        final Identity identity = new IdentityMocker().mock();
         final Bout bout = new BoutMocker()
-            .withParticipant(name.toString())
-            .withParticipant(identity)
+            .withParticipant(new UrnMocker().mock())
+            .withParticipant(new UrnMocker().mock())
             .mock();
         MatcherAssert.assertThat(
             bout.participants().size(),

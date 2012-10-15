@@ -30,34 +30,19 @@
 package com.netbout.spi;
 
 /**
- * Thowable when URN can't be reached by the system anyhow.
+ * Friend of {@link Identity}.
+ *
+ * <p>Instances of this interface must be thread-safe.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
- * @version $Id$
+ * @version $Id: Message.java 2241 2012-04-08 18:39:18Z guard $
  */
-public final class UnreachableUrnException extends Exception {
+public interface Friend extends Comparable<Friend> {
 
     /**
-     * Serialization marker.
+     * Get name of the identity, which is unique in the system.
+     * @return The name of the identity
      */
-    private static final long serialVersionUID = 0x7526FA78EFD214F0L;
-
-    /**
-     * Public ctor.
-     * @param urn The URN
-     * @param cause The cause of the exception
-     */
-    public UnreachableUrnException(final Urn urn, final String cause) {
-        super(String.format("%s: '%s'", cause, urn));
-    }
-
-    /**
-     * Public ctor.
-     * @param urn The URN
-     * @param cause The cause of the exception
-     */
-    public UnreachableUrnException(final Urn urn, final Throwable cause) {
-        super(urn.toString(), cause);
-    }
+    Urn name();
 
 }

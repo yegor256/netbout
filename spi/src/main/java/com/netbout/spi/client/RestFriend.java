@@ -27,28 +27,46 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
  * OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.netbout.spi;
+package com.netbout.spi.client;
+
+import com.netbout.spi.Friend;
+import com.netbout.spi.Urn;
 
 /**
- * If this person is already in the bout.
+ * Implementation of {@link Friend}, with no connection to REST API.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
- * @see Bout#invite(Identity)
  */
-public final class DuplicateInvitationException extends Exception {
+final class RestFriend implements Friend {
 
     /**
-     * Serialization marker.
+     * Name of it.
      */
-    private static final long serialVersionUID = 0x7526FA7AEBD21470L;
+    private final transient Urn iname;
 
     /**
      * Public ctor.
-     * @param cause The cause of the problem
+     * @param name The name of it
      */
-    public DuplicateInvitationException(final String cause) {
-        super(cause);
+    public RestFriend(final Urn name) {
+        this.iname = name;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public int compareTo(final Friend friend) {
+        return this.iname.compareTo(friend.name());
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Urn name() {
+        return this.iname;
     }
 
 }

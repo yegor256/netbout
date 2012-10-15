@@ -46,13 +46,13 @@ public final class ParticipantTest {
      */
     @Test
     public void setsIdentityOnDemand() throws Exception {
-        final Identity identity = new IdentityMocker().mock();
+        final Urn name = new UrnMocker().mock();
         final Participant participant = new ParticipantMocker()
-            .withIdentity(identity)
+            .withName(name)
             .mock();
         MatcherAssert.assertThat(
-            participant.identity(),
-            Matchers.equalTo(identity)
+            participant.name(),
+            Matchers.equalTo(name)
         );
     }
 

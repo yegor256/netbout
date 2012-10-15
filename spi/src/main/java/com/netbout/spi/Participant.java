@@ -37,19 +37,13 @@ package com.netbout.spi;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public interface Participant {
+public interface Participant extends Friend {
 
     /**
      * Which bout it is in?
      * @return The bout
      */
     Bout bout();
-
-    /**
-     * Who is a participant.
-     * @return The identity of the participant
-     */
-    Identity identity();
 
     /**
      * Did he confirm his participation already?

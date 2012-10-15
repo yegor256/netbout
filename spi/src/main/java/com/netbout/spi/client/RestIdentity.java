@@ -30,6 +30,7 @@
 package com.netbout.spi.client;
 
 import com.netbout.spi.Bout;
+import com.netbout.spi.Friend;
 import com.netbout.spi.Identity;
 import com.netbout.spi.Profile;
 import com.netbout.spi.Urn;
@@ -68,8 +69,8 @@ final class RestIdentity implements Identity {
      * {@inheritDoc}
      */
     @Override
-    public int compareTo(final Identity identity) {
-        return this.name().compareTo(identity.name());
+    public int compareTo(final Friend friend) {
+        return this.name().compareTo(friend.name());
     }
 
     /**
@@ -218,8 +219,8 @@ final class RestIdentity implements Identity {
      * {@inheritDoc}
      */
     @Override
-    public Identity friend(final Urn name) {
-        return new Friend(name);
+    public Friend friend(final Urn name) {
+        return new RestFriend(name);
     }
 
     /**
@@ -227,7 +228,7 @@ final class RestIdentity implements Identity {
      */
     @Override
     @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
-    public Set<Identity> friends(final String mask) {
+    public Set<Friend> friends(final String mask) {
         final List<String> names = this.client
             .get("reading 'friends' @rel link")
             .assertStatus(HttpURLConnection.HTTP_OK)
@@ -240,9 +241,9 @@ final class RestIdentity implements Identity {
             .assertXPath(String.format("/page/mask[.='%s']", mask))
             .assertXPath("/page/invitees")
             .xpath("/page/invitees/invitee/name/text()");
-        final Set<Identity> friends = new HashSet<Identity>();
+        final Set<Friend> friends = new HashSet<Friend>();
         for (String name : names) {
-            friends.add(new Friend(Urn.create(name)));
+            friends.add(new RestFriend(Urn.create(name)));
         }
         return Collections.unmodifiableSet(friends);
     }

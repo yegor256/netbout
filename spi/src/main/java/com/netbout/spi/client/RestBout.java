@@ -30,7 +30,7 @@
 package com.netbout.spi.client;
 
 import com.netbout.spi.Bout;
-import com.netbout.spi.Identity;
+import com.netbout.spi.Friend;
 import com.netbout.spi.Message;
 import com.netbout.spi.NetboutUtils;
 import com.netbout.spi.Participant;
@@ -190,8 +190,8 @@ final class RestBout implements Bout {
      * {@inheritDoc}
      */
     @Override
-    public Participant invite(final Identity identity) {
-        final Urn name = identity.name();
+    public Participant invite(final Friend friend) {
+        final Urn name = friend.name();
         final List<String> hrefs = this.client
             .queryParam("mask", name.toString())
             .get(String.format("reading suggestions for '%s'", name))
@@ -209,7 +209,7 @@ final class RestBout implements Bout {
                 String.format(
                     // @checkstyle LineLength (1 line)
                     "Can't invite '%s' to the bout because Netbout doesn't suggest any identities by this keyword",
-                    name
+                    friend
                 )
             );
         }

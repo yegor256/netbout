@@ -30,7 +30,7 @@
 package com.netbout.spi.client;
 
 import com.netbout.spi.Bout;
-import com.netbout.spi.Identity;
+import com.netbout.spi.Friend;
 import com.netbout.spi.Message;
 import com.netbout.spi.Urn;
 import java.util.Date;
@@ -101,8 +101,8 @@ final class XmlMessage implements Message {
      * {@inheritDoc}
      */
     @Override
-    public Identity author() {
-        return new Friend(Urn.create(this.byPath("/author/text()")));
+    public Friend author() {
+        return new RestFriend(Urn.create(this.byPath("/author/text()")));
     }
 
     /**

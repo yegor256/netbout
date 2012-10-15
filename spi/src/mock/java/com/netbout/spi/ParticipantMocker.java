@@ -49,19 +49,19 @@ public final class ParticipantMocker {
      * Public ctor.
      */
     public ParticipantMocker() {
-        this.withIdentity(new IdentityMocker().mock());
+        this.withName(new UrnMocker().mock());
         this.withConfirm(true);
         this.withLeader(false);
         this.inBout(new BoutMocker().mock());
     }
 
     /**
-     * This is the participant.
-     * @param identity The identity
+     * With this name.
+     * @param name Name of participant
      * @return This object
      */
-    public ParticipantMocker withIdentity(final Identity identity) {
-        Mockito.doReturn(identity).when(this.participant).identity();
+    public ParticipantMocker withName(final Urn name) {
+        Mockito.doReturn(name).when(this.participant).name();
         return this;
     }
 

@@ -59,7 +59,7 @@ public interface Message extends Comparable<Message> {
      * Author of this message, his identity.
      * @return The author
      */
-    Identity author();
+    Friend author();
 
     /**
      * Text of the message.

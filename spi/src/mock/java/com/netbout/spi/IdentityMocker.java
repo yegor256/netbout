@@ -107,7 +107,7 @@ public final class IdentityMocker {
                     }
                 }
             ).when(this.identity).bout(Mockito.anyLong());
-        } catch (com.netbout.spi.BoutNotFoundException ex) {
+        } catch (Identity.BoutNotFoundException ex) {
             throw new IllegalArgumentException(ex);
         }
     }

@@ -29,8 +29,6 @@
  */
 package com.netbout.spi;
 
-import com.jcabi.log.Logger;
-import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.Set;
@@ -41,6 +39,8 @@ import java.util.regex.Pattern;
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
+ * @todo #176 This entire class is a temporary workaround. It contains static
+ *  functions, which should be transformed into normal class methods.
  */
 public final class NetboutUtils {
 
@@ -139,56 +139,6 @@ public final class NetboutUtils {
             seen = msgs.iterator().next().seen();
         }
         return !seen;
-    }
-
-    /**
-     * Find a person in the bout, if he's there (otherwise throw a runtime
-     * exception).
-     * @param identity The person to find
-     * @param bout Where to find
-     * @return The participant
-     */
-    public static Participant participantOf(final Identity identity,
-        final Bout bout) {
-        final Collection<Participant> participants = bout.participants();
-        Participant found = null;
-        for (Participant participant : participants) {
-            if (participant.identity().name().equals(identity.name())) {
-                found = participant;
-            }
-        }
-        if (found == null) {
-            throw new IllegalStateException(
-                Logger.format(
-                    // @checkstyle LineLength (1 line)
-                    "Can't find myself ('%s') among %d participants in bout #%d: %[list]s",
-                    identity,
-                    participants.size(),
-                    bout.number(),
-                    participants
-                )
-            );
-        }
-        return found;
-    }
-
-    /**
-     * Checks whether this person participates in the bout.
-     * @param name Name of the person
-     * @param bout Where to find
-     * @return He is in?
-     */
-    public static boolean participatesIn(final Urn name,
-        final Bout bout) {
-        final Collection<Participant> participants = bout.participants();
-        boolean found = false;
-        for (Participant participant : participants) {
-            if (participant.identity().name().equals(name)) {
-                found = true;
-                break;
-            }
-        }
-        return found;
     }
 
 }

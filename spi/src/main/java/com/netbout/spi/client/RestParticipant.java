@@ -30,7 +30,7 @@
 package com.netbout.spi.client;
 
 import com.netbout.spi.Bout;
-import com.netbout.spi.Identity;
+import com.netbout.spi.Friend;
 import com.netbout.spi.Participant;
 import com.netbout.spi.Urn;
 import java.net.HttpURLConnection;
@@ -51,7 +51,7 @@ final class RestParticipant implements Participant {
     /**
      * Number of this guy.
      */
-    private final transient Urn name;
+    private final transient Urn iname;
 
     /**
      * Public ctor.
@@ -60,7 +60,15 @@ final class RestParticipant implements Participant {
      */
     public RestParticipant(final RestClient clnt, final Urn nam) {
         this.client = clnt;
-        this.name = nam;
+        this.iname = nam;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public int compareTo(final Friend friend) {
+        return this.name().compareTo(friend.name());
     }
 
     /**
@@ -75,8 +83,8 @@ final class RestParticipant implements Participant {
      * {@inheritDoc}
      */
     @Override
-    public Identity identity() {
-        return new Friend(this.name);
+    public Urn name() {
+        return this.iname;
     }
 
     /**
@@ -115,7 +123,7 @@ final class RestParticipant implements Participant {
             .assertStatus(HttpURLConnection.HTTP_OK)
             .assertXPath(this.xpath("", "/link[@rel='kickoff']"))
             .rel(this.xpath("", "/link[@rel='kickoff']/@href"))
-            .get(String.format("kicking off '%s' participant", this.name))
+            .get(String.format("kicking off '%s' participant", this.iname))
             .assertStatus(HttpURLConnection.HTTP_SEE_OTHER);
     }
 
@@ -142,7 +150,7 @@ final class RestParticipant implements Participant {
     private String xpath(final String condition, final String suffix) {
         return String.format(
             "/page/bout/participants/participant[identity='%s' %s]%s",
-            this.name,
+            this.iname,
             condition,
             suffix
         );
