@@ -90,7 +90,7 @@ public final class IdentityMocker {
                     return inbox;
                 }
             }
-        ).when(this.identity).inbox(Mockito.anyString());
+        ).when(this.identity).inbox(Mockito.any(Query.class));
         try {
             Mockito.doAnswer(
                 new Answer<Bout>() {
@@ -181,7 +181,7 @@ public final class IdentityMocker {
      * @param nums List of bout numbers to return
      * @return This object
      */
-    public IdentityMocker withInbox(final String query, final Long[] nums) {
+    public IdentityMocker withInbox(final Query query, final Long[] nums) {
         Mockito.doAnswer(
             new Answer<List<Bout>>() {
                 @Override

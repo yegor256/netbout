@@ -30,6 +30,7 @@
 package com.netbout.spi;
 
 import java.net.URL;
+import java.util.HashSet;
 import java.util.Locale;
 import java.util.Set;
 
@@ -78,5 +79,87 @@ public interface Profile {
      * @param alias The alias
      */
     void alias(String alias);
+
+    /**
+     * Profile with implemented conventions.
+     *
+     * <p>To avoid runtime exceptions and unexpected situations you're
+     * encouraged to use this class every time you're accessing a profile
+     * of an identity.
+     */
+    class Conventional implements Profile {
+        /**
+         * Original identity.
+         */
+        private final transient Identity origin;
+        /**
+         * Public ctor.
+         * @param identity Original identity
+         */
+        public Conventional(final Identity identity) {
+            this.origin = identity;
+        }
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public Locale locale() {
+            Locale locale = this.origin.profile().locale();
+            if (locale == null) {
+                locale = Locale.ENGLISH;
+            }
+            return locale;
+        }
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public void setLocale(final Locale locale) {
+            this.origin.profile().setLocale(locale);
+        }
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public URL photo() {
+            URL photo = this.origin.profile().photo();
+            if (photo == null) {
+                try {
+                    photo = new URL("http://cdn.netbout.com/unknown.png");
+                } catch (java.net.MalformedURLException ex) {
+                    throw new IllegalStateException(ex);
+                }
+            }
+            return photo;
+        }
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public void setPhoto(final URL url) {
+            this.origin.profile().setPhoto(url);
+        }
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public Set<String> aliases() {
+            final Profile profile = this.origin.profile();
+            assert profile != null : "Profile is NULL";
+            final Set<String> aliases = new HashSet<String>(profile.aliases());
+            assert aliases != null : "Set of aliases in the profile is NULL";
+            if (aliases.isEmpty()) {
+                aliases.add(this.origin.name().toString());
+            }
+            return aliases;
+        }
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public void alias(final String alias) {
+            this.origin.profile().alias(alias);
+        }
+    }
 
 }

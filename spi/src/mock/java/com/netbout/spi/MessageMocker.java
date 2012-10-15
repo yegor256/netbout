@@ -55,17 +55,6 @@ public final class MessageMocker {
         this.withAuthor(new UrnMocker().mock());
         this.withText("some text");
         this.withDate(new Date());
-        this.inBout(new BoutMocker().withMessage(this.message).mock());
-    }
-
-    /**
-     * In this bout.
-     * @param bout The bout
-     * @return This object
-     */
-    public MessageMocker inBout(final Bout bout) {
-        Mockito.doReturn(bout).when(this.message).bout();
-        return this;
     }
 
     /**

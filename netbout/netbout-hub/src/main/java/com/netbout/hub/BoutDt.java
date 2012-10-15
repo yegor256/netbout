@@ -26,6 +26,7 @@
  */
 package com.netbout.hub;
 
+import com.netbout.spi.Bout;
 import com.netbout.spi.Urn;
 import java.util.Collection;
 import java.util.Date;

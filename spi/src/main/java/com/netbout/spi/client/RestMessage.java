@@ -29,7 +29,6 @@
  */
 package com.netbout.spi.client;
 
-import com.netbout.spi.Bout;
 import com.netbout.spi.Friend;
 import com.netbout.spi.Message;
 import com.netbout.spi.Urn;
@@ -98,14 +97,6 @@ final class RestMessage implements Message {
     @Override
     public String toString() {
         return String.format("RestMessage#%d", this.number());
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Bout bout() {
-        return new RestBout(this.client.copy());
     }
 
     /**

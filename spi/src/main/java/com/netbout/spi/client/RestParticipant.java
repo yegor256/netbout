@@ -29,7 +29,6 @@
  */
 package com.netbout.spi.client;
 
-import com.netbout.spi.Bout;
 import com.netbout.spi.Friend;
 import com.netbout.spi.Participant;
 import com.netbout.spi.Urn;
@@ -77,14 +76,6 @@ final class RestParticipant implements Participant {
     @Override
     public int compareTo(final Friend friend) {
         return this.name().compareTo(friend.name());
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Bout bout() {
-        return new RestBout(this.client.copy());
     }
 
     /**

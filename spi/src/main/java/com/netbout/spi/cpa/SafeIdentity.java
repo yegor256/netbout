@@ -33,6 +33,7 @@ import com.netbout.spi.Bout;
 import com.netbout.spi.Friend;
 import com.netbout.spi.Identity;
 import com.netbout.spi.Profile;
+import com.netbout.spi.Query;
 import com.netbout.spi.Urn;
 import java.net.URL;
 import java.util.Iterator;
@@ -121,7 +122,7 @@ final class SafeIdentity implements Identity {
      * {@inheritDoc}
      */
     @Override
-    public Iterable<Bout> inbox(final String query) {
+    public Iterable<Bout> inbox(final Query query) {
         new Bump(this.identity).pause();
         final Iterable<Bout> bouts = this.identity.inbox(query);
         final Iterator<Bout> source = bouts.iterator();

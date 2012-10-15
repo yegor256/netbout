@@ -52,7 +52,6 @@ public final class ParticipantMocker {
         this.withName(new UrnMocker().mock());
         this.withConfirm(true);
         this.withLeader(false);
-        this.inBout(new BoutMocker().mock());
     }
 
     /**
@@ -82,16 +81,6 @@ public final class ParticipantMocker {
      */
     public ParticipantMocker withLeader(final Boolean flag) {
         Mockito.doReturn(flag).when(this.participant).leader();
-        return this;
-    }
-
-    /**
-     * In bout.
-     * @param bout The bout
-     * @return This object
-     */
-    public ParticipantMocker inBout(final Bout bout) {
-        Mockito.doReturn(bout).when(this.participant).bout();
         return this;
     }
 

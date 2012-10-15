@@ -33,6 +33,7 @@ import com.netbout.spi.Bout;
 import com.netbout.spi.Friend;
 import com.netbout.spi.Identity;
 import com.netbout.spi.Profile;
+import com.netbout.spi.Query;
 import com.netbout.spi.Urn;
 import java.net.HttpURLConnection;
 import java.net.URI;
@@ -176,9 +177,9 @@ final class RestIdentity implements Identity {
      */
     @Override
     @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
-    public Iterable<Bout> inbox(final String query) {
+    public Iterable<Bout> inbox(final Query query) {
         final List<String> hrefs = this.client
-            .queryParam(RestSession.QUERY_PARAM, query)
+            .queryParam(RestSession.QUERY_PARAM, query.toString())
             .queryParam(RestSession.BUNDLE_PARAM, "")
             .get(String.format("reading bouts in the inbox '%s'", query))
             .assertStatus(HttpURLConnection.HTTP_OK)

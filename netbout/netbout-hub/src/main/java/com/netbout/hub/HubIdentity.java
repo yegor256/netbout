@@ -28,6 +28,7 @@ package com.netbout.hub;
 
 import com.jcabi.log.Logger;
 import com.netbout.spi.Bout;
+import com.netbout.spi.Friend;
 import com.netbout.spi.Identity;
 import com.netbout.spi.NetboutUtils;
 import com.netbout.spi.Profile;
@@ -82,7 +83,7 @@ public final class HubIdentity implements Identity {
      * {@inheritDoc}
      */
     @Override
-    public int compareTo(final Identity identity) {
+    public int compareTo(final Friend friend) {
         return this.iname.compareTo(identity.name());
     }
 
@@ -195,7 +196,7 @@ public final class HubIdentity implements Identity {
      * @checkstyle RedundantThrows (4 lines)
      */
     @Override
-    public Identity friend(final Urn name)
+    public Friend friend(final Urn name)
         throws Identity.UnreachableUrnException {
         final Identity identity = this.hub.identity(name);
         Logger.debug(
@@ -210,8 +211,8 @@ public final class HubIdentity implements Identity {
      * {@inheritDoc}
      */
     @Override
-    public Set<Identity> friends(final String keyword) {
-        final Set<Identity> friends = this.hub.findByKeyword(this, keyword);
+    public Set<Friend> friends(final String keyword) {
+        final Set<Friend> friends = this.hub.findByKeyword(this, keyword);
         if (friends.contains(this)) {
             friends.remove(this);
         }

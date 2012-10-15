@@ -64,8 +64,8 @@ public final class IdentityTest {
             .withProfile(new ProfileMocker().withAlias(alias).mock())
             .mock();
         MatcherAssert.assertThat(
-            NetboutUtils.aliasOf(identity),
-            Matchers.equalTo(alias)
+            new Profile.Conventional(identity).aliases(),
+            Matchers.hasItem(alias)
         );
     }
 
@@ -108,7 +108,7 @@ public final class IdentityTest {
             Matchers.notNullValue()
         );
         MatcherAssert.assertThat(
-            identity.inbox(""),
+            identity.inbox(new Query.Textual("")),
             Matchers.<Bout>iterableWithSize(2)
         );
     }
@@ -133,7 +133,7 @@ public final class IdentityTest {
      */
     @Test
     public void mocksDifferentInboxQueries() throws Exception {
-        final String query = "some query";
+        final Query query = new Query.Textual("some query");
         final Identity identity = new IdentityMocker()
             .withBout(1L, new BoutMocker().mock())
             .withBout(2L, new BoutMocker().mock())
@@ -144,7 +144,7 @@ public final class IdentityTest {
             Matchers.<Bout>iterableWithSize(1)
         );
         MatcherAssert.assertThat(
-            identity.inbox(""),
+            identity.inbox(new Query.Textual("")),
             Matchers.<Bout>iterableWithSize(2)
         );
     }
@@ -162,7 +162,7 @@ public final class IdentityTest {
             .withBout(num - 1, new BoutMocker().withNumber(num - 1).mock())
             .mock();
         MatcherAssert.assertThat(
-            identity.inbox("").iterator().next().number(),
+            identity.inbox(new Query.Textual("")).iterator().next().number(),
             Matchers.equalTo(num + 1)
         );
     }

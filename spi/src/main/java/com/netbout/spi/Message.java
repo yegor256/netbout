@@ -44,12 +44,6 @@ import java.util.Date;
 public interface Message extends Comparable<Message> {
 
     /**
-     * Where this message is published.
-     * @return The bout
-     */
-    Bout bout();
-
-    /**
      * Unique number of the message, in the entire system.
      * @return The number
      */
@@ -63,12 +57,17 @@ public interface Message extends Comparable<Message> {
 
     /**
      * Text of the message.
-     * @return The text
+     *
+     * <p>As soon as you call this method the message considers to be
+     * "seen" and the next call to {@link #seen()} should return TRUE. Until
+     * this method is called {@link #seen()} sould return FALSE.
+     *
+     * @return The text of the message, in UTF-8
      */
     String text();
 
     /**
-     * Date when it was posted.
+     * Date when it was posted by the author.
      * @return The date
      */
     Date date();

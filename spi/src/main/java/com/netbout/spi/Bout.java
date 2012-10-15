@@ -175,7 +175,7 @@ public interface Bout extends Comparable<Bout> {
      * @param query Search query, if necessary
      * @return The list of them
      */
-    Iterable<Message> messages(String query);
+    Iterable<Message> messages(Query query);
 
     /**
      * Find message by ID.
@@ -192,5 +192,197 @@ public interface Bout extends Comparable<Bout> {
      * @throws Bout.MessagePostException If can't post it for some reason
      */
     Message post(String text) throws Bout.MessagePostException;
+
+    /**
+     * Smart implementation of {@link Bout}, which extends it with useful
+     * features.
+     */
+    class Smart implements Bout {
+        /**
+         * Original bout.
+         */
+        private final transient Bout origin;
+        /**
+         * Public ctor.
+         * @param bout The original bout
+         */
+        public Smart(final Bout bout) {
+            this.origin = bout;
+        }
+        /**
+         * Get the latest date of the bout (when it was updated by anyone).
+         * @return Its recent date
+         */
+        public Date updated() {
+            final Iterable<Message> msgs = this.latest();
+            Date recent = this.date();
+            if (msgs.iterator().hasNext()) {
+                final Message msg = msgs.iterator().next();
+                final Date mdate = msg.date();
+                if (mdate.before(recent)) {
+                    throw new IllegalArgumentException(
+                        String.format(
+                            // @checkstyle LineLength (1 line)
+                            "Message #%d in bout #%d created on '%s', which before bout was created '%s', how come?",
+                            msg.number(),
+                            this.number(),
+                            mdate,
+                            recent
+                        )
+                    );
+                }
+                recent = mdate;
+            }
+            return recent;
+        }
+        /**
+         * This bout was seen already and has nothing new to read?
+         * @return TRUE if this bout doesn't have anything new to read
+         * @todo #332 This implementation is very ineffective and should be
+         *  changed. We should introduce a new predicate in INF and use it.
+         *  Something like "(seen-by ?)".
+         */
+        public boolean seen() {
+            final Iterable<Message> msgs = this.latest();
+            boolean seen = true;
+            if (msgs.iterator().hasNext()) {
+                seen = msgs.iterator().next().seen();
+            }
+            return seen;
+        }
+        /**
+         * Find participant in the list of participants (or throw a runtime
+         * exception if not found).
+         * @param name Name of participant, with {@code #toString()}
+         * @return Participant found
+         */
+        public Participant participant(final Object name) {
+            Participant found = null;
+            for (Participant dude : this.participants()) {
+                if (dude.name().equals(name.toString())) {
+                    found = dude;
+                    break;
+                }
+            }
+            if (found == null) {
+                throw new IllegalStateException(
+                    String.format(
+                        "Can't find '%s' in %s",
+                        name,
+                        this
+                    )
+                );
+            }
+            return found;
+        }
+        /**
+         * Get a collection with one latest message.
+         * @return Collection with one msg
+         */
+        private Iterable<Message> latest() {
+            return this.messages(new Query.Textual("(pos 0)"));
+        }
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public int compareTo(final Bout bout) {
+            return this.origin.compareTo(bout);
+        }
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public boolean equals(final Object bout) {
+            return this.origin.equals(bout);
+        }
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public int hashCode() {
+            return this.origin.hashCode();
+        }
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public Long number() {
+            return this.origin.number();
+        }
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public String title() {
+            return this.origin.title();
+        }
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public Date date() {
+            return this.origin.date();
+        }
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public void rename(final String text) {
+            this.origin.rename(text);
+        }
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public void confirm() {
+            this.origin.confirm();
+        }
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public void leave() {
+            this.origin.leave();
+        }
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public Participant invite(final Friend friend)
+            throws Bout.DuplicateInvitationException {
+            return this.origin.invite(friend);
+        }
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public Collection<Participant> participants() {
+            return this.origin.participants();
+        }
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public Iterable<Message> messages(final Query query) {
+            return this.origin.messages(query);
+        }
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public Message message(final Long num)
+            throws Bout.MessageNotFoundException {
+            return this.origin.message(num);
+        }
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public Message post(final String text)
+            throws Bout.MessagePostException {
+            return this.origin.post(text);
+        }
+    }
 
 }

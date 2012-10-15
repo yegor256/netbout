@@ -72,8 +72,8 @@ public final class InfParticipant implements Participant {
      * {@inheritDoc}
      */
     @Override
-    public Identity identity() {
-        return new InfIdentity(this.data.getIdentity());
+    public Urn name() {
+        return this.data.getIdentity();
     }
 
     /**

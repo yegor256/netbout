@@ -30,8 +30,8 @@ import com.jcabi.log.Logger;
 import com.netbout.hub.BoutMgr;
 import com.netbout.hub.ParticipantDt;
 import com.netbout.hub.PowerHub;
-import com.netbout.spi.BoutNotFoundException;
-import com.netbout.spi.MessageNotFoundException;
+import com.netbout.spi.Bout;
+import com.netbout.spi.Identity;
 import com.netbout.spi.Urn;
 import java.util.Collections;
 import java.util.concurrent.ConcurrentHashMap;
@@ -108,7 +108,7 @@ public final class DefaultBoutMgr implements BoutMgr, MsgListener {
         BoutData data;
         try {
             data = this.find(number);
-        } catch (com.netbout.spi.BoutNotFoundException ex) {
+        } catch (Identity.BoutNotFoundException ex) {
             throw new IllegalStateException(ex);
         }
         final ParticipantDt dude = data.addParticipant(author);
@@ -128,7 +128,8 @@ public final class DefaultBoutMgr implements BoutMgr, MsgListener {
      * @checkstyle RedundantThrows (3 lines)
      */
     @Override
-    public BoutData boutOf(final Long msg) throws MessageNotFoundException {
+    public BoutData boutOf(final Long msg)
+        throws Bout.MessageNotFoundException {
         if (!this.cached.containsKey(msg)) {
             final Long bout = this.hub
                 .make("get-bout-of-message")
@@ -137,13 +138,13 @@ public final class DefaultBoutMgr implements BoutMgr, MsgListener {
                 .asDefault(0L)
                 .exec();
             if (bout == 0) {
-                throw new MessageNotFoundException(msg);
+                throw new Bout.MessageNotFoundException(msg);
             }
             this.cached.put(msg, bout);
         }
         try {
             return this.find(this.cached.get(msg));
-        } catch (com.netbout.spi.BoutNotFoundException ex) {
+        } catch (Identity.BoutNotFoundException ex) {
             throw new IllegalStateException(ex);
         }
     }
@@ -153,7 +154,8 @@ public final class DefaultBoutMgr implements BoutMgr, MsgListener {
      * @checkstyle RedundantThrows (3 lines)
      */
     @Override
-    public BoutData find(final Long number) throws BoutNotFoundException {
+    public BoutData find(final Long number)
+        throws Identity.BoutNotFoundException {
         synchronized (this.bouts) {
             assert number != null;
             if (!this.bouts.containsKey(number)) {
@@ -164,7 +166,7 @@ public final class DefaultBoutMgr implements BoutMgr, MsgListener {
                     .asDefault(true)
                     .exec();
                 if (!exists) {
-                    throw new BoutNotFoundException(number);
+                    throw new Identity.BoutNotFoundException(number);
                 }
                 this.bouts.put(number, new BoutData(this.hub, number, this));
                 Logger.debug(

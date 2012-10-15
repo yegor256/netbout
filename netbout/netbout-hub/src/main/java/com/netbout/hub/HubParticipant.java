@@ -95,12 +95,8 @@ public final class HubParticipant implements Participant {
      * {@inheritDoc}
      */
     @Override
-    public Identity identity() {
-        try {
-            return this.hub.identity(this.data.getIdentity());
-        } catch (com.netbout.spi.UnreachableUrnException ex) {
-            throw new IllegalStateException(ex);
-        }
+    public Urn name() {
+        return this.data.getIdentity();
     }
 
     /**
@@ -108,12 +104,11 @@ public final class HubParticipant implements Participant {
      */
     @Override
     public void kickOff() {
-        final Identity identity = this.identity();
-        this.boutdt.kickOff(identity.name());
+        this.boutdt.kickOff(this.name());
         Logger.info(
             this,
             "Participant '%s' was kicked-off from bout #%d",
-            identity.name(),
+            this.name(),
             this.ibout.number()
         );
     }
@@ -139,7 +134,7 @@ public final class HubParticipant implements Participant {
      */
     @Override
     public void consign() {
-        this.boutdt.setLeader(this.identity().name());
+        this.boutdt.setLeader(this.name());
     }
 
 }

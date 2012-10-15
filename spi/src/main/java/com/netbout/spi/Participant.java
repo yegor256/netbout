@@ -40,30 +40,24 @@ package com.netbout.spi;
 public interface Participant extends Friend {
 
     /**
-     * Which bout it is in?
-     * @return The bout
-     */
-    Bout bout();
-
-    /**
      * Did he confirm his participation already?
      * @return Yes or no?
      */
     boolean confirmed();
 
     /**
-     * Is he a leader?
+     * Is he a leader in the bout?
      * @return Yes or no?
      */
     boolean leader();
 
     /**
-     * He is a leader now.
+     * Make this participant a leader in the bout.
      */
     void consign();
 
     /**
-     * Kick him off this bout.
+     * Kick him off of this bout.
      */
     void kickOff();
 

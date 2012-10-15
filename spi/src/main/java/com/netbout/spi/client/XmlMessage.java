@@ -29,7 +29,6 @@
  */
 package com.netbout.spi.client;
 
-import com.netbout.spi.Bout;
 import com.netbout.spi.Friend;
 import com.netbout.spi.Message;
 import com.netbout.spi.Urn;
@@ -46,11 +45,6 @@ import org.joda.time.format.ISODateTimeFormat;
 final class XmlMessage implements Message {
 
     /**
-     * Rest client.
-     */
-    private final transient RestClient client;
-
-    /**
      * Rest response.
      */
     private final transient RestResponse response;
@@ -62,13 +56,10 @@ final class XmlMessage implements Message {
 
     /**
      * Public ctor.
-     * @param clnt REST client
      * @param resp REST response
      * @param number Number of the message
      */
-    public XmlMessage(final RestClient clnt, final RestResponse resp,
-        final Long number) {
-        this.client = clnt;
+    public XmlMessage(final RestResponse resp, final Long number) {
         this.response = resp;
         this.num = number;
     }
@@ -79,14 +70,6 @@ final class XmlMessage implements Message {
     @Override
     public int compareTo(final Message msg) {
         return this.date().compareTo(msg.date());
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Bout bout() {
-        return new RestBout(this.client.copy());
     }
 
     /**

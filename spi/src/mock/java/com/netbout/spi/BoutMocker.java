@@ -69,7 +69,7 @@ public final class BoutMocker {
      */
     public BoutMocker() {
         Mockito.doReturn(this.messages).when(this.bout)
-            .messages(Mockito.anyString());
+            .messages(Mockito.any(Query.class));
         Mockito.doReturn(this.participants).when(this.bout).participants();
         try {
             Mockito.doAnswer(
@@ -127,7 +127,6 @@ public final class BoutMocker {
     public BoutMocker withMessage(final String text) {
         return this.withMessage(
             new MessageMocker()
-                .inBout(this.bout)
                 .withText(text)
                 .mock()
         );
@@ -160,7 +159,11 @@ public final class BoutMocker {
             }
         )
             .when(this.bout)
-            .messages(Mockito.argThat(Matchers.containsString(mask)));
+            .messages(
+                Mockito.<Query>argThat(
+                    Matchers.<Query>hasToString(Matchers.containsString(mask))
+                )
+            );
         return this;
     }
 
@@ -191,7 +194,6 @@ public final class BoutMocker {
     public BoutMocker withParticipant(final Urn name) {
         return this.withParticipant(
             new ParticipantMocker()
-                .inBout(this.bout)
                 .withName(name)
                 .mock()
         );

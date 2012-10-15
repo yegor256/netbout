@@ -29,6 +29,7 @@ package com.netbout.hub.inf;
 import com.netbout.hub.BoutDt;
 import com.netbout.hub.ParticipantDt;
 import com.netbout.spi.Bout;
+import com.netbout.spi.Friend;
 import com.netbout.spi.Identity;
 import com.netbout.spi.Message;
 import com.netbout.spi.Participant;
@@ -135,7 +136,7 @@ public final class InfBout implements Bout {
      * {@inheritDoc}
      */
     @Override
-    public Participant invite(final Identity friend) {
+    public Participant invite(final Friend friend) {
         throw new UnsupportedOperationException("#invite()");
     }
 
@@ -143,14 +144,8 @@ public final class InfBout implements Bout {
      * {@inheritDoc}
      */
     @Override
-    @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
     public Collection<Participant> participants() {
-        final Collection<Participant> participants =
-            new LinkedList<Participant>();
-        for (ParticipantDt dude : this.data.getParticipants()) {
-            participants.add(new InfParticipant(dude));
-        }
-        return participants;
+        return new ParticipantDt.Participants(this.data.getParticipants());
     }
 
     /**

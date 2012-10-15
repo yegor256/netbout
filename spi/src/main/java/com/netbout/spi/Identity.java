@@ -117,7 +117,7 @@ public interface Identity extends Friend {
      * @param query Search query, if necessary
      * @return The list of bouts
      */
-    Iterable<Bout> inbox(String query);
+    Iterable<Bout> inbox(Query query);
 
     /**
      * Get bout by its unique ID.

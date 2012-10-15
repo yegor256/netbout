@@ -32,8 +32,8 @@ package com.netbout.spi.client;
 import com.netbout.spi.Bout;
 import com.netbout.spi.Friend;
 import com.netbout.spi.Message;
-import com.netbout.spi.NetboutUtils;
 import com.netbout.spi.Participant;
+import com.netbout.spi.Query;
 import com.netbout.spi.Urn;
 import java.net.HttpURLConnection;
 import java.net.URI;
@@ -80,7 +80,9 @@ final class RestBout implements Bout {
      */
     @Override
     public int compareTo(final Bout bout) {
-        return NetboutUtils.dateOf(this).compareTo(NetboutUtils.dateOf(bout));
+        return new Bout.Smart(this).updated().compareTo(
+            new Bout.Smart(bout).updated()
+        );
     }
 
     /**
@@ -214,9 +216,9 @@ final class RestBout implements Bout {
      */
     @Override
     @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
-    public Iterable<Message> messages(final String query) {
+    public Iterable<Message> messages(final Query query) {
         final RestResponse response = this.client
-            .queryParam(RestSession.QUERY_PARAM, query)
+            .queryParam(RestSession.QUERY_PARAM, query.toString())
             .get("bout.messages(..)");
         final List<String> nums = response
             .assertStatus(HttpURLConnection.HTTP_OK)
@@ -224,13 +226,7 @@ final class RestBout implements Bout {
             .xpath("/page/bout/messages/message/number/text()");
         final List<Message> msgs = new ArrayList<Message>();
         for (String num : nums) {
-            msgs.add(
-                new XmlMessage(
-                    this.client.copy(),
-                    response,
-                    Long.valueOf(num)
-                )
-            );
+            msgs.add(new XmlMessage(response, Long.valueOf(num)));
         }
         return Collections.unmodifiableList(msgs);
     }

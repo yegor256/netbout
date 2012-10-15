@@ -34,6 +34,7 @@ import com.netbout.spi.Friend;
 import com.netbout.spi.Identity;
 import com.netbout.spi.Message;
 import com.netbout.spi.Participant;
+import com.netbout.spi.Query;
 import java.util.Collection;
 import java.util.Date;
 
@@ -145,7 +146,7 @@ final class SafeBout implements Bout {
      * {@inheritDoc}
      */
     @Override
-    public Iterable<Message> messages(final String query) {
+    public Iterable<Message> messages(final Query query) {
         new Bump(this.identity).pause();
         return this.bout.messages(query);
     }
