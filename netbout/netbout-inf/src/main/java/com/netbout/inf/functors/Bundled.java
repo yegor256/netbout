@@ -214,7 +214,7 @@ final class Bundled implements Functor {
     private static String marker(final Bout bout) {
         final Set<Urn> names = new TreeSet<Urn>();
         for (Participant dude : bout.participants()) {
-            names.add(dude.identity().name());
+            names.add(dude.name());
         }
         return Logger.format("%[list]s", names);
     }

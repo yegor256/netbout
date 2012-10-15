@@ -99,8 +99,8 @@ public final class MessageNoticeTest {
         final Participant found = restored.message().bout()
             .participants().iterator().next();
         MatcherAssert.assertThat(
-            found.identity().name(),
-            Matchers.equalTo(dude.identity().name())
+            found.name(),
+            Matchers.equalTo(dude.name())
         );
         MatcherAssert.assertThat(
             found.leader(),

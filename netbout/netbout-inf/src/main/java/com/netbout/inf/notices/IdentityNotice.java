@@ -28,6 +28,7 @@ package com.netbout.inf.notices;
 
 import com.netbout.inf.Notice;
 import com.netbout.spi.Bout;
+import com.netbout.spi.Friend;
 import com.netbout.spi.Identity;
 import com.netbout.spi.Profile;
 import com.netbout.spi.Urn;
@@ -127,11 +128,11 @@ public interface IdentityNotice extends Notice {
                     throw new UnsupportedOperationException();
                 }
                 @Override
-                public Set<Identity> friends(final String query) {
+                public Set<Friend> friends(final String query) {
                     throw new UnsupportedOperationException();
                 }
                 @Override
-                public Identity friend(final Urn name) {
+                public Friend friend(final Urn name) {
                     throw new UnsupportedOperationException();
                 }
                 @Override
@@ -155,8 +156,8 @@ public interface IdentityNotice extends Notice {
                     throw new UnsupportedOperationException();
                 }
                 @Override
-                public int compareTo(final Identity identity) {
-                    return name.compareTo(identity.name());
+                public int compareTo(final Friend friend) {
+                    return name.compareTo(friend.name());
                 }
             };
         }

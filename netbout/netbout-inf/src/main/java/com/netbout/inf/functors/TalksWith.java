@@ -80,7 +80,7 @@ final class TalksWith implements Functor {
             ray.cursor().add(
                 ray.builder().picker(number),
                 TalksWith.ATTR,
-                dude.identity().name().toString()
+                dude.name().toString()
             );
         }
     }
