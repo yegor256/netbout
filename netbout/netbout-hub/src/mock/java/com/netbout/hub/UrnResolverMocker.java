@@ -27,6 +27,7 @@
 package com.netbout.hub;
 
 import com.jcabi.log.Logger;
+import com.netbout.spi.Identity;
 import com.netbout.spi.Urn;
 import java.net.URL;
 import java.util.concurrent.ConcurrentHashMap;
@@ -77,7 +78,7 @@ public final class UrnResolverMocker {
         try {
             Mockito.doAnswer(answer).when(this.resolver)
                 .authority(Mockito.any(Urn.class));
-        } catch (com.netbout.spi.UnreachableUrnException ex) {
+        } catch (Identity.UnreachableUrnException ex) {
             throw new IllegalArgumentException(ex);
         }
     }

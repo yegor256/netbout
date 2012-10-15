@@ -29,8 +29,10 @@
  */
 package com.netbout.spi;
 
+import com.jcabi.log.Logger;
 import java.util.Collection;
 import java.util.Date;
+import java.util.LinkedList;
 
 /**
  * Bout, a conversation room.
@@ -253,23 +255,33 @@ public interface Bout extends Comparable<Bout> {
         /**
          * Find participant in the list of participants (or throw a runtime
          * exception if not found).
-         * @param name Name of participant, with {@code #toString()}
+         * @param obj Participant, with {@code #toString()}
          * @return Participant found
          */
-        public Participant participant(final Object name) {
+        public Participant participant(final Object obj) {
+            String name;
+            if (obj instanceof Friend) {
+                name = Friend.class.cast(obj).name().toString();
+            } else {
+                name = obj.toString();
+            }
             Participant found = null;
+            final Collection<Urn> names = new LinkedList<Urn>();
             for (Participant dude : this.participants()) {
-                if (dude.name().equals(name.toString())) {
+                names.add(dude.name());
+                if (dude.name().equals(name)) {
                     found = dude;
                     break;
                 }
             }
             if (found == null) {
                 throw new IllegalStateException(
-                    String.format(
-                        "Can't find '%s' in %s",
+                    Logger.format(
+                        "Can't find '%s' in %s among %d participants: %[list]s",
                         name,
-                        this
+                        this,
+                        names.size(),
+                        names
                     )
                 );
             }

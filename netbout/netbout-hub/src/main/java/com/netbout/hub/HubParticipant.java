@@ -27,9 +27,9 @@
 package com.netbout.hub;
 
 import com.jcabi.log.Logger;
-import com.netbout.spi.Bout;
-import com.netbout.spi.Identity;
+import com.netbout.spi.Friend;
 import com.netbout.spi.Participant;
+import com.netbout.spi.Urn;
 
 /**
  * Identity.
@@ -38,16 +38,6 @@ import com.netbout.spi.Participant;
  * @version $Id$
  */
 public final class HubParticipant implements Participant {
-
-    /**
-     * The hub.
-     */
-    private final transient PowerHub hub;
-
-    /**
-     * The bout I'm in (from the point of view of current viewer).
-     */
-    private final transient Bout ibout;
 
     /**
      * The data.
@@ -61,16 +51,10 @@ public final class HubParticipant implements Participant {
 
     /**
      * Public ctor.
-     * @param ihub The hub
-     * @param bout The bout
      * @param dat The data
      * @param bdt Bout data
-     * @checkstyle ParameterNumber (3 lines)
      */
-    public HubParticipant(final PowerHub ihub, final Bout bout,
-        final ParticipantDt dat, final BoutDt bdt) {
-        this.hub = ihub;
-        this.ibout = bout;
+    public HubParticipant(final ParticipantDt dat, final BoutDt bdt) {
         this.data = dat;
         this.boutdt = bdt;
     }
@@ -79,16 +63,16 @@ public final class HubParticipant implements Participant {
      * {@inheritDoc}
      */
     @Override
-    public String toString() {
-        return this.data.getIdentity().toString();
+    public int compareTo(final Friend friend) {
+        return this.name().compareTo(friend.name());
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public Bout bout() {
-        return this.ibout;
+    public String toString() {
+        return this.data.getIdentity().toString();
     }
 
     /**
@@ -109,7 +93,7 @@ public final class HubParticipant implements Participant {
             this,
             "Participant '%s' was kicked-off from bout #%d",
             this.name(),
-            this.ibout.number()
+            this.boutdt.getNumber()
         );
     }
 

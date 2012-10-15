@@ -122,7 +122,7 @@ public final class DefaultUrnResolverTest {
      * DefaultUrnResolver can throw exception if namespace is absent.
      * @throws Exception If there is some problem inside
      */
-    @Test(expected = com.netbout.spi.UnreachableUrnException.class)
+    @Test(expected = Identity.UnreachableUrnException.class)
     public void thowsOnAbsentNamespace() throws Exception {
         final Hub hub = new HubMocker().mock();
         new DefaultUrnResolver(hub).authority(new Urn("absent", ""));
@@ -140,7 +140,7 @@ public final class DefaultUrnResolverTest {
         try {
             resolver.authority(new Urn(namespace, ""));
             throw new AssertionError("we shouldn't reach this point");
-        } catch (com.netbout.spi.UnreachableUrnException ex) {
+        } catch (Identity.UnreachableUrnException ex) {
             MatcherAssert.assertThat(
                 ex.getMessage(),
                 Matchers.containsString(namespace)

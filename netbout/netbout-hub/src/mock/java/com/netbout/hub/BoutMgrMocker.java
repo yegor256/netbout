@@ -26,6 +26,7 @@
  */
 package com.netbout.hub;
 
+import com.netbout.spi.Identity;
 import com.netbout.spi.Urn;
 import com.netbout.spi.UrnMocker;
 import java.util.Random;
@@ -83,7 +84,7 @@ public final class BoutMgrMocker {
                     }
                 }
             ).when(this.mgr).find(Mockito.anyLong());
-        } catch (com.netbout.spi.BoutNotFoundException ex) {
+        } catch (Identity.BoutNotFoundException ex) {
             throw new IllegalArgumentException(ex);
         }
         return this.mgr;

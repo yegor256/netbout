@@ -28,6 +28,7 @@ package com.netbout.hh;
 
 import com.netbout.hub.PowerHub;
 import com.netbout.inf.notices.MessagePostedNotice;
+import com.netbout.spi.Bout;
 import com.netbout.spi.Identity;
 import com.netbout.spi.Message;
 import com.netbout.spi.Urn;
@@ -47,6 +48,7 @@ import org.apache.commons.lang.CharEncoding;
  * @version $Id$
  */
 @Farm
+@SuppressWarnings("PMD.TooManyMethods")
 public final class StatsFarm implements IdentityAware {
 
     /**
@@ -155,15 +157,19 @@ public final class StatsFarm implements IdentityAware {
                     .synchronously()
                     .arg(bnum)
                     .exec();
-                final Message msg = StatsFarm.hub
+                final Bout bout = StatsFarm.hub
                     .identity(dudes.get(0))
-                    .bout(bnum)
-                    .message(mnum);
+                    .bout(bnum);
+                final Message message = bout.message(mnum);
                 StatsFarm.hub.infinity().see(
                     new MessagePostedNotice() {
                         @Override
                         public Message message() {
-                            return msg;
+                            return message;
+                        }
+                        @Override
+                        public Bout bout() {
+                            return bout;
                         }
                     }
                 );

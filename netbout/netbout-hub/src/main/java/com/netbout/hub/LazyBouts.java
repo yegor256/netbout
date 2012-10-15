@@ -107,9 +107,9 @@ public final class LazyBouts implements Iterable<Bout> {
                     LazyBouts.this.manager.boutOf(this.iterator.next())
                         .getNumber()
                 );
-            } catch (com.netbout.spi.BoutNotFoundException ex) {
+            } catch (Identity.BoutNotFoundException ex) {
                 throw new IllegalStateException(ex);
-            } catch (com.netbout.spi.MessageNotFoundException ex) {
+            } catch (Bout.MessageNotFoundException ex) {
                 throw new IllegalStateException(ex);
             }
         }

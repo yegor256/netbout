@@ -30,6 +30,7 @@ import com.netbout.inf.Infinity;
 import com.netbout.spi.Bout;
 import com.netbout.spi.Identity;
 import com.netbout.spi.IdentityMocker;
+import com.netbout.spi.Query;
 import com.netbout.spi.Urn;
 import com.netbout.spi.UrnMocker;
 import org.apache.commons.lang.StringUtils;
@@ -134,17 +135,20 @@ public final class HubBoutTest {
         Mockito.doReturn(infinity).when(ihub).infinity();
         final Identity identity = new IdentityMocker().mock();
         final BoutDt data = new BoutDtMocker().mock();
-        new HubBout(ihub, identity, data).messages("(pos 1)");
+        new HubBout(ihub, identity, data)
+            .messages(new Query.Textual("(pos 1)"));
         Mockito.verify(infinity).messages(
-            Mockito.argThat(
-                Matchers.<String>allOf(
-                    Matchers.containsString(
-                        String.format(
-                            "(equal $bout.number %d)",
-                            data.getNumber()
-                        )
-                    ),
-                    Matchers.not(Matchers.containsString("'(pos 1)'"))
+            Mockito.<Query>argThat(
+                Matchers.<Query>hasToString(
+                    Matchers.<String>allOf(
+                        Matchers.containsString(
+                            String.format(
+                                "(equal $bout.number %d)",
+                                data.getNumber()
+                            )
+                        ),
+                        Matchers.not(Matchers.containsString("'(pos 1)'"))
+                    )
                 )
             )
         );

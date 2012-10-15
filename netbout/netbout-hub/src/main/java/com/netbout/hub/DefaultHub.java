@@ -220,7 +220,7 @@ public final class DefaultHub implements PowerHub {
 
     /**
      * {@inheritDoc}
-     * @checkstyle RedundantThrows (3 lines)
+     * @checkstyle RedundantThrows (4 lines)
      */
     @Override
     public Identity identity(final Urn name)
@@ -395,7 +395,7 @@ public final class DefaultHub implements PowerHub {
                 .arg(name)
                 .exec();
             try {
-                this.promote(persister.friend(name), url);
+                this.promote(this.identity(name), url);
             } catch (Identity.UnreachableUrnException ex) {
                 Logger.error(
                     this,

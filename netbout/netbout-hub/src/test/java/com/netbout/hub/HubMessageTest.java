@@ -26,8 +26,6 @@
  */
 package com.netbout.hub;
 
-import com.netbout.spi.Bout;
-import com.netbout.spi.BoutMocker;
 import com.netbout.spi.Identity;
 import com.netbout.spi.IdentityMocker;
 import com.netbout.spi.Message;
@@ -51,9 +49,8 @@ public final class HubMessageTest {
     public void wrapsMessageDtDataProperties() throws Exception {
         final PowerHub hub = new PowerHubMocker().mock();
         final Identity viewer = new IdentityMocker().mock();
-        final Bout bout = new BoutMocker().mock();
         final MessageDt data = Mockito.mock(MessageDt.class);
-        final Message msg = new HubMessage(hub, viewer, bout, data);
+        final Message msg = new HubMessage(hub, viewer, data);
         msg.number();
         Mockito.verify(data).getNumber();
         msg.author();
@@ -72,11 +69,10 @@ public final class HubMessageTest {
     public void exposesEqualityFeature() throws Exception {
         final PowerHub hub = new PowerHubMocker().mock();
         final Identity viewer = new IdentityMocker().mock();
-        final Bout bout = new BoutMocker().mock();
         final MessageDt data = Mockito.mock(MessageDt.class);
         MatcherAssert.assertThat(
-            new HubMessage(hub, viewer, bout, data),
-            Matchers.equalTo(new HubMessage(hub, viewer, bout, data))
+            new HubMessage(hub, viewer, data),
+            Matchers.equalTo(new HubMessage(hub, viewer, data))
         );
     }
 

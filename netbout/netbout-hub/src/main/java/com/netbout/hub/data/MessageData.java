@@ -30,10 +30,12 @@ import com.jcabi.log.Logger;
 import com.netbout.hub.BoutDt;
 import com.netbout.hub.MessageDt;
 import com.netbout.hub.PowerHub;
+import com.netbout.hub.inf.InfBout;
 import com.netbout.hub.inf.InfIdentity;
 import com.netbout.hub.inf.InfMessage;
 import com.netbout.inf.notices.MessagePostedNotice;
 import com.netbout.inf.notices.MessageSeenNotice;
+import com.netbout.spi.Bout;
 import com.netbout.spi.Identity;
 import com.netbout.spi.Message;
 import com.netbout.spi.Urn;
@@ -207,10 +209,11 @@ final class MessageData implements MessageDt {
             new MessagePostedNotice() {
                 @Override
                 public Message message() {
-                    return new InfMessage(
-                        MessageData.this,
-                        MessageData.this.bdata
-                    );
+                    return new InfMessage(MessageData.this);
+                }
+                @Override
+                public Bout bout() {
+                    return new InfBout(MessageData.this.bdata);
                 }
             }
         );
@@ -256,10 +259,7 @@ final class MessageData implements MessageDt {
                     new MessageSeenNotice() {
                         @Override
                         public Message message() {
-                            return new InfMessage(
-                                MessageData.this,
-                                MessageData.this.bdata
-                            );
+                            return new InfMessage(MessageData.this);
                         }
                         @Override
                         public Identity identity() {

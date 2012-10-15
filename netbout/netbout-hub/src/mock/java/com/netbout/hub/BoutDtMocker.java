@@ -102,6 +102,20 @@ public final class BoutDtMocker {
     }
 
     /**
+     * With this participant on board.
+     * @param participant The participant
+     * @return This object
+     */
+    public BoutDtMocker withParticipant(final Urn participant) {
+        this.participants.add(
+            new ParticipantDtMocker()
+                .withIdentity(participant)
+                .mock()
+        );
+        return this;
+    }
+
+    /**
      * Copy it.
      * @return New mocker
      */

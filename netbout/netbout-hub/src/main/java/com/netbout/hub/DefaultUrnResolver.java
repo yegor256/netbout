@@ -28,7 +28,6 @@ package com.netbout.hub;
 
 import com.jcabi.log.Logger;
 import com.netbout.spi.Identity;
-import com.netbout.spi.UnreachableUrnException;
 import com.netbout.spi.Urn;
 import java.net.URL;
 import java.util.ArrayList;
@@ -162,21 +161,22 @@ final class DefaultUrnResolver implements UrnResolver {
 
     /**
      * {@inheritDoc}
-     * @checkstyle RedundantThrows (3 lines)
+     * @checkstyle RedundantThrows (5 lines)
      */
     @Override
-    public URL authority(final Urn urn) throws UnreachableUrnException {
+    public URL authority(final Urn urn)
+        throws Identity.UnreachableUrnException {
         String template;
         try {
             template = this.load(urn.nid());
         } catch (NamespaceNotFoundException ex) {
-            throw new UnreachableUrnException(urn, ex);
+            throw new Identity.UnreachableUrnException(urn, ex);
         }
         URL result;
         try {
             result = new URL(template.replace(UrnResolver.MARKER, urn.nss()));
         } catch (java.net.MalformedURLException ex) {
-            throw new UnreachableUrnException(urn, ex);
+            throw new Identity.UnreachableUrnException(urn, ex);
         }
         Logger.debug(
             this,

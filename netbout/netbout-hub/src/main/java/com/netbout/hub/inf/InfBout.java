@@ -30,12 +30,11 @@ import com.netbout.hub.BoutDt;
 import com.netbout.hub.ParticipantDt;
 import com.netbout.spi.Bout;
 import com.netbout.spi.Friend;
-import com.netbout.spi.Identity;
 import com.netbout.spi.Message;
 import com.netbout.spi.Participant;
+import com.netbout.spi.Query;
 import java.util.Collection;
 import java.util.Date;
-import java.util.LinkedList;
 
 /**
  * Bout we push to identity.
@@ -152,7 +151,7 @@ public final class InfBout implements Bout {
      * {@inheritDoc}
      */
     @Override
-    public Iterable<Message> messages(final String query) {
+    public Iterable<Message> messages(final Query query) {
         throw new UnsupportedOperationException("#messages()");
     }
 

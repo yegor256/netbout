@@ -84,7 +84,7 @@ public final class PowerHubMocker {
                     }
                 }
             ).when(this.hub).identity(Mockito.any(Urn.class));
-        } catch (com.netbout.spi.UnreachableUrnException ex) {
+        } catch (Identity.UnreachableUrnException ex) {
             throw new IllegalArgumentException(ex);
         }
         Mockito.doAnswer(
@@ -153,7 +153,7 @@ public final class PowerHubMocker {
         final Identity identity) {
         try {
             Mockito.doReturn(identity).when(this.hub).identity(name);
-        } catch (com.netbout.spi.UnreachableUrnException ex) {
+        } catch (Identity.UnreachableUrnException ex) {
             throw new IllegalArgumentException(ex);
         }
         return this;

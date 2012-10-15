@@ -30,8 +30,8 @@ import com.jcabi.log.Logger;
 import com.netbout.spi.Bout;
 import com.netbout.spi.Friend;
 import com.netbout.spi.Identity;
-import com.netbout.spi.NetboutUtils;
 import com.netbout.spi.Profile;
+import com.netbout.spi.Query;
 import com.netbout.spi.Urn;
 import java.net.URL;
 import java.util.Set;
@@ -84,7 +84,7 @@ public final class HubIdentity implements Identity {
      */
     @Override
     public int compareTo(final Friend friend) {
-        return this.iname.compareTo(identity.name());
+        return this.iname.compareTo(friend.name());
     }
 
     /**
@@ -165,15 +165,17 @@ public final class HubIdentity implements Identity {
      * {@inheritDoc}
      */
     @Override
-    public Iterable<Bout> inbox(final String query) {
+    public Iterable<Bout> inbox(final Query query) {
         try {
             return new LazyBouts(
                 this.hub.manager(),
                 this.hub.infinity().messages(
-                    String.format(
-                        "(and (talks-with '%s') %s (unique $bout.number))",
-                        this.name(),
-                        NetboutUtils.normalize(query)
+                    new Query.Textual(
+                        String.format(
+                            "(and (talks-with '%s') %s (unique $bout.number))",
+                            this.name(),
+                            query
+                        )
                     )
                 ),
                 this

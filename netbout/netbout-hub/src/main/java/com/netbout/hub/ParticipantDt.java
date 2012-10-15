@@ -26,11 +26,12 @@
  */
 package com.netbout.hub;
 
+import com.netbout.hub.inf.InfParticipant;
+import com.netbout.spi.Participant;
 import com.netbout.spi.Urn;
 import java.util.AbstractCollection;
 import java.util.Collection;
 import java.util.Iterator;
-import java.util.List;
 
 /**
  * Participant data type.
@@ -39,12 +40,6 @@ import java.util.List;
  * @version $Id$
  */
 public interface ParticipantDt {
-
-    /**
-     * Get bout number.
-     * @return The identity
-     */
-    Long getBout();
 
     /**
      * Get identity.
@@ -83,12 +78,13 @@ public interface ParticipantDt {
         /**
          * List of participants.
          */
-        private final transient List<ParticipantDt> dudes;
+        private final transient Collection<ParticipantDt> dudes;
         /**
          * Public ctor.
          * @param list List of them
          */
-        public Participants(final List<ParticipantDt> list) {
+        public Participants(final Collection<ParticipantDt> list) {
+            super();
             this.dudes = list;
         }
         /**

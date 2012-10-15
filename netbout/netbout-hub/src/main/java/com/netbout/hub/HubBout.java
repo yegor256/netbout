@@ -28,14 +28,14 @@ package com.netbout.hub;
 
 import com.jcabi.log.Logger;
 import com.netbout.spi.Bout;
+import com.netbout.spi.Friend;
 import com.netbout.spi.Identity;
 import com.netbout.spi.Message;
-import com.netbout.spi.NetboutUtils;
 import com.netbout.spi.Participant;
+import com.netbout.spi.Query;
 import com.netbout.spi.Urn;
 import com.netbout.spi.xml.DomParser;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -85,7 +85,8 @@ public final class HubBout implements Bout {
      */
     @Override
     public int compareTo(final Bout bout) {
-        return NetboutUtils.dateOf(this).compareTo(NetboutUtils.dateOf(bout));
+        return new Bout.Smart(this).updated()
+            .compareTo(new Bout.Smart(bout).updated());
     }
 
     /**
@@ -162,7 +163,7 @@ public final class HubBout implements Bout {
      */
     @Override
     public void rename(final String text) {
-        if (!NetboutUtils.participantOf(this.viewer, this).confirmed()) {
+        if (!new Bout.Smart(this).participant(this.viewer).confirmed()) {
             throw new IllegalStateException(
                 String.format(
                     "You '%s' can't rename bout #%d until you join",
@@ -191,9 +192,9 @@ public final class HubBout implements Bout {
      * @checkstyle RedundantThrows (4 lines)
      */
     @Override
-    public Participant invite(final Identity friend)
+    public Participant invite(final Friend friend)
         throws Bout.DuplicateInvitationException {
-        if (!NetboutUtils.participantOf(this.viewer, this).confirmed()) {
+        if (!new Bout.Smart(this).participant(this.viewer).confirmed()) {
             throw new IllegalStateException(
                 String.format(
                     "You '%s' can't invite %s until you join bout #%d",
@@ -203,7 +204,7 @@ public final class HubBout implements Bout {
                 )
             );
         }
-        if (NetboutUtils.participatesIn(friend.name(), this)) {
+        if (this.participants().contains(friend)) {
             throw new Bout.DuplicateInvitationException(
                 String.format(
                     "Identity '%s' has already been invited to bout #%d",
@@ -237,7 +238,7 @@ public final class HubBout implements Bout {
         if (confirm) {
             dude.setConfirmed(true);
         }
-        return new HubParticipant(this.hub, this, dude, this.data);
+        return new HubParticipant(dude, this.data);
     }
 
     /**
@@ -254,7 +255,7 @@ public final class HubBout implements Bout {
      */
     @Override
     @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
-    public Iterable<Message> messages(final String query) {
+    public Iterable<Message> messages(final Query query) {
         Iterable<Long> msgs;
         if ("(pos 0)".equals(query)) {
             final long latest = this.data.getLatestMessage();
@@ -266,10 +267,12 @@ public final class HubBout implements Bout {
         } else {
             try {
                 msgs = this.hub.infinity().messages(
-                    String.format(
-                        "(and (equal $bout.number %d) %s)",
-                        this.number(),
-                        NetboutUtils.normalize(query)
+                    new Query.Textual(
+                        String.format(
+                            "(and (equal $bout.number %d) %s)",
+                            this.number(),
+                            query
+                        )
                     )
                 );
             } catch (com.netbout.inf.InvalidSyntaxException ex) {
@@ -289,7 +292,6 @@ public final class HubBout implements Bout {
         final Message message = new HubMessage(
             this.hub,
             this.viewer,
-            this,
             this.data.findMessage(num)
         );
         Logger.debug(
@@ -312,7 +314,7 @@ public final class HubBout implements Bout {
                 "some message content is required"
             );
         }
-        if (!NetboutUtils.participantOf(this.viewer, this).confirmed()) {
+        if (!new Bout.Smart(this).participant(this.viewer).confirmed()) {
             throw new IllegalStateException(
                 String.format(
                     "You '%s' can't post to bout #%d until you join",
@@ -339,7 +341,6 @@ public final class HubBout implements Bout {
             message = new HubMessage(
                 this.hub,
                 this.viewer,
-                this,
                 msg
             );
             message.text();

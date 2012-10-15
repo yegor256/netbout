@@ -125,7 +125,7 @@ public final class DefaultBoutMgr implements BoutMgr, MsgListener {
 
     /**
      * {@inheritDoc}
-     * @checkstyle RedundantThrows (3 lines)
+     * @checkstyle RedundantThrows (4 lines)
      */
     @Override
     public BoutData boutOf(final Long msg)
@@ -151,7 +151,7 @@ public final class DefaultBoutMgr implements BoutMgr, MsgListener {
 
     /**
      * {@inheritDoc}
-     * @checkstyle RedundantThrows (3 lines)
+     * @checkstyle RedundantThrows (4 lines)
      */
     @Override
     public BoutData find(final Long number)
