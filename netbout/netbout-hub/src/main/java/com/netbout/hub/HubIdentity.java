@@ -28,11 +28,9 @@ package com.netbout.hub;
 
 import com.jcabi.log.Logger;
 import com.netbout.spi.Bout;
-import com.netbout.spi.BoutNotFoundException;
 import com.netbout.spi.Identity;
 import com.netbout.spi.NetboutUtils;
 import com.netbout.spi.Profile;
-import com.netbout.spi.UnreachableUrnException;
 import com.netbout.spi.Urn;
 import java.net.URL;
 import java.util.Set;
@@ -120,7 +118,7 @@ public final class HubIdentity implements Identity {
     public URL authority() {
         try {
             return this.hub.resolver().authority(this.name());
-        } catch (com.netbout.spi.UnreachableUrnException ex) {
+        } catch (Identity.UnreachableUrnException ex) {
             throw new IllegalStateException(ex);
         }
     }
@@ -141,7 +139,7 @@ public final class HubIdentity implements Identity {
         Bout bout;
         try {
             bout = this.bout(this.hub.manager().create(this.name()));
-        } catch (com.netbout.spi.BoutNotFoundException ex) {
+        } catch (Identity.BoutNotFoundException ex) {
             throw new IllegalStateException(ex);
         }
         Logger.info(
@@ -158,7 +156,7 @@ public final class HubIdentity implements Identity {
      * @checkstyle RedundantThrows (4 lines)
      */
     @Override
-    public Bout bout(final Long number) throws BoutNotFoundException {
+    public Bout bout(final Long number) throws Identity.BoutNotFoundException {
         return new HubBout(this.hub, this, this.hub.manager().find(number));
     }
 
@@ -197,7 +195,8 @@ public final class HubIdentity implements Identity {
      * @checkstyle RedundantThrows (4 lines)
      */
     @Override
-    public Identity friend(final Urn name) throws UnreachableUrnException {
+    public Identity friend(final Urn name)
+        throws Identity.UnreachableUrnException {
         final Identity identity = this.hub.identity(name);
         Logger.debug(
             this,

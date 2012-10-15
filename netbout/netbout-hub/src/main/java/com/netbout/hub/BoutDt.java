@@ -26,7 +26,6 @@
  */
 package com.netbout.hub;
 
-import com.netbout.spi.MessageNotFoundException;
 import com.netbout.spi.Urn;
 import java.util.Collection;
 import java.util.Date;
@@ -104,10 +103,10 @@ public interface BoutDt {
      * Find message by number.
      * @param num The number of it
      * @return Message
-     * @throws MessageNotFoundException If not found
+     * @throws Bout.MessageNotFoundException If not found
      * @checkstyle RedundantThrows (4 lines)
      */
-    MessageDt findMessage(Long num) throws MessageNotFoundException;
+    MessageDt findMessage(Long num) throws Bout.MessageNotFoundException;
 
     /**
      * Get number of the latest message in the bout.

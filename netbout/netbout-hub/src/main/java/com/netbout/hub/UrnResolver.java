@@ -27,7 +27,6 @@
 package com.netbout.hub;
 
 import com.netbout.spi.Identity;
-import com.netbout.spi.UnreachableUrnException;
 import com.netbout.spi.Urn;
 import java.net.URL;
 import java.util.Map;
@@ -90,9 +89,9 @@ public interface UrnResolver {
      * Resolve URN to URL (get is authority).
      * @param urn The URN
      * @return The authority
-     * @throws UnreachableUrnException If we can't reach it
+     * @throws Identity.UnreachableUrnException If we can't reach it
      * @checkstyle RedundantThrows (2 lines)
      */
-    URL authority(Urn urn) throws UnreachableUrnException;
+    URL authority(Urn urn) throws Identity.UnreachableUrnException;
 
 }

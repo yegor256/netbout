@@ -27,12 +27,10 @@
 package com.netbout.hub;
 
 import com.netbout.spi.Bout;
-import com.netbout.spi.BoutNotFoundException;
 import com.netbout.spi.Helper;
 import com.netbout.spi.Identity;
 import com.netbout.spi.Profile;
 import com.netbout.spi.Token;
-import com.netbout.spi.UnreachableUrnException;
 import com.netbout.spi.Urn;
 import java.net.URL;
 import java.util.Set;
@@ -135,7 +133,7 @@ final class HelperIdentity implements Identity, Helper {
      * @checkstyle RedundantThrows (4 lines)
      */
     @Override
-    public Bout bout(final Long number) throws BoutNotFoundException {
+    public Bout bout(final Long number) throws Identity.BoutNotFoundException {
         return this.identity.bout(number);
     }
 
@@ -160,7 +158,8 @@ final class HelperIdentity implements Identity, Helper {
      * @checkstyle RedundantThrows (4 lines)
      */
     @Override
-    public Identity friend(final Urn name) throws UnreachableUrnException {
+    public Identity friend(final Urn name)
+        throws Identity.UnreachableUrnException {
         return this.identity.friend(name);
     }
 
