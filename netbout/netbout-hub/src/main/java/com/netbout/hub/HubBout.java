@@ -36,10 +36,12 @@ import com.netbout.spi.Query;
 import com.netbout.spi.Urn;
 import com.netbout.spi.xml.DomParser;
 import java.net.URL;
+import java.util.AbstractCollection;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
+import java.util.Iterator;
 
 /**
  * Bout (cheap resource, created on demand and immediately destroyed by GC).
@@ -247,7 +249,48 @@ public final class HubBout implements Bout {
     @Override
     @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
     public Collection<Participant> participants() {
-        return new ParticipantDt.Participants(this.data.getParticipants());
+        final Collection<ParticipantDt> dudes =
+            HubBout.this.data.getParticipants();
+        // @checkstyle AnonInnerLength (50 lines)
+        return new AbstractCollection<Participant>() {
+            @Override
+            public Iterator<Participant> iterator() {
+                final Iterator<ParticipantDt> iter = dudes.iterator();
+                return new Iterator<Participant>() {
+                    @Override
+                    public Participant next() {
+                        return new HubParticipant(
+                            HubBout.this.hub,
+                            iter.next(),
+                            HubBout.this.data
+                        );
+                    }
+                    @Override
+                    public boolean hasNext() {
+                        return iter.hasNext();
+                    }
+                    @Override
+                    public void remove() {
+                        throw new UnsupportedOperationException();
+                    }
+                };
+            }
+            @Override
+            public int size() {
+                return dudes.size();
+            }
+            @Override
+            public boolean contains(final Object object) {
+                boolean contains = false;
+                for (ParticipantDt dude : dudes) {
+                    if (dude.getIdentity().equals(object.toString())) {
+                        contains = true;
+                        break;
+                    }
+                }
+                return contains;
+            }
+        };
     }
 
     /**
