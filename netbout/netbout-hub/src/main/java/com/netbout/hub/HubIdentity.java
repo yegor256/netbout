@@ -28,11 +28,10 @@ package com.netbout.hub;
 
 import com.jcabi.log.Logger;
 import com.netbout.spi.Bout;
-import com.netbout.spi.BoutNotFoundException;
+import com.netbout.spi.Friend;
 import com.netbout.spi.Identity;
-import com.netbout.spi.NetboutUtils;
-import com.netbout.spi.Profile;
-import com.netbout.spi.UnreachableUrnException;
+import com.netbout.spi.OwnProfile;
+import com.netbout.spi.Query;
 import com.netbout.spi.Urn;
 import java.net.URL;
 import java.util.Set;
@@ -59,7 +58,7 @@ public final class HubIdentity implements Identity {
     /**
      * The profile.
      */
-    private final transient Profile iprofile;
+    private final transient OwnProfile iprofile;
 
     /**
      * Public ctor.
@@ -84,8 +83,8 @@ public final class HubIdentity implements Identity {
      * {@inheritDoc}
      */
     @Override
-    public int compareTo(final Identity identity) {
-        return this.iname.compareTo(identity.name());
+    public int compareTo(final Friend friend) {
+        return this.iname.compareTo(friend.name());
     }
 
     /**
@@ -120,7 +119,7 @@ public final class HubIdentity implements Identity {
     public URL authority() {
         try {
             return this.hub.resolver().authority(this.name());
-        } catch (com.netbout.spi.UnreachableUrnException ex) {
+        } catch (Identity.UnreachableUrnException ex) {
             throw new IllegalStateException(ex);
         }
     }
@@ -141,7 +140,7 @@ public final class HubIdentity implements Identity {
         Bout bout;
         try {
             bout = this.bout(this.hub.manager().create(this.name()));
-        } catch (com.netbout.spi.BoutNotFoundException ex) {
+        } catch (Identity.BoutNotFoundException ex) {
             throw new IllegalStateException(ex);
         }
         Logger.info(
@@ -158,7 +157,7 @@ public final class HubIdentity implements Identity {
      * @checkstyle RedundantThrows (4 lines)
      */
     @Override
-    public Bout bout(final Long number) throws BoutNotFoundException {
+    public Bout bout(final Long number) throws Identity.BoutNotFoundException {
         return new HubBout(this.hub, this, this.hub.manager().find(number));
     }
 
@@ -166,15 +165,17 @@ public final class HubIdentity implements Identity {
      * {@inheritDoc}
      */
     @Override
-    public Iterable<Bout> inbox(final String query) {
+    public Iterable<Bout> inbox(final Query query) {
         try {
             return new LazyBouts(
                 this.hub.manager(),
                 this.hub.infinity().messages(
-                    String.format(
-                        "(and (talks-with '%s') %s (unique $bout.number))",
-                        this.name(),
-                        NetboutUtils.normalize(query)
+                    new Query.Textual(
+                        String.format(
+                            "(and (talks-with '%s') %s (unique $bout.number))",
+                            this.name(),
+                            query
+                        )
                     )
                 ),
                 this
@@ -188,7 +189,7 @@ public final class HubIdentity implements Identity {
      * {@inheritDoc}
      */
     @Override
-    public Profile profile() {
+    public OwnProfile profile() {
         return this.iprofile;
     }
 
@@ -197,7 +198,8 @@ public final class HubIdentity implements Identity {
      * @checkstyle RedundantThrows (4 lines)
      */
     @Override
-    public Identity friend(final Urn name) throws UnreachableUrnException {
+    public Friend friend(final Urn name)
+        throws Identity.UnreachableUrnException {
         final Identity identity = this.hub.identity(name);
         Logger.debug(
             this,
@@ -211,8 +213,8 @@ public final class HubIdentity implements Identity {
      * {@inheritDoc}
      */
     @Override
-    public Set<Identity> friends(final String keyword) {
-        final Set<Identity> friends = this.hub.findByKeyword(this, keyword);
+    public Set<Friend> friends(final String keyword) {
+        final Set<Friend> friends = this.hub.findByKeyword(this, keyword);
         if (friends.contains(this)) {
             friends.remove(this);
         }

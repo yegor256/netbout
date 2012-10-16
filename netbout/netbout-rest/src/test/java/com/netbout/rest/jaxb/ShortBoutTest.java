@@ -51,7 +51,7 @@ public final class ShortBoutTest {
     public void convertsToXml() throws Exception {
         final Identity viewer = new IdentityMocker().mock();
         final ShortBout obj = new ShortBout(
-            new BoutMocker().withParticipant(viewer).mock(),
+            new BoutMocker().withParticipant(viewer.name()).mock(),
             UriBuilder.fromUri("http://localhost"),
             viewer
         );

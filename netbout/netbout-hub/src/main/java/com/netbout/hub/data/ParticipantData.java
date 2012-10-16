@@ -89,14 +89,6 @@ final class ParticipantData implements ParticipantDt {
      * {@inheritDoc}
      */
     @Override
-    public Long getBout() {
-        return this.boutdt.getNumber();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
     public Urn getIdentity() {
         return this.person;
     }

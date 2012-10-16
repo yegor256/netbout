@@ -28,9 +28,11 @@ package com.netbout.inf.notices;
 
 import com.netbout.inf.Notice;
 import com.netbout.spi.Bout;
-import com.netbout.spi.Identity;
+import com.netbout.spi.Friend;
 import com.netbout.spi.Message;
 import com.netbout.spi.Participant;
+import com.netbout.spi.Profile;
+import com.netbout.spi.Query;
 import com.netbout.spi.Urn;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -77,7 +79,15 @@ public interface BoutNotice extends Notice {
         public Set<Urn> deps(final BoutNotice notice) {
             final Set<Urn> deps = new HashSet<Urn>();
             for (Participant dude : notice.bout().participants()) {
-                deps.add(dude.identity().name());
+                deps.add(dude.name());
+            }
+            if (deps.isEmpty()) {
+                throw new IllegalArgumentException(
+                    String.format(
+                        "empty list of participants in %s",
+                        notice.bout()
+                    )
+                );
             }
             return deps;
         }
@@ -92,7 +102,7 @@ public interface BoutNotice extends Notice {
             stream.writeUTF(notice.bout().title());
             stream.writeInt(notice.bout().participants().size());
             for (Participant dude : notice.bout().participants()) {
-                stream.writeUTF(dude.identity().name().toString());
+                stream.writeUTF(dude.name().toString());
                 stream.writeBoolean(dude.leader());
                 stream.writeBoolean(dude.confirmed());
             }
@@ -119,8 +129,8 @@ public interface BoutNotice extends Notice {
                     // @checkstyle AnonInnerLength (50 lines)
                     new Participant() {
                         @Override
-                        public Identity identity() {
-                            return IdentityNotice.Serial.toIdentity(name);
+                        public Urn name() {
+                            return name;
                         }
                         @Override
                         public boolean leader() {
@@ -131,8 +141,8 @@ public interface BoutNotice extends Notice {
                             return confirmed;
                         }
                         @Override
-                        public Bout bout() {
-                            return bout.get();
+                        public int compareTo(final Friend friend) {
+                            throw new UnsupportedOperationException();
                         }
                         @Override
                         public void kickOff() {
@@ -140,6 +150,10 @@ public interface BoutNotice extends Notice {
                         }
                         @Override
                         public void consign() {
+                            throw new UnsupportedOperationException();
+                        }
+                        @Override
+                        public Profile profile() {
                             throw new UnsupportedOperationException();
                         }
                     }
@@ -192,11 +206,11 @@ public interface BoutNotice extends Notice {
                         throw new UnsupportedOperationException();
                     }
                     @Override
-                    public Iterable<Message> messages(final String query) {
+                    public Iterable<Message> messages(final Query query) {
                         throw new UnsupportedOperationException();
                     }
                     @Override
-                    public Participant invite(final Identity dude) {
+                    public Participant invite(final Friend friend) {
                         throw new UnsupportedOperationException();
                     }
                     @Override

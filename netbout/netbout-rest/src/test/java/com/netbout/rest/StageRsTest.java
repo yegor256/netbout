@@ -53,7 +53,7 @@ public final class StageRsTest {
     public void returnsResourceContent() throws Exception {
         final Identity identity = new IdentityMocker().mock();
         final Bout bout = new BoutMocker()
-            .withParticipant(identity)
+            .withParticipant(identity.name())
             .mock();
         Mockito.doReturn(bout).when(identity).start();
         Mockito.doReturn(bout).when(identity).bout(Mockito.any(Long.class));

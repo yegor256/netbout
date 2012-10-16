@@ -27,7 +27,7 @@
 package com.netbout.rest.period;
 
 import com.jcabi.log.Logger;
-import com.netbout.spi.NetboutUtils;
+import com.netbout.spi.Query;
 import java.util.Date;
 import java.util.SortedSet;
 import java.util.TreeSet;
@@ -162,7 +162,7 @@ final class PosPeriod implements Period {
             original = query;
         } else {
             if (!query.isEmpty()) {
-                original = NetboutUtils.normalize(query);
+                original = new Query.Textual(query).toString();
             }
         }
         final String text = String.format(

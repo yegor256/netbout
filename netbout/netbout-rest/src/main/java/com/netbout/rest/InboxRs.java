@@ -32,7 +32,7 @@ import com.netbout.rest.period.Period;
 import com.netbout.rest.period.PeriodsBuilder;
 import com.netbout.spi.Bout;
 import com.netbout.spi.Identity;
-import com.netbout.spi.NetboutUtils;
+import com.netbout.spi.Query;
 import com.netbout.spi.Urn;
 import com.netbout.spi.client.RestSession;
 import com.rexsl.page.JaxbBundle;
@@ -121,7 +121,7 @@ public final class InboxRs extends BaseRs {
         for (Bout bout : inbox) {
             boolean show;
             try {
-                show = periods.show(NetboutUtils.dateOf(bout));
+                show = periods.show(new Bout.Smart(bout).updated());
             } catch (com.netbout.rest.period.PeriodViolationException ex) {
                 throw new IllegalStateException(
                     Logger.format(
@@ -218,11 +218,11 @@ public final class InboxRs extends BaseRs {
      * @return The list of them
      */
     private Iterable<Bout> fetch(final Period period) {
-        String pred = NetboutUtils.normalize(this.query);
+        String pred = this.query;
         if (this.bundle) {
             pred = String.format("(and %s (bundled))", pred);
         }
-        return this.identity().inbox(period.query(pred));
+        return this.identity().inbox(new Query.Textual(period.query(pred)));
     }
 
 }

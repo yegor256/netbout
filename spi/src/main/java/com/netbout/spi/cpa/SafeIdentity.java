@@ -30,8 +30,10 @@
 package com.netbout.spi.cpa;
 
 import com.netbout.spi.Bout;
+import com.netbout.spi.Friend;
 import com.netbout.spi.Identity;
-import com.netbout.spi.Profile;
+import com.netbout.spi.OwnProfile;
+import com.netbout.spi.Query;
 import com.netbout.spi.Urn;
 import java.net.URL;
 import java.util.Iterator;
@@ -63,8 +65,8 @@ final class SafeIdentity implements Identity {
      * {@inheritDoc}
      */
     @Override
-    public int compareTo(final Identity idnt) {
-        return this.identity.compareTo(idnt);
+    public int compareTo(final Friend friend) {
+        return this.identity.compareTo(friend);
     }
 
     /**
@@ -120,7 +122,7 @@ final class SafeIdentity implements Identity {
      * {@inheritDoc}
      */
     @Override
-    public Iterable<Bout> inbox(final String query) {
+    public Iterable<Bout> inbox(final Query query) {
         new Bump(this.identity).pause();
         final Iterable<Bout> bouts = this.identity.inbox(query);
         final Iterator<Bout> source = bouts.iterator();
@@ -148,19 +150,21 @@ final class SafeIdentity implements Identity {
 
     /**
      * {@inheritDoc}
+     * @checkstyle RedundantThrows (4 lines)
      */
     @Override
     public Bout bout(final Long num)
-        throws com.netbout.spi.BoutNotFoundException {
+        throws Identity.BoutNotFoundException {
         return this.identity.bout(num);
     }
 
     /**
      * {@inheritDoc}
+     * @checkstyle RedundantThrows (4 lines)
      */
     @Override
-    public Identity friend(final Urn name)
-        throws com.netbout.spi.UnreachableUrnException {
+    public Friend friend(final Urn name)
+        throws Identity.UnreachableUrnException {
         return this.identity.friend(name);
     }
 
@@ -168,7 +172,7 @@ final class SafeIdentity implements Identity {
      * {@inheritDoc}
      */
     @Override
-    public Set<Identity> friends(final String mask) {
+    public Set<Friend> friends(final String mask) {
         return this.identity.friends(mask);
     }
 
@@ -176,7 +180,7 @@ final class SafeIdentity implements Identity {
      * {@inheritDoc}
      */
     @Override
-    public Profile profile() {
+    public OwnProfile profile() {
         return this.identity.profile();
     }
 

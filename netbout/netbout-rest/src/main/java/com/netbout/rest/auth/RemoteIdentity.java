@@ -29,8 +29,10 @@ package com.netbout.rest.auth;
 import com.jcabi.log.Logger;
 import com.netbout.hub.Hub;
 import com.netbout.spi.Bout;
+import com.netbout.spi.Friend;
 import com.netbout.spi.Identity;
-import com.netbout.spi.Profile;
+import com.netbout.spi.OwnProfile;
+import com.netbout.spi.Query;
 import com.netbout.spi.Urn;
 import java.net.URL;
 import java.util.HashSet;
@@ -78,11 +80,11 @@ public final class RemoteIdentity implements Identity {
      * Find it in hub and return.
      * @param hub The hub to find in
      * @return The identity found
-     * @throws com.netbout.spi.UnreachableUrnException If can't find it
+     * @throws Identity.UnreachableUrnException If can't find it
      * @checkstyle RedundantThrows (4 lines)
      */
     public Identity findIn(final Hub hub)
-        throws com.netbout.spi.UnreachableUrnException {
+        throws Identity.UnreachableUrnException {
         final Identity identity = hub.identity(this.iname);
         for (String alias : this.profile().aliases()) {
             identity.profile().alias(alias);
@@ -199,7 +201,7 @@ public final class RemoteIdentity implements Identity {
      * {@inheritDoc}
      */
     @Override
-    public Profile profile() {
+    public OwnProfile profile() {
         this.validate();
         return this.iprofile;
     }
@@ -208,7 +210,7 @@ public final class RemoteIdentity implements Identity {
      * {@inheritDoc}
      */
     @Override
-    public int compareTo(final Identity identity) {
+    public int compareTo(final Friend friend) {
         throw new UnsupportedOperationException("#compareTo()");
     }
 
@@ -240,7 +242,7 @@ public final class RemoteIdentity implements Identity {
      * {@inheritDoc}
      */
     @Override
-    public List<Bout> inbox(final String query) {
+    public List<Bout> inbox(final Query query) {
         throw new UnsupportedOperationException("#inbox()");
     }
 
@@ -248,7 +250,7 @@ public final class RemoteIdentity implements Identity {
      * {@inheritDoc}
      */
     @Override
-    public Identity friend(final Urn name) {
+    public Friend friend(final Urn name) {
         throw new UnsupportedOperationException("#friend()");
     }
 
@@ -256,7 +258,7 @@ public final class RemoteIdentity implements Identity {
      * {@inheritDoc}
      */
     @Override
-    public Set<Identity> friends(final String keyword) {
+    public Set<Friend> friends(final String keyword) {
         throw new UnsupportedOperationException("#friends()");
     }
 

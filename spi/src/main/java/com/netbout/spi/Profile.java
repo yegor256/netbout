@@ -30,6 +30,7 @@
 package com.netbout.spi;
 
 import java.net.URL;
+import java.util.HashSet;
 import java.util.Locale;
 import java.util.Set;
 
@@ -50,22 +51,10 @@ public interface Profile {
     Locale locale();
 
     /**
-     * Set locale for this identity.
-     * @param locale The language we should speak with this identity
-     */
-    void setLocale(Locale locale);
-
-    /**
      * Get a photo of this identity.
      * @return The URL of the photo
      */
     URL photo();
-
-    /**
-     * Set photo of the identity.
-     * @param photo The photo
-     */
-    void setPhoto(URL photo);
 
     /**
      * Get all aliases.
@@ -74,9 +63,81 @@ public interface Profile {
     Set<String> aliases();
 
     /**
-     * Add new alias.
-     * @param alias The alias
+     * Profile with implemented conventions.
+     *
+     * <p>To avoid runtime exceptions and unexpected situations you're
+     * encouraged to use this class every time you're accessing a profile
+     * of an identity.
      */
-    void alias(String alias);
+    class Conventional implements Profile {
+        /**
+         * Original identity.
+         */
+        private final transient Friend origin;
+        /**
+         * Public ctor.
+         * @param friend Original identity
+         */
+        public Conventional(final Friend friend) {
+            if (friend.profile() == null) {
+                throw new IllegalStateException(
+                    String.format(
+                        "Profile is NULL in '%s' (%s)",
+                        friend,
+                        friend.name()
+                    )
+                );
+            }
+            this.origin = friend;
+        }
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public Locale locale() {
+            Locale locale = this.origin.profile().locale();
+            if (locale == null) {
+                locale = Locale.ENGLISH;
+            }
+            return locale;
+        }
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public URL photo() {
+            URL photo = this.origin.profile().photo();
+            if (photo == null) {
+                try {
+                    photo = new URL("http://cdn.netbout.com/unknown.png");
+                } catch (java.net.MalformedURLException ex) {
+                    throw new IllegalStateException(ex);
+                }
+            }
+            return photo;
+        }
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public Set<String> aliases() {
+            final Set<String> aliases = new HashSet<String>(
+                this.origin.profile().aliases()
+            );
+            if (aliases == null) {
+                throw new IllegalStateException(
+                    String.format(
+                        "Set of aliases in the profile is NULL for '%s' (%s)",
+                        this.origin,
+                        this.origin.name()
+                    )
+                );
+            }
+            if (aliases.isEmpty()) {
+                aliases.add(this.origin.name().toString());
+            }
+            return aliases;
+        }
+    }
 
 }

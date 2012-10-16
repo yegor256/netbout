@@ -67,7 +67,7 @@ public final class IdentityMocker {
     public IdentityMocker() {
         this.namedAs(new UrnMocker().mock());
         this.belongsTo("http://localhost/set-by-IdentityMocker");
-        this.withProfile(new ProfileMocker().mock());
+        this.withProfile(new OwnProfileMocker().mock());
         Mockito.doAnswer(
             new Answer<Bout>() {
                 @Override
@@ -90,7 +90,7 @@ public final class IdentityMocker {
                     return inbox;
                 }
             }
-        ).when(this.identity).inbox(Mockito.anyString());
+        ).when(this.identity).inbox(Mockito.any(Query.class));
         try {
             Mockito.doAnswer(
                 new Answer<Bout>() {
@@ -107,7 +107,7 @@ public final class IdentityMocker {
                     }
                 }
             ).when(this.identity).bout(Mockito.anyLong());
-        } catch (com.netbout.spi.BoutNotFoundException ex) {
+        } catch (Identity.BoutNotFoundException ex) {
             throw new IllegalArgumentException(ex);
         }
     }
@@ -159,7 +159,7 @@ public final class IdentityMocker {
      * @param profile The profile
      * @return This object
      */
-    public IdentityMocker withProfile(final Profile profile) {
+    public IdentityMocker withProfile(final OwnProfile profile) {
         Mockito.doReturn(profile).when(this.identity).profile();
         return this;
     }
@@ -181,7 +181,7 @@ public final class IdentityMocker {
      * @param nums List of bout numbers to return
      * @return This object
      */
-    public IdentityMocker withInbox(final String query, final Long[] nums) {
+    public IdentityMocker withInbox(final Query query, final Long[] nums) {
         Mockito.doAnswer(
             new Answer<List<Bout>>() {
                 @Override

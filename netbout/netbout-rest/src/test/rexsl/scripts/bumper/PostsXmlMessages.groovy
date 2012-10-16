@@ -29,6 +29,7 @@
  */
 package com.netbout.rest.rexsl.bumper
 
+import com.netbout.spi.Query
 import com.netbout.spi.Urn
 import com.netbout.spi.client.RestSession
 import com.netbout.spi.client.RestUriBuilder
@@ -62,6 +63,10 @@ RestTester.start(RestUriBuilder.from(bout).path('/s'))
     )
     .assertStatus(HttpURLConnection.HTTP_SEE_OTHER)
 MatcherAssert.assertThat(
-    bout.messages('(and (ns "urn:test:bumper:ns?bar=%E8%94%94%20value%3F") (pos 0))'),
+    bout.messages(
+        new Query.Textual(
+            '(and (ns "urn:test:bumper:ns?bar=%E8%94%94%20value%3F") (pos 0))'
+        )
+    ),
     Matchers.hasSize(1)
 )

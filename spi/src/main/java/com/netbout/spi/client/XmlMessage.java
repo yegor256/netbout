@@ -29,8 +29,7 @@
  */
 package com.netbout.spi.client;
 
-import com.netbout.spi.Bout;
-import com.netbout.spi.Identity;
+import com.netbout.spi.Friend;
 import com.netbout.spi.Message;
 import com.netbout.spi.Urn;
 import java.util.Date;
@@ -46,11 +45,6 @@ import org.joda.time.format.ISODateTimeFormat;
 final class XmlMessage implements Message {
 
     /**
-     * Rest client.
-     */
-    private final transient RestClient client;
-
-    /**
      * Rest response.
      */
     private final transient RestResponse response;
@@ -62,13 +56,10 @@ final class XmlMessage implements Message {
 
     /**
      * Public ctor.
-     * @param clnt REST client
      * @param resp REST response
      * @param number Number of the message
      */
-    public XmlMessage(final RestClient clnt, final RestResponse resp,
-        final Long number) {
-        this.client = clnt;
+    public XmlMessage(final RestResponse resp, final Long number) {
         this.response = resp;
         this.num = number;
     }
@@ -85,14 +76,6 @@ final class XmlMessage implements Message {
      * {@inheritDoc}
      */
     @Override
-    public Bout bout() {
-        return new RestBout(this.client.copy());
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
     public Long number() {
         return this.num;
     }
@@ -101,8 +84,8 @@ final class XmlMessage implements Message {
      * {@inheritDoc}
      */
     @Override
-    public Identity author() {
-        return new Friend(Urn.create(this.byPath("/author/text()")));
+    public Friend author() {
+        return new RestFriend(Urn.create(this.byPath("/author/text()")));
     }
 
     /**

@@ -28,9 +28,9 @@ package com.netbout.hh;
 
 import com.netbout.hub.PowerHub;
 import com.netbout.inf.notices.MessagePostedNotice;
+import com.netbout.spi.Bout;
 import com.netbout.spi.Identity;
 import com.netbout.spi.Message;
-import com.netbout.spi.NetboutUtils;
 import com.netbout.spi.Urn;
 import com.netbout.spi.cpa.CpaUtils;
 import com.netbout.spi.cpa.Farm;
@@ -48,6 +48,7 @@ import org.apache.commons.lang.CharEncoding;
  * @version $Id$
  */
 @Farm
+@SuppressWarnings("PMD.TooManyMethods")
 public final class StatsFarm implements IdentityAware {
 
     /**
@@ -88,10 +89,9 @@ public final class StatsFarm implements IdentityAware {
         throws Exception {
         Boolean allow = null;
         if (who.equals(this.identity.name())) {
-            allow = NetboutUtils.participatesIn(
-                Urn.create("urn:facebook:1531296526"),
-                this.identity.bout(number)
-            );
+            allow = this.identity.bout(number)
+                .participants()
+                .contains("urn:facebook:1531296526");
         }
         return allow;
     }
@@ -157,15 +157,19 @@ public final class StatsFarm implements IdentityAware {
                     .synchronously()
                     .arg(bnum)
                     .exec();
-                final Message msg = StatsFarm.hub
+                final Bout bout = StatsFarm.hub
                     .identity(dudes.get(0))
-                    .bout(bnum)
-                    .message(mnum);
+                    .bout(bnum);
+                final Message message = bout.message(mnum);
                 StatsFarm.hub.infinity().see(
                     new MessagePostedNotice() {
                         @Override
                         public Message message() {
-                            return msg;
+                            return message;
+                        }
+                        @Override
+                        public Bout bout() {
+                            return bout;
                         }
                     }
                 );

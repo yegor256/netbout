@@ -29,6 +29,7 @@
  */
 package com.netbout.rest.rexsl.scripts
 
+import com.netbout.spi.Query
 import com.netbout.spi.Urn
 import com.netbout.spi.client.RestSession
 import java.security.SecureRandom
@@ -45,7 +46,8 @@ bout.post('inviting and kicking off others')
 def number = bout.number()
 bout.invite(random)
 random.bout(number).confirm()
-MatcherAssert.assertThat(random.inbox('').size(), Matchers.equalTo(1))
+def query = new Query.Textual('')
+MatcherAssert.assertThat(random.inbox(query).size(), Matchers.equalTo(1))
 random.bout(number).leave()
-MatcherAssert.assertThat(random.inbox('').size(), Matchers.equalTo(0))
+MatcherAssert.assertThat(random.inbox(query).size(), Matchers.equalTo(0))
 

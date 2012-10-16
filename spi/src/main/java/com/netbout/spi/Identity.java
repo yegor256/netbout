@@ -42,7 +42,52 @@ import java.util.Set;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public interface Identity extends Comparable<Identity> {
+public interface Identity extends Friend {
+
+    /**
+     * Thowable when bout is not found.
+     * @see Identity#bout(Long)
+     */
+    class BoutNotFoundException extends Exception {
+        /**
+         * Serialization marker.
+         */
+        private static final long serialVersionUID = 0x7526FA78EED21470L;
+        /**
+         * Public ctor.
+         * @param num The number of bout not found
+         */
+        public BoutNotFoundException(final Long num) {
+            super(String.format("Bout #%d not found", num));
+        }
+    }
+
+    /**
+     * Thowable when URN can't be reached by the system anyhow.
+     * @see Identity#friend(Urn)
+     */
+    class UnreachableUrnException extends Exception {
+        /**
+         * Serialization marker.
+         */
+        private static final long serialVersionUID = 0x7526FA78EFD214F0L;
+        /**
+         * Public ctor.
+         * @param urn The URN
+         * @param cause The cause of the exception
+         */
+        public UnreachableUrnException(final Urn urn, final String cause) {
+            super(String.format("%s: '%s'", cause, urn));
+        }
+        /**
+         * Public ctor.
+         * @param urn The URN
+         * @param cause The cause of the exception
+         */
+        public UnreachableUrnException(final Urn urn, final Throwable cause) {
+            super(urn.toString(), cause);
+        }
+    }
 
     /**
      * How many milliseconds we should way before this object becomes fully
@@ -61,12 +106,6 @@ public interface Identity extends Comparable<Identity> {
     URL authority();
 
     /**
-     * Get name of the identity, which is unique in the system.
-     * @return The name of the identity
-     */
-    Urn name();
-
-    /**
      * Start new bout.
      * @return The bout just created
      */
@@ -78,35 +117,36 @@ public interface Identity extends Comparable<Identity> {
      * @param query Search query, if necessary
      * @return The list of bouts
      */
-    Iterable<Bout> inbox(String query);
+    Iterable<Bout> inbox(Query query);
 
     /**
      * Get bout by its unique ID.
      * @param number The number of the bout
      * @return The bout
-     * @throws BoutNotFoundException If this bout doesn't exist
+     * @throws Identity.BoutNotFoundException If this bout doesn't exist
      */
-    Bout bout(Long number) throws BoutNotFoundException;
+    Bout bout(Long number) throws Identity.BoutNotFoundException;
 
     /**
      * Find another identity by name.
      * @param name Unique name of identity
      * @return The identity just found
-     * @throws UnreachableUrnException If such a friend can't be reached
+     * @throws Identity.UnreachableUrnException If such
+     *  a friend can't be reached
      */
-    Identity friend(Urn name) throws UnreachableUrnException;
+    Friend friend(Urn name) throws Identity.UnreachableUrnException;
 
     /**
      * Find friends by keyword.
      * @param keyword The keyword
      * @return The list of identities found
      */
-    Set<Identity> friends(String keyword);
+    Set<Friend> friends(String keyword);
 
     /**
      * Get profile.
      * @return The profile of this identity
      */
-    Profile profile();
+    OwnProfile profile();
 
 }

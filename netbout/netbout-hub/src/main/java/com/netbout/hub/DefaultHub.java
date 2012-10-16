@@ -37,9 +37,9 @@ import com.netbout.hub.cron.AbstractCron;
 import com.netbout.hub.data.DefaultBoutMgr;
 import com.netbout.inf.DefaultInfinity;
 import com.netbout.inf.Infinity;
+import com.netbout.spi.Friend;
 import com.netbout.spi.Helper;
 import com.netbout.spi.Identity;
-import com.netbout.spi.UnreachableUrnException;
 import com.netbout.spi.Urn;
 import com.netbout.spi.cpa.CpaHelper;
 import java.io.IOException;
@@ -220,10 +220,11 @@ public final class DefaultHub implements PowerHub {
 
     /**
      * {@inheritDoc}
-     * @checkstyle RedundantThrows (3 lines)
+     * @checkstyle RedundantThrows (4 lines)
      */
     @Override
-    public Identity identity(final Urn name) throws UnreachableUrnException {
+    public Identity identity(final Urn name)
+        throws Identity.UnreachableUrnException {
         this.resolver().authority(name);
         Identity identity;
         if (this.all.containsKey(name)) {
@@ -268,7 +269,7 @@ public final class DefaultHub implements PowerHub {
         Identity existing;
         try {
             existing = this.identity(identity.name());
-        } catch (com.netbout.spi.UnreachableUrnException ex) {
+        } catch (Identity.UnreachableUrnException ex) {
             throw new IllegalArgumentException(ex);
         }
         this.all.remove(existing);
@@ -317,7 +318,7 @@ public final class DefaultHub implements PowerHub {
         Identity joined;
         try {
             joined = this.identity(mname);
-        } catch (com.netbout.spi.UnreachableUrnException ex) {
+        } catch (Identity.UnreachableUrnException ex) {
             throw new IllegalStateException(ex);
         }
         for (String alias : aliases) {
@@ -330,9 +331,9 @@ public final class DefaultHub implements PowerHub {
      * {@inheritDoc}
      */
     @Override
-    public Set<Identity> findByKeyword(final Identity who,
+    public Set<Friend> findByKeyword(final Identity who,
         final String keyword) {
-        final Set<Identity> found = new HashSet<Identity>();
+        final Set<Friend> found = new HashSet<Friend>();
         if (!keyword.isEmpty()) {
             final List<Urn> names = this
                 .make("find-identities-by-keyword")
@@ -344,7 +345,7 @@ public final class DefaultHub implements PowerHub {
             for (Urn name : names) {
                 try {
                     found.add(this.identity(name));
-                } catch (com.netbout.spi.UnreachableUrnException ex) {
+                } catch (Identity.UnreachableUrnException ex) {
                     Logger.warn(
                         this,
                         // @checkstyle LineLength (1 line)
@@ -394,8 +395,8 @@ public final class DefaultHub implements PowerHub {
                 .arg(name)
                 .exec();
             try {
-                this.promote(persister.friend(name), url);
-            } catch (com.netbout.spi.UnreachableUrnException ex) {
+                this.promote(this.identity(name), url);
+            } catch (Identity.UnreachableUrnException ex) {
                 Logger.error(
                     this,
                     "#start(): failed to create '%s' identity:\n%[exception]s",
@@ -420,7 +421,7 @@ public final class DefaultHub implements PowerHub {
         final Identity persister;
         try {
             persister = this.identity(new Urn("netbout", "db"));
-        } catch (com.netbout.spi.UnreachableUrnException ex) {
+        } catch (Identity.UnreachableUrnException ex) {
             throw new IllegalStateException(
                 "Failed to create starter's identity",
                 ex

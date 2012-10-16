@@ -27,6 +27,7 @@
 package com.netbout.hub;
 
 import com.netbout.inf.Infinity;
+import com.netbout.spi.Friend;
 import com.netbout.spi.Identity;
 import com.netbout.spi.Urn;
 import java.util.Set;
@@ -59,11 +60,11 @@ public interface PowerHub extends Hub {
     Infinity infinity();
 
     /**
-     * Find identities by keyword.
+     * Find friends by keyword.
      * @param who Who is searching
      * @param keyword The keyword
      * @return The identities found
      */
-    Set<Identity> findByKeyword(Identity who, String keyword);
+    Set<Friend> findByKeyword(Identity who, String keyword);
 
 }

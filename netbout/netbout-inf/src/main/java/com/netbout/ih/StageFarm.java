@@ -28,7 +28,6 @@ package com.netbout.ih;
 
 import com.netbout.inf.Infinity;
 import com.netbout.spi.Identity;
-import com.netbout.spi.NetboutUtils;
 import com.netbout.spi.Urn;
 import com.netbout.spi.cpa.Farm;
 import com.netbout.spi.cpa.IdentityAware;
@@ -84,10 +83,9 @@ public final class StageFarm implements IdentityAware {
         throws Exception {
         Boolean allow = null;
         if (who.equals(this.identity.name())) {
-            allow = NetboutUtils.participatesIn(
-                Urn.create("urn:facebook:1531296526"),
-                this.identity.bout(number)
-            );
+            allow = this.identity.bout(number)
+                .participants()
+                .contains("urn:facebook:1531296526");
         }
         return allow;
     }

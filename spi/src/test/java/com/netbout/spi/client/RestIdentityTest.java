@@ -55,6 +55,10 @@ public final class RestIdentityTest {
             .mock();
         final Identity identity = new RestIdentity(client);
         MatcherAssert.assertThat(identity.name(), Matchers.equalTo(name));
+        MatcherAssert.assertThat(
+            identity,
+            Matchers.hasToString(Matchers.equalTo(name.toString()))
+        );
     }
 
 }

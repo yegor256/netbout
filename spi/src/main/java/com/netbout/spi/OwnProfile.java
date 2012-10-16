@@ -29,26 +29,35 @@
  */
 package com.netbout.spi;
 
+import java.net.URL;
+import java.util.Locale;
+
 /**
- * Thowable when bout is not found.
+ * Profile of {@link Identity}.
+ *
+ * <p>Instances of this interface are thread-safe.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
- * @version $Id$
- * @see Identity#bout(Long)
+ * @version $Id: Profile.java 3458 2012-10-15 11:30:46Z yegor@tpc2.com $
  */
-public final class BoutNotFoundException extends Exception {
+public interface OwnProfile extends Profile {
 
     /**
-     * Serialization marker.
+     * Set locale for this identity.
+     * @param locale The language we should speak with this identity
      */
-    private static final long serialVersionUID = 0x7526FA78EED21470L;
+    void setLocale(Locale locale);
 
     /**
-     * Public ctor.
-     * @param num The number of bout not found
+     * Set photo of the identity.
+     * @param photo The photo
      */
-    public BoutNotFoundException(final Long num) {
-        super(String.format("Bout #%d not found", num));
-    }
+    void setPhoto(URL photo);
+
+    /**
+     * Add new alias.
+     * @param alias The alias
+     */
+    void alias(String alias);
 
 }

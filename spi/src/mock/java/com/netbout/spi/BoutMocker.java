@@ -69,7 +69,7 @@ public final class BoutMocker {
      */
     public BoutMocker() {
         Mockito.doReturn(this.messages).when(this.bout)
-            .messages(Mockito.anyString());
+            .messages(Mockito.any(Query.class));
         Mockito.doReturn(this.participants).when(this.bout).participants();
         try {
             Mockito.doAnswer(
@@ -80,7 +80,7 @@ public final class BoutMocker {
                     }
                 }
             ).when(this.bout).message(Mockito.anyLong());
-        } catch (com.netbout.spi.MessageNotFoundException ex) {
+        } catch (Bout.MessageNotFoundException ex) {
             throw new IllegalStateException(ex);
         }
         this.titledAs("some random text");
@@ -127,7 +127,6 @@ public final class BoutMocker {
     public BoutMocker withMessage(final String text) {
         return this.withMessage(
             new MessageMocker()
-                .inBout(this.bout)
                 .withText(text)
                 .mock()
         );
@@ -160,7 +159,11 @@ public final class BoutMocker {
             }
         )
             .when(this.bout)
-            .messages(Mockito.argThat(Matchers.containsString(mask)));
+            .messages(
+                Mockito.<Query>argThat(
+                    Matchers.<Query>hasToString(Matchers.containsString(mask))
+                )
+            );
         return this;
     }
 
@@ -170,16 +173,7 @@ public final class BoutMocker {
      * @return This object
      */
     public BoutMocker withParticipant(final String name) {
-        return this.withParticipant(new IdentityMocker().namedAs(name).mock());
-    }
-
-    /**
-     * With this participant, by its name.
-     * @param name The name of it
-     * @return This object
-     */
-    public BoutMocker withParticipant(final Urn name) {
-        return this.withParticipant(new IdentityMocker().namedAs(name).mock());
+        return this.withParticipant(Urn.create(name));
     }
 
     /**
@@ -194,14 +188,13 @@ public final class BoutMocker {
 
     /**
      * With this participant.
-     * @param part The identity
+     * @param name Name of participant
      * @return This object
      */
-    public BoutMocker withParticipant(final Identity part) {
+    public BoutMocker withParticipant(final Urn name) {
         return this.withParticipant(
             new ParticipantMocker()
-                .inBout(this.bout)
-                .withIdentity(part)
+                .withName(name)
                 .mock()
         );
     }

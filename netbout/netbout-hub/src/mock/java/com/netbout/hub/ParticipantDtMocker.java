@@ -28,7 +28,6 @@ package com.netbout.hub;
 
 import com.netbout.spi.Urn;
 import com.netbout.spi.UrnMocker;
-import java.util.Random;
 import org.mockito.Mockito;
 
 /**
@@ -48,19 +47,8 @@ public final class ParticipantDtMocker {
      * Public ctor.
      */
     public ParticipantDtMocker() {
-        this.withBout(Math.abs(new Random().nextLong()));
         this.withIdentity(new UrnMocker().mock());
         this.confirmed();
-    }
-
-    /**
-     * With this number of bout.
-     * @param bout The bout number
-     * @return This object
-     */
-    public ParticipantDtMocker withBout(final Long bout) {
-        Mockito.doReturn(bout).when(this.participant).getBout();
-        return this;
     }
 
     /**

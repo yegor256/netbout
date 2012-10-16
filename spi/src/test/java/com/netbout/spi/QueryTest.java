@@ -29,78 +29,43 @@
  */
 package com.netbout.spi;
 
-import java.util.Date;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;
 
 /**
- * Test case for {@link NetboutUtils}.
+ * Test case for {@link Query}.
  * @author Yegor Bugayenko (yegor@netbout.com)
- * @version $Id$
+ * @version $Id: QueryTest.java 3452 2012-10-15 07:55:58Z yegor@tpc2.com $
  */
-public final class NetboutUtilsTest {
+public final class QueryTest {
 
     /**
-     * NetboutUtils can calculate the date of a bout.
-     * @throws Exception If there is some problem inside
-     */
-    @Test
-    public void calculatesDateOfBout() throws Exception {
-        final Date bdate = new Date();
-        final Date mdate = new Date(bdate.getTime() + 1);
-        final Bout bout = new BoutMocker()
-            .withDate(bdate)
-            .withMessage(new MessageMocker().withDate(mdate).mock())
-            .mock();
-        MatcherAssert.assertThat(
-            NetboutUtils.dateOf(bout),
-            Matchers.equalTo(mdate)
-        );
-    }
-
-    /**
-     * NetboutUtils can find a participant in bout.
-     * @throws Exception If there is some problem inside
-     */
-    @Test
-    public void findsParticipantInBout() throws Exception {
-        final Urn name = new UrnMocker().mock();
-        final Identity identity = new IdentityMocker().namedAs(name).mock();
-        final Bout bout = new BoutMocker().withParticipant(name).mock();
-        MatcherAssert.assertThat(
-            NetboutUtils.participantOf(identity, bout).identity().name(),
-            Matchers.equalTo(name)
-        );
-    }
-
-    /**
-     * NetboutUtils can check for participation.
-     * @throws Exception If there is some problem inside
-     */
-    @Test
-    public void checksForParticipationInBout() throws Exception {
-        final Urn name = new UrnMocker().mock();
-        final Bout bout = new BoutMocker().withParticipant(name).mock();
-        MatcherAssert.assertThat(
-            "he is in!",
-            NetboutUtils.participatesIn(name, bout)
-        );
-    }
-
-    /**
-     * NetboutUtils can normalize a query.
+     * Query.Textual can normalize a query.
      * @throws Exception If there is some problem inside
      */
     @Test
     public void normalizedArbitraryQuery() throws Exception {
         MatcherAssert.assertThat(
-            NetboutUtils.normalize("it's cool"),
+            new Query.Textual("it's cool").toString(),
             Matchers.equalTo("(matches 'it\\'s cool')")
         );
         MatcherAssert.assertThat(
-            NetboutUtils.normalize(" \n(matches '\nhey')\n\t "),
+            new Query.Textual(" \n(matches '\nhey')\n\t ").toString(),
             Matchers.equalTo("(matches '\nhey')")
+        );
+    }
+
+    /**
+     * Query.Textual can be compared to itself.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void comparesTwoInstances() throws Exception {
+        final String text = "some query text";
+        MatcherAssert.assertThat(
+            new Query.Textual(text),
+            Matchers.equalTo(new Query.Textual(text))
         );
     }
 

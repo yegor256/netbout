@@ -76,11 +76,11 @@ final class TalksWith implements Functor {
     public void see(final Ray ray, final MessagePostedNotice notice) {
         final long number = ray.msg(notice.message().number()).number();
         ray.cursor().delete(ray.builder().picker(number), TalksWith.ATTR);
-        for (Participant dude : notice.message().bout().participants()) {
+        for (Participant dude : notice.bout().participants()) {
             ray.cursor().add(
                 ray.builder().picker(number),
                 TalksWith.ATTR,
-                dude.identity().name().toString()
+                dude.name().toString()
             );
         }
     }

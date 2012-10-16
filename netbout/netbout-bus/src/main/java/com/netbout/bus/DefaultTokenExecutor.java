@@ -33,6 +33,7 @@ import com.netbout.spi.Helper;
 import com.netbout.spi.Identity;
 import com.netbout.spi.Participant;
 import com.netbout.spi.Plain;
+import com.netbout.spi.Urn;
 import com.netbout.spi.plain.PlainList;
 import java.util.AbstractMap;
 import java.util.ArrayList;
@@ -60,8 +61,8 @@ final class DefaultTokenExecutor implements TokenExecutor, StatsProvider {
     /**
      * List of registered helpers.
      */
-    private final transient ConcurrentMap<Identity, Helper> helpers =
-        new ConcurrentHashMap<Identity, Helper>();
+    private final transient ConcurrentMap<Urn, Helper> helpers =
+        new ConcurrentHashMap<Urn, Helper>();
 
     /**
      * Consumption bills.
@@ -73,7 +74,7 @@ final class DefaultTokenExecutor implements TokenExecutor, StatsProvider {
      */
     @Override
     public void register(final Identity identity, final Helper helper) {
-        if (this.helpers.containsKey(identity)) {
+        if (this.helpers.containsKey(identity.name())) {
             throw new IllegalArgumentException(
                 String.format(
                     "Identity '%s' has already been registered as '%s'",
@@ -90,18 +91,18 @@ final class DefaultTokenExecutor implements TokenExecutor, StatsProvider {
                 )
             );
         }
-        for (Map.Entry<Identity, Helper> entry : this.helpers.entrySet()) {
+        for (Map.Entry<Urn, Helper> entry : this.helpers.entrySet()) {
             if (entry.getValue().location().equals(helper.location())) {
                 throw new IllegalArgumentException(
                     String.format(
                         "Identity '%s' already registered '%s' location",
-                        entry.getKey().name(),
+                        entry.getKey(),
                         helper.location()
                     )
                 );
             }
         }
-        this.helpers.put(identity, helper);
+        this.helpers.put(identity.name(), helper);
         Logger.debug(
             this,
             "#register(%s): registered (%d total now)",
@@ -125,15 +126,15 @@ final class DefaultTokenExecutor implements TokenExecutor, StatsProvider {
     @Override
     @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
     public void exec(final TxToken token, final Bout bout) {
-        final Set<Map.Entry<Identity, Helper>> active =
-            new HashSet<Map.Entry<Identity, Helper>>();
+        final Set<Map.Entry<Urn, Helper>> active =
+            new HashSet<Map.Entry<Urn, Helper>>();
         for (Participant participant : bout.participants()) {
-            final Identity identity = participant.identity();
-            if (this.helpers.containsKey(identity)) {
+            final Urn name = participant.name();
+            if (this.helpers.containsKey(name)) {
                 active.add(
-                    new AbstractMap.SimpleEntry<Identity, Helper>(
-                        identity,
-                        this.helpers.get(identity)
+                    new AbstractMap.SimpleEntry<Urn, Helper>(
+                        name,
+                        this.helpers.get(name)
                     )
                 );
             }
@@ -149,11 +150,11 @@ final class DefaultTokenExecutor implements TokenExecutor, StatsProvider {
     @Override
     public String statistics() {
         final StringBuilder text = new StringBuilder();
-        for (Map.Entry<Identity, Helper> entry : this.helpers.entrySet()) {
+        for (Map.Entry<Urn, Helper> entry : this.helpers.entrySet()) {
             text.append(
                 Logger.format(
                     "%s as %s with %[list]s\n",
-                    entry.getKey().name(),
+                    entry.getKey(),
                     entry.getValue().location(),
                     entry.getValue().supports()
                 )
@@ -172,16 +173,16 @@ final class DefaultTokenExecutor implements TokenExecutor, StatsProvider {
      * @return The bill
      */
     private Bill run(final TxToken token,
-        final Set<Map.Entry<Identity, Helper>> targets) {
+        final Set<Map.Entry<Urn, Helper>> targets) {
         final String mnemo = token.mnemo();
         final Bill bill = new Bill(mnemo);
-        for (Map.Entry<Identity, Helper> helper : targets) {
+        for (Map.Entry<Urn, Helper> helper : targets) {
             if (helper.getValue().supports().contains(mnemo)) {
                 final long start = System.nanoTime();
                 helper.getValue().execute(token);
                 if (token.isCompleted()) {
                     bill.done(
-                        helper.getKey().name().toString(),
+                        helper.getKey().toString(),
                         System.nanoTime() - start
                     );
                     break;

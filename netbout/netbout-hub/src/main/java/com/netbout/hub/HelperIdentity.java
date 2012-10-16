@@ -27,12 +27,12 @@
 package com.netbout.hub;
 
 import com.netbout.spi.Bout;
-import com.netbout.spi.BoutNotFoundException;
+import com.netbout.spi.Friend;
 import com.netbout.spi.Helper;
 import com.netbout.spi.Identity;
-import com.netbout.spi.Profile;
+import com.netbout.spi.OwnProfile;
+import com.netbout.spi.Query;
 import com.netbout.spi.Token;
-import com.netbout.spi.UnreachableUrnException;
 import com.netbout.spi.Urn;
 import java.net.URL;
 import java.util.Set;
@@ -78,8 +78,8 @@ final class HelperIdentity implements Identity, Helper {
      * {@inheritDoc}
      */
     @Override
-    public int compareTo(final Identity idnt) {
-        return this.identity.compareTo(idnt);
+    public int compareTo(final Friend friend) {
+        return this.identity.compareTo(friend);
     }
 
     /**
@@ -135,7 +135,7 @@ final class HelperIdentity implements Identity, Helper {
      * @checkstyle RedundantThrows (4 lines)
      */
     @Override
-    public Bout bout(final Long number) throws BoutNotFoundException {
+    public Bout bout(final Long number) throws Identity.BoutNotFoundException {
         return this.identity.bout(number);
     }
 
@@ -143,7 +143,7 @@ final class HelperIdentity implements Identity, Helper {
      * {@inheritDoc}
      */
     @Override
-    public Iterable<Bout> inbox(final String query) {
+    public Iterable<Bout> inbox(final Query query) {
         return this.identity.inbox(query);
     }
 
@@ -151,7 +151,7 @@ final class HelperIdentity implements Identity, Helper {
      * {@inheritDoc}
      */
     @Override
-    public Profile profile() {
+    public OwnProfile profile() {
         return this.identity.profile();
     }
 
@@ -160,7 +160,8 @@ final class HelperIdentity implements Identity, Helper {
      * @checkstyle RedundantThrows (4 lines)
      */
     @Override
-    public Identity friend(final Urn name) throws UnreachableUrnException {
+    public Friend friend(final Urn name)
+        throws Identity.UnreachableUrnException {
         return this.identity.friend(name);
     }
 
@@ -168,7 +169,7 @@ final class HelperIdentity implements Identity, Helper {
      * {@inheritDoc}
      */
     @Override
-    public Set<Identity> friends(final String keyword) {
+    public Set<Friend> friends(final String keyword) {
         return this.identity.friends(keyword);
     }
 

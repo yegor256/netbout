@@ -30,6 +30,7 @@ import com.jcabi.log.Logger;
 import com.netbout.inf.functors.DefaultStore;
 import com.netbout.inf.ray.MemRay;
 import com.netbout.inf.ray.imap.DirectoryMocker;
+import com.netbout.spi.Query;
 import java.io.File;
 import java.security.SecureRandom;
 import java.util.Iterator;
@@ -91,7 +92,7 @@ public final class LazyMessagesProf {
     private Term term(final Ray ray) throws Exception {
         return new ParserAdapter(new DefaultStore())
             // @checkstyle LineLength (1 line)
-            .parse("(and (talks-with 'urn:test:1') (from 0) (bundled) (unique $bout.number))")
+            .parse(new Query.Textual("(and (talks-with 'urn:test:1') (from 0) (bundled) (unique $bout.number))"))
             .term(ray);
     }
 

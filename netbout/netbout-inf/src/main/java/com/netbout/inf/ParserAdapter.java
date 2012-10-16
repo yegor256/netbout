@@ -28,7 +28,7 @@ package com.netbout.inf;
 
 import com.jcabi.log.Logger;
 import com.netbout.inf.atoms.PredicateAtom;
-import com.netbout.spi.NetboutUtils;
+import com.netbout.spi.Query;
 import org.antlr.runtime.ANTLRStringStream;
 import org.antlr.runtime.CharStream;
 import org.antlr.runtime.CommonTokenStream;
@@ -63,11 +63,9 @@ final class ParserAdapter {
      * @return The predicate atom
      * @throws InvalidSyntaxException If query is not valid
      */
-    public PredicateAtom parse(final String query)
+    public PredicateAtom parse(final Query query)
         throws InvalidSyntaxException {
-        final CharStream input = new ANTLRStringStream(
-            NetboutUtils.normalize(query)
-        );
+        final CharStream input = new ANTLRStringStream(query.toString());
         final QueryLexer lexer = new QueryLexer(input);
         final TokenStream tokens = new CommonTokenStream(lexer);
         final QueryParser parser = new QueryParser(tokens);

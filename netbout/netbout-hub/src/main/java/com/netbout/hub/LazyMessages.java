@@ -96,7 +96,7 @@ public final class LazyMessages implements Iterable<Message> {
         public Message next() {
             try {
                 return LazyMessages.this.bout.message(this.iterator.next());
-            } catch (com.netbout.spi.MessageNotFoundException ex) {
+            } catch (Bout.MessageNotFoundException ex) {
                 throw new IllegalStateException(ex);
             }
         }

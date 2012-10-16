@@ -26,7 +26,6 @@
  */
 package com.netbout.hub;
 
-import com.netbout.spi.Bout;
 import com.netbout.spi.Identity;
 import com.netbout.spi.Message;
 import java.util.Date;
@@ -50,11 +49,6 @@ final class HubMessage implements Message {
     private final transient Identity viewer;
 
     /**
-     * The bout where this message is located.
-     */
-    private final transient Bout ibout;
-
-    /**
      * The data.
      */
     private final transient MessageDt data;
@@ -63,15 +57,13 @@ final class HubMessage implements Message {
      * Public ctor.
      * @param ihub The hub
      * @param vwr Viewer
-     * @param bout The bout where this message is located
      * @param dat The data
      * @checkstyle ParameterNumber (3 lines)
      */
     public HubMessage(final PowerHub ihub, final Identity vwr,
-        final Bout bout, final MessageDt dat) {
+        final MessageDt dat) {
         this.hub = ihub;
         this.viewer = vwr;
-        this.ibout = bout;
         this.data = dat;
     }
 
@@ -112,14 +104,6 @@ final class HubMessage implements Message {
      * {@inheritDoc}
      */
     @Override
-    public Bout bout() {
-        return this.ibout;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
     public Long number() {
         return this.data.getNumber();
     }
@@ -131,7 +115,7 @@ final class HubMessage implements Message {
     public Identity author() {
         try {
             return this.hub.identity(this.data.getAuthor());
-        } catch (com.netbout.spi.UnreachableUrnException ex) {
+        } catch (Identity.UnreachableUrnException ex) {
             throw new IllegalStateException(ex);
         }
     }

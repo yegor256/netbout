@@ -26,6 +26,7 @@
  */
 
 import com.jcabi.log.Logger;
+import com.netbout.spi.Query;
 import com.netbout.spi.Urn;
 import com.netbout.spi.client.RestSession;
 import de.svenjacobs.loremipsum.LoremIpsum;
@@ -46,7 +47,7 @@ try {
         new Urn("urn:netbout:buddy-" + ctx.getThread().getThreadNum()), ""
     );
     // this bout should be created before, in ReXSL tests
-    bouts = user.inbox("(equal $bout.number 4)").iterator();
+    bouts = user.inbox(new Query.Textual("(equal $bout.number 4)")).iterator();
     if (bouts.hasNext()) {
         bout = bouts.next();
         bout.rename(lorem(10));

@@ -53,7 +53,7 @@ public final class BoutRsTest {
         final String title = "\u0443\u0440\u0430!";
         final Identity identity = new IdentityMocker().mock();
         final Bout bout = new BoutMocker()
-            .withParticipant(identity)
+            .withParticipant(identity.name())
             .titledAs(title)
             .mock();
         Mockito.doReturn(bout).when(identity).start();

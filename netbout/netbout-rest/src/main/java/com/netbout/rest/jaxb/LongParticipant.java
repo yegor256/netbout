@@ -27,8 +27,8 @@
 package com.netbout.rest.jaxb;
 
 import com.netbout.spi.Helper;
-import com.netbout.spi.NetboutUtils;
 import com.netbout.spi.Participant;
+import com.netbout.spi.Profile;
 import com.rexsl.page.Link;
 import java.net.URL;
 import java.util.Collection;
@@ -101,7 +101,7 @@ public final class LongParticipant {
                     this.builder.clone()
                         .path("/kickoff")
                         .replaceQueryParam("name", "{name}")
-                        .build(this.participant.identity().name())
+                        .build(this.participant.name())
                 )
             );
         }
@@ -114,7 +114,7 @@ public final class LongParticipant {
      */
     @XmlElement
     public String getIdentity() {
-        return this.participant.identity().name().toString();
+        return this.participant.name().toString();
     }
 
     /**
@@ -123,7 +123,10 @@ public final class LongParticipant {
      */
     @XmlElement
     public String getAlias() {
-        return NetboutUtils.aliasOf(this.participant.identity());
+        return new Profile.Conventional(this.participant)
+            .aliases()
+            .iterator()
+            .next();
     }
 
     /**
@@ -132,7 +135,7 @@ public final class LongParticipant {
      */
     @XmlElement
     public URL getPhoto() {
-        return this.participant.identity().profile().photo();
+        return this.participant.profile().photo();
     }
 
     /**
@@ -159,7 +162,7 @@ public final class LongParticipant {
      */
     @XmlAttribute
     public Boolean isHelper() {
-        return this.participant.identity() instanceof Helper;
+        return this.participant instanceof Helper;
     }
 
     /**
@@ -168,7 +171,7 @@ public final class LongParticipant {
      */
     @XmlAttribute
     public Boolean isMe() {
-        return this.participant.identity().equals(this.viewer.identity());
+        return this.participant.equals(this.viewer);
     }
 
 }

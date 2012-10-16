@@ -27,9 +27,11 @@
 package com.netbout.hub;
 
 import com.jcabi.log.Logger;
-import com.netbout.spi.Bout;
+import com.netbout.spi.Friend;
 import com.netbout.spi.Identity;
 import com.netbout.spi.Participant;
+import com.netbout.spi.Profile;
+import com.netbout.spi.Urn;
 
 /**
  * Identity.
@@ -42,12 +44,7 @@ public final class HubParticipant implements Participant {
     /**
      * The hub.
      */
-    private final transient PowerHub hub;
-
-    /**
-     * The bout I'm in (from the point of view of current viewer).
-     */
-    private final transient Bout ibout;
+    private final transient Hub hub;
 
     /**
      * The data.
@@ -61,18 +58,23 @@ public final class HubParticipant implements Participant {
 
     /**
      * Public ctor.
-     * @param ihub The hub
-     * @param bout The bout
+     * @param ihub Hub with data
      * @param dat The data
      * @param bdt Bout data
-     * @checkstyle ParameterNumber (3 lines)
      */
-    public HubParticipant(final PowerHub ihub, final Bout bout,
+    public HubParticipant(final Hub ihub,
         final ParticipantDt dat, final BoutDt bdt) {
         this.hub = ihub;
-        this.ibout = bout;
         this.data = dat;
         this.boutdt = bdt;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public int compareTo(final Friend friend) {
+        return this.name().compareTo(friend.name());
     }
 
     /**
@@ -87,20 +89,8 @@ public final class HubParticipant implements Participant {
      * {@inheritDoc}
      */
     @Override
-    public Bout bout() {
-        return this.ibout;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Identity identity() {
-        try {
-            return this.hub.identity(this.data.getIdentity());
-        } catch (com.netbout.spi.UnreachableUrnException ex) {
-            throw new IllegalStateException(ex);
-        }
+    public Urn name() {
+        return this.data.getIdentity();
     }
 
     /**
@@ -108,13 +98,12 @@ public final class HubParticipant implements Participant {
      */
     @Override
     public void kickOff() {
-        final Identity identity = this.identity();
-        this.boutdt.kickOff(identity.name());
+        this.boutdt.kickOff(this.name());
         Logger.info(
             this,
             "Participant '%s' was kicked-off from bout #%d",
-            identity.name(),
-            this.ibout.number()
+            this.name(),
+            this.boutdt.getNumber()
         );
     }
 
@@ -139,7 +128,19 @@ public final class HubParticipant implements Participant {
      */
     @Override
     public void consign() {
-        this.boutdt.setLeader(this.identity().name());
+        this.boutdt.setLeader(this.name());
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Profile profile() {
+        try {
+            return this.hub.identity(this.name()).profile();
+        } catch (Identity.UnreachableUrnException ex) {
+            throw new IllegalStateException(ex);
+        }
     }
 
 }

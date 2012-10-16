@@ -27,7 +27,7 @@
 package com.netbout.shary;
 
 import com.netbout.spi.Identity;
-import com.netbout.spi.NetboutUtils;
+import com.netbout.spi.Profile;
 import com.netbout.spi.Urn;
 import com.netbout.spi.text.SecureString;
 import com.netbout.spi.xml.SchemaLocation;
@@ -104,10 +104,10 @@ public final class Slip {
     public String render(final Identity viewer) {
         String alias;
         try {
-            alias = NetboutUtils.aliasOf(
+            alias = new Profile.Conventional(
                 viewer.friend(Urn.create(this.author))
-            );
-        } catch (com.netbout.spi.UnreachableUrnException ex) {
+            ).aliases().iterator().next();
+        } catch (Identity.UnreachableUrnException ex) {
             alias = "someone";
         }
         String text;

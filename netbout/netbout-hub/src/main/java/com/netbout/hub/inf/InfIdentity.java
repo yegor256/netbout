@@ -27,9 +27,10 @@
 package com.netbout.hub.inf;
 
 import com.netbout.spi.Bout;
+import com.netbout.spi.Friend;
 import com.netbout.spi.Identity;
-import com.netbout.spi.Profile;
-import com.netbout.spi.UnreachableUrnException;
+import com.netbout.spi.OwnProfile;
+import com.netbout.spi.Query;
 import com.netbout.spi.Urn;
 import java.net.URL;
 import java.util.Set;
@@ -68,7 +69,7 @@ public final class InfIdentity implements Identity {
      * {@inheritDoc}
      */
     @Override
-    public int compareTo(final Identity identity) {
+    public int compareTo(final Friend friend) {
         throw new UnsupportedOperationException("#compareTo()");
     }
 
@@ -132,7 +133,7 @@ public final class InfIdentity implements Identity {
      * {@inheritDoc}
      */
     @Override
-    public Iterable<Bout> inbox(final String query) {
+    public Iterable<Bout> inbox(final Query query) {
         throw new UnsupportedOperationException("#inbox()");
     }
 
@@ -140,7 +141,7 @@ public final class InfIdentity implements Identity {
      * {@inheritDoc}
      */
     @Override
-    public Profile profile() {
+    public OwnProfile profile() {
         throw new UnsupportedOperationException("#profile()");
     }
 
@@ -149,7 +150,7 @@ public final class InfIdentity implements Identity {
      * @checkstyle RedundantThrows (4 lines)
      */
     @Override
-    public Identity friend(final Urn name) throws UnreachableUrnException {
+    public Friend friend(final Urn name) throws UnreachableUrnException {
         throw new UnsupportedOperationException("#friend()");
     }
 
@@ -157,7 +158,7 @@ public final class InfIdentity implements Identity {
      * {@inheritDoc}
      */
     @Override
-    public Set<Identity> friends(final String keyword) {
+    public Set<Friend> friends(final String keyword) {
         throw new UnsupportedOperationException("#friends()");
     }
 

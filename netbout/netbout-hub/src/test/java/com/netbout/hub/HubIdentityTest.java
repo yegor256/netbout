@@ -27,6 +27,7 @@
 package com.netbout.hub;
 
 import com.netbout.inf.Infinity;
+import com.netbout.spi.Query;
 import com.netbout.spi.Urn;
 import com.netbout.spi.UrnMocker;
 import java.util.Arrays;
@@ -53,11 +54,13 @@ public final class HubIdentityTest {
         final Infinity infinity = Mockito.mock(Infinity.class);
         Mockito.doReturn(infinity).when(hub).infinity();
         final Urn name = new UrnMocker().mock();
-        new HubIdentity(hub, name).inbox("");
+        new HubIdentity(hub, name).inbox(new Query.Textual(""));
         Mockito.verify(infinity).messages(
-            Mockito.argThat(
-                Matchers.containsString(
-                    String.format("(talks-with '%s')", name)
+            Mockito.<Query>argThat(
+                Matchers.<Query>hasToString(
+                    Matchers.containsString(
+                        String.format("(talks-with '%s')", name)
+                    )
                 )
             )
         );

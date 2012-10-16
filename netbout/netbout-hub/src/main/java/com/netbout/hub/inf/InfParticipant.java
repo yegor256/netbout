@@ -27,9 +27,10 @@
 package com.netbout.hub.inf;
 
 import com.netbout.hub.ParticipantDt;
-import com.netbout.spi.Bout;
-import com.netbout.spi.Identity;
+import com.netbout.spi.Friend;
 import com.netbout.spi.Participant;
+import com.netbout.spi.Profile;
+import com.netbout.spi.Urn;
 
 /**
  * Participant to be seen by INF.
@@ -56,6 +57,14 @@ public final class InfParticipant implements Participant {
      * {@inheritDoc}
      */
     @Override
+    public int compareTo(final Friend friend) {
+        throw new UnsupportedOperationException("#compareTo()");
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public String toString() {
         throw new UnsupportedOperationException("#toString()");
     }
@@ -64,16 +73,8 @@ public final class InfParticipant implements Participant {
      * {@inheritDoc}
      */
     @Override
-    public Bout bout() {
-        throw new UnsupportedOperationException("#bout()");
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Identity identity() {
-        return new InfIdentity(this.data.getIdentity());
+    public Urn name() {
+        return this.data.getIdentity();
     }
 
     /**
@@ -106,6 +107,14 @@ public final class InfParticipant implements Participant {
     @Override
     public void consign() {
         throw new UnsupportedOperationException("#consign()");
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Profile profile() {
+        throw new UnsupportedOperationException("#profile()");
     }
 
 }

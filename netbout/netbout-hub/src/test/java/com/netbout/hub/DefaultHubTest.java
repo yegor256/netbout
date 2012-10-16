@@ -138,7 +138,7 @@ public final class DefaultHubTest {
      * Catalog can check identity name and throws exception if it's unreachable.
      * @throws Exception If there is some problem inside
      */
-    @Test(expected = com.netbout.spi.UnreachableUrnException.class)
+    @Test(expected = Identity.UnreachableUrnException.class)
     public void doesntAllowUnreachableIdentities() throws Exception {
         final Bus bus = new BusMocker().mock();
         final PowerHub hub = new DefaultHub(bus, new InfinityMocker().mock());

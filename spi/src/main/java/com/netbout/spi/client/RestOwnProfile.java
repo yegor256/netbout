@@ -29,51 +29,88 @@
  */
 package com.netbout.spi.client;
 
-import com.netbout.spi.Bout;
-import com.netbout.spi.Identity;
-import com.netbout.spi.Profile;
-import com.netbout.spi.Urn;
+import com.netbout.spi.OwnProfile;
+import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Set;
 
 /**
- * Friend, with no connection to REST API.
+ * The profile of {@link Identity}.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
- * @version $Id$
+ * @version $Id: RestProfile.java 2482 2012-05-22 10:18:34Z guard $
  */
-@SuppressWarnings("PMD.TooManyMethods")
-final class Friend implements Identity {
+final class RestOwnProfile implements OwnProfile {
 
     /**
-     * Name of it.
+     * REST client.
      */
-    private final transient Urn iname;
+    private final transient RestClient client;
 
     /**
      * Public ctor.
-     * @param name The name of it
+     * @param clnt REST client
      */
-    public Friend(final Urn name) {
-        this.iname = name;
+    public RestOwnProfile(final RestClient clnt) {
+        this.client = clnt;
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public int compareTo(final Identity identity) {
-        return this.iname.compareTo(identity.name());
+    public Locale locale() {
+        final String lang = this.client
+            .get("reading locale of identity")
+            .assertStatus(HttpURLConnection.HTTP_OK)
+            .assertXPath("/page/identity/locale")
+            .xpath("/page/identity/locale/text()")
+            .get(0);
+        return new Locale(lang);
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public Long eta() {
+    public URL photo() {
+        final String href = this.client
+            .get("reading photo of identity")
+            .assertStatus(HttpURLConnection.HTTP_OK)
+            .assertXPath("/page/identity/photo[.!='']")
+            .xpath("/page/identity/photo/text()")
+            .get(0);
+        try {
+            return new URL(href);
+        } catch (java.net.MalformedURLException ex) {
+            throw new IllegalStateException(ex);
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Set<String> aliases() {
+        final List<String> names = this.client
+            .get("reading aliases of identity")
+            .assertStatus(HttpURLConnection.HTTP_OK)
+            .assertXPath("/page/identity/aliases")
+            .xpath("/page/identity/aliases/alias/text()");
+        return Collections.unmodifiableSet(new HashSet<String>(names));
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void setLocale(final Locale locale) {
         throw new UnsupportedOperationException(
-            "#eta() can't be called on a friend"
+            "Profile#setLocale() is not implemented yet"
         );
     }
 
@@ -81,9 +118,9 @@ final class Friend implements Identity {
      * {@inheritDoc}
      */
     @Override
-    public URL authority() {
+    public void setPhoto(final URL photo) {
         throw new UnsupportedOperationException(
-            "#authority() can't be called on a friend"
+            "Profile#setPhoto() is not implemented yet"
         );
     }
 
@@ -91,67 +128,9 @@ final class Friend implements Identity {
      * {@inheritDoc}
      */
     @Override
-    public Urn name() {
-        return this.iname;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Bout start() {
+    public void alias(final String alias) {
         throw new UnsupportedOperationException(
-            "#start() can't be called on a friend"
-        );
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public List<Bout> inbox(final String query) {
-        throw new UnsupportedOperationException(
-            "#inbox() can't be called on a friend"
-        );
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Bout bout(final Long num) {
-        throw new UnsupportedOperationException(
-            "#bout() can't be called on a friend"
-        );
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Identity friend(final Urn name) {
-        throw new UnsupportedOperationException(
-            "#friend() can't be called on a friend"
-        );
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Set<Identity> friends(final String keyword) {
-        throw new UnsupportedOperationException(
-            "#friends() can't be called on a friend"
-        );
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Profile profile() {
-        throw new UnsupportedOperationException(
-            "#profile() can't be called on a friend"
+            "Profile#alias() is not implemented yet"
         );
     }
 

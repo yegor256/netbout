@@ -27,7 +27,7 @@
 package com.netbout.rest;
 
 import com.netbout.rest.jaxb.Invitee;
-import com.netbout.spi.Identity;
+import com.netbout.spi.Friend;
 import com.rexsl.page.JaxbBundle;
 import com.rexsl.page.JaxbGroup;
 import com.rexsl.page.PageBuilder;
@@ -68,10 +68,10 @@ public final class FriendsRs extends BaseRs {
             );
         }
         final List<Invitee> invitees = new LinkedList<Invitee>();
-        for (Identity identity : this.identity().friends(mask)) {
+        for (Friend friend : this.identity().friends(mask)) {
             invitees.add(
                 new Invitee(
-                    identity,
+                    friend,
                     UriBuilder.fromUri(this.base().path("/{bout}").build(bout))
                 )
             );

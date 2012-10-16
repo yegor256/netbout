@@ -26,10 +26,8 @@
  */
 package com.netbout.hub.inf;
 
-import com.netbout.hub.BoutDt;
 import com.netbout.hub.MessageDt;
-import com.netbout.spi.Bout;
-import com.netbout.spi.Identity;
+import com.netbout.spi.Friend;
 import com.netbout.spi.Message;
 import java.util.Date;
 
@@ -49,18 +47,11 @@ public final class InfMessage implements Message {
     private final transient MessageDt data;
 
     /**
-     * Bout data.
-     */
-    private final transient BoutDt bdata;
-
-    /**
      * Public ctor.
      * @param msg Message data
-     * @param bout Bout data
      */
-    public InfMessage(final MessageDt msg, final BoutDt bout) {
+    public InfMessage(final MessageDt msg) {
         this.data = msg;
-        this.bdata = bout;
     }
 
     /**
@@ -99,14 +90,6 @@ public final class InfMessage implements Message {
      * {@inheritDoc}
      */
     @Override
-    public Bout bout() {
-        return new InfBout(this.bdata);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
     public Long number() {
         return this.data.getNumber();
     }
@@ -115,7 +98,7 @@ public final class InfMessage implements Message {
      * {@inheritDoc}
      */
     @Override
-    public Identity author() {
+    public Friend author() {
         return new InfIdentity(this.data.getAuthor());
     }
 

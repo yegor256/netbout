@@ -41,19 +41,6 @@ import org.junit.Test;
 public final class MessageTest {
 
     /**
-     * MessageMocker sets bout on demand.
-     * @throws Exception If there is some problem inside
-     */
-    @Test
-    public void setsBoutOnDemand() throws Exception {
-        final Bout bout = new BoutMocker().mock();
-        final Message message = new MessageMocker()
-            .inBout(bout)
-            .mock();
-        MatcherAssert.assertThat(message.bout(), Matchers.equalTo(bout));
-    }
-
-    /**
      * MessageMocker can set properties by default.
      * @throws Exception If there is some problem inside
      */

@@ -30,7 +30,7 @@ import com.jcabi.log.Logger;
 import com.netbout.hub.inf.InfIdentity;
 import com.netbout.inf.notices.AliasAddedNotice;
 import com.netbout.spi.Identity;
-import com.netbout.spi.Profile;
+import com.netbout.spi.OwnProfile;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -49,7 +49,7 @@ import java.util.regex.Pattern;
  * @version $Id$
  * @checkstyle ClassDataAbstractionCoupling (500 lines)
  */
-public final class HubProfile implements Profile {
+public final class HubProfile implements OwnProfile {
 
     /**
      * Default photo of identity.

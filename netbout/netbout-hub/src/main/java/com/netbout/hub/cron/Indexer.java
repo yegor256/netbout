@@ -30,6 +30,7 @@ import com.jcabi.log.Logger;
 import com.jcabi.log.VerboseThreads;
 import com.netbout.hub.PowerHub;
 import com.netbout.inf.notices.MessagePostedNotice;
+import com.netbout.spi.Bout;
 import com.netbout.spi.Message;
 import com.netbout.spi.Urn;
 import java.util.ArrayList;
@@ -111,15 +112,8 @@ final class Indexer extends AbstractCron {
                 executor.submit(
                     new Callable<Void>() {
                         public Void call() throws Exception {
-                            final Message message =
-                                Indexer.this.message(number);
                             Indexer.this.hub().infinity().see(
-                                new MessagePostedNotice() {
-                                    @Override
-                                    public Message message() {
-                                        return message;
-                                    }
-                                }
+                                Indexer.this.notice(number)
                             );
                             return null;
                         }
@@ -137,12 +131,12 @@ final class Indexer extends AbstractCron {
     }
 
     /**
-     * Create a message from its number.
+     * Create a message posted notice from message number.
      * @param number Number of message
-     * @return The message itself
+     * @return Message posted notice
      * @throws Exception If something wrong with this msg
      */
-    private Message message(final Long number) throws Exception {
+    private MessagePostedNotice notice(final Long number) throws Exception {
         final Long bnum = this.hub().make("get-bout-of-message")
             .synchronously()
             .arg(number)
@@ -160,7 +154,18 @@ final class Indexer extends AbstractCron {
                 )
             );
         }
-        return this.hub().identity(dudes.get(0)).bout(bnum).message(number);
+        final Bout bout = this.hub().identity(dudes.get(0)).bout(bnum);
+        final Message message = bout.message(number);
+        return new MessagePostedNotice() {
+            @Override
+            public Message message() {
+                return message;
+            }
+            @Override
+            public Bout bout() {
+                return bout;
+            }
+        };
     }
 
 }

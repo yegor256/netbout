@@ -26,6 +26,7 @@
  */
 package com.netbout.inf;
 
+import com.netbout.spi.Query;
 import com.netbout.spi.Urn;
 import java.io.Closeable;
 import java.util.Set;
@@ -52,7 +53,7 @@ public interface Infinity extends Closeable {
      * @return The list of messages, ordered
      * @throws InvalidSyntaxException If query syntax is not valid
      */
-    Iterable<Long> messages(String query) throws InvalidSyntaxException;
+    Iterable<Long> messages(Query query) throws InvalidSyntaxException;
 
     /**
      * How many messages were seen totally by this infinity?

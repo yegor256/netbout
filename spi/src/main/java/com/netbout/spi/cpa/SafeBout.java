@@ -30,9 +30,11 @@
 package com.netbout.spi.cpa;
 
 import com.netbout.spi.Bout;
+import com.netbout.spi.Friend;
 import com.netbout.spi.Identity;
 import com.netbout.spi.Message;
 import com.netbout.spi.Participant;
+import com.netbout.spi.Query;
 import java.util.Collection;
 import java.util.Date;
 
@@ -132,28 +134,30 @@ final class SafeBout implements Bout {
 
     /**
      * {@inheritDoc}
+     * @checkstyle RedundantThrows (4 lines)
      */
     @Override
-    public Participant invite(final Identity idnt)
-        throws com.netbout.spi.DuplicateInvitationException {
-        return this.bout.invite(idnt);
+    public Participant invite(final Friend friend)
+        throws Bout.DuplicateInvitationException {
+        return this.bout.invite(friend);
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public Iterable<Message> messages(final String query) {
+    public Iterable<Message> messages(final Query query) {
         new Bump(this.identity).pause();
         return this.bout.messages(query);
     }
 
     /**
      * {@inheritDoc}
+     * @checkstyle RedundantThrows (4 lines)
      */
     @Override
     public Message message(final Long number)
-        throws com.netbout.spi.MessageNotFoundException {
+        throws Bout.MessageNotFoundException {
         return this.bout.message(number);
     }
 
@@ -175,10 +179,11 @@ final class SafeBout implements Bout {
 
     /**
      * {@inheritDoc}
+     * @checkstyle RedundantThrows (4 lines)
      */
     @Override
     public Message post(final String text)
-        throws com.netbout.spi.MessagePostException {
+        throws Bout.MessagePostException {
         return this.bout.post(text);
     }
 

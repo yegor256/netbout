@@ -67,7 +67,6 @@ public final class TalksWithTest {
         final Message message = new MessageMocker()
             .withNumber(msg)
             .withAuthor(author)
-            .inBout(bout)
             .mock();
         final TalksWith functor = new TalksWith();
         functor.see(
@@ -76,6 +75,10 @@ public final class TalksWithTest {
                 @Override
                 public Message message() {
                     return message;
+                }
+                @Override
+                public Bout bout() {
+                    return bout;
                 }
             }
         );

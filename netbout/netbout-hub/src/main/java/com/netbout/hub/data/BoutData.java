@@ -38,7 +38,6 @@ import com.netbout.inf.notices.JoinNotice;
 import com.netbout.inf.notices.KickOffNotice;
 import com.netbout.spi.Bout;
 import com.netbout.spi.Identity;
-import com.netbout.spi.MessageNotFoundException;
 import com.netbout.spi.Urn;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -360,7 +359,7 @@ final class BoutData implements BoutDt {
      */
     @Override
     public MessageDt findMessage(final Long num)
-        throws MessageNotFoundException {
+        throws Bout.MessageNotFoundException {
         synchronized (this.number) {
             if (!this.messages.containsKey(num)) {
                 final Boolean exists = this.hub
@@ -371,7 +370,7 @@ final class BoutData implements BoutDt {
                     .asDefault(false)
                     .exec();
                 if (!exists) {
-                    throw new MessageNotFoundException(num);
+                    throw new Bout.MessageNotFoundException(num);
                 }
                 this.messages.put(num, new MessageData(this.hub, num, this));
             }

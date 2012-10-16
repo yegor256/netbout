@@ -30,8 +30,10 @@
 package com.netbout.spi.client;
 
 import com.netbout.spi.Bout;
+import com.netbout.spi.Friend;
 import com.netbout.spi.Identity;
-import com.netbout.spi.Profile;
+import com.netbout.spi.OwnProfile;
+import com.netbout.spi.Query;
 import com.netbout.spi.Urn;
 import java.net.HttpURLConnection;
 import java.net.URI;
@@ -68,8 +70,8 @@ final class RestIdentity implements Identity {
      * {@inheritDoc}
      */
     @Override
-    public int compareTo(final Identity identity) {
-        return this.name().compareTo(identity.name());
+    public int compareTo(final Friend friend) {
+        return this.name().compareTo(friend.name());
     }
 
     /**
@@ -94,7 +96,7 @@ final class RestIdentity implements Identity {
      */
     @Override
     public String toString() {
-        return String.format("RestIdentity(%s)", this.name());
+        return this.name().toString();
     }
 
     /**
@@ -175,9 +177,9 @@ final class RestIdentity implements Identity {
      */
     @Override
     @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
-    public Iterable<Bout> inbox(final String query) {
+    public Iterable<Bout> inbox(final Query query) {
         final List<String> hrefs = this.client
-            .queryParam(RestSession.QUERY_PARAM, query)
+            .queryParam(RestSession.QUERY_PARAM, query.toString())
             .queryParam(RestSession.BUNDLE_PARAM, "")
             .get(String.format("reading bouts in the inbox '%s'", query))
             .assertStatus(HttpURLConnection.HTTP_OK)
@@ -218,8 +220,14 @@ final class RestIdentity implements Identity {
      * {@inheritDoc}
      */
     @Override
-    public Identity friend(final Urn name) {
-        return new Friend(name);
+    public Friend friend(final Urn name) {
+        final Set<Friend> friends = this.friends(name.toString());
+        if (friends.isEmpty()) {
+            throw new IllegalArgumentException(
+                String.format("friend %s not found", name)
+            );
+        }
+        return friends.iterator().next();
     }
 
     /**
@@ -227,22 +235,21 @@ final class RestIdentity implements Identity {
      */
     @Override
     @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
-    public Set<Identity> friends(final String mask) {
-        final List<String> names = this.client
+    public Set<Friend> friends(final String mask) {
+        final RestResponse response = this.client
             .get("reading 'friends' @rel link")
             .assertStatus(HttpURLConnection.HTTP_OK)
             .assertXPath("/page/links/link[@rel='friends']")
             .rel("friends")
             .queryParam("mask", mask)
-            .queryParam("bout", "1")
+            .queryParam("bout", "")
             .get(String.format("reading suggestions for '%s'", mask))
             .assertStatus(HttpURLConnection.HTTP_OK)
             .assertXPath(String.format("/page/mask[.='%s']", mask))
-            .assertXPath("/page/invitees")
-            .xpath("/page/invitees/invitee/name/text()");
-        final Set<Identity> friends = new HashSet<Identity>();
-        for (String name : names) {
-            friends.add(new Friend(Urn.create(name)));
+            .assertXPath("/page/invitees");
+        final Set<Friend> friends = new HashSet<Friend>();
+        for (String name : response.xpath("//invitee/name/text()")) {
+            friends.add(new RestFriend(Urn.create(name)));
         }
         return Collections.unmodifiableSet(friends);
     }
@@ -251,14 +258,14 @@ final class RestIdentity implements Identity {
      * {@inheritDoc}
      */
     @Override
-    public Profile profile() {
+    public OwnProfile profile() {
         final String href = this.client
             .get("reading 'profle' @rel link")
             .assertStatus(HttpURLConnection.HTTP_OK)
             .assertXPath("/page/links/link[@rel='profile']")
             .xpath("/page/links/link[@rel='profile']/@href")
             .get(0);
-        return new RestProfile(this.client.copy(href));
+        return new RestOwnProfile(this.client.copy(href));
     }
 
 }

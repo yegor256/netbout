@@ -30,10 +30,10 @@
 package com.netbout.spi.client;
 
 import com.netbout.spi.Bout;
-import com.netbout.spi.Identity;
+import com.netbout.spi.Friend;
 import com.netbout.spi.Message;
-import com.netbout.spi.NetboutUtils;
 import com.netbout.spi.Participant;
+import com.netbout.spi.Query;
 import com.netbout.spi.Urn;
 import java.net.HttpURLConnection;
 import java.net.URI;
@@ -80,7 +80,9 @@ final class RestBout implements Bout {
      */
     @Override
     public int compareTo(final Bout bout) {
-        return NetboutUtils.dateOf(this).compareTo(NetboutUtils.dateOf(bout));
+        return new Bout.Smart(this).updated().compareTo(
+            new Bout.Smart(bout).updated()
+        );
     }
 
     /**
@@ -170,28 +172,16 @@ final class RestBout implements Bout {
      * {@inheritDoc}
      */
     @Override
-    @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
     public Collection<Participant> participants() {
-        final List<String> names = this.client
-            .get("bout.participants()")
-            .assertStatus(HttpURLConnection.HTTP_OK)
-            .assertXPath("/page/bout/participants")
-            .xpath("/page/bout/participants/participant/identity/text()");
-        final List<Participant> dudes = new ArrayList<Participant>();
-        for (String name : names) {
-            dudes.add(
-                new RestParticipant(this.client.copy(), Urn.create(name))
-            );
-        }
-        return Collections.unmodifiableList(dudes);
+        return new RestParticipants(this.client);
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public Participant invite(final Identity identity) {
-        final Urn name = identity.name();
+    public Participant invite(final Friend friend) {
+        final Urn name = friend.name();
         final List<String> hrefs = this.client
             .queryParam("mask", name.toString())
             .get(String.format("reading suggestions for '%s'", name))
@@ -209,7 +199,7 @@ final class RestBout implements Bout {
                 String.format(
                     // @checkstyle LineLength (1 line)
                     "Can't invite '%s' to the bout because Netbout doesn't suggest any identities by this keyword",
-                    name
+                    friend
                 )
             );
         }
@@ -226,9 +216,9 @@ final class RestBout implements Bout {
      */
     @Override
     @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
-    public Iterable<Message> messages(final String query) {
+    public Iterable<Message> messages(final Query query) {
         final RestResponse response = this.client
-            .queryParam(RestSession.QUERY_PARAM, query)
+            .queryParam(RestSession.QUERY_PARAM, query.toString())
             .get("bout.messages(..)");
         final List<String> nums = response
             .assertStatus(HttpURLConnection.HTTP_OK)
@@ -236,13 +226,7 @@ final class RestBout implements Bout {
             .xpath("/page/bout/messages/message/number/text()");
         final List<Message> msgs = new ArrayList<Message>();
         for (String num : nums) {
-            msgs.add(
-                new XmlMessage(
-                    this.client.copy(),
-                    response,
-                    Long.valueOf(num)
-                )
-            );
+            msgs.add(new XmlMessage(response, Long.valueOf(num)));
         }
         return Collections.unmodifiableList(msgs);
     }

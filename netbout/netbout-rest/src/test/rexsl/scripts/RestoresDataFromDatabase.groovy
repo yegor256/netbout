@@ -29,6 +29,7 @@
  */
 package com.netbout.rest.rexsl.scripts
 
+import com.netbout.spi.Query
 import com.netbout.spi.Urn
 import com.netbout.spi.client.EtaAssertion
 import com.netbout.spi.client.RestSession
@@ -45,7 +46,7 @@ final NUMBER = 555L
 def bout = cindy.bout(NUMBER)
 MatcherAssert.assertThat(bout.number(), Matchers.equalTo(NUMBER))
 MatcherAssert.assertThat(bout.title(), Matchers.equalTo('\u0443\u0440\u0430!'))
-MatcherAssert.assertThat(bout.messages('').get(0).text(), Matchers.equalTo('\u0443!'))
+MatcherAssert.assertThat(bout.messages(new Query.Textual('')).get(0).text(), Matchers.equalTo('\u0443!'))
 
 // validate content of the bout page
 RestTester.start(RestUriBuilder.from(bout))

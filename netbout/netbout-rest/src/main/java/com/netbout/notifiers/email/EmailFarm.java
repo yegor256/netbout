@@ -32,8 +32,8 @@ import com.netbout.rest.meta.MetaText;
 import com.netbout.spi.Bout;
 import com.netbout.spi.Identity;
 import com.netbout.spi.Message;
-import com.netbout.spi.NetboutUtils;
 import com.netbout.spi.Participant;
+import com.netbout.spi.Profile;
 import com.netbout.spi.Urn;
 import com.netbout.spi.cpa.Farm;
 import com.netbout.spi.cpa.IdentityAware;
@@ -120,15 +120,13 @@ public final class EmailFarm implements IdentityAware {
             .exec();
         if (visible) {
             for (Participant participant : bout.participants()) {
-                if (!EmailFarm.NID.equals(
-                    participant.identity().name().nid()
-                )) {
+                if (!EmailFarm.NID.equals(participant.name().nid())) {
                     continue;
                 }
-                if (message.author().equals(participant.identity())) {
+                if (message.author().equals(participant)) {
                     continue;
                 }
-                this.send(participant, message);
+                this.send(participant, bout, message);
             }
         }
     }
@@ -170,41 +168,48 @@ public final class EmailFarm implements IdentityAware {
     /**
      * Notify this identity.
      * @param dude The recepient
+     * @param bout In which bout we're in
      * @param message The message
      */
-    private void send(final Participant dude, final Message message) {
+    private void send(final Participant dude, final Bout bout,
+        final Message message) {
         assert dude != null;
         final String text = new VelocityPage(
             "com/netbout/notifiers/email/email-notification.vm"
         )
-            .set("bout", dude.bout())
-            .set("text", this.textOf(message))
-            .set("author", NetboutUtils.aliasOf(message.author()))
+            .set("bout", bout)
+            .set("text", this.textOf(bout, message))
+            .set(
+                "author",
+                new Profile.Conventional(message.author())
+                    .aliases().iterator().next()
+            )
             .set(
                 "href",
                 UriBuilder.fromUri("http://www.netbout.com/e")
                     .path("/{hash}")
-                    .build(new AnchorEmail(dude.identity(), dude.bout()).hash())
+                    .build(new AnchorEmail(dude, bout).hash())
                     .toString()
             )
             .toString();
         final javax.mail.Message email = this.sender.newMessage();
         try {
             final InternetAddress reply = new InternetAddress(
-                new AnchorEmail(dude.identity(), dude.bout()).email(),
-                NetboutUtils.aliasOf(message.author())
+                new AnchorEmail(dude, bout).email(),
+                new Profile.Conventional(message.author())
+                    .aliases().iterator().next()
             );
             email.addFrom(new Address[] {reply});
             email.setReplyTo(new Address[] {reply});
             email.addRecipient(
                 javax.mail.Message.RecipientType.TO,
                 new InternetAddress(
-                    dude.identity().name().nss(),
-                    NetboutUtils.aliasOf(dude.identity())
+                    dude.name().nss(),
+                    new Profile.Conventional(dude).aliases().iterator().next()
                 )
             );
             email.setText(text);
-            email.setSubject(String.format("Re: %s", dude.bout().title()));
+            email.setSubject(String.format("Re: %s", bout.title()));
             this.sender.send(email);
         } catch (javax.mail.internet.AddressException ex) {
             throw new IllegalArgumentException(ex);
@@ -217,15 +222,16 @@ public final class EmailFarm implements IdentityAware {
 
     /**
      * Get text of message.
+     * @param bout We're in this bout
      * @param message The message
      * @return The text to show in email
      */
-    private String textOf(final Message message) {
+    private String textOf(final Bout bout, final Message message) {
         final String text = message.text();
         final String render = EmailFarm.hub.make("pre-render-message")
             .synchronously()
-            .inBout(message.bout())
-            .arg(message.bout().number())
+            .inBout(bout)
+            .arg(bout.number())
             .arg(message.number())
             .arg(text)
             .asDefault(text)

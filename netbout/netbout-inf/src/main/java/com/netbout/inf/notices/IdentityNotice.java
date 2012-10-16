@@ -28,8 +28,10 @@ package com.netbout.inf.notices;
 
 import com.netbout.inf.Notice;
 import com.netbout.spi.Bout;
+import com.netbout.spi.Friend;
 import com.netbout.spi.Identity;
-import com.netbout.spi.Profile;
+import com.netbout.spi.OwnProfile;
+import com.netbout.spi.Query;
 import com.netbout.spi.Urn;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -123,15 +125,15 @@ public interface IdentityNotice extends Notice {
                     return name;
                 }
                 @Override
-                public Profile profile() {
+                public OwnProfile profile() {
                     throw new UnsupportedOperationException();
                 }
                 @Override
-                public Set<Identity> friends(final String query) {
+                public Set<Friend> friends(final String query) {
                     throw new UnsupportedOperationException();
                 }
                 @Override
-                public Identity friend(final Urn name) {
+                public Friend friend(final Urn name) {
                     throw new UnsupportedOperationException();
                 }
                 @Override
@@ -139,7 +141,7 @@ public interface IdentityNotice extends Notice {
                     throw new UnsupportedOperationException();
                 }
                 @Override
-                public Iterable<Bout> inbox(final String query) {
+                public Iterable<Bout> inbox(final Query query) {
                     throw new UnsupportedOperationException();
                 }
                 @Override
@@ -155,8 +157,8 @@ public interface IdentityNotice extends Notice {
                     throw new UnsupportedOperationException();
                 }
                 @Override
-                public int compareTo(final Identity identity) {
-                    return name.compareTo(identity.name());
+                public int compareTo(final Friend friend) {
+                    return name.compareTo(friend.name());
                 }
             };
         }

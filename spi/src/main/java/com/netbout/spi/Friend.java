@@ -30,25 +30,25 @@
 package com.netbout.spi;
 
 /**
- * Thowable when message is not found.
+ * Friend of {@link Identity}.
+ *
+ * <p>Instances of this interface must be thread-safe.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
- * @version $Id$
- * @see Bout#message(Long)
+ * @version $Id: Message.java 2241 2012-04-08 18:39:18Z guard $
  */
-public final class MessageNotFoundException extends Exception {
+public interface Friend extends Comparable<Friend> {
 
     /**
-     * Serialization marker.
+     * Get name of the identity, which is unique in the system.
+     * @return The name of the identity
      */
-    private static final long serialVersionUID = 0x7526FA78EED67470L;
+    Urn name();
 
     /**
-     * Public ctor.
-     * @param num Number of it
+     * Get profile.
+     * @return The profile of this friend
      */
-    public MessageNotFoundException(final Long num) {
-        super(String.format("Message #%d not found", num));
-    }
+    Profile profile();
 
 }

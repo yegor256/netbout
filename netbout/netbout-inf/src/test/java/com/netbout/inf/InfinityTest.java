@@ -32,6 +32,7 @@ import com.netbout.spi.Bout;
 import com.netbout.spi.BoutMocker;
 import com.netbout.spi.Message;
 import com.netbout.spi.MessageMocker;
+import com.netbout.spi.Query;
 import com.netbout.spi.UrnMocker;
 import com.rexsl.test.SimpleXml;
 import com.rexsl.test.XmlDocument;
@@ -49,6 +50,7 @@ import org.junit.Test;
  * @version $Id$
  * @checkstyle ClassDataAbstractionCoupling (500 lines)
  */
+@SuppressWarnings("PMD.TooManyMethods")
 public final class InfinityTest {
 
     /**
@@ -65,6 +67,7 @@ public final class InfinityTest {
      * @throws Exception If there is some problem inside
      */
     @Test
+    @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
     public void consumesMessagesAndFindsThem() throws Exception {
         final XmlDocument xml = new SimpleXml(
             this.getClass().getResourceAsStream("scenario.xml")
@@ -78,7 +81,9 @@ public final class InfinityTest {
                     MatcherAssert.assertThat(
                         InfinityTest.toList(
                             inf.messages(
-                                query.xpath("predicate/text()").get(0)
+                                new Query.Textual(
+                                    query.xpath("predicate/text()").get(0)
+                                )
                             )
                         ),
                         Matchers.contains(InfinityTest.numbers(nums))
@@ -122,6 +127,10 @@ public final class InfinityTest {
                 public Message message() {
                     return InfinityTest.message(props);
                 }
+                @Override
+                public Bout bout() {
+                    return InfinityTest.bout(props);
+                }
             };
         } else {
             throw new IllegalArgumentException(type.getName());
@@ -155,7 +164,6 @@ public final class InfinityTest {
             .withText(props.getProperty("message.text", "msg text"))
             .withAuthor(props.getProperty("message.author", "urn:test:John"))
             .withNumber(Long.valueOf(props.getProperty("message.number", "1")))
-            .inBout(InfinityTest.bout(props))
             .mock();
     }
 

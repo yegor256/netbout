@@ -29,6 +29,7 @@
  */
 package com.netbout.spi;
 
+import java.util.Date;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;
@@ -79,7 +80,7 @@ public final class BoutTest {
     public void addsBoutMessageByDefault() throws Exception {
         final Bout bout = new BoutMocker().mock();
         MatcherAssert.assertThat(
-            bout.messages(""),
+            bout.messages(new Query.Textual("")),
             Matchers.not(Matchers.<Message>emptyIterable())
         );
         MatcherAssert.assertThat(bout.message(0L), Matchers.notNullValue());
@@ -91,11 +92,9 @@ public final class BoutTest {
      */
     @Test
     public void canAssignParticipantsToBout() throws Exception {
-        final Urn name = new UrnMocker().mock();
-        final Identity identity = new IdentityMocker().mock();
         final Bout bout = new BoutMocker()
-            .withParticipant(name.toString())
-            .withParticipant(identity)
+            .withParticipant(new UrnMocker().mock())
+            .withParticipant(new UrnMocker().mock())
             .mock();
         MatcherAssert.assertThat(
             bout.participants().size(),
@@ -113,8 +112,28 @@ public final class BoutTest {
             .messageOn("foo", "hello!")
             .mock();
         MatcherAssert.assertThat(
-            bout.messages("foo is inside").iterator().next().text(),
+            bout.messages(
+                new Query.Textual("foo is inside")
+            ).iterator().next().text(),
             Matchers.containsString("hello")
+        );
+    }
+
+    /**
+     * Bout.Smart can calculate the date of a bout.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void calculatesDateOfBout() throws Exception {
+        final Date bdate = new Date();
+        final Date mdate = new Date(bdate.getTime() + 1);
+        final Bout bout = new BoutMocker()
+            .withDate(bdate)
+            .withMessage(new MessageMocker().withDate(mdate).mock())
+            .mock();
+        MatcherAssert.assertThat(
+            new Bout.Smart(bout).updated(),
+            Matchers.equalTo(mdate)
         );
     }
 

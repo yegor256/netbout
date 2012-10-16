@@ -29,7 +29,8 @@ package com.netbout.shary;
 import com.netbout.spi.Bout;
 import com.netbout.spi.Identity;
 import com.netbout.spi.Message;
-import com.netbout.spi.NetboutUtils;
+import com.netbout.spi.Profile;
+import com.netbout.spi.Query;
 import com.netbout.spi.Urn;
 import com.netbout.spi.cpa.CpaUtils;
 import com.netbout.spi.cpa.Farm;
@@ -296,11 +297,11 @@ public final class StageFarm implements IdentityAware {
             }
             try {
                 doc.setAlias(
-                    NetboutUtils.aliasOf(
+                    new Profile.Conventional(
                         this.identity.friend(Urn.create(doc.getAuthor()))
-                    )
+                    ).aliases().iterator().next()
                 );
-            } catch (com.netbout.spi.UnreachableUrnException ex) {
+            } catch (Identity.UnreachableUrnException ex) {
                 doc.setAlias("somebody");
             }
         }
@@ -314,7 +315,7 @@ public final class StageFarm implements IdentityAware {
      */
     private static Collection<SharedDoc> documents(final Bout bout) {
         final Iterable<Message> inbox = bout.messages(
-            String.format("(ns '%s')", Slip.NAMESPACE)
+            new Query.Textual(String.format("(ns '%s')", Slip.NAMESPACE))
         );
         final Map<String, SharedDoc> docs =
             new HashMap<String, SharedDoc>();

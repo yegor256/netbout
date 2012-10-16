@@ -27,37 +27,34 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
  * OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.netbout.spi;
+package com.netbout.spi.client;
+
+import com.netbout.spi.Friend;
+import com.netbout.spi.Urn;
+import com.netbout.spi.UrnMocker;
+import org.hamcrest.MatcherAssert;
+import org.hamcrest.Matchers;
+import org.junit.Test;
 
 /**
- * Thowable when URN can't be reached by the system anyhow.
- *
+ * Test case for {@link RestFriend}.
  * @author Yegor Bugayenko (yegor@netbout.com)
- * @version $Id$
+ * @version $Id: RestFriendTest.java 2159 2012-04-03 05:45:07Z guard $
  */
-public final class UnreachableUrnException extends Exception {
+public final class RestFriendTest {
 
     /**
-     * Serialization marker.
+     * RestFriend can return a clean name of identity.
+     * @throws Exception If there is some problem inside
      */
-    private static final long serialVersionUID = 0x7526FA78EFD214F0L;
-
-    /**
-     * Public ctor.
-     * @param urn The URN
-     * @param cause The cause of the exception
-     */
-    public UnreachableUrnException(final Urn urn, final String cause) {
-        super(String.format("%s: '%s'", cause, urn));
-    }
-
-    /**
-     * Public ctor.
-     * @param urn The URN
-     * @param cause The cause of the exception
-     */
-    public UnreachableUrnException(final Urn urn, final Throwable cause) {
-        super(urn.toString(), cause);
+    @Test
+    public void hasToStringWithCleanImplementation() throws Exception {
+        final Urn name = new UrnMocker().mock();
+        final Friend friend = new RestFriend(name);
+        MatcherAssert.assertThat(
+            friend,
+            Matchers.hasToString(Matchers.equalTo(name.toString()))
+        );
     }
 
 }

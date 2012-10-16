@@ -31,6 +31,7 @@ package com.netbout.spi.client;
 
 import com.netbout.spi.Participant;
 import com.netbout.spi.Urn;
+import com.netbout.spi.UrnMocker;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;
@@ -58,6 +59,20 @@ public final class RestParticipantTest {
             new Urn("urn:test:A")
         );
         MatcherAssert.assertThat(dude.confirmed(), Matchers.equalTo(true));
+    }
+
+    /**
+     * RestParticipant can return a clean name of identity.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void hasToStringWithCleanImplementation() throws Exception {
+        final Urn name = new UrnMocker().mock();
+        final Participant dude = new RestParticipant(null, name);
+        MatcherAssert.assertThat(
+            dude,
+            Matchers.hasToString(Matchers.equalTo(name.toString()))
+        );
     }
 
 }

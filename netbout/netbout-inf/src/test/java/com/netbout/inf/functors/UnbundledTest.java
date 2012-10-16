@@ -69,8 +69,11 @@ public final class UnbundledTest {
                 public Message message() {
                     return new MessageMocker()
                         .withNumber(msg)
-                        .inBout(bout)
                         .mock();
+                }
+                @Override
+                public Bout bout() {
+                    return bout;
                 }
             };
             new Bundled().see(ray, notice);

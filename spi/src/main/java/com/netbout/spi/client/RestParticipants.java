@@ -29,22 +29,20 @@
  */
 package com.netbout.spi.client;
 
-import com.netbout.spi.Profile;
+import com.netbout.spi.Participant;
+import com.netbout.spi.Urn;
 import java.net.HttpURLConnection;
-import java.net.URL;
-import java.util.Collections;
-import java.util.HashSet;
+import java.util.AbstractCollection;
+import java.util.Iterator;
 import java.util.List;
-import java.util.Locale;
-import java.util.Set;
 
 /**
- * The profile of identity.
+ * List of {@link Participant}-s in a {@link Bout}.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
- * @version $Id$
+ * @version $Id: RestParticipant.java 3452 2012-10-15 07:55:58Z yegor@tpc2.com $
  */
-final class RestProfile implements Profile {
+final class RestParticipants extends AbstractCollection<Participant> {
 
     /**
      * Rest client.
@@ -55,7 +53,8 @@ final class RestProfile implements Profile {
      * Public ctor.
      * @param clnt Rest client
      */
-    public RestProfile(final RestClient clnt) {
+    public RestParticipants(final RestClient clnt) {
+        super();
         this.client = clnt;
     }
 
@@ -63,75 +62,53 @@ final class RestProfile implements Profile {
      * {@inheritDoc}
      */
     @Override
-    public Locale locale() {
-        final String lang = this.client
-            .get("reading locale of identity")
+    public Iterator<Participant> iterator() {
+        final Iterator<String> names = this.names().iterator();
+        return new Iterator<Participant>() {
+            @Override
+            public Participant next() {
+                return new RestParticipant(
+                    RestParticipants.this.client.copy(),
+                    Urn.create(names.next())
+                );
+            }
+            @Override
+            public boolean hasNext() {
+                return names.hasNext();
+            }
+            @Override
+            public void remove() {
+                throw new UnsupportedOperationException();
+            }
+        };
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public int size() {
+        return this.names().size();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean contains(final Object object) {
+        return this.names().contains(object.toString());
+    }
+
+    /**
+     * Fetch list of names.
+     * @return Names of participants
+     */
+    private List<String> names() {
+        return this.client
+            .get("bout.participants()")
             .assertStatus(HttpURLConnection.HTTP_OK)
-            .assertXPath("/page/identity/locale")
-            .xpath("/page/identity/locale/text()")
-            .get(0);
-        return new Locale(lang);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void setLocale(final Locale locale) {
-        throw new UnsupportedOperationException(
-            "Profile#setLocale() is not implemented yet"
-        );
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public URL photo() {
-        final String href = this.client
-            .get("reading photo of identity")
-            .assertStatus(HttpURLConnection.HTTP_OK)
-            .assertXPath("/page/identity/photo[.!='']")
-            .xpath("/page/identity/photo/text()")
-            .get(0);
-        try {
-            return new URL(href);
-        } catch (java.net.MalformedURLException ex) {
-            throw new IllegalStateException(ex);
-        }
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void setPhoto(final URL photo) {
-        throw new UnsupportedOperationException(
-            "Profile#setPhoto() is not implemented yet"
-        );
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Set<String> aliases() {
-        final List<String> names = this.client
-            .get("reading aliases of identity")
-            .assertStatus(HttpURLConnection.HTTP_OK)
-            .assertXPath("/page/identity/aliases")
-            .xpath("/page/identity/aliases/alias/text()");
-        return Collections.unmodifiableSet(new HashSet<String>(names));
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void alias(final String alias) {
-        throw new UnsupportedOperationException(
-            "Profile#alias() is not implemented yet"
-        );
+            .assertXPath("/page/bout/participants")
+            .xpath("/page/bout/participants/participant/identity/text()");
     }
 
 }

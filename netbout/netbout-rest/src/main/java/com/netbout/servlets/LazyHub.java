@@ -33,7 +33,6 @@ import com.netbout.hub.Hub;
 import com.netbout.hub.UrnResolver;
 import com.netbout.spi.Helper;
 import com.netbout.spi.Identity;
-import com.netbout.spi.UnreachableUrnException;
 import com.netbout.spi.Urn;
 import java.io.IOException;
 import java.net.HttpURLConnection;
@@ -87,10 +86,11 @@ final class LazyHub implements Hub {
 
     /**
      * {@inheritDoc}
-     * @checkstyle RedundantThrows (3 lines)
+     * @checkstyle RedundantThrows (4 lines)
      */
     @Override
-    public Identity identity(final Urn name) throws UnreachableUrnException {
+    public Identity identity(final Urn name)
+        throws Identity.UnreachableUrnException {
         return this.origin().identity(name);
     }
 
