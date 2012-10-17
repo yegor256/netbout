@@ -49,10 +49,15 @@
 
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.netbout.spi</groupId>
-    <artifactId>netbout-spi</artifactId>
+    <artifactId>netbout</artifactId>
     <version netbout="yes">2.0-SNAPSHOT</version>
-    <packaging>jar</packaging>
-    <name>com.netbout.spi</name>
+    <packaging>pom</packaging>
+    <name>spi:netbout</name>
+
+    <modules>
+        <module>netbout-spi</module>
+        <module>netbout-lite</module>
+    </modules>
 
     <description>Service Programming Interface for NetBout.com</description>
     <url>http://spi.netbout.com</url>
@@ -144,161 +149,125 @@
         <!-- intentionally empty -->
     </pluginRepositories>
 
-    <dependencies>
-        <dependency>
-            <!--
-            This library simplifies string operations. This is
-            org.apache.commons.lang.*.
-            -->
-            <groupId>commons-lang</groupId>
-            <artifactId>commons-lang</artifactId>
-            <version since="26 Dec 2010">2.6</version>
-        </dependency>
-        <dependency>
-            <!-- This library simplifies file-management operations. -->
-            <groupId>commons-io</groupId>
-            <artifactId>commons-io</artifactId>
-            <version since="19 Oct 2011">2.1</version>
-        </dependency>
-        <dependency>
-            <!-- ReXSL core features -->
-            <groupId>com.rexsl</groupId>
-            <artifactId>rexsl-core</artifactId>
-            <version>${rexsl.version}</version>
-        </dependency>
-        <dependency>
-            <!-- ReXSL test client -->
-            <groupId>com.rexsl</groupId>
-            <artifactId>rexsl-test</artifactId>
-            <version>${rexsl.version}</version>
-        </dependency>
-        <dependency>
-            <!-- ReXSL test client, mocks -->
-            <groupId>com.rexsl</groupId>
-            <artifactId>rexsl-test</artifactId>
-            <version>${rexsl.version}</version>
-            <classifier>mock</classifier>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <!-- JAX-RS implementation, core library -->
-            <groupId>com.sun.jersey</groupId>
-            <artifactId>jersey-server</artifactId>
-            <version since="6 May 2012">1.12</version>
-            <scope>runtime</scope>
-        </dependency>
-        <dependency>
-            <!-- Logging facility, on top of SLF4J. -->
-            <groupId>com.jcabi</groupId>
-            <artifactId>jcabi-log</artifactId>
-            <version since="6 Jun 2012">1.0-SNAPSHOT</version>
-        </dependency>
-        <dependency>
-            <!--
-            Apache Xerces is a JAXP implementation of DOM.
-            In order to replace a default implementation
-            provided by JDK with Xerces we are using text files inside
-            "src/main/resources/META-INF/services" directory.
-            -->
-            <groupId>xerces</groupId>
-            <artifactId>xercesImpl</artifactId>
-            <version since="9 Mar 2011">2.9.1</version>
-            <scope>runtime</scope>
-        </dependency>
-        <dependency>
-            <!-- Forward all calls to SLF4J to LOG4J. -->
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-log4j12</artifactId>
-            <version since="19 Sep 2011">1.6.2</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <!-- Use LOG4J logging facility for all loggings. -->
-            <groupId>log4j</groupId>
-            <artifactId>log4j</artifactId>
-            <version since="19 Sep 2011">1.2.16</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <!--
-            org.hamcrest.MatcherAssert class.
-            @link http://code.google.com/p/hamcrest/wiki/Tutorial
-            -->
-            <groupId>org.hamcrest</groupId>
-            <artifactId>hamcrest-core</artifactId>
-            <version since="2 Sep 2012">1.3</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <!--
-            Assertions and matchers for unit tests.
-            @link http://code.google.com/p/hamcrest/wiki/Tutorial
-            -->
-            <groupId>org.hamcrest</groupId>
-            <artifactId>hamcrest-library</artifactId>
-            <version since="2 Sep 2012">1.3</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <!--
-            We are using JUnit framework for unit test organization
-            and management. This framework is the most stable and mature
-            in the market. Other options considered: TestNG.
-            @link http://www.junit.org/
-            -->
-            <groupId>junit</groupId>
-            <artifactId>junit-dep</artifactId>
-            <version since="23 Dec 2011">4.10</version>
-            <scope>test</scope>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.hamcrest</groupId>
-                    <artifactId>hamcrest-core</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-        <dependency>
-            <!--
-            Mockito is used as a mocking library during testing.
-            Other options: jMock.
-            @link http://stackoverflow.com/questions/22697
-            @link http://www.mockito.org/
-            -->
-            <groupId>org.mockito</groupId>
-            <artifactId>mockito-core</artifactId>
-            <version since="17 Apr 2010">1.9.0</version>
-            <scope>test</scope>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.hamcrest</groupId>
-                    <artifactId>hamcrest-core</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-        <dependency>
-            <groupId>org.reflections</groupId>
-            <artifactId>reflections</artifactId>
-            <version since="8 Dec 2011">0.9.5</version>
-        </dependency>
-        <dependency>
-            <groupId>joda-time</groupId>
-            <artifactId>joda-time</artifactId>
-            <version since="14 Nov 2011">2.0</version>
-        </dependency>
-        <dependency>
-            <!-- Base64 codec -->
-            <groupId>commons-codec</groupId>
-            <artifactId>commons-codec</artifactId>
-            <version since="8 Nov 2011">1.5</version>
-        </dependency>
-        <dependency>
-            <!-- Embedded Java Servlet Container, for com.rexsl:rexsl-test:mock -->
-            <groupId>com.sun.grizzly</groupId>
-            <artifactId>grizzly-servlet-webserver</artifactId>
-            <version>1.9.10</version>
-            <scope>test</scope>
-        </dependency>
-    </dependencies>
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <!--
+                This library simplifies string operations. This is
+                org.apache.commons.lang.*.
+                -->
+                <groupId>commons-lang</groupId>
+                <artifactId>commons-lang</artifactId>
+                <version since="26 Dec 2010">2.6</version>
+            </dependency>
+            <dependency>
+                <!-- This library simplifies file-management operations. -->
+                <groupId>commons-io</groupId>
+                <artifactId>commons-io</artifactId>
+                <version since="19 Oct 2011">2.1</version>
+            </dependency>
+            <dependency>
+                <!-- ReXSL core features -->
+                <groupId>com.rexsl</groupId>
+                <artifactId>rexsl-core</artifactId>
+                <version>${rexsl.version}</version>
+            </dependency>
+            <dependency>
+                <!-- ReXSL test client -->
+                <groupId>com.rexsl</groupId>
+                <artifactId>rexsl-test</artifactId>
+                <version>${rexsl.version}</version>
+            </dependency>
+            <dependency>
+                <!-- Logging facility, on top of SLF4J. -->
+                <groupId>com.jcabi</groupId>
+                <artifactId>jcabi-log</artifactId>
+                <version since="6 Jun 2012">1.0-SNAPSHOT</version>
+            </dependency>
+            <dependency>
+                <!--
+                Apache Xerces is a JAXP implementation of DOM.
+                In order to replace a default implementation
+                provided by JDK with Xerces we are using text files inside
+                "src/main/resources/META-INF/services" directory.
+                -->
+                <groupId>xerces</groupId>
+                <artifactId>xercesImpl</artifactId>
+                <version since="9 Mar 2011">2.9.1</version>
+                <scope>runtime</scope>
+            </dependency>
+            <dependency>
+                <!-- Forward all calls to SLF4J to LOG4J. -->
+                <groupId>org.slf4j</groupId>
+                <artifactId>slf4j-log4j12</artifactId>
+                <version since="19 Sep 2011">1.6.2</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <!-- Use LOG4J logging facility for all loggings. -->
+                <groupId>log4j</groupId>
+                <artifactId>log4j</artifactId>
+                <version since="19 Sep 2011">1.2.16</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <!--
+                org.hamcrest.MatcherAssert class.
+                @link http://code.google.com/p/hamcrest/wiki/Tutorial
+                -->
+                <groupId>org.hamcrest</groupId>
+                <artifactId>hamcrest-core</artifactId>
+                <version since="2 Sep 2012">1.3</version>
+                <scope>compile</scope>
+            </dependency>
+            <dependency>
+                <!--
+                Assertions and matchers for unit tests.
+                @link http://code.google.com/p/hamcrest/wiki/Tutorial
+                -->
+                <groupId>org.hamcrest</groupId>
+                <artifactId>hamcrest-library</artifactId>
+                <version since="2 Sep 2012">1.3</version>
+                <scope>compile</scope>
+            </dependency>
+            <dependency>
+                <!--
+                We are using JUnit framework for unit test organization
+                and management. This framework is the most stable and mature
+                in the market. Other options considered: TestNG.
+                @link http://www.junit.org/
+                -->
+                <groupId>junit</groupId>
+                <artifactId>junit-dep</artifactId>
+                <version since="23 Dec 2011">4.10</version>
+                <scope>test</scope>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.hamcrest</groupId>
+                        <artifactId>hamcrest-core</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+            <dependency>
+                <!--
+                Mockito is used as a mocking library during testing.
+                Other options: jMock.
+                @link http://stackoverflow.com/questions/22697
+                @link http://www.mockito.org/
+                -->
+                <groupId>org.mockito</groupId>
+                <artifactId>mockito-core</artifactId>
+                <version since="17 Apr 2010">1.9.0</version>
+                <scope>test</scope>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.hamcrest</groupId>
+                        <artifactId>hamcrest-core</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 
     <profiles>
         <profile>
@@ -586,6 +555,9 @@
                             <Xlint:-path/>
                             <!-- @see https://blogs.oracle.com/darcy/entry/bootclasspath_older_source -->
                             <Xlint:-options/>
+                            <!-- @see http://netbeans.org/bugzilla/show_bug.cgi?format=multiple&id=208666 -->
+                            <!-- this is to avoid a problem with ANTLR and JDK7 -->
+                            <Xlint:-classfile/>
                         </compilerArguments>
                         <testExcludes>
                             <exclude>**/package-info.java</exclude>

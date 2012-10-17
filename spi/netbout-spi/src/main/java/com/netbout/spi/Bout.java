@@ -319,6 +319,13 @@ public interface Bout extends Comparable<Bout> {
          * {@inheritDoc}
          */
         @Override
+        public String toString() {
+            return this.origin.toString();
+        }
+        /**
+         * {@inheritDoc}
+         */
+        @Override
         public Long number() {
             return this.origin.number();
         }
