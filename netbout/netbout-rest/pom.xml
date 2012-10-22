@@ -834,7 +834,7 @@
                     <plugin>
                         <groupId>com.jcabi</groupId>
                         <artifactId>jcabi-heroku-maven-plugin</artifactId>
-                        <version since="20 Oct 2012">0.4</version>
+                        <version since="22 Oct 2012">0.4.1</version>
                         <executions>
                             <execution>
                                 <id>deploy-to-heroku</id>
