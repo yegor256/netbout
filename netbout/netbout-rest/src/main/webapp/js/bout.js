@@ -37,7 +37,7 @@ String.prototype.escaped = function() {
  * Pre-configure this page.
  */
 var setup = function() {
-    var bout = parseInt($('#bout-number').text(), 10);
+    var bout = parseInt($('a span.num').text(), 10);
     if ($('#rename')[0]) {
         $('h1 span.title')
             .blur(

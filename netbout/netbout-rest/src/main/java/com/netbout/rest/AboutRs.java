@@ -55,7 +55,7 @@ public final class AboutRs extends BaseRs {
      * @todo #158 Path annotation: http://java.net/jira/browse/JERSEY-739
      */
     @GET
-    @Path("/{page}")
+    @Path("/{page : .+}")
     public Response read(@PathParam("page") final String page) {
         final URI uri = UriBuilder.fromUri("http://about.netbout.com/")
             .path(String.format("%s.md", page))

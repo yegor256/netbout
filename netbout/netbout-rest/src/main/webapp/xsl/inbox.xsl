@@ -84,11 +84,9 @@
     <xsl:template name="content">
         <xsl:choose>
             <xsl:when test="count(/page/bouts/bout) = 0 and /page/query = ''">
-                <header>
-                    <h1>
-                        <span class="title"><xsl:text>Welcome to Netbout!</xsl:text></span>
-                    </h1>
-                </header>
+                <h1>
+                    <span class="title"><xsl:text>Welcome to Netbout!</xsl:text></span>
+                </h1>
                 <p>
                     <xsl:value-of select="$TEXTS/Lets.start"/>
                 </p>
@@ -162,7 +160,7 @@
                 <xsl:text>bout</xsl:text>
                 <xsl:value-of select="number"/>
             </xsl:attribute>
-            <h1>
+            <h1 class="bout">
                 <span>
                     <xsl:attribute name="class">
                         <xsl:text>num</xsl:text>

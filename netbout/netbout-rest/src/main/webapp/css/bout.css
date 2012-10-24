@@ -175,7 +175,7 @@ h1 {
         .message .right .text {
         }
 
-            .message .right .text p.fixed {
+            .message .right .text pre {
                 padding: 1em;
                 overflow-x: auto;
                 max-height: 25em;

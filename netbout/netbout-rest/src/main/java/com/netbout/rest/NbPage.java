@@ -38,6 +38,7 @@ import com.rexsl.page.BasePage;
 import com.rexsl.page.JaxbBundle;
 import com.rexsl.page.Link;
 import java.util.Collection;
+import java.util.Locale;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -128,6 +129,7 @@ public class NbPage extends BasePage<NbPage, NbResource> {
                 new CryptedIdentity(identity).toString()
             )
         );
+        this.link(NbPage.about(identity.profile().locale()));
         this.link(new Link("logout", "/g/out"));
         this.link(new Link("profile", "/pf"));
         if (NbPage.trusted(identity)) {
@@ -164,6 +166,7 @@ public class NbPage extends BasePage<NbPage, NbResource> {
      * @return This object
      */
     public final Response.ResponseBuilder anonymous() {
+        this.link(NbPage.about(Locale.ENGLISH));
         this.link(new Link("login", "/g"));
         this.extend();
         return this.builder
@@ -237,7 +240,6 @@ public class NbPage extends BasePage<NbPage, NbResource> {
      * Extend page with mandatory elements.
      */
     private void extend() {
-        this.link(new Link("about", "/a/index"));
         this.append(
             new JaxbBundle("version")
                 .add("name", Manifests.read("Netbout-Version"))
@@ -281,6 +283,15 @@ public class NbPage extends BasePage<NbPage, NbResource> {
             )
             .build()
             .toString();
+    }
+
+    /**
+     * Create "about" link depending on the provided locale.
+     * @param locale The locale
+     * @return Link to add
+     */
+    private static Link about(final Locale locale) {
+        return new Link("about", String.format("/a/%s/index", locale));
     }
 
 }
