@@ -26,7 +26,6 @@
  */
 package com.netbout.rest;
 
-import com.netbout.rest.meta.MetaText;
 import com.rexsl.page.JaxbBundle;
 import com.rexsl.page.PageBuilder;
 import com.rexsl.test.RestTester;
@@ -66,7 +65,7 @@ public final class AboutRs extends BaseRs {
             .get(String.format("loading '%s' page", page))
             .assertStatus(HttpURLConnection.HTTP_OK)
             .getBody();
-        final String html = new MetaText(markdown).html();
+        final String html = new Markdown(markdown).html();
         return new PageBuilder()
             .stylesheet("/xsl/about.xsl")
             .build(NbPage.class)
