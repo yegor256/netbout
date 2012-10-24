@@ -237,6 +237,7 @@ public class NbPage extends BasePage<NbPage, NbResource> {
      * Extend page with mandatory elements.
      */
     private void extend() {
+        this.link(new Link("about", "/a/index"));
         this.append(
             new JaxbBundle("version")
                 .add("name", Manifests.read("Netbout-Version"))
