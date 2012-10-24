@@ -26,6 +26,8 @@
  */
 package com.netbout.rest;
 
+import com.rexsl.test.JaxbConverter;
+import com.rexsl.test.XhtmlMatchers;
 import java.net.HttpURLConnection;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
@@ -71,6 +73,30 @@ public final class NbPageTest {
                     "entity",
                     Matchers.equalTo(page)
                 )
+            )
+        );
+    }
+
+    /**
+     * NbPage can build mandatory XML elements.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void buildsMandatoryXmlElements() throws Exception {
+        final NbPage page = new NbPage();
+        final BaseRs rest = new NbResourceMocker().mock(BaseRs.class);
+        page.init(rest);
+        MatcherAssert.assertThat(
+            JaxbConverter.the(page.render().anonymous().build().getEntity()),
+            XhtmlMatchers.hasXPaths(
+                "/page/log",
+                "/page/message",
+                "/page/version/name",
+                "/page/version/revision",
+                "/page/version/date",
+                "/page/links/link[@rel='self']/@href",
+                "/page/links/link[@rel='home']/@href",
+                "/page/links/link[@rel='about']/@href"
             )
         );
     }

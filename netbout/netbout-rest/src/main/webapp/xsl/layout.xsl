@@ -240,9 +240,20 @@
                                 </xsl:choose>
                             </li>
                         </xsl:if>
-                        <li>
-                            <xsl:value-of select="$TEXTS/About"/>
-                        </li>
+                        <xsl:if test="links/link[@rel='about']">
+                            <li>
+                                <a>
+                                    <xsl:attribute name="href">
+                                        <xsl:value-of select="links/link[@rel='about']/@href"/>
+                                    </xsl:attribute>
+                                    <xsl:attribute name="title">
+                                        <xsl:value-of select="$TEXTS/About"/>
+                                    </xsl:attribute>
+                                    <xsl:value-of select="$TEXTS/About"/>
+                                </a>
+                                <xsl:value-of select="$TEXTS/About"/>
+                            </li>
+                        </xsl:if>
                         <li>
                             <a>
                                 <xsl:attribute name="href">
