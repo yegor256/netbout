@@ -68,9 +68,10 @@ public final class AboutRs extends BaseRs {
             .getBody();
         final String html = new MetaText(markdown).html();
         return new PageBuilder()
-            .schema("")
+            .stylesheet("/xsl/about.xsl")
             .build(NbPage.class)
             .init(this)
+            .append(new JaxbBundle("name", page))
             .append(new JaxbBundle("content", html))
             .render()
             .preserved()

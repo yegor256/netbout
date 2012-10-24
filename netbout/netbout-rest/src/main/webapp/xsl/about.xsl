@@ -1,4 +1,5 @@
-/**
+<?xml version="1.0"?>
+<!--
  * Copyright (c) 2009-2012, Netbout.com
  * All rights reserved.
  *
@@ -8,7 +9,7 @@
  * except the server platform of netBout Inc. located at www.netbout.com.
  * Federal copyright law prohibits unauthorized reproduction by any means
  * and imposes fines up to $25,000 for violation. If you received
- * this code occasionally and without intent to use it, please report this
+ * this code accidentally and without intent to use it, please report this
  * incident to the author by email.
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
@@ -25,26 +26,28 @@
  * SUCH DAMAGE.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
- * @version $Id: PostsInvalidMessages.groovy 3219 2012-08-14 10:54:12Z yegor@tpc2.com $
- */
-package com.netbout.rest.rexsl.scripts
+ * @version $Id: profile.xsl 3314 2012-09-10 15:45:55Z guard $
+ -->
+<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+    xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    xmlns="http://www.w3.org/1999/xhtml"
+    version="2.0" exclude-result-prefixes="xs">
 
-import com.rexsl.test.RestTester
-import javax.ws.rs.core.HttpHeaders
-import javax.ws.rs.core.MediaType
+    <xsl:output method="xml" omit-xml-declaration="yes"/>
 
-RestTester.start(rexsl.home)
-    .get('read front page')
-    .follow()
-    .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_XML)
-    .get('read next page after forwarding')
-    .assertStatus(HttpURLConnection.HTTP_OK)
-    .rel('/page/links/link[@rel="about"]/@href')
-    .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_XML)
-    .get('read about page')
-    .assertStatus(HttpURLConnection.HTTP_OK)
-    .assertXPath('/page/content')
-    .rel('/page/links/link[@rel="self"]/@href')
-    .header(HttpHeaders.ACCEPT, MediaType.TEXT_HTML)
-    .get('read about page again in HTML')
-    .assertStatus(HttpURLConnection.HTTP_OK)
+    <xsl:param name="TEXTS"
+        select="document(concat('/xml/lang/en.xml?', /page/version/revision))/texts"/>
+
+    <xsl:include href="/xsl/layout.xsl" />
+
+    <xsl:template name="head">
+        <title>
+            <xsl:value-of select="/page/name"/>
+        </title>
+    </xsl:template>
+
+    <xsl:template name="content">
+        <xsl:value-of select="/page/content" disable-output-escaping="yes"/>
+    </xsl:template>
+
+</xsl:stylesheet>

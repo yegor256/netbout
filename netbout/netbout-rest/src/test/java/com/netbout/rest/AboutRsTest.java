@@ -48,7 +48,10 @@ public final class AboutRsTest {
         final Response response = rest.read("index");
         MatcherAssert.assertThat(
             NbResourceMocker.the((NbPage) response.getEntity(), rest),
-            XhtmlMatchers.hasXPath("/page/content")
+            XhtmlMatchers.hasXPaths(
+                "/page/content",
+                "/page[name='index']"
+            )
         );
     }
 
