@@ -44,6 +44,9 @@
         <title>
             <xsl:value-of select="/page/name"/>
         </title>
+        <script src="http://drawdotio.appspot.com/embed.js">
+            <xsl:text> </xsl:text> <!-- this is for W3C compliance -->
+        </script>
     </xsl:template>
 
     <xsl:template name="content">
