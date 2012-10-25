@@ -24,21 +24,21 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.rest.meta;
+package com.netbout.rest;
 
-import java.util.LinkedList;
-import java.util.List;
-import org.apache.commons.lang.StringUtils;
+import java.io.StringReader;
+import java.io.StringWriter;
 
 /**
- * Text with meta commands.
+ * Text with markdown formatting.
  *
  * <p>The class is immutable and thread-safe.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
- * @version $Id$
+ * @version $Id: MetaText.java 3314 2012-09-10 15:45:55Z guard $
+ * @see <a href="Markdown Syntax">http://daringfireball.net/projects/markdown/syntax</a>
  */
-public final class MetaText {
+public final class Markdown {
 
     /**
      * The source text.
@@ -49,7 +49,7 @@ public final class MetaText {
      * Public ctor.
      * @param txt The raw source text, with meta commands
      */
-    public MetaText(final String txt) {
+    public Markdown(final String txt) {
         this.text = txt;
     }
 
@@ -58,7 +58,16 @@ public final class MetaText {
      * @return The HTML
      */
     public String html() {
-        return StringUtils.join(this.paragraphs(new HtmlPar()), "");
+        final StringWriter writer = new StringWriter();
+        try {
+            new org.tautua.markdownpapers.Markdown().transform(
+                new StringReader(this.text),
+                writer
+            );
+        } catch (org.tautua.markdownpapers.parser.ParseException ex) {
+            throw new IllegalArgumentException(ex);
+        }
+        return writer.toString();
     }
 
     /**
@@ -66,28 +75,7 @@ public final class MetaText {
      * @return The plain text
      */
     public String plain() {
-        return StringUtils.join(this.paragraphs(new PlainPar()), "\n\n");
-    }
-
-    /**
-     * Break text down do paragraphs.
-     * @param par Paragraph processor
-     * @return List of paragraphs found
-     */
-    private List<String> paragraphs(final Par par) {
-        final String[] lines =
-            StringUtils.splitPreserveAllTokens(this.text, "\n");
-        final List<String> pars = new LinkedList<String>();
-        for (String line : lines) {
-            par.push(line);
-            if (par.ready()) {
-                pars.add(par.out());
-            }
-        }
-        if (!par.isEmpty()) {
-            pars.add(par.out());
-        }
-        return pars;
+        return this.html();
     }
 
 }

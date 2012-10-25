@@ -26,10 +26,12 @@
  */
 package com.netbout.rest;
 
-import com.netbout.rest.meta.MetaText;
+import com.jcabi.log.Logger;
+import com.rexsl.core.Manifests;
 import com.rexsl.page.JaxbBundle;
 import com.rexsl.page.PageBuilder;
 import com.rexsl.test.RestTester;
+import com.rexsl.test.TestResponse;
 import java.net.HttpURLConnection;
 import java.net.URI;
 import javax.ws.rs.GET;
@@ -56,17 +58,9 @@ public final class AboutRs extends BaseRs {
      * @todo #158 Path annotation: http://java.net/jira/browse/JERSEY-739
      */
     @GET
-    @Path("/{page}")
+    @Path("/{page : .+}")
     public Response read(@PathParam("page") final String page) {
-        final URI uri = UriBuilder.fromUri("http://about.netbout.com/")
-            .path(String.format("%s.md", page))
-            .build();
-        final String markdown = RestTester.start(uri)
-            .header(HttpHeaders.ACCEPT, MediaType.TEXT_HTML)
-            .get(String.format("loading '%s' page", page))
-            .assertStatus(HttpURLConnection.HTTP_OK)
-            .getBody();
-        final String html = new MetaText(markdown).html();
+        final String html = new Markdown(this.markdown(page)).html();
         return new PageBuilder()
             .stylesheet("/xsl/about.xsl")
             .build(NbPage.class)
@@ -76,6 +70,41 @@ public final class AboutRs extends BaseRs {
             .render()
             .preserved()
             .build();
+    }
+
+    /**
+     * Fetch and return markdown content of the page.
+     * @param page Page name to show
+     * @return The markdown content of it
+     * @todo #481 Would be great to cache these pages locally, or at least
+     *  use If-Modified-Since HTTP header
+     */
+    private String markdown(final String page) {
+        final URI uri = UriBuilder.fromUri("http://about.netbout.com/")
+            .userInfo(String.format("a:%s", Manifests.read("Netbout-AboutPwd")))
+            .path(String.format("%s.md", page))
+            .build();
+        final TestResponse response = RestTester.start(uri)
+            .header(HttpHeaders.ACCEPT, MediaType.TEXT_HTML)
+            .get(String.format("loading '%s' page", page));
+        String markdown;
+        if (response.getStatus() == HttpURLConnection.HTTP_OK) {
+            markdown = response.getBody();
+        } else {
+            Logger.warn(
+                this,
+                "#read('%s'): '%s' returned #%d '%s'",
+                page,
+                uri,
+                response.getStatus(),
+                response.getBody()
+            );
+            markdown = String.format(
+                "Page '%s' not found, try [index](index).",
+                page
+            );
+        }
+        return markdown;
     }
 
 }

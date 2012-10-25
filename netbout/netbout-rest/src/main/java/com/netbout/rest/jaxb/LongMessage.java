@@ -27,7 +27,7 @@
 package com.netbout.rest.jaxb;
 
 import com.netbout.hub.Hub;
-import com.netbout.rest.meta.MetaText;
+import com.netbout.rest.Markdown;
 import com.netbout.rest.period.PeriodsBuilder;
 import com.netbout.spi.Bout;
 import com.netbout.spi.Message;
@@ -152,7 +152,7 @@ public final class LongMessage {
             }
         }
         if (output == null) {
-            output = new MetaText(StringEscapeUtils.escapeXml(render)).html();
+            output = new Markdown(StringEscapeUtils.escapeXml(render)).html();
         }
         return output;
     }

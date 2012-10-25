@@ -89,8 +89,7 @@
     </xsl:template>
 
     <xsl:template name="content">
-        <h1>
-            <span id="bout-number" style="display: none;"><xsl:value-of select="/page/bout/number"/></span>
+        <h1 class="bout">
             <a>
                 <xsl:attribute name="href">
                     <xsl:value-of select="/page/links/link[@rel='top']/@href"/>

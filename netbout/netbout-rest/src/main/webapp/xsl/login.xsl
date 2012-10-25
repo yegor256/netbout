@@ -82,6 +82,19 @@
                                 </img>
                             </a>
                         </p>
+                        <xsl:if test="/page[links/link[@rel='about'] and not(identity)]">
+                            <p>
+                                <a>
+                                    <xsl:attribute name="href">
+                                        <xsl:value-of select="/page/links/link[@rel='about']/@href"/>
+                                    </xsl:attribute>
+                                    <xsl:attribute name="title">
+                                        <xsl:text>What is Netbout?</xsl:text>
+                                    </xsl:attribute>
+                                    <xsl:text>What is Netbout and how it works?</xsl:text>
+                                </a>
+                            </p>
+                        </xsl:if>
                         <xsl:if test="/page/identity">
                             <p id="message">
                                 <xsl:choose>

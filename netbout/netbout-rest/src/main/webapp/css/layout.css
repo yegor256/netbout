@@ -167,23 +167,24 @@ body {
 
     #content h1 {
         position: relative;
-        padding-top: 5em;
-        margin-bottom: 0.7em;
+        padding-top: 1.8519em; /* 5em */
+        margin-bottom: 0.2593em; /* 0.7em */
+        font-size: 2.7em;
     }
 
-        #content h1 .num {
-            font-size: 1.6em;
+        #content h1.bout .num {
+            font-size: 0.5926em; /* 1.6 */
             margin-right: 0.3em;
         }
 
-        #content h1 .title {
-            font-size: 2.7em;
+        #content h1.bout .title {
+            font-size: 1em; /* 2.7 */
             font-weight: 500;
             line-height: 1em;
         }
 
-        #content h1 .new {
-            font-size: 1.7em;
+        #content h1.bout .new {
+            font-size: 0.6296em; /* 1.7 */
             font-weight: 500;
             color: #f24a40; /* red */
             margin-left: 0.3em;

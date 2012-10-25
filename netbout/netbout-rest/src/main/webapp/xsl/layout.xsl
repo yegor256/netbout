@@ -251,7 +251,6 @@
                                     </xsl:attribute>
                                     <xsl:value-of select="$TEXTS/About"/>
                                 </a>
-                                <xsl:value-of select="$TEXTS/About"/>
                             </li>
                         </xsl:if>
                         <li>
