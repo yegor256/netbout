@@ -27,7 +27,7 @@
 package com.netbout.rest.jaxb;
 
 import com.netbout.hub.HubMocker;
-import com.netbout.rest.meta.MetaText;
+import com.netbout.rest.Markdown;
 import com.netbout.spi.BoutMocker;
 import com.netbout.spi.MessageMocker;
 import com.rexsl.test.JaxbConverter;
@@ -84,7 +84,7 @@ public final class LongMessageTest {
         );
         MatcherAssert.assertThat(
             (String) msg.getRender(),
-            Matchers.equalTo(new MetaText(text).html())
+            Matchers.equalTo(new Markdown(text).html())
         );
     }
 

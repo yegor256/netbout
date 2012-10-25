@@ -28,7 +28,7 @@ package com.netbout.notifiers.email;
 
 import com.jcabi.velocity.VelocityPage;
 import com.netbout.hub.Hub;
-import com.netbout.rest.meta.MetaText;
+import com.netbout.rest.Markdown;
 import com.netbout.spi.Bout;
 import com.netbout.spi.Identity;
 import com.netbout.spi.Message;
@@ -236,7 +236,7 @@ public final class EmailFarm implements IdentityAware {
             .arg(text)
             .asDefault(text)
             .exec();
-        return new MetaText(render).plain();
+        return new Markdown(render).plain();
     }
 
 }

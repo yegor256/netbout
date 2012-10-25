@@ -24,7 +24,7 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.rest.meta;
+package com.netbout.rest;
 
 import com.rexsl.test.XhtmlMatchers;
 import java.util.Map;
@@ -34,19 +34,19 @@ import org.hamcrest.Matchers;
 import org.junit.Test;
 
 /**
- * Test case for {@link MetaText}.
+ * Test case for {@link Markdown}.
  * @author Yegor Bugayenko (yegor@netbout.com)
- * @version $Id$
+ * @version $Id: MarkdownTest.java 3314 2012-09-10 15:45:55Z guard $
  */
-public final class MetaTextTest {
+public final class MarkdownTest {
 
     /**
-     * MetaText can format a text to HTML.
+     * Markdown can format a text to HTML.
      * @throws Exception If there is some problem inside
      */
     @Test
     public void formatsTextToHtml() throws Exception {
-        final MetaText meta = new MetaText(
+        final Markdown meta = new Markdown(
             "**hi**, _dude_!\r\n\n     b**o\n    \n    \n    o**m\n"
         );
         MatcherAssert.assertThat(
@@ -54,21 +54,23 @@ public final class MetaTextTest {
             Matchers.describedAs(
                 meta.html(),
                 XhtmlMatchers.hasXPaths(
-                    "/x/p/b[.='hi']",
-                    "/x/p/i[.='dude']",
-                    "/x/p[@class='fixed' and .=' b**o\n\n\no**m']"
+                    "/x/p/strong[.='hi']",
+                    "/x/p/em[.='dude']",
+                    "/x/pre/code[.=' b**o\n\n\no**m\n']"
                 )
             )
         );
     }
 
     /**
-     * MetaText can format a meta-text to plain text.
+     * Markdown can format a meta-text to plain text.
      * @throws Exception If there is some problem inside
+     * @todo #481 Waiting for https://github.com/lruiz/MarkdownPapers/issues/27
      */
     @Test
-    public void formatsMetaTextToPlain() throws Exception {
-        final MetaText meta = new MetaText(
+    @org.junit.Ignore
+    public void formatsMarkdownToPlain() throws Exception {
+        final Markdown meta = new Markdown(
             "**hi**, _buddy_!\r\n\n     b**o\n    \n    \n    o**m\n"
         );
         MatcherAssert.assertThat(
@@ -78,7 +80,7 @@ public final class MetaTextTest {
     }
 
     /**
-     * MetaText can handle broken formatting correctly.
+     * Markdown can handle broken formatting correctly.
      * @throws Exception If there is some problem inside
      */
     @Test
@@ -93,14 +95,14 @@ public final class MetaTextTest {
         };
         for (String text : texts) {
             MatcherAssert.assertThat(
-                String.format("<z>%s</z>", new MetaText(text).html()),
+                String.format("<z>%s</z>", new Markdown(text).html()),
                 XhtmlMatchers.hasXPath("/z")
             );
         }
     }
 
     /**
-     * MetaText can format small snippets.
+     * Markdown can format small snippets.
      * @throws Exception If there is some problem inside
      */
     @Test
@@ -112,30 +114,33 @@ public final class MetaTextTest {
     public void formatsTextFragmentsToHtml() throws Exception {
         final Map<String, String> texts = ArrayUtils.toMap(
             new Object[][] {
-                {"hi, *dude*!", "<p>hi, <b>dude</b>!</p>"},
-                {"hello, **dude**!", "<p>hello, <b>dude</b>!</p>"},
-                {"wazzup, ***dude***!", "<p>wazzup, <b>dude</b>!</p>"},
-                {"hey, _man_!", "<p>hey, <i>man</i>!</p>"},
-                {"x: `oops`", "<p>x: <span class='tt'>oops</span></p>"},
-                {"[a](http://foo)", "<p><a href='http://foo'>a</a></p>"},
+                {"hi, *dude*!", "<p>hi, <em>dude</em>!</p>"},
+                {"hello, **dude**!", "<p>hello, <strong>dude</strong>!</p>"},
+                {
+                    "wazzup, ***dude***!",
+                    "<p>wazzup, <strong><em>dude</em></strong>!</p>",
+                },
+                {"hey, _man_!", "<p>hey, <em>man</em>!</p>"},
+                {"x: `oops`", "<p>x: <code>oops</code></p>"},
+                {"[a](http://foo)", "<p><a href=\"http://foo\">a</a></p>"},
                 {"}}}\n", "<p>}}}</p>"},
             }
         );
         for (Map.Entry<String, String> entry : texts.entrySet()) {
             MatcherAssert.assertThat(
-                new MetaText(entry.getKey()).html(),
+                new Markdown(entry.getKey()).html().trim(),
                 Matchers.equalTo(entry.getValue())
             );
         }
     }
 
     /**
-     * MetaText can format bullets to HTML.
+     * Markdown can format bullets to HTML.
      * @throws Exception If there is some problem inside
      */
     @Test
     public void formatsBulletsToHtml() throws Exception {
-        final MetaText meta = new MetaText(
+        final Markdown meta = new Markdown(
             "my list:\n\n* line one\n* line two\n\nnormal text now"
         );
         MatcherAssert.assertThat(
