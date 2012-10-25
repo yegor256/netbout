@@ -28,7 +28,6 @@ package com.netbout.rest;
 
 import java.io.StringReader;
 import java.io.StringWriter;
-import org.apache.commons.lang.StringUtils;
 
 /**
  * Text with markdown formatting.

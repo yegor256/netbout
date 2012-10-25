@@ -118,7 +118,7 @@ public final class MarkdownTest {
                 {"hello, **dude**!", "<p>hello, <strong>dude</strong>!</p>"},
                 {
                     "wazzup, ***dude***!",
-                    "<p>wazzup, <strong><em>dude</em></strong>!</p>"
+                    "<p>wazzup, <strong><em>dude</em></strong>!</p>",
                 },
                 {"hey, _man_!", "<p>hey, <em>man</em>!</p>"},
                 {"x: `oops`", "<p>x: <code>oops</code></p>"},
