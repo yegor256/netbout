@@ -370,6 +370,7 @@
                                 <Netbout-Revision>${build.number}</Netbout-Revision>
                                 <Netbout-Version>${project.version}</Netbout-Version>
                                 <Netbout-Date>${maven.build.timestamp}</Netbout-Date>
+                                <Netbout-AboutPwd>${about.pwd}</Netbout-AboutPwd>
                                 <Netbout-FbId>${fb.id}</Netbout-FbId>
                                 <Netbout-FbSecret>${fb.secret}</Netbout-FbSecret>
                                 <Netbout-JdbcDriver>com.mysql.jdbc.Driver</Netbout-JdbcDriver>
@@ -724,6 +725,7 @@
                                     <primaryArtifact>false</primaryArtifact>
                                     <archive>
                                         <manifestEntries>
+                                            <Netbout-AboutPwd>test</Netbout-AboutPwd>
                                             <Netbout-FbId>123456</Netbout-FbId>
                                             <Netbout-FbSecret>secret</Netbout-FbSecret>
                                             <Netbout-JdbcDriver>com.mysql.jdbc.Driver</Netbout-JdbcDriver>
