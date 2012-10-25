@@ -100,7 +100,7 @@ public final class AboutRs extends BaseRs {
                 response.getBody()
             );
             markdown = String.format(
-                "Page '%s' not found, try [index](index).",
+                "Page '%s' not found, try [index](/a/index).",
                 page
             );
         }
