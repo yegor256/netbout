@@ -45,7 +45,14 @@
                 <meta name="description" content="Netbout.com is a conversation-centric UI on demand... do you get it?"/>
                 <meta name="keywords" content="Netbout, User Interface, UI, On-Demand, Cloud User Interface"/>
                 <meta name="author" content="Netbout.com, Inc."/>
-                <script type="text/javascript" src="http://img.netbout.com/jquery.js">
+                <script type="text/javascript">
+                    <xsl:attribute name="src">
+                        <xsl:call-template name="https">
+                            <xsl:with-param name="uri">
+                                <xsl:text>img.netbout.com/jquery.js</xsl:text>
+                            </xsl:with-param>
+                        </xsl:call-template>
+                    </xsl:attribute>
                     <xsl:text> </xsl:text>
                     <!-- this is for W3C compliance -->
                 </script>
@@ -63,17 +70,20 @@
                 </link>
                 <link rel="icon" type="image/gif">
                     <xsl:attribute name="href">
-                        <xsl:text>http://img.netbout.com/favicon</xsl:text>
-                        <xsl:choose>
-                            <xsl:when test="contains(/page/version/name, '-SNAPSHOT')">
-                                <xsl:text>-test</xsl:text>
-                            </xsl:when>
-                            <xsl:when test="contains(/page/version/name, '-RC')">
-                                <xsl:text>-stage</xsl:text>
-                            </xsl:when>
-                        </xsl:choose>
-                        <xsl:text>.ico?</xsl:text>
-                        <xsl:value-of select="/page/version/revision"/>
+                        <xsl:call-template name="https">
+                            <xsl:with-param name="uri">
+                                <xsl:text>img.netbout.com/favicon</xsl:text>
+                                <xsl:choose>
+                                    <xsl:when test="contains(/page/version/name, '-SNAPSHOT')">
+                                        <xsl:text>-test</xsl:text>
+                                    </xsl:when>
+                                    <xsl:when test="contains(/page/version/name, '-RC')">
+                                        <xsl:text>-stage</xsl:text>
+                                    </xsl:when>
+                                </xsl:choose>
+                                <xsl:text>.ico?</xsl:text>
+                            </xsl:with-param>
+                        </xsl:call-template>
                     </xsl:attribute>
                 </link>
                 <xsl:call-template name="head"/>
@@ -161,21 +171,21 @@
                         <xsl:value-of select="$TEXTS/back.to.inbox"/>
                     </xsl:attribute>
                     <xsl:attribute name="style">
-                        <xsl:text>background-image: url('http</xsl:text>
-                        <xsl:if test="/page/identity">
-                            <xsl:text>s</xsl:text>
-                        </xsl:if>
-                        <xsl:text>://img.netbout.com/logo/logo-</xsl:text>
-                        <xsl:choose>
-                            <xsl:when test="/page/identity/locale">
-                                <xsl:value-of select="/page/identity/locale"/>
-                            </xsl:when>
-                            <xsl:otherwise>
-                                <xsl:text>en</xsl:text>
-                            </xsl:otherwise>
-                        </xsl:choose>
-                        <xsl:text>.png?</xsl:text>
-                        <xsl:value-of select="/page/version/revision"/>
+                        <xsl:text>background-image: url('</xsl:text>
+                        <xsl:call-template name="https">
+                            <xsl:with-param name="uri">
+                                <xsl:text>img.netbout.com/logo/logo-</xsl:text>
+                                <xsl:choose>
+                                    <xsl:when test="/page/identity/locale">
+                                        <xsl:value-of select="/page/identity/locale"/>
+                                    </xsl:when>
+                                    <xsl:otherwise>
+                                        <xsl:text>en</xsl:text>
+                                    </xsl:otherwise>
+                                </xsl:choose>
+                                <xsl:text>.png?</xsl:text>
+                            </xsl:with-param>
+                        </xsl:call-template>
                         <xsl:text>');</xsl:text>
                     </xsl:attribute>
                     <xsl:text> </xsl:text>

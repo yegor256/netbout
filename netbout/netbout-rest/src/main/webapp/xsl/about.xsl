@@ -44,8 +44,16 @@
         <title>
             <xsl:value-of select="/page/name"/>
         </title>
-        <script type="text/javascript" src="http://drawdotio.appspot.com/embed.js">
-            <xsl:text> </xsl:text> <!-- this is for W3C compliance -->
+        <script type="text/javascript">
+            <xsl:attribute name="src">
+                <xsl:call-template name="https">
+                    <xsl:with-param name="uri">
+                        <xsl:text>drawdotio.appspot.com/embed.js</xsl:text>
+                    </xsl:with-param>
+                </xsl:call-template>
+            </xsl:attribute>
+            <xsl:text> </xsl:text>
+            <!-- this is for W3C compliance -->
         </script>
     </xsl:template>
 

@@ -97,10 +97,13 @@
             <xsl:text>: </xsl:text>
             <img class="flag">
                 <xsl:attribute name="src">
-                    <xsl:text>http://img.netbout.com/lang/</xsl:text>
-                    <xsl:value-of select="/page/identity/locale"/>
-                    <xsl:text>.png?</xsl:text>
-                    <xsl:value-of select="/page/version/revision"/>
+                    <xsl:call-template name="https">
+                        <xsl:with-param name="uri">
+                            <xsl:text>img.netbout.com/lang/</xsl:text>
+                            <xsl:value-of select="/page/identity/locale"/>
+                            <xsl:text>.png</xsl:text>
+                        </xsl:with-param>
+                    </xsl:call-template>
                 </xsl:attribute>
                 <xsl:attribute name="alt">
                     <xsl:value-of select="/page/identity/locale"/>
@@ -120,10 +123,13 @@
                         </xsl:attribute>
                         <img class="flag">
                             <xsl:attribute name="src">
-                                <xsl:text>http://img.netbout.com/lang/</xsl:text>
-                                <xsl:value-of select="code"/>
-                                <xsl:text>.png?</xsl:text>
-                                <xsl:value-of select="/page/version/revision"/>
+                                <xsl:call-template name="https">
+                                    <xsl:with-param name="uri">
+                                        <xsl:text>img.netbout.com/lang/</xsl:text>
+                                        <xsl:value-of select="code"/>
+                                        <xsl:text>.png</xsl:text>
+                                    </xsl:with-param>
+                                </xsl:call-template>
                             </xsl:attribute>
                             <xsl:attribute name="alt">
                                 <xsl:value-of select="name"/>
