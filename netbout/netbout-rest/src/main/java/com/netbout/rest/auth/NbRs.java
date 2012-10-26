@@ -116,7 +116,7 @@ public final class NbRs extends BaseRs {
             identity.profile().setPhoto(
                 new URL(
                     String.format(
-                        "http://cdn.netbout.com/nb/%s.png",
+                        "http://img.netbout.com/nb/%s.png",
                         iname.nss()
                     )
                 )

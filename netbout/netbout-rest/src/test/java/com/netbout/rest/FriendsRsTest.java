@@ -69,7 +69,7 @@ public final class FriendsRsTest {
         Mockito.doReturn(
             new IdentityMocker().withProfile(
                 new OwnProfileMocker().withPhoto(
-                    "http://cdn.netbout.com/logo.png"
+                    "http://img.netbout.com/logo.png"
                 ).mock()
             ).mock()
         ).when(identity).friend(Mockito.any(Urn.class));

@@ -119,7 +119,7 @@ public final class EmailRs extends BaseRs {
                 iname
             );
             identity.profile().setPhoto(
-                new URL("http://cdn.netbout.com/email.png")
+                new URL("http://img.netbout.com/email.png")
             );
         } catch (java.net.MalformedURLException ex) {
             throw new IllegalArgumentException(ex);

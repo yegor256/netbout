@@ -75,10 +75,20 @@ public final class Photo {
      */
     @XmlValue
     public URI getPhoto() {
-        return this.builder.clone()
-            .path("/f/photo")
-            .queryParam("urn", "{urn}")
-            .build(this.friend.name());
+        URI photo;
+        if ("test".equals(this.friend.name().nid())) {
+            try {
+                photo = this.friend.profile().photo().toURI();
+            } catch (java.net.URISyntaxException ex) {
+                throw new IllegalArgumentException(ex);
+            }
+        } else {
+            photo = this.builder.clone()
+                .path("/f/photo")
+                .queryParam("urn", "{urn}")
+                .build(this.friend.name());
+        }
+        return photo;
     }
 
 }

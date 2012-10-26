@@ -70,7 +70,7 @@ public final class LongIdentityTest {
                 "/identity[eta='0']",
                 "/identity[alias='John Smith']",
                 "/identity/aliases[alias='John Smith']",
-                "/identity[photo='http://localhost/f/photo?urn=urn:test:a']"
+                "/identity[photo='http://example.com/a.jpg']"
             )
         );
     }

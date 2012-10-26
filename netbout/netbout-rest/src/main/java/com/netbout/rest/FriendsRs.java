@@ -26,8 +26,10 @@
  */
 package com.netbout.rest;
 
+import com.jcabi.log.Logger;
 import com.netbout.rest.jaxb.Invitee;
 import com.netbout.spi.Friend;
+import com.netbout.spi.Identity;
 import com.netbout.spi.Urn;
 import com.rexsl.page.JaxbBundle;
 import com.rexsl.page.JaxbGroup;
@@ -108,7 +110,13 @@ public final class FriendsRs extends BaseRs {
                 "Query param 'urn' is mandatory"
             );
         }
-        final Friend friend = this.identity().friend(urn);
+        final Identity self = this.identity();
+        Friend friend;
+        if (self.name().equals(urn)) {
+            friend = self;
+        } else {
+            friend = self.friend(urn);
+        }
         final TestResponse response = RestTester
             .start(friend.profile().photo().toURI())
             .get("fetching photo of friend");
@@ -121,6 +129,12 @@ public final class FriendsRs extends BaseRs {
             }
         }
         builder.entity(response.getBody());
+        Logger.debug(
+            this,
+            "#photo('%s'): fetched from '%s'",
+            urn,
+            friend.profile().photo().toURI()
+        );
         return builder.build();
     }
 

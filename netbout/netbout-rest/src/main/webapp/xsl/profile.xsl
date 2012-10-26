@@ -97,7 +97,7 @@
             <xsl:text>: </xsl:text>
             <img class="flag">
                 <xsl:attribute name="src">
-                    <xsl:text>http://cdn.netbout.com/lang/</xsl:text>
+                    <xsl:text>http://img.netbout.com/lang/</xsl:text>
                     <xsl:value-of select="/page/identity/locale"/>
                     <xsl:text>.png?</xsl:text>
                     <xsl:value-of select="/page/version/revision"/>
@@ -120,7 +120,7 @@
                         </xsl:attribute>
                         <img class="flag">
                             <xsl:attribute name="src">
-                                <xsl:text>http://cdn.netbout.com/lang/</xsl:text>
+                                <xsl:text>http://img.netbout.com/lang/</xsl:text>
                                 <xsl:value-of select="code"/>
                                 <xsl:text>.png?</xsl:text>
                                 <xsl:value-of select="/page/version/revision"/>

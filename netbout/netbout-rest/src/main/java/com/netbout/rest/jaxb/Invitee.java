@@ -28,7 +28,6 @@ package com.netbout.rest.jaxb;
 
 import com.netbout.spi.Friend;
 import com.netbout.spi.Profile;
-import java.net.URL;
 import javax.ws.rs.core.UriBuilder;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;

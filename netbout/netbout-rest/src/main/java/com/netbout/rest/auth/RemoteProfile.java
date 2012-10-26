@@ -61,7 +61,7 @@ final class RemoteProfile implements OwnProfile {
      */
     public RemoteProfile() {
         try {
-            this.iphoto = new URL("http://cdn.netbout.com/unknown.png");
+            this.iphoto = new URL("http://img.netbout.com/unknown.png");
         } catch (java.net.MalformedURLException ex) {
             throw new IllegalStateException(ex);
         }

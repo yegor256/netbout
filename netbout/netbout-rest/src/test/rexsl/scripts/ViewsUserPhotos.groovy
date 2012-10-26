@@ -30,32 +30,17 @@
 package com.netbout.rest.rexsl.scripts
 
 import com.netbout.spi.Urn
-import com.netbout.spi.client.EtaAssertion
 import com.netbout.spi.client.RestSession
 import com.netbout.spi.client.RestUriBuilder
 import com.rexsl.test.RestTester
 import javax.ws.rs.core.HttpHeaders
 import javax.ws.rs.core.MediaType
-import org.hamcrest.Matchers
 
-def donald = new RestSession(rexsl.home).authenticate(new Urn('urn:test:donald'), '')
-def bout = donald.start()
-bout.post('Hi there!')
-
-// validate content of the inbox
-RestTester.start(RestUriBuilder.from(william))
+def bruno = new RestSession(rexsl.home).authenticate(new Urn('urn:test:bruno'), '')
+RestTester.start(RestUriBuilder.from(bruno))
     .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_XML)
     .get('render inbox of a user')
     .assertStatus(HttpURLConnection.HTTP_OK)
-    .assertThat(new EtaAssertion())
-    // @todo #213 for some reason this stuff doesn't work with rexsl 0.3.2
-    // .assertXPath("/processing-instruction('xml-stylesheet')[contains(.,'/inbox.xsl')]")
-    .assertXPath('/page/identity[name="urn:test:willy"]')
-    .assertXPath('/page/links/link[@rel="search"]')
-    .assertXPath('/page/bouts')
-    .assertXPath('/page/millis')
-    .assertXPath('/page[@date]')
-    .assertXPath('/page[@ip]')
-    .assertXPath('/page/view[.=""]')
-    .assertXPath('/page/bouts/bout/participants/participant')
-    .assertHeader('Netbout-Version', Matchers.notNullValue())
+    .rel('/page/identity/photo/text()')
+    .get('load photo of a user')
+    .assertStatus(HttpURLConnection.HTTP_OK)

@@ -191,7 +191,7 @@
                         </xsl:when>
                         <xsl:otherwise>
                             <xsl:attribute name="src">
-                                <xsl:text>http://cdn.netbout.com/someone.png?</xsl:text>
+                                <xsl:text>http://img.netbout.com/someone.png?</xsl:text>
                                 <xsl:value-of select="/page/version/revision"/>
                             </xsl:attribute>
                             <xsl:attribute name="alt">

@@ -30,7 +30,6 @@ import com.netbout.spi.Helper;
 import com.netbout.spi.Participant;
 import com.netbout.spi.Profile;
 import com.rexsl.page.Link;
-import java.net.URL;
 import java.util.Collection;
 import java.util.LinkedList;
 import javax.ws.rs.core.UriBuilder;

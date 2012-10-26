@@ -55,7 +55,7 @@ public final class HubProfile implements OwnProfile {
      * Default photo of identity.
      */
     private static final String DEFAULT_PHOTO =
-        "http://cdn.netbout.com/unknown.png";
+        "http://img.netbout.com/unknown.png";
 
     /**
      * The hub.
