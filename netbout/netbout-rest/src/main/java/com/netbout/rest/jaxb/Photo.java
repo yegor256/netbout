@@ -24,53 +24,71 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.rest.auth;
+package com.netbout.rest.jaxb;
 
-import com.netbout.rest.jaxb.LongIdentity;
-import com.netbout.spi.Identity;
-import com.netbout.spi.Urn;
-import com.netbout.spi.xml.JaxbPrinter;
-import com.rexsl.test.XhtmlMatchers;
-import java.net.URL;
-import java.util.Locale;
+import com.netbout.spi.Friend;
+import java.net.URI;
 import javax.ws.rs.core.UriBuilder;
-import org.hamcrest.MatcherAssert;
-import org.junit.Test;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlValue;
 
 /**
- * Test case for {@link ResolvedIdentity}.
+ * Participant convertable to XML through JAXB.
+ *
  * @author Yegor Bugayenko (yegor@netbout.com)
- * @version $Id$
+ * @version $Id: LongParticipant.java 3465 2012-10-16 18:31:35Z guard $
  */
-public final class ResolvedIdentityTest {
+@XmlAccessorType(XmlAccessType.NONE)
+public final class Photo {
 
     /**
-     * ResolvedIdentity can marshall itself to XML text.
-     * @throws Exception If there is some problem inside
+     * The friend.
      */
-    @Test
-    public void marshallsItselfToXml() throws Exception {
-        final Identity identity = new ResolvedIdentity(
-            new URL("http://localhost/authority"),
-            new Urn("urn:test:johnny")
-        );
-        identity.profile().alias("Johnny");
-        identity.profile().setPhoto(new URL("http://localhost/pic.png"));
-        identity.profile().setLocale(Locale.CHINESE);
-        MatcherAssert.assertThat(
-            new JaxbPrinter(
-                new LongIdentity(
-                    identity,
-                    UriBuilder.fromPath("http://localhost")
-                )
-            ).print(),
-            XhtmlMatchers.hasXPaths(
-                "/identity[name='urn:test:johnny']",
-                "/identity[authority='http://localhost/authority']",
-                "/identity/aliases[alias='Johnny']",
-                "/identity[locale='zh']"
-            )
-        );
+    private transient Friend friend;
+
+    /**
+     * URI builder.
+     */
+    private final transient UriBuilder builder;
+
+    /**
+     * Public ctor for JAXB.
+     */
+    public Photo() {
+        throw new IllegalStateException("This ctor should never be called");
+    }
+
+    /**
+     * Public ctor.
+     * @param dude The friend
+     * @param bldr The builder
+     */
+    public Photo(final Friend dude, final UriBuilder bldr) {
+        this.friend = dude;
+        this.builder = bldr;
+    }
+
+    /**
+     * Get its photo.
+     * @return The photo
+     */
+    @XmlValue
+    public URI getPhoto() {
+        URI photo;
+        if ("test".equals(this.friend.name().nid())) {
+            try {
+                photo = this.friend.profile().photo().toURI();
+            } catch (java.net.URISyntaxException ex) {
+                throw new IllegalArgumentException(ex);
+            }
+        } else {
+            photo = this.builder.clone()
+                .path("/f/photo")
+                .queryParam("urn", "{urn}")
+                .build(this.friend.name());
+        }
+        return photo;
     }
 
 }

@@ -5,12 +5,12 @@
         <link href="/css/global.css?${build.number}"
             rel="stylesheet" type="text/css"></link>
         <link rel="icon" type="image/gif"
-            href="http://cdn.netbout.com/favicon.ico?${build.number}"/>
+            href="http://img.netbout.com/favicon.ico?${build.number}"/>
     </head>
     <body style="padding: 1em;">
         <p>
             <a href="http://www.netbout.com/">
-                <img src="http://cdn.netbout.com/logo-small.png?${build.number}"/>
+                <img src="http://img.netbout.com/logo-small.png?${build.number}"/>
             </a>
         </p>
         <p>

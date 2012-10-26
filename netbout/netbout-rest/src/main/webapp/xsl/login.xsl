@@ -56,7 +56,7 @@
                 </link>
                 <link rel="icon" type="image/gif">
                     <xsl:attribute name="href">
-                        <xsl:text>http://cdn.netbout.com/favicon.ico?</xsl:text>
+                        <xsl:text>http://img.netbout.com/favicon.ico?</xsl:text>
                         <xsl:value-of select="/page/version/revision"/>
                     </xsl:attribute>
                 </link>
@@ -76,7 +76,7 @@
                                 </xsl:attribute>
                                 <img id="logo" alt="back home">
                                     <xsl:attribute name="src">
-                                        <xsl:text>http://cdn.netbout.com/logo-beta.png?</xsl:text>
+                                        <xsl:text>http://img.netbout.com/logo-beta.png?</xsl:text>
                                         <xsl:value-of select="/page/version/revision"/>
                                     </xsl:attribute>
                                 </img>
@@ -140,7 +140,7 @@
                                 </xsl:attribute>
                                 <img id="facebook" alt="login through facebook">
                                     <xsl:attribute name="src">
-                                        <xsl:text>http://cdn.netbout.com/facebook.png?</xsl:text>
+                                        <xsl:text>http://img.netbout.com/facebook.png?</xsl:text>
                                         <xsl:value-of select="/page/version/revision"/>
                                     </xsl:attribute>
                                 </img>

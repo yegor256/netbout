@@ -26,13 +26,19 @@
  */
 package com.netbout.rest;
 
+import com.jcabi.log.Logger;
 import com.netbout.rest.jaxb.Invitee;
 import com.netbout.spi.Friend;
+import com.netbout.spi.Identity;
+import com.netbout.spi.Urn;
 import com.rexsl.page.JaxbBundle;
 import com.rexsl.page.JaxbGroup;
 import com.rexsl.page.PageBuilder;
+import com.rexsl.test.RestTester;
+import com.rexsl.test.TestResponse;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.QueryParam;
@@ -85,6 +91,51 @@ public final class FriendsRs extends BaseRs {
             .render()
             .authenticated(this.identity())
             .build();
+    }
+
+    /**
+     * Get photo of a friend.
+     * @param urn URN of a friend
+     * @return The JAX-RS response with a picture inside
+     * @throws Exception If anything is wrong
+     * @todo #158 Path annotation: http://java.net/jira/browse/JERSEY-739
+     */
+    @GET
+    @Path("/photo")
+    public Response photo(@QueryParam("urn") final Urn urn) throws Exception {
+        if (urn == null) {
+            throw new ForwardException(
+                this,
+                this.base(),
+                "Query param 'urn' is mandatory"
+            );
+        }
+        final Identity self = this.identity();
+        Friend friend;
+        if (self.name().equals(urn)) {
+            friend = self;
+        } else {
+            friend = self.friend(urn);
+        }
+        final TestResponse response = RestTester
+            .start(friend.profile().photo().toURI())
+            .get("fetching photo of friend");
+        final Response.ResponseBuilder builder =
+            Response.status(response.getStatus());
+        for (Map.Entry<String, List<String>> header
+            : response.getHeaders().entrySet()) {
+            for (String value : header.getValue()) {
+                builder.header(header.getKey(), value);
+            }
+        }
+        builder.entity(response.getBody());
+        Logger.debug(
+            this,
+            "#photo('%s'): fetched from '%s'",
+            urn,
+            friend.profile().photo().toURI()
+        );
+        return builder.build();
     }
 
 }

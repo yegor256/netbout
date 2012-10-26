@@ -191,8 +191,11 @@
                         </xsl:when>
                         <xsl:otherwise>
                             <xsl:attribute name="src">
-                                <xsl:text>http://cdn.netbout.com/someone.png?</xsl:text>
-                                <xsl:value-of select="/page/version/revision"/>
+                                <xsl:call-template name="https">
+                                    <xsl:with-param name="uri">
+                                        <xsl:text>img.netbout.com/someone.png</xsl:text>
+                                    </xsl:with-param>
+                                </xsl:call-template>
                             </xsl:attribute>
                             <xsl:attribute name="alt">
                                 <xsl:text>someone some time ago</xsl:text>

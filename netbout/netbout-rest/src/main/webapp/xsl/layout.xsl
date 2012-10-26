@@ -28,31 +28,33 @@
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  -->
-<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
-    xmlns:xs="http://www.w3.org/2001/XMLSchema"
-    xmlns="http://www.w3.org/1999/xhtml"
-    version="2.0" exclude-result-prefixes="xs">
-
-    <xsl:include href="/xsl/templates.xsl" />
-
+<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="http://www.w3.org/1999/xhtml" version="2.0" exclude-result-prefixes="xs">
+    <xsl:include href="/xsl/templates.xsl"/>
     <xsl:template match="/">
         <!-- see http://stackoverflow.com/questions/3387127 -->
         <xsl:text disable-output-escaping="yes">&lt;!DOCTYPE html&gt;</xsl:text>
-        <xsl:apply-templates select="page" />
+        <xsl:apply-templates select="page"/>
     </xsl:template>
-
     <xsl:template match="page">
         <html>
             <xsl:attribute name="lang">
                 <xsl:value-of select="/page/identity/locale"/>
             </xsl:attribute>
             <head>
-                <meta charset="UTF-8" />
-                <meta name="description" content="Netbout.com is a conversation-centric UI on demand... do you get it?" />
-                <meta name="keywords" content="Netbout, User Interface, UI, On-Demand, Cloud User Interface" />
-                <meta name="author" content="Netbout.com, Inc." />
-                <script type="text/javascript" src="http://cdn.netbout.com/jquery.js">
-                    <xsl:text> </xsl:text> <!-- this is for W3C compliance -->
+                <meta charset="UTF-8"/>
+                <meta name="description" content="Netbout.com is a conversation-centric UI on demand... do you get it?"/>
+                <meta name="keywords" content="Netbout, User Interface, UI, On-Demand, Cloud User Interface"/>
+                <meta name="author" content="Netbout.com, Inc."/>
+                <script type="text/javascript">
+                    <xsl:attribute name="src">
+                        <xsl:call-template name="https">
+                            <xsl:with-param name="uri">
+                                <xsl:text>img.netbout.com/jquery.js</xsl:text>
+                            </xsl:with-param>
+                        </xsl:call-template>
+                    </xsl:attribute>
+                    <xsl:text> </xsl:text>
+                    <!-- this is for W3C compliance -->
                 </script>
                 <link rel="stylesheet" type="text/css" media="all">
                     <xsl:attribute name="href">
@@ -68,20 +70,23 @@
                 </link>
                 <link rel="icon" type="image/gif">
                     <xsl:attribute name="href">
-                        <xsl:text>http://cdn.netbout.com/favicon</xsl:text>
-                        <xsl:choose>
-                            <xsl:when test="contains(/page/version/name, '-SNAPSHOT')">
-                                <xsl:text>-test</xsl:text>
-                            </xsl:when>
-                            <xsl:when test="contains(/page/version/name, '-RC')">
-                                <xsl:text>-stage</xsl:text>
-                            </xsl:when>
-                        </xsl:choose>
-                        <xsl:text>.ico?</xsl:text>
-                        <xsl:value-of select="/page/version/revision"/>
+                        <xsl:call-template name="https">
+                            <xsl:with-param name="uri">
+                                <xsl:text>img.netbout.com/favicon</xsl:text>
+                                <xsl:choose>
+                                    <xsl:when test="contains(/page/version/name, '-SNAPSHOT')">
+                                        <xsl:text>-test</xsl:text>
+                                    </xsl:when>
+                                    <xsl:when test="contains(/page/version/name, '-RC')">
+                                        <xsl:text>-stage</xsl:text>
+                                    </xsl:when>
+                                </xsl:choose>
+                                <xsl:text>.ico?</xsl:text>
+                            </xsl:with-param>
+                        </xsl:call-template>
                     </xsl:attribute>
                 </link>
-                <xsl:call-template name="head" />
+                <xsl:call-template name="head"/>
                 <script type="text/javascript">
                     //<![CDATA[
                     var _gaq = _gaq || [];
@@ -96,10 +101,10 @@
                 </script>
             </head>
             <body>
-                <xsl:apply-templates select="version" />
+                <xsl:apply-templates select="version"/>
                 <div id="cap">
                     <div id="incap">
-                        <xsl:call-template name="cap" />
+                        <xsl:call-template name="cap"/>
                     </div>
                 </div>
                 <div id="content" role="main">
@@ -144,16 +149,17 @@
                     <xsl:if test="count(log/event) &gt; 0">
                         <div id="log">
                             <xsl:for-each select="log/event">
-                                <p><xsl:value-of select="."/></p>
+                                <p>
+                                    <xsl:value-of select="."/>
+                                </p>
                             </xsl:for-each>
                         </div>
                     </xsl:if>
-                    <xsl:call-template name="content" />
+                    <xsl:call-template name="content"/>
                 </div>
             </body>
         </html>
     </xsl:template>
-
     <xsl:template name="cap">
         <div id="header">
             <div id="left">
@@ -165,28 +171,32 @@
                         <xsl:value-of select="$TEXTS/back.to.inbox"/>
                     </xsl:attribute>
                     <xsl:attribute name="style">
-                        <xsl:text>background-image: url('http://cdn.netbout.com/logo/logo-</xsl:text>
-                        <xsl:choose>
-                            <xsl:when test="/page/identity/locale">
-                                <xsl:value-of select="/page/identity/locale"/>
-                            </xsl:when>
-                            <xsl:otherwise>
-                                <xsl:text>en</xsl:text>
-                            </xsl:otherwise>
-                        </xsl:choose>
-                        <xsl:text>.png?</xsl:text>
-                        <xsl:value-of select="/page/version/revision"/>
+                        <xsl:text>background-image: url('</xsl:text>
+                        <xsl:call-template name="https">
+                            <xsl:with-param name="uri">
+                                <xsl:text>img.netbout.com/logo/logo-</xsl:text>
+                                <xsl:choose>
+                                    <xsl:when test="/page/identity/locale">
+                                        <xsl:value-of select="/page/identity/locale"/>
+                                    </xsl:when>
+                                    <xsl:otherwise>
+                                        <xsl:text>en</xsl:text>
+                                    </xsl:otherwise>
+                                </xsl:choose>
+                                <xsl:text>.png?</xsl:text>
+                            </xsl:with-param>
+                        </xsl:call-template>
                         <xsl:text>');</xsl:text>
                     </xsl:attribute>
-                    <xsl:text> </xsl:text> <!-- for W3C compliance -->
+                    <xsl:text> </xsl:text>
+                    <!-- for W3C compliance -->
                 </a>
                 <xsl:if test="/page/links/link[@rel='search']">
                     <form id="search" method="get" role="search">
                         <xsl:attribute name="action">
                             <xsl:value-of select="/page/links/link[@rel='search']/@href"/>
                         </xsl:attribute>
-                        <input name="q" id="search-input"
-                            autocomplete="off" size="10" maxlength="120">
+                        <input name="q" id="search-input" autocomplete="off" size="10" maxlength="120">
                             <xsl:attribute name="placeholder">
                                 <xsl:value-of select="$TEXTS/Find"/>
                             </xsl:attribute>
@@ -216,7 +226,7 @@
                             </img>
                             <xsl:call-template name="identity"/>
                             <xsl:if test="identity/@helper='true'">
-                                <xsl:text>&#160;(h)</xsl:text>
+                                <xsl:text>&#xA0;(h)</xsl:text>
                             </xsl:if>
                         </li>
                         <xsl:if test="links/link[@rel='start']">
@@ -235,7 +245,9 @@
                                             </xsl:attribute>
                                             <xsl:value-of select="$TEXTS/Start"/>
                                         </a>
-                                        <span class="start"><xsl:text>+</xsl:text></span>
+                                        <span class="start">
+                                            <xsl:text>+</xsl:text>
+                                        </span>
                                     </xsl:otherwise>
                                 </xsl:choose>
                             </li>
@@ -269,7 +281,6 @@
             </xsl:if>
         </div>
     </xsl:template>
-
     <xsl:template name="identity">
         <xsl:choose>
             <xsl:when test="/page/links/link[@rel='profile']">
@@ -281,20 +292,19 @@
                         <xsl:value-of select="$TEXTS/settings.of.your.profile"/>
                     </xsl:attribute>
                     <xsl:call-template name="crop">
-                        <xsl:with-param name="text" select="/page/identity/alias" />
-                        <xsl:with-param name="length" select="25" />
+                        <xsl:with-param name="text" select="/page/identity/alias"/>
+                        <xsl:with-param name="length" select="25"/>
                     </xsl:call-template>
                 </a>
             </xsl:when>
             <xsl:otherwise>
                 <xsl:call-template name="crop">
-                    <xsl:with-param name="text" select="/page/identity/alias" />
-                    <xsl:with-param name="length" select="25" />
+                    <xsl:with-param name="text" select="/page/identity/alias"/>
+                    <xsl:with-param name="length" select="25"/>
                 </xsl:call-template>
             </xsl:otherwise>
         </xsl:choose>
     </xsl:template>
-
     <xsl:template name="format">
         <xsl:param name="text" as="xs:string"/>
         <xsl:param name="value" as="xs:string"/>
@@ -302,5 +312,4 @@
         <xsl:value-of select="$value"/>
         <xsl:value-of select="substring-after($TEXTS/*[local-name()=$text], '%s')"/>
     </xsl:template>
-
 </xsl:stylesheet>

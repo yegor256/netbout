@@ -35,6 +35,10 @@ a conversation-centric format for end-users. The majority of
 data is presentable in a simple message-by-message dialog form. We
 develop helpers for new customers, but you can do that yourself as well.
 
+"Helper" tailors the user interface of Netbout.com platform for a specific
+style of your particular business application. Moreover, it makes changes
+to the functionality.
+
 Architecture
 ------------
 

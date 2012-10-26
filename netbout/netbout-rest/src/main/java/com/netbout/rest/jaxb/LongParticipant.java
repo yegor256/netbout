@@ -30,7 +30,6 @@ import com.netbout.spi.Helper;
 import com.netbout.spi.Participant;
 import com.netbout.spi.Profile;
 import com.rexsl.page.Link;
-import java.net.URL;
 import java.util.Collection;
 import java.util.LinkedList;
 import javax.ws.rs.core.UriBuilder;
@@ -134,8 +133,8 @@ public final class LongParticipant {
      * @return The photo
      */
     @XmlElement
-    public URL getPhoto() {
-        return this.participant.profile().photo();
+    public Photo getPhoto() {
+        return new Photo(this.participant, this.builder);
     }
 
     /**

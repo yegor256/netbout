@@ -28,7 +28,6 @@ package com.netbout.rest.jaxb;
 
 import com.netbout.spi.Friend;
 import com.netbout.spi.Profile;
-import java.net.URL;
 import javax.ws.rs.core.UriBuilder;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -80,6 +79,7 @@ public final class Invitee {
     @XmlAttribute
     public String getHref() {
         return this.builder
+            .clone()
             .path("/i")
             .replaceQueryParam("name", "{name}")
             .build(this.friend.name())
@@ -112,8 +112,8 @@ public final class Invitee {
      * @return The photo
      */
     @XmlElement
-    public URL getPhoto() {
-        return this.friend.profile().photo();
+    public Photo getPhoto() {
+        return new Photo(this.friend, this.builder);
     }
 
 }
