@@ -1,5 +1,4 @@
-<?xml version="1.0"?>
-<!--
+/**
  * Copyright (c) 2009-2012, Netbout.com
  * All rights reserved.
  *
@@ -24,33 +23,62 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
+ */
+package com.netbout.rest.jaxb;
+
+import com.netbout.spi.Friend;
+import java.net.URI;
+import javax.ws.rs.core.UriBuilder;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlValue;
+
+/**
+ * Participant convertable to XML through JAXB.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
- * @version $Id: profile.xsl 3314 2012-09-10 15:45:55Z guard $
- -->
-<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
-    xmlns:xs="http://www.w3.org/2001/XMLSchema"
-    xmlns="http://www.w3.org/1999/xhtml"
-    version="2.0" exclude-result-prefixes="xs">
+ * @version $Id: LongParticipant.java 3465 2012-10-16 18:31:35Z guard $
+ */
+@XmlAccessorType(XmlAccessType.NONE)
+public final class Photo {
 
-    <xsl:output method="xml" omit-xml-declaration="yes"/>
+    /**
+     * The friend.
+     */
+    private transient Friend friend;
 
-    <xsl:param name="TEXTS"
-        select="document(concat('/xml/lang/en.xml?', /page/version/revision))/texts"/>
+    /**
+     * URI builder.
+     */
+    private final transient UriBuilder builder;
 
-    <xsl:include href="/xsl/layout.xsl" />
+    /**
+     * Public ctor for JAXB.
+     */
+    public Photo() {
+        throw new IllegalStateException("This ctor should never be called");
+    }
 
-    <xsl:template name="head">
-        <title>
-            <xsl:value-of select="/page/name"/>
-        </title>
-        <script type="text/javascript" src="http://drawdotio.appspot.com/embed.js">
-            <xsl:text> </xsl:text> <!-- this is for W3C compliance -->
-        </script>
-    </xsl:template>
+    /**
+     * Public ctor.
+     * @param dude The friend
+     * @param bldr The builder
+     */
+    public Photo(final Friend dude, final UriBuilder bldr) {
+        this.friend = dude;
+        this.builder = bldr;
+    }
 
-    <xsl:template name="content">
-        <xsl:value-of select="/page/content" disable-output-escaping="yes"/>
-    </xsl:template>
+    /**
+     * Get its photo.
+     * @return The photo
+     */
+    @XmlValue
+    public URI getPhoto() {
+        return this.builder.clone()
+            .path("/f/photo")
+            .queryParam("urn", "{urn}")
+            .build(this.friend.name());
+    }
 
-</xsl:stylesheet>
+}

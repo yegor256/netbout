@@ -1,4 +1,4 @@
 Terms of Use
 ===================================
 
-TBD...
+This page is currently under construction.

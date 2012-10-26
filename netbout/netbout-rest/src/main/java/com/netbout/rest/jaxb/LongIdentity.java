@@ -30,6 +30,7 @@ import com.netbout.spi.Identity;
 import com.netbout.spi.Profile;
 import java.net.URL;
 import java.util.Collection;
+import javax.ws.rs.core.UriBuilder;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -52,6 +53,11 @@ public class LongIdentity {
     private final transient Identity person;
 
     /**
+     * URI builder.
+     */
+    private final transient UriBuilder builder;
+
+    /**
      * Public ctor for JAXB.
      */
     public LongIdentity() {
@@ -61,9 +67,11 @@ public class LongIdentity {
     /**
      * Private ctor.
      * @param idnt The identity
+     * @param bldr Uri builder
      */
-    public LongIdentity(final Identity idnt) {
+    public LongIdentity(final Identity idnt, final UriBuilder bldr) {
         this.person = idnt;
+        this.builder = bldr;
     }
 
     /**
@@ -121,8 +129,8 @@ public class LongIdentity {
      * @return The photo
      */
     @XmlElement
-    public final URL getPhoto() {
-        return this.person.profile().photo();
+    public final Photo getPhoto() {
+        return new Photo(this.person, this.builder);
     }
 
     /**

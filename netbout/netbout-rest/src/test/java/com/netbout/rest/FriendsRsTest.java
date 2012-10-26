@@ -24,52 +24,62 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.rest.auth;
+package com.netbout.rest;
 
-import com.netbout.rest.jaxb.LongIdentity;
 import com.netbout.spi.Identity;
+import com.netbout.spi.IdentityMocker;
+import com.netbout.spi.OwnProfileMocker;
 import com.netbout.spi.Urn;
-import com.netbout.spi.xml.JaxbPrinter;
+import com.netbout.spi.UrnMocker;
 import com.rexsl.test.XhtmlMatchers;
-import java.net.URL;
-import java.util.Locale;
-import javax.ws.rs.core.UriBuilder;
+import javax.ws.rs.core.Response;
 import org.hamcrest.MatcherAssert;
+import org.hamcrest.Matchers;
 import org.junit.Test;
+import org.mockito.Mockito;
 
 /**
- * Test case for {@link ResolvedIdentity}.
+ * Test case for {@link FriendsRs}.
  * @author Yegor Bugayenko (yegor@netbout.com)
- * @version $Id$
+ * @version $Id: FriendsRsTest.java 3314 2012-09-10 15:45:55Z guard $
  */
-public final class ResolvedIdentityTest {
+public final class FriendsRsTest {
 
     /**
-     * ResolvedIdentity can marshall itself to XML text.
+     * FriendsRs can render a login page.
      * @throws Exception If there is some problem inside
      */
     @Test
-    public void marshallsItselfToXml() throws Exception {
-        final Identity identity = new ResolvedIdentity(
-            new URL("http://localhost/authority"),
-            new Urn("urn:test:johnny")
-        );
-        identity.profile().alias("Johnny");
-        identity.profile().setPhoto(new URL("http://localhost/pic.png"));
-        identity.profile().setLocale(Locale.CHINESE);
+    public void rendersListOfFriends() throws Exception {
+        final FriendsRs rest = new NbResourceMocker().mock(FriendsRs.class);
+        final Response response = rest.list("a", "123");
         MatcherAssert.assertThat(
-            new JaxbPrinter(
-                new LongIdentity(
-                    identity,
-                    UriBuilder.fromPath("http://localhost")
-                )
-            ).print(),
-            XhtmlMatchers.hasXPaths(
-                "/identity[name='urn:test:johnny']",
-                "/identity[authority='http://localhost/authority']",
-                "/identity/aliases[alias='Johnny']",
-                "/identity[locale='zh']"
-            )
+            NbResourceMocker.the((NbPage) response.getEntity(), rest),
+            XhtmlMatchers.hasXPath("/page[mask='a']")
+        );
+    }
+
+    /**
+     * FriendsRs can show a photo of a user.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void showsPhotoOfAnIdentity() throws Exception {
+        final Identity identity = new IdentityMocker().mock();
+        Mockito.doReturn(
+            new IdentityMocker().withProfile(
+                new OwnProfileMocker().withPhoto(
+                    "http://cdn.netbout.com/logo.png"
+                ).mock()
+            ).mock()
+        ).when(identity).friend(Mockito.any(Urn.class));
+        final FriendsRs rest = new NbResourceMocker()
+            .withIdentity(identity)
+            .mock(FriendsRs.class);
+        final Response response = rest.photo(new UrnMocker().mock());
+        MatcherAssert.assertThat(
+            response.getEntity(),
+            Matchers.notNullValue()
         );
     }
 

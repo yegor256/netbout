@@ -30,6 +30,7 @@ import com.netbout.spi.Helper;
 import com.netbout.spi.Identity;
 import java.net.URL;
 import java.util.Set;
+import javax.ws.rs.core.UriBuilder;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -64,9 +65,11 @@ public final class LongHelper extends LongIdentity {
      * Private ctor.
      * @param identity The identity
      * @param hlp The helper
+     * @param bldr Builder of home URI
      */
-    public LongHelper(final Identity identity, final Helper hlp) {
-        super(identity);
+    public LongHelper(final Identity identity, final Helper hlp,
+        final UriBuilder bldr) {
+        super(identity, bldr);
         this.helper = hlp;
     }
 

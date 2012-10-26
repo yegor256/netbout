@@ -80,6 +80,7 @@ public final class Invitee {
     @XmlAttribute
     public String getHref() {
         return this.builder
+            .clone()
             .path("/i")
             .replaceQueryParam("name", "{name}")
             .build(this.friend.name())
@@ -112,8 +113,8 @@ public final class Invitee {
      * @return The photo
      */
     @XmlElement
-    public URL getPhoto() {
-        return this.friend.profile().photo();
+    public Photo getPhoto() {
+        return new Photo(this.friend, this.builder);
     }
 
 }

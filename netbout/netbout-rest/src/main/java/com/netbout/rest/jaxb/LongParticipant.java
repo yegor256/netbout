@@ -134,8 +134,8 @@ public final class LongParticipant {
      * @return The photo
      */
     @XmlElement
-    public URL getPhoto() {
-        return this.participant.profile().photo();
+    public Photo getPhoto() {
+        return new Photo(this.participant, this.builder);
     }
 
     /**

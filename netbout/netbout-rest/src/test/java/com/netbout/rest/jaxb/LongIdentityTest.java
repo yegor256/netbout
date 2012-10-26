@@ -27,10 +27,12 @@
 package com.netbout.rest.jaxb;
 
 import com.netbout.spi.IdentityMocker;
+import com.netbout.spi.OwnProfileMocker;
 import com.rexsl.test.JaxbConverter;
 import com.rexsl.test.XhtmlMatchers;
+import java.util.Locale;
+import javax.ws.rs.core.UriBuilder;
 import org.hamcrest.MatcherAssert;
-import org.hamcrest.Matchers;
 import org.junit.Test;
 
 /**
@@ -47,15 +49,28 @@ public final class LongIdentityTest {
     @Test
     public void convertsToXml() throws Exception {
         final LongIdentity obj = new LongIdentity(
-            new IdentityMocker().mock()
+            new IdentityMocker()
+                .namedAs("urn:test:a")
+                .withProfile(
+                    new OwnProfileMocker()
+                        .withAlias("John Smith")
+                        .withLocale(Locale.ENGLISH)
+                        .withPhoto("http://example.com/a.jpg")
+                        .mock()
+                )
+                .mock(),
+            UriBuilder.fromPath("http://localhost")
         );
         MatcherAssert.assertThat(
             JaxbConverter.the(obj),
-            Matchers.allOf(
-                XhtmlMatchers.hasXPath("/identity/name"),
-                XhtmlMatchers.hasXPath("/identity/authority"),
-                XhtmlMatchers.hasXPath("/identity/alias"),
-                XhtmlMatchers.hasXPath("/identity/aliases")
+            XhtmlMatchers.hasXPaths(
+                "/identity[name='urn:test:a']",
+                "/identity/authority",
+                "/identity[locale='en']",
+                "/identity[eta='0']",
+                "/identity[alias='John Smith']",
+                "/identity/aliases[alias='John Smith']",
+                "/identity[photo='http://localhost/f/photo?urn=urn:test:a']"
             )
         );
     }
