@@ -33,6 +33,7 @@ import com.netbout.spi.Identity;
 import com.netbout.spi.client.RestSession;
 import com.netbout.spi.text.SecureString;
 import com.rexsl.page.BaseResource;
+import com.rexsl.page.Resource;
 import java.net.URI;
 import java.util.List;
 import java.util.Locale;
@@ -50,6 +51,7 @@ import javax.ws.rs.core.UriBuilder;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
+@Resource.Forwarded
 public class BaseRs extends BaseResource implements NbResource {
 
     /**
