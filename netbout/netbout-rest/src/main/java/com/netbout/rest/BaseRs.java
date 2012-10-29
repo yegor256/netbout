@@ -35,7 +35,6 @@ import com.netbout.spi.text.SecureString;
 import com.rexsl.page.BaseResource;
 import com.rexsl.page.Resource;
 import java.net.URI;
-import java.util.List;
 import java.util.Locale;
 import javax.servlet.ServletContext;
 import javax.ws.rs.CookieParam;
