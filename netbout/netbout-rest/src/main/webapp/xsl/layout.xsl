@@ -183,7 +183,7 @@
                                         <xsl:text>en</xsl:text>
                                     </xsl:otherwise>
                                 </xsl:choose>
-                                <xsl:text>.png?</xsl:text>
+                                <xsl:text>.png</xsl:text>
                             </xsl:with-param>
                         </xsl:call-template>
                         <xsl:text>');</xsl:text>

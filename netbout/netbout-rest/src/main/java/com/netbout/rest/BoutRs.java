@@ -34,7 +34,7 @@ import com.netbout.spi.Identity;
 import com.netbout.spi.Message;
 import com.netbout.spi.Urn;
 import com.netbout.spi.client.RestSession;
-import com.rexsl.misc.CookieBuilder;
+import com.rexsl.page.CookieBuilder;
 import com.rexsl.page.JaxbBundle;
 import com.rexsl.page.JaxbGroup;
 import com.rexsl.page.Link;

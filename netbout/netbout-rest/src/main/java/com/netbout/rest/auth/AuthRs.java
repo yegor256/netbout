@@ -36,7 +36,7 @@ import com.netbout.spi.Urn;
 import com.netbout.spi.client.RestSession;
 import com.netbout.spi.text.SecureString;
 import com.rexsl.core.Manifests;
-import com.rexsl.misc.CookieBuilder;
+import com.rexsl.page.CookieBuilder;
 import com.rexsl.page.PageBuilder;
 import java.net.URI;
 import javax.ws.rs.CookieParam;

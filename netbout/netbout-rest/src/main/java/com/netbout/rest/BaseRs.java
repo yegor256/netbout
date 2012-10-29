@@ -33,8 +33,8 @@ import com.netbout.spi.Identity;
 import com.netbout.spi.client.RestSession;
 import com.netbout.spi.text.SecureString;
 import com.rexsl.page.BaseResource;
+import com.rexsl.page.Resource;
 import java.net.URI;
-import java.util.List;
 import java.util.Locale;
 import javax.servlet.ServletContext;
 import javax.ws.rs.CookieParam;
@@ -50,6 +50,7 @@ import javax.ws.rs.core.UriBuilder;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
+@Resource.Forwarded
 public class BaseRs extends BaseResource implements NbResource {
 
     /**
@@ -290,16 +291,9 @@ public class BaseRs extends BaseResource implements NbResource {
     private Identity secured(final Identity identity) {
         final String https = "https";
         final URI base = this.uriInfo().getBaseUri();
-        boolean forward =
+        final boolean forward =
             !https.equals(base.getScheme().toLowerCase(Locale.ENGLISH))
             && !"localhost".equals(base.getHost());
-        if (forward) {
-            final List<String> list = this.httpHeaders()
-                .getRequestHeader("x-forwarded-proto");
-            if (list != null) {
-                forward ^= list.contains(https);
-            }
-        }
         if (forward) {
             throw new WebApplicationException(
                 Response.status(Response.Status.TEMPORARY_REDIRECT).location(
