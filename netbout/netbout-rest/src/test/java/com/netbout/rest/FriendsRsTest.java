@@ -32,6 +32,8 @@ import com.netbout.spi.OwnProfileMocker;
 import com.netbout.spi.Urn;
 import com.netbout.spi.UrnMocker;
 import com.rexsl.test.XhtmlMatchers;
+import java.net.HttpURLConnection;
+import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.Response;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
@@ -64,23 +66,41 @@ public final class FriendsRsTest {
      * @throws Exception If there is some problem inside
      */
     @Test
+    @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
     public void showsPhotoOfAnIdentity() throws Exception {
-        final Identity identity = new IdentityMocker().mock();
-        Mockito.doReturn(
-            new IdentityMocker().withProfile(
-                new OwnProfileMocker().withPhoto(
-                    "http://img.netbout.com/logo.png"
+        final String[] photos = new String[] {
+            "http://img.netbout.com/logo-small.png",
+            "http://img.netbout.com/non-existing-image.png",
+        };
+        for (String photo : photos) {
+            final Identity identity = new IdentityMocker().mock();
+            Mockito.doReturn(
+                new IdentityMocker().withProfile(
+                    new OwnProfileMocker().withPhoto(photo).mock()
                 ).mock()
-            ).mock()
-        ).when(identity).friend(Mockito.any(Urn.class));
-        final FriendsRs rest = new NbResourceMocker()
-            .withIdentity(identity)
-            .mock(FriendsRs.class);
-        final Response response = rest.photo(new UrnMocker().mock());
-        MatcherAssert.assertThat(
-            response.getEntity(),
-            Matchers.notNullValue()
-        );
+            ).when(identity).friend(Mockito.any(Urn.class));
+            final FriendsRs rest = new NbResourceMocker()
+                .withIdentity(identity)
+                .mock(FriendsRs.class);
+            final Response response = rest.photo(new UrnMocker().mock());
+            MatcherAssert.assertThat(
+                response,
+                Matchers.allOf(
+                    Matchers.hasProperty(
+                        "status",
+                        Matchers.equalTo(HttpURLConnection.HTTP_OK)
+                    ),
+                    Matchers.hasProperty(
+                        "metadata",
+                        Matchers.hasEntry(
+                            Matchers.equalTo(HttpHeaders.CONTENT_TYPE),
+                            Matchers.hasItem("image/png")
+                        )
+                    ),
+                    Matchers.hasProperty("entity", Matchers.notNullValue())
+                )
+            );
+        }
     }
 
 }

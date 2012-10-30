@@ -36,6 +36,8 @@ import com.rexsl.page.JaxbGroup;
 import com.rexsl.page.PageBuilder;
 import com.rexsl.test.RestTester;
 import com.rexsl.test.TestResponse;
+import java.net.HttpURLConnection;
+import java.net.URI;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -117,9 +119,24 @@ public final class FriendsRs extends BaseRs {
         } else {
             friend = self.friend(urn);
         }
-        final TestResponse response = RestTester
-            .start(friend.profile().photo().toURI())
-            .get("fetching photo of friend");
+        final URI[] opts = new URI[] {
+            friend.profile().photo().toURI(),
+            URI.create("http://img.netbout.com/unknown.png"),
+        };
+        TestResponse response = null;
+        for (URI opt : opts) {
+            response = RestTester.start(opt).get("photo");
+            if (response.getStatus() != HttpURLConnection.HTTP_OK) {
+                Logger.warn(
+                    this,
+                    "#photo('%s'): failed to fetch from '%s'\n%s",
+                    urn,
+                    opt,
+                    response
+                );
+                continue;
+            }
+        }
         final Response.ResponseBuilder builder =
             Response.status(response.getStatus());
         for (Map.Entry<String, List<String>> header
