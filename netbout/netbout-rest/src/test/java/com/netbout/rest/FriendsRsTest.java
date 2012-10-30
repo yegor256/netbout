@@ -66,6 +66,7 @@ public final class FriendsRsTest {
      * @throws Exception If there is some problem inside
      */
     @Test
+    @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
     public void showsPhotoOfAnIdentity() throws Exception {
         final String[] photos = new String[] {
             "http://img.netbout.com/logo-small.png",
