@@ -50,6 +50,12 @@
                 </link>
                 <link rel="stylesheet" type="text/css" media="all">
                     <xsl:attribute name="href">
+                        <xsl:text>/css/layout.css?</xsl:text>
+                        <xsl:value-of select="/page/version/revision"/>
+                    </xsl:attribute>
+                </link>
+                <link rel="stylesheet" type="text/css" media="all">
+                    <xsl:attribute name="href">
                         <xsl:text>/css/login.css?</xsl:text>
                         <xsl:value-of select="/page/version/revision"/>
                     </xsl:attribute>

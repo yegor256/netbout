@@ -39,7 +39,7 @@ import org.junit.Test;
 /**
  * Test case for {@link RestFriend}.
  * @author Yegor Bugayenko (yegor@netbout.com)
- * @version $Id: RestFriendTest.java 2159 2012-04-03 05:45:07Z guard $
+ * @version $Id$
  */
 public final class RestFriendTest {
 

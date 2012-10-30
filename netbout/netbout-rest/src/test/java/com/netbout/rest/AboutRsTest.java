@@ -34,7 +34,7 @@ import org.junit.Test;
 /**
  * Test case for {@link AboutRs}.
  * @author Yegor Bugayenko (yegor@netbout.com)
- * @version $Id: AboutRsTest.java 3314 2012-09-10 15:45:55Z guard $
+ * @version $Id$
  */
 public final class AboutRsTest {
 

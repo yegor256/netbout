@@ -38,7 +38,7 @@ import org.junit.Test;
 /**
  * Test case of {@link BigText}.
  * @author Yegor Bugayenko (yegor@netbout.com)
- * @version $Id: MessageNoticeTest.java 3211 2012-08-13 17:12:12Z yegor@tpc2.com $
+ * @version $Id$
  */
 public final class BigTextTest {
 

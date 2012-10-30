@@ -901,7 +901,7 @@
                     <plugin>
                         <groupId>com.jcabi</groupId>
                         <artifactId>jcabi-beanstalk-maven-plugin</artifactId>
-                        <version since="8 Oct 2012">1.0-SNAPSHOT</version>
+                        <version since="30 Oct 2012">0.4.1</version>
                         <configuration>
                             <server>aws.amazon.com</server>
                             <name>netbout</name>

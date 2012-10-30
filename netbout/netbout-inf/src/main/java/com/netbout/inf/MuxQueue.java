@@ -37,7 +37,7 @@ import java.util.concurrent.TimeUnit;
  * http://stackoverflow.com/questions/12349881
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
- * @version $Id: Mux.java 3305 2012-09-07 15:18:34Z yegor@tpc2.com $
+ * @version $Id$
  */
 final class MuxQueue {
 

@@ -61,7 +61,7 @@ import org.junit.rules.TemporaryFolder;
 /**
  * Test case of {@link ConcurrentDirectory}.
  * @author Yegor Bugayenko (yegor@netbout.com)
- * @version $Id: ConcurrentDirectoryTest.java 3270 2012-08-21 18:36:22Z yegor@tpc2.com $
+ * @version $Id$
  * @checkstyle ClassDataAbstractionCoupling (500 lines)
  */
 @SuppressWarnings({

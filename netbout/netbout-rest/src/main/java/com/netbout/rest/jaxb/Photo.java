@@ -37,7 +37,7 @@ import javax.xml.bind.annotation.XmlValue;
  * Participant convertable to XML through JAXB.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
- * @version $Id: LongParticipant.java 3465 2012-10-16 18:31:35Z guard $
+ * @version $Id$
  */
 @XmlAccessorType(XmlAccessType.NONE)
 public final class Photo {

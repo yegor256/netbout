@@ -42,7 +42,7 @@ import java.util.Set;
  * The profile of {@link Identity}.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
- * @version $Id: RestProfile.java 2482 2012-05-22 10:18:34Z guard $
+ * @version $Id$
  */
 final class RestOwnProfile implements OwnProfile {
 

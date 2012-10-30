@@ -38,7 +38,7 @@ import org.junit.Test;
 /**
  * Test case for {@link NbPage}.
  * @author Yegor Bugayenko (yegor@netbout.com)
- * @version $Id: BoutRsTest.java 2482 2012-05-22 10:18:34Z guard $
+ * @version $Id$
  */
 public final class NbPageTest {
 

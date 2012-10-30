@@ -35,7 +35,7 @@ import org.apache.commons.lang.CharEncoding;
  * Big text manipulator.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
- * @version $Id: MessageNotice.java 2943 2012-07-19 15:50:03Z guard $
+ * @version $Id$
  */
 final class BigText {
 

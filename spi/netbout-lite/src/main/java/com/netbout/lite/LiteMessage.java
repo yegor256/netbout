@@ -39,7 +39,7 @@ import java.util.Date;
  * <p>The class is thread-safe.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
- * @version $Id: Bout.java 3447 2012-10-12 19:48:25Z yegor@tpc2.com $
+ * @version $Id$
  */
 final class LiteMessage implements Message {
 

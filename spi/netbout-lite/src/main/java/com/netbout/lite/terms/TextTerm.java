@@ -38,7 +38,7 @@ import com.netbout.spi.Message;
  * <p>This class is immutable and thread-safe.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
- * @version $Id: ParserAdapter.java 3465 2012-10-16 18:31:35Z guard $
+ * @version $Id$
  */
 final class TextTerm implements Term {
 

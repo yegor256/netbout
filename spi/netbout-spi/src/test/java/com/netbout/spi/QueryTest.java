@@ -36,7 +36,7 @@ import org.junit.Test;
 /**
  * Test case for {@link Query}.
  * @author Yegor Bugayenko (yegor@netbout.com)
- * @version $Id: QueryTest.java 3452 2012-10-15 07:55:58Z yegor@tpc2.com $
+ * @version $Id$
  */
 public final class QueryTest {
 

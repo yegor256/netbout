@@ -35,7 +35,7 @@ package com.netbout.spi;
  * <p>Instances of this interface must be thread-safe.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
- * @version $Id: Message.java 2241 2012-04-08 18:39:18Z guard $
+ * @version $Id$
  */
 public interface Friend extends Comparable<Friend> {
 

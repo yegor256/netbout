@@ -26,7 +26,7 @@
  * SUCH DAMAGE.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
- * @version $Id: site.xml 3297 2012-09-02 10:57:37Z yegor@tpc2.com $
+ * @version $Id$
  -->
 <project xmlns="http://maven.apache.org/DECORATION/1.0.0"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"

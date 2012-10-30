@@ -25,7 +25,7 @@
  * SUCH DAMAGE.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
- * @version $Id: RendersInboxOfUser.groovy 3392 2012-10-02 14:44:21Z guard $
+ * @version $Id$
  */
 package com.netbout.rest.rexsl.scripts
 
