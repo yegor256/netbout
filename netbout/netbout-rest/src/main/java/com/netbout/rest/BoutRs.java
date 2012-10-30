@@ -384,7 +384,7 @@ public final class BoutRs extends BaseRs {
         final NbPage page = new PageBuilder()
             .schema("")
             .stylesheet(
-                this.base().path("/{bout}/xsl/{stage}/wrapper.xsl")
+                UriBuilder.fromPath("/{bout}/xsl/{stage}/wrapper.xsl")
                     .build(this.bout().number(), this.coords.stage())
                     .toString()
             )
