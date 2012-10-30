@@ -29,7 +29,7 @@
  * OF THE POSSIBILITY OF SUCH DAMAGE.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
- * @version $Id: pom.xml 3379 2012-10-01 12:47:17Z guard $
+ * @version $Id$
  -->
 <project xmlns="http://maven.apache.org/POM/4.0.0"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"

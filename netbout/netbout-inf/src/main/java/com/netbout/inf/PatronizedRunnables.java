@@ -45,7 +45,7 @@ import java.util.concurrent.TimeUnit;
  * see: http://stackoverflow.com/questions/12349881
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
- * @version $Id: Mux.java 3289 2012-08-28 15:02:31Z yegor@tpc2.com $
+ * @version $Id$
  */
 @SuppressWarnings("PMD.DoNotUseThreads")
 final class PatronizedRunnables implements Closeable {

@@ -42,7 +42,7 @@ import org.junit.Test;
 /**
  * Test case for {@link NetboutLite}.
  * @author Yegor Bugayenko (yegor@netbout.com)
- * @version $Id: NetboutLiteTest.java 3447 2012-10-12 19:48:25Z yegor@tpc2.com $
+ * @version $Id$
  */
 public final class NetboutLiteTest {
 

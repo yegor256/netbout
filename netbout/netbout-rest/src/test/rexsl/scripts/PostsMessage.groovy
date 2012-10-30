@@ -25,7 +25,7 @@
  * SUCH DAMAGE.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
- * @version $Id: PostsInvalidMessages.groovy 3219 2012-08-14 10:54:12Z yegor@tpc2.com $
+ * @version $Id$
  */
 package com.netbout.rest.rexsl.scripts
 

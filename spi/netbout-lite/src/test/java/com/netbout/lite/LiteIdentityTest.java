@@ -39,7 +39,7 @@ import org.junit.Test;
 /**
  * Test case for {@link LiteIdentity}.
  * @author Yegor Bugayenko (yegor@netbout.com)
- * @version $Id: LiteIdentityTest.java 3447 2012-10-12 19:48:25Z yegor@tpc2.com $
+ * @version $Id$
  */
 public final class LiteIdentityTest {
 

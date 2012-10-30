@@ -42,7 +42,7 @@ import org.mockito.stubbing.Answer;
  * Mocker of {@link OwnProfile}.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
- * @version $Id: OwnProfileMocker.java 3116 2012-08-02 18:28:36Z guard $
+ * @version $Id$
  */
 public final class OwnProfileMocker {
 

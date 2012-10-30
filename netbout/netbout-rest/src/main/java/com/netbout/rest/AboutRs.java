@@ -46,7 +46,7 @@ import javax.ws.rs.core.UriBuilder;
  * Friends finding service (used by RESTful client or AJAX).
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
- * @version $Id: FriendsRs.java 3465 2012-10-16 18:31:35Z guard $
+ * @version $Id$
  */
 @Path("/a")
 public final class AboutRs extends BaseRs {

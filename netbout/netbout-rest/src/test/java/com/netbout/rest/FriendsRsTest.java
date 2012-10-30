@@ -41,7 +41,7 @@ import org.mockito.Mockito;
 /**
  * Test case for {@link FriendsRs}.
  * @author Yegor Bugayenko (yegor@netbout.com)
- * @version $Id: FriendsRsTest.java 3314 2012-09-10 15:45:55Z guard $
+ * @version $Id$
  */
 public final class FriendsRsTest {
 

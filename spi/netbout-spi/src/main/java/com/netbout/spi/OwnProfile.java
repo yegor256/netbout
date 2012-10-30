@@ -38,7 +38,7 @@ import java.util.Locale;
  * <p>Instances of this interface are thread-safe.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
- * @version $Id: Profile.java 3458 2012-10-15 11:30:46Z yegor@tpc2.com $
+ * @version $Id$
  */
 public interface OwnProfile extends Profile {
 

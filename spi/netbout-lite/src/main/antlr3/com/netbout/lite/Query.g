@@ -1,5 +1,5 @@
 /**
- * @version $Id: Query.g 3116 2012-08-02 18:28:36Z guard $
+ * @version $Id$
  */
 grammar Query;
 

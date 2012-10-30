@@ -35,7 +35,7 @@ import java.io.StringWriter;
  * <p>The class is immutable and thread-safe.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
- * @version $Id: MetaText.java 3314 2012-09-10 15:45:55Z guard $
+ * @version $Id$
  * @see <a href="Markdown Syntax">http://daringfireball.net/projects/markdown/syntax</a>
  */
 public final class Markdown {

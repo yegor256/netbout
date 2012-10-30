@@ -26,7 +26,7 @@
  * SUCH DAMAGE.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
- * @version $Id: profile.xsl 3314 2012-09-10 15:45:55Z guard $
+ * @version $Id$
  -->
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
     xmlns:xs="http://www.w3.org/2001/XMLSchema"

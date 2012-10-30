@@ -32,6 +32,6 @@
  * Lite version of Netbout.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
- * @version $Id: package-info.java 3447 2012-10-12 19:48:25Z yegor@tpc2.com $
+ * @version $Id$
  */
 package com.netbout.lite;

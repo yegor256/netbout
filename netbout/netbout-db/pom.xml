@@ -72,7 +72,7 @@
         <dependency>
             <groupId>com.jcabi</groupId>
             <artifactId>jcabi-jdbc</artifactId>
-            <version since="17 May 2012">1.0-SNAPSHOT</version>
+            <version since="30 Oct 2012">0.4.1</version>
         </dependency>
         <dependency>
             <!--

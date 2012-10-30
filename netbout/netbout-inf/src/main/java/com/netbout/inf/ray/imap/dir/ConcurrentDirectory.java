@@ -43,7 +43,7 @@ import java.util.concurrent.Semaphore;
  * <p>Class is mutable and thread-safe.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
- * @version $Id: ConcurrentDirectory.java 3260 2012-08-20 19:15:11Z yegor@tpc2.com $
+ * @version $Id$
  * @checkstyle ClassDataAbstractionCoupling (500 lines)
  */
 @SuppressWarnings("PMD.TooManyMethods")
