@@ -596,7 +596,7 @@
                     <artifactId>maven-failsafe-plugin</artifactId>
                     <version since="2 Oct 2011">2.9</version>
                     <configuration>
-                        <argLine>-Dfile.encoding=UTF8</argLine>
+                        <argLine>-Dfile.encoding=${project.build.sourceEncoding}</argLine>
                         <runOrder>random</runOrder>
                         <useFile>false</useFile>
                     </configuration>
@@ -610,7 +610,7 @@
                     <artifactId>maven-surefire-plugin</artifactId>
                     <version since="13 Dec 2011">2.11</version>
                     <configuration>
-                        <argLine>-Dfile.encoding=UTF8</argLine>
+                        <argLine>-Dfile.encoding=${project.build.sourceEncoding}</argLine>
                         <runOrder>random</runOrder>
                         <useFile>false</useFile>
                     </configuration>

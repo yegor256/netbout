@@ -604,7 +604,11 @@
                             <artifactId>rexsl-maven-plugin</artifactId>
                             <configuration>
                                 <systemPropertyVariables>
-                                    <catapult.home>http://localhost:${catapult.port}${catapult.context}</catapult.home>
+                                    <catapult.home>http://localhost:${maven.tomcat.port}${catapult.context}</catapult.home>
+                                    <catapult.https.port>${maven.tomcat.httpsPort}</catapult.https.port>
+                                    <javax.net.ssl.keyStore>${project.build.directory}/keystore.bin</javax.net.ssl.keyStore>
+                                    <javax.net.ssl.trustStore>${project.build.directory}/keystore.bin</javax.net.ssl.trustStore>
+                                    <javax.net.ssl.keyStorePassword>netbout</javax.net.ssl.keyStorePassword>
                                 </systemPropertyVariables>
                             </configuration>
                         </plugin>
@@ -623,7 +627,8 @@
                                 </goals>
                                 <configuration>
                                     <portNames>
-                                        <portName>catapult.port</portName>
+                                        <portName>maven.tomcat.port</portName>
+                                        <portName>maven.tomcat.httpsPort</portName>
                                         <portName>mysql.port.catapult</portName>
                                     </portNames>
                                 </configuration>
@@ -676,7 +681,7 @@
                                         <property name="maven.classpath" refid="maven.test.classpath"/>
                                         <propertyfile file="${project.build.directory}/jmeter.properties">
                                             <entry key="user.classpath" value="${maven.classpath}"/>
-                                            <entry key="port" value="${catapult.port}"/>
+                                            <entry key="port" value="${maven.tomcat.port}"/>
                                         </propertyfile>
                                         <apply executable="jmeter" failonerror="true" dir="${basedir}">
                                             <arg value="-Dlog4j.configuration=file:./src/test/jmeter/log4j.properties"/>
@@ -709,6 +714,48 @@
                                     </target>
                                 </configuration>
                             </execution>
+                            <execution>
+                                <!--
+                                This keystore file (at the same time a trustStore) is required
+                                by Tomcat to enable SSL. In order to generate it we should
+                                use keytool, which reads from stdin.
+                                @see http://tomcat.apache.org/tomcat-7.0-doc/ssl-howto.html#Configuration
+                                -->
+                                <id>keystore-for-tomcat-SSL</id>
+                                <phase>pre-integration-test</phase>
+                                <goals>
+                                    <goal>run</goal>
+                                </goals>
+                                <configuration>
+                                    <target description="generate SSL keystore">
+                                        <echo file="${project.build.directory}/keystore-input.txt">
+                                            localhost
+                                            Netbout
+                                            Netbout.com
+                                            Mountain View
+                                            California
+                                            US
+                                            yes
+                                        </echo>
+                                        <exec executable="perl" failonerror="true">
+                                            <arg value="-pi"/>
+                                            <arg value="-e"/>
+                                            <arg value="s/^ *//g"/>
+                                            <arg value="${project.build.directory}/keystore-input.txt"/>
+                                        </exec>
+                                        <exec executable="${java.home}/bin/keytool" failonerror="true"
+                                            input="${project.build.directory}/keystore-input.txt">
+                                            <arg value="-genkey"/>
+                                            <arg line="-alias localhost"/>
+                                            <arg line="-keyalg RSA"/>
+                                            <arg line="-storepass netbout"/>
+                                            <arg line="-keypass netbout"/>
+                                            <arg value="-keystore"/>
+                                            <arg value="${project.build.directory}/keystore.bin"/>
+                                        </exec>
+                                    </target>
+                                </configuration>
+                            </execution>
                         </executions>
                     </plugin>
                     <plugin>
@@ -718,11 +765,21 @@
                                 <id>war-for-catapult</id>
                                 <phase>pre-integration-test</phase>
                                 <goals>
-                                    <goal>war</goal>
+                                    <goal>exploded</goal>
                                 </goals>
                                 <configuration>
-                                    <classifier>catapult</classifier>
-                                    <primaryArtifact>false</primaryArtifact>
+                                    <webappDirectory>${project.build.directory}/webapp-catapult</webappDirectory>
+                                </configuration>
+                            </execution>
+                            <execution>
+                                <id>manifest-for-catapult</id>
+                                <phase>pre-integration-test</phase>
+                                <goals>
+                                    <!-- because of http://jira.codehaus.org/browse/MWAR-167 -->
+                                    <goal>manifest</goal>
+                                </goals>
+                                <configuration>
+                                    <warSourceDirectory>${project.build.directory}/webapp-catapult</warSourceDirectory>
                                     <archive>
                                         <manifestEntries>
                                             <Netbout-AboutPwd>test</Netbout-AboutPwd>
@@ -754,7 +811,7 @@
                     <plugin>
                         <groupId>org.apache.tomcat.maven</groupId>
                         <artifactId>tomcat7-maven-plugin</artifactId>
-                        <version since="10 Aug 2012">2.0-beta-1</version>
+                        <version since="30 Oct 2012">2.0</version>
                         <configuration>
                             <systemProperties>
                                 <log4j.configuration>file:${basedir}/src/test/resources/log4j-tomcat.properties</log4j.configuration>
@@ -762,11 +819,12 @@
                             <tomcatLoggingFile>${basedir}/src/test/catapult/logging.properties</tomcatLoggingFile>
                             <contextFile>${basedir}/src/test/catapult/context.xml</contextFile>
                             <fork>true</fork>
+                            <keystoreFile>${project.build.directory}/keystore.bin</keystoreFile>
+                            <keystorePass>netbout</keystorePass>
                             <path>${catapult.context}</path>
-                            <port>${catapult.port}</port>
-                            <uriEncoding>UTF-8</uriEncoding>
+                            <uriEncoding>${project.build.sourceEncoding}</uriEncoding>
                             <useSeparateTomcatClassLoader>true</useSeparateTomcatClassLoader>
-                            <warDirectory>${project.build.directory}/${project.build.finalName}-catapult.war</warDirectory>
+                            <warDirectory>${project.build.directory}/webapp-catapult</warDirectory>
                         </configuration>
                         <executions>
                             <execution>

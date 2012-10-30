@@ -1,35 +1,103 @@
 Netbout.com, Communication Platform
 ===================================
 
-E-mail, chats, forums, instant messengers, and social networks,
-plus hundreds of specific CRMs, shopping carts, ticketing systems and status
-tracking websites. This is what stays between us when we want to talk to each
-other. Clunky and outdated software tools dictate us their rules of
-communication. We’re not in charge any more, they are.
+Netbout.com is an isolated persistent online conversation between
+parties, both people and computers. A conversation is started by a participant
+who has the ability to invite others and remove them when necessary.
+Every participant can send messages to the conversation, making them visible to others.
 
-Netbout.com is a solution that flips the situation upside down. With Netbout.com
-we talk the way we usually do, sitting in a coffee shop face to face, while
-software "helpers" assist us. They help us to exchange files, make video
-calls, share links, schedule events, make online purchases, track shipment
-status, etc. Netbout.com is a platform that organizes such helpers around
-our plain and straight-forward online conversation. We’re in charge now,
-the rules are ours.
+Every conversation, called "bout", is asynchronous, meaning that every participant
+sends a message to the bout without getting an immediate answer. Instead,
+the message gets posted in the bout and becomes visible for all other
+participants. There is where Netbout.com resembles a bulletin board
+system or online chat. Messages are posted in a chronological order
+and are visible to all participants just like messages in an online
+blog or forum message, with the most recent on top (or on the bottom).
+Every message has a number of attributes attached to it and is visible
+to readers, including date and time of publication, name and photo of the author.
 
-**Netbout.com is making software to help us communicate, instead of making us to communicate through software.**
+Netbout.com solves the problems which other communication mechanisms
+(like e-mail,
+[SNS](http://en.wikipedia.org/wiki/Social_networking_service),
+and conferences) suffer from related to their
+lack of persistency, isolation, privacy, and usability:
 
-It’s a revolutionary new way of exchanging information online.
+ * **Persistency.** Every bout is persistent for a lifetime. Its participants
+   do not need to archive, protocol, or log anything manually.
+ * **Isolation.** Every bout is isolated and is visible only to its participants. A bout
+   resembles a private dedicated room for a single conversation. Even
+   if the same participants establish another conversation on some
+   other subject -- it is another ``room'' and another bout isolated
+   from all others.
+ * **Privacy.** Netbout.com does not reveal any private details of its participants.
+   It does not enable any of its participants to send
+   unsolicited messages to each other outside of the established and accepted
+   conversation.
+ * **Usability.** Netbout.com is an easy-to-use online entity, which is
+   created, archived, tagged, read, and understood in seconds for
+   a non-computer user.
+
 The concept is pending USPTO patent,
 [app. no. 12/943,022](http://www.google.com/patents/US20120117164).
 See also [Terms of Use](terms).
 
-Integrated Parties
-------------------
+Persistency
+-----------
+
+Contrary to e-mails, video conferences, and phone calls, A bout
+has an endless life cycle. It is absolutely persistent, meaning that
+its participants may get back to the conversation any time and the
+conversation will stay online. The persistence of a bout does not
+depend on the willingness of its participants. None of them can cancel
+a bout, thus making it invisible to others. Once a bout is
+started and its participants have accepted an invitation to join, nobody
+can destroy the bout and remove it from a participant's account.
+Such a strict persistence management mechanism distinguishes
+Netbout.com from forums, bulletin board systems, and almost all other
+communication means, where in most cases an initiator of a conversation controls
+its persistency.
+
+Isolation
+---------
+
+Netbout.com is n securely isolated communication environment for its
+users, where they exchange information messages without
+any fear of their disclosure to anyone else. Access to
+Netbout.com messages is protected by user name and password,
+and can't be shared with anyone except its owner.
+
+Privacy
+-------
+
+Unlike e-mails, instant messages, phones and other peer-to-peer
+communication means, Netbout.com does not disclose contact details
+to conversation participants. The only public element
+is the unique [URN](http://en.wikipedia.org/wiki/Uniform_resource_name)
+of a registered user.
+Knowing this URN does not mean that
+a new conversation can be established with this user. However it is possible
+to send an invitation to this user. Once the invitation is accepted, a new
+bout may be established. In other words, users
+are hidden behind their Netbout.com URNs, without any fear to be
+accidentally or intentionally contacted by an unwanted party.
+
+Usability
+---------
+
+The Netbout.com online conversation environment is web hosted and does not
+require any software installation or configuration, unlike
+web conferences or instant messaging systems. Moreover, the initialization
+and closure of a bout is done in seconds, with a simple web
+click to the link or a bookmark in a web browser. Netbout.com is
+very similar to a "blog" page, where users post their comments
+and read replies from other users. The page can be opened very quickly
+and does not require any software configuration or installation.
+
+Extendability
+-------------
 
 Netbout.com seamlessly integrates communicating parties, which
-include humans, computers, and software helpers inside the platform:
-
-<div class="mxgraph" style="position:relative;overflow:hidden;width:490px;height:192px;"><div style="width:1px;height:1px;overflow:hidden;">5VbbjtowEP0aHoNyAQqPLJeWSkgrsajtEzLJkFg4ceQ4kPD1nWCHJAR2t7tI+1AkgueMPZ45Y07ccSZh9l2QOFhyD1jHNr2s40w7tj00TXwWQH4F+IJ6CrI0kFIPkgYkOWeSxk3Q5VEErmxgO86awWLiQwtYuYS10V/Uk4FOzh5U+A+gflBuYw1GypPIvIzhwY6kTBpnyFbuzFS+vp6ea9tyRmXkqJHBifOwAQhI6KmZ5Y7qNDR1Wy48EA2I0Whfp8mZdZyJ4FyqUZhNgBV9KTlXy+Z3vBd2BETyPQs0bQfCUp16iy3B08iDYr6OfgAhIbu7YVUGHi3gIUiRFwQrr10eI32srJ62j1U3raHGgnonRxokmi7/EruqDwe6xNvlOq1yZ5GHwDrBtlwXTsPzWXzSv1Ma+hif0S0+XUbjDREShzHwGJfY81VK5WZJos0TRt9Y9jDDbzeO/AfQNrhibdBm7RZpwwdw1mtxtgKBxRgJ/u3RseI7ecRCPsqfy8M4lSASHE+JJFuSPJq9Xv/r6Ou36AuAxR8/bnW6SuofTJf9hXSN3hYkIgQ/IlGQUfn7LEtq/AfHZlfzDV7rPXJVPsbkqXChoQySCB9krXNtkupCZd4SKvMVGnS4Z04xl4rg6yUqMz2rLt/lwuzOQpV/a+GZ9UsN72qEZX6+E2hFuGHhMkvjU13qt7vU+7+7ZL/dpVJQAimLG9m42A+FJeh3fc59Bim+/PBuJpH4LqoL+oxvp5fnkfEziA57NNeLcLzeLN2X/QKtcfmZLNEaGXm8yI2FNS98Sa8odc64z89a5DwlAYmVmhVJPECbrKY2XUSn3vDBjYY7/y5OaFY3MdWc6qrszP4C</div></div>
-
+include humans, computers, and software helpers inside the platform.
 "Helper" makes private server-specific data presentable in
 a conversation-centric format for end-users. The majority of
 data is presentable in a simple message-by-message dialog form. We
@@ -38,12 +106,6 @@ develop helpers for new customers, but you can do that yourself as well.
 "Helper" tailors the user interface of Netbout.com platform for a specific
 style of your particular business application. Moreover, it makes changes
 to the functionality.
-
-Architecture
-------------
-
 Helpers extends existing architecture and design in an object oriented
-way:
-
-<div class="mxgraph" style="position:relative;overflow:hidden;width:462px;height:439px;"><div style="width:1px;height:1px;overflow:hidden;">7Vldb9owFP01SNvDpjghgT5S2q6dOgmVSd0eTXIJVh07chwa+utnE4ckOGztygoTfUG+xx+5PufmXjv0vHFSfBE4XXzjEdCe60RFz7voue7QcdSvBlZbQCxIVELIADmJIGtBknMqSdoGQ84YhLKFzTltL5biGCxgGmJqo/ckkgvjnBvU+DWQeFE9BgVnZU8mV9UaEcxxTuWnNeSW3YVjJvTN+JUBfLdambU8eOI8aQECMvLU9nJOjBuGuhkXEYgWRAl7aNLkXfa8seBclq2kGAPVulScl9OudvRu2BHA5HMm9MsJS0xz4/o10FT5uM1ZtsCpboY8STlbr36OKYk1KRTm2sxSHBIW366tC88osgQhodjpXr1pFYjAE5BipeUwvb6hyQQhGhj7sdYeVVQuGroHBsOG23izdE2Gahg+urnxd3KjtuYVWG2ZMDXg6+hurbWi6jhY89wDshbsZO0ouOmfHZCbocXNFMSShNAIqYngscBJovbdQG+YBDHHeqTzYTq5+WjR+Q/ixvdtaoIOavw9UHNmUWPtECJVCYzJVMQoWqAg8ocync++sX5qS7dZNBKCPypzRnn4UEJXRDtQDZiW+RqZuNLr/5455Q7PRQit3CmxiEE2BLb5bRLodBC4AbsYNMtNOFG+1HG7PaX0zIxqZvxqYrFjYum/NXEt2GYPz9IQOXsXUT270aVN3YfeRmD/XeAtgdErBXYP8JoG7ypuqehaKo5yyRMsIWqUnDElitZsZ93OEzoKJVfH2XNddYg6o9/iGdAJz4gkXJfxGZdSn5I3A0amvkue7qFeoWG7XnlDu5b3O3Qc7qFeIc8i8e5y+n2e0+6qfRwHQ2+LMOcNDz+o466RJ5gdc4T5/QNGmH3/eEmyRc1Ma8rnJtfyFFgr1aK9pNoqszRzbfminG6yte9DLyqZXSrWKv1J1L9TseNge+oqDl6n4kEOPlWJaurYP20Z7Qv4y2QcHImMwWnL+B9+LOhS0T8lFZVZf9Yuh9f/O3iXvwA=</div></div>
+way.
 
