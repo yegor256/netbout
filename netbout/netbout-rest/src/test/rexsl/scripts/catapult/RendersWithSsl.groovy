@@ -79,7 +79,7 @@ private void prepare(URI path) {
         .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_XML)
         .get('read SSL bout page')
         .assertStatus(HttpURLConnection.HTTP_OK)
-        .assertXPath('/page[@ssl="true"]')
+        .assertXPath('/page[@ssl = "true"]')
         .rel('/page/links/link[@rel="post"]/@href')
         .post('post new SSL message', 'text=hello+SSL')
         .assertStatus(HttpURLConnection.HTTP_SEE_OTHER)
