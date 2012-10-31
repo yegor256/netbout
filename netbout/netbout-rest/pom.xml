@@ -604,7 +604,8 @@
                             <artifactId>rexsl-maven-plugin</artifactId>
                             <configuration>
                                 <systemPropertyVariables>
-                                    <catapult.home>http://localhost:${catapult.port}${catapult.context}</catapult.home>
+                                    <catapult.home>http://localhost:${maven.tomcat.port}${catapult.context}</catapult.home>
+                                    <catapult.https.port>${maven.tomcat.httpsPort}</catapult.https.port>
                                 </systemPropertyVariables>
                             </configuration>
                         </plugin>
@@ -623,7 +624,8 @@
                                 </goals>
                                 <configuration>
                                     <portNames>
-                                        <portName>catapult.port</portName>
+                                        <portName>maven.tomcat.port</portName>
+                                        <portName>maven.tomcat.httpsPort</portName>
                                         <portName>mysql.port.catapult</portName>
                                     </portNames>
                                 </configuration>
@@ -676,7 +678,7 @@
                                         <property name="maven.classpath" refid="maven.test.classpath"/>
                                         <propertyfile file="${project.build.directory}/jmeter.properties">
                                             <entry key="user.classpath" value="${maven.classpath}"/>
-                                            <entry key="port" value="${catapult.port}"/>
+                                            <entry key="port" value="${maven.tomcat.port}"/>
                                         </propertyfile>
                                         <apply executable="jmeter" failonerror="true" dir="${basedir}">
                                             <arg value="-Dlog4j.configuration=file:./src/test/jmeter/log4j.properties"/>
@@ -718,11 +720,21 @@
                                 <id>war-for-catapult</id>
                                 <phase>pre-integration-test</phase>
                                 <goals>
-                                    <goal>war</goal>
+                                    <goal>exploded</goal>
                                 </goals>
                                 <configuration>
-                                    <classifier>catapult</classifier>
-                                    <primaryArtifact>false</primaryArtifact>
+                                    <webappDirectory>${project.build.directory}/webapp-catapult</webappDirectory>
+                                </configuration>
+                            </execution>
+                            <execution>
+                                <id>manifest-for-catapult</id>
+                                <phase>pre-integration-test</phase>
+                                <goals>
+                                    <!-- because of http://jira.codehaus.org/browse/MWAR-167 -->
+                                    <goal>manifest</goal>
+                                </goals>
+                                <configuration>
+                                    <warSourceDirectory>${project.build.directory}/webapp-catapult</warSourceDirectory>
                                     <archive>
                                         <manifestEntries>
                                             <Netbout-AboutPwd>test</Netbout-AboutPwd>
@@ -754,19 +766,20 @@
                     <plugin>
                         <groupId>org.apache.tomcat.maven</groupId>
                         <artifactId>tomcat7-maven-plugin</artifactId>
-                        <version since="10 Aug 2012">2.0-beta-1</version>
+                        <version since="30 Oct 2012">2.0</version>
                         <configuration>
                             <systemProperties>
                                 <log4j.configuration>file:${basedir}/src/test/resources/log4j-tomcat.properties</log4j.configuration>
                             </systemProperties>
                             <tomcatLoggingFile>${basedir}/src/test/catapult/logging.properties</tomcatLoggingFile>
                             <contextFile>${basedir}/src/test/catapult/context.xml</contextFile>
+                            <keystoreFile>${javax.net.ssl.keyStore}</keystoreFile>
+                            <keystorePass>${javax.net.ssl.keyStorePassword}</keystorePass>
                             <fork>true</fork>
                             <path>${catapult.context}</path>
-                            <port>${catapult.port}</port>
-                            <uriEncoding>UTF-8</uriEncoding>
+                            <uriEncoding>${project.build.sourceEncoding}</uriEncoding>
                             <useSeparateTomcatClassLoader>true</useSeparateTomcatClassLoader>
-                            <warDirectory>${project.build.directory}/${project.build.finalName}-catapult.war</warDirectory>
+                            <warDirectory>${project.build.directory}/webapp-catapult</warDirectory>
                         </configuration>
                         <executions>
                             <execution>
@@ -841,7 +854,7 @@
                     <plugin>
                         <groupId>com.jcabi</groupId>
                         <artifactId>jcabi-heroku-maven-plugin</artifactId>
-                        <version since="22 Oct 2012">0.4.1</version>
+                        <version since="22 Oct 2012">1.0-SNAPSHOT</version>
                         <executions>
                             <execution>
                                 <id>deploy-to-heroku</id>

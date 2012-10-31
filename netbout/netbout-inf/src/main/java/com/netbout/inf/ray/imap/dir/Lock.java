@@ -80,6 +80,7 @@ final class Lock implements Closeable {
      *  already locked by another thread/class
      */
     public Lock(final File dir) throws IOException {
+        assert dir != null;
         this.directory = dir;
         final File file = new File(this.directory, Lock.NAME);
         file.getParentFile().mkdirs();

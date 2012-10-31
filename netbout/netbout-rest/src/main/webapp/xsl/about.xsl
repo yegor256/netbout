@@ -42,19 +42,9 @@
 
     <xsl:template name="head">
         <title>
+            <xsl:text>about: </xsl:text>
             <xsl:value-of select="/page/name"/>
         </title>
-        <script type="text/javascript">
-            <xsl:attribute name="src">
-                <xsl:call-template name="https">
-                    <xsl:with-param name="uri">
-                        <xsl:text>drawdotio.appspot.com/embed.js</xsl:text>
-                    </xsl:with-param>
-                </xsl:call-template>
-            </xsl:attribute>
-            <xsl:text> </xsl:text>
-            <!-- this is for W3C compliance -->
-        </script>
     </xsl:template>
 
     <xsl:template name="content">
