@@ -536,7 +536,7 @@
             -->
             <id>ssl-certificate</id>
             <activation>
-                <file><exists>${basedir}/src/main/java</exists></file>
+                <file><exists>${basedir}/pom.xml</exists></file>
             </activation>
             <properties>
                 <javax.net.ssl.keyStore>${project.build.directory}/keystore.jks</javax.net.ssl.keyStore>
