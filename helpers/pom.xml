@@ -470,7 +470,6 @@
                 <file><exists>${basedir}/src/main/java</exists></file>
             </activation>
             <properties>
-                <javax.net.debug>ssl</javax.net.debug>
                 <javax.net.ssl.keyStore>${project.build.directory}/keystore.jks</javax.net.ssl.keyStore>
                 <javax.net.ssl.keyStorePassword>netbout</javax.net.ssl.keyStorePassword>
                 <javax.net.ssl.trustStore>${project.build.directory}/keystore.jks</javax.net.ssl.trustStore>
@@ -489,6 +488,10 @@
                                 </goals>
                                 <configuration>
                                     <properties>
+                                        <property>
+                                            <name>javax.net.debug</name>
+                                            <value>ssl</value>
+                                        </property>
                                         <property>
                                             <name>javax.net.ssl.keyStore</name>
                                             <value>${javax.net.ssl.keyStore}</value>
