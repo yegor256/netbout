@@ -606,10 +606,6 @@
                                 <systemPropertyVariables>
                                     <catapult.home>http://localhost:${maven.tomcat.port}${catapult.context}</catapult.home>
                                     <catapult.https.port>${maven.tomcat.httpsPort}</catapult.https.port>
-                                    <javax.net.ssl.keyStore>${project.build.directory}/keystore.jks</javax.net.ssl.keyStore>
-                                    <javax.net.ssl.trustStore>${project.build.directory}/keystore.jks</javax.net.ssl.trustStore>
-                                    <javax.net.ssl.keyStorePassword>netbout</javax.net.ssl.keyStorePassword>
-                                    <javax.net.ssl.trustStorePassword>netbout</javax.net.ssl.trustStorePassword>
                                 </systemPropertyVariables>
                             </configuration>
                         </plugin>
@@ -715,48 +711,6 @@
                                     </target>
                                 </configuration>
                             </execution>
-                            <execution>
-                                <!--
-                                This keystore file (at the same time a trustStore) is required
-                                by Tomcat to enable SSL. In order to generate it we should
-                                use keytool, which reads from stdin.
-                                @see http://tomcat.apache.org/tomcat-7.0-doc/ssl-howto.html#Configuration
-                                -->
-                                <id>keystore-for-tomcat-SSL</id>
-                                <phase>pre-integration-test</phase>
-                                <goals>
-                                    <goal>run</goal>
-                                </goals>
-                                <configuration>
-                                    <target description="generate SSL keystore">
-                                        <echo file="${project.build.directory}/keystore-input.txt">
-                                            localhost
-                                            Netbout
-                                            Netbout.com
-                                            Mountain View
-                                            California
-                                            US
-                                            yes
-                                        </echo>
-                                        <exec executable="perl" failonerror="true">
-                                            <arg value="-pi"/>
-                                            <arg value="-e"/>
-                                            <arg value="s/^ *//g"/>
-                                            <arg value="${project.build.directory}/keystore-input.txt"/>
-                                        </exec>
-                                        <exec executable="${java.home}/bin/keytool" failonerror="true"
-                                            input="${project.build.directory}/keystore-input.txt">
-                                            <arg value="-genkey"/>
-                                            <arg line="-alias localhost"/>
-                                            <arg line="-keyalg RSA"/>
-                                            <arg line="-storepass netbout"/>
-                                            <arg line="-keypass netbout"/>
-                                            <arg value="-keystore"/>
-                                            <arg value="${project.build.directory}/keystore.jks"/>
-                                        </exec>
-                                    </target>
-                                </configuration>
-                            </execution>
                         </executions>
                     </plugin>
                     <plugin>
@@ -816,15 +770,12 @@
                         <configuration>
                             <systemProperties>
                                 <log4j.configuration>file:${basedir}/src/test/resources/log4j-tomcat.properties</log4j.configuration>
-                                <javax.net.ssl.trustStore>${project.build.directory}/keystore.jks</javax.net.ssl.trustStore>
-                                <javax.net.ssl.trustStorePassword>netbout</javax.net.ssl.trustStorePassword>
-                                <javax.net.debug>ssl</javax.net.debug>
                             </systemProperties>
                             <tomcatLoggingFile>${basedir}/src/test/catapult/logging.properties</tomcatLoggingFile>
                             <contextFile>${basedir}/src/test/catapult/context.xml</contextFile>
+                            <keystoreFile>${javax.net.ssl.keyStore}</keystoreFile>
+                            <keystorePass>${javax.net.ssl.keyStorePassword}</keystorePass>
                             <fork>true</fork>
-                            <keystoreFile>${project.build.directory}/keystore.jks</keystoreFile>
-                            <keystorePass>netbout</keystorePass>
                             <path>${catapult.context}</path>
                             <uriEncoding>${project.build.sourceEncoding}</uriEncoding>
                             <useSeparateTomcatClassLoader>true</useSeparateTomcatClassLoader>

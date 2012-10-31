@@ -524,6 +524,110 @@
                 </plugins>
             </build>
         </profile>
+        <profile>
+            <!--
+            @todo #487 Prepare SSL certificates for smooth SSL connections. This is
+             a temporary workaround, which should be eventually replaced by
+             a proper plugin. This profile is here because we need to set these
+             system properties as early as possible, earlier than the first
+             call to SSLContext.getInstance() happens in the Java code. With
+             OpenJDK these system properties are being read only once, and any
+             consequent changes to them are just ignored.
+            -->
+            <id>ssl-certificate</id>
+            <activation>
+                <file><exists>${basedir}/src/main/java</exists></file>
+            </activation>
+            <properties>
+                <javax.net.ssl.keyStore>${project.build.directory}/keystore.jks</javax.net.ssl.keyStore>
+                <javax.net.ssl.keyStorePassword>netbout</javax.net.ssl.keyStorePassword>
+                <javax.net.ssl.trustStore>${project.build.directory}/keystore.jks</javax.net.ssl.trustStore>
+                <javax.net.ssl.trustStorePassword>netbout</javax.net.ssl.trustStorePassword>
+            </properties>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>properties-maven-plugin</artifactId>
+                        <version since="31 Oct 2012">1.0-alpha-2</version>
+                        <executions>
+                            <execution>
+                                <goals>
+                                    <goal>set-system-properties</goal>
+                                </goals>
+                                <configuration>
+                                    <properties>
+                                        <property>
+                                            <name>javax.net.ssl.keyStore</name>
+                                            <value>${javax.net.ssl.keyStore}</value>
+                                        </property>
+                                        <property>
+                                            <name>javax.net.ssl.keyStorePassword</name>
+                                            <value>${javax.net.ssl.keyStorePassword}</value>
+                                        </property>
+                                        <property>
+                                            <name>javax.net.ssl.trustStore</name>
+                                            <value>${javax.net.ssl.trustStore}</value>
+                                        </property>
+                                        <property>
+                                            <name>javax.net.ssl.trustStorePassword</name>
+                                            <value>${javax.net.ssl.trustStorePassword}</value>
+                                        </property>
+                                    </properties>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <artifactId>maven-antrun-plugin</artifactId>
+                        <version since="2 Dec 2011">1.7</version>
+                        <executions>
+                            <execution>
+                                <!--
+                                This keystore file (at the same time a trustStore) is required
+                                by Tomcat to enable SSL. In order to generate it we should
+                                use keytool, which reads from stdin.
+                                @see http://tomcat.apache.org/tomcat-7.0-doc/ssl-howto.html#Configuration
+                                -->
+                                <id>prepare-SSL-keys</id>
+                                <phase>process-resources</phase>
+                                <goals>
+                                    <goal>run</goal>
+                                </goals>
+                                <configuration>
+                                    <target description="generate SSL keystore">
+                                        <echo file="${project.build.directory}/keystore-input.txt">
+                                            localhost
+                                            Netbout
+                                            Netbout.com
+                                            Mountain View
+                                            California
+                                            US
+                                            yes
+                                        </echo>
+                                        <exec executable="perl" failonerror="true">
+                                            <arg value="-pi"/>
+                                            <arg value="-e"/>
+                                            <arg value="s/^ *//g"/>
+                                            <arg value="${project.build.directory}/keystore-input.txt"/>
+                                        </exec>
+                                        <exec executable="${java.home}/bin/keytool" failonerror="true" input="${project.build.directory}/keystore-input.txt">
+                                            <arg value="-genkey"/>
+                                            <arg line="-alias localhost"/>
+                                            <arg line="-keyalg RSA"/>
+                                            <arg line="-storepass ${javax.net.ssl.keyStorePassword}"/>
+                                            <arg line="-keypass ${javax.net.ssl.keyStorePassword}"/>
+                                            <arg value="-keystore"/>
+                                            <arg value="${javax.net.ssl.keyStore}"/>
+                                        </exec>
+                                    </target>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
     </profiles>
 
     <build>
