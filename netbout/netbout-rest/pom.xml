@@ -609,6 +609,7 @@
                                     <javax.net.ssl.keyStore>${project.build.directory}/keystore.bin</javax.net.ssl.keyStore>
                                     <javax.net.ssl.trustStore>${project.build.directory}/keystore.bin</javax.net.ssl.trustStore>
                                     <javax.net.ssl.keyStorePassword>netbout</javax.net.ssl.keyStorePassword>
+                                    <javax.net.ssl.trustStorePassword>netbout</javax.net.ssl.trustStorePassword>
                                 </systemPropertyVariables>
                             </configuration>
                         </plugin>
