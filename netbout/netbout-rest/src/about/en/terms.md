@@ -28,23 +28,18 @@ software. By making Content available, you represent and warrant that:
  * the downloading, copying and use of the Content will not infringe the
    proprietary rights, including but not limited to the copyright, patent,
    trademark or trade secret rights, of any third party;
-
  * if your employer has rights to intellectual property you create, you have
    either (i) received permission from your employer to post or make available
    the Content, including but not limited to any software, or (ii) secured from
    your employer a waiver as to all rights in or to the Content;
-
  * you have fully complied with any third-party licenses relating to the
    Content, and have done all things necessary to successfully pass through to
    end users any required terms;
-
  * the Content does not contain or install any viruses, worms, malware, Trojan
    horses or other harmful or destructive content;
-
  * the Content is not pornographic, does not contain threats or incite violence
    towards individuals or entities, and does not violate the privacy or
    publicity rights of any third party;
-
  * you have, in the case of Content that includes computer code, accurately
    categorized and/or described the type, nature, uses and effects of the
    materials, whether requested to do so by Netbout.com or otherwise.
