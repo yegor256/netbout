@@ -470,6 +470,7 @@
                 <file><exists>${basedir}/src/main/java</exists></file>
             </activation>
             <properties>
+                <javax.net.debug>ssl</javax.net.debug>
                 <javax.net.ssl.keyStore>${project.build.directory}/keystore.jks</javax.net.ssl.keyStore>
                 <javax.net.ssl.keyStorePassword>netbout</javax.net.ssl.keyStorePassword>
                 <javax.net.ssl.trustStore>${project.build.directory}/keystore.jks</javax.net.ssl.trustStore>
