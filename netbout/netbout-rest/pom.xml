@@ -818,6 +818,7 @@
                                 <log4j.configuration>file:${basedir}/src/test/resources/log4j-tomcat.properties</log4j.configuration>
                                 <javax.net.ssl.trustStore>${project.build.directory}/keystore.bin</javax.net.ssl.trustStore>
                                 <javax.net.ssl.trustStorePassword>netbout</javax.net.ssl.trustStorePassword>
+                                <javax.net.debug>ssl</javax.net.debug>
                             </systemProperties>
                             <tomcatLoggingFile>${basedir}/src/test/catapult/logging.properties</tomcatLoggingFile>
                             <contextFile>${basedir}/src/test/catapult/context.xml</contextFile>
