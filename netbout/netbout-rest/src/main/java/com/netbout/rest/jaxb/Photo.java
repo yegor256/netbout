@@ -27,6 +27,10 @@
 package com.netbout.rest.jaxb;
 
 import com.netbout.spi.Friend;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 import java.net.URI;
 import javax.ws.rs.core.UriBuilder;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -41,6 +45,14 @@ import javax.xml.bind.annotation.XmlValue;
  */
 @XmlAccessorType(XmlAccessType.NONE)
 public final class Photo {
+
+    /**
+     * Use original photo.
+     */
+    @Retention(RetentionPolicy.RUNTIME)
+    @Target(ElementType.TYPE)
+    public @interface Original {
+    }
 
     /**
      * The friend.
@@ -76,7 +88,10 @@ public final class Photo {
     @XmlValue
     public URI getPhoto() {
         URI photo;
-        if ("test".equals(this.friend.name().nid())) {
+        if ("test".equals(this.friend.name().nid())
+            || this.friend.getClass().isAnnotationPresent(
+                Photo.Original.class
+            )) {
             try {
                 photo = this.friend.profile().photo().toURI();
             } catch (java.net.URISyntaxException ex) {
