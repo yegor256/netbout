@@ -26,6 +26,7 @@
  */
 package com.netbout.rest.auth;
 
+import com.netbout.rest.jaxb.Photo;
 import com.netbout.spi.Bout;
 import com.netbout.spi.Friend;
 import com.netbout.spi.Identity;
@@ -44,6 +45,7 @@ import java.util.Set;
  * @version $Id$
  */
 @SuppressWarnings("PMD.TooManyMethods")
+@Photo.Original
 final class ResolvedIdentity implements Identity {
 
     /**

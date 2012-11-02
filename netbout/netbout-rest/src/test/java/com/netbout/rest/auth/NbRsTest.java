@@ -34,7 +34,6 @@ import com.netbout.spi.text.SecureString;
 import com.rexsl.test.XhtmlMatchers;
 import javax.ws.rs.core.Response;
 import org.hamcrest.MatcherAssert;
-import org.hamcrest.Matchers;
 import org.junit.Test;
 
 /**
@@ -56,10 +55,11 @@ public final class NbRsTest {
         final Response response = rest.auth(iname, secret);
         MatcherAssert.assertThat(
             NbResourceMocker.the((NbPage) response.getEntity(), rest),
-            Matchers.allOf(
-                XhtmlMatchers.hasXPath("//identity[alias='hh']"),
-                XhtmlMatchers.hasXPath("//identity[name='urn:netbout:hh']"),
-                XhtmlMatchers.hasXPath("//identity[contains(authority,'/nb')]")
+            XhtmlMatchers.hasXPaths(
+                "//identity[alias='hh']",
+                "//identity[name='urn:netbout:hh']",
+                "//identity[contains(authority,'/nb')]",
+                "//identity[photo='http://img.netbout.com/nb/hh.png']"
             )
         );
     }

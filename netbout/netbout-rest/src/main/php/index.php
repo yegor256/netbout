@@ -41,11 +41,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         if (!empty($text)) {
             fwrite(
                 $handle,
-                sprintf(
-                    '%s %s',
-                    $_SERVER['SERVER_ADDR'],
-                    $text
-                )
+                implode(
+                    "\n",
+                    array_map(
+                        create_function('$l', 'return sprintf("%s %s", $_SERVER["SERVER_ADDR"], $l);'),
+                        explode(
+                            "\n",
+                            trim($text)
+                        )
+                    )
+                ) . "\n"
             );
         }
     }

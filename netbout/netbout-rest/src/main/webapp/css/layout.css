@@ -170,22 +170,24 @@ body {
         padding-top: 1.8519em; /* 5em */
         margin-bottom: 0.2593em; /* 0.7em */
         font-size: 2.7em;
+        font-weight: 500;
+        width: 25.9259em; /* 70em */
     }
 
         #content h1.bout .num {
             font-size: 0.5926em; /* 1.6 */
             margin-right: 0.3em;
+            font-weight: normal;
         }
 
         #content h1.bout .title {
             font-size: 1em; /* 2.7 */
-            font-weight: 500;
             line-height: 1em;
         }
 
         #content h1.bout .new {
             font-size: 0.6296em; /* 1.7 */
-            font-weight: 500;
+            font-weight: normal;
             color: #f24a40; /* red */
             margin-left: 0.3em;
         }
@@ -194,6 +196,7 @@ body {
         position: relative;
         padding-top: 1em; /* 2em */
         font-size: 2em;
+        font-weight: 500;
     }
 
     #content p,

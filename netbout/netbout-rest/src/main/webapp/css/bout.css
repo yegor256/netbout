@@ -27,11 +27,6 @@
 
 /* JIGSAW IGNORE: there is some problem in w3c server now */
 
-/* header with title */
-h1 {
-    width: 70em;
-}
-
 /* header with participants and options */
 #top2 {
     position: relative;
