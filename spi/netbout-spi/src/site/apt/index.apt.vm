@@ -40,4 +40,4 @@
 
 Service Provider Interface (SPI) for Netbout.com
 
-  More details in {{{./apidocs-${releasedVersion}Javadocs API}}.
+  More details in {{{./apidocs-${releasedVersion}}Javadocs API}}.
