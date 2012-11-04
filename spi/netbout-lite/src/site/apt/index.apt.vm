@@ -1,5 +1,5 @@
  ------
- netBout.com
+ Embedded version of Netbout
  ------
  Yegor Bugayenko
  ------
@@ -38,6 +38,6 @@
 ~~ @version $Id$
 ~~
 
-Service Provider Interface (SPI) for Netbout.com
+Embedded (lite) version of Netbout
 
-  More details in {{{./apidocs-${releasedVersion}Javadocs API}}.
+  More details in {{{./apidocs-${releasedVersion}}Javadocs API}}.
