@@ -1,5 +1,5 @@
  ------
- netBout.com
+ Service Provider Interface, Netbout.com
  ------
  Yegor Bugayenko
  ------
@@ -38,6 +38,10 @@
 ~~ @version $Id$
 ~~
 
-Service Provider Interface (SPI) for Netbout.com
+Service Provider Interface, Netbout.com
 
-  More details in {{{./apidocs-${releasedVersion}}Javadocs API}}.
+  Modules are:
+
+  * {{{./netbout-spi/}SPI}}.
+
+  * {{{./netbout-lite/}Lite implementation}}.
