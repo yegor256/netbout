@@ -102,7 +102,8 @@ final class RexslRestClient implements RestClient {
                 RestSession.ERROR_HEADER,
                 Matchers.emptyIterableOf(String.class)
             )
-            .assertThat(new EtaAssertion());
+            .assertThat(new EtaAssertion())
+            .assertThat(new VersionAssertion());
         return new RexslRestResponse(this, response);
     }
 

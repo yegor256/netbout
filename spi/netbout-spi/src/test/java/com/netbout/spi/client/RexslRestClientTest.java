@@ -86,7 +86,10 @@ public final class RexslRestClientTest {
             .expectMethod(Matchers.equalTo(RestTester.GET))
             .expectHeader(HttpHeaders.COOKIE, Matchers.equalTo(cookie))
             .expectHeader(HttpHeaders.ACCEPT, MediaType.APPLICATION_XML)
-            .returnBody("<page><identity><eta>0</eta></identity><a/></page>")
+            .returnBody(
+                // @checkstyle LineLength (1 line)
+                "<page><version><name>1.0-TEST</name></version><identity><eta>0</eta></identity><a/></page>"
+            )
             .returnStatus(HttpURLConnection.HTTP_OK)
             .mock();
         final URI uri = UriBuilder.fromUri(container.home())
