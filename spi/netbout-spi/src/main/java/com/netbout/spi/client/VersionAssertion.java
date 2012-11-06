@@ -48,16 +48,20 @@ final class VersionAssertion implements AssertionPolicy {
      */
     @Override
     public void assertThat(final TestResponse response) {
-        final String srv = response.xpath("/page/version/name/text()").get(0);
-        final String client = Manifests.read("Netbout-Version");
-        if (!client.equals(srv)) {
-            throw new AssertionError(
-                Logger.format(
-                    "Server's version '%s' doesn't match client's version '%s'",
-                    srv,
-                    client
-                )
-            );
+        if (response.getStatus() == HttpURLConnection.HTTP_OK) {
+            final String srv = response
+                .xpath("/page/version/name/text()")
+                .get(0);
+            final String client = Manifests.read("Netbout-Version");
+            if (!client.equals(srv)) {
+                throw new AssertionError(
+                    Logger.format(
+                        "Server's version '%s' doesn't match client's one '%s'",
+                        srv,
+                        client
+                    )
+                );
+            }
         }
     }
 
