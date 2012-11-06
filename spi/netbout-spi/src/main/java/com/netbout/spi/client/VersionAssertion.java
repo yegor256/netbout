@@ -33,6 +33,7 @@ import com.jcabi.log.Logger;
 import com.rexsl.core.Manifests;
 import com.rexsl.test.AssertionPolicy;
 import com.rexsl.test.TestResponse;
+import java.net.HttpURLConnection;
 
 /**
  * Asserts that versions of the server and the client are the same.
