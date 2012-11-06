@@ -32,7 +32,10 @@ import com.netbout.spi.OwnProfileMocker;
 import com.netbout.spi.Urn;
 import com.netbout.spi.UrnMocker;
 import com.rexsl.test.XhtmlMatchers;
+import java.awt.image.BufferedImage;
+import java.io.InputStream;
 import java.net.HttpURLConnection;
+import javax.imageio.ImageIO;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.Response;
 import org.hamcrest.MatcherAssert;
@@ -99,6 +102,14 @@ public final class FriendsRsTest {
                     ),
                     Matchers.hasProperty("entity", Matchers.notNullValue())
                 )
+            );
+            final BufferedImage received = ImageIO.read(
+                InputStream.class.cast(response.getEntity())
+            );
+            MatcherAssert.assertThat(received, Matchers.notNullValue());
+            MatcherAssert.assertThat(
+                received.getHeight(),
+                Matchers.greaterThan(0)
             );
         }
     }
