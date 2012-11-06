@@ -39,7 +39,9 @@ import org.apache.commons.lang.CharEncoding;
 import org.apache.commons.lang.StringUtils;
 
 /**
- * Universal resource locator (URN), immutable and of cource thread-safe.
+ * Universal resource locator (URN).
+ *
+ * <p>The class is immutable and thread-safe.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$

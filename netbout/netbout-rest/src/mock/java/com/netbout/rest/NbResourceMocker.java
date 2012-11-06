@@ -169,7 +169,7 @@ public final class NbResourceMocker {
         rest.setCookie(new CryptedIdentity(this.identity).toString());
         final ServletContext context = Mockito.mock(ServletContext.class);
         Mockito.doReturn(this.hub).when(context)
-            .getAttribute("com.netbout.rest.HUB");
+            .getAttribute(Hub.class.getName());
         rest.setServletContext(context);
         return type.cast(rest);
     }

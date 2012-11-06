@@ -72,8 +72,7 @@ public final class LifecycleListener implements ServletContextListener {
             );
             throw new IllegalStateException(ex);
         }
-        event.getServletContext()
-            .setAttribute("com.netbout.rest.HUB", this.hub);
+        event.getServletContext().setAttribute(Hub.class.getName(), this.hub);
         EmailFarm.setHub(this.hub);
         Logger.info(
             this,

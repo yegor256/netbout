@@ -226,7 +226,7 @@ public class BaseRs extends BaseResource implements NbResource {
      */
     @Context
     public final void setServletContext(final ServletContext context) {
-        this.ihub = (Hub) context.getAttribute("com.netbout.rest.HUB");
+        this.ihub = Hub.class.cast(context.getAttribute(Hub.class.getName()));
         if (this.ihub == null) {
             throw new IllegalStateException("HUB is not initialized");
         }

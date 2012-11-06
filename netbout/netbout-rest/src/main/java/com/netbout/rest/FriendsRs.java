@@ -34,16 +34,14 @@ import com.netbout.spi.Urn;
 import com.rexsl.page.JaxbBundle;
 import com.rexsl.page.JaxbGroup;
 import com.rexsl.page.PageBuilder;
-import com.rexsl.test.RestTester;
-import com.rexsl.test.TestResponse;
 import java.net.HttpURLConnection;
-import java.net.URI;
+import java.net.URL;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
 
@@ -119,38 +117,39 @@ public final class FriendsRs extends BaseRs {
         } else {
             friend = self.friend(urn);
         }
-        final URI[] opts = new URI[] {
-            friend.profile().photo().toURI(),
-            URI.create("http://img.netbout.com/unknown.png"),
+        final URL[] opts = new URL[] {
+            friend.profile().photo(),
+            new URL("http://img.netbout.com/unknown.png"),
         };
-        TestResponse response = null;
-        for (URI opt : opts) {
-            response = RestTester.start(opt).get("photo");
-            if (response.getStatus() != HttpURLConnection.HTTP_OK) {
-                Logger.warn(
-                    this,
-                    "#photo('%s'): failed to fetch from '%s'\n%s",
-                    urn,
-                    opt,
-                    response
-                );
-                continue;
+        HttpURLConnection conn = null;
+        for (URL url : opts) {
+            conn = HttpURLConnection.class.cast(url.openConnection());
+            if (conn.getResponseCode() == HttpURLConnection.HTTP_OK) {
+                break;
             }
+            Logger.warn(
+                this,
+                "#photo('%s'): failed to fetch from '%s' (code=%d)",
+                urn,
+                url,
+                conn.getResponseCode()
+            );
+        }
+        if (conn.getResponseCode() != HttpURLConnection.HTTP_OK) {
+            throw new IllegalStateException(
+                String.format("failed to fetch photo for '%s'", urn)
+            );
         }
         final Response.ResponseBuilder builder =
-            Response.status(response.getStatus());
-        for (Map.Entry<String, List<String>> header
-            : response.getHeaders().entrySet()) {
-            for (String value : header.getValue()) {
-                builder.header(header.getKey(), value);
-            }
-        }
-        builder.entity(response.getBody());
+            Response.status(HttpURLConnection.HTTP_OK);
+        builder.header(HttpHeaders.CONTENT_TYPE, conn.getContentType());
+        builder.header(HttpHeaders.CONTENT_LENGTH, conn.getContentLength());
+        builder.entity(conn.getInputStream());
         Logger.debug(
             this,
             "#photo('%s'): fetched from '%s'",
             urn,
-            friend.profile().photo().toURI()
+            friend.profile().photo()
         );
         return builder.build();
     }
