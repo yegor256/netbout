@@ -39,7 +39,7 @@
     <parent>
         <groupId>com.netbout.spi</groupId>
         <artifactId>netbout</artifactId>
-        <version netbout="yes">1.5.4</version>
+        <version netbout="yes">2.0-SNAPSHOT</version>
     </parent>
     <artifactId>netbout-lite</artifactId>
     <packaging>jar</packaging>
@@ -49,12 +49,12 @@
         <dependency>
             <groupId>com.netbout.spi</groupId>
             <artifactId>netbout-spi</artifactId>
-            <version netbout="yes">1.5.4</version>
+            <version netbout="yes">2.0-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>com.netbout.spi</groupId>
             <artifactId>netbout-spi</artifactId>
-            <version netbout="yes">1.5.4</version>
+            <version netbout="yes">2.0-SNAPSHOT</version>
             <classifier>mock</classifier>
             <scope>test</scope>
         </dependency>
