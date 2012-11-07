@@ -97,9 +97,9 @@
             <xsl:text>: </xsl:text>
             <img class="flag">
                 <xsl:attribute name="src">
-                    <xsl:call-template name="https">
-                        <xsl:with-param name="uri">
-                            <xsl:text>img.netbout.com/lang/</xsl:text>
+                    <xsl:call-template name="cdn">
+                        <xsl:with-param name="name">
+                            <xsl:text>lang/</xsl:text>
                             <xsl:value-of select="/page/identity/locale"/>
                             <xsl:text>.png</xsl:text>
                         </xsl:with-param>
@@ -123,9 +123,9 @@
                         </xsl:attribute>
                         <img class="flag">
                             <xsl:attribute name="src">
-                                <xsl:call-template name="https">
-                                    <xsl:with-param name="uri">
-                                        <xsl:text>img.netbout.com/lang/</xsl:text>
+                                <xsl:call-template name="cdn">
+                                    <xsl:with-param name="name">
+                                        <xsl:text>lang/</xsl:text>
                                         <xsl:value-of select="code"/>
                                         <xsl:text>.png</xsl:text>
                                     </xsl:with-param>
