@@ -61,7 +61,7 @@
         <if>
             <equals arg1="${tag.current}" arg2="${tag.new}" />
             <then>
-                <echo message="version ${tag.current} is the latest, no need to deploy" />
+                <echo message="tag /tags/netbout-${tag.current} is the latest, no need to deploy" />
             </then>
             <else>
                 <echo message="replacing '${tag.current}' with '${tag.new}'..." />

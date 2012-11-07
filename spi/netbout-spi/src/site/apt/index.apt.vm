@@ -41,3 +41,13 @@
 Service Provider Interface (SPI) for Netbout.com
 
   More details in {{{./apidocs-${releasedVersion}}Javadocs API}}.
+
+  The only dependency you need:
+
++--
+<dependency>
+  <groupId>com.netbout.spi</groupId>
+  <artifactId>netbout-spi</artifactId>
+  <version>${releasedVersion}</version>
+</dependency>
++--

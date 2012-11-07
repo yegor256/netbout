@@ -64,13 +64,13 @@
     <inceptionYear>2011</inceptionYear>
 
     <organization>
-        <name>netBout Inc.</name>
+        <name>Netbout.com</name>
         <url>http://spi.netbout.com</url>
     </organization>
 
     <licenses>
         <license>
-            <name>netBout persistent communications</name>
+            <name>Netbout persistent communications</name>
             <url>http://spi.netbout.com/LICENSE.txt</url>
             <distribution>repo</distribution>
             <comments>This is an open-source software</comments>
@@ -82,7 +82,7 @@
             <id>1</id>
             <name>Yegor Bugayenko</name>
             <email>yegor@netbout.com</email>
-            <organization>netBout Inc.</organization>
+            <organization>Netbout.com</organization>
             <organizationUrl>http://www.netbout.com</organizationUrl>
             <roles>
                 <role>Architect</role>
@@ -122,7 +122,6 @@
             server during build cycle.
             -->
             <id>spi.netbout.com</id>
-            <name>spi.netbout.com Project Site</name>
             <url>s3://spi.netbout.com/</url>
         </site>
     </distributionManagement>
@@ -134,7 +133,7 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <rexsl.version since="2 Nov 2012">0.4</rexsl.version>
-        <releasedVersion>1.5.3</releasedVersion>
+        <releasedVersion>1.5.4</releasedVersion>
     </properties>
 
     <repositories>
@@ -374,7 +373,7 @@
                             <reportPlugins>
                                 <plugin>
                                     <artifactId>maven-project-info-reports-plugin</artifactId>
-                                    <version since="7 Nov 2010">2.2</version>
+                                    <version since="7 Nov 2012">2.6</version>
                                     <configuration>
                                         <dependencyDetailsEnabled>false</dependencyDetailsEnabled>
                                         <dependencyLocationsEnabled>false</dependencyLocationsEnabled>
@@ -393,7 +392,7 @@
                                 </plugin>
                                 <plugin>
                                     <artifactId>maven-javadoc-plugin</artifactId>
-                                    <version since="5 Sep 2012">2.8.1</version>
+                                    <version since="7 Nov 2012">2.9</version>
                                     <configuration>
                                         <failOnError>true</failOnError>
                                         <serialwarn>true</serialwarn>
@@ -417,25 +416,38 @@
                                                 <head>Suppressed Checkstyle violations:</head>
                                             </tag>
                                         </tags>
-                                        <reportSets>
-                                            <reportSet>
-                                                <id>html</id>
-                                                <reports>
-                                                    <report>javadoc</report>
-                                                </reports>
-                                                <configuration>
-                                                    <sourcepath>src/main/java</sourcepath>
-                                                    <destDir>apidocs-${project.version}</destDir>
-                                                </configuration>
-                                            </reportSet>
-                                        </reportSets>
                                     </configuration>
+                                    <reportSets>
+                                        <reportSet>
+                                            <id>versioned-html</id>
+                                            <reports>
+                                                <report>javadoc</report>
+                                            </reports>
+                                            <configuration>
+                                                <sourcepath>src/main/java</sourcepath>
+                                                <destDir>apidocs-${project.version}</destDir>
+                                            </configuration>
+                                        </reportSet>
+                                        <reportSet>
+                                            <id>versioned-mock</id>
+                                            <reports>
+                                                <report>test-javadoc</report>
+                                            </reports>
+                                            <configuration>
+                                                <sourcepath>src/mock/java</sourcepath>
+                                                <destDir>testapidocs-${project.version}</destDir>
+                                            </configuration>
+                                        </reportSet>
+                                    </reportSets>
                                 </plugin>
+                                <!--
+                                @see http://jira.codehaus.org/browse/MCOBERTURA-169
                                 <plugin>
                                     <groupId>org.codehaus.mojo</groupId>
                                     <artifactId>cobertura-maven-plugin</artifactId>
                                     <version since="2 Oct 2011">2.5.1</version>
                                 </plugin>
+                                -->
                             </reportPlugins>
                         </configuration>
                         <executions>
@@ -520,7 +532,7 @@
                 </plugin>
                 <plugin>
                     <artifactId>maven-site-plugin</artifactId>
-                    <version since="2 Oct 2011">3.0-beta-3</version>
+                    <version since="7 Nov 2012">3.2</version>
                     <configuration>
                         <reportPlugins>
                             <!--

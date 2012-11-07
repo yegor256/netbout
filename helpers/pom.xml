@@ -390,15 +390,15 @@
                                                 <head>Suppressed Checkstyle violations:</head>
                                             </tag>
                                         </tags>
-                                        <reportSets>
-                                            <reportSet>
-                                                <id>html</id>
-                                                <reports>
-                                                    <report>javadoc</report>
-                                                </reports>
-                                            </reportSet>
-                                        </reportSets>
                                     </configuration>
+                                    <reportSets>
+                                        <reportSet>
+                                            <id>html</id>
+                                            <reports>
+                                                <report>javadoc</report>
+                                            </reports>
+                                        </reportSet>
+                                    </reportSets>
                                 </plugin>
                                 <plugin>
                                     <groupId>com.rempl.plugins</groupId>
