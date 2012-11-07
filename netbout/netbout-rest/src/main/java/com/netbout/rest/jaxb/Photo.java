@@ -84,9 +84,11 @@ public final class Photo {
     /**
      * Get its photo.
      * @return The photo
+     * @todo #494 This is a workaround, the builder is not used.
      */
     @XmlValue
     public URI getPhoto() {
+        assert this.builder != null;
         URI photo;
         if ("test".equals(this.friend.name().nid())
             || this.friend.getClass().isAnnotationPresent(
@@ -98,8 +100,7 @@ public final class Photo {
                 throw new IllegalArgumentException(ex);
             }
         } else {
-            photo = this.builder.clone()
-                .path("/f/photo")
+            photo = UriBuilder.fromPath("/f/photo")
                 .queryParam("urn", "{urn}")
                 .build(this.friend.name());
         }
