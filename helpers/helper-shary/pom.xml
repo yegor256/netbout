@@ -36,7 +36,7 @@
     <parent>
         <groupId>com.netbout</groupId>
         <artifactId>helpers</artifactId>
-        <version netbout="yes">2.0-SNAPSHOT</version>
+        <version netbout="yes">1.5.4</version>
     </parent>
     <groupId>com.netbout.helpers</groupId>
     <artifactId>helper-shary</artifactId>
@@ -51,7 +51,7 @@
         <dependency>
             <groupId>com.netbout.spi</groupId>
             <artifactId>netbout-spi</artifactId>
-            <version netbout="yes">2.0-SNAPSHOT</version>
+            <version netbout="yes">1.5.4</version>
             <classifier>mock</classifier>
             <scope>test</scope>
         </dependency>
