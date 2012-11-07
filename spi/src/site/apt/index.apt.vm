@@ -38,15 +38,15 @@
 ~~ @version $Id$
 ~~
 
-Service Provider Interface, Netbout.com
+Service Provider Interface (SPI)
 
   Two main modules are:
 
-   * {{{./netbout-spi/}Service Programming Interface}}, which you extend in
-     your helpers in order to develop for the Netbout platform.
+   * {{{./netbout-spi/}netbout-spi}} -- Service Programming Interface that
+     you extend in your helpers in order to develop for the Netbout platform.
 
-   * {{{./netbout-lite/}Lightweight implementation of the SPI}}, which you use
-     for unit/integration testing of your helpers.
+   * {{{./netbout-lite/}netbout-lite}} -- Lightweight implementation of the SPI
+     that you use for unit/integration testing of your helpers.
 
   Latest release of the system is running at
   {{{http://www.netbout.com}www.netbout.com}}.

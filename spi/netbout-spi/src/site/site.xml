@@ -41,6 +41,7 @@
         <menu name="Overview">
             <item name="Introduction" href="index.html" />
             <item name="API ${releasedVersion}" href="./apidocs-${releasedVersion}/index.html" />
+            <item name="Mock API ${releasedVersion}" href="./testapidocs-${releasedVersion}/index.html" />
         </menu>
         <menu ref="reports" />
     </body>
