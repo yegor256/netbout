@@ -134,7 +134,7 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <rexsl.version since="2 Nov 2012">0.4</rexsl.version>
-        <releasedVersion>1.5.3</releasedVersion>
+        <releasedVersion>1.5.4</releasedVersion>
     </properties>
 
     <repositories>

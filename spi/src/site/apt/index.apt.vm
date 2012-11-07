@@ -45,3 +45,6 @@ Service Provider Interface, Netbout.com
   * {{{./netbout-spi/}SPI}}.
 
   * {{{./netbout-lite/}Lite implementation}}.
+
+  Released version: <<<${releasedVersion}>>>.
+
