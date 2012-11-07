@@ -64,13 +64,13 @@
     <inceptionYear>2011</inceptionYear>
 
     <organization>
-        <name>netBout Inc.</name>
+        <name>Netbout.com</name>
         <url>http://spi.netbout.com</url>
     </organization>
 
     <licenses>
         <license>
-            <name>netBout persistent communications</name>
+            <name>Netbout persistent communications</name>
             <url>http://spi.netbout.com/LICENSE.txt</url>
             <distribution>repo</distribution>
             <comments>This is an open-source software</comments>
@@ -82,7 +82,7 @@
             <id>1</id>
             <name>Yegor Bugayenko</name>
             <email>yegor@netbout.com</email>
-            <organization>netBout Inc.</organization>
+            <organization>Netbout.com</organization>
             <organizationUrl>http://www.netbout.com</organizationUrl>
             <roles>
                 <role>Architect</role>

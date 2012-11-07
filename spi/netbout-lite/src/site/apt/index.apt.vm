@@ -41,3 +41,13 @@
 Embedded (lite) version of Netbout
 
   More details in {{{./apidocs-${releasedVersion}}Javadocs API}}.
+
+  The only dependency you need:
+
++--
+<dependency>
+  <groupId>com.netbout.spi</groupId>
+  <artifactId>netbout-lite</artifactId>
+  <version>${releasedVersion}</version>
+</dependency>
++--
