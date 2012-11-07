@@ -69,7 +69,7 @@
                 <xsl:apply-templates select="page/version" />
                 <div id="wrapper">
                     <div id="content">
-                        <p>
+                        <div>
                             <a>
                                 <xsl:attribute name="href">
                                     <xsl:value-of select="/page/links/link[@rel='home']/@href"/>
@@ -84,7 +84,7 @@
                                     </xsl:attribute>
                                 </img>
                             </a>
-                        </p>
+                        </div>
                         <xsl:if test="/page[links/link[@rel='about'] and not(identity)]">
                             <p>
                                 <a>
@@ -99,7 +99,7 @@
                             </p>
                         </xsl:if>
                         <xsl:if test="/page/identity">
-                            <p id="message">
+                            <p>
                                 <xsl:choose>
                                     <xsl:when test="/page/links/link[@rel='re-login']">
                                         <xsl:text>We know you as "</xsl:text>
@@ -133,7 +133,7 @@
                                 <xsl:value-of select="/page/message"/>
                             </div>
                         </xsl:if>
-                        <p>
+                        <div>
                             <a>
                                 <xsl:attribute name="href">
                                     <xsl:value-of select="/page/links/link[@rel='facebook']/@href" />
@@ -148,7 +148,7 @@
                                     </xsl:attribute>
                                 </img>
                             </a>
-                        </p>
+                        </div>
                     </div>
                 </div>
             </body>

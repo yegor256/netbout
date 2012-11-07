@@ -121,10 +121,22 @@ public final class FriendsRs extends BaseRs {
             friend.profile().photo(),
             new URL("http://img.netbout.com/unknown.png"),
         };
-        HttpURLConnection conn = null;
+        final Response.ResponseBuilder builder =
+            Response.status(HttpURLConnection.HTTP_OK);
         for (URL url : opts) {
-            conn = HttpURLConnection.class.cast(url.openConnection());
+            final HttpURLConnection conn =
+                HttpURLConnection.class.cast(url.openConnection());
             if (conn.getResponseCode() == HttpURLConnection.HTTP_OK) {
+                builder.header(
+                    HttpHeaders.CONTENT_TYPE,
+                    conn.getContentType()
+                );
+                builder.header(
+                    HttpHeaders.CONTENT_LENGTH,
+                    conn.getContentLength()
+                );
+                builder.header("Netbout-Original", url.toString());
+                builder.entity(conn.getInputStream());
                 break;
             }
             Logger.warn(
@@ -135,16 +147,6 @@ public final class FriendsRs extends BaseRs {
                 conn.getResponseCode()
             );
         }
-        if (conn.getResponseCode() != HttpURLConnection.HTTP_OK) {
-            throw new IllegalStateException(
-                String.format("failed to fetch photo for '%s'", urn)
-            );
-        }
-        final Response.ResponseBuilder builder =
-            Response.status(HttpURLConnection.HTTP_OK);
-        builder.header(HttpHeaders.CONTENT_TYPE, conn.getContentType());
-        builder.header(HttpHeaders.CONTENT_LENGTH, conn.getContentLength());
-        builder.entity(conn.getInputStream());
         Logger.debug(
             this,
             "#photo('%s'): fetched from '%s'",

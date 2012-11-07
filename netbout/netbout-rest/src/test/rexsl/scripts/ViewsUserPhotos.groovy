@@ -35,6 +35,7 @@ import com.netbout.spi.client.RestUriBuilder
 import com.rexsl.test.RestTester
 import javax.ws.rs.core.HttpHeaders
 import javax.ws.rs.core.MediaType
+import org.hamcrest.Matchers
 
 def bruno = new RestSession(rexsl.home).authenticate(new Urn('urn:test:bruno'), '')
 RestTester.start(RestUriBuilder.from(bruno))
@@ -43,4 +44,5 @@ RestTester.start(RestUriBuilder.from(bruno))
     .assertStatus(HttpURLConnection.HTTP_OK)
     .rel('/page/identity/photo/text()')
     .get('load photo of a user')
+    .assertHeader(HttpHeaders.CONTENT_TYPE, Matchers.hasItem('image/png'))
     .assertStatus(HttpURLConnection.HTTP_OK)

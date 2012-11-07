@@ -6,7 +6,7 @@ parties, both people and computers. A conversation is started by a participant
 who has the ability to invite others and remove them when necessary.
 Every participant can send messages to the conversation, making them visible to others.
 
-<div style="background-image: url(http://img.netbout.com/figures/flow.png);
+<div style="background-image: url(https://dxe6yfv2r7pzd.cloudfront.net/figures/flow.png);
     float: right; margin-left: 2em; margin-bottom: 2em;
     width: 567px; height: 265px;">&nbsp;</div>
 
@@ -70,7 +70,7 @@ any fear of their disclosure to anyone else. Access to
 Netbout.com messages is protected by user name and password,
 and can't be shared with anyone except its owner.
 
-<div style="background-image: url(http://img.netbout.com/figures/design.png);
+<div style="background-image: url(https://dxe6yfv2r7pzd.cloudfront.net/figures/design.png);
     float: right; margin-left: 2em; margin-bottom: 2em;
     width: 453px; height: 489px;">&nbsp;</div>
 
