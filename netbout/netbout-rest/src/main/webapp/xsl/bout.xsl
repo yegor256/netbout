@@ -191,9 +191,9 @@
                         </xsl:when>
                         <xsl:otherwise>
                             <xsl:attribute name="src">
-                                <xsl:call-template name="https">
-                                    <xsl:with-param name="uri">
-                                        <xsl:text>img.netbout.com/someone.png</xsl:text>
+                                <xsl:call-template name="cdn">
+                                    <xsl:with-param name="name">
+                                        <xsl:text>someone.png</xsl:text>
                                     </xsl:with-param>
                                 </xsl:call-template>
                             </xsl:attribute>

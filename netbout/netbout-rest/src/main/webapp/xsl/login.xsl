@@ -56,8 +56,11 @@
                 </link>
                 <link rel="icon" type="image/gif">
                     <xsl:attribute name="href">
-                        <xsl:text>http://img.netbout.com/favicon.ico?</xsl:text>
-                        <xsl:value-of select="/page/version/revision"/>
+                        <xsl:call-template name="cdn">
+                            <xsl:with-param name="name">
+                                <xsl:text>favicon.ico</xsl:text>
+                            </xsl:with-param>
+                        </xsl:call-template>
                     </xsl:attribute>
                 </link>
                 <title>Netbout.com, Conversation-Centric UI On-Demand</title>

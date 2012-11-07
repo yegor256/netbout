@@ -97,14 +97,15 @@
         </div>
     </xsl:template>
 
-    <xsl:template name="https">
-        <xsl:param name="uri" as="xs:string"/>
+    <xsl:template name="cdn">
+        <xsl:param name="name" as="xs:string"/>
         <xsl:text>http</xsl:text>
         <xsl:if test="/page/identity">
             <xsl:text>s</xsl:text>
         </xsl:if>
         <xsl:text>://</xsl:text>
-        <xsl:value-of select="$uri"/>
+        <xsl:text>dxe6yfv2r7pzd.cloudfront.net/</xsl:text>
+        <xsl:value-of select="$name"/>
         <xsl:text>?</xsl:text>
         <xsl:value-of select="/page/version/revision"/>
     </xsl:template>

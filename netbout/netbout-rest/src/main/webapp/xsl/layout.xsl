@@ -47,9 +47,9 @@
                 <meta name="author" content="Netbout.com, Inc."/>
                 <script type="text/javascript">
                     <xsl:attribute name="src">
-                        <xsl:call-template name="https">
-                            <xsl:with-param name="uri">
-                                <xsl:text>img.netbout.com/jquery.js</xsl:text>
+                        <xsl:call-template name="cdn">
+                            <xsl:with-param name="name">
+                                <xsl:text>jquery.js</xsl:text>
                             </xsl:with-param>
                         </xsl:call-template>
                     </xsl:attribute>
@@ -70,9 +70,9 @@
                 </link>
                 <link rel="icon" type="image/gif">
                     <xsl:attribute name="href">
-                        <xsl:call-template name="https">
-                            <xsl:with-param name="uri">
-                                <xsl:text>img.netbout.com/favicon</xsl:text>
+                        <xsl:call-template name="cdn">
+                            <xsl:with-param name="name">
+                                <xsl:text>favicon</xsl:text>
                                 <xsl:choose>
                                     <xsl:when test="contains(/page/version/name, '-SNAPSHOT')">
                                         <xsl:text>-test</xsl:text>
@@ -81,7 +81,7 @@
                                         <xsl:text>-stage</xsl:text>
                                     </xsl:when>
                                 </xsl:choose>
-                                <xsl:text>.ico?</xsl:text>
+                                <xsl:text>.ico</xsl:text>
                             </xsl:with-param>
                         </xsl:call-template>
                     </xsl:attribute>
@@ -172,9 +172,9 @@
                     </xsl:attribute>
                     <xsl:attribute name="style">
                         <xsl:text>background-image: url('</xsl:text>
-                        <xsl:call-template name="https">
-                            <xsl:with-param name="uri">
-                                <xsl:text>img.netbout.com/logo/logo-</xsl:text>
+                        <xsl:call-template name="cdn">
+                            <xsl:with-param name="name">
+                                <xsl:text>logo/logo-</xsl:text>
                                 <xsl:choose>
                                     <xsl:when test="/page/identity/locale">
                                         <xsl:value-of select="/page/identity/locale"/>
