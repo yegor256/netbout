@@ -97,7 +97,7 @@
         </div>
     </xsl:template>
 
-    <xsl:template name="image">
+    <xsl:template name="cdn">
         <xsl:param name="name" as="xs:string"/>
         <xsl:text>http</xsl:text>
         <xsl:if test="/page/identity">
