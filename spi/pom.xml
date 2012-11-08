@@ -133,7 +133,7 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <rexsl.version since="2 Nov 2012">0.4</rexsl.version>
-        <releasedVersion>1.5.4</releasedVersion>
+        <releasedVersion>1.5.5</releasedVersion>
     </properties>
 
     <repositories>
@@ -600,7 +600,7 @@
             <plugin>
                 <groupId>com.jcabi</groupId>
                 <artifactId>jcabi-ssl-maven-plugin</artifactId>
-                <version since="31 Oct 2012">0.5</version>
+                <version since="8 Nov 2012">0.5.1</version>
                 <executions>
                     <execution>
                         <goals>

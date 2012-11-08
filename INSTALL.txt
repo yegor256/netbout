@@ -33,10 +33,14 @@ How to release new version:
 
     1. Switch version as explained in spi/INSTALL.txt
 
-    2. Release SPI (as explained in spi/INSTALL.txt)
+    2. Release SPI (as explained in spi/INSTALL.txt), to Maven Central
+       and to Amazon S3 site
 
-    3. Create a tag
+    3. Create a tag in SVN, properly named. Production platform will
+       pick it up and deploy automatically.
 
-    4. Close the ticket as "fixed"
+    4. Merge it back to TRUNK
+
+    5. Close the ticket as "fixed"
 
     That's it
