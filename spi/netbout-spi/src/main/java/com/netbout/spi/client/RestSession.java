@@ -49,12 +49,12 @@ public final class RestSession {
     /**
      * Authentication header.
      */
-    public static final String AUTH_HEADER = "Netbout-auth";
+    public static final String AUTH_HEADER = "X-Netbout-Auth";
 
     /**
      * HTTP header with error message.
      */
-    public static final String ERROR_HEADER = "Netbout-error";
+    public static final String ERROR_HEADER = "X-Netbout-Error";
 
     /**
      * Authentication query param.
