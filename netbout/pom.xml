@@ -173,7 +173,7 @@
                 <!-- Logging facility, on top of SLF4J. -->
                 <groupId>com.jcabi</groupId>
                 <artifactId>jcabi-log</artifactId>
-                <version since="30 Oct 2012">0.4.1</version>
+                <version since="8 Nov 2012">0.5.2</version>
             </dependency>
             <dependency>
                 <!--
@@ -645,7 +645,7 @@
             <plugin>
                 <groupId>com.jcabi</groupId>
                 <artifactId>jcabi-ssl-maven-plugin</artifactId>
-                <version since="8 Nov 2012">0.5.1</version>
+                <version since="8 Nov 2012">0.5.2</version>
                 <executions>
                     <execution>
                         <goals>
