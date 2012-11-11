@@ -38,6 +38,7 @@
     name="netbout-lite">
 
     <body>
+        <menu ref="parent" />
         <menu name="Overview">
             <item name="Introduction" href="index.html" />
             <item name="API ${releasedVersion}" href="./apidocs-${releasedVersion}/index.html" />
