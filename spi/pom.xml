@@ -92,6 +92,11 @@
         </developer>
     </developers>
 
+    <ciManagement>
+        <system>jenkins</system>
+        <url>http://ci.netbout.com:8080/job/netbout-spi</url>
+    </ciManagement>
+
     <issueManagement>
         <system>trac</system>
         <url>http://trac.netbout.com/netbout</url>
