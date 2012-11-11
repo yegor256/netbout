@@ -6,7 +6,7 @@
  * Redistribution and use in source and binary forms, with or without
  * modification, are PROHIBITED without prior written permission from
  * the author. This product may NOT be used anywhere and on any computer
- * except the server platform of netBout Inc. located at www.netbout.com.
+ * except the server platform of Netbout Inc. located at www.netbout.com.
  * Federal copyright law prohibits unauthorized reproduction by any means
  * and imposes fines up to $25,000 for violation. If you received
  * this code accidentally and without intent to use it, please report this
@@ -64,13 +64,13 @@
     <inceptionYear>2010</inceptionYear>
 
     <organization>
-        <name>netBout Inc.</name>
+        <name>Netbout Inc.</name>
         <url>http://www.netbout.com</url>
     </organization>
 
     <licenses>
         <license>
-            <name>netBout persistent communications</name>
+            <name>Netbout persistent communications</name>
             <url>http://www.netbout.com/LICENSE.txt</url>
             <distribution>repo</distribution>
             <comments>This is a proprietary software, you can't redistribute it</comments>
@@ -82,7 +82,7 @@
             <id>1</id>
             <name>Yegor Bugayenko</name>
             <email>yegor@netbout.com</email>
-            <organization>netBout Inc.</organization>
+            <organization>Netbout Inc.</organization>
             <organizationUrl>http://www.netbout.com</organizationUrl>
             <roles>
                 <role>Architect</role>
@@ -127,7 +127,7 @@
             Deploying the site to Amazon S3.
             -->
             <id>maven.netbout.com</id>
-            <name>netBout.com Project Site</name>
+            <name>Netbout.com Project Site</name>
             <url>s3://maven.netbout.com/</url>
         </site>
     </distributionManagement>

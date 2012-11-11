@@ -31,36 +31,29 @@
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  -->
-<project xmlns="http://maven.apache.org/DECORATION/1.0.0"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://maven.apache.org/DECORATION/1.0.0
-    http://maven.apache.org/xsd/decoration-1.0.0.xsd"
-    name="netbout">
-
+<project xmlns="http://maven.apache.org/DECORATION/1.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/DECORATION/1.0.0     http://maven.apache.org/xsd/decoration-1.0.0.xsd" name="netbout">
     <skin>
         <groupId>com.jcabi</groupId>
         <artifactId>jcabi-maven-skin</artifactId>
-        <version>0.5.2</version>
+        <version>1.0-SNAPSHOT</version>
     </skin>
-
+    <googleAnalyticsAccountId>UA-1963507-24</googleAnalyticsAccountId>
     <bannerLeft>
         <name>Netbout SPI</name>
         <src>http://img.netbout.com/logo-small.png</src>
         <href>http://spi.netbout.com/</href>
     </bannerLeft>
-
     <body>
         <head>
-            <link href="http://img.netbout.com/favicon.ico" rel="shortcut icon" />
+            <link href="http://img.netbout.com/favicon.ico" rel="shortcut icon"/>
         </head>
         <breadcrumbs>
             <item name="spi.netbout.com" href="http://spi.netbout.com"/>
         </breadcrumbs>
         <menu name="Overview">
-            <item name="Introduction" href="index.html" />
+            <item name="Introduction" href="index.html"/>
         </menu>
-        <menu ref="modules" />
-        <menu ref="reports" />
+        <menu ref="modules"/>
+        <menu ref="reports"/>
     </body>
-
 </project>
