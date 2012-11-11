@@ -37,7 +37,7 @@
     <googleAnalyticsAccountId>UA-1963507-24</googleAnalyticsAccountId>
     <bannerLeft>
         <name>Netbout</name>
-        <src>http://img.netbout.com/logo.png</src>
+        <src>http://img.netbout.com/logo-small.png</src>
         <href>http://maven.netbout.com/</href>
     </bannerLeft>
     <body>
