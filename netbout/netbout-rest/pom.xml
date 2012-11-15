@@ -915,9 +915,9 @@
                     <plugin>
                         <groupId>com.jcabi</groupId>
                         <artifactId>jcabi-beanstalk-maven-plugin</artifactId>
-                        <version since="8 Nov 2012">0.5.2</version>
+                        <version since="15 Nov 2012">0.5.5</version>
                         <configuration>
-                            <server>aws.amazon.com</server>
+                            <swap>false</swap>
                             <name>netbout</name>
                             <bucket>webapps.netbout.com</bucket>
                             <key>${project.build.finalName}-${build.number}.${project.packaging}</key>
@@ -925,7 +925,6 @@
                         </configuration>
                         <executions>
                             <execution>
-                                <phase>deploy</phase>
                                 <goals>
                                     <goal>deploy</goal>
                                 </goals>
