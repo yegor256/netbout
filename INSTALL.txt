@@ -28,19 +28,110 @@ OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ===============================================================================
 
-How to release new version:
+Prerequisites
+-------------
+
+    To build the project you need the following:
+
+        - JDK 1.6
+        - Maven (>= 3.0.3)
+
+
+Continuous Integration Configuration
+------------------------------------
+
+    Continuous Integration platform has to be configured to run
+    "mvn deploy" on every commit. Besides that the platform has to
+    have "settings.xml", "pubring.gpg", and "secring.gpg" files available
+    near the project source code base. These files are not inside SVN
+    repository for security reasons. They have to be provided by the CI
+    platform owner (the project owner, in most cases). "settings.xml"
+    file has to document connection settings to the sonatype repository
+    and web deployment platform. For example (this is a complete example
+    of "setting.xml" file):
+
+    <settings>
+     <profiles>
+      <profile>
+       <id>ci</id>
+       <properties>
+        <gpg.homedir>../../closures/</gpg.homedir>
+        <gpg.keyname>...</gpg.keyname>
+        <gpg.passphrase>....</gpg.passphrase>
+       </properties>
+      </profile>
+     </profiles>
+     <servers>
+      <server>
+       <id>netbout.s3</id>
+       <username>....</username>
+       <password>....</password>
+      </server>
+      <server>
+       <id>sonatype.nexus</id>
+       <username>....</username>
+       <password>....</password>
+      </server>
+     </servers>
+    </settings>
+
+    At the moment the following two goals are defined in our CI
+    server:
+
+    mvn clean deploy site-deploy -e -Dci -Dsite --settings ../../closures/settings.xml
+
+
+How to release new version to Maven Central:
 ---------------------------------
+    https://docs.sonatype.org/display/Repository/Sonatype+OSS+Maven+Repository+Usage+Guide#SonatypeOSSMavenRepositoryUsageGuide-8.ReleaseIt
+    http://www.sonatype.com/books/nexus-book/reference/staging-sect-managing-plugin.html
 
-    1. Switch version as explained in spi/INSTALL.txt
+    1. Create a new ticket in Trac, explaining why you want to release
+       a new version (for example see ticket #502)
 
-    2. Release SPI (as explained in spi/INSTALL.txt), to Maven Central
-       and to Amazon S3 site
+    2. Create new branch
 
-    3. Create a tag in SVN, properly named. Production platform will
-       pick it up and deploy automatically.
+        svn cp ^/trunk ^/branches/ticket502 -m 'refs #502 - new branch' && svn sw ^/branches/ticket502
 
-    4. Merge it back to TRUNK
+    3. Replace <version netbout="yes">...</version> with the next
+       version you want to use, e.g.:
 
-    5. Close the ticket as "fixed"
+        find . -name "*.xml" -exec sed -i "" 's|\(\<version netbout\=\"yes\"\>\)2\.0\-SNAPSHOT\(\<\/version\>\)|\11.5.6\2|g' {} \;
+
+    4. Change releasedVersion in spi/pom.xml
+
+    4. Commit your changes to SVN
+
+        svn ci -m 'refs #502 - version up to 1.5.6'
+
+    6. Run in SPI folder:
+
+        cd spi && mvn -Dci -Pnetbout-production clean deploy
+
+        Make sure that you have this profile in ~/.m2/settings.xml:
+
+          <profile>
+            <id>netbout-production</id>
+            <properties>
+              <gpg.homedir>/code/gpg/netbout</gpg.homedir>
+              <gpg.keyname>...</gpg.keyname>
+              <gpg.passphrase>...</gpg.passphrase>
+            </properties>
+          </profile>
+
+    7. Deploy all sites:
+
+        mvn -Dsite clean install site-deploy -Pnetbout-production
+
+    8. Copy your branch to tags:
+
+        svn cp ^/branches/ticket502 ^/tags/netbout-1.5.6 -m "refs #502 - netbout-1.5.6 released to Maven Central"
+
+    9. Revert version back
+
+        find . -name "*.xml" -exec sed -i "" 's|\(\<version netbout\=\"yes\"\>\)1\.5\.6\(\<\/version\>\)|\12.0-SNAPSHOT\2|g' {} \;
+        svn ci -m 'refs #502 - version back to SNAPSHOT'
+
+    10. Close the ticket as "fixed"
 
     That's it
