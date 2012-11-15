@@ -35,7 +35,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.netbout</groupId>
     <artifactId>helpers</artifactId>
-    <version netbout="yes">1.5.6</version>
+    <version netbout="yes">2.0-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>helpers</name>
 
@@ -147,7 +147,7 @@
                 <!-- Service programming interface of the netbout -->
                 <groupId>com.netbout.spi</groupId>
                 <artifactId>netbout-spi</artifactId>
-                <version netbout="yes">1.5.6</version>
+                <version netbout="yes">2.0-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <!-- Logging facility, on top of SLF4J. -->
