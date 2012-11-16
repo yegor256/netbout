@@ -140,7 +140,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.build.timestamp.format>yyyy-MM-dd</maven.build.timestamp.format>
         <rempl.dir>${basedir}</rempl.dir>
-        <rexsl.version since="2 Nov 2012">0.4</rexsl.version>
+        <rexsl.version since="17 Nov 2012">0.4.2</rexsl.version>
     </properties>
 
     <repositories>
