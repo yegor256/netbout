@@ -30,10 +30,10 @@
 package com.netbout.lite;
 
 import com.jcabi.log.Logger;
+import com.jcabi.urn.URN;
 import com.netbout.spi.Friend;
 import com.netbout.spi.Participant;
 import com.netbout.spi.Profile;
-import com.netbout.spi.Urn;
 
 /**
  * Lite implementation of {@link Participant}.
@@ -48,7 +48,7 @@ final class LiteParticipant implements Participant {
     /**
      * Name of identity.
      */
-    private final transient Urn urn;
+    private final transient URN urn;
 
     /**
      * Messages.
@@ -60,7 +60,7 @@ final class LiteParticipant implements Participant {
      * @param name Name of it
      * @param msgs Messages
      */
-    public LiteParticipant(final Urn name, final Messages msgs) {
+    public LiteParticipant(final URN name, final Messages msgs) {
         this.urn = name;
         this.messages = msgs;
     }
@@ -85,7 +85,7 @@ final class LiteParticipant implements Participant {
      * {@inheritDoc}
      */
     @Override
-    public Urn name() {
+    public URN name() {
         return this.urn;
     }
 

@@ -29,7 +29,7 @@ package com.netbout.db;
 import com.jcabi.jdbc.JdbcSession;
 import com.jcabi.jdbc.Utc;
 import com.jcabi.jdbc.VoidHandler;
-import com.netbout.spi.Urn;
+import com.jcabi.urn.URN;
 import com.netbout.spi.cpa.Farm;
 import com.netbout.spi.cpa.Operation;
 import java.sql.ResultSet;
@@ -58,7 +58,7 @@ public final class ParticipantFarm {
      * @return Should it be rejected (FALSE) or it can be (NULL)
      */
     @Operation("can-be-invited")
-    public Boolean canBeInvited(final Long bout, final Urn identity) {
+    public Boolean canBeInvited(final Long bout, final URN identity) {
         Boolean can = null;
         // @checkstyle MagicNumber (1 line)
         if (identity.toString().length() > 250) {
@@ -73,19 +73,19 @@ public final class ParticipantFarm {
      * @return List of names
      */
     @Operation("get-bout-participants")
-    public List<Urn> getBoutParticipants(final Long bout) {
+    public List<URN> getBoutParticipants(final Long bout) {
         return new JdbcSession(Database.source())
             // @checkstyle LineLength (1 line)
             .sql("SELECT identity FROM participant JOIN bout ON bout.number = participant.bout WHERE bout = ?")
             .set(bout)
             .select(
-                new JdbcSession.Handler<List<Urn>>() {
+                new JdbcSession.Handler<List<URN>>() {
                     @Override
-                    public List<Urn> handle(final ResultSet rset)
+                    public List<URN> handle(final ResultSet rset)
                         throws SQLException {
-                        final List<Urn> names = new LinkedList<Urn>();
+                        final List<URN> names = new LinkedList<URN>();
                         while (rset.next()) {
-                            names.add(Urn.create(rset.getString(1)));
+                            names.add(URN.create(rset.getString(1)));
                         }
                         return names;
                     }
@@ -99,7 +99,7 @@ public final class ParticipantFarm {
      * @param identity The name of the person
      */
     @Operation("added-bout-participant")
-    public void addedBoutParticipant(final Long bout, final Urn identity) {
+    public void addedBoutParticipant(final Long bout, final URN identity) {
         new JdbcSession(Database.source())
             // @checkstyle LineLength (1 line)
             .sql("INSERT INTO participant (bout, identity, date) VALUES (?, ?, ?)")
@@ -115,7 +115,7 @@ public final class ParticipantFarm {
      * @param identity The name of the person
      */
     @Operation("removed-bout-participant")
-    public void removedBoutParticipant(final Long bout, final Urn identity) {
+    public void removedBoutParticipant(final Long bout, final URN identity) {
         new JdbcSession(Database.source())
             .sql("DELETE FROM participant WHERE bout = ? AND identity = ?")
             .set(bout)
@@ -130,7 +130,7 @@ public final class ParticipantFarm {
      * @return Status of the participant
      */
     @Operation("get-participant-status")
-    public Boolean getParticipantStatus(final Long bout, final Urn identity) {
+    public Boolean getParticipantStatus(final Long bout, final URN identity) {
         return new JdbcSession(Database.source())
             // @checkstyle LineLength (1 line)
             .sql("SELECT confirmed FROM participant WHERE bout = ? AND identity = ?")
@@ -147,7 +147,7 @@ public final class ParticipantFarm {
      */
     @Operation("changed-participant-status")
     public void changedParticipantStatus(final Long bout,
-        final Urn identity, final Boolean status) {
+        final URN identity, final Boolean status) {
         new JdbcSession(Database.source())
             // @checkstyle LineLength (1 line)
             .sql("UPDATE participant SET confirmed = ? WHERE bout = ? AND identity = ?")
@@ -165,7 +165,7 @@ public final class ParticipantFarm {
      */
     @Operation("get-participant-leadership")
     public Boolean getParticipantLeadership(final Long bout,
-        final Urn identity) {
+        final URN identity) {
         return new JdbcSession(Database.source())
             // @checkstyle LineLength (1 line)
             .sql("SELECT leader FROM participant WHERE bout = ? AND identity = ?")
@@ -182,7 +182,7 @@ public final class ParticipantFarm {
      */
     @Operation("changed-participant-leadership")
     public void changedParticipantLeadership(final Long bout,
-        final Urn identity, final Boolean status) {
+        final URN identity, final Boolean status) {
         new JdbcSession(Database.source())
             // @checkstyle LineLength (1 line)
             .sql("UPDATE participant SET leader = ? WHERE bout = ? AND identity = ?")

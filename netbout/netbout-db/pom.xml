@@ -71,6 +71,15 @@
         </dependency>
         <dependency>
             <groupId>com.jcabi</groupId>
+            <artifactId>jcabi-urn</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.jcabi</groupId>
+            <artifactId>jcabi-urn</artifactId>
+            <classifier>mock</classifier>
+        </dependency>
+        <dependency>
+            <groupId>com.jcabi</groupId>
             <artifactId>jcabi-jdbc</artifactId>
             <version since="30 Oct 2012">0.4.1</version>
         </dependency>

@@ -26,9 +26,9 @@
  */
 package com.netbout.rest.auth;
 
+import com.jcabi.urn.URN;
 import com.netbout.rest.jaxb.LongIdentity;
 import com.netbout.spi.Identity;
-import com.netbout.spi.Urn;
 import com.netbout.spi.xml.JaxbPrinter;
 import com.rexsl.test.XhtmlMatchers;
 import java.net.URL;
@@ -52,7 +52,7 @@ public final class ResolvedIdentityTest {
     public void marshallsItselfToXml() throws Exception {
         final Identity identity = new ResolvedIdentity(
             new URL("http://localhost/authority"),
-            new Urn("urn:test:johnny")
+            new URN("urn:test:johnny")
         );
         identity.profile().alias("Johnny");
         identity.profile().setPhoto(new URL("http://localhost/pic.png"));

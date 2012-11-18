@@ -31,7 +31,7 @@ import com.jcabi.jdbc.NotEmptyHandler;
 import com.jcabi.jdbc.SingleHandler;
 import com.jcabi.jdbc.Utc;
 import com.jcabi.jdbc.VoidHandler;
-import com.netbout.spi.Urn;
+import com.jcabi.urn.URN;
 import com.netbout.spi.cpa.Farm;
 import com.netbout.spi.cpa.Operation;
 import java.net.URL;
@@ -55,17 +55,17 @@ public final class HelperFarm {
      * @return List of identities, which are helpers
      */
     @Operation("get-all-helpers")
-    public List<Urn> getAllHelpers() {
+    public List<URN> getAllHelpers() {
         return new JdbcSession(Database.source())
             .sql("SELECT identity FROM helper")
             .select(
-                new JdbcSession.Handler<List<Urn>>() {
+                new JdbcSession.Handler<List<URN>>() {
                     @Override
-                    public List<Urn> handle(final ResultSet rset)
+                    public List<URN> handle(final ResultSet rset)
                         throws SQLException {
-                        final List<Urn> names = new LinkedList<Urn>();
+                        final List<URN> names = new LinkedList<URN>();
                         while (rset.next()) {
-                            names.add(Urn.create(rset.getString(1)));
+                            names.add(URN.create(rset.getString(1)));
                         }
                         return names;
                     }
@@ -79,7 +79,7 @@ public final class HelperFarm {
      * @param url URL of helper
      */
     @Operation("identity-promoted")
-    public void identityPromoted(final Urn name, final URL url) {
+    public void identityPromoted(final URN name, final URL url) {
         final Boolean exists = new JdbcSession(Database.source())
             .sql("SELECT url FROM helper WHERE identity = ? ")
             .set(name)
@@ -114,7 +114,7 @@ public final class HelperFarm {
      * @return The URL
      */
     @Operation("get-helper-url")
-    public URL getHelperUrl(final Urn name) {
+    public URL getHelperUrl(final URN name) {
         final String location = new JdbcSession(Database.source())
             .sql("SELECT url FROM helper WHERE identity = ?")
             .set(name)

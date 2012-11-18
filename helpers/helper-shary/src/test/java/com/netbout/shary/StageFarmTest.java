@@ -26,12 +26,12 @@
  */
 package com.netbout.shary;
 
+import com.jcabi.urn.URN;
+import com.jcabi.urn.URNMocker;
 import com.netbout.spi.Bout;
 import com.netbout.spi.BoutMocker;
 import com.netbout.spi.Identity;
 import com.netbout.spi.IdentityMocker;
-import com.netbout.spi.Urn;
-import com.netbout.spi.UrnMocker;
 import com.netbout.spi.xml.JaxbPrinter;
 import com.rexsl.test.XhtmlMatchers;
 import org.hamcrest.MatcherAssert;
@@ -51,7 +51,7 @@ public final class StageFarmTest {
     @Test
     public void rendersStageXml() throws Exception {
         final StageFarm farm = new StageFarm();
-        final Urn name = new UrnMocker().mock();
+        final URN name = new URNMocker().mock();
         final Slip slip = new Slip(true, "s3:...", "John", "foo.txt");
         final Bout bout = new BoutMocker()
             .withMessage(new JaxbPrinter(slip).print())

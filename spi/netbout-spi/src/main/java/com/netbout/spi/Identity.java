@@ -29,6 +29,7 @@
  */
 package com.netbout.spi;
 
+import com.jcabi.urn.URN;
 import java.net.URL;
 import java.util.Set;
 
@@ -64,9 +65,9 @@ public interface Identity extends Friend {
 
     /**
      * Thowable when URN can't be reached by the system anyhow.
-     * @see Identity#friend(Urn)
+     * @see Identity#friend(URN)
      */
-    class UnreachableUrnException extends Exception {
+    class UnreachableURNException extends Exception {
         /**
          * Serialization marker.
          */
@@ -76,7 +77,7 @@ public interface Identity extends Friend {
          * @param urn The URN
          * @param cause The cause of the exception
          */
-        public UnreachableUrnException(final Urn urn, final String cause) {
+        public UnreachableURNException(final URN urn, final String cause) {
             super(String.format("%s: '%s'", cause, urn));
         }
         /**
@@ -84,7 +85,7 @@ public interface Identity extends Friend {
          * @param urn The URN
          * @param cause The cause of the exception
          */
-        public UnreachableUrnException(final Urn urn, final Throwable cause) {
+        public UnreachableURNException(final URN urn, final Throwable cause) {
             super(urn.toString(), cause);
         }
     }
@@ -131,10 +132,10 @@ public interface Identity extends Friend {
      * Find another identity by name.
      * @param name Unique name of identity
      * @return The identity just found
-     * @throws Identity.UnreachableUrnException If such
+     * @throws Identity.UnreachableURNException If such
      *  a friend can't be reached
      */
-    Friend friend(Urn name) throws Identity.UnreachableUrnException;
+    Friend friend(URN name) throws Identity.UnreachableURNException;
 
     /**
      * Find friends by keyword.

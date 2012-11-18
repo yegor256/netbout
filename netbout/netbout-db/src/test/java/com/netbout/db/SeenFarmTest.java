@@ -26,7 +26,7 @@
  */
 package com.netbout.db;
 
-import com.netbout.spi.Urn;
+import com.jcabi.urn.URN;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;
@@ -50,7 +50,7 @@ public final class SeenFarmTest {
     @Test
     public void testMessageSeenFlag() throws Exception {
         final Long bout = new BoutRowMocker().mock();
-        final Urn identity = new ParticipantRowMocker(bout).mock();
+        final URN identity = new ParticipantRowMocker(bout).mock();
         final Long msg = new MessageRowMocker(bout).mock();
         MatcherAssert.assertThat(
             this.farm.wasMessageSeen(msg, identity),

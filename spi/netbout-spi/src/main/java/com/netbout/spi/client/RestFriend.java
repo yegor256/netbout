@@ -29,9 +29,9 @@
  */
 package com.netbout.spi.client;
 
+import com.jcabi.urn.URN;
 import com.netbout.spi.Friend;
 import com.netbout.spi.Profile;
-import com.netbout.spi.Urn;
 
 /**
  * Implementation of {@link Friend}, with no connection to REST API.
@@ -44,13 +44,13 @@ final class RestFriend implements Friend {
     /**
      * Name of it.
      */
-    private final transient Urn iname;
+    private final transient URN iname;
 
     /**
      * Public ctor.
      * @param name The name of it
      */
-    public RestFriend(final Urn name) {
+    public RestFriend(final URN name) {
         this.iname = name;
     }
 
@@ -74,7 +74,7 @@ final class RestFriend implements Friend {
      * {@inheritDoc}
      */
     @Override
-    public Urn name() {
+    public URN name() {
         return this.iname;
     }
 

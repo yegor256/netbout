@@ -27,12 +27,12 @@
 package com.netbout.rest.auth;
 
 import com.jcabi.log.Logger;
+import com.jcabi.urn.URN;
 import com.netbout.rest.BaseRs;
 import com.netbout.rest.CryptedIdentity;
 import com.netbout.rest.LoginRequiredException;
 import com.netbout.rest.NbPage;
 import com.netbout.spi.Identity;
-import com.netbout.spi.Urn;
 import com.netbout.spi.client.RestSession;
 import com.netbout.spi.text.SecureString;
 import com.rexsl.core.Manifests;
@@ -122,7 +122,7 @@ public final class AuthRs extends BaseRs {
      */
     @GET
     @Path("/")
-    public Response auth(@QueryParam("identity") final Urn iname,
+    public Response auth(@QueryParam("identity") final URN iname,
         @QueryParam("secret") final String secret,
         @QueryParam("goto") @DefaultValue("/") final String path) {
         if (iname == null) {
@@ -170,7 +170,7 @@ public final class AuthRs extends BaseRs {
      * @param secret Secret word
      * @return The identity
      */
-    private Identity identity(final Urn iname, final String secret) {
+    private Identity identity(final URN iname, final String secret) {
         Identity identity;
         try {
             final Identity previous = this.identity();
@@ -208,7 +208,7 @@ public final class AuthRs extends BaseRs {
      * @param secret Secret word
      * @return The identity found
      */
-    private Identity authenticate(final Urn iname, final String secret) {
+    private Identity authenticate(final URN iname, final String secret) {
         RemoteIdentity remote;
         try {
             remote = new AuthMediator(this.hub().resolver())
@@ -220,7 +220,7 @@ public final class AuthRs extends BaseRs {
         Identity identity;
         try {
             identity = remote.findIn(this.hub());
-        } catch (Identity.UnreachableUrnException ex) {
+        } catch (Identity.UnreachableURNException ex) {
             throw new LoginRequiredException(this, ex);
         }
         return identity;
@@ -231,10 +231,10 @@ public final class AuthRs extends BaseRs {
      * @param iname Identity name
      * @return Identity
      */
-    private Identity bypass(final Urn iname) {
+    private Identity bypass(final URN iname) {
         try {
             return this.hub().identity(iname);
-        } catch (Identity.UnreachableUrnException ex) {
+        } catch (Identity.UnreachableURNException ex) {
             Logger.warn(this, "sudo %[exception]s", ex);
             throw new LoginRequiredException(this, ex);
         }

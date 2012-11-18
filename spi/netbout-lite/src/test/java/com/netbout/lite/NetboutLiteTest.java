@@ -29,12 +29,12 @@
  */
 package com.netbout.lite;
 
+import com.jcabi.urn.URN;
+import com.jcabi.urn.URNMocker;
 import com.netbout.spi.Bout;
 import com.netbout.spi.Identity;
 import com.netbout.spi.Message;
 import com.netbout.spi.Query;
-import com.netbout.spi.Urn;
-import com.netbout.spi.UrnMocker;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;
@@ -52,7 +52,7 @@ public final class NetboutLiteTest {
      */
     @Test
     public void createsNewIdentity() throws Exception {
-        final Urn urn = new UrnMocker().mock();
+        final URN urn = new URNMocker().mock();
         final NetboutLite lite = new NetboutLite();
         MatcherAssert.assertThat(
             lite.login(urn).name(),
@@ -66,11 +66,11 @@ public final class NetboutLiteTest {
      */
     @Test
     public void supportsFullCycleOfOperations() throws Exception {
-        final Urn urn = new UrnMocker().mock();
+        final URN urn = new URNMocker().mock();
         final NetboutLite lite = new NetboutLite();
         final Identity self = lite.login(urn);
         final Bout bout = self.bout(self.start().number());
-        bout.invite(self.friend(new UrnMocker().mock()));
+        bout.invite(self.friend(new URNMocker().mock()));
         MatcherAssert.assertThat(
             new Bout.Smart(bout).participant(urn).name(),
             Matchers.equalTo(urn)

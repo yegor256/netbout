@@ -26,8 +26,8 @@
  */
 package com.netbout.inf;
 
+import com.jcabi.urn.URN;
 import com.netbout.spi.Query;
-import com.netbout.spi.Urn;
 import java.io.Closeable;
 import java.util.Set;
 
@@ -45,7 +45,7 @@ public interface Infinity extends Closeable {
      *  for the entire Infinity, not any particular URN)
      * @return Estimated number of nanoseconds
      */
-    long eta(Urn... who);
+    long eta(URN... who);
 
     /**
      * Find messages for the given predicate.
@@ -66,6 +66,6 @@ public interface Infinity extends Closeable {
      * @param notice The notice to see
      * @return Who should wait for its processing
      */
-    Set<Urn> see(Notice notice);
+    Set<URN> see(Notice notice);
 
 }

@@ -26,14 +26,14 @@
  */
 package com.netbout.rest;
 
+import com.jcabi.urn.URN;
+import com.jcabi.urn.URNMocker;
 import com.netbout.hub.Hub;
 import com.netbout.hub.HubMocker;
 import com.netbout.spi.Bout;
 import com.netbout.spi.BoutMocker;
 import com.netbout.spi.Identity;
 import com.netbout.spi.IdentityMocker;
-import com.netbout.spi.Urn;
-import com.netbout.spi.UrnMocker;
 import com.rexsl.test.XhtmlMatchers;
 import javax.ws.rs.core.UriBuilder;
 import org.hamcrest.MatcherAssert;
@@ -60,7 +60,7 @@ public final class BoutStylesheetRsTest {
         final BoutStylesheetRs rest = new NbResourceMocker()
             .withIdentity(identity)
             .mock(BoutStylesheetRs.class);
-        final Urn stage = new UrnMocker().mock();
+        final URN stage = new URNMocker().mock();
         rest.setBout(bout.number());
         rest.setStage(stage);
         final String xsl = rest.boutXsl();
@@ -97,7 +97,7 @@ public final class BoutStylesheetRsTest {
             .withIdentity(identity)
             .withHub(hub)
             .mock(BoutStylesheetRs.class);
-        final Urn stage = new UrnMocker().mock();
+        final URN stage = new URNMocker().mock();
         rest.setBout(bout.number());
         rest.setStage(stage);
         final String xsl = rest.stageXsl();

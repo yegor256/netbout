@@ -26,6 +26,7 @@
  */
 package com.netbout.hub;
 
+import com.jcabi.urn.URN;
 import com.netbout.spi.Bout;
 import com.netbout.spi.Friend;
 import com.netbout.spi.Helper;
@@ -33,7 +34,6 @@ import com.netbout.spi.Identity;
 import com.netbout.spi.OwnProfile;
 import com.netbout.spi.Query;
 import com.netbout.spi.Token;
-import com.netbout.spi.Urn;
 import java.net.URL;
 import java.util.Set;
 
@@ -118,7 +118,7 @@ final class HelperIdentity implements Identity, Helper {
      * {@inheritDoc}
      */
     @Override
-    public Urn name() {
+    public URN name() {
         return this.identity.name();
     }
 
@@ -160,8 +160,8 @@ final class HelperIdentity implements Identity, Helper {
      * @checkstyle RedundantThrows (4 lines)
      */
     @Override
-    public Friend friend(final Urn name)
-        throws Identity.UnreachableUrnException {
+    public Friend friend(final URN name)
+        throws Identity.UnreachableURNException {
         return this.identity.friend(name);
     }
 

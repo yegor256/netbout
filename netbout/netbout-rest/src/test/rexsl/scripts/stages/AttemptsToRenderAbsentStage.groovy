@@ -29,7 +29,7 @@
  */
 package com.netbout.rest.rexsl.scripts.stages
 
-import com.netbout.spi.Urn
+import com.jcabi.urn.URN
 import com.netbout.spi.client.RestSession
 import com.netbout.spi.client.RestUriBuilder
 import com.rexsl.test.RestTester
@@ -37,7 +37,7 @@ import javax.ws.rs.core.HttpHeaders
 import javax.ws.rs.core.MediaType
 import javax.ws.rs.core.UriBuilder
 
-def jeff = new RestSession(rexsl.home).authenticate(new Urn('urn:test:jeff'), '')
+def jeff = new RestSession(rexsl.home).authenticate(new URN('urn:test:jeff'), '')
 def bout = jeff.start()
 bout.post('hi there!')
 bout.rename('Trying to render an empty stage')

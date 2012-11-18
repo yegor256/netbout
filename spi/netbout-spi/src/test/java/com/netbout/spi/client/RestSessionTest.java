@@ -29,8 +29,8 @@
  */
 package com.netbout.spi.client;
 
+import com.jcabi.urn.URN;
 import com.netbout.spi.Identity;
-import com.netbout.spi.Urn;
 import com.rexsl.test.ContainerMocker;
 import java.net.HttpURLConnection;
 import java.net.URI;
@@ -57,7 +57,7 @@ public final class RestSessionTest {
             .mock()
             .home();
         final RestSession session = new RestSession(home);
-        final Identity identity = session.authenticate(new Urn(), "");
+        final Identity identity = session.authenticate(new URN(), "");
         MatcherAssert.assertThat(identity, Matchers.notNullValue());
     }
 
@@ -72,7 +72,7 @@ public final class RestSessionTest {
             .returnStatus(HttpURLConnection.HTTP_NOT_FOUND)
             .mock()
             .home();
-        new RestSession(home).authenticate(new Urn(), "");
+        new RestSession(home).authenticate(new URN(), "");
     }
 
 }

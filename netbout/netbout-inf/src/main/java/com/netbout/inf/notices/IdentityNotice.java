@@ -26,13 +26,13 @@
  */
 package com.netbout.inf.notices;
 
+import com.jcabi.urn.URN;
 import com.netbout.inf.Notice;
 import com.netbout.spi.Bout;
 import com.netbout.spi.Friend;
 import com.netbout.spi.Identity;
 import com.netbout.spi.OwnProfile;
 import com.netbout.spi.Query;
-import com.netbout.spi.Urn;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -73,8 +73,8 @@ public interface IdentityNotice extends Notice {
          * {@inheritDoc}
          */
         @Override
-        public Set<Urn> deps(final IdentityNotice notice) {
-            final Set<Urn> deps = new HashSet<Urn>();
+        public Set<URN> deps(final IdentityNotice notice) {
+            final Set<URN> deps = new HashSet<URN>();
             deps.add(notice.identity().name());
             return deps;
         }
@@ -92,7 +92,7 @@ public interface IdentityNotice extends Notice {
         @Override
         public IdentityNotice read(final DataInputStream stream)
             throws IOException {
-            final Urn name = Urn.create(stream.readUTF());
+            final URN name = URN.create(stream.readUTF());
             return new IdentityNotice() {
                 @Override
                 public Identity identity() {
@@ -107,7 +107,7 @@ public interface IdentityNotice extends Notice {
          * @return The identity
          */
         @SuppressWarnings("PMD.DefaultPackage")
-        static Identity toIdentity(final Urn name) {
+        static Identity toIdentity(final URN name) {
             // @checkstyle AnonInnerLength (100 lines)
             return new Identity() {
                 @Override
@@ -121,7 +121,7 @@ public interface IdentityNotice extends Notice {
                         );
                 }
                 @Override
-                public Urn name() {
+                public URN name() {
                     return name;
                 }
                 @Override
@@ -133,7 +133,7 @@ public interface IdentityNotice extends Notice {
                     throw new UnsupportedOperationException();
                 }
                 @Override
-                public Friend friend(final Urn name) {
+                public Friend friend(final URN name) {
                     throw new UnsupportedOperationException();
                 }
                 @Override

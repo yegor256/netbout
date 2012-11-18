@@ -29,11 +29,11 @@ package com.netbout.inf;
 import com.jcabi.log.Logger;
 import com.jcabi.log.VerboseRunnable;
 import com.jcabi.log.VerboseThreads;
+import com.jcabi.urn.URN;
 import com.netbout.ih.StageFarm;
 import com.netbout.inf.functors.DefaultStore;
 import com.netbout.inf.ray.MemRay;
 import com.netbout.spi.Query;
-import com.netbout.spi.Urn;
 import com.rexsl.core.Manifests;
 import java.io.File;
 import java.io.IOException;
@@ -175,7 +175,7 @@ public final class DefaultInfinity implements Infinity {
      * hasn't been intialized yet.
      */
     @Override
-    public long eta(final Urn... who) {
+    public long eta(final URN... who) {
         long eta = this.mux.eta(who);
         if (eta == 0 && this.maximum() == 0) {
             eta = 1;
@@ -208,7 +208,7 @@ public final class DefaultInfinity implements Infinity {
      * {@inheritDoc}
      */
     @Override
-    public Set<Urn> see(final Notice notice) {
+    public Set<URN> see(final Notice notice) {
         try {
             if (!this.folder.isWritable()) {
                 throw new IllegalStateException("Folder is not writable");

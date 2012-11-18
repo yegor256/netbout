@@ -26,9 +26,9 @@
  */
 package com.netbout.hub;
 
+import com.jcabi.urn.URN;
 import com.netbout.spi.Bout;
 import com.netbout.spi.Identity;
-import com.netbout.spi.Urn;
 
 /**
  * Manager of all bouts.
@@ -49,7 +49,7 @@ public interface BoutMgr {
      * @param author Who is creating it
      * @return It's number (unique)
      */
-    Long create(Urn author);
+    Long create(URN author);
 
     /**
      * Find and return bout from collection.
@@ -73,6 +73,6 @@ public interface BoutMgr {
      * Destroy all bouts that are related to this identity.
      * @param author The identity
      */
-    void destroy(Urn author);
+    void destroy(URN author);
 
 }

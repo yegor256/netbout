@@ -29,7 +29,7 @@
  */
 package com.netbout.rest.rexsl.scripts.fast
 
-import com.netbout.spi.Urn
+import com.jcabi.urn.URN
 import com.netbout.spi.client.EtaAssertion
 import com.netbout.spi.client.RestSession
 import com.netbout.spi.client.RestUriBuilder
@@ -42,7 +42,7 @@ def message = 'Hi, how are you doing there?\nI\'m fine by the way!\n'
 def first = 'urn:test:jackie'
 def second = 'urn:test:chris'
 
-def bruce = new RestSession(rexsl.home).authenticate(new Urn('urn:test:bruce'), '')
+def bruce = new RestSession(rexsl.home).authenticate(new URN('urn:test:bruce'), '')
 
 def uri = UriBuilder.fromUri(RestUriBuilder.from(bruce).build())
     .path('/fast/start')

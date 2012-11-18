@@ -29,8 +29,8 @@
  */
 package com.netbout.rest.rexsl.scripts
 
+import com.jcabi.urn.URN
 import com.netbout.spi.Query
-import com.netbout.spi.Urn
 import com.netbout.spi.client.EtaAssertion
 import com.netbout.spi.client.RestSession
 import com.netbout.spi.client.RestUriBuilder
@@ -40,7 +40,7 @@ import javax.ws.rs.core.MediaType
 import org.hamcrest.MatcherAssert
 import org.hamcrest.Matchers
 
-def cindy = new RestSession(rexsl.home).authenticate(new Urn('urn:test:cindy'), '')
+def cindy = new RestSession(rexsl.home).authenticate(new URN('urn:test:cindy'), '')
 
 final NUMBER = 555L
 def bout = cindy.bout(NUMBER)

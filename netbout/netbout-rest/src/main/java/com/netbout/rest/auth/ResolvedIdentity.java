@@ -26,20 +26,20 @@
  */
 package com.netbout.rest.auth;
 
+import com.jcabi.urn.URN;
 import com.netbout.rest.jaxb.Photo;
 import com.netbout.spi.Bout;
 import com.netbout.spi.Friend;
 import com.netbout.spi.Identity;
 import com.netbout.spi.OwnProfile;
 import com.netbout.spi.Query;
-import com.netbout.spi.Urn;
 import java.net.URL;
 import java.util.List;
 import java.util.Set;
 
 /**
- * Resolved identity, instantiated in {@link NbRs#authenticate(Urn,String)},
- * {@link EmailRs#resolve(Urn)}, and {@link FacebookRs#authenticate(String)}.
+ * Resolved identity, instantiated in {@link NbRs#authenticate(URN,String)},
+ * {@link EmailRs#resolve(URN)}, and {@link FacebookRs#authenticate(String)}.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
@@ -56,7 +56,7 @@ final class ResolvedIdentity implements Identity {
     /**
      * The name of it.
      */
-    private final transient Urn iname;
+    private final transient URN iname;
 
     /**
      * Profile.
@@ -68,7 +68,7 @@ final class ResolvedIdentity implements Identity {
      * @param authority The authority
      * @param name The name of it
      */
-    public ResolvedIdentity(final URL authority, final Urn name) {
+    public ResolvedIdentity(final URL authority, final URN name) {
         this.iauthority = authority;
         this.iname = name;
     }
@@ -85,7 +85,7 @@ final class ResolvedIdentity implements Identity {
      * {@inheritDoc}
      */
     @Override
-    public Urn name() {
+    public URN name() {
         return this.iname;
     }
 
@@ -141,7 +141,7 @@ final class ResolvedIdentity implements Identity {
      * {@inheritDoc}
      */
     @Override
-    public Friend friend(final Urn name) {
+    public Friend friend(final URN name) {
         throw new UnsupportedOperationException("#friend()");
     }
 

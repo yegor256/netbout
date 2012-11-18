@@ -29,9 +29,9 @@
  */
 package com.netbout.spi.client;
 
+import com.jcabi.urn.URN;
+import com.jcabi.urn.URNMocker;
 import com.netbout.spi.Participant;
-import com.netbout.spi.Urn;
-import com.netbout.spi.UrnMocker;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;
@@ -56,7 +56,7 @@ public final class RestParticipantTest {
         ).mock();
         final Participant dude = new RestParticipant(
             client,
-            new Urn("urn:test:A")
+            new URN("urn:test:A")
         );
         MatcherAssert.assertThat(dude.confirmed(), Matchers.equalTo(true));
     }
@@ -67,7 +67,7 @@ public final class RestParticipantTest {
      */
     @Test
     public void hasToStringWithCleanImplementation() throws Exception {
-        final Urn name = new UrnMocker().mock();
+        final URN name = new URNMocker().mock();
         final Participant dude = new RestParticipant(null, name);
         MatcherAssert.assertThat(
             dude,

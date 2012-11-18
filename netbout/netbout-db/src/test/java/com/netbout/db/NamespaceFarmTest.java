@@ -26,7 +26,7 @@
  */
 package com.netbout.db;
 
-import com.netbout.spi.Urn;
+import com.jcabi.urn.URN;
 import java.util.List;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
@@ -61,7 +61,7 @@ public final class NamespaceFarmTest {
      */
     @Test
     public void findsNameAndTemplateOfNamespace() throws Exception {
-        final Urn identity = new IdentityRowMocker().mock();
+        final URN identity = new IdentityRowMocker().mock();
         final String template = "http://localhost/abc/{nss}/cde";
         final String name = new NamespaceRowMocker()
             .withTemplate(template)

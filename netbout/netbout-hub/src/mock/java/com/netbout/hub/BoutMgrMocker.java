@@ -26,9 +26,9 @@
  */
 package com.netbout.hub;
 
+import com.jcabi.urn.URN;
+import com.jcabi.urn.URNMocker;
 import com.netbout.spi.Identity;
-import com.netbout.spi.Urn;
-import com.netbout.spi.UrnMocker;
 import java.util.Random;
 import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
@@ -49,14 +49,14 @@ public final class BoutMgrMocker {
     /**
      * Author of all bouts.
      */
-    private transient Urn author = new UrnMocker().mock();
+    private transient URN author = new URNMocker().mock();
 
     /**
      * With this author in all created bouts.
      * @param name The name of author
      * @return This object
      */
-    public BoutMgrMocker withAuthor(final Urn name) {
+    public BoutMgrMocker withAuthor(final URN name) {
         this.author = name;
         return this;
     }
@@ -67,7 +67,7 @@ public final class BoutMgrMocker {
      */
     public BoutMgr mock() {
         Mockito.doReturn(Math.abs(new Random().nextLong()))
-            .when(this.mgr).create(Mockito.any(Urn.class));
+            .when(this.mgr).create(Mockito.any(URN.class));
         try {
             Mockito.doAnswer(
                 new Answer<BoutDt>() {

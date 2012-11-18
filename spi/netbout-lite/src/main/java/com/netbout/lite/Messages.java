@@ -30,13 +30,13 @@
 package com.netbout.lite;
 
 import com.jcabi.log.Logger;
+import com.jcabi.urn.URN;
 import com.netbout.spi.Bout;
 import com.netbout.spi.Friend;
 import com.netbout.spi.Identity;
 import com.netbout.spi.Message;
 import com.netbout.spi.Participant;
 import com.netbout.spi.Query;
-import com.netbout.spi.Urn;
 import java.util.AbstractCollection;
 import java.util.Collection;
 import java.util.Collections;
@@ -65,8 +65,8 @@ final class Messages {
     /**
      * All participants.
      */
-    private final transient ConcurrentMap<Urn, Participant> dudes =
-        new ConcurrentSkipListMap<Urn, Participant>();
+    private final transient ConcurrentMap<URN, Participant> dudes =
+        new ConcurrentSkipListMap<URN, Participant>();
 
     /**
      * Invite new dude.

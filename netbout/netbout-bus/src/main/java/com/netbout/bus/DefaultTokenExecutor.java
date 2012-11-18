@@ -27,13 +27,13 @@
 package com.netbout.bus;
 
 import com.jcabi.log.Logger;
+import com.jcabi.urn.URN;
 import com.netbout.bh.StatsProvider;
 import com.netbout.spi.Bout;
 import com.netbout.spi.Helper;
 import com.netbout.spi.Identity;
 import com.netbout.spi.Participant;
 import com.netbout.spi.Plain;
-import com.netbout.spi.Urn;
 import com.netbout.spi.plain.PlainList;
 import java.util.AbstractMap;
 import java.util.ArrayList;
@@ -61,8 +61,8 @@ final class DefaultTokenExecutor implements TokenExecutor, StatsProvider {
     /**
      * List of registered helpers.
      */
-    private final transient ConcurrentMap<Urn, Helper> helpers =
-        new ConcurrentHashMap<Urn, Helper>();
+    private final transient ConcurrentMap<URN, Helper> helpers =
+        new ConcurrentHashMap<URN, Helper>();
 
     /**
      * Consumption bills.
@@ -91,7 +91,7 @@ final class DefaultTokenExecutor implements TokenExecutor, StatsProvider {
                 )
             );
         }
-        for (Map.Entry<Urn, Helper> entry : this.helpers.entrySet()) {
+        for (Map.Entry<URN, Helper> entry : this.helpers.entrySet()) {
             if (entry.getValue().location().equals(helper.location())) {
                 throw new IllegalArgumentException(
                     String.format(
@@ -126,13 +126,13 @@ final class DefaultTokenExecutor implements TokenExecutor, StatsProvider {
     @Override
     @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
     public void exec(final TxToken token, final Bout bout) {
-        final Set<Map.Entry<Urn, Helper>> active =
-            new HashSet<Map.Entry<Urn, Helper>>();
+        final Set<Map.Entry<URN, Helper>> active =
+            new HashSet<Map.Entry<URN, Helper>>();
         for (Participant participant : bout.participants()) {
-            final Urn name = participant.name();
+            final URN name = participant.name();
             if (this.helpers.containsKey(name)) {
                 active.add(
-                    new AbstractMap.SimpleEntry<Urn, Helper>(
+                    new AbstractMap.SimpleEntry<URN, Helper>(
                         name,
                         this.helpers.get(name)
                     )
@@ -150,7 +150,7 @@ final class DefaultTokenExecutor implements TokenExecutor, StatsProvider {
     @Override
     public String statistics() {
         final StringBuilder text = new StringBuilder();
-        for (Map.Entry<Urn, Helper> entry : this.helpers.entrySet()) {
+        for (Map.Entry<URN, Helper> entry : this.helpers.entrySet()) {
             text.append(
                 Logger.format(
                     "%s as %s with %[list]s\n",
@@ -173,10 +173,10 @@ final class DefaultTokenExecutor implements TokenExecutor, StatsProvider {
      * @return The bill
      */
     private Bill run(final TxToken token,
-        final Set<Map.Entry<Urn, Helper>> targets) {
+        final Set<Map.Entry<URN, Helper>> targets) {
         final String mnemo = token.mnemo();
         final Bill bill = new Bill(mnemo);
-        for (Map.Entry<Urn, Helper> helper : targets) {
+        for (Map.Entry<URN, Helper> helper : targets) {
             if (helper.getValue().supports().contains(mnemo)) {
                 final long start = System.nanoTime();
                 helper.getValue().execute(token);

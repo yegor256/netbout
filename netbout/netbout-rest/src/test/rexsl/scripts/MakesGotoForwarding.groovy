@@ -29,7 +29,7 @@
  */
 package com.netbout.rest.rexsl.scripts
 
-import com.netbout.spi.Urn
+import com.jcabi.urn.URN
 import com.netbout.spi.client.RestSession
 import com.rexsl.test.RestTester
 import javax.ws.rs.core.HttpHeaders
@@ -38,7 +38,7 @@ import javax.ws.rs.core.Response
 import javax.ws.rs.core.UriBuilder
 import org.hamcrest.Matchers
 
-def name = new Urn('urn:test:leon')
+def name = new URN('urn:test:leon')
 def matt = new RestSession(rexsl.home).authenticate(name, '')
 def bout = matt.start()
 def path = UriBuilder.fromUri(rexsl.home).path('/{bout}').build(bout.number())

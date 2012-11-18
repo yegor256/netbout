@@ -26,12 +26,12 @@
  */
 package com.netbout.hh;
 
+import com.jcabi.urn.URN;
 import com.netbout.hub.PowerHub;
 import com.netbout.inf.notices.MessagePostedNotice;
 import com.netbout.spi.Bout;
 import com.netbout.spi.Identity;
 import com.netbout.spi.Message;
-import com.netbout.spi.Urn;
 import com.netbout.spi.cpa.CpaUtils;
 import com.netbout.spi.cpa.Farm;
 import com.netbout.spi.cpa.IdentityAware;
@@ -85,7 +85,7 @@ public final class StatsFarm implements IdentityAware {
      * @throws Exception If some problem inside
      */
     @Operation("can-be-invited")
-    public Boolean canBeInvited(final Long number, final Urn who)
+    public Boolean canBeInvited(final Long number, final URN who)
         throws Exception {
         Boolean allow = null;
         if (who.equals(this.identity.name())) {
@@ -103,7 +103,7 @@ public final class StatsFarm implements IdentityAware {
      * @return Confirm participation?
      */
     @Operation("just-invited")
-    public Boolean justInvited(final Long number, final Urn who) {
+    public Boolean justInvited(final Long number, final URN who) {
         Boolean confirm = null;
         if (who.equals(this.identity.name())) {
             confirm = true;
@@ -118,7 +118,7 @@ public final class StatsFarm implements IdentityAware {
      * @return Does it?
      */
     @Operation("does-stage-exist")
-    public Boolean doesStageExist(final Long number, final Urn stage) {
+    public Boolean doesStageExist(final Long number, final URN stage) {
         Boolean exists = null;
         if (this.identity.name().equals(stage)) {
             exists = Boolean.TRUE;
@@ -138,8 +138,8 @@ public final class StatsFarm implements IdentityAware {
      */
     @Operation("render-stage-xml")
     @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
-    public String renderStageXml(final Long number, final Urn viewer,
-        final Urn stage, final String place) throws Exception {
+    public String renderStageXml(final Long number, final URN viewer,
+        final URN stage, final String place) throws Exception {
         String xml = null;
         if (this.identity.name().equals(stage)) {
             xml = new JaxbPrinter(new Stage(StatsFarm.hub.toString())).print();
@@ -152,7 +152,7 @@ public final class StatsFarm implements IdentityAware {
                     .synchronously()
                     .arg(mnum)
                     .exec();
-                final List<Urn> dudes = StatsFarm.hub
+                final List<URN> dudes = StatsFarm.hub
                     .make("get-bout-participants")
                     .synchronously()
                     .arg(bnum)
@@ -186,7 +186,7 @@ public final class StatsFarm implements IdentityAware {
      * @throws java.io.IOException If some problem inside
      */
     @Operation("render-stage-xsl")
-    public String renderStageXsl(final Long number, final Urn stage)
+    public String renderStageXsl(final Long number, final URN stage)
         throws java.io.IOException {
         String xsl = null;
         if (this.identity.name().equals(stage)) {
@@ -210,8 +210,8 @@ public final class StatsFarm implements IdentityAware {
      * @checkstyle ParameterNumber (5 lines)
      */
     @Operation("stage-post-request")
-    public String stagePostRequest(final Long number, final Urn author,
-        final Urn stage, final String place, final String body)
+    public String stagePostRequest(final Long number, final URN author,
+        final URN stage, final String place, final String body)
         throws Exception {
         String dest = null;
         if (this.identity.name().equals(stage)) {
@@ -231,8 +231,8 @@ public final class StatsFarm implements IdentityAware {
      * @checkstyle ParameterNumber (5 lines)
      */
     @Operation("post-render-change-place")
-    public String postRenderChangePlace(final Long number, final Urn author,
-        final Urn stage, final String place)
+    public String postRenderChangePlace(final Long number, final URN author,
+        final URN stage, final String place)
         throws Exception {
         String dest = null;
         if (this.identity.name().equals(stage)) {

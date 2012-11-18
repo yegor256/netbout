@@ -29,6 +29,8 @@
  */
 package com.netbout.spi;
 
+import com.jcabi.urn.URN;
+import com.jcabi.urn.URNMocker;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;
@@ -46,7 +48,7 @@ public final class ParticipantTest {
      */
     @Test
     public void setsIdentityOnDemand() throws Exception {
-        final Urn name = new UrnMocker().mock();
+        final URN name = new URNMocker().mock();
         final Participant participant = new ParticipantMocker()
             .withName(name)
             .mock();

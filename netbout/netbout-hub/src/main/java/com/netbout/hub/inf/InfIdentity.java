@@ -26,12 +26,12 @@
  */
 package com.netbout.hub.inf;
 
+import com.jcabi.urn.URN;
 import com.netbout.spi.Bout;
 import com.netbout.spi.Friend;
 import com.netbout.spi.Identity;
 import com.netbout.spi.OwnProfile;
 import com.netbout.spi.Query;
-import com.netbout.spi.Urn;
 import java.net.URL;
 import java.util.Set;
 
@@ -47,13 +47,13 @@ public final class InfIdentity implements Identity {
     /**
      * The name.
      */
-    private final transient Urn iname;
+    private final transient URN iname;
 
     /**
      * Public ctor.
      * @param name The identity's name
      */
-    public InfIdentity(final Urn name) {
+    public InfIdentity(final URN name) {
         this.iname = name;
     }
 
@@ -109,7 +109,7 @@ public final class InfIdentity implements Identity {
      * {@inheritDoc}
      */
     @Override
-    public Urn name() {
+    public URN name() {
         return this.iname;
     }
 
@@ -150,7 +150,7 @@ public final class InfIdentity implements Identity {
      * @checkstyle RedundantThrows (4 lines)
      */
     @Override
-    public Friend friend(final Urn name) throws UnreachableUrnException {
+    public Friend friend(final URN name) throws UnreachableURNException {
         throw new UnsupportedOperationException("#friend()");
     }
 

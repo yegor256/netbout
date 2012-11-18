@@ -26,8 +26,8 @@
  */
 package com.netbout.inf.notices;
 
+import com.jcabi.urn.URN;
 import com.netbout.spi.Identity;
-import com.netbout.spi.Urn;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -72,7 +72,7 @@ public interface AliasAddedNotice extends IdentityNotice {
          * {@inheritDoc}
          */
         @Override
-        public Set<Urn> deps(final AliasAddedNotice notice) {
+        public Set<URN> deps(final AliasAddedNotice notice) {
             return new IdentityNotice.Serial().deps(notice);
         }
         /**

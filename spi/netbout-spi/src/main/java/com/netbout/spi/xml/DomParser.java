@@ -30,7 +30,7 @@
 package com.netbout.spi.xml;
 
 import com.jcabi.log.Logger;
-import com.netbout.spi.Urn;
+import com.jcabi.urn.URN;
 import java.net.URL;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -140,7 +140,7 @@ public final class DomParser {
      * @param urn The namespace to belong to
      * @return Does it belong?
      */
-    public boolean belongsTo(final Urn urn) {
+    public boolean belongsTo(final URN urn) {
         boolean belongs = false;
         if (this.isXml()) {
             final String namespace = this.parse()
@@ -157,7 +157,7 @@ public final class DomParser {
      * @throws DomValidationException If ther is no namespace or its format is
      *  wrong
      */
-    public Urn namespace() throws DomValidationException {
+    public URN namespace() throws DomValidationException {
         final String namespace = this.parse()
             .getDocumentElement()
             .getNamespaceURI();
@@ -167,7 +167,7 @@ public final class DomParser {
             );
         }
         try {
-            return new Urn(namespace);
+            return new URN(namespace);
         } catch (java.net.URISyntaxException ex) {
             throw new DomValidationException(ex);
         }
@@ -180,7 +180,7 @@ public final class DomParser {
      * @throws DomValidationException If some problem inside
      * @see <a href="http://www.w3.org/TR/xmlschema-0/#schemaLocation">W3C on schemaLocation</a>
      */
-    public URL schemaLocation(final Urn namespace)
+    public URL schemaLocation(final URN namespace)
         throws DomValidationException {
         final XPath xpath = XPathFactory.newInstance().newXPath();
         xpath.setNamespaceContext(new DomContext());
@@ -254,7 +254,7 @@ public final class DomParser {
      * @checkstyle ParameterNumber (4 lines)
      */
     static void rename(final Document dom, final Node node,
-        final String actual, final Urn required) {
+        final String actual, final URN required) {
         if (node.getNodeType() == Node.ELEMENT_NODE
             && node.getNamespaceURI().equals(actual)) {
             dom.renameNode(node, required.toString(), node.getNodeName());
@@ -271,7 +271,7 @@ public final class DomParser {
      * @param actual The actual namespace
      * @return Actual is a variation of a canonical one
      */
-    static boolean matches(final Urn canonical, final String actual) {
+    static boolean matches(final URN canonical, final String actual) {
         boolean matches = false;
         if (!canonical.isEmpty() && actual != null) {
             matches = actual.matches(
@@ -300,7 +300,7 @@ public final class DomParser {
         } catch (javax.xml.parsers.ParserConfigurationException ex) {
             throw new IllegalArgumentException(ex);
         }
-        final Urn namespace = this.namespace();
+        final URN namespace = this.namespace();
         if (namespace.hasParams()) {
             final Element root = dom.getDocumentElement();
             DomParser.rename(

@@ -27,9 +27,9 @@
 package com.netbout.rest.auth;
 
 import com.jcabi.log.Logger;
-import com.netbout.hub.UrnResolver;
+import com.jcabi.urn.URN;
+import com.netbout.hub.URNResolver;
 import com.netbout.spi.Identity;
-import com.netbout.spi.Urn;
 import com.rexsl.core.Manifests;
 import com.sun.jersey.api.client.Client;
 import java.io.IOException;
@@ -49,13 +49,13 @@ public final class AuthMediator {
     /**
      * URN resolver.
      */
-    private final transient UrnResolver resolver;
+    private final transient URNResolver resolver;
 
     /**
      * Public ctor.
      * @param rslv Resolver of URNs
      */
-    public AuthMediator(final UrnResolver rslv) {
+    public AuthMediator(final URNResolver rslv) {
         this.resolver = rslv;
     }
 
@@ -66,7 +66,7 @@ public final class AuthMediator {
      * @return Identity name, if it's valid
      * @throws IOException If some problem with FB
      */
-    public RemoteIdentity authenticate(final Urn iname, final String secret)
+    public RemoteIdentity authenticate(final URN iname, final String secret)
         throws IOException {
         if (iname == null || secret == null) {
             throw new IllegalArgumentException(
@@ -77,7 +77,7 @@ public final class AuthMediator {
         URL entry;
         try {
             entry = this.resolver.authority(iname);
-        } catch (Identity.UnreachableUrnException ex) {
+        } catch (Identity.UnreachableURNException ex) {
             throw new IOException(ex);
         }
         final URI uri = UriBuilder.fromUri(entry.toString())

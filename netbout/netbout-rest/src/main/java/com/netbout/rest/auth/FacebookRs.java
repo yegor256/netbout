@@ -27,11 +27,11 @@
 package com.netbout.rest.auth;
 
 import com.jcabi.log.Logger;
+import com.jcabi.urn.URN;
 import com.netbout.rest.BaseRs;
 import com.netbout.rest.LoginRequiredException;
 import com.netbout.rest.NbPage;
 import com.netbout.spi.Identity;
-import com.netbout.spi.Urn;
 import com.restfb.DefaultFacebookClient;
 import com.restfb.FacebookClient;
 import com.restfb.types.User;
@@ -84,7 +84,7 @@ public final class FacebookRs extends BaseRs {
             .status(Response.Status.SEE_OTHER)
             .location(
                 this.base().path("/auth")
-                    .queryParam("identity", new Urn(FacebookRs.NAMESPACE, ""))
+                    .queryParam("identity", new URN(FacebookRs.NAMESPACE, ""))
                     .queryParam("secret", "{fbcode}")
                     .build(code)
             )
@@ -100,7 +100,7 @@ public final class FacebookRs extends BaseRs {
      */
     @GET
     @Path("/")
-    public Response auth(@QueryParam("identity") final Urn iname,
+    public Response auth(@QueryParam("identity") final URN iname,
         @QueryParam("secret") final String secret) {
         if (iname == null || secret == null) {
             throw new LoginRequiredException(
@@ -156,7 +156,7 @@ public final class FacebookRs extends BaseRs {
         final User fbuser = this.fbUser(this.token(code));
         final Identity resolved = new ResolvedIdentity(
             this.base().path("/fb").build().toURL(),
-            new Urn(FacebookRs.NAMESPACE, fbuser.getId())
+            new URN(FacebookRs.NAMESPACE, fbuser.getId())
         );
         resolved.profile().setPhoto(
             UriBuilder

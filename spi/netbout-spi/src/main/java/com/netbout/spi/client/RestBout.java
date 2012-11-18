@@ -29,12 +29,12 @@
  */
 package com.netbout.spi.client;
 
+import com.jcabi.urn.URN;
 import com.netbout.spi.Bout;
 import com.netbout.spi.Friend;
 import com.netbout.spi.Message;
 import com.netbout.spi.Participant;
 import com.netbout.spi.Query;
-import com.netbout.spi.Urn;
 import java.net.HttpURLConnection;
 import java.net.URI;
 import java.util.ArrayList;
@@ -181,7 +181,7 @@ final class RestBout implements Bout {
      */
     @Override
     public Participant invite(final Friend friend) {
-        final Urn name = friend.name();
+        final URN name = friend.name();
         final List<String> hrefs = this.client
             .queryParam("mask", name.toString())
             .get(String.format("reading suggestions for '%s'", name))
@@ -208,7 +208,7 @@ final class RestBout implements Bout {
             .get(String.format("inviting '%s' to the bout", name))
             .assertStatus(HttpURLConnection.HTTP_SEE_OTHER)
             .header("Participant-name");
-        return new RestParticipant(this.client.copy(), Urn.create(participant));
+        return new RestParticipant(this.client.copy(), URN.create(participant));
     }
 
     /**

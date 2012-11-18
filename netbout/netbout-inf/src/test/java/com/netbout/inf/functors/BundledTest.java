@@ -26,6 +26,8 @@
  */
 package com.netbout.inf.functors;
 
+import com.jcabi.urn.URN;
+import com.jcabi.urn.URNMocker;
 import com.netbout.inf.Atom;
 import com.netbout.inf.FolderMocker;
 import com.netbout.inf.MsgMocker;
@@ -40,8 +42,6 @@ import com.netbout.spi.Identity;
 import com.netbout.spi.IdentityMocker;
 import com.netbout.spi.Message;
 import com.netbout.spi.MessageMocker;
-import com.netbout.spi.Urn;
-import com.netbout.spi.UrnMocker;
 import java.util.Arrays;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
@@ -91,7 +91,7 @@ public final class BundledTest {
     @Test
     public void findsBundledMessagesAfterJoinAndKickoff() throws Exception {
         final Ray ray = new MemRay(new FolderMocker().mock().path());
-        final Urn dude = new UrnMocker().mock();
+        final URN dude = new URNMocker().mock();
         final Bout first = new BoutMocker()
             .withParticipant(dude)
             .mock();
@@ -115,7 +115,7 @@ public final class BundledTest {
                 public Bout bout() {
                     return new BoutMocker()
                         .withNumber(first.number())
-                        .withParticipant(new UrnMocker().mock())
+                        .withParticipant(new URNMocker().mock())
                         .mock();
                 }
                 @Override

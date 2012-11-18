@@ -53,5 +53,5 @@ Service Provider Interface (SPI)
   Cutting edge version you can see here:
   {{{http://test.netbout.com}test.netbout.com}}.
 
-  Released version: <<<${releasedVersion}>>>.
+  Released version: <<<${project.version}>>>.
 

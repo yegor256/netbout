@@ -26,8 +26,8 @@
  */
 package com.netbout.rest;
 
+import com.jcabi.urn.URN;
 import com.jcabi.velocity.VelocityPage;
-import com.netbout.spi.Urn;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -51,7 +51,7 @@ public final class BoutStylesheetRs extends BaseRs {
     /**
      * Name of the stage.
      */
-    private transient Urn stage;
+    private transient URN stage;
 
     /**
      * Set bout number, and verify that this bout is accessible by this
@@ -68,7 +68,7 @@ public final class BoutStylesheetRs extends BaseRs {
      * @param name Name of the stage
      */
     @PathParam("stage")
-    public void setStage(final Urn name) {
+    public void setStage(final URN name) {
         this.stage = name;
     }
 

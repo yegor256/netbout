@@ -29,6 +29,7 @@
  */
 package com.netbout.spi;
 
+import com.jcabi.urn.URN;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -173,7 +174,7 @@ public final class BoutMocker {
      * @return This object
      */
     public BoutMocker withParticipant(final String name) {
-        return this.withParticipant(Urn.create(name));
+        return this.withParticipant(URN.create(name));
     }
 
     /**
@@ -191,7 +192,7 @@ public final class BoutMocker {
      * @param name Name of participant
      * @return This object
      */
-    public BoutMocker withParticipant(final Urn name) {
+    public BoutMocker withParticipant(final URN name) {
         return this.withParticipant(
             new ParticipantMocker()
                 .withName(name)

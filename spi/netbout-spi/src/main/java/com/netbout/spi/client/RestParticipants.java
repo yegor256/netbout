@@ -29,8 +29,8 @@
  */
 package com.netbout.spi.client;
 
+import com.jcabi.urn.URN;
 import com.netbout.spi.Participant;
-import com.netbout.spi.Urn;
 import java.net.HttpURLConnection;
 import java.util.AbstractCollection;
 import java.util.Iterator;
@@ -69,7 +69,7 @@ final class RestParticipants extends AbstractCollection<Participant> {
             public Participant next() {
                 return new RestParticipant(
                     RestParticipants.this.client.copy(),
-                    Urn.create(names.next())
+                    URN.create(names.next())
                 );
             }
             @Override

@@ -26,11 +26,11 @@
  */
 package com.netbout.hub;
 
+import com.jcabi.urn.URN;
 import com.netbout.bus.BusMocker;
 import com.netbout.bus.TxBuilder;
 import com.netbout.spi.Identity;
 import com.netbout.spi.IdentityMocker;
-import com.netbout.spi.Urn;
 import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
@@ -68,15 +68,15 @@ public final class HubMocker {
             Mockito.doAnswer(
                 new Answer<Identity>() {
                     public Identity answer(final InvocationOnMock invocation) {
-                        final Urn name = (Urn) invocation.getArguments()[0];
+                        final URN name = (URN) invocation.getArguments()[0];
                         return new IdentityMocker().namedAs(name).mock();
                     }
                 }
-            ).when(this.hub).identity(Mockito.any(Urn.class));
-        } catch (Identity.UnreachableUrnException ex) {
+            ).when(this.hub).identity(Mockito.any(URN.class));
+        } catch (Identity.UnreachableURNException ex) {
             throw new IllegalArgumentException(ex);
         }
-        this.withUrnResolver(new UrnResolverMocker().mock());
+        this.withURNResolver(new URNResolverMocker().mock());
         Mockito.doAnswer(
             new Answer<Identity>() {
                 public Identity answer(final InvocationOnMock invocation) {
@@ -106,7 +106,7 @@ public final class HubMocker {
      * @param resolver The resolver to use
      * @return This object
      */
-    public HubMocker withUrnResolver(final UrnResolver resolver) {
+    public HubMocker withURNResolver(final URNResolver resolver) {
         Mockito.doReturn(resolver).when(this.hub).resolver();
         return this;
     }
@@ -118,7 +118,7 @@ public final class HubMocker {
      */
     public HubMocker withIdentity(final String name) {
         return this.withIdentity(
-            Urn.create(name),
+            URN.create(name),
             new IdentityMocker().namedAs(name).mock()
         );
     }
@@ -129,10 +129,10 @@ public final class HubMocker {
      * @param identity The identity
      * @return This object
      */
-    public HubMocker withIdentity(final Urn name, final Identity identity) {
+    public HubMocker withIdentity(final URN name, final Identity identity) {
         try {
             Mockito.doReturn(identity).when(this.hub).identity(name);
-        } catch (Identity.UnreachableUrnException ex) {
+        } catch (Identity.UnreachableURNException ex) {
             throw new IllegalArgumentException(ex);
         }
         return this;

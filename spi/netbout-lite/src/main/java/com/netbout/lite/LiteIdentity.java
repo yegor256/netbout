@@ -29,12 +29,12 @@
  */
 package com.netbout.lite;
 
+import com.jcabi.urn.URN;
 import com.netbout.spi.Bout;
 import com.netbout.spi.Friend;
 import com.netbout.spi.Identity;
 import com.netbout.spi.OwnProfile;
 import com.netbout.spi.Query;
-import com.netbout.spi.Urn;
 import java.net.URL;
 import java.util.Set;
 
@@ -57,7 +57,7 @@ final class LiteIdentity implements Identity {
     /**
      * Name of identity.
      */
-    private final transient Urn urn;
+    private final transient URN urn;
 
     /**
      * Lite.
@@ -70,7 +70,7 @@ final class LiteIdentity implements Identity {
      * @param name Name of it
      * @param lte Lite netbout
      */
-    public LiteIdentity(final Bouts bts, final Urn name,
+    public LiteIdentity(final Bouts bts, final URN name,
         final NetboutLite lte) {
         this.bouts = bts;
         this.urn = name;
@@ -134,7 +134,7 @@ final class LiteIdentity implements Identity {
      * {@inheritDoc}
      */
     @Override
-    public Urn name() {
+    public URN name() {
         return this.urn;
     }
 
@@ -167,7 +167,7 @@ final class LiteIdentity implements Identity {
      * {@inheritDoc}
      */
     @Override
-    public Friend friend(final Urn name) {
+    public Friend friend(final URN name) {
         return this.lite.login(name);
     }
 

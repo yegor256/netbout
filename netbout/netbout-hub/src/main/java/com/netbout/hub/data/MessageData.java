@@ -27,6 +27,7 @@
 package com.netbout.hub.data;
 
 import com.jcabi.log.Logger;
+import com.jcabi.urn.URN;
 import com.netbout.hub.BoutDt;
 import com.netbout.hub.MessageDt;
 import com.netbout.hub.PowerHub;
@@ -38,7 +39,6 @@ import com.netbout.inf.notices.MessageSeenNotice;
 import com.netbout.spi.Bout;
 import com.netbout.spi.Identity;
 import com.netbout.spi.Message;
-import com.netbout.spi.Urn;
 import java.util.Date;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -74,7 +74,7 @@ final class MessageData implements MessageDt {
     /**
      * The author.
      */
-    private transient Urn author;
+    private transient URN author;
 
     /**
      * The text.
@@ -84,8 +84,8 @@ final class MessageData implements MessageDt {
     /**
      * Who already have seen this message, and who haven't?
      */
-    private final transient ConcurrentMap<Urn, Boolean> seenBy =
-        new ConcurrentHashMap<Urn, Boolean>();
+    private final transient ConcurrentMap<URN, Boolean> seenBy =
+        new ConcurrentHashMap<URN, Boolean>();
 
     /**
      * Public ctor.
@@ -157,7 +157,7 @@ final class MessageData implements MessageDt {
      * {@inheritDoc}
      */
     @Override
-    public void setAuthor(final Urn idnt) {
+    public void setAuthor(final URN idnt) {
         synchronized (this.number) {
             this.author = idnt;
             this.hub.make("changed-message-author")
@@ -179,7 +179,7 @@ final class MessageData implements MessageDt {
      * {@inheritDoc}
      */
     @Override
-    public Urn getAuthor() {
+    public URN getAuthor() {
         synchronized (this.number) {
             if (this.author == null) {
                 this.author = this.hub.make("get-message-author")
@@ -245,7 +245,7 @@ final class MessageData implements MessageDt {
      * {@inheritDoc}
      */
     @Override
-    public void addSeenBy(final Urn identity) {
+    public void addSeenBy(final URN identity) {
         synchronized (this.number) {
             if (!this.isSeenBy(identity)) {
                 this.hub.make("message-was-seen")
@@ -281,7 +281,7 @@ final class MessageData implements MessageDt {
      * {@inheritDoc}
      */
     @Override
-    public Boolean isSeenBy(final Urn identity) {
+    public Boolean isSeenBy(final URN identity) {
         synchronized (this.number) {
             if (!this.seenBy.containsKey(identity)) {
                 final Boolean status = this.hub.make("was-message-seen")

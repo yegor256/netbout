@@ -26,11 +26,11 @@
  */
 package com.netbout.rest;
 
+import com.jcabi.urn.URN;
+import com.jcabi.urn.URNMocker;
 import com.netbout.spi.Identity;
 import com.netbout.spi.IdentityMocker;
 import com.netbout.spi.OwnProfileMocker;
-import com.netbout.spi.Urn;
-import com.netbout.spi.UrnMocker;
 import com.rexsl.test.XhtmlMatchers;
 import java.awt.image.BufferedImage;
 import java.io.InputStream;
@@ -81,11 +81,11 @@ public final class FriendsRsTest {
                 new IdentityMocker().withProfile(
                     new OwnProfileMocker().withPhoto(photo).mock()
                 ).mock()
-            ).when(identity).friend(Mockito.any(Urn.class));
+            ).when(identity).friend(Mockito.any(URN.class));
             final FriendsRs rest = new NbResourceMocker()
                 .withIdentity(identity)
                 .mock(FriendsRs.class);
-            final Response response = rest.photo(new UrnMocker().mock());
+            final Response response = rest.photo(new URNMocker().mock());
             MatcherAssert.assertThat(
                 response,
                 Matchers.allOf(

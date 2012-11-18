@@ -29,12 +29,12 @@
  */
 package com.netbout.rest.rexsl.scripts
 
-import com.netbout.spi.Urn
+import com.jcabi.urn.URN
 import com.netbout.spi.client.RestSession
 import org.hamcrest.MatcherAssert
 import org.hamcrest.Matchers
 
-def ozzie = new RestSession(rexsl.home).authenticate(new Urn('urn:test:ozzie'), '')
+def ozzie = new RestSession(rexsl.home).authenticate(new URN('urn:test:ozzie'), '')
 
 def bout = ozzie.start()
 bout.post('Hi there!')

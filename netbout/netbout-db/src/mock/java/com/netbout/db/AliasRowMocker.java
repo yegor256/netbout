@@ -26,7 +26,7 @@
  */
 package com.netbout.db;
 
-import com.netbout.spi.Urn;
+import com.jcabi.urn.URN;
 import java.util.Random;
 
 /**
@@ -44,7 +44,7 @@ public final class AliasRowMocker {
     /**
      * The identity it is related to.
      */
-    private final transient Urn identity;
+    private final transient URN identity;
 
     /**
      * The alias.
@@ -55,7 +55,7 @@ public final class AliasRowMocker {
      * Public ctor.
      * @param name The identity
      */
-    public AliasRowMocker(final Urn name) {
+    public AliasRowMocker(final URN name) {
         this.identity = name;
         this.alias = String.format(
             "Captain William Bones no.%d",

@@ -27,13 +27,13 @@
 package com.netbout.rest.auth;
 
 import com.jcabi.log.Logger;
+import com.jcabi.urn.URN;
 import com.netbout.hub.Hub;
 import com.netbout.spi.Bout;
 import com.netbout.spi.Friend;
 import com.netbout.spi.Identity;
 import com.netbout.spi.OwnProfile;
 import com.netbout.spi.Query;
-import com.netbout.spi.Urn;
 import java.net.URL;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -45,7 +45,7 @@ import javax.xml.bind.annotation.XmlType;
 import org.apache.commons.lang.LocaleUtils;
 
 /**
- * Remote identity, returned by {@link AuthMediator#authenticate(Urn,String)}.
+ * Remote identity, returned by {@link AuthMediator#authenticate(URN,String)}.
  *
  * <p>The class has to be public because it's instantiated by JAXB.
  *
@@ -64,7 +64,7 @@ public final class RemoteIdentity implements Identity {
     /**
      * Identity name.
      */
-    private transient Urn iname;
+    private transient URN iname;
 
     /**
      * Profile of identity.
@@ -80,11 +80,11 @@ public final class RemoteIdentity implements Identity {
      * Find it in hub and return.
      * @param hub The hub to find in
      * @return The identity found
-     * @throws Identity.UnreachableUrnException If can't find it
+     * @throws Identity.UnreachableURNException If can't find it
      * @checkstyle RedundantThrows (4 lines)
      */
     public Identity findIn(final Hub hub)
-        throws Identity.UnreachableUrnException {
+        throws Identity.UnreachableURNException {
         final Identity identity = hub.identity(this.iname);
         for (String alias : this.profile().aliases()) {
             identity.profile().alias(alias);
@@ -118,7 +118,7 @@ public final class RemoteIdentity implements Identity {
     @XmlElement
     public void setName(final String name) {
         try {
-            this.iname = new Urn(name);
+            this.iname = new URN(name);
         } catch (java.net.URISyntaxException ex) {
             this.problems.add(
                 String.format(
@@ -192,7 +192,7 @@ public final class RemoteIdentity implements Identity {
      * {@inheritDoc}
      */
     @Override
-    public Urn name() {
+    public URN name() {
         this.validate();
         return this.iname;
     }
@@ -250,7 +250,7 @@ public final class RemoteIdentity implements Identity {
      * {@inheritDoc}
      */
     @Override
-    public Friend friend(final Urn name) {
+    public Friend friend(final URN name) {
         throw new UnsupportedOperationException("#friend()");
     }
 

@@ -27,8 +27,8 @@
 package com.netbout.hub;
 
 import com.jcabi.log.Logger;
+import com.jcabi.urn.URN;
 import com.netbout.spi.Identity;
-import com.netbout.spi.Urn;
 import java.net.URL;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -37,17 +37,17 @@ import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 
 /**
- * Mocker of {@link UrnResolver}.
+ * Mocker of {@link URNResolver}.
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class UrnResolverMocker {
+public final class URNResolverMocker {
 
     /**
      * The object.
      */
-    private final transient UrnResolver resolver =
-        Mockito.mock(UrnResolver.class);
+    private final transient URNResolver resolver =
+        Mockito.mock(URNResolver.class);
 
     /**
      * Namespaces and related URL templates.
@@ -58,27 +58,27 @@ public final class UrnResolverMocker {
     /**
      * Public ctor.
      */
-    public UrnResolverMocker() {
+    public URNResolverMocker() {
         final Answer<URL> answer = new Answer<URL>() {
             public URL answer(final InvocationOnMock invocation) {
-                final Urn urn = (Urn) invocation.getArguments()[0];
+                final URN urn = (URN) invocation.getArguments()[0];
                 final String nid = urn.nid();
-                if (!UrnResolverMocker.this.namespaces.containsKey(nid)) {
+                if (!URNResolverMocker.this.namespaces.containsKey(nid)) {
                     throw new IllegalArgumentException(
                         Logger.format(
                             "NID of '%s' is not registered among %[list]s",
                             urn,
-                            UrnResolverMocker.this.namespaces.keySet()
+                            URNResolverMocker.this.namespaces.keySet()
                         )
                     );
                 }
-                return UrnResolverMocker.this.namespaces.get(nid);
+                return URNResolverMocker.this.namespaces.get(nid);
             }
         };
         try {
             Mockito.doAnswer(answer).when(this.resolver)
-                .authority(Mockito.any(Urn.class));
-        } catch (Identity.UnreachableUrnException ex) {
+                .authority(Mockito.any(URN.class));
+        } catch (Identity.UnreachableURNException ex) {
             throw new IllegalArgumentException(ex);
         }
     }
@@ -89,7 +89,7 @@ public final class UrnResolverMocker {
      * @param url The URL to return
      * @return This object
      */
-    public UrnResolverMocker resolveAs(final String name, final URL url) {
+    public URNResolverMocker resolveAs(final String name, final URL url) {
         this.namespaces.put(name, url);
         return this;
     }
@@ -98,7 +98,7 @@ public final class UrnResolverMocker {
      * Build it.
      * @return The resolver
      */
-    public UrnResolver mock() {
+    public URNResolver mock() {
         return this.resolver;
     }
 

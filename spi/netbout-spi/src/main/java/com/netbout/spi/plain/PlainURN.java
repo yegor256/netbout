@@ -27,61 +27,89 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
  * OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.netbout.spi;
+package com.netbout.spi.plain;
 
-import java.util.UUID;
+import com.jcabi.urn.URN;
+import com.netbout.spi.Plain;
 
 /**
- * Mocker of {@link Urn}.
+ * Plain URN.
+ *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class UrnMocker {
+public final class PlainURN implements Plain<URN> {
 
     /**
-     * Namespace ID.
+     * Prefix.
      */
-    private transient String nid;
+    private static final String PREFIX = "URN:";
 
     /**
-     * Nammespace specific string.
+     * The value.
      */
-    private transient String nss;
+    private final transient URN urn;
 
     /**
      * Public ctor.
+     * @param text The text presentation
      */
-    public UrnMocker() {
-        this.nid = "test";
-        this.nss = UUID.randomUUID().toString();
+    public PlainURN(final String text) {
+        this.urn = URN.create(text.substring(PlainURN.PREFIX.length()));
     }
 
     /**
-     * With this namespace.
-     * @param name The namespace
-     * @return This object
+     * Public ctor.
+     * @param addr The URN
      */
-    public UrnMocker withNid(final String name) {
-        this.nid = name;
-        return this;
+    public PlainURN(final URN addr) {
+        this.urn = addr;
     }
 
     /**
-     * With this nss.
-     * @param text The nss
-     * @return This object
+     * Is it of our type?
+     * @param text The text
+     * @return Is it or not?
      */
-    public UrnMocker withNss(final String text) {
-        this.nss = text;
-        return this;
+    public static boolean isIt(final String text) {
+        return text.startsWith(PlainURN.PREFIX);
     }
 
     /**
-     * Mock it.
-     * @return Mocked URN
+     * {@inheritDoc}
      */
-    public Urn mock() {
-        return new Urn(this.nid, this.nss);
+    @Override
+    public int hashCode() {
+        return this.urn.hashCode();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean equals(final Object obj) {
+        return obj == this || ((obj instanceof PlainURN)
+            && (this.hashCode() == obj.hashCode()));
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public URN value() {
+        return this.urn;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String toString() {
+        return String.format(
+            "%s%s",
+            PlainURN.PREFIX,
+            this.urn.toString()
+        );
     }
 
 }

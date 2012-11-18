@@ -26,9 +26,9 @@
  */
 package com.netbout.rest.auth;
 
-import com.netbout.hub.UrnResolver;
-import com.netbout.hub.UrnResolverMocker;
-import com.netbout.spi.Urn;
+import com.jcabi.urn.URN;
+import com.netbout.hub.URNResolver;
+import com.netbout.hub.URNResolverMocker;
 import com.rexsl.core.Manifests;
 import com.rexsl.test.ContainerMocker;
 import java.util.Locale;
@@ -54,14 +54,14 @@ public final class AuthMediatorTest {
     @Test
     public void authenticatesFacebookIdentity() throws Exception {
         final String secret = "some-super-secret";
-        final Urn iname = new Urn(FacebookRs.NAMESPACE, "1234567");
+        final URN iname = new URN(FacebookRs.NAMESPACE, "1234567");
         final String photo = "http://localhost/some-pic.png";
         final ContainerMocker container = new ContainerMocker()
             .expectMethod(Matchers.equalTo("GET"))
             .expectRequestUri(Matchers.equalTo("/"))
             .expectParam(
                 "identity",
-                Matchers.equalTo(new Urn(FacebookRs.NAMESPACE, "").toString())
+                Matchers.equalTo(new URN(FacebookRs.NAMESPACE, "").toString())
             )
             .expectParam("secret", Matchers.equalTo(secret))
             .expectParam(
@@ -84,11 +84,11 @@ public final class AuthMediatorTest {
             )
             .returnHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_XML)
             .mock();
-        final UrnResolver resolver = new UrnResolverMocker()
+        final URNResolver resolver = new URNResolverMocker()
             .resolveAs(FacebookRs.NAMESPACE, container.home().toURL())
             .mock();
         final RemoteIdentity identity = new AuthMediator(resolver)
-            .authenticate(new Urn(FacebookRs.NAMESPACE, ""), secret);
+            .authenticate(new URN(FacebookRs.NAMESPACE, ""), secret);
         MatcherAssert.assertThat(identity.name(), Matchers.equalTo(iname));
         MatcherAssert.assertThat(
             identity.profile().photo().toString(),
@@ -114,11 +114,11 @@ public final class AuthMediatorTest {
             .returnBody("<page></page>")
             .returnHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_XML)
             .mock();
-        final UrnResolver resolver = new UrnResolverMocker()
+        final URNResolver resolver = new URNResolverMocker()
             .resolveAs(FacebookRs.NAMESPACE, container.home().toURL())
             .mock();
         final RemoteIdentity identity = new AuthMediator(resolver)
-            .authenticate(new Urn(FacebookRs.NAMESPACE, ""), "secret-2");
+            .authenticate(new URN(FacebookRs.NAMESPACE, ""), "secret-2");
         identity.name();
     }
 
@@ -138,11 +138,11 @@ public final class AuthMediatorTest {
         )
             .returnHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_XML)
             .mock();
-        final UrnResolver resolver = new UrnResolverMocker()
+        final URNResolver resolver = new URNResolverMocker()
             .resolveAs(FacebookRs.NAMESPACE, container.home().toURL())
             .mock();
         final RemoteIdentity identity = new AuthMediator(resolver)
-            .authenticate(new Urn(FacebookRs.NAMESPACE, ""), "secret-5");
+            .authenticate(new URN(FacebookRs.NAMESPACE, ""), "secret-5");
         MatcherAssert.assertThat(
             identity.profile().photo(),
             Matchers.notNullValue()

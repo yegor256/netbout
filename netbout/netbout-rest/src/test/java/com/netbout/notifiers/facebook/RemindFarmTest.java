@@ -26,8 +26,8 @@
  */
 package com.netbout.notifiers.facebook;
 
+import com.jcabi.urn.URN;
 import com.netbout.rest.auth.FacebookRs;
-import com.netbout.spi.Urn;
 import org.junit.Test;
 
 /**
@@ -45,7 +45,7 @@ public final class RemindFarmTest {
     @Test
     public void sendsAppRequestsToFacebookUsers() throws Exception {
         final RemindFarm farm = new RemindFarm();
-        final Urn name = new Urn(FacebookRs.NAMESPACE, "1531296526");
+        final URN name = new URN(FacebookRs.NAMESPACE, "1531296526");
         final String marker = "test";
         assert marker != null;
         assert name != null;

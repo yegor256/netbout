@@ -27,13 +27,13 @@
 package com.netbout.inf;
 
 import com.jcabi.log.Logger;
+import com.jcabi.urn.URNMocker;
 import com.netbout.inf.notices.MessagePostedNotice;
 import com.netbout.spi.Bout;
 import com.netbout.spi.BoutMocker;
 import com.netbout.spi.Message;
 import com.netbout.spi.MessageMocker;
 import com.netbout.spi.Query;
-import com.netbout.spi.UrnMocker;
 import com.rexsl.test.SimpleXml;
 import com.rexsl.test.XmlDocument;
 import java.util.Iterator;
@@ -177,7 +177,7 @@ public final class InfinityTest {
             .titledAs(props.getProperty("bout.title", "some title"))
             .withNumber(Long.valueOf(props.getProperty("bout.number", "55")));
         final String[] urns = props.getProperty(
-            "bout.participants", new UrnMocker().mock().toString()
+            "bout.participants", new URNMocker().mock().toString()
         ).split("\\s*,\\s*");
         for (String urn : urns) {
             mocker.withParticipant(urn);

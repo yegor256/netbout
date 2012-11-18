@@ -26,12 +26,12 @@
  */
 package com.netbout.rest.auth;
 
+import com.jcabi.urn.URN;
+import com.jcabi.urn.URNMocker;
 import com.netbout.rest.ForwardException;
 import com.netbout.rest.NbResourceMocker;
 import com.netbout.spi.Identity;
 import com.netbout.spi.IdentityMocker;
-import com.netbout.spi.Urn;
-import com.netbout.spi.UrnMocker;
 import com.rexsl.core.Manifests;
 import com.rexsl.test.ContainerMocker;
 import java.net.HttpURLConnection;
@@ -55,7 +55,7 @@ public final class AuthRsTest {
      */
     @Test
     public void authenticatesByNamesAndSecret() throws Exception {
-        final Urn iname = new UrnMocker().mock();
+        final URN iname = new URNMocker().mock();
         final String photo = "http://localhost/some-pic.png";
         final ContainerMocker container = new ContainerMocker()
             .expectMethod(Matchers.equalTo("GET"))
@@ -102,7 +102,7 @@ public final class AuthRsTest {
         final AuthRs rest = new NbResourceMocker()
             .withNamespaceURL(container.home().toURL())
             .mock(AuthRs.class);
-        rest.auth(new Urn("foo", "test"), "", "/path-to-go");
+        rest.auth(new URN("foo", "test"), "", "/path-to-go");
     }
 
     /**
@@ -111,7 +111,7 @@ public final class AuthRsTest {
      */
     @Test
     public void authenticatesWithSuperCode() throws Exception {
-        final Urn name = Urn.create("urn:test:123456789");
+        final URN name = URN.create("urn:test:123456789");
         final AuthRs rest = new NbResourceMocker().mock(AuthRs.class);
         rest.setSudo(Manifests.read("Netbout-SuperSecret"));
         final Response response = rest.auth(name, null, "/");

@@ -30,7 +30,7 @@ import com.jcabi.jdbc.JdbcSession;
 import com.jcabi.jdbc.NotEmptyHandler;
 import com.jcabi.jdbc.SingleHandler;
 import com.jcabi.jdbc.Utc;
-import com.netbout.spi.Urn;
+import com.jcabi.urn.URN;
 import com.netbout.spi.cpa.Farm;
 import com.netbout.spi.cpa.Operation;
 import java.sql.ResultSet;
@@ -169,14 +169,14 @@ public final class MessageFarm {
      * @return Name of the author
      */
     @Operation("get-message-author")
-    public Urn getMessageAuthor(final Long number) {
+    public URN getMessageAuthor(final Long number) {
         return new JdbcSession(Database.source())
             .sql("SELECT author FROM message WHERE number = ?")
             .set(number)
             .select(
-                new JdbcSession.Handler<Urn>() {
+                new JdbcSession.Handler<URN>() {
                     @Override
-                    public Urn handle(final ResultSet rset)
+                    public URN handle(final ResultSet rset)
                         throws SQLException {
                         if (!rset.next()) {
                             throw new IllegalArgumentException(
@@ -186,7 +186,7 @@ public final class MessageFarm {
                                 )
                             );
                         }
-                        return Urn.create(rset.getString(1));
+                        return URN.create(rset.getString(1));
                     }
                 }
             );
@@ -198,7 +198,7 @@ public final class MessageFarm {
      * @param author The author of the message to change
      */
     @Operation("changed-message-author")
-    public void changedMessageAuthor(final Long number, final Urn author) {
+    public void changedMessageAuthor(final Long number, final URN author) {
         new JdbcSession(Database.source())
             .sql("UPDATE message SET author = ? WHERE number = ?")
             .set(author)

@@ -27,6 +27,7 @@
 package com.netbout.inf.functors;
 
 import com.jcabi.log.Logger;
+import com.jcabi.urn.URN;
 import com.netbout.inf.Atom;
 import com.netbout.inf.Cursor;
 import com.netbout.inf.Functor;
@@ -40,7 +41,6 @@ import com.netbout.inf.notices.KickOffNotice;
 import com.netbout.inf.notices.MessagePostedNotice;
 import com.netbout.spi.Bout;
 import com.netbout.spi.Participant;
-import com.netbout.spi.Urn;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
@@ -211,7 +211,7 @@ final class Bundled implements Functor {
      * @return Marker
      */
     private static String marker(final Bout bout) {
-        final Set<Urn> names = new TreeSet<Urn>();
+        final Set<URN> names = new TreeSet<URN>();
         for (Participant dude : bout.participants()) {
             names.add(dude.name());
         }

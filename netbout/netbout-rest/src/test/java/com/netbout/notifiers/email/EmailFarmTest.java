@@ -26,13 +26,13 @@
  */
 package com.netbout.notifiers.email;
 
+import com.jcabi.urn.URN;
+import com.jcabi.urn.URNMocker;
 import com.netbout.hub.HubMocker;
 import com.netbout.spi.Bout;
 import com.netbout.spi.BoutMocker;
 import com.netbout.spi.Identity;
 import com.netbout.spi.IdentityMocker;
-import com.netbout.spi.Urn;
-import com.netbout.spi.UrnMocker;
 import java.util.List;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
@@ -80,16 +80,16 @@ public final class EmailFarmTest {
      * @throws Exception If there is some problem inside
      */
     @Test
-    public void constructsUrnFromEmail() throws Exception {
+    public void constructsURNFromEmail() throws Exception {
         final EmailFarm farm = new EmailFarm();
-        final List<Urn> urns = farm.findIdentitiesByKeyword(
-            new UrnMocker().mock(),
+        final List<URN> urns = farm.findIdentitiesByKeyword(
+            new URNMocker().mock(),
             "abc@a.com"
         );
         MatcherAssert.assertThat(urns, Matchers.hasSize(1));
         MatcherAssert.assertThat(
             urns.get(0),
-            Matchers.equalTo(new Urn("urn:email:abc%40a%2Ecom"))
+            Matchers.equalTo(new URN("urn:email:abc%40a%2Ecom"))
         );
     }
 
@@ -101,7 +101,7 @@ public final class EmailFarmTest {
     public void ingoresOtherKeywords() throws Exception {
         MatcherAssert.assertThat(
             new EmailFarm().findIdentitiesByKeyword(
-                new UrnMocker().mock(),
+                new URNMocker().mock(),
                 "some text"
             ),
             Matchers.nullValue()

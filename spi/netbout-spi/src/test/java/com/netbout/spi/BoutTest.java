@@ -29,6 +29,7 @@
  */
 package com.netbout.spi;
 
+import com.jcabi.urn.URNMocker;
 import java.util.Date;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
@@ -93,8 +94,8 @@ public final class BoutTest {
     @Test
     public void canAssignParticipantsToBout() throws Exception {
         final Bout bout = new BoutMocker()
-            .withParticipant(new UrnMocker().mock())
-            .withParticipant(new UrnMocker().mock())
+            .withParticipant(new URNMocker().mock())
+            .withParticipant(new URNMocker().mock())
             .mock();
         MatcherAssert.assertThat(
             bout.participants().size(),

@@ -29,7 +29,7 @@
  */
 package com.netbout.rest.rexsl.scripts
 
-import com.netbout.spi.Urn
+import com.jcabi.urn.URN
 import com.netbout.spi.client.EtaAssertion
 import com.netbout.spi.client.RestSession
 import com.netbout.spi.client.RestUriBuilder
@@ -38,7 +38,7 @@ import javax.ws.rs.core.HttpHeaders
 import javax.ws.rs.core.MediaType
 import org.hamcrest.Matchers
 
-def william = new RestSession(rexsl.home).authenticate(new Urn('urn:test:willy'), '')
+def william = new RestSession(rexsl.home).authenticate(new URN('urn:test:willy'), '')
 def bout = william.start()
 bout.post('Hi there!')
 

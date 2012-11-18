@@ -29,6 +29,8 @@
  */
 package com.netbout.spi;
 
+import com.jcabi.urn.URN;
+import com.jcabi.urn.URNMocker;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -65,7 +67,7 @@ public final class IdentityMocker {
      * Public ctor.
      */
     public IdentityMocker() {
-        this.namedAs(new UrnMocker().mock());
+        this.namedAs(new URNMocker().mock());
         this.belongsTo("http://localhost/set-by-IdentityMocker");
         this.withProfile(new OwnProfileMocker().mock());
         Mockito.doAnswer(
@@ -118,7 +120,7 @@ public final class IdentityMocker {
      * @return This object
      */
     public IdentityMocker namedAs(final String name) {
-        return this.namedAs(Urn.create(name));
+        return this.namedAs(URN.create(name));
     }
 
     /**
@@ -126,7 +128,7 @@ public final class IdentityMocker {
      * @param name The name of it
      * @return This object
      */
-    public IdentityMocker namedAs(final Urn name) {
+    public IdentityMocker namedAs(final URN name) {
         Mockito.doReturn(name).when(this.identity).name();
         return this;
     }

@@ -26,7 +26,7 @@
  */
 package com.netbout.hub;
 
-import com.netbout.spi.Urn;
+import com.jcabi.urn.URN;
 import java.util.Date;
 
 /**
@@ -59,13 +59,13 @@ public interface MessageDt extends Comparable<MessageDt> {
      * Set identity.
      * @param idnt The identity
      */
-    void setAuthor(Urn idnt);
+    void setAuthor(URN idnt);
 
     /**
      * Get identity.
      * @return The identity
      */
-    Urn getAuthor();
+    URN getAuthor();
 
     /**
      * Set text.
@@ -83,13 +83,13 @@ public interface MessageDt extends Comparable<MessageDt> {
      * Add indentity, who has seen the message.
      * @param identity The identity
      */
-    void addSeenBy(Urn identity);
+    void addSeenBy(URN identity);
 
     /**
      * Was it seen by this identity?
      * @param identity The identity
      * @return Was it seen?
      */
-    Boolean isSeenBy(Urn identity);
+    Boolean isSeenBy(URN identity);
 
 }

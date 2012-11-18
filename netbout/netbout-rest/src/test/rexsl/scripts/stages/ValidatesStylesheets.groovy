@@ -29,17 +29,17 @@
  */
 package com.netbout.rest.rexsl.scripts.stages
 
-import com.netbout.spi.Urn
+import com.jcabi.urn.URN
 import com.netbout.spi.client.RestSession
 import com.netbout.spi.client.RestUriBuilder
 import com.rexsl.test.RestTester
 
-def jeff = new RestSession(rexsl.home).authenticate(new Urn('urn:test:jeff'), '')
+def jeff = new RestSession(rexsl.home).authenticate(new URN('urn:test:jeff'), '')
 def bout = jeff.start()
 bout.post('hi there!')
 bout.rename('Stage stylesheet validation')
-def helper = new Urn('urn:test:hh')
-bout.invite(jeff.friend(new Urn('urn:facebook:1531296526')))
+def helper = new URN('urn:test:hh')
+bout.invite(jeff.friend(new URN('urn:facebook:1531296526')))
 bout.invite(jeff.friend(helper))
 
 // validate global bout XSL

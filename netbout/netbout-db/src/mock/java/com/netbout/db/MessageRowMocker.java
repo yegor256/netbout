@@ -26,7 +26,7 @@
  */
 package com.netbout.db;
 
-import com.netbout.spi.Urn;
+import com.jcabi.urn.URN;
 import java.util.Date;
 
 /**
@@ -54,7 +54,7 @@ public final class MessageRowMocker {
     /**
      * Author of bout.
      */
-    private transient Urn author = new IdentityRowMocker().mock();
+    private transient URN author = new IdentityRowMocker().mock();
 
     /**
      * Public ctor.
@@ -89,7 +89,7 @@ public final class MessageRowMocker {
      * @param name The author
      * @return THis object
      */
-    public MessageRowMocker withAuthor(final Urn name) {
+    public MessageRowMocker withAuthor(final URN name) {
         this.author = name;
         return this;
     }

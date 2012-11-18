@@ -26,7 +26,7 @@
  */
 package com.netbout.db;
 
-import com.netbout.spi.Urn;
+import com.jcabi.urn.URN;
 import java.util.List;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
@@ -51,7 +51,7 @@ public final class AliasFarmTest {
     @Test
     public void addsAnAliasAndRetrievesItBack() throws Exception {
         final String alias = "\u0443\u0440\u0430";
-        final Urn identity = new IdentityRowMocker()
+        final URN identity = new IdentityRowMocker()
             .withAlias(alias)
             .mock();
         final List<String> aliases = this.farm.getAliasesOfIdentity(identity);

@@ -26,13 +26,13 @@
  */
 package com.netbout.hub;
 
+import com.jcabi.urn.URN;
+import com.jcabi.urn.URNMocker;
 import com.netbout.inf.Infinity;
 import com.netbout.spi.Bout;
 import com.netbout.spi.Identity;
 import com.netbout.spi.IdentityMocker;
 import com.netbout.spi.Query;
-import com.netbout.spi.Urn;
-import com.netbout.spi.UrnMocker;
 import org.apache.commons.lang.StringUtils;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
@@ -118,7 +118,7 @@ public final class HubBoutTest {
         final BoutDt data = this.boutDtMocker.mock();
         final Bout bout = new HubBout(this.hub, this.viewer, data);
         final Identity friend = Mockito.mock(Identity.class);
-        final Urn fname = new UrnMocker().mock();
+        final URN fname = new URNMocker().mock();
         Mockito.doReturn(fname).when(friend).name();
         bout.invite(friend);
         Mockito.verify(data).addParticipant(fname);

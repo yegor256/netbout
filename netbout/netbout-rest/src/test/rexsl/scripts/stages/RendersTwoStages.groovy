@@ -29,7 +29,7 @@
  */
 package com.netbout.rest.rexsl.scripts.stages
 
-import com.netbout.spi.Urn
+import com.jcabi.urn.URN
 import com.netbout.spi.client.EtaAssertion
 import com.netbout.spi.client.RestSession
 import com.netbout.spi.client.RestUriBuilder
@@ -37,14 +37,14 @@ import com.rexsl.test.RestTester
 import javax.ws.rs.core.HttpHeaders
 import javax.ws.rs.core.MediaType
 
-def elisabeth = new RestSession(rexsl.home).authenticate(new Urn('urn:test:elisabeth'), '')
+def elisabeth = new RestSession(rexsl.home).authenticate(new URN('urn:test:elisabeth'), '')
 def bout = elisabeth.start()
 bout.post('hi there!')
 bout.rename('Two stages in one bout')
-bout.invite(elisabeth.friend(new Urn('urn:facebook:1531296526')))
+bout.invite(elisabeth.friend(new URN('urn:facebook:1531296526')))
 
 // invite two helpers there
-['urn:test:hh', 'urn:test:dh'].each { bout.invite(elisabeth.friend(new Urn(it))) }
+['urn:test:hh', 'urn:test:dh'].each { bout.invite(elisabeth.friend(new URN(it))) }
 
 // validate that there are really two stages in the XML
 RestTester.start(RestUriBuilder.from(bout))

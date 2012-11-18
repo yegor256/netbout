@@ -29,12 +29,12 @@ package com.netbout.inf;
 import com.jcabi.log.Logger;
 import com.jcabi.log.VerboseRunnable;
 import com.jcabi.log.VerboseThreads;
+import com.jcabi.urn.URNMocker;
 import com.netbout.inf.notices.MessagePostedNotice;
 import com.netbout.spi.Bout;
 import com.netbout.spi.BoutMocker;
 import com.netbout.spi.Message;
 import com.netbout.spi.MessageMocker;
-import com.netbout.spi.UrnMocker;
 import com.rexsl.core.Manifests;
 import java.util.concurrent.Callable;
 import java.util.concurrent.CountDownLatch;
@@ -270,7 +270,7 @@ public final class MuxTest {
                 public Bout bout() {
                     return new BoutMocker()
                         .withNumber(MuxTest.NUMBER.incrementAndGet())
-                        .withParticipant(new UrnMocker().mock())
+                        .withParticipant(new URNMocker().mock())
                         .mock();
                 }
             }

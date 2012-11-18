@@ -26,11 +26,11 @@
  */
 package com.netbout.hub.data;
 
+import com.jcabi.urn.URN;
+import com.jcabi.urn.URNMocker;
 import com.netbout.hub.BoutDtMocker;
 import com.netbout.hub.PowerHub;
 import com.netbout.hub.PowerHubMocker;
-import com.netbout.spi.Urn;
-import com.netbout.spi.UrnMocker;
 import java.util.Random;
 import org.hamcrest.MatcherAssert;
 import org.junit.Test;
@@ -55,7 +55,7 @@ public final class MessageDataTest {
             new Random().nextLong(),
             new BoutDtMocker().mock()
         );
-        final Urn identity = new UrnMocker().mock();
+        final URN identity = new URNMocker().mock();
         data.addSeenBy(identity);
         Mockito.verify(hub).make("was-message-seen");
         // @checkstyle MultipleStringLiterals (1 line)

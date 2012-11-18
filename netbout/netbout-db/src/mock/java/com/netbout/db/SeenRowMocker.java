@@ -26,7 +26,7 @@
  */
 package com.netbout.db;
 
-import com.netbout.spi.Urn;
+import com.jcabi.urn.URN;
 
 /**
  * Mocker of {@code SEEN} row in a database.
@@ -43,14 +43,14 @@ public final class SeenRowMocker {
     /**
      * The identity it is related to.
      */
-    private final transient Urn identity;
+    private final transient URN identity;
 
     /**
      * Public ctor.
      * @param msg The number of message
      * @param name The identity
      */
-    public SeenRowMocker(final Long msg, final Urn name) {
+    public SeenRowMocker(final Long msg, final URN name) {
         this.message = msg;
         this.identity = name;
     }

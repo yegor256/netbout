@@ -26,7 +26,7 @@
  */
 package com.netbout.db;
 
-import com.netbout.spi.Urn;
+import com.jcabi.urn.URN;
 import java.net.URL;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
@@ -53,7 +53,7 @@ public final class IdentityFarmTest {
      */
     @Test
     public void changesIdentityPhoto() throws Exception {
-        final Urn identity = new IdentityRowMocker().mock();
+        final URN identity = new IdentityRowMocker().mock();
         final URL photo = new URL("http://localhost/img.png");
         this.farm.changedIdentityPhoto(identity, photo);
         MatcherAssert.assertThat(
@@ -69,10 +69,10 @@ public final class IdentityFarmTest {
     @Test
     @org.junit.Ignore
     public void findsIdentitiesByTheirAliases() throws Exception {
-        final Urn who = new IdentityRowMocker().mock();
+        final URN who = new IdentityRowMocker().mock();
         final Long bout = new BoutRowMocker().mock();
         new ParticipantRowMocker(bout).namedAs(who).mock();
-        final Urn identity = new IdentityRowMocker()
+        final URN identity = new IdentityRowMocker()
             .withAlias("martin.fowler@example.com")
             .withAlias("Martin Fowler")
             .withAlias("marty")
@@ -100,10 +100,10 @@ public final class IdentityFarmTest {
      */
     @Test
     public void findsIdentitiesByTheirNames() throws Exception {
-        final Urn who = new IdentityRowMocker().mock();
+        final URN who = new IdentityRowMocker().mock();
         final Long bout = new BoutRowMocker().mock();
         new ParticipantRowMocker(bout).namedAs(who).mock();
-        final Urn identity = new IdentityRowMocker()
+        final URN identity = new IdentityRowMocker()
             .namedAs("urn:test:test%40example%2Ecom")
             .withAlias("test@example.com")
             .mock();
@@ -126,10 +126,10 @@ public final class IdentityFarmTest {
      */
     @Test
     public void findsIdentityByExactName() throws Exception {
-        final Urn identity = new IdentityRowMocker().mock();
+        final URN identity = new IdentityRowMocker().mock();
         MatcherAssert.assertThat(
             this.farm.findIdentitiesByKeyword(
-                new Urn("urn:foo:absent-identity"), identity.toString()
+                new URN("urn:foo:absent-identity"), identity.toString()
             ),
             Matchers.hasItem(identity)
         );
@@ -141,10 +141,10 @@ public final class IdentityFarmTest {
      */
     @Test
     public void excludeNonObviousIdentities() throws Exception {
-        final Urn who = new IdentityRowMocker().mock();
+        final URN who = new IdentityRowMocker().mock();
         final Long bout = new BoutRowMocker().mock();
         new ParticipantRowMocker(bout).namedAs(who).mock();
-        final Urn identity = new IdentityRowMocker()
+        final URN identity = new IdentityRowMocker()
             .namedAs("urn:netbout:hh")
             .withAlias("freeDOM")
             .mock();
@@ -161,8 +161,8 @@ public final class IdentityFarmTest {
      */
     @Test
     public void joinsIdentityOnDemand() throws Exception {
-        final Urn main = new IdentityRowMocker().mock();
-        final Urn child = new IdentityRowMocker().mock();
+        final URN main = new IdentityRowMocker().mock();
+        final URN child = new IdentityRowMocker().mock();
         final Long bout = new BoutRowMocker().withParticipant(child).mock();
         new ParticipantRowMocker(bout).namedAs(main).mock();
         final String alias = "the-same-alias-for-both-identities";
@@ -181,7 +181,7 @@ public final class IdentityFarmTest {
      */
     @Test
     public void findsSilentIdentities() throws Exception {
-        final Urn who = new IdentityRowMocker().mock();
+        final URN who = new IdentityRowMocker().mock();
         final Long bout = new BoutRowMocker().withParticipant(who).mock();
         final Calendar cal = new GregorianCalendar();
         cal.add(Calendar.MONTH, -1);
@@ -205,7 +205,7 @@ public final class IdentityFarmTest {
      */
     @Test
     public void emptyListIfNoSilentIdentities() throws Exception {
-        final Urn who = new IdentityRowMocker().mock();
+        final URN who = new IdentityRowMocker().mock();
         final Long bout = new BoutRowMocker().withParticipant(who).mock();
         final Calendar cal = new GregorianCalendar();
         cal.add(Calendar.MINUTE, -1);

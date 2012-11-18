@@ -29,10 +29,10 @@
  */
 package com.netbout.spi.client;
 
+import com.jcabi.urn.URN;
 import com.netbout.spi.Friend;
 import com.netbout.spi.Participant;
 import com.netbout.spi.Profile;
-import com.netbout.spi.Urn;
 import java.net.HttpURLConnection;
 
 /**
@@ -51,14 +51,14 @@ final class RestParticipant implements Participant {
     /**
      * Number of this guy.
      */
-    private final transient Urn iname;
+    private final transient URN iname;
 
     /**
      * Public ctor.
      * @param clnt Rest client
      * @param nam Name of participant
      */
-    public RestParticipant(final RestClient clnt, final Urn nam) {
+    public RestParticipant(final RestClient clnt, final URN nam) {
         this.client = clnt;
         this.iname = nam;
     }
@@ -83,7 +83,7 @@ final class RestParticipant implements Participant {
      * {@inheritDoc}
      */
     @Override
-    public Urn name() {
+    public URN name() {
         return this.iname;
     }
 

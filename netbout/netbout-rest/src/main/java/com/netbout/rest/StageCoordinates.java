@@ -26,11 +26,11 @@
  */
 package com.netbout.rest;
 
+import com.jcabi.urn.URN;
 import com.netbout.hub.Hub;
 import com.netbout.spi.Bout;
 import com.netbout.spi.Friend;
 import com.netbout.spi.Participant;
-import com.netbout.spi.Urn;
 import com.netbout.spi.text.SecureString;
 import java.util.HashSet;
 import java.util.Set;
@@ -56,7 +56,7 @@ public final class StageCoordinates {
     /**
      * Name of stage.
      */
-    private transient Urn istage = new Urn();
+    private transient URN istage = new URN();
 
     /**
      * Place of stage.
@@ -67,7 +67,7 @@ public final class StageCoordinates {
      * Get stage.
      * @return The name of it
      */
-    public Urn stage() {
+    public URN stage() {
         if (this.stages == null) {
             throw new IllegalStateException(
                 "Call #normalize() before #stage()"
@@ -93,7 +93,7 @@ public final class StageCoordinates {
      * @param name The name of it
      * @return This object
      */
-    public StageCoordinates setStage(final Urn name) {
+    public StageCoordinates setStage(final URN name) {
         this.istage = name;
         this.iplace = "";
         return this;
@@ -132,7 +132,7 @@ public final class StageCoordinates {
         if (pair != null && pair.contains(StageCoordinates.SEPARATOR)) {
             try {
                 coords.setStage(
-                    new Urn(
+                    new URN(
                         SecureString.valueOf(
                             pair.substring(
                                 0,
@@ -150,10 +150,10 @@ public final class StageCoordinates {
                     ).text()
                 );
             } catch (java.net.URISyntaxException ex) {
-                coords.setStage(new Urn());
+                coords.setStage(new URN());
                 coords.setPlace("");
             } catch (com.netbout.spi.text.StringDecryptionException ex) {
-                coords.setStage(new Urn());
+                coords.setStage(new URN());
                 coords.setPlace("");
             }
         }
@@ -229,7 +229,7 @@ public final class StageCoordinates {
             }
         }
         if (!found) {
-            this.istage = new Urn();
+            this.istage = new URN();
         }
     }
 

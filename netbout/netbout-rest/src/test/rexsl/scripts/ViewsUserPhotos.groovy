@@ -29,7 +29,7 @@
  */
 package com.netbout.rest.rexsl.scripts
 
-import com.netbout.spi.Urn
+import com.jcabi.urn.URN
 import com.netbout.spi.client.RestSession
 import com.netbout.spi.client.RestUriBuilder
 import com.rexsl.test.RestTester
@@ -38,7 +38,7 @@ import javax.ws.rs.core.MediaType
 import org.hamcrest.MatcherAssert
 import org.hamcrest.Matchers
 
-def bruno = new RestSession(rexsl.home).authenticate(new Urn('urn:test:bruno'), '')
+def bruno = new RestSession(rexsl.home).authenticate(new URN('urn:test:bruno'), '')
 def url = RestTester.start(RestUriBuilder.from(bruno))
     .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_XML)
     .get('render inbox of a user')

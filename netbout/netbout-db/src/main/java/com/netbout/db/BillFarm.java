@@ -29,7 +29,7 @@ package com.netbout.db;
 import com.jcabi.jdbc.JdbcSession;
 import com.jcabi.jdbc.Utc;
 import com.jcabi.jdbc.VoidHandler;
-import com.netbout.spi.Urn;
+import com.jcabi.urn.URN;
 import com.netbout.spi.cpa.Farm;
 import com.netbout.spi.cpa.Operation;
 import java.util.List;
@@ -72,7 +72,7 @@ public final class BillFarm {
                     )
                 )
                 .set(parts[1])
-                .set(Urn.create(parts[2]))
+                .set(URN.create(parts[2]))
                 .set(Long.valueOf(parts[3]))
                 .set(bout)
                 .insert(handler);

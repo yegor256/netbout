@@ -30,7 +30,7 @@ import com.jcabi.jdbc.JdbcSession;
 import com.jcabi.jdbc.NotEmptyHandler;
 import com.jcabi.jdbc.Utc;
 import com.jcabi.jdbc.VoidHandler;
-import com.netbout.spi.Urn;
+import com.jcabi.urn.URN;
 import com.netbout.spi.cpa.Farm;
 import com.netbout.spi.cpa.Operation;
 
@@ -49,7 +49,7 @@ public final class SeenFarm {
      * @param identity The viewer
      */
     @Operation("message-was-seen")
-    public void messageWasSeen(final Long msg, final Urn identity) {
+    public void messageWasSeen(final Long msg, final URN identity) {
         new JdbcSession(Database.source())
             .sql("INSERT INTO seen (message, identity, date) VALUES (?, ?, ?)")
             .set(msg)
@@ -65,7 +65,7 @@ public final class SeenFarm {
      * @return Was it seen?
      */
     @Operation("was-message-seen")
-    public Boolean wasMessageSeen(final Long msg, final Urn identity) {
+    public Boolean wasMessageSeen(final Long msg, final URN identity) {
         return new JdbcSession(Database.source())
             .sql("SELECT message FROM seen WHERE message = ? AND identity = ?")
             .set(msg)

@@ -29,9 +29,9 @@
  */
 package com.netbout.spi.client;
 
+import com.jcabi.urn.URN;
 import com.netbout.spi.Friend;
 import com.netbout.spi.Message;
-import com.netbout.spi.Urn;
 import java.net.HttpURLConnection;
 import java.util.Date;
 import org.joda.time.DateTimeZone;
@@ -112,7 +112,7 @@ final class RestMessage implements Message {
      */
     @Override
     public Friend author() {
-        return new RestFriend(Urn.create(this.bySuffix("/author/text()")));
+        return new RestFriend(URN.create(this.bySuffix("/author/text()")));
     }
 
     /**

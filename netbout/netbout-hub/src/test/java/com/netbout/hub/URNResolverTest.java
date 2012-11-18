@@ -26,32 +26,32 @@
  */
 package com.netbout.hub;
 
-import com.netbout.spi.Urn;
+import com.jcabi.urn.URN;
 import java.net.URL;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;
 
 /**
- * Test case of {@link UrnResolver} and {@link UrnResolverMocker}.
+ * Test case of {@link URNResolver} and {@link URNResolverMocker}.
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class UrnResolverTest {
+public final class URNResolverTest {
 
     /**
-     * UrnResolver can mock basic operations.
+     * URNResolver can mock basic operations.
      * @throws Exception If there is some problem inside
      */
     @Test
     public void loadsUrlByNamespace() throws Exception {
         final String namespace = "alpha";
         final URL url = new URL("http://localhost/abc");
-        final UrnResolver resolver = new UrnResolverMocker()
+        final URNResolver resolver = new URNResolverMocker()
             .resolveAs(namespace, url)
             .mock();
         MatcherAssert.assertThat(
-            resolver.authority(new Urn(namespace, "nss")),
+            resolver.authority(new URN(namespace, "nss")),
             Matchers.equalTo(url)
         );
     }

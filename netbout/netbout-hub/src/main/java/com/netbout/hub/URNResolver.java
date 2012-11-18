@@ -26,8 +26,8 @@
  */
 package com.netbout.hub;
 
+import com.jcabi.urn.URN;
 import com.netbout.spi.Identity;
-import com.netbout.spi.Urn;
 import java.net.URL;
 import java.util.Map;
 
@@ -37,7 +37,7 @@ import java.util.Map;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public interface UrnResolver {
+public interface URNResolver {
 
     /**
      * Marker for URL template.
@@ -63,7 +63,7 @@ public interface UrnResolver {
          * @param owner Already registered owner
          * @param nsp The namespace
          */
-        public DuplicateNamespaceException(final Urn owner, final String nsp) {
+        public DuplicateNamespaceException(final URN owner, final String nsp) {
             super(String.format("'%s' registered by '%s'", nsp, owner));
         }
     }
@@ -73,10 +73,10 @@ public interface UrnResolver {
      * @param owner Who is registering
      * @param namespace The namespace to register
      * @param template URL template
-     * @throws UrnResolver.DuplicateNamespaceException If registered
+     * @throws URNResolver.DuplicateNamespaceException If registered
      */
     void register(Identity owner, String namespace, String template)
-        throws UrnResolver.DuplicateNamespaceException;
+        throws URNResolver.DuplicateNamespaceException;
 
     /**
      * Get all namespaces registered for the given identity.
@@ -89,9 +89,9 @@ public interface UrnResolver {
      * Resolve URN to URL (get is authority).
      * @param urn The URN
      * @return The authority
-     * @throws Identity.UnreachableUrnException If we can't reach it
+     * @throws Identity.UnreachableURNException If we can't reach it
      * @checkstyle RedundantThrows (2 lines)
      */
-    URL authority(Urn urn) throws Identity.UnreachableUrnException;
+    URL authority(URN urn) throws Identity.UnreachableURNException;
 
 }

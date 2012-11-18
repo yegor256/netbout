@@ -27,12 +27,12 @@
 package com.netbout.hub;
 
 import com.jcabi.log.Logger;
+import com.jcabi.urn.URN;
 import com.netbout.spi.Bout;
 import com.netbout.spi.Friend;
 import com.netbout.spi.Identity;
 import com.netbout.spi.OwnProfile;
 import com.netbout.spi.Query;
-import com.netbout.spi.Urn;
 import java.net.URL;
 import java.util.Set;
 
@@ -53,7 +53,7 @@ public final class HubIdentity implements Identity {
     /**
      * The name.
      */
-    private final transient Urn iname;
+    private final transient URN iname;
 
     /**
      * The profile.
@@ -65,7 +65,7 @@ public final class HubIdentity implements Identity {
      * @param ihub The hub
      * @param name The identity's name
      */
-    public HubIdentity(final PowerHub ihub, final Urn name) {
+    public HubIdentity(final PowerHub ihub, final URN name) {
         this.hub = ihub;
         this.iname = name;
         this.iprofile = new HubProfile(ihub, this);
@@ -119,7 +119,7 @@ public final class HubIdentity implements Identity {
     public URL authority() {
         try {
             return this.hub.resolver().authority(this.name());
-        } catch (Identity.UnreachableUrnException ex) {
+        } catch (Identity.UnreachableURNException ex) {
             throw new IllegalStateException(ex);
         }
     }
@@ -128,7 +128,7 @@ public final class HubIdentity implements Identity {
      * {@inheritDoc}
      */
     @Override
-    public Urn name() {
+    public URN name() {
         return this.iname;
     }
 
@@ -198,8 +198,8 @@ public final class HubIdentity implements Identity {
      * @checkstyle RedundantThrows (4 lines)
      */
     @Override
-    public Friend friend(final Urn name)
-        throws Identity.UnreachableUrnException {
+    public Friend friend(final URN name)
+        throws Identity.UnreachableURNException {
         final Identity identity = this.hub.identity(name);
         Logger.debug(
             this,

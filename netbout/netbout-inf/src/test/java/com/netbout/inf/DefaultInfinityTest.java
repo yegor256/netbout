@@ -28,13 +28,13 @@ package com.netbout.inf;
 
 import com.jcabi.log.VerboseRunnable;
 import com.jcabi.log.VerboseThreads;
+import com.jcabi.urn.URNMocker;
 import com.netbout.inf.notices.MessagePostedNotice;
 import com.netbout.spi.Bout;
 import com.netbout.spi.BoutMocker;
 import com.netbout.spi.Message;
 import com.netbout.spi.MessageMocker;
 import com.netbout.spi.Query;
-import com.netbout.spi.UrnMocker;
 import java.util.concurrent.Callable;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
@@ -63,7 +63,7 @@ public final class DefaultInfinityTest {
     public void findsMessageJustPosted() throws Exception {
         final Infinity inf = new DefaultInfinity(new FolderMocker().mock());
         final Bout bout = new BoutMocker()
-            .withParticipant(new UrnMocker().mock())
+            .withParticipant(new URNMocker().mock())
             .mock();
         final Message msg = new MessageMocker()
             .withText("some text to index")
@@ -131,7 +131,7 @@ public final class DefaultInfinityTest {
                                 @Override
                                 public Bout bout() {
                                     return new BoutMocker()
-                                        .withParticipant(new UrnMocker().mock())
+                                        .withParticipant(new URNMocker().mock())
                                         .mock();
                                 }
                             }
@@ -179,7 +179,7 @@ public final class DefaultInfinityTest {
         final Infinity inf = new DefaultInfinity(folder);
         for (int num = 0; num < 10; ++num) {
             final Bout bout = new BoutMocker()
-                .withParticipant(new UrnMocker().mock())
+                .withParticipant(new URNMocker().mock())
                 .withNumber(MsgMocker.number())
                 .mock();
             final Message msg = new MessageMocker()
