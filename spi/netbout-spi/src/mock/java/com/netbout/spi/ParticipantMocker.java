@@ -29,6 +29,8 @@
  */
 package com.netbout.spi;
 
+import com.jcabi.urn.URN;
+import com.jcabi.urn.URNMocker;
 import org.mockito.Mockito;
 
 /**
@@ -49,7 +51,7 @@ public final class ParticipantMocker {
      * Public ctor.
      */
     public ParticipantMocker() {
-        this.withName(new UrnMocker().mock());
+        this.withName(new URNMocker().mock());
         this.withConfirm(true);
         this.withLeader(false);
     }
@@ -59,7 +61,7 @@ public final class ParticipantMocker {
      * @param name Name of participant
      * @return This object
      */
-    public ParticipantMocker withName(final Urn name) {
+    public ParticipantMocker withName(final URN name) {
         Mockito.doReturn(name).when(this.participant).name();
         return this;
     }

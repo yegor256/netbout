@@ -26,8 +26,8 @@
  */
 package com.netbout.hub;
 
-import com.netbout.spi.Urn;
-import com.netbout.spi.UrnMocker;
+import com.jcabi.urn.URN;
+import com.jcabi.urn.URNMocker;
 import org.mockito.Mockito;
 
 /**
@@ -47,7 +47,7 @@ public final class ParticipantDtMocker {
      * Public ctor.
      */
     public ParticipantDtMocker() {
-        this.withIdentity(new UrnMocker().mock());
+        this.withIdentity(new URNMocker().mock());
         this.confirmed();
     }
 
@@ -57,7 +57,7 @@ public final class ParticipantDtMocker {
      * @return This object
      */
     public ParticipantDtMocker withIdentity(final String identity) {
-        return this.withIdentity(Urn.create(identity));
+        return this.withIdentity(URN.create(identity));
     }
 
     /**
@@ -65,7 +65,7 @@ public final class ParticipantDtMocker {
      * @param name The name
      * @return This object
      */
-    public ParticipantDtMocker withIdentity(final Urn name) {
+    public ParticipantDtMocker withIdentity(final URN name) {
         Mockito.doReturn(name).when(this.participant).getIdentity();
         return this;
     }

@@ -26,9 +26,9 @@
  */
 package com.netbout.inf.notices;
 
+import com.jcabi.urn.URN;
 import com.netbout.spi.Identity;
 import com.netbout.spi.Message;
-import com.netbout.spi.Urn;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -62,8 +62,8 @@ public interface MessageSeenNotice extends MessageNotice, IdentityNotice {
          * {@inheritDoc}
          */
         @Override
-        public Set<Urn> deps(final MessageSeenNotice notice) {
-            final Set<Urn> deps = new HashSet<Urn>();
+        public Set<URN> deps(final MessageSeenNotice notice) {
+            final Set<URN> deps = new HashSet<URN>();
             deps.addAll(new IdentityNotice.Serial().deps(notice));
             deps.addAll(new MessageNotice.Serial().deps(notice));
             return deps;

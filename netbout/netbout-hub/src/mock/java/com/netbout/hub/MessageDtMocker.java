@@ -26,7 +26,7 @@
  */
 package com.netbout.hub;
 
-import com.netbout.spi.Urn;
+import com.jcabi.urn.URN;
 import java.util.Date;
 import java.util.Random;
 import org.mockito.Mockito;
@@ -77,7 +77,7 @@ public final class MessageDtMocker {
      * @param author The author
      * @return This object
      */
-    public MessageDtMocker withAuthor(final Urn author) {
+    public MessageDtMocker withAuthor(final URN author) {
         Mockito.doReturn(author).when(this.message).getAuthor();
         return this;
     }

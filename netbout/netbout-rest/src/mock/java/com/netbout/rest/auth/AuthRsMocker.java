@@ -26,11 +26,11 @@
  */
 package com.netbout.rest.auth;
 
+import com.jcabi.urn.URN;
 import com.netbout.rest.BaseRs;
 import com.netbout.rest.ForwardException;
 import com.netbout.rest.NbPage;
 import com.netbout.spi.Identity;
-import com.netbout.spi.Urn;
 import com.rexsl.page.PageBuilder;
 import java.net.URL;
 import javax.ws.rs.GET;
@@ -54,7 +54,7 @@ public final class AuthRsMocker extends BaseRs {
      * @throws Exception If some problem
      */
     @GET
-    public Response auth(@QueryParam("identity") final Urn iname,
+    public Response auth(@QueryParam("identity") final URN iname,
         @QueryParam("secret") final String secret) throws Exception {
         if ((iname == null) || (secret == null)) {
             throw new ForwardException(this, this.base(), "NULL inputs");

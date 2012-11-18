@@ -29,7 +29,7 @@
  */
 package com.netbout.rest.rexsl.scripts.selenium
 
-import com.netbout.spi.Urn
+import com.jcabi.urn.URN
 import com.netbout.spi.client.RestSession
 import com.netbout.spi.client.RestUriBuilder
 import org.hamcrest.MatcherAssert
@@ -37,8 +37,8 @@ import org.hamcrest.Matchers
 import org.openqa.selenium.By
 import org.openqa.selenium.htmlunit.HtmlUnitDriver
 
-def boris = new RestSession(rexsl.home).authenticate(new Urn('urn:test:boris'), '')
-def anna = new RestSession(rexsl.home).authenticate(new Urn('urn:test:anna'), '')
+def boris = new RestSession(rexsl.home).authenticate(new URN('urn:test:boris'), '')
+def anna = new RestSession(rexsl.home).authenticate(new URN('urn:test:anna'), '')
 def bout = boris.start()
 bout.post('hi there!')
 bout.rename('Selenimum test')

@@ -26,9 +26,9 @@
  */
 package com.netbout.rest.auth;
 
+import com.jcabi.urn.URN;
 import com.netbout.spi.Identity;
 import com.netbout.spi.Profile;
-import com.netbout.spi.Urn;
 import com.netbout.spi.xml.JaxbParser;
 import java.net.URL;
 import java.util.Locale;
@@ -62,7 +62,7 @@ public final class RemoteIdentityTest {
             new JaxbParser(xml).parse(RemoteIdentity.class);
         MatcherAssert.assertThat(
             identity.name(),
-            Matchers.equalTo(new Urn("urn:test:johnny"))
+            Matchers.equalTo(new URN("urn:test:johnny"))
         );
         MatcherAssert.assertThat(
             identity.profile().photo(),

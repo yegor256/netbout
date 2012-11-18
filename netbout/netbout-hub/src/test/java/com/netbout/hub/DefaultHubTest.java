@@ -26,14 +26,14 @@
  */
 package com.netbout.hub;
 
+import com.jcabi.urn.URN;
+import com.jcabi.urn.URNMocker;
 import com.netbout.bus.Bus;
 import com.netbout.bus.BusMocker;
 import com.netbout.inf.InfinityMocker;
 import com.netbout.spi.Helper;
 import com.netbout.spi.Identity;
 import com.netbout.spi.IdentityMocker;
-import com.netbout.spi.Urn;
-import com.netbout.spi.UrnMocker;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -58,7 +58,7 @@ public final class DefaultHubTest {
      */
     @Test
     public void createsIdentityByName() throws Exception {
-        final Urn name = new UrnMocker().mock();
+        final URN name = new URNMocker().mock();
         final Bus bus = new BusMocker().mock();
         final PowerHub hub = new DefaultHub(bus, new InfinityMocker().mock());
         hub.resolver().register(
@@ -87,7 +87,7 @@ public final class DefaultHubTest {
      */
     @Test
     public void promotesIdentityToHelper() throws Exception {
-        final Urn name = new UrnMocker().mock();
+        final URN name = new URNMocker().mock();
         final Bus bus = new BusMocker().mock();
         final PowerHub hub = new DefaultHub(bus, new InfinityMocker().mock());
         hub.resolver().register(
@@ -109,7 +109,7 @@ public final class DefaultHubTest {
     public void doesntDuplicateIdentities() throws Exception {
         final Bus bus = new BusMocker().mock();
         final PowerHub hub = new DefaultHub(bus, new InfinityMocker().mock());
-        final Urn name = new UrnMocker().mock();
+        final URN name = new URNMocker().mock();
         hub.resolver().register(
             new IdentityMocker().mock(), name.nid(), "http://foo"
         );
@@ -125,7 +125,7 @@ public final class DefaultHubTest {
     public void informsBusAboutIdentityBeingMentioned() throws Exception {
         final Bus bus = new BusMocker().mock();
         final PowerHub hub = new DefaultHub(bus, new InfinityMocker().mock());
-        final Urn name = new UrnMocker().mock();
+        final URN name = new URNMocker().mock();
         hub.resolver().register(
             new IdentityMocker().mock(), name.nid(), "http://bar"
         );
@@ -138,11 +138,11 @@ public final class DefaultHubTest {
      * Catalog can check identity name and throws exception if it's unreachable.
      * @throws Exception If there is some problem inside
      */
-    @Test(expected = Identity.UnreachableUrnException.class)
+    @Test(expected = Identity.UnreachableURNException.class)
     public void doesntAllowUnreachableIdentities() throws Exception {
         final Bus bus = new BusMocker().mock();
         final PowerHub hub = new DefaultHub(bus, new InfinityMocker().mock());
-        final Urn name = new UrnMocker().mock();
+        final URN name = new URNMocker().mock();
         hub.identity(name);
     }
 
@@ -152,8 +152,8 @@ public final class DefaultHubTest {
      */
     @Test
     public void findsIdentitiesByNameWhenTheyExist() throws Exception {
-        final Urn name = new UrnMocker().mock();
-        final List<Urn> names = new ArrayList<Urn>();
+        final URN name = new URNMocker().mock();
+        final List<URN> names = new ArrayList<URN>();
         names.add(name);
         final Bus bus = new BusMocker()
             .doReturn(names, "find-identities-by-keyword")
@@ -190,8 +190,8 @@ public final class DefaultHubTest {
     public void joinsTwoIdentities() throws Exception {
         final Bus bus = new BusMocker().mock();
         final PowerHub hub = new DefaultHub(bus, new InfinityMocker().mock());
-        final Identity main = hub.identity(new Urn("urn:netbout:a"));
-        final Identity child = hub.identity(new Urn("urn:netbout:b"));
+        final Identity main = hub.identity(new URN("urn:netbout:a"));
+        final Identity child = hub.identity(new URN("urn:netbout:b"));
         hub.join(main, child);
     }
 

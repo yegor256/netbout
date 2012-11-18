@@ -26,7 +26,7 @@
  */
 package com.netbout.db;
 
-import com.netbout.spi.Urn;
+import com.jcabi.urn.URN;
 import java.util.ArrayList;
 import java.util.List;
 import org.junit.Test;
@@ -49,7 +49,7 @@ public final class BillFarmTest {
      */
     @Test
     public void savesBills() throws Exception {
-        final Urn name = new IdentityRowMocker().mock();
+        final URN name = new IdentityRowMocker().mock();
         final Long bout = new BoutRowMocker().mock();
         final List<String> lines = new ArrayList<String>();
         lines.add(

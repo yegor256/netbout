@@ -26,14 +26,14 @@
  */
 package com.netbout.notifiers.email;
 
+import com.jcabi.urn.URN;
+import com.jcabi.urn.URNMocker;
 import com.netbout.hub.Hub;
 import com.netbout.hub.HubMocker;
 import com.netbout.spi.Bout;
 import com.netbout.spi.BoutMocker;
 import com.netbout.spi.Identity;
 import com.netbout.spi.IdentityMocker;
-import com.netbout.spi.Urn;
-import com.netbout.spi.UrnMocker;
 import javax.mail.internet.InternetAddress;
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -51,7 +51,7 @@ public final class AnchorEmailTest {
      */
     @Test
     public void convertsToTextAndBack() throws Exception {
-        final Urn name = new UrnMocker().mock();
+        final URN name = new URNMocker().mock();
         final Bout bout = new BoutMocker().mock();
         final Identity identity = new IdentityMocker()
             .namedAs(name)

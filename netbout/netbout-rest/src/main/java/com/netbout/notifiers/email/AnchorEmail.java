@@ -26,11 +26,11 @@
  */
 package com.netbout.notifiers.email;
 
+import com.jcabi.urn.URN;
 import com.netbout.hub.Hub;
 import com.netbout.spi.Bout;
 import com.netbout.spi.Friend;
 import com.netbout.spi.Identity;
-import com.netbout.spi.Urn;
 import com.netbout.spi.text.SecureString;
 import java.util.regex.Pattern;
 import javax.mail.internet.InternetAddress;
@@ -99,14 +99,14 @@ final class AnchorEmail {
             if (parts.length != 2) {
                 throw new BrokenAnchorException("Invalid text inside hash");
             }
-            final Identity identity = hub.identity(new Urn(parts[1]));
+            final Identity identity = hub.identity(new URN(parts[1]));
             this.receiver = identity;
             this.where = identity.bout(Long.valueOf(parts[0]));
         } catch (com.netbout.spi.text.StringDecryptionException ex) {
             throw new BrokenAnchorException(ex);
         } catch (java.net.URISyntaxException ex) {
             throw new BrokenAnchorException(ex);
-        } catch (Identity.UnreachableUrnException ex) {
+        } catch (Identity.UnreachableURNException ex) {
             throw new BrokenAnchorException(ex);
         } catch (Identity.BoutNotFoundException ex) {
             throw new BrokenAnchorException(ex);

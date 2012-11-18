@@ -26,6 +26,7 @@
  */
 package com.netbout.inf.notices;
 
+import com.jcabi.urn.URN;
 import com.netbout.inf.Notice;
 import com.netbout.spi.Bout;
 import com.netbout.spi.Friend;
@@ -33,7 +34,6 @@ import com.netbout.spi.Message;
 import com.netbout.spi.Participant;
 import com.netbout.spi.Profile;
 import com.netbout.spi.Query;
-import com.netbout.spi.Urn;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -76,8 +76,8 @@ public interface BoutNotice extends Notice {
          * {@inheritDoc}
          */
         @Override
-        public Set<Urn> deps(final BoutNotice notice) {
-            final Set<Urn> deps = new HashSet<Urn>();
+        public Set<URN> deps(final BoutNotice notice) {
+            final Set<URN> deps = new HashSet<URN>();
             for (Participant dude : notice.bout().participants()) {
                 deps.add(dude.name());
             }
@@ -122,14 +122,14 @@ public interface BoutNotice extends Notice {
             final Set<Participant> dudes = new HashSet<Participant>();
             final AtomicReference<Bout> bout = new AtomicReference<Bout>();
             for (int num = 0; num < total; ++num) {
-                final Urn name = Urn.create(stream.readUTF());
+                final URN name = URN.create(stream.readUTF());
                 final boolean leader = stream.readBoolean();
                 final boolean confirmed = stream.readBoolean();
                 dudes.add(
                     // @checkstyle AnonInnerLength (50 lines)
                     new Participant() {
                         @Override
-                        public Urn name() {
+                        public URN name() {
                             return name;
                         }
                         @Override

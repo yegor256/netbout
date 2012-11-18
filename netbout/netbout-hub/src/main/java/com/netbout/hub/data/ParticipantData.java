@@ -27,6 +27,7 @@
 package com.netbout.hub.data;
 
 import com.jcabi.log.Logger;
+import com.jcabi.urn.URN;
 import com.netbout.hub.BoutDt;
 import com.netbout.hub.ParticipantDt;
 import com.netbout.hub.PowerHub;
@@ -35,7 +36,6 @@ import com.netbout.hub.inf.InfIdentity;
 import com.netbout.inf.notices.JoinNotice;
 import com.netbout.spi.Bout;
 import com.netbout.spi.Identity;
-import com.netbout.spi.Urn;
 
 /**
  * Bout with data.
@@ -58,7 +58,7 @@ final class ParticipantData implements ParticipantDt {
     /**
      * The participant.
      */
-    private final transient Urn person;
+    private final transient URN person;
 
     /**
      * Is it confirmed?
@@ -77,7 +77,7 @@ final class ParticipantData implements ParticipantDt {
      * @param idnt The identity
      */
     public ParticipantData(final PowerHub ihub, final BoutDt bdata,
-        final Urn idnt) {
+        final URN idnt) {
         this.hub = ihub;
         assert bdata != null;
         this.boutdt = bdata;
@@ -89,7 +89,7 @@ final class ParticipantData implements ParticipantDt {
      * {@inheritDoc}
      */
     @Override
-    public Urn getIdentity() {
+    public URN getIdentity() {
         return this.person;
     }
 

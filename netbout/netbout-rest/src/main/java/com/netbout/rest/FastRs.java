@@ -26,10 +26,10 @@
  */
 package com.netbout.rest;
 
+import com.jcabi.urn.URN;
 import com.netbout.spi.Bout;
 import com.netbout.spi.Identity;
 import com.netbout.spi.Participant;
-import com.netbout.spi.Urn;
 import com.rexsl.page.PageBuilder;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.FormParam;
@@ -74,8 +74,8 @@ public final class FastRs extends BaseRs {
         for (String dude : participants.split(",")) {
             Participant invited;
             try {
-                invited = bout.invite(identity.friend(Urn.create(dude)));
-            } catch (Identity.UnreachableUrnException ex) {
+                invited = bout.invite(identity.friend(URN.create(dude)));
+            } catch (Identity.UnreachableURNException ex) {
                 throw new ForwardException(this, this.base(), ex);
             } catch (Bout.DuplicateInvitationException ex) {
                 throw new ForwardException(this, this.base(), ex);

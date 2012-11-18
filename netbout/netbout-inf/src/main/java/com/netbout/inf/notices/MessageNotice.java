@@ -26,10 +26,10 @@
  */
 package com.netbout.inf.notices;
 
+import com.jcabi.urn.URN;
 import com.netbout.inf.Notice;
 import com.netbout.spi.Identity;
 import com.netbout.spi.Message;
-import com.netbout.spi.Urn;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -70,8 +70,8 @@ public interface MessageNotice extends Notice {
          * {@inheritDoc}
          */
         @Override
-        public Set<Urn> deps(final MessageNotice notice) {
-            final Set<Urn> deps = new HashSet<Urn>();
+        public Set<URN> deps(final MessageNotice notice) {
+            final Set<URN> deps = new HashSet<URN>();
             deps.add(notice.message().author().name());
             return deps;
         }
@@ -93,7 +93,7 @@ public interface MessageNotice extends Notice {
         public MessageNotice read(final DataInputStream stream)
             throws IOException {
             final long number = stream.readLong();
-            final Urn author = Urn.create(stream.readUTF());
+            final URN author = URN.create(stream.readUTF());
             final String text = BigText.read(stream).toString();
             final Date date = new Date(stream.readLong());
             // @checkstyle AnonInnerLength (100 lines)

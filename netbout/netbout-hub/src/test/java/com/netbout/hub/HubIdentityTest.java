@@ -26,10 +26,10 @@
  */
 package com.netbout.hub;
 
+import com.jcabi.urn.URN;
+import com.jcabi.urn.URNMocker;
 import com.netbout.inf.Infinity;
 import com.netbout.spi.Query;
-import com.netbout.spi.Urn;
-import com.netbout.spi.UrnMocker;
 import java.util.Arrays;
 import java.util.Set;
 import org.hamcrest.MatcherAssert;
@@ -53,7 +53,7 @@ public final class HubIdentityTest {
         final PowerHub hub = Mockito.mock(PowerHub.class);
         final Infinity infinity = Mockito.mock(Infinity.class);
         Mockito.doReturn(infinity).when(hub).infinity();
-        final Urn name = new UrnMocker().mock();
+        final URN name = new URNMocker().mock();
         new HubIdentity(hub, name).inbox(new Query.Textual(""));
         Mockito.verify(infinity).messages(
             Mockito.<Query>argThat(
@@ -79,7 +79,7 @@ public final class HubIdentityTest {
             "get-aliases-of-identity"
         )
             .mock();
-        final Urn name = new UrnMocker().mock();
+        final URN name = new URNMocker().mock();
         final Set<String> aliases = new HubIdentity(hub, name)
             .profile()
             .aliases();

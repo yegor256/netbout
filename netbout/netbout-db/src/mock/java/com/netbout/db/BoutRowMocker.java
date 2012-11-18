@@ -26,7 +26,7 @@
  */
 package com.netbout.db;
 
-import com.netbout.spi.Urn;
+import com.jcabi.urn.URN;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -40,14 +40,14 @@ public final class BoutRowMocker {
     /**
      * Participants to add.
      */
-    private final transient Set<Urn> participants = new HashSet<Urn>();
+    private final transient Set<URN> participants = new HashSet<URN>();
 
     /**
      * With this participant on board.
      * @param name The name
      * @return THis object
      */
-    public BoutRowMocker withParticipant(final Urn name) {
+    public BoutRowMocker withParticipant(final URN name) {
         this.participants.add(name);
         return this;
     }
@@ -61,7 +61,7 @@ public final class BoutRowMocker {
         final BoutFarm farm = new BoutFarm();
         final Long bout = farm.getNextBoutNumber();
         farm.startedNewBout(bout);
-        for (Urn name : this.participants) {
+        for (URN name : this.participants) {
             new ParticipantRowMocker(bout).namedAs(name).mock();
         }
         return bout;

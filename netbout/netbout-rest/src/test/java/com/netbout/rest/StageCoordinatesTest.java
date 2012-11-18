@@ -26,12 +26,12 @@
  */
 package com.netbout.rest;
 
+import com.jcabi.urn.URN;
+import com.jcabi.urn.URNMocker;
 import com.netbout.hub.Hub;
 import com.netbout.hub.HubMocker;
 import com.netbout.spi.Bout;
 import com.netbout.spi.BoutMocker;
-import com.netbout.spi.Urn;
-import com.netbout.spi.UrnMocker;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;
@@ -50,7 +50,7 @@ public final class StageCoordinatesTest {
      */
     @Test(expected = IllegalStateException.class)
     public void doesntAllowToWorkWithoutNormalization() throws Exception {
-        final Urn stage = new UrnMocker().mock();
+        final URN stage = new URNMocker().mock();
         final String place = "/some/place?with&some info";
         final StageCoordinates coords = new StageCoordinates();
         coords.setStage(stage);
@@ -64,7 +64,7 @@ public final class StageCoordinatesTest {
      */
     @Test
     public void normalizesWithEmptyBout() throws Exception {
-        final Urn stage = new UrnMocker().mock();
+        final URN stage = new URNMocker().mock();
         final String place = "/some/place";
         final StageCoordinates coords = new StageCoordinates();
         coords.setStage(stage);
@@ -79,7 +79,7 @@ public final class StageCoordinatesTest {
      */
     @Test
     public void convertsTextToCoordinatesAndBack() throws Exception {
-        final Urn stage = new UrnMocker().mock();
+        final URN stage = new URNMocker().mock();
         final String place = "/some/place?with-info";
         final StageCoordinates coords = new StageCoordinates();
         coords.setStage(stage);
@@ -108,7 +108,7 @@ public final class StageCoordinatesTest {
         final Bout bout = new BoutMocker().mock();
         final StageCoordinates coords = StageCoordinates.valueOf("ouch");
         coords.normalize(hub, bout);
-        MatcherAssert.assertThat(coords.stage(), Matchers.equalTo(new Urn()));
+        MatcherAssert.assertThat(coords.stage(), Matchers.equalTo(new URN()));
     }
 
     /**
@@ -122,7 +122,7 @@ public final class StageCoordinatesTest {
         final StageCoordinates coords = new StageCoordinates();
         coords.normalize(hub, bout);
         coords.setPlace("abc");
-        coords.setStage(new Urn("urn:test:"));
+        coords.setStage(new URN("urn:test:"));
         MatcherAssert.assertThat(coords.place(), Matchers.equalTo(""));
     }
 

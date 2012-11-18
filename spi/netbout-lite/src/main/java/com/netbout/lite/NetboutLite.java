@@ -29,8 +29,8 @@
  */
 package com.netbout.lite;
 
+import com.jcabi.urn.URN;
 import com.netbout.spi.Identity;
-import com.netbout.spi.Urn;
 
 /**
  * Lite implementation of Netbout.
@@ -52,7 +52,7 @@ public final class NetboutLite {
      * @param urn Name of identity to use
      * @return The identity
      */
-    public Identity login(final Urn urn) {
+    public Identity login(final URN urn) {
         return new LiteIdentity(this.bouts, urn, this);
     }
 

@@ -26,9 +26,9 @@
  */
 package com.netbout.hub;
 
+import com.jcabi.urn.URN;
 import com.netbout.hub.inf.InfParticipant;
 import com.netbout.spi.Participant;
-import com.netbout.spi.Urn;
 import java.util.AbstractCollection;
 import java.util.Collection;
 import java.util.Iterator;
@@ -45,7 +45,7 @@ public interface ParticipantDt {
      * Get identity.
      * @return The identity
      */
-    Urn getIdentity();
+    URN getIdentity();
 
     /**
      * Set status.

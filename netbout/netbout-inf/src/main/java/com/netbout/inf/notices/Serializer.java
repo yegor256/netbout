@@ -26,8 +26,8 @@
  */
 package com.netbout.inf.notices;
 
+import com.jcabi.urn.URN;
 import com.netbout.inf.Notice;
-import com.netbout.spi.Urn;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -53,7 +53,7 @@ interface Serializer<T extends Notice> {
      * @param notice The notice
      * @return Names of deps
      */
-    Set<Urn> deps(T notice);
+    Set<URN> deps(T notice);
 
     /**
      * Write it to the stream.

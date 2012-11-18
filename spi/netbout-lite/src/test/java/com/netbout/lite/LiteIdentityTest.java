@@ -29,9 +29,9 @@
  */
 package com.netbout.lite;
 
+import com.jcabi.urn.URN;
+import com.jcabi.urn.URNMocker;
 import com.netbout.spi.Identity;
-import com.netbout.spi.Urn;
-import com.netbout.spi.UrnMocker;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;
@@ -49,7 +49,7 @@ public final class LiteIdentityTest {
      */
     @Test
     public void returnsItsOwnName() throws Exception {
-        final Urn urn = new UrnMocker().mock();
+        final URN urn = new URNMocker().mock();
         final Identity identity = new LiteIdentity(null, urn, null);
         MatcherAssert.assertThat(
             identity.name(),

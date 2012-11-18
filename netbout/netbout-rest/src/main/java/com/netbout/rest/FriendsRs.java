@@ -27,10 +27,10 @@
 package com.netbout.rest;
 
 import com.jcabi.log.Logger;
+import com.jcabi.urn.URN;
 import com.netbout.rest.jaxb.Invitee;
 import com.netbout.spi.Friend;
 import com.netbout.spi.Identity;
-import com.netbout.spi.Urn;
 import com.rexsl.page.JaxbBundle;
 import com.rexsl.page.JaxbGroup;
 import com.rexsl.page.PageBuilder;
@@ -102,7 +102,7 @@ public final class FriendsRs extends BaseRs {
      */
     @GET
     @Path("/photo")
-    public Response photo(@QueryParam("urn") final Urn urn) throws Exception {
+    public Response photo(@QueryParam("urn") final URN urn) throws Exception {
         if (urn == null) {
             throw new ForwardException(
                 this,

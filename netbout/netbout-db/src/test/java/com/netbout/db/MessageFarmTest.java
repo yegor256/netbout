@@ -26,7 +26,7 @@
  */
 package com.netbout.db;
 
-import com.netbout.spi.Urn;
+import com.jcabi.urn.URN;
 import java.util.Date;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
@@ -96,7 +96,7 @@ public final class MessageFarmTest {
     public void setsAndReadsMessageAuthor() throws Exception {
         final Long message =
             new MessageRowMocker(new BoutRowMocker().mock()).mock();
-        final Urn author = new IdentityRowMocker().mock();
+        final URN author = new IdentityRowMocker().mock();
         this.farm.changedMessageAuthor(message, author);
         MatcherAssert.assertThat(
             this.farm.getMessageAuthor(message),

@@ -26,9 +26,9 @@
  */
 package com.netbout.inf.notices;
 
+import com.jcabi.urn.URN;
 import com.netbout.spi.Bout;
 import com.netbout.spi.Identity;
-import com.netbout.spi.Urn;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -62,8 +62,8 @@ public interface KickOffNotice extends IdentityNotice, BoutNotice {
          * {@inheritDoc}
          */
         @Override
-        public Set<Urn> deps(final KickOffNotice notice) {
-            final Set<Urn> deps = new HashSet<Urn>();
+        public Set<URN> deps(final KickOffNotice notice) {
+            final Set<URN> deps = new HashSet<URN>();
             deps.addAll(new IdentityNotice.Serial().deps(notice));
             deps.addAll(new BoutNotice.Serial().deps(notice));
             return deps;

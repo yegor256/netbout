@@ -29,7 +29,7 @@ package com.netbout.db;
 import com.jcabi.jdbc.JdbcSession;
 import com.jcabi.jdbc.Utc;
 import com.jcabi.jdbc.VoidHandler;
-import com.netbout.spi.Urn;
+import com.jcabi.urn.URN;
 import com.netbout.spi.cpa.Farm;
 import com.netbout.spi.cpa.Operation;
 import java.sql.ResultSet;
@@ -52,7 +52,7 @@ public final class AliasFarm {
      * @param alias The alias just added
      */
     @Operation("added-identity-alias")
-    public void addedIdentityAlias(final Urn identity, final String alias) {
+    public void addedIdentityAlias(final URN identity, final String alias) {
         new JdbcSession(Database.source())
             .sql("INSERT INTO alias (identity, name, date) VALUES (?, ?, ?)")
             .set(identity)
@@ -67,7 +67,7 @@ public final class AliasFarm {
      * @return List of aliases
      */
     @Operation("get-aliases-of-identity")
-    public List<String> getAliasesOfIdentity(final Urn name) {
+    public List<String> getAliasesOfIdentity(final URN name) {
         return new JdbcSession(Database.source())
             .sql("SELECT name FROM alias WHERE identity = ?")
             .set(name)

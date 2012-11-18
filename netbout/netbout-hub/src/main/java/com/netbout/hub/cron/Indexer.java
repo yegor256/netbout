@@ -28,11 +28,11 @@ package com.netbout.hub.cron;
 
 import com.jcabi.log.Logger;
 import com.jcabi.log.VerboseThreads;
+import com.jcabi.urn.URN;
 import com.netbout.hub.PowerHub;
 import com.netbout.inf.notices.MessagePostedNotice;
 import com.netbout.spi.Bout;
 import com.netbout.spi.Message;
-import com.netbout.spi.Urn;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -141,7 +141,7 @@ final class Indexer extends AbstractCron {
             .synchronously()
             .arg(number)
             .exec();
-        final List<Urn> dudes = this.hub().make("get-bout-participants")
+        final List<URN> dudes = this.hub().make("get-bout-participants")
             .synchronously()
             .arg(bnum)
             .exec();

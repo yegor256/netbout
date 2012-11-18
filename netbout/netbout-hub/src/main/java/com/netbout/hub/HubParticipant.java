@@ -27,11 +27,11 @@
 package com.netbout.hub;
 
 import com.jcabi.log.Logger;
+import com.jcabi.urn.URN;
 import com.netbout.spi.Friend;
 import com.netbout.spi.Identity;
 import com.netbout.spi.Participant;
 import com.netbout.spi.Profile;
-import com.netbout.spi.Urn;
 
 /**
  * Identity.
@@ -89,7 +89,7 @@ public final class HubParticipant implements Participant {
      * {@inheritDoc}
      */
     @Override
-    public Urn name() {
+    public URN name() {
         return this.data.getIdentity();
     }
 
@@ -138,7 +138,7 @@ public final class HubParticipant implements Participant {
     public Profile profile() {
         try {
             return this.hub.identity(this.name()).profile();
-        } catch (Identity.UnreachableUrnException ex) {
+        } catch (Identity.UnreachableURNException ex) {
             throw new IllegalStateException(ex);
         }
     }

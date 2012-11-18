@@ -30,6 +30,7 @@
 package com.netbout.spi;
 
 import com.jcabi.log.Logger;
+import com.jcabi.urn.URN;
 import java.util.Collection;
 import java.util.Date;
 import java.util.LinkedList;
@@ -145,7 +146,7 @@ public interface Bout extends Comparable<Bout> {
      *
      * In order to check whether certain identity belongs to the list of
      * participants you can use {@link Collection#contains(Object)} method with
-     * {@link String}, {@link Friend}, {@link Urn}, {@link Identity}
+     * {@link String}, {@link Friend}, {@link URN}, {@link Identity}
      * or {@link Participant} as an argument. Actually, no matter what is the
      * type of the argument, only its {@code #toString()} result will matter.
      *
@@ -266,7 +267,7 @@ public interface Bout extends Comparable<Bout> {
                 name = obj.toString();
             }
             Participant found = null;
-            final Collection<Urn> names = new LinkedList<Urn>();
+            final Collection<URN> names = new LinkedList<URN>();
             for (Participant dude : this.participants()) {
                 names.add(dude.name());
                 if (dude.name().equals(name)) {

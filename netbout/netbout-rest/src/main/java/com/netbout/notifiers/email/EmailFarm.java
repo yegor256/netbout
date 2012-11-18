@@ -26,6 +26,7 @@
  */
 package com.netbout.notifiers.email;
 
+import com.jcabi.urn.URN;
 import com.jcabi.velocity.VelocityPage;
 import com.netbout.hub.Hub;
 import com.netbout.rest.Markdown;
@@ -34,7 +35,6 @@ import com.netbout.spi.Identity;
 import com.netbout.spi.Message;
 import com.netbout.spi.Participant;
 import com.netbout.spi.Profile;
-import com.netbout.spi.Urn;
 import com.netbout.spi.cpa.Farm;
 import com.netbout.spi.cpa.IdentityAware;
 import com.netbout.spi.cpa.Operation;
@@ -138,13 +138,13 @@ public final class EmailFarm implements IdentityAware {
      * @return List of URNs
      */
     @Operation("find-identities-by-keyword")
-    public List<Urn> findIdentitiesByKeyword(final Urn who,
+    public List<URN> findIdentitiesByKeyword(final URN who,
         final String keyword) {
-        List<Urn> urns = null;
+        List<URN> urns = null;
         if (keyword.matches(EmailFarm.EMAIL_REGEX)) {
-            urns = new ArrayList<Urn>();
+            urns = new ArrayList<URN>();
             urns.add(
-                new Urn(EmailFarm.NID, keyword.toLowerCase(Locale.ENGLISH))
+                new URN(EmailFarm.NID, keyword.toLowerCase(Locale.ENGLISH))
             );
         }
         return urns;
@@ -156,7 +156,7 @@ public final class EmailFarm implements IdentityAware {
      * @return List of aliases
      */
     @Operation("get-aliases-of-identity")
-    public List<String> getAliasesOfIdentity(final Urn name) {
+    public List<String> getAliasesOfIdentity(final URN name) {
         List<String> aliases = null;
         if (EmailFarm.NID.equals(name.nid())) {
             aliases = new ArrayList<String>();

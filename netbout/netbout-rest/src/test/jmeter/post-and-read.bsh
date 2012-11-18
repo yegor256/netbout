@@ -26,7 +26,7 @@
  */
 
 import com.jcabi.log.Logger;
-import com.netbout.spi.Urn;
+import com.jcabi.urn.URN;
 import com.netbout.spi.client.RestSession;
 import de.svenjacobs.loremipsum.LoremIpsum;
 import java.util.Random;
@@ -41,9 +41,9 @@ String lorem(int words) {
 try {
     random = new Random();
     home = URI.create("http://localhost:" + props.get("port"));
-    user = new RestSession(home, sudo).authenticate(new Urn("urn:netbout:jmeter"), "");
+    user = new RestSession(home, sudo).authenticate(new URN("urn:netbout:jmeter"), "");
     friend = new RestSession(home, sudo).authenticate(
-        new Urn("urn:netbout:friend-" + ctx.getThread().getThreadNum()), ""
+        new URN("urn:netbout:friend-" + ctx.getThread().getThreadNum()), ""
     );
     bout = user.start();
     bout.rename(lorem(10));

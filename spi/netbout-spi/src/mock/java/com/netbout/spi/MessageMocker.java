@@ -29,6 +29,8 @@
  */
 package com.netbout.spi;
 
+import com.jcabi.urn.URN;
+import com.jcabi.urn.URNMocker;
 import java.util.Date;
 import java.util.Random;
 import org.mockito.Mockito;
@@ -52,7 +54,7 @@ public final class MessageMocker {
     public MessageMocker() {
         // @checkstyle MagicNumber (1 line)
         this.withNumber(new Random().nextInt(1024) + 128L);
-        this.withAuthor(new UrnMocker().mock());
+        this.withAuthor(new URNMocker().mock());
         this.withText("some text");
         this.withDate(new Date());
     }
@@ -82,7 +84,7 @@ public final class MessageMocker {
      * @param name Name of the author
      * @return This object
      */
-    public MessageMocker withAuthor(final Urn name) {
+    public MessageMocker withAuthor(final URN name) {
         final Identity author = Mockito.mock(Identity.class);
         Mockito.doReturn(name).when(author).name();
         Mockito.doReturn(new OwnProfileMocker().mock()).when(author).profile();
@@ -96,7 +98,7 @@ public final class MessageMocker {
      * @return This object
      */
     public MessageMocker withAuthor(final String name) {
-        return this.withAuthor(Urn.create(name));
+        return this.withAuthor(URN.create(name));
     }
 
     /**

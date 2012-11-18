@@ -31,7 +31,7 @@ import com.jcabi.jdbc.NotEmptyHandler;
 import com.jcabi.jdbc.SingleHandler;
 import com.jcabi.jdbc.Utc;
 import com.jcabi.jdbc.VoidHandler;
-import com.netbout.spi.Urn;
+import com.jcabi.urn.URN;
 import com.netbout.spi.cpa.Farm;
 import com.netbout.spi.cpa.Operation;
 import java.sql.ResultSet;
@@ -55,7 +55,7 @@ public final class NamespaceFarm {
      * @param template The template of it
      */
     @Operation("namespace-was-registered")
-    public void namespaceWasRegistered(final Urn owner, final String name,
+    public void namespaceWasRegistered(final URN owner, final String name,
         final String template) {
         final Boolean exists = new JdbcSession(Database.source())
             .sql("SELECT name FROM namespace WHERE name = ?")
@@ -110,14 +110,14 @@ public final class NamespaceFarm {
      * @return Photo of the identity
      */
     @Operation("get-namespace-owner")
-    public Urn getNamespaceOwner(final String name) {
+    public URN getNamespaceOwner(final String name) {
         return new JdbcSession(Database.source())
             .sql("SELECT identity FROM namespace WHERE name = ?")
             .set(name)
             .select(
-                new JdbcSession.Handler<Urn>() {
+                new JdbcSession.Handler<URN>() {
                     @Override
-                    public Urn handle(final ResultSet rset)
+                    public URN handle(final ResultSet rset)
                         throws SQLException {
                         if (!rset.next()) {
                             throw new IllegalArgumentException(
@@ -127,7 +127,7 @@ public final class NamespaceFarm {
                                 )
                             );
                         }
-                        return Urn.create(rset.getString(1));
+                        return URN.create(rset.getString(1));
                     }
                 }
             );

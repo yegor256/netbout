@@ -29,15 +29,15 @@
  */
 package com.netbout.rest.rexsl.scripts
 
-import com.netbout.spi.Urn
+import com.jcabi.urn.URN
 import com.netbout.spi.client.RestSession
 import org.hamcrest.MatcherAssert
 import org.hamcrest.Matchers
 
-def rick = new RestSession(rexsl.home).authenticate(new Urn('urn:test:rick'), '')
+def rick = new RestSession(rexsl.home).authenticate(new URN('urn:test:rick'), '')
 
 def names = []
 def name = 'urn:facebook:4466'
 rick.friends(name).each { names.add(it.name()); }
-MatcherAssert.assertThat(names, Matchers.hasItem(new Urn(name)))
+MatcherAssert.assertThat(names, Matchers.hasItem(new URN(name)))
 

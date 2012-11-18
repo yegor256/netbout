@@ -26,8 +26,8 @@
  */
 
 import com.jcabi.log.Logger;
+import com.jcabi.urn.URN;
 import com.netbout.spi.Query;
-import com.netbout.spi.Urn;
 import com.netbout.spi.client.RestSession;
 import de.svenjacobs.loremipsum.LoremIpsum;
 import java.util.Random;
@@ -42,9 +42,9 @@ String lorem(int words) {
 try {
     random = new Random();
     home = URI.create("http://localhost:" + props.get("port"));
-    user = new RestSession(home, sudo).authenticate(new Urn("urn:netbout:jmeter"), "");
+    user = new RestSession(home, sudo).authenticate(new URN("urn:netbout:jmeter"), "");
     buddy = new RestSession(home, sudo).authenticate(
-        new Urn("urn:netbout:buddy-" + ctx.getThread().getThreadNum()), ""
+        new URN("urn:netbout:buddy-" + ctx.getThread().getThreadNum()), ""
     );
     // this bout should be created before, in ReXSL tests
     bouts = user.inbox(new Query.Textual("(equal $bout.number 4)")).iterator();

@@ -27,7 +27,7 @@
 package com.netbout.inf;
 
 import com.jcabi.log.Logger;
-import com.netbout.spi.Urn;
+import com.jcabi.urn.URN;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.concurrent.TimeUnit;
@@ -51,7 +51,7 @@ public final class InfinityMocker {
      * @throws InterruptedException If any
      */
     public static void waitFor(final Infinity inf) throws InterruptedException {
-        InfinityMocker.waitFor(inf, new ArrayList<Urn>());
+        InfinityMocker.waitFor(inf, new ArrayList<URN>());
     }
 
     /**
@@ -61,9 +61,9 @@ public final class InfinityMocker {
      * @throws InterruptedException If any
      * @checkstyle MagicNumber (20 lines)
      */
-    public static void waitFor(final Infinity inf, final Collection<Urn> urns)
+    public static void waitFor(final Infinity inf, final Collection<URN> urns)
         throws InterruptedException {
-        final Urn[] names = urns.toArray(new Urn[urns.size()]);
+        final URN[] names = urns.toArray(new URN[urns.size()]);
         int cycles = 0;
         while (inf.eta(names) != 0) {
             TimeUnit.MILLISECONDS.sleep(100);

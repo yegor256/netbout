@@ -26,7 +26,7 @@
  */
 package com.netbout.db;
 
-import com.netbout.spi.Urn;
+import com.jcabi.urn.URN;
 import java.net.URL;
 import java.util.List;
 import org.hamcrest.MatcherAssert;
@@ -51,10 +51,10 @@ public final class HelperFarmTest {
      */
     @Test
     public void registersNewHelperAndFindsIt() throws Exception {
-        final Urn identity = new IdentityRowMocker().mock();
+        final URN identity = new IdentityRowMocker().mock();
         final URL url = new URL("http://localhost/some-address");
         this.farm.identityPromoted(identity, url);
-        final List<Urn> names = this.farm.getAllHelpers();
+        final List<URN> names = this.farm.getAllHelpers();
         MatcherAssert.assertThat(names, Matchers.hasItem(identity));
         MatcherAssert.assertThat(
             this.farm.getHelperUrl(identity),
@@ -68,7 +68,7 @@ public final class HelperFarmTest {
      */
     @Test
     public void registersHelperTwice() throws Exception {
-        final Urn identity = new IdentityRowMocker().mock();
+        final URN identity = new IdentityRowMocker().mock();
         final URL url = new URL("http://localhost/some-other-address");
         this.farm.identityPromoted(identity, url);
         this.farm.identityPromoted(identity, url);
@@ -80,7 +80,7 @@ public final class HelperFarmTest {
      */
     @Test(expected = IllegalArgumentException.class)
     public void registersHelperTwiceWithDifferentUrl() throws Exception {
-        final Urn identity = new IdentityRowMocker().mock();
+        final URN identity = new IdentityRowMocker().mock();
         this.farm.identityPromoted(identity, new URL("http://localhost/abc"));
         this.farm.identityPromoted(identity, new URL("http://localhost/cde"));
     }

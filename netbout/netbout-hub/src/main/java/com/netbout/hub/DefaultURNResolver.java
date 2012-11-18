@@ -27,8 +27,8 @@
 package com.netbout.hub;
 
 import com.jcabi.log.Logger;
+import com.jcabi.urn.URN;
 import com.netbout.spi.Identity;
-import com.netbout.spi.Urn;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -43,7 +43,7 @@ import java.util.concurrent.ConcurrentMap;
  * @version $Id$
  * @checkstyle ClassDataAbstractionCoupling (500 lines)
  */
-final class DefaultUrnResolver implements UrnResolver {
+final class DefaultURNResolver implements URNResolver {
 
     /**
      * The hub.
@@ -59,19 +59,19 @@ final class DefaultUrnResolver implements UrnResolver {
     /**
      * Namespaces and related URL templates, allocated in slots.
      */
-    private final transient ConcurrentMap<Urn, Map<String, String>> slots =
-        new ConcurrentHashMap<Urn, Map<String, String>>();
+    private final transient ConcurrentMap<URN, Map<String, String>> slots =
+        new ConcurrentHashMap<URN, Map<String, String>>();
 
     /**
      * Public ctor.
      * @param ihub The hub
      */
-    public DefaultUrnResolver(final Hub ihub) {
+    public DefaultURNResolver(final Hub ihub) {
         this.hub = ihub;
         try {
-            this.save(new Urn(), "void", "http://www.netbout.com/");
-            this.save(new Urn(), "netbout", "http://www.netbout.com/nb");
-        } catch (UrnResolver.DuplicateNamespaceException ex) {
+            this.save(new URN(), "void", "http://www.netbout.com/");
+            this.save(new URN(), "netbout", "http://www.netbout.com/nb");
+        } catch (URNResolver.DuplicateNamespaceException ex) {
             throw new IllegalStateException(ex);
         }
     }
@@ -83,7 +83,7 @@ final class DefaultUrnResolver implements UrnResolver {
     public String statistics() {
         final StringBuilder text = new StringBuilder();
         text.append("Registered namespaces:\n");
-        for (Urn owner : this.slots.keySet()) {
+        for (URN owner : this.slots.keySet()) {
             text.append(String.format("%s\n", owner));
             for (ConcurrentMap.Entry<String, String> entry
                 : this.slots.get(owner).entrySet()) {
@@ -104,7 +104,7 @@ final class DefaultUrnResolver implements UrnResolver {
      */
     @Override
     public void register(final Identity owner, final String namespace,
-        final String template) throws UrnResolver.DuplicateNamespaceException {
+        final String template) throws URNResolver.DuplicateNamespaceException {
         if (!namespace.matches("^[a-z]{1,31}$")) {
             throw new IllegalArgumentException(
                 String.format(
@@ -114,7 +114,7 @@ final class DefaultUrnResolver implements UrnResolver {
             );
         }
         try {
-            new URL(template.replace(UrnResolver.MARKER, "-"));
+            new URL(template.replace(URNResolver.MARKER, "-"));
         } catch (java.net.MalformedURLException ex) {
             throw new IllegalArgumentException(
                 String.format(
@@ -164,19 +164,19 @@ final class DefaultUrnResolver implements UrnResolver {
      * @checkstyle RedundantThrows (5 lines)
      */
     @Override
-    public URL authority(final Urn urn)
-        throws Identity.UnreachableUrnException {
+    public URL authority(final URN urn)
+        throws Identity.UnreachableURNException {
         String template;
         try {
             template = this.load(urn.nid());
         } catch (NamespaceNotFoundException ex) {
-            throw new Identity.UnreachableUrnException(urn, ex);
+            throw new Identity.UnreachableURNException(urn, ex);
         }
         URL result;
         try {
-            result = new URL(template.replace(UrnResolver.MARKER, urn.nss()));
+            result = new URL(template.replace(URNResolver.MARKER, urn.nss()));
         } catch (java.net.MalformedURLException ex) {
-            throw new Identity.UnreachableUrnException(urn, ex);
+            throw new Identity.UnreachableURNException(urn, ex);
         }
         Logger.debug(
             this,
@@ -192,19 +192,19 @@ final class DefaultUrnResolver implements UrnResolver {
      * @param urn The identity
      * @param name Name of the namespace
      * @param template The template
-     * @throws UrnResolver.DuplicateNamespaceException If already registered
+     * @throws URNResolver.DuplicateNamespaceException If already registered
      */
-    private void save(final Urn urn, final String name, final String template)
-        throws UrnResolver.DuplicateNamespaceException {
+    private void save(final URN urn, final String name, final String template)
+        throws URNResolver.DuplicateNamespaceException {
         synchronized (this.slots) {
             if (!this.slots.containsKey(urn)) {
                 this.slots.put(urn, new ConcurrentHashMap<String, String>());
             }
-            for (ConcurrentMap.Entry<Urn, Map<String, String>> entry
+            for (ConcurrentMap.Entry<URN, Map<String, String>> entry
                 : this.slots.entrySet()) {
                 for (String nsp : entry.getValue().keySet()) {
                     if (nsp.equals(name) && !entry.getKey().equals(urn)) {
-                        throw new UrnResolver.DuplicateNamespaceException(
+                        throw new URNResolver.DuplicateNamespaceException(
                             entry.getKey(), nsp
                         );
                     }
@@ -245,10 +245,10 @@ final class DefaultUrnResolver implements UrnResolver {
      * Load template by namespace.
      * @param name The namespace
      * @return The template
-     * @throws DefaultUrnResolver.NamespaceNotFoundException If can't find it
+     * @throws DefaultURNResolver.NamespaceNotFoundException If can't find it
      */
     private String load(final String name)
-        throws DefaultUrnResolver.NamespaceNotFoundException {
+        throws DefaultURNResolver.NamespaceNotFoundException {
         synchronized (this.slots) {
             this.initialize();
             String template = null;
@@ -291,7 +291,7 @@ final class DefaultUrnResolver implements UrnResolver {
                         .synchronously()
                         .arg(name)
                         .exec();
-                    final Urn owner = this.hub
+                    final URN owner = this.hub
                         .make("get-namespace-owner")
                         .synchronously()
                         .arg(name)

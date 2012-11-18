@@ -26,7 +26,7 @@
  */
 package com.netbout.db;
 
-import com.netbout.spi.Urn;
+import com.jcabi.urn.URN;
 import java.util.Locale;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
@@ -50,7 +50,7 @@ public final class LocaleFarmTest {
      */
     @Test
     public void setLocaleAndRetrievesItBack() throws Exception {
-        final Urn identity = new IdentityRowMocker().mock();
+        final URN identity = new IdentityRowMocker().mock();
         MatcherAssert.assertThat(
             this.farm.getLocaleOfIdentity(identity),
             Matchers.nullValue()

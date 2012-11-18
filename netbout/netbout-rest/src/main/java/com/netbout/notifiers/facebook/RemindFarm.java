@@ -26,7 +26,7 @@
  */
 package com.netbout.notifiers.facebook;
 
-import com.netbout.spi.Urn;
+import com.jcabi.urn.URN;
 import com.netbout.spi.cpa.Farm;
 import com.netbout.spi.cpa.Operation;
 import com.restfb.DefaultFacebookClient;
@@ -49,7 +49,7 @@ public final class RemindFarm {
      * @param marker The marker to avoid duplicate reminders
      */
     @Operation("remind-silent-identity")
-    public void remindSilentIdentity(final Urn name, final String marker) {
+    public void remindSilentIdentity(final URN name, final String marker) {
         final Requests requests = new Requests(
             new DefaultFacebookClient(new TokenBuilder().build()),
             name.nss()

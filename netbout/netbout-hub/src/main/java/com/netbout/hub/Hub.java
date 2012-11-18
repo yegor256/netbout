@@ -26,10 +26,10 @@
  */
 package com.netbout.hub;
 
+import com.jcabi.urn.URN;
 import com.netbout.bus.TxBuilder;
 import com.netbout.spi.Helper;
 import com.netbout.spi.Identity;
-import com.netbout.spi.Urn;
 import java.io.Closeable;
 import java.net.URL;
 
@@ -45,16 +45,16 @@ public interface Hub extends Closeable {
      * Get URN resolver.
      * @return The resolver
      */
-    UrnResolver resolver();
+    URNResolver resolver();
 
     /**
      * Find identity by URN.
      * @param name The name of the identity
      * @return The identity found
-     * @throws Identity.UnreachableUrnException If we can't reach it
+     * @throws Identity.UnreachableURNException If we can't reach it
      * @checkstyle RedundantThrows (3 lines)
      */
-    Identity identity(Urn name) throws Identity.UnreachableUrnException;
+    Identity identity(URN name) throws Identity.UnreachableURNException;
 
     /**
      * Start new transaction.

@@ -26,8 +26,8 @@
  */
 package com.netbout.db;
 
-import com.netbout.spi.Urn;
-import com.netbout.spi.UrnMocker;
+import com.jcabi.urn.URN;
+import com.jcabi.urn.URNMocker;
 import java.net.URL;
 import java.util.HashSet;
 import java.util.Random;
@@ -48,13 +48,13 @@ public final class IdentityRowMocker {
     /**
      * Name of identity.
      */
-    private transient Urn identity;
+    private transient URN identity;
 
     /**
      * Public ctor.
      */
     public IdentityRowMocker() {
-        this.identity = new UrnMocker().mock();
+        this.identity = new URNMocker().mock();
     }
 
     /**
@@ -63,7 +63,7 @@ public final class IdentityRowMocker {
      * @return THis object
      */
     public IdentityRowMocker namedAs(final String name) {
-        return this.namedAs(Urn.create(name));
+        return this.namedAs(URN.create(name));
     }
 
     /**
@@ -71,7 +71,7 @@ public final class IdentityRowMocker {
      * @param name The name
      * @return THis object
      */
-    public IdentityRowMocker namedAs(final Urn name) {
+    public IdentityRowMocker namedAs(final URN name) {
         this.identity = name;
         return this;
     }
@@ -91,7 +91,7 @@ public final class IdentityRowMocker {
      * @return Name of just mocked identity
      */
     @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
-    public Urn mock() {
+    public URN mock() {
         final IdentityFarm farm = new IdentityFarm();
         try {
             farm.identityMentioned(this.identity);

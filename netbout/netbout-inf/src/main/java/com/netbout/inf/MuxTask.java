@@ -27,7 +27,7 @@
 package com.netbout.inf;
 
 import com.jcabi.log.Logger;
-import com.netbout.spi.Urn;
+import com.jcabi.urn.URN;
 import java.util.Set;
 import java.util.concurrent.Callable;
 
@@ -60,7 +60,7 @@ final class MuxTask implements Callable<Double> {
     /**
      * Dependants.
      */
-    private final transient Set<Urn> deps;
+    private final transient Set<URN> deps;
 
     /**
      * Public ctor.
@@ -130,7 +130,7 @@ final class MuxTask implements Callable<Double> {
      * Get names of all people waiting for the completion of this task.
      * @return Names
      */
-    public Set<Urn> dependants() {
+    public Set<URN> dependants() {
         return this.deps;
     }
 

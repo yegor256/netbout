@@ -29,7 +29,7 @@
  */
 package com.netbout.rest.rexsl.scripts.selenium
 
-import com.netbout.spi.Urn
+import com.jcabi.urn.URN
 import com.netbout.spi.client.RestSession
 import com.netbout.spi.client.RestUriBuilder
 import java.util.concurrent.TimeUnit
@@ -38,7 +38,7 @@ import org.hamcrest.Matchers
 import org.openqa.selenium.By
 import org.openqa.selenium.htmlunit.HtmlUnitDriver
 
-def bruno = new RestSession(rexsl.home).authenticate(new Urn('urn:test:bruno'), '')
+def bruno = new RestSession(rexsl.home).authenticate(new URN('urn:test:bruno'), '')
 def bout = bruno.start()
 bout.post('hi, I will try to find friends with AJAX!')
 bout.rename('finding friends with AJAX/Selenium')

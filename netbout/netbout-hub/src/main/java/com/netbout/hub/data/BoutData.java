@@ -27,6 +27,7 @@
 package com.netbout.hub.data;
 
 import com.jcabi.log.Logger;
+import com.jcabi.urn.URN;
 import com.netbout.hub.BoutDt;
 import com.netbout.hub.MessageDt;
 import com.netbout.hub.ParticipantDt;
@@ -38,7 +39,6 @@ import com.netbout.inf.notices.JoinNotice;
 import com.netbout.inf.notices.KickOffNotice;
 import com.netbout.spi.Bout;
 import com.netbout.spi.Identity;
-import com.netbout.spi.Urn;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -127,7 +127,7 @@ final class BoutData implements BoutDt {
      * {@inheritDoc}
      */
     @Override
-    public void confirm(final Urn identity) {
+    public void confirm(final URN identity) {
         this.find(identity).setConfirmed(true);
     }
 
@@ -135,7 +135,7 @@ final class BoutData implements BoutDt {
      * {@inheritDoc}
      */
     @Override
-    public void kickOff(final Urn identity) {
+    public void kickOff(final URN identity) {
         final ParticipantDt dude = this.find(identity);
         synchronized (this.number) {
             this.participants.remove(dude);
@@ -164,7 +164,7 @@ final class BoutData implements BoutDt {
      * {@inheritDoc}
      */
     @Override
-    public void setLeader(final Urn name) {
+    public void setLeader(final URN name) {
         synchronized (this.number) {
             final Collection<ParticipantDt> dudes = this.getParticipants();
             ParticipantDt leader = null;
@@ -269,7 +269,7 @@ final class BoutData implements BoutDt {
      * {@inheritDoc}
      */
     @Override
-    public ParticipantDt addParticipant(final Urn name) {
+    public ParticipantDt addParticipant(final URN name) {
         final ParticipantDt data =
             new ParticipantData(this.hub, this, name);
         synchronized (this.number) {
@@ -312,13 +312,13 @@ final class BoutData implements BoutDt {
         synchronized (this.number) {
             if (this.participants == null) {
                 this.participants = new CopyOnWriteArrayList<ParticipantDt>();
-                final List<Urn> identities = this.hub
+                final List<URN> identities = this.hub
                     .make("get-bout-participants")
                     .synchronously()
                     .arg(this.number)
-                    .asDefault(new ArrayList<Urn>())
+                    .asDefault(new ArrayList<URN>())
                     .exec();
-                for (Urn identity : identities) {
+                for (URN identity : identities) {
                     this.participants.add(
                         new ParticipantData(this.hub, this, identity)
                     );
@@ -400,7 +400,7 @@ final class BoutData implements BoutDt {
      * @param name Name of it
      * @return The participant
      */
-    private ParticipantDt find(final Urn name) {
+    private ParticipantDt find(final URN name) {
         ParticipantDt found = null;
         for (ParticipantDt dude : this.getParticipants()) {
             if (dude.getIdentity().equals(name)) {

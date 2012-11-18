@@ -26,7 +26,7 @@
  */
 package com.netbout.hub;
 
-import com.netbout.spi.Urn;
+import com.jcabi.urn.URN;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Random;
@@ -70,7 +70,7 @@ public final class BoutDtMocker {
         Mockito.doAnswer(
             new Answer<ParticipantDt>() {
                 public ParticipantDt answer(final InvocationOnMock invocation) {
-                    final Urn name = (Urn) invocation.getArguments()[0];
+                    final URN name = (URN) invocation.getArguments()[0];
                     final ParticipantDt dude = new ParticipantDtMocker()
                         .withIdentity(name)
                         .mock();
@@ -78,7 +78,7 @@ public final class BoutDtMocker {
                     return dude;
                 }
             }
-        ).when(this.bout).addParticipant(Mockito.any(Urn.class));
+        ).when(this.bout).addParticipant(Mockito.any(URN.class));
     }
 
     /**
@@ -106,7 +106,7 @@ public final class BoutDtMocker {
      * @param participant The participant
      * @return This object
      */
-    public BoutDtMocker withParticipant(final Urn participant) {
+    public BoutDtMocker withParticipant(final URN participant) {
         this.participants.add(
             new ParticipantDtMocker()
                 .withIdentity(participant)

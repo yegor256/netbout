@@ -27,8 +27,8 @@
 package com.netbout.hub.cron;
 
 import com.jcabi.log.Logger;
+import com.jcabi.urn.URN;
 import com.netbout.hub.PowerHub;
-import com.netbout.spi.Urn;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -53,11 +53,11 @@ final class Reminder extends AbstractCron {
      */
     @Override
     public Void call() throws Exception {
-        final List<Urn> names = this.hub().make("find-silent-identities")
+        final List<URN> names = this.hub().make("find-silent-identities")
             .synchronously()
-            .asDefault(new ArrayList<Urn>(0))
+            .asDefault(new ArrayList<URN>(0))
             .exec();
-        for (Urn name : names) {
+        for (URN name : names) {
             this.remind(name);
         }
         return null;
@@ -67,7 +67,7 @@ final class Reminder extends AbstractCron {
      * Remind one person.
      * @param name The name to remind
      */
-    private void remind(final Urn name) {
+    private void remind(final URN name) {
         final String marker = this.hub().make("get-silence-marker")
             .synchronously()
             .arg(name)

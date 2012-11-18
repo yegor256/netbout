@@ -30,13 +30,14 @@
 package com.netbout.spi;
 
 import com.jcabi.log.Logger;
+import com.jcabi.urn.URN;
 import com.netbout.spi.plain.PlainBoolean;
 import com.netbout.spi.plain.PlainDate;
 import com.netbout.spi.plain.PlainList;
 import com.netbout.spi.plain.PlainLong;
 import com.netbout.spi.plain.PlainString;
 import com.netbout.spi.plain.PlainURL;
-import com.netbout.spi.plain.PlainUrn;
+import com.netbout.spi.plain.PlainURN;
 import java.net.URL;
 import java.util.Date;
 import java.util.List;
@@ -79,8 +80,8 @@ public final class PlainBuilder {
             result = (Plain) new PlainDate((Date) data);
         } else if (data instanceof URL) {
             result = (Plain) new PlainURL((URL) data);
-        } else if (data instanceof Urn) {
-            result = (Plain) new PlainUrn((Urn) data);
+        } else if (data instanceof URN) {
+            result = (Plain) new PlainURN((URN) data);
         } else if (data instanceof List) {
             result = (Plain) new PlainList<T>((List<T>) data);
         } else {
@@ -111,8 +112,8 @@ public final class PlainBuilder {
         Plain<T> result;
         if (PlainList.isIt(text)) {
             result = (Plain) PlainList.valueOf(text);
-        } else if (PlainUrn.isIt(text)) {
-            result = (Plain) new PlainUrn(text);
+        } else if (PlainURN.isIt(text)) {
+            result = (Plain) new PlainURN(text);
         } else if (PlainURL.isIt(text)) {
             result = (Plain) new PlainURL(text);
         } else if (PlainDate.isIt(text)) {

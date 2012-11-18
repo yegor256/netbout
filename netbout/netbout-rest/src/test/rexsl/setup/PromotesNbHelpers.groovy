@@ -30,7 +30,7 @@
 package com.netbout.rest.rexsl.setup
 
 import com.jcabi.log.Logger
-import com.netbout.spi.Urn
+import com.jcabi.urn.URN
 import com.netbout.spi.client.RestExpert
 import com.netbout.spi.client.RestSession
 import javax.ws.rs.core.UriBuilder
@@ -38,7 +38,7 @@ import org.hamcrest.MatcherAssert
 import org.hamcrest.Matchers
 
 def starter = new RestExpert(
-    new RestSession(rexsl.home, 'UY7lgj8POjfh7J').authenticate(new Urn(), '')
+    new RestSession(rexsl.home, 'UY7lgj8POjfh7J').authenticate(new URN(), '')
 )
 def mandatory = [
     'test' : '/mock-auth',
@@ -63,7 +63,7 @@ MatcherAssert.assertThat(
     'urn:test:email' : 'file:com.netbout.notifiers.email',
 ].each {
     new RestExpert(
-        new RestSession(rexsl.home).authenticate(new Urn(it.key), '')
+        new RestSession(rexsl.home).authenticate(new URN(it.key), '')
     ).promote(new URL(it.value))
     Logger.info(this, '%s promoted to helper at %s', it.key, it.value)
 }

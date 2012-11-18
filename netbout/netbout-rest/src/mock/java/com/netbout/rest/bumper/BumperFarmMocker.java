@@ -26,8 +26,8 @@
  */
 package com.netbout.rest.bumper;
 
+import com.jcabi.urn.URN;
 import com.netbout.spi.Identity;
-import com.netbout.spi.Urn;
 import com.netbout.spi.cpa.Farm;
 import com.netbout.spi.cpa.IdentityAware;
 import com.netbout.spi.cpa.Operation;
@@ -83,9 +83,9 @@ public final class BumperFarmMocker implements IdentityAware {
      * @return Its URI
      */
     @Operation("resolve-xml-namespace")
-    public URL resolveXmlNamespace(final Urn namespace) {
+    public URL resolveXmlNamespace(final URN namespace) {
         URL url = null;
-        if (namespace.equals(Urn.create("urn:test:bumper:ns"))) {
+        if (namespace.equals(URN.create("urn:test:bumper:ns"))) {
             url = BumperFarmMocker.xsd;
         }
         return url;
@@ -98,7 +98,7 @@ public final class BumperFarmMocker implements IdentityAware {
      * @return Shall we immediately confirm participation?
      */
     @Operation("just-invited")
-    public Boolean justInvited(final Long number, final Urn who) {
+    public Boolean justInvited(final Long number, final URN who) {
         Boolean confirm = null;
         if (who.equals(this.identity.name())) {
             confirm = true;

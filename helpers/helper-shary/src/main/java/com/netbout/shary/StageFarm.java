@@ -26,12 +26,12 @@
  */
 package com.netbout.shary;
 
+import com.jcabi.urn.URN;
 import com.netbout.spi.Bout;
 import com.netbout.spi.Identity;
 import com.netbout.spi.Message;
 import com.netbout.spi.Profile;
 import com.netbout.spi.Query;
-import com.netbout.spi.Urn;
 import com.netbout.spi.cpa.CpaUtils;
 import com.netbout.spi.cpa.Farm;
 import com.netbout.spi.cpa.IdentityAware;
@@ -83,7 +83,7 @@ public final class StageFarm implements IdentityAware {
      * @return Does it?
      */
     @Operation("does-stage-exist")
-    public Boolean doesStageExist(final Long number, final Urn stage) {
+    public Boolean doesStageExist(final Long number, final URN stage) {
         Boolean exists = null;
         if (this.identity.name().equals(stage)) {
             exists = Boolean.TRUE;
@@ -102,8 +102,8 @@ public final class StageFarm implements IdentityAware {
      * @checkstyle ParameterNumber (4 lines)
      */
     @Operation("render-stage-xml")
-    public String renderStageXml(final Long number, final Urn author,
-        final Urn stage, final String place) throws Exception {
+    public String renderStageXml(final Long number, final URN author,
+        final URN stage, final String place) throws Exception {
         String xml = null;
         if (this.identity.name().equals(stage)) {
             final Bout bout = this.identity.bout(number);
@@ -121,9 +121,9 @@ public final class StageFarm implements IdentityAware {
      * @throws Exception If some problem inside
      */
     @Operation("resolve-xml-namespace")
-    public URL resolveXmlNamespace(final Urn namespace) throws Exception {
+    public URL resolveXmlNamespace(final URN namespace) throws Exception {
         URL url = null;
-        if (namespace.equals(Urn.create("urn:netbout:ns:shary/Slip"))) {
+        if (namespace.equals(URN.create("urn:netbout:ns:shary/Slip"))) {
             url = new URL(
                 namespace.toString().replaceAll(
                     "urn:netbout:ns:(.*)",
@@ -146,8 +146,8 @@ public final class StageFarm implements IdentityAware {
      * @checkstyle ParameterNumber (5 lines)
      */
     @Operation("stage-post-request")
-    public String stagePostRequest(final Long number, final Urn author,
-        final Urn stage, final String place, final String body)
+    public String stagePostRequest(final Long number, final URN author,
+        final URN stage, final String place, final String body)
         throws Exception {
         String dest = null;
         if (this.identity.name().equals(stage)) {
@@ -175,8 +175,8 @@ public final class StageFarm implements IdentityAware {
      * @checkstyle ParameterNumber (5 lines)
      */
     @Operation("post-render-change-place")
-    public String postRenderChangePlace(final Long number, final Urn author,
-        final Urn stage, final String place)
+    public String postRenderChangePlace(final Long number, final URN author,
+        final URN stage, final String place)
         throws Exception {
         String dest = null;
         if (this.identity.name().equals(stage)) {
@@ -197,8 +197,8 @@ public final class StageFarm implements IdentityAware {
      * @checkstyle ParameterNumber (5 lines)
      */
     @Operation("render-stage-resource")
-    public String renderStageResource(final Long number, final Urn author,
-        final Urn stage, final URL base, final String path)
+    public String renderStageResource(final Long number, final URN author,
+        final URN stage, final URL base, final String path)
         throws Exception {
         String response = null;
         if (this.identity.name().equals(stage)) {
@@ -244,7 +244,7 @@ public final class StageFarm implements IdentityAware {
      * @throws Exception If some problem inside
      */
     @Operation("render-stage-xsl")
-    public String renderStageXsl(final Long number, final Urn stage)
+    public String renderStageXsl(final Long number, final URN stage)
         throws Exception {
         String xsl = null;
         if (this.identity.name().equals(stage)) {
@@ -262,7 +262,7 @@ public final class StageFarm implements IdentityAware {
      * @param body The body
      * @return The slip
      */
-    private static Slip slip(final Urn author, final String body) {
+    private static Slip slip(final URN author, final String body) {
         final Map<String, String> args = CpaUtils.decodeBody(body);
         return new Slip(
             true,
@@ -278,7 +278,7 @@ public final class StageFarm implements IdentityAware {
      * @param docs The documents
      * @return The same array of them
      */
-    private Collection<SharedDoc> extend(final Urn viewer,
+    private Collection<SharedDoc> extend(final URN viewer,
         final Collection<SharedDoc> docs) {
         for (SharedDoc doc : docs) {
             doc.add(
@@ -298,10 +298,10 @@ public final class StageFarm implements IdentityAware {
             try {
                 doc.setAlias(
                     new Profile.Conventional(
-                        this.identity.friend(Urn.create(doc.getAuthor()))
+                        this.identity.friend(URN.create(doc.getAuthor()))
                     ).aliases().iterator().next()
                 );
-            } catch (Identity.UnreachableUrnException ex) {
+            } catch (Identity.UnreachableURNException ex) {
                 doc.setAlias("somebody");
             }
         }

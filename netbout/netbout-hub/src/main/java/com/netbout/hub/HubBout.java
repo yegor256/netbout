@@ -27,13 +27,13 @@
 package com.netbout.hub;
 
 import com.jcabi.log.Logger;
+import com.jcabi.urn.URN;
 import com.netbout.spi.Bout;
 import com.netbout.spi.Friend;
 import com.netbout.spi.Identity;
 import com.netbout.spi.Message;
 import com.netbout.spi.Participant;
 import com.netbout.spi.Query;
-import com.netbout.spi.Urn;
 import com.netbout.spi.xml.DomParser;
 import java.net.URL;
 import java.util.AbstractCollection;
@@ -422,7 +422,7 @@ public final class HubBout implements Bout {
             throw new Bout.MessagePostException(ex);
         }
         if (parser.isXml()) {
-            Urn namespace;
+            URN namespace;
             try {
                 namespace = parser.namespace();
             } catch (com.netbout.spi.xml.DomValidationException ex) {

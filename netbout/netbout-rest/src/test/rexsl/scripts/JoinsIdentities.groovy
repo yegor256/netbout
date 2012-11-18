@@ -29,8 +29,8 @@
  */
 package com.netbout.rest.rexsl.scripts
 
+import com.jcabi.urn.URN
 import com.netbout.spi.Identity
-import com.netbout.spi.Urn
 import com.netbout.spi.client.RestSession
 import com.netbout.spi.client.RestUriBuilder
 import com.netbout.spi.text.SecureString
@@ -44,13 +44,13 @@ import org.mockito.Mockito
 Manifests.append(new File(rexsl.basedir, 'src/test/resources/META-INF/MANIFEST.MF'))
 
 def email = 'son@example.com'
-def name = new Urn('email', email)
+def name = new URN('email', email)
 def identity = Mockito.mock(Identity)
 Mockito.doReturn(name).when(identity).name()
 def secret = new SecureString(name).toString()
 def son = new RestSession(rexsl.home).authenticate(name, secret)
 
-def father = new RestSession(rexsl.home).authenticate(new Urn('urn:test:father'), '')
+def father = new RestSession(rexsl.home).authenticate(new URN('urn:test:father'), '')
 def bout = father.start()
 bout.post('Hi there!')
 bout.invite(son)

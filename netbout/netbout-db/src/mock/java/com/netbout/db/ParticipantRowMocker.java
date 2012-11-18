@@ -26,8 +26,8 @@
  */
 package com.netbout.db;
 
-import com.netbout.spi.Urn;
-import com.netbout.spi.UrnMocker;
+import com.jcabi.urn.URN;
+import com.jcabi.urn.URNMocker;
 
 /**
  * Mocker of {@code PARTICIPANT} row in a database.
@@ -44,14 +44,14 @@ public final class ParticipantRowMocker {
     /**
      * The name of it.
      */
-    private transient Urn identity;
+    private transient URN identity;
 
     /**
      * Public ctor.
      * @param number The bout
      */
     public ParticipantRowMocker(final Long number) {
-        this.identity = new UrnMocker().mock();
+        this.identity = new URNMocker().mock();
         this.bout = number;
     }
 
@@ -61,7 +61,7 @@ public final class ParticipantRowMocker {
      * @return This object
      */
     public ParticipantRowMocker namedAs(final String name) {
-        return this.namedAs(Urn.create(name));
+        return this.namedAs(URN.create(name));
     }
 
     /**
@@ -69,7 +69,7 @@ public final class ParticipantRowMocker {
      * @param name The name of participant
      * @return This object
      */
-    public ParticipantRowMocker namedAs(final Urn name) {
+    public ParticipantRowMocker namedAs(final URN name) {
         this.identity = name;
         return this;
     }
@@ -78,7 +78,7 @@ public final class ParticipantRowMocker {
      * Mock it and return its name.
      * @return The URN of just created participant
      */
-    public Urn mock() {
+    public URN mock() {
         final IdentityFarm ifarm = new IdentityFarm();
         ifarm.identityMentioned(this.identity);
         final ParticipantFarm farm = new ParticipantFarm();

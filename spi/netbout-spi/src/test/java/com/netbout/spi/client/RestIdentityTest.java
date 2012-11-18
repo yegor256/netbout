@@ -29,9 +29,9 @@
  */
 package com.netbout.spi.client;
 
+import com.jcabi.urn.URN;
+import com.jcabi.urn.URNMocker;
 import com.netbout.spi.Identity;
-import com.netbout.spi.Urn;
-import com.netbout.spi.UrnMocker;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;
@@ -49,7 +49,7 @@ public final class RestIdentityTest {
      */
     @Test
     public void fetchesNameOfIdentity() throws Exception {
-        final Urn name = new UrnMocker().mock();
+        final URN name = new URNMocker().mock();
         final RestClient client = new RestClientMocker()
             .onXPath("/page/identity/name/text()", name.toString())
             .mock();

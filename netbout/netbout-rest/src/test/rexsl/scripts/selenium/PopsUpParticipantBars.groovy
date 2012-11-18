@@ -29,7 +29,7 @@
  */
 package com.netbout.rest.rexsl.scripts.selenium
 
-import com.netbout.spi.Urn
+import com.jcabi.urn.URN
 import com.netbout.spi.client.RestSession
 import com.netbout.spi.client.RestUriBuilder
 import java.util.concurrent.TimeUnit
@@ -37,7 +37,7 @@ import org.hamcrest.MatcherAssert
 import org.hamcrest.Matchers
 import org.openqa.selenium.htmlunit.HtmlUnitDriver
 
-def erik = new RestSession(rexsl.home).authenticate(new Urn('urn:test:erik'), '')
+def erik = new RestSession(rexsl.home).authenticate(new URN('urn:test:erik'), '')
 def bout = erik.start()
 bout.post('hello everybody!')
 bout.rename('Selenimum test of participant bars pop-ups')

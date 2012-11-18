@@ -29,6 +29,7 @@ package com.netbout.hub;
 import com.jcabi.log.Logger;
 import com.jcabi.log.VerboseRunnable;
 import com.jcabi.log.VerboseThreads;
+import com.jcabi.urn.URN;
 import com.netbout.bus.Bus;
 import com.netbout.bus.DefaultBus;
 import com.netbout.bus.TxBuilder;
@@ -40,7 +41,6 @@ import com.netbout.inf.Infinity;
 import com.netbout.spi.Friend;
 import com.netbout.spi.Helper;
 import com.netbout.spi.Identity;
-import com.netbout.spi.Urn;
 import com.netbout.spi.cpa.CpaHelper;
 import java.io.IOException;
 import java.net.URL;
@@ -91,13 +91,13 @@ public final class DefaultHub implements PowerHub {
     /**
      * Resolver.
      */
-    private final transient UrnResolver iresolver;
+    private final transient URNResolver iresolver;
 
     /**
      * All identities known for us at the moment.
      */
-    private final transient ConcurrentMap<Urn, Identity> all =
-        new ConcurrentHashMap<Urn, Identity>();
+    private final transient ConcurrentMap<URN, Identity> all =
+        new ConcurrentHashMap<URN, Identity>();
 
     /**
      * Cron runner.
@@ -135,7 +135,7 @@ public final class DefaultHub implements PowerHub {
         this.ibus = bus;
         this.inf = infinity;
         this.imanager = new DefaultBoutMgr(this);
-        this.iresolver = new DefaultUrnResolver(this);
+        this.iresolver = new DefaultURNResolver(this);
         this.promote(this.persister());
         for (Callable<?> task : AbstractCron.all(this)) {
             this.crons.add(
@@ -182,7 +182,7 @@ public final class DefaultHub implements PowerHub {
      * {@inheritDoc}
      */
     @Override
-    public UrnResolver resolver() {
+    public URNResolver resolver() {
         return this.iresolver;
     }
 
@@ -206,7 +206,7 @@ public final class DefaultHub implements PowerHub {
      * {@inheritDoc}
      */
     @Override
-    public Long eta(final Urn who) {
+    public Long eta(final URN who) {
         return this.inf.eta(who);
     }
 
@@ -223,8 +223,8 @@ public final class DefaultHub implements PowerHub {
      * @checkstyle RedundantThrows (4 lines)
      */
     @Override
-    public Identity identity(final Urn name)
-        throws Identity.UnreachableUrnException {
+    public Identity identity(final URN name)
+        throws Identity.UnreachableURNException {
         this.resolver().authority(name);
         Identity identity;
         if (this.all.containsKey(name)) {
@@ -269,7 +269,7 @@ public final class DefaultHub implements PowerHub {
         Identity existing;
         try {
             existing = this.identity(identity.name());
-        } catch (Identity.UnreachableUrnException ex) {
+        } catch (Identity.UnreachableURNException ex) {
             throw new IllegalArgumentException(ex);
         }
         this.all.remove(existing);
@@ -295,8 +295,8 @@ public final class DefaultHub implements PowerHub {
     @Override
     public Identity join(final Identity main, final Identity child) {
         final Collection<String> aliases = child.profile().aliases();
-        final Urn mname = main.name();
-        final Urn cname = child.name();
+        final URN mname = main.name();
+        final URN cname = child.name();
         synchronized (this.all) {
             this.make("identities-joined")
                 .synchronously()
@@ -318,7 +318,7 @@ public final class DefaultHub implements PowerHub {
         Identity joined;
         try {
             joined = this.identity(mname);
-        } catch (Identity.UnreachableUrnException ex) {
+        } catch (Identity.UnreachableURNException ex) {
             throw new IllegalStateException(ex);
         }
         for (String alias : aliases) {
@@ -335,17 +335,17 @@ public final class DefaultHub implements PowerHub {
         final String keyword) {
         final Set<Friend> found = new HashSet<Friend>();
         if (!keyword.isEmpty()) {
-            final List<Urn> names = this
+            final List<URN> names = this
                 .make("find-identities-by-keyword")
                 .synchronously()
                 .arg(who.name())
                 .arg(keyword)
-                .asDefault(new ArrayList<Urn>())
+                .asDefault(new ArrayList<URN>())
                 .exec();
-            for (Urn name : names) {
+            for (URN name : names) {
                 try {
                     found.add(this.identity(name));
-                } catch (Identity.UnreachableUrnException ex) {
+                } catch (Identity.UnreachableURNException ex) {
                     Logger.warn(
                         this,
                         // @checkstyle LineLength (1 line)
@@ -381,12 +381,12 @@ public final class DefaultHub implements PowerHub {
      */
     private void promote(final Identity persister) {
         final long start = System.nanoTime();
-        final List<Urn> helpers = this.make("get-all-helpers")
+        final List<URN> helpers = this.make("get-all-helpers")
             .synchronously()
-            .asDefault(new ArrayList<Urn>())
+            .asDefault(new ArrayList<URN>())
             .exec();
         Logger.debug(this, "#promote(): promoting %[list]s", helpers);
-        for (Urn name : helpers) {
+        for (URN name : helpers) {
             if (name.equals(persister.name())) {
                 continue;
             }
@@ -396,7 +396,7 @@ public final class DefaultHub implements PowerHub {
                 .exec();
             try {
                 this.promote(this.identity(name), url);
-            } catch (Identity.UnreachableUrnException ex) {
+            } catch (Identity.UnreachableURNException ex) {
                 Logger.error(
                     this,
                     "#start(): failed to create '%s' identity:\n%[exception]s",
@@ -420,8 +420,8 @@ public final class DefaultHub implements PowerHub {
     private Identity persister() {
         final Identity persister;
         try {
-            persister = this.identity(new Urn("netbout", "db"));
-        } catch (Identity.UnreachableUrnException ex) {
+            persister = this.identity(new URN("netbout", "db"));
+        } catch (Identity.UnreachableURNException ex) {
             throw new IllegalStateException(
                 "Failed to create starter's identity",
                 ex

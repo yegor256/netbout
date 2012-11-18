@@ -26,12 +26,12 @@
  */
 package com.netbout.inf.notices;
 
+import com.jcabi.urn.URN;
 import com.netbout.spi.Bout;
 import com.netbout.spi.BoutMocker;
 import com.netbout.spi.Message;
 import com.netbout.spi.MessageMocker;
 import com.netbout.spi.ParticipantMocker;
-import com.netbout.spi.Urn;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
@@ -104,7 +104,7 @@ public final class MessagePostedNoticeTest {
             new MessagePostedNotice.Serial().deps(restored),
             Matchers.contains(
                 new MessagePostedNotice.Serial().deps(notice)
-                    .toArray(new Urn[0])
+                    .toArray(new URN[0])
             )
         );
     }

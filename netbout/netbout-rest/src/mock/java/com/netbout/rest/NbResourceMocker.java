@@ -26,12 +26,12 @@
  */
 package com.netbout.rest;
 
+import com.jcabi.urn.URN;
 import com.netbout.hub.Hub;
 import com.netbout.hub.HubMocker;
-import com.netbout.hub.UrnResolver;
+import com.netbout.hub.URNResolver;
 import com.netbout.spi.Identity;
 import com.netbout.spi.IdentityMocker;
-import com.netbout.spi.Urn;
 import com.rexsl.core.XslResolver;
 import com.rexsl.page.Resource;
 import com.rexsl.page.ResourceMocker;
@@ -147,14 +147,14 @@ public final class NbResourceMocker {
      */
     public <T extends Resource> T mock(final Class<T> type) throws Exception {
         if (this.hub == null) {
-            final Urn iname = this.identity.name();
+            final URN iname = this.identity.name();
             this.hub = new HubMocker()
                 .withIdentity(iname, this.identity)
                 .mock();
             if (this.namespaceUrl != null) {
-                final UrnResolver resolver = Mockito.mock(UrnResolver.class);
+                final URNResolver resolver = Mockito.mock(URNResolver.class);
                 Mockito.doReturn(this.namespaceUrl).when(resolver)
-                    .authority(Mockito.any(Urn.class));
+                    .authority(Mockito.any(URN.class));
                 Mockito.doReturn(resolver).when(this.hub).resolver();
             }
         }

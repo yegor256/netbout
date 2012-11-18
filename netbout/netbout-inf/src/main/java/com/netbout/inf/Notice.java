@@ -27,13 +27,13 @@
 package com.netbout.inf;
 
 import com.jcabi.log.Logger;
+import com.jcabi.urn.URN;
 import com.netbout.inf.notices.AliasAddedNotice;
 import com.netbout.inf.notices.BoutRenamedNotice;
 import com.netbout.inf.notices.JoinNotice;
 import com.netbout.inf.notices.KickOffNotice;
 import com.netbout.inf.notices.MessagePostedNotice;
 import com.netbout.inf.notices.MessageSeenNotice;
-import com.netbout.spi.Urn;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
@@ -112,8 +112,8 @@ public interface Notice {
          * Dependencies of this notice.
          * @return Set of names
          */
-        public Set<Urn> deps() {
-            Set<Urn> deps;
+        public Set<URN> deps() {
+            Set<URN> deps;
             if (this.origin instanceof MessagePostedNotice) {
                 deps = new MessagePostedNotice.Serial().deps(
                     MessagePostedNotice.class.cast(this.origin)

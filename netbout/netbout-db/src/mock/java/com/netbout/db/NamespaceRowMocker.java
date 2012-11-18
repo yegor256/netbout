@@ -26,7 +26,7 @@
  */
 package com.netbout.db;
 
-import com.netbout.spi.Urn;
+import com.jcabi.urn.URN;
 
 /**
  * Mocker of {@code NAMESPACE} row in a database.
@@ -38,7 +38,7 @@ public final class NamespaceRowMocker {
     /**
      * Owner of namespace.
      */
-    private transient Urn identity;
+    private transient URN identity;
 
     /**
      * Name of namespace.
@@ -72,7 +72,7 @@ public final class NamespaceRowMocker {
      * @param txt The owner
      * @return This object
      */
-    public NamespaceRowMocker withOwner(final Urn txt) {
+    public NamespaceRowMocker withOwner(final URN txt) {
         this.identity = txt;
         return this;
     }

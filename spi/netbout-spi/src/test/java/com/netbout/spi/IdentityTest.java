@@ -29,6 +29,8 @@
  */
 package com.netbout.spi;
 
+import com.jcabi.urn.URN;
+import com.jcabi.urn.URNMocker;
 import java.util.Random;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
@@ -47,7 +49,7 @@ public final class IdentityTest {
      */
     @Test
     public void canHaveANameMocked() throws Exception {
-        final Urn name = new UrnMocker().mock();
+        final URN name = new URNMocker().mock();
         final Identity identity = new IdentityMocker()
             .namedAs(name.toString()).mock();
         MatcherAssert.assertThat(identity.name(), Matchers.equalTo(name));

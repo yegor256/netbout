@@ -29,8 +29,8 @@
  */
 package com.netbout.spi.client;
 
+import com.jcabi.urn.URNMocker;
 import com.netbout.spi.Bout;
-import com.netbout.spi.UrnMocker;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
@@ -69,8 +69,8 @@ public final class RestBoutTest {
      */
     @Test
     public void fetchesListOfParticipants() throws Exception {
-        final String first = new UrnMocker().mock().toString();
-        final String second = new UrnMocker().mock().toString();
+        final String first = new URNMocker().mock().toString();
+        final String second = new URNMocker().mock().toString();
         final RestClient client = new RestClientMocker()
             .onXPath("ticipant/identity/text()", Arrays.asList(first, second))
             .mock();

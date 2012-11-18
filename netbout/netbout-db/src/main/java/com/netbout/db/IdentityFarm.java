@@ -31,7 +31,7 @@ import com.jcabi.jdbc.NotEmptyHandler;
 import com.jcabi.jdbc.SingleHandler;
 import com.jcabi.jdbc.Utc;
 import com.jcabi.jdbc.VoidHandler;
-import com.netbout.spi.Urn;
+import com.jcabi.urn.URN;
 import com.netbout.spi.cpa.Farm;
 import com.netbout.spi.cpa.Operation;
 import java.net.URL;
@@ -61,7 +61,7 @@ public final class IdentityFarm {
      * @return List of identities
      */
     @Operation("find-identities-by-keyword")
-    public List<Urn> findIdentitiesByKeyword(final Urn who,
+    public List<URN> findIdentitiesByKeyword(final URN who,
         final String keyword) {
         final String matcher = String.format(
             "%%%s%%",
@@ -94,7 +94,7 @@ public final class IdentityFarm {
      * @return Photo of the identity
      */
     @Operation("get-identity-photo")
-    public URL getIdentityPhoto(final Urn name) {
+    public URL getIdentityPhoto(final URN name) {
         return new JdbcSession(Database.source())
             .sql("SELECT photo FROM identity WHERE name = ?")
             .set(name)
@@ -126,7 +126,7 @@ public final class IdentityFarm {
      * @param name The name of identity
      */
     @Operation("identity-mentioned")
-    public void identityMentioned(final Urn name) {
+    public void identityMentioned(final URN name) {
         final Boolean exists = new JdbcSession(Database.source())
             .sql("SELECT name FROM identity WHERE name = ?")
             .set(name)
@@ -148,7 +148,7 @@ public final class IdentityFarm {
      * @param child The name of child identity
      */
     @Operation("identities-joined")
-    public void identitiesJoined(final Urn main, final Urn child) {
+    public void identitiesJoined(final URN main, final URN child) {
         new JdbcSession(Database.source())
             .autocommit(false)
             // @checkstyle LineLength (1 line)
@@ -197,7 +197,7 @@ public final class IdentityFarm {
      * @param photo The photo to set
      */
     @Operation("changed-identity-photo")
-    public void changedIdentityPhoto(final Urn name, final URL photo) {
+    public void changedIdentityPhoto(final URN name, final URL photo) {
         new JdbcSession(Database.source())
             .sql("UPDATE identity SET photo = ? WHERE name = ?")
             .set(photo)
@@ -210,7 +210,7 @@ public final class IdentityFarm {
      * @return List of their names
      */
     @Operation("find-silent-identities")
-    public List<Urn> findSilentIdentities() {
+    public List<URN> findSilentIdentities() {
         final Calendar cal = new GregorianCalendar();
         cal.add(Calendar.HOUR, -1);
         return new JdbcSession(Database.source()).sql(
@@ -230,7 +230,7 @@ public final class IdentityFarm {
      * @return The marker
      */
     @Operation("get-silence-marker")
-    public String getSilenceMarker(final Urn name) {
+    public String getSilenceMarker(final URN name) {
         final Date recent = new JdbcSession(Database.source()).sql(
             // @checkstyle StringLiteralsConcatenation (4 lines)
             "SELECT message.date FROM message"
@@ -264,16 +264,16 @@ public final class IdentityFarm {
     }
 
     @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
-    static final class NamesHandler implements JdbcSession.Handler<List<Urn>> {
+    static final class NamesHandler implements JdbcSession.Handler<List<URN>> {
         @Override
-        public List<Urn> handle(final ResultSet rset)
+        public List<URN> handle(final ResultSet rset)
             throws SQLException {
-            List<Urn> names = null;
+            List<URN> names = null;
             while (rset.next()) {
                 if (names == null) {
-                    names = new LinkedList<Urn>();
+                    names = new LinkedList<URN>();
                 }
-                names.add(Urn.create(rset.getString(1)));
+                names.add(URN.create(rset.getString(1)));
             }
             return names;
         }

@@ -156,6 +156,20 @@
                 <version since="8 Nov 2012">0.5.2</version>
             </dependency>
             <dependency>
+                <!-- URN implementation -->
+                <groupId>com.jcabi</groupId>
+                <artifactId>jcabi-urn</artifactId>
+                <version since="18 Nov 2012">1.0-SNAPSHOT</version>
+            </dependency>
+            <dependency>
+                <!-- URN implementation -->
+                <groupId>com.jcabi</groupId>
+                <artifactId>jcabi-urn</artifactId>
+                <version since="18 Nov 2012">1.0-SNAPSHOT</version>
+                <classifier>mock</classifier>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
                 <!--
                 This library simplifies string operations. This is
                 org.apache.commons.lang.*.

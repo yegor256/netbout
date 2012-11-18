@@ -29,7 +29,7 @@
  */
 package com.netbout.rest.rexsl.scripts.catapult
 
-import com.netbout.spi.Urn
+import com.jcabi.urn.URN
 import com.netbout.spi.client.RestSession
 import com.netbout.spi.client.RestUriBuilder
 import com.netbout.spi.text.SecureString
@@ -46,7 +46,7 @@ def home = UriBuilder.fromUri(System.getProperty('catapult.home'))
     .port(Integer.valueOf(System.getProperty('catapult.https.port')))
     .build()
 
-def starter = new RestSession(home, '9OLKJ8JHGytfh6JGJF0LKF').authenticate(new Urn(), '')
+def starter = new RestSession(home, '9OLKJ8JHGytfh6JGJF0LKF').authenticate(new URN(), '')
 def text = 'netbout=' + UriBuilder.fromUri(home).path('/nb').build()
 RestTester.start(RestUriBuilder.from(starter).build())
     .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_XML)
@@ -60,7 +60,7 @@ RestTester.start(RestUriBuilder.from(starter).build())
     .post('register namespace', 'text=' + URLEncoder.encode(text))
     .assertStatus(HttpURLConnection.HTTP_SEE_OTHER)
 
-def name = new Urn('urn:netbout:sisily')
+def name = new URN('urn:netbout:sisily')
 def sisily = new RestSession(home).authenticate(name, new SecureString(name).toString())
 this.prepare(RestUriBuilder.from(sisily).build())
 def bout = sisily.start()

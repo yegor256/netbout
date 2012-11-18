@@ -27,13 +27,13 @@
 package com.netbout.rest;
 
 import com.jcabi.log.Logger;
+import com.jcabi.urn.URN;
 import com.netbout.rest.jaxb.ShortBout;
 import com.netbout.rest.period.Period;
 import com.netbout.rest.period.PeriodsBuilder;
 import com.netbout.spi.Bout;
 import com.netbout.spi.Identity;
 import com.netbout.spi.Query;
-import com.netbout.spi.Urn;
 import com.netbout.spi.client.RestSession;
 import com.rexsl.page.JaxbBundle;
 import com.rexsl.page.JaxbGroup;
@@ -202,7 +202,7 @@ public final class InboxRs extends BaseRs {
         final Bout bout = identity.start();
         bout.rename("Welcome to Netbout!");
         bout.post(text);
-        bout.invite(identity.friend(new Urn("facebook", "1531296526")));
+        bout.invite(identity.friend(new URN("facebook", "1531296526")));
         return new PageBuilder()
             .build(NbPage.class)
             .init(this)

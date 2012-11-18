@@ -29,6 +29,7 @@
  */
 package com.netbout.spi;
 
+import com.jcabi.urn.URN;
 import java.net.URL;
 import java.util.Arrays;
 import java.util.Collection;
@@ -77,8 +78,8 @@ public final class PlainBuilderTest {
                 new Object[] {"some text: 8(&^%$,:;,\"/\\+ "},
                 new Object[] {"\u043F\u0440\u0438\u0432\u0435\u0442"},
                 new Object[] {new Date()},
-                new Object[] {new Urn("urn:foo:test")},
-                new Object[] {new Urn("bar", "&^%$#@\u8514\u043F")},
+                new Object[] {new URN("urn:foo:test")},
+                new Object[] {new URN("bar", "&^%$#@\u8514\u043F")},
                 new Object[] {new URL("http://localhost/test")},
                 new Object[] {new Date(Math.abs(random.nextLong()))},
                 new Object[] {true},

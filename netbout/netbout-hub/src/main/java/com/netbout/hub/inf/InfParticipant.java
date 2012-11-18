@@ -26,11 +26,11 @@
  */
 package com.netbout.hub.inf;
 
+import com.jcabi.urn.URN;
 import com.netbout.hub.ParticipantDt;
 import com.netbout.spi.Friend;
 import com.netbout.spi.Participant;
 import com.netbout.spi.Profile;
-import com.netbout.spi.Urn;
 
 /**
  * Participant to be seen by INF.
@@ -73,7 +73,7 @@ public final class InfParticipant implements Participant {
      * {@inheritDoc}
      */
     @Override
-    public Urn name() {
+    public URN name() {
         return this.data.getIdentity();
     }
 

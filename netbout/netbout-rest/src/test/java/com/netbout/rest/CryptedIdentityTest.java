@@ -26,11 +26,11 @@
  */
 package com.netbout.rest;
 
+import com.jcabi.urn.URN;
+import com.jcabi.urn.URNMocker;
 import com.netbout.hub.Hub;
 import com.netbout.spi.Identity;
 import com.netbout.spi.IdentityMocker;
-import com.netbout.spi.Urn;
-import com.netbout.spi.UrnMocker;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;
@@ -49,7 +49,7 @@ public final class CryptedIdentityTest {
      */
     @Test
     public void encryptsAndDecryptsIdentity() throws Exception {
-        final Urn iname = new UrnMocker().mock();
+        final URN iname = new URNMocker().mock();
         final Identity identity = new IdentityMocker()
             .namedAs(iname)
             .mock();

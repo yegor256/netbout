@@ -26,6 +26,8 @@
  */
 package com.netbout.inf.functors;
 
+import com.jcabi.urn.URN;
+import com.jcabi.urn.URNMocker;
 import com.netbout.inf.Atom;
 import com.netbout.inf.FolderMocker;
 import com.netbout.inf.MsgMocker;
@@ -37,8 +39,6 @@ import com.netbout.spi.Bout;
 import com.netbout.spi.BoutMocker;
 import com.netbout.spi.Message;
 import com.netbout.spi.MessageMocker;
-import com.netbout.spi.Urn;
-import com.netbout.spi.UrnMocker;
 import java.util.Arrays;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
@@ -60,7 +60,7 @@ public final class TalksWithTest {
     public void findsMessageByAuthor() throws Exception {
         final Ray ray = new MemRay(new FolderMocker().mock().path());
         final long msg = MsgMocker.number();
-        final Urn author = new UrnMocker().mock();
+        final URN author = new URNMocker().mock();
         final Bout bout = new BoutMocker()
             .withParticipant(author)
             .mock();

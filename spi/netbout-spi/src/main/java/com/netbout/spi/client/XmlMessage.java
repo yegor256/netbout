@@ -29,9 +29,9 @@
  */
 package com.netbout.spi.client;
 
+import com.jcabi.urn.URN;
 import com.netbout.spi.Friend;
 import com.netbout.spi.Message;
-import com.netbout.spi.Urn;
 import java.util.Date;
 import org.joda.time.DateTimeZone;
 import org.joda.time.format.ISODateTimeFormat;
@@ -85,7 +85,7 @@ final class XmlMessage implements Message {
      */
     @Override
     public Friend author() {
-        return new RestFriend(Urn.create(this.byPath("/author/text()")));
+        return new RestFriend(URN.create(this.byPath("/author/text()")));
     }
 
     /**

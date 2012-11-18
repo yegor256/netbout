@@ -115,7 +115,7 @@ final class HubMessage implements Message {
     public Identity author() {
         try {
             return this.hub.identity(this.data.getAuthor());
-        } catch (Identity.UnreachableUrnException ex) {
+        } catch (Identity.UnreachableURNException ex) {
             throw new IllegalStateException(ex);
         }
     }

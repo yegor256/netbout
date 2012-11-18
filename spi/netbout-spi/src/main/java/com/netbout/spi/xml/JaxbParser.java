@@ -29,7 +29,7 @@
  */
 package com.netbout.spi.xml;
 
-import com.netbout.spi.Urn;
+import com.jcabi.urn.URN;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.transform.dom.DOMSource;
@@ -107,7 +107,7 @@ public final class JaxbParser {
      * @return The same document
      */
     private static Document clear(final Document dom, final Class<?> type) {
-        final Urn required = JaxbPrinter.namespace(type);
+        final URN required = JaxbPrinter.namespace(type);
         if (!required.isEmpty()) {
             final String actual = dom.getDocumentElement().getNamespaceURI();
             if (!DomParser.matches(required, actual)) {

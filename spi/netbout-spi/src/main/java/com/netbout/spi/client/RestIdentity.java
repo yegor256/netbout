@@ -29,12 +29,12 @@
  */
 package com.netbout.spi.client;
 
+import com.jcabi.urn.URN;
 import com.netbout.spi.Bout;
 import com.netbout.spi.Friend;
 import com.netbout.spi.Identity;
 import com.netbout.spi.OwnProfile;
 import com.netbout.spi.Query;
-import com.netbout.spi.Urn;
 import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URL;
@@ -145,8 +145,8 @@ final class RestIdentity implements Identity {
      * {@inheritDoc}
      */
     @Override
-    public Urn name() {
-        return Urn.create(
+    public URN name() {
+        return URN.create(
             this.client
                 .get("reading identity name")
                 .assertStatus(HttpURLConnection.HTTP_OK)
@@ -220,7 +220,7 @@ final class RestIdentity implements Identity {
      * {@inheritDoc}
      */
     @Override
-    public Friend friend(final Urn name) {
+    public Friend friend(final URN name) {
         final Set<Friend> friends = this.friends(name.toString());
         if (friends.isEmpty()) {
             throw new IllegalArgumentException(
@@ -249,7 +249,7 @@ final class RestIdentity implements Identity {
             .assertXPath("/page/invitees");
         final Set<Friend> friends = new HashSet<Friend>();
         for (String name : response.xpath("//invitee/name/text()")) {
-            friends.add(new RestFriend(Urn.create(name)));
+            friends.add(new RestFriend(URN.create(name)));
         }
         return Collections.unmodifiableSet(friends);
     }

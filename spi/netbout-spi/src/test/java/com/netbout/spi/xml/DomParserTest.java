@@ -29,7 +29,7 @@
  */
 package com.netbout.spi.xml;
 
-import com.netbout.spi.Urn;
+import com.jcabi.urn.URN;
 import com.rexsl.test.ContainerMocker;
 import com.rexsl.test.XhtmlMatchers;
 import java.net.URL;
@@ -83,7 +83,7 @@ public final class DomParserTest {
         MatcherAssert.assertThat(
             "this XML document belongs to the namespace mentioned",
             new DomParser("<foo:x xmlns:foo='urn:test:foo'/>").belongsTo(
-                new Urn("urn:test:foo")
+                new URN("urn:test:foo")
             )
         );
     }

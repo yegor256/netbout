@@ -26,10 +26,10 @@
  */
 package com.netbout.hub;
 
+import com.jcabi.urn.URN;
 import com.netbout.inf.Infinity;
 import com.netbout.spi.Friend;
 import com.netbout.spi.Identity;
-import com.netbout.spi.Urn;
 import java.util.Set;
 
 /**
@@ -45,7 +45,7 @@ public interface PowerHub extends Hub {
      * @param who Who is checking
      * @return The ETA in milliseconds
      */
-    Long eta(Urn who);
+    Long eta(URN who);
 
     /**
      * Get manager of bouts.

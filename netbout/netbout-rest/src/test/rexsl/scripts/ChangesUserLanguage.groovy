@@ -29,7 +29,7 @@
  */
 package com.netbout.rest.rexsl.scripts
 
-import com.netbout.spi.Urn
+import com.jcabi.urn.URN
 import com.netbout.spi.client.RestSession
 import com.netbout.spi.client.RestUriBuilder
 import com.rexsl.test.RestTester
@@ -38,7 +38,7 @@ import javax.ws.rs.core.MediaType
 import org.hamcrest.MatcherAssert
 import org.hamcrest.Matchers
 
-def misha = new RestSession(rexsl.home).authenticate(new Urn('urn:test:misha'), '')
+def misha = new RestSession(rexsl.home).authenticate(new URN('urn:test:misha'), '')
 
 RestTester.start(RestUriBuilder.from(misha))
     .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_XML)

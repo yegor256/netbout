@@ -30,8 +30,8 @@
 package com.netbout.spi.client;
 
 import com.jcabi.log.Logger;
+import com.jcabi.urn.URN;
 import com.netbout.spi.Identity;
-import com.netbout.spi.Urn;
 import com.rexsl.test.RestTester;
 import java.net.HttpURLConnection;
 import java.net.URI;
@@ -138,7 +138,7 @@ public final class RestSession {
      * @param secret The secret word to use
      * @return The identity to work with
      */
-    public Identity authenticate(final Urn iname, final String secret) {
+    public Identity authenticate(final URN iname, final String secret) {
         return new RestIdentity(
             new RexslRestClient(
                 RestTester.start(this.home),
@@ -153,7 +153,7 @@ public final class RestSession {
      * @param secret The secret word to use
      * @return The URL
      */
-    private String fetch(final Urn identity, final String secret) {
+    private String fetch(final URN identity, final String secret) {
         final URI uri = this.uri(identity, secret);
         final String token = RestTester.start(uri)
             .get("authorization")
@@ -182,7 +182,7 @@ public final class RestSession {
      * @param secret The secret word to use
      * @return The URI
      */
-    private URI uri(final Urn identity, final String secret) {
+    private URI uri(final URN identity, final String secret) {
         URI uri = UriBuilder.fromUri(this.home)
             .path("/auth")
             .queryParam("identity", "{identity}")

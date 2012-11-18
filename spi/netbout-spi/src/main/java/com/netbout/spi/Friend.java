@@ -29,6 +29,8 @@
  */
 package com.netbout.spi;
 
+import com.jcabi.urn.URN;
+
 /**
  * Friend of {@link Identity}.
  *
@@ -43,7 +45,7 @@ public interface Friend extends Comparable<Friend> {
      * Get name of the identity, which is unique in the system.
      * @return The name of the identity
      */
-    Urn name();
+    URN name();
 
     /**
      * Get profile.

@@ -26,12 +26,12 @@
  */
 package com.netbout.rest.auth;
 
+import com.jcabi.urn.URN;
 import com.netbout.notifiers.email.EmailFarm;
 import com.netbout.rest.BaseRs;
 import com.netbout.rest.LoginRequiredException;
 import com.netbout.rest.NbPage;
 import com.netbout.spi.Identity;
-import com.netbout.spi.Urn;
 import com.netbout.spi.text.SecureString;
 import com.rexsl.page.PageBuilder;
 import java.net.URL;
@@ -58,7 +58,7 @@ public final class EmailRs extends BaseRs {
      */
     @GET
     @Path("/")
-    public Response auth(@QueryParam("identity") final Urn iname,
+    public Response auth(@QueryParam("identity") final URN iname,
         @QueryParam("secret") final String secret) {
         return new PageBuilder()
             .build(NbPage.class)
@@ -74,7 +74,7 @@ public final class EmailRs extends BaseRs {
      * @param secret The secret code
      * @return The identity just authenticated
      */
-    private Identity authenticate(final Urn iname, final String secret) {
+    private Identity authenticate(final URN iname, final String secret) {
         if ((iname == null) || (secret == null)) {
             throw new LoginRequiredException(
                 this,
@@ -111,7 +111,7 @@ public final class EmailRs extends BaseRs {
      * @param iname Name of identity
      * @return The identity just authenticated
      */
-    private Identity resolve(final Urn iname) {
+    private Identity resolve(final URN iname) {
         Identity identity;
         try {
             identity = new ResolvedIdentity(

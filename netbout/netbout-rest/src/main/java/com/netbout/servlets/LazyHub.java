@@ -27,13 +27,13 @@
 package com.netbout.servlets;
 
 import com.jcabi.log.Logger;
+import com.jcabi.urn.URN;
 import com.jcabi.velocity.VelocityPage;
 import com.netbout.bus.TxBuilder;
 import com.netbout.hub.Hub;
-import com.netbout.hub.UrnResolver;
+import com.netbout.hub.URNResolver;
 import com.netbout.spi.Helper;
 import com.netbout.spi.Identity;
-import com.netbout.spi.Urn;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -80,7 +80,7 @@ final class LazyHub implements Hub {
      * {@inheritDoc}
      */
     @Override
-    public UrnResolver resolver() {
+    public URNResolver resolver() {
         return this.origin().resolver();
     }
 
@@ -89,8 +89,8 @@ final class LazyHub implements Hub {
      * @checkstyle RedundantThrows (4 lines)
      */
     @Override
-    public Identity identity(final Urn name)
-        throws Identity.UnreachableUrnException {
+    public Identity identity(final URN name)
+        throws Identity.UnreachableURNException {
         return this.origin().identity(name);
     }
 

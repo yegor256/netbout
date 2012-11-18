@@ -27,9 +27,9 @@
 package com.netbout.rest;
 
 import com.jcabi.log.Logger;
+import com.jcabi.urn.URN;
 import com.netbout.hub.Hub;
 import com.netbout.spi.Identity;
-import com.netbout.spi.Urn;
 import com.netbout.spi.text.SecureString;
 
 /**
@@ -81,8 +81,8 @@ public final class CryptedIdentity {
         }
         Identity identity;
         try {
-            identity = hub.identity(new Urn(iname));
-        } catch (Identity.UnreachableUrnException ex) {
+            identity = hub.identity(new URN(iname));
+        } catch (Identity.UnreachableURNException ex) {
             throw new CryptedIdentity.DecryptionException(ex);
         } catch (java.net.URISyntaxException ex) {
             throw new CryptedIdentity.DecryptionException(ex);

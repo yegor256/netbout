@@ -29,8 +29,8 @@
  */
 package com.netbout.rest.rexsl.bumper
 
+import com.jcabi.urn.URN
 import com.netbout.spi.Query
-import com.netbout.spi.Urn
 import com.netbout.spi.client.RestSession
 import com.netbout.spi.client.RestUriBuilder
 import com.rexsl.test.RestTester
@@ -40,12 +40,12 @@ import javax.ws.rs.core.UriBuilder
 import org.hamcrest.MatcherAssert
 import org.hamcrest.Matchers
 
-def paul = new RestSession(rexsl.home).authenticate(new Urn('urn:test:paul'), '')
+def paul = new RestSession(rexsl.home).authenticate(new URN('urn:test:paul'), '')
 
 def bout = paul.start()
 bout.rename('Posting XML messages to bumper')
 bout.post('hi there!')
-bout.invite(paul.friend(new Urn('urn:test:bumper')))
+bout.invite(paul.friend(new URN('urn:test:bumper')))
 
 def xsd = UriBuilder.fromUri(rexsl.home).path('/bumper/ns.xsd').build()
 RestTester.start(RestUriBuilder.from(bout).path('/s'))

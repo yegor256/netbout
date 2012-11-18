@@ -29,21 +29,21 @@
  */
 package com.netbout.rest.rexsl.scripts.stages
 
-import com.netbout.spi.Urn
+import com.jcabi.urn.URN
 import com.netbout.spi.client.RestSession
 import com.netbout.spi.client.RestUriBuilder
 import com.rexsl.test.RestTester
 import javax.ws.rs.core.HttpHeaders
 import javax.ws.rs.core.MediaType
 
-def jeff = new RestSession(rexsl.home).authenticate(new Urn('urn:test:jeff'), '')
+def jeff = new RestSession(rexsl.home).authenticate(new URN('urn:test:jeff'), '')
 def bout = jeff.start()
 bout.post('hi there!')
-def maria = new RestSession(rexsl.home).authenticate(new Urn('urn:test:maria'), '')
+def maria = new RestSession(rexsl.home).authenticate(new URN('urn:test:maria'), '')
 bout.rename('Rendering urn:test:hh stage data')
 bout.invite(maria)
-bout.invite(jeff.friend(new Urn('urn:facebook:1531296526')))
-bout.invite(jeff.friend(new Urn('urn:test:hh')))
+bout.invite(jeff.friend(new URN('urn:facebook:1531296526')))
+bout.invite(jeff.friend(new URN('urn:test:hh')))
 
 // validate that the stage is really there, in XHTML
 RestTester.start(RestUriBuilder.from(bout))

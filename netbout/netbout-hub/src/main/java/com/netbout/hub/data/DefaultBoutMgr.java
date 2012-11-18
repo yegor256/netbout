@@ -27,12 +27,12 @@
 package com.netbout.hub.data;
 
 import com.jcabi.log.Logger;
+import com.jcabi.urn.URN;
 import com.netbout.hub.BoutMgr;
 import com.netbout.hub.ParticipantDt;
 import com.netbout.hub.PowerHub;
 import com.netbout.spi.Bout;
 import com.netbout.spi.Identity;
-import com.netbout.spi.Urn;
 import java.util.Collections;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -91,7 +91,7 @@ public final class DefaultBoutMgr implements BoutMgr, MsgListener {
      * {@inheritDoc}
      */
     @Override
-    public Long create(final Urn author) {
+    public Long create(final URN author) {
         final Long number = this.hub
             // @checkstyle MultipleStringLiterals (1 lines)
             .make("get-next-bout-number")
@@ -183,7 +183,7 @@ public final class DefaultBoutMgr implements BoutMgr, MsgListener {
      * {@inheritDoc}
      */
     @Override
-    public void destroy(final Urn author) {
+    public void destroy(final URN author) {
         synchronized (this.bouts) {
             for (Long number : this.bouts.keySet()) {
                 boolean found = false;

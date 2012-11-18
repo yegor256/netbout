@@ -26,13 +26,13 @@
  */
 package com.netbout.rest;
 
+import com.jcabi.urn.URN;
+import com.jcabi.urn.URNMocker;
 import com.netbout.rest.period.Period;
 import com.netbout.rest.period.PeriodsBuilder;
 import com.netbout.spi.BoutMocker;
 import com.netbout.spi.IdentityMocker;
 import com.netbout.spi.MessageMocker;
-import com.netbout.spi.Urn;
-import com.netbout.spi.UrnMocker;
 import com.rexsl.test.XhtmlMatchers;
 import java.util.Calendar;
 import java.util.Date;
@@ -57,7 +57,7 @@ public final class InboxRsTest {
     @Test
     @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
     public void rendersInboxFrontPage() throws Exception {
-        final Urn name = new UrnMocker().mock();
+        final URN name = new URNMocker().mock();
         final IdentityMocker imocker = new IdentityMocker().namedAs(name);
         final Calendar cal = new GregorianCalendar();
         final long total = Period.MAX * 2 + 1;

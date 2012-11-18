@@ -26,8 +26,8 @@
  */
 package com.netbout.rest.bumper;
 
+import com.jcabi.urn.URN;
 import com.netbout.spi.Identity;
-import com.netbout.spi.Urn;
 import com.netbout.spi.cpa.Farm;
 import com.netbout.spi.cpa.IdentityAware;
 import com.netbout.spi.cpa.Operation;
@@ -65,7 +65,7 @@ public final class StageFarmMocker implements IdentityAware {
      * @return Does it?
      */
     @Operation("does-stage-exist")
-    public Boolean doesStageExist(final Long number, final Urn stage) {
+    public Boolean doesStageExist(final Long number, final URN stage) {
         Boolean exists = null;
         if (this.identity.name().equals(stage)) {
             exists = Boolean.TRUE;
@@ -86,7 +86,7 @@ public final class StageFarmMocker implements IdentityAware {
      */
     @Operation("stage-post-request")
     public String stagePostRequest(final Long number,
-        final Urn author, final Urn stage,
+        final URN author, final URN stage,
         final String place, final String body) throws Exception {
         String dest = null;
         if (this.identity.name().equals(stage)) {
@@ -115,8 +115,8 @@ public final class StageFarmMocker implements IdentityAware {
      * @checkstyle ParameterNumber (4 lines)
      */
     @Operation("render-stage-xml")
-    public String renderStageXml(final Long number, final Urn viewer,
-        final Urn stage, final String place) throws Exception {
+    public String renderStageXml(final Long number, final URN viewer,
+        final URN stage, final String place) throws Exception {
         String xml = null;
         if (this.identity.name().equals(stage)) {
             xml = "<data/>";
@@ -132,7 +132,7 @@ public final class StageFarmMocker implements IdentityAware {
      * @throws Exception If some problem inside
      */
     @Operation("render-stage-xsl")
-    public String renderStageXsl(final Long number, final Urn stage)
+    public String renderStageXsl(final Long number, final URN stage)
         throws Exception {
         String xsl = null;
         if (this.identity.name().equals(stage)) {
@@ -154,8 +154,8 @@ public final class StageFarmMocker implements IdentityAware {
      * @checkstyle ParameterNumber (4 lines)
      */
     @Operation("render-stage-resource")
-    public String renderStageResource(final Long number, final Urn author,
-        final Urn stage, final URL base, final String path)
+    public String renderStageResource(final Long number, final URN author,
+        final URN stage, final URL base, final String path)
         throws Exception {
         String response = null;
         if (this.identity.name().equals(stage)) {

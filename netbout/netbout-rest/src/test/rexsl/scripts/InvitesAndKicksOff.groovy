@@ -29,16 +29,16 @@
  */
 package com.netbout.rest.rexsl.scripts
 
+import com.jcabi.urn.URN
 import com.netbout.spi.Query
-import com.netbout.spi.Urn
 import com.netbout.spi.client.RestSession
 import java.security.SecureRandom
 import org.hamcrest.MatcherAssert
 import org.hamcrest.Matchers
 
-def jeff = new RestSession(rexsl.home).authenticate(new Urn('urn:test:jeff'), '')
+def jeff = new RestSession(rexsl.home).authenticate(new URN('urn:test:jeff'), '')
 def random = new RestSession(rexsl.home).authenticate(
-    new Urn('test', new SecureRandom().nextLong().toString()), ''
+    new URN('test', new SecureRandom().nextLong().toString()), ''
 )
 
 def bout = jeff.start()

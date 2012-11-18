@@ -26,13 +26,13 @@
  */
 package com.netbout.rest;
 
+import com.jcabi.urn.URN;
 import com.netbout.rest.jaxb.Invitee;
 import com.netbout.rest.jaxb.LongBout;
 import com.netbout.spi.Bout;
 import com.netbout.spi.Friend;
 import com.netbout.spi.Identity;
 import com.netbout.spi.Message;
-import com.netbout.spi.Urn;
 import com.netbout.spi.client.RestSession;
 import com.rexsl.page.CookieBuilder;
 import com.rexsl.page.JaxbBundle;
@@ -127,7 +127,7 @@ public final class BoutRs extends BaseRs {
      * @param name The name of it
      */
     @QueryParam(BoutRs.STAGE_PARAM)
-    public void setStage(final Urn name) {
+    public void setStage(final URN name) {
         if (name != null) {
             this.coords.setStage(name);
         }
@@ -266,7 +266,7 @@ public final class BoutRs extends BaseRs {
      */
     @Path("/i")
     @GET
-    public Response invite(@QueryParam("name") final Urn name) {
+    public Response invite(@QueryParam("name") final URN name) {
         final Bout bout = this.bout();
         if (name == null) {
             throw new ForwardException(
@@ -277,7 +277,7 @@ public final class BoutRs extends BaseRs {
         }
         try {
             bout.invite(this.identity().friend(name));
-        } catch (Identity.UnreachableUrnException ex) {
+        } catch (Identity.UnreachableURNException ex) {
             throw new ForwardException(this, this.self(""), ex);
         } catch (Bout.DuplicateInvitationException ex) {
             throw new ForwardException(this, this.self(""), ex);
@@ -333,11 +333,11 @@ public final class BoutRs extends BaseRs {
      */
     @Path("/kickoff")
     @GET
-    public Response kickoff(@QueryParam("name") final Urn name) {
+    public Response kickoff(@QueryParam("name") final URN name) {
         Friend friend;
         try {
             friend = this.identity().friend(name);
-        } catch (Identity.UnreachableUrnException ex) {
+        } catch (Identity.UnreachableURNException ex) {
             throw new ForwardException(this, this.base(), ex);
         }
         new Bout.Smart(this.bout()).participant(friend).kickOff();

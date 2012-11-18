@@ -26,8 +26,8 @@
  */
 package com.netbout.hub;
 
+import com.jcabi.urn.URN;
 import com.netbout.spi.Bout;
-import com.netbout.spi.Urn;
 import java.util.Collection;
 import java.util.Date;
 
@@ -67,26 +67,26 @@ public interface BoutDt {
      * Confirm participation.
      * @param identity Who confirms?
      */
-    void confirm(Urn identity);
+    void confirm(URN identity);
 
     /**
      * Kick off this identity of the bout.
      * @param identity Who leaves
      */
-    void kickOff(Urn identity);
+    void kickOff(URN identity);
 
     /**
      * Set leader.
      * @param identity Who should be a leader now
      */
-    void setLeader(Urn identity);
+    void setLeader(URN identity);
 
     /**
      * Add new participant.
      * @param name The name of participant
      * @return The participant just created/added
      */
-    ParticipantDt addParticipant(Urn name);
+    ParticipantDt addParticipant(URN name);
 
     /**
      * Get list of participants.

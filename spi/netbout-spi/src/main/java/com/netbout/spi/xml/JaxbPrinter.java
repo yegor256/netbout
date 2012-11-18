@@ -30,7 +30,7 @@
 package com.netbout.spi.xml;
 
 import com.jcabi.log.Logger;
-import com.netbout.spi.Urn;
+import com.jcabi.urn.URN;
 import java.net.URL;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;
@@ -75,7 +75,7 @@ public final class JaxbPrinter {
      * @return The document
      */
     public String print(final String suffix) {
-        final Urn namespace = JaxbPrinter.namespace(this.object.getClass());
+        final URN namespace = JaxbPrinter.namespace(this.object.getClass());
         if (namespace.isEmpty() && !suffix.isEmpty()) {
             throw new IllegalArgumentException(
                 Logger.format(
@@ -85,7 +85,7 @@ public final class JaxbPrinter {
             );
         }
         return this.print(
-            Urn.create(String.format("%s%s", namespace, suffix))
+            URN.create(String.format("%s%s", namespace, suffix))
         );
     }
 
@@ -94,9 +94,9 @@ public final class JaxbPrinter {
      * @param required New namespace to set there
      * @return The document
      */
-    public String print(final Urn required) {
+    public String print(final URN required) {
         final Document dom = this.marshall();
-        final Urn namespace = JaxbPrinter.namespace(this.object.getClass());
+        final URN namespace = JaxbPrinter.namespace(this.object.getClass());
         if (!namespace.isEmpty()) {
             if (!namespace.equals(required)) {
                 DomParser.rename(
@@ -184,8 +184,8 @@ public final class JaxbPrinter {
      * @param type The type
      * @return The namespace of it
      */
-    public static Urn namespace(final Class<?> type) {
-        Urn namespace;
+    public static URN namespace(final Class<?> type) {
+        URN namespace;
         final XmlType tannot = XmlType.class.cast(
             type.getAnnotation(XmlType.class)
         );
@@ -215,13 +215,13 @@ public final class JaxbPrinter {
      * @param origin The namespace to convert, in JAXB-form
      * @return The namespace of it
      */
-    private static Urn convert(final String origin) {
-        Urn namespace;
+    private static URN convert(final String origin) {
+        URN namespace;
         if ("##default".equals(origin)) {
-            namespace = new Urn();
+            namespace = new URN();
         } else {
             try {
-                namespace = new Urn(origin);
+                namespace = new URN(origin);
             } catch (java.net.URISyntaxException ex) {
                 throw new IllegalArgumentException(
                     Logger.format(
@@ -263,7 +263,7 @@ public final class JaxbPrinter {
             name = tannot.name();
         }
         QName qname;
-        final Urn namespace = JaxbPrinter.namespace(this.object.getClass());
+        final URN namespace = JaxbPrinter.namespace(this.object.getClass());
         if (namespace.isEmpty()) {
             qname = new QName("", name);
         } else {

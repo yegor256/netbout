@@ -29,7 +29,7 @@
  */
 package com.netbout.rest.rexsl.scripts
 
-import com.netbout.spi.Urn
+import com.jcabi.urn.URN
 import com.netbout.spi.client.EtaAssertion
 import com.netbout.spi.client.RestSession
 import com.netbout.spi.client.RestUriBuilder
@@ -37,7 +37,7 @@ import com.rexsl.test.RestTester
 import javax.ws.rs.core.HttpHeaders
 import javax.ws.rs.core.MediaType
 
-def andre = new RestSession(rexsl.home).authenticate(new Urn('urn:test:andre'), '')
+def andre = new RestSession(rexsl.home).authenticate(new URN('urn:test:andre'), '')
 def bout = andre.start()
 
 RestTester.start(RestUriBuilder.from(bout))

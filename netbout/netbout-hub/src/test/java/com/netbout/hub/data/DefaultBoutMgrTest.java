@@ -26,6 +26,7 @@
  */
 package com.netbout.hub.data;
 
+import com.jcabi.urn.URNMocker;
 import com.netbout.bus.Bus;
 import com.netbout.bus.BusMocker;
 import com.netbout.hub.BoutMgr;
@@ -33,7 +34,6 @@ import com.netbout.hub.DefaultHub;
 import com.netbout.hub.PowerHub;
 import com.netbout.hub.PowerHubMocker;
 import com.netbout.inf.InfinityMocker;
-import com.netbout.spi.UrnMocker;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;
@@ -66,7 +66,7 @@ public final class DefaultBoutMgrTest {
     public void createsNewBout() throws Exception {
         final PowerHub hub = new PowerHubMocker().mock();
         final BoutMgr mgr = new DefaultBoutMgr(hub);
-        final Long num = mgr.create(new UrnMocker().mock());
+        final Long num = mgr.create(new URNMocker().mock());
         MatcherAssert.assertThat(num, Matchers.equalTo(1L));
     }
 
@@ -81,8 +81,8 @@ public final class DefaultBoutMgrTest {
         final BoutMgr mgr = new DefaultBoutMgr(
             new DefaultHub(bus, new InfinityMocker().mock())
         );
-        final Long first = mgr.create(new UrnMocker().mock());
-        final Long second = mgr.create(new UrnMocker().mock());
+        final Long first = mgr.create(new URNMocker().mock());
+        final Long second = mgr.create(new URNMocker().mock());
         MatcherAssert.assertThat(first, Matchers.not(Matchers.equalTo(second)));
     }
 

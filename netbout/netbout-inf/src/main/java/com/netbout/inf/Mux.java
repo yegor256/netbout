@@ -29,7 +29,7 @@ package com.netbout.inf;
 import com.jcabi.log.Logger;
 import com.jcabi.log.VerboseRunnable;
 import com.jcabi.log.VerboseThreads;
-import com.netbout.spi.Urn;
+import com.jcabi.urn.URN;
 import com.rexsl.core.Manifests;
 import java.io.Closeable;
 import java.io.IOException;
@@ -98,8 +98,8 @@ final class Mux implements Closeable {
     /**
      * How many notices every identity has now in pending status.
      */
-    private final transient ConcurrentMap<Urn, AtomicLong> dependants =
-        new ConcurrentHashMap<Urn, AtomicLong>();
+    private final transient ConcurrentMap<URN, AtomicLong> dependants =
+        new ConcurrentHashMap<URN, AtomicLong>();
 
     /**
      * Stats on notice processing performance.
@@ -185,10 +185,10 @@ final class Mux implements Closeable {
      * @param who Who is asking
      * @return Estimated number of nanoseconds
      */
-    public long eta(final Urn... who) {
+    public long eta(final URN... who) {
         long eta = 0L;
         if (who.length > 0) {
-            for (Urn urn : who) {
+            for (URN urn : who) {
                 if (this.dependants.containsKey(urn)) {
                     eta += this.dependants.get(urn).get();
                 }
@@ -214,10 +214,10 @@ final class Mux implements Closeable {
      * @throws IOException If some IO problem inside
      */
     @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
-    public Set<Urn> add(final Notice notice) throws IOException {
+    public Set<URN> add(final Notice notice) throws IOException {
         this.ray.stash().add(notice);
         final MuxTask task = new MuxTask(notice, this.ray, this.store);
-        final Set<Urn> deps = new HashSet<Urn>();
+        final Set<URN> deps = new HashSet<URN>();
         if (this.queue.contains(task)) {
             Logger.debug(
                 this,
@@ -225,7 +225,7 @@ final class Mux implements Closeable {
                 task
             );
         } else {
-            for (Urn who : task.dependants()) {
+            for (URN who : task.dependants()) {
                 this.dependants.putIfAbsent(who, new AtomicLong());
                 this.dependants.get(who).incrementAndGet();
                 deps.add(who);
@@ -248,7 +248,7 @@ final class Mux implements Closeable {
     public String toString() {
         final StringBuilder text = new StringBuilder();
         text.append(String.format("%d identities\n", this.dependants.size()));
-        for (ConcurrentMap.Entry<Urn, AtomicLong> entry
+        for (ConcurrentMap.Entry<URN, AtomicLong> entry
             : this.dependants.entrySet()) {
             if (entry.getValue().get() != 0) {
                 text.append(
@@ -378,7 +378,7 @@ final class Mux implements Closeable {
                     final MuxTask task = this.queue.poll(1, TimeUnit.SECONDS);
                     if (task != null) {
                         final double time = task.call();
-                        for (Urn who : task.dependants()) {
+                        for (URN who : task.dependants()) {
                             this.dependants.get(who).decrementAndGet();
                         }
                         this.stats.addValue(time);

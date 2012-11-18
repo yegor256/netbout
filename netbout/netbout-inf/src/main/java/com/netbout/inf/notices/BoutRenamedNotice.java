@@ -26,8 +26,8 @@
  */
 package com.netbout.inf.notices;
 
+import com.jcabi.urn.URN;
 import com.netbout.spi.Bout;
-import com.netbout.spi.Urn;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -60,7 +60,7 @@ public interface BoutRenamedNotice extends BoutNotice {
          * {@inheritDoc}
          */
         @Override
-        public Set<Urn> deps(final BoutRenamedNotice notice) {
+        public Set<URN> deps(final BoutRenamedNotice notice) {
             return new BoutNotice.Serial().deps(notice);
         }
         /**
