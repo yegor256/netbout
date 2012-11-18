@@ -46,6 +46,6 @@ def url = RestTester.start(RestUriBuilder.from(bruno))
     .xpath('/page/identity/photo/text()')
     .get(0)
 MatcherAssert.assertThat(
-    HttpURLConnection.class.cast(new URL(url).openConnection()).getResponseCode(),
+    HttpURLConnection.cast(new URL(url).openConnection()).responseCode,
     Matchers.equalTo(HttpURLConnection.HTTP_OK)
 )
