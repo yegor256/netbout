@@ -35,14 +35,17 @@ import com.netbout.spi.client.RestUriBuilder
 import com.rexsl.test.RestTester
 import javax.ws.rs.core.HttpHeaders
 import javax.ws.rs.core.MediaType
+import org.hamcrest.MatcherAssert
 import org.hamcrest.Matchers
 
 def bruno = new RestSession(rexsl.home).authenticate(new Urn('urn:test:bruno'), '')
-RestTester.start(RestUriBuilder.from(bruno))
+def url = RestTester.start(RestUriBuilder.from(bruno))
     .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_XML)
     .get('render inbox of a user')
     .assertStatus(HttpURLConnection.HTTP_OK)
-    .rel('/page/identity/photo/text()')
-    .get('load photo of a user')
-    .assertHeader(HttpHeaders.CONTENT_TYPE, Matchers.hasItem('image/png'))
-    .assertStatus(HttpURLConnection.HTTP_OK)
+    .xpath('/page/identity/photo/text()')
+    .get(0)
+MatcherAssert.assertThat(
+    HttpURLConnection.class.cast(new URL(url).openConnection()).getResponseCode(),
+    Matchers.equalTo(HttpURLConnection.HTTP_OK)
+)
