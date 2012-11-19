@@ -28,7 +28,6 @@ package com.netbout.servlets;
 
 import com.netbout.hub.Hub;
 import com.rexsl.test.XhtmlMatchers;
-import java.util.concurrent.atomic.AtomicReference;
 import org.hamcrest.MatcherAssert;
 import org.junit.Test;
 
@@ -45,7 +44,7 @@ public final class LazyHubTest {
      */
     @Test
     public void rendersWaitingPage() throws Exception {
-        final Hub hub = new LazyHub(new AtomicReference<Hub>());
+        final Hub hub = LazyHub.build();
         try {
             hub.make("test");
         } catch (javax.ws.rs.WebApplicationException ex) {

@@ -63,7 +63,7 @@ public final class LifecycleListener implements ServletContextListener {
         final long start = System.nanoTime();
         try {
             Manifests.append(event.getServletContext());
-            this.hub = new HubBuilder().build();
+            this.hub = LazyHub.build();
         } catch (java.io.IOException ex) {
             Logger.error(
                 this,
