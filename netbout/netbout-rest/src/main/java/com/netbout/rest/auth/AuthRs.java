@@ -27,6 +27,7 @@
 package com.netbout.rest.auth;
 
 import com.jcabi.log.Logger;
+import com.jcabi.manifests.Manifests;
 import com.jcabi.urn.URN;
 import com.netbout.rest.BaseRs;
 import com.netbout.rest.CryptedIdentity;
@@ -35,7 +36,6 @@ import com.netbout.rest.NbPage;
 import com.netbout.spi.Identity;
 import com.netbout.spi.client.RestSession;
 import com.netbout.spi.text.SecureString;
-import com.rexsl.core.Manifests;
 import com.rexsl.page.CookieBuilder;
 import com.rexsl.page.PageBuilder;
 import java.net.URI;

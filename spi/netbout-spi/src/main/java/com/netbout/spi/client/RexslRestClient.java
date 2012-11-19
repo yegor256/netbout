@@ -29,7 +29,7 @@
  */
 package com.netbout.spi.client;
 
-import com.rexsl.core.Manifests;
+import com.jcabi.manifests.Manifests;
 import com.rexsl.test.RestTester;
 import com.rexsl.test.TestClient;
 import com.rexsl.test.TestResponse;

@@ -1,11 +1,12 @@
-/**
+<?xml version="1.0"?>
+<!--
  * Copyright (c) 2009-2012, Netbout.com
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are PROHIBITED without prior written permission from
  * the author. This product may NOT be used anywhere and on any computer
- * except the server platform of netBout Inc. located at www.netbout.com.
+ * except the server platform of Netbout Inc. located at www.netbout.com.
  * Federal copyright law prohibits unauthorized reproduction by any means
  * and imposes fines up to $25,000 for violation. If you received
  * this code accidentally and without intent to use it, please report this
@@ -23,43 +24,8 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
- */
-package com.netbout.notifiers.email;
-
-import com.jcabi.manifests.Manifests;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlType;
-
-/**
- * The stage to render with JAXB.
- *
- * @author Yegor Bugayenko (yegor@netbout.com)
- * @version $Id$
- */
-@XmlType(name = "data")
-@XmlAccessorType(XmlAccessType.NONE)
-public final class Stage {
-
-    /**
-     * Get text.
-     * @return The text
-     */
-    @XmlElement
-    public String getText() {
-        return String.format(
-            // @checkstyle LineLength (1 line)
-            "SMTP\nHost: %s\nPort: %s\nUser: %s\nPassword: %s\n\nPOP3\nHost: %s\nPort: %s\nUser: %s\nPassword: %s",
-            Manifests.read("Netbout-SmtpHost"),
-            Manifests.read("Netbout-SmtpPort"),
-            Manifests.read("Netbout-SmtpUser"),
-            Manifests.read("Netbout-SmtpPassword"),
-            Manifests.read("Netbout-PopHost"),
-            Manifests.read("Netbout-PopPort"),
-            Manifests.read("Netbout-PopUser"),
-            Manifests.read("Netbout-PopPassword")
-        );
-    }
-
-}
+ -->
+<document xmlns="http://maven.apache.org/changes/1.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/changes/1.0.0 http://maven.apache.org/xsd/changes-1.0.0.xsd">
+    <body>
+    </body>
+</document>

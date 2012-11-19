@@ -31,10 +31,7 @@
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id: pom.xml 3379 2012-10-01 12:47:17Z guard $
  -->
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>com.netbout.spi</groupId>
@@ -44,7 +41,6 @@
     <artifactId>netbout-spi</artifactId>
     <packaging>jar</packaging>
     <name>spi:netbout-spi</name>
-
     <dependencies>
         <dependency>
             <groupId>commons-lang</groupId>
@@ -53,6 +49,10 @@
         <dependency>
             <groupId>commons-io</groupId>
             <artifactId>commons-io</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.jcabi</groupId>
+            <artifactId>jcabi-manifests</artifactId>
         </dependency>
         <dependency>
             <groupId>com.rexsl</groupId>
@@ -148,5 +148,4 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
-
 </project>

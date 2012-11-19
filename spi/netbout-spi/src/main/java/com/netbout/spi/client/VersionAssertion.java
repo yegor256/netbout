@@ -30,7 +30,7 @@
 package com.netbout.spi.client;
 
 import com.jcabi.log.Logger;
-import com.rexsl.core.Manifests;
+import com.jcabi.manifests.Manifests;
 import com.rexsl.test.AssertionPolicy;
 import com.rexsl.test.TestResponse;
 import java.net.HttpURLConnection;

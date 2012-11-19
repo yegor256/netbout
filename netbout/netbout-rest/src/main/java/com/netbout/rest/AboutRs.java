@@ -27,7 +27,7 @@
 package com.netbout.rest;
 
 import com.jcabi.log.Logger;
-import com.rexsl.core.Manifests;
+import com.jcabi.manifests.Manifests;
 import com.rexsl.page.JaxbBundle;
 import com.rexsl.page.PageBuilder;
 import com.rexsl.test.RestTester;

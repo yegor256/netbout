@@ -26,13 +26,13 @@
  */
 package com.netbout.rest.auth;
 
+import com.jcabi.manifests.Manifests;
 import com.jcabi.urn.URN;
 import com.jcabi.urn.URNMocker;
 import com.netbout.rest.ForwardException;
 import com.netbout.rest.NbResourceMocker;
 import com.netbout.spi.Identity;
 import com.netbout.spi.IdentityMocker;
-import com.rexsl.core.Manifests;
 import com.rexsl.test.ContainerMocker;
 import java.net.HttpURLConnection;
 import javax.ws.rs.core.HttpHeaders;

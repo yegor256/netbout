@@ -26,10 +26,10 @@
  */
 package com.netbout.rest.auth;
 
+import com.jcabi.manifests.Manifests;
 import com.jcabi.urn.URN;
 import com.netbout.hub.URNResolver;
 import com.netbout.hub.URNResolverMocker;
-import com.rexsl.core.Manifests;
 import com.rexsl.test.ContainerMocker;
 import java.util.Locale;
 import javax.ws.rs.core.HttpHeaders;

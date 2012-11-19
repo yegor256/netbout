@@ -57,6 +57,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
+import javax.validation.constraints.NotNull;
 
 /**
  * Entry point to Hub.
@@ -130,7 +131,8 @@ public final class DefaultHub implements PowerHub {
      *  should introduce a start() method in this class.
      */
     @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
-    public DefaultHub(final Bus bus, final Infinity infinity) {
+    public DefaultHub(@NotNull final Bus bus,
+        @NotNull final Infinity infinity) {
         StatsFarm.register(this);
         this.ibus = bus;
         this.inf = infinity;
@@ -190,7 +192,7 @@ public final class DefaultHub implements PowerHub {
      * {@inheritDoc}
      */
     @Override
-    public TxBuilder make(final String mnemo) {
+    public TxBuilder make(@NotNull final String mnemo) {
         return this.ibus.make(mnemo);
     }
 
@@ -206,7 +208,7 @@ public final class DefaultHub implements PowerHub {
      * {@inheritDoc}
      */
     @Override
-    public Long eta(final URN who) {
+    public Long eta(@NotNull final URN who) {
         return this.inf.eta(who);
     }
 

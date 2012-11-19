@@ -33,6 +33,7 @@ import java.lang.management.ManagementFactory;
 import java.net.InetAddress;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
+import javax.validation.constraints.NotNull;
 import org.apache.commons.io.FileUtils;
 
 /**
@@ -66,7 +67,7 @@ final class NfsFolder implements Folder {
      * @param path Directory, where to mount locally
      * @throws IOException If some error inside
      */
-    public NfsFolder(final File path) throws IOException {
+    public NfsFolder(@NotNull final File path) throws IOException {
         this.directory = path;
         this.obtain();
     }

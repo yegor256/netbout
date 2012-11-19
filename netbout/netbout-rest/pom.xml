@@ -28,10 +28,7 @@
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  -->
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>com.netbout</groupId>
@@ -41,7 +38,6 @@
     <artifactId>netbout-rest</artifactId>
     <packaging>war</packaging>
     <name>netbout-rest</name>
-
     <dependencies>
         <dependency>
             <!-- this one has to stay on top of others, and remain in "compile"
@@ -105,6 +101,10 @@
         </dependency>
         <dependency>
             <groupId>com.jcabi</groupId>
+            <artifactId>jcabi-manifests</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.jcabi</groupId>
             <artifactId>jcabi-log</artifactId>
         </dependency>
         <dependency>
@@ -124,7 +124,7 @@
         <dependency>
             <groupId>com.jcabi</groupId>
             <artifactId>jcabi-velocity</artifactId>
-            <version since="8 Nov 2012">0.5.2</version>
+            <version>${jcabi.version}</version>
         </dependency>
         <dependency>
             <groupId>com.rexsl</groupId>
@@ -353,7 +353,6 @@
             <scope>runtime</scope>
         </dependency>
     </dependencies>
-
     <build>
         <pluginManagement>
             <plugins>
@@ -499,7 +498,6 @@
             </plugin>
         </plugins>
     </build>
-
     <profiles>
         <profile>
             <id>deploy-to-environments</id>
@@ -521,17 +519,15 @@
                                 </goals>
                                 <configuration>
                                     <target description="deploy to production and staging envs">
-                                        <ant dir="${basedir}" antfile="${basedir}/src/main/ant/deploy/production.xml"
-                                            inheritRefs="true" target="deploy">
-                                            <property name="svn.username" value="${svn.username}" />
-                                            <property name="svn.password" value="${svn.password}" />
-                                            <property name="maven.settings" value="${maven.settings}" />
+                                        <ant dir="${basedir}" antfile="${basedir}/src/main/ant/deploy/production.xml" inheritRefs="true" target="deploy">
+                                            <property name="svn.username" value="${svn.username}"/>
+                                            <property name="svn.password" value="${svn.password}"/>
+                                            <property name="maven.settings" value="${maven.settings}"/>
                                         </ant>
-                                        <ant dir="${basedir}" antfile="${basedir}/src/main/ant/deploy/candidates.xml"
-                                            inheritRefs="true" target="deploy">
-                                            <property name="svn.username" value="${svn.username}" />
-                                            <property name="svn.password" value="${svn.password}" />
-                                            <property name="maven.settings" value="${maven.settings}" />
+                                        <ant dir="${basedir}" antfile="${basedir}/src/main/ant/deploy/candidates.xml" inheritRefs="true" target="deploy">
+                                            <property name="svn.username" value="${svn.username}"/>
+                                            <property name="svn.password" value="${svn.password}"/>
+                                            <property name="maven.settings" value="${maven.settings}"/>
                                         </ant>
                                     </target>
                                 </configuration>
@@ -562,9 +558,9 @@
                                 <configuration>
                                     <target description="start MySQL for ReXSL tests">
                                         <ant antfile="${basedir}/src/test/ant/mysql.xml" target="start">
-                                            <property name="database" value="netbout" />
-                                            <property name="port" value="${mysql.port.rest}" />
-                                            <property name="directory" value="${project.build.directory}" />
+                                            <property name="database" value="netbout"/>
+                                            <property name="port" value="${mysql.port.rest}"/>
+                                            <property name="directory" value="${project.build.directory}"/>
                                         </ant>
                                     </target>
                                 </configuration>
@@ -578,9 +574,9 @@
                                 <configuration>
                                     <target description="stop MySQL for ReXSL tests">
                                         <ant antfile="${basedir}/src/test/ant/mysql.xml" target="stop">
-                                            <property name="database" value="netbout" />
-                                            <property name="port" value="${mysql.port.rest}" />
-                                            <property name="directory" value="${project.build.directory}" />
+                                            <property name="database" value="netbout"/>
+                                            <property name="port" value="${mysql.port.rest}"/>
+                                            <property name="directory" value="${project.build.directory}"/>
                                         </ant>
                                     </target>
                                 </configuration>
@@ -654,9 +650,9 @@
                                 <configuration>
                                     <target description="start MySQL for ReXSL/catapult tests">
                                         <ant antfile="${basedir}/src/test/ant/mysql.xml" target="start">
-                                            <property name="database" value="catapult" />
-                                            <property name="port" value="${mysql.port.catapult}" />
-                                            <property name="directory" value="${project.build.directory}" />
+                                            <property name="database" value="catapult"/>
+                                            <property name="port" value="${mysql.port.catapult}"/>
+                                            <property name="directory" value="${project.build.directory}"/>
                                         </ant>
                                     </target>
                                 </configuration>
@@ -670,9 +666,9 @@
                                 <configuration>
                                     <target description="stop MySQL for ReXSL/catapult tests">
                                         <ant antfile="${basedir}/src/test/ant/mysql.xml" target="stop">
-                                            <property name="database" value="catapult" />
-                                            <property name="port" value="${mysql.port.catapult}" />
-                                            <property name="directory" value="${project.build.directory}" />
+                                            <property name="database" value="catapult"/>
+                                            <property name="port" value="${mysql.port.catapult}"/>
+                                            <property name="directory" value="${project.build.directory}"/>
                                         </ant>
                                     </target>
                                 </configuration>
@@ -712,7 +708,7 @@
                                             <arg value="ERROR - "/>
                                             <arg value="${project.build.directory}/jmeter.log"/>
                                         </exec>
-                                        <echo message="${errors}" />
+                                        <echo message="${errors}"/>
                                         <fail message="errors found in jmeter.log">
                                             <condition>
                                                 <length string="${errors}" when="greater" trim="true" length="0"/>
@@ -864,7 +860,7 @@
                     <plugin>
                         <groupId>com.jcabi</groupId>
                         <artifactId>jcabi-heroku-maven-plugin</artifactId>
-                        <version since="8 Nov 2012">0.5.2</version>
+                        <version>${jcabi.version}</version>
                         <executions>
                             <execution>
                                 <id>deploy-to-heroku</id>
@@ -924,7 +920,7 @@
                     <plugin>
                         <groupId>com.jcabi</groupId>
                         <artifactId>jcabi-beanstalk-maven-plugin</artifactId>
-                        <version since="15 Nov 2012">0.5.5</version>
+                        <version>${jcabi.version}</version>
                         <configuration>
                             <swap>false</swap>
                             <name>netbout</name>
@@ -968,5 +964,4 @@
             </build>
         </profile>
     </profiles>
-
 </project>

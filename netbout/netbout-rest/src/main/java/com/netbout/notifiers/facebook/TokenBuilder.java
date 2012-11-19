@@ -26,7 +26,7 @@
  */
 package com.netbout.notifiers.facebook;
 
-import com.rexsl.core.Manifests;
+import com.jcabi.manifests.Manifests;
 import com.rexsl.test.RestTester;
 import java.net.HttpURLConnection;
 import java.net.URI;

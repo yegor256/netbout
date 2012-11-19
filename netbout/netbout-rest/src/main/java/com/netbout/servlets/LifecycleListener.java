@@ -27,9 +27,9 @@
 package com.netbout.servlets;
 
 import com.jcabi.log.Logger;
+import com.jcabi.manifests.Manifests;
 import com.netbout.hub.Hub;
 import com.netbout.notifiers.email.EmailFarm;
-import com.rexsl.core.Manifests;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 

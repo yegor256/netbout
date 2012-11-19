@@ -1,4 +1,5 @@
-/**
+<?xml version="1.0"?>
+<!--
  * Copyright (c) 2009-2012, Netbout.com
  * All rights reserved.
  *
@@ -26,35 +27,10 @@
  * STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
  * OF THE POSSIBILITY OF SUCH DAMAGE.
- */
-package com.netbout.lite;
-
-import com.jcabi.urn.URN;
-import com.netbout.spi.Identity;
-import javax.validation.constraints.NotNull;
-
-/**
- * Lite implementation of Netbout.
- *
- * <p>The class is thread-safe.
- *
- * @author Yegor Bugayenko (yegor@netbout.com)
- * @version $Id$
- */
-public final class NetboutLite {
-
-    /**
-     * Bouts.
-     */
-    private final transient Bouts bouts = new Bouts();
-
-    /**
-     * Enter netbout as a new identity.
-     * @param urn Name of identity to use
-     * @return The identity
-     */
-    public Identity login(@NotNull final URN urn) {
-        return new LiteIdentity(this.bouts, urn, this);
-    }
-
-}
+ -->
+<document xmlns="http://maven.apache.org/changes/1.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/changes/1.0.0 http://maven.apache.org/xsd/changes-1.0.0.xsd">
+    <body>
+        <release version="???" date="" description="ReXSL 0.4.4 and JCabi 0.7 used"/>
+        <release version="1.5.6" date="16 Nov 2012" description=""/>
+    </body>
+</document>

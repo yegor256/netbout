@@ -43,31 +43,24 @@
  * @link http://maven.apache.org/
  * @link http://en.wikipedia.org/wiki/List_of_build_automation_software
  -->
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.netbout.spi</groupId>
     <artifactId>netbout</artifactId>
     <version netbout="yes">2.0-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>spi:netbout</name>
-
     <modules>
         <module>netbout-spi</module>
         <module>netbout-lite</module>
     </modules>
-
     <description>Service Programming Interface for NetBout.com</description>
     <url>http://spi.netbout.com</url>
     <inceptionYear>2011</inceptionYear>
-
     <organization>
         <name>Netbout.com</name>
         <url>http://spi.netbout.com</url>
     </organization>
-
     <licenses>
         <license>
             <name>Netbout persistent communications</name>
@@ -76,7 +69,6 @@
             <comments>This is an open-source software</comments>
         </license>
     </licenses>
-
     <developers>
         <developer>
             <id>1</id>
@@ -91,23 +83,19 @@
             <timezone>-7</timezone>
         </developer>
     </developers>
-
     <ciManagement>
         <system>jenkins</system>
         <url>http://ci.netbout.com:8080/job/netbout-spi</url>
     </ciManagement>
-
     <issueManagement>
         <system>trac</system>
         <url>http://trac.netbout.com/netbout</url>
     </issueManagement>
-
     <scm>
         <connection>scm:svn:svn://svn.netbout.com/netbout/trunk/spi</connection>
         <developerConnection>scm:svn:svn://svn.netbout.com/netbout/trunk/spi</developerConnection>
         <url>svn://svn.netbout.com/netbout/trunk/spi</url>
     </scm>
-
     <distributionManagement>
         <downloadUrl>https://oss.sonatype.org/content/groups/public</downloadUrl>
         <repository>
@@ -128,16 +116,14 @@
             <url>s3://spi.netbout.com/</url>
         </site>
     </distributionManagement>
-
     <prerequisites>
         <maven>3.0</maven>
     </prerequisites>
-
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <rexsl.version since="18 Nov 2012">0.4.2</rexsl.version>
+        <rexsl.version since="19 Nov 2012">0.4.4</rexsl.version>
+        <jcabi.version since="19 Nov 2012">0.7</jcabi.version>
     </properties>
-
     <repositories>
         <!-- intentionally empty -->
         <repository>
@@ -146,11 +132,35 @@
             <url>https://oss.sonatype.org/content/repositories/snapshots/</url>
         </repository>
     </repositories>
-
     <pluginRepositories>
         <!-- intentionally empty -->
     </pluginRepositories>
-
+    <dependencies>
+        <dependency>
+            <!-- Aspects -->
+            <groupId>com.jcabi</groupId>
+            <artifactId>jcabi-aspects</artifactId>
+            <version>${jcabi.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.aspectj</groupId>
+            <artifactId>aspectjrt</artifactId>
+            <!-- this one is compliant with aspectj-maven-plugin -->
+            <version since="27 May 2012">1.6.11</version>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>javax.validation</groupId>
+            <artifactId>validation-api</artifactId>
+            <version since="27 May 2012">1.1.0.Alpha1</version>
+        </dependency>
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-validator</artifactId>
+            <version since="27 May 2012">4.3.0.Final</version>
+            <scope>runtime</scope>
+        </dependency>
+    </dependencies>
     <dependencyManagement>
         <dependencies>
             <dependency>
@@ -184,19 +194,25 @@
                 <!-- Logging facility, on top of SLF4J. -->
                 <groupId>com.jcabi</groupId>
                 <artifactId>jcabi-log</artifactId>
-                <version since="8 Nov 2012">0.5.2</version>
+                <version>${jcabi.version}</version>
+            </dependency>
+            <dependency>
+                <!-- reader of META-INF/MANIFEST.MF files -->
+                <groupId>com.jcabi</groupId>
+                <artifactId>jcabi-manifests</artifactId>
+                <version>${jcabi.version}</version>
             </dependency>
             <dependency>
                 <!-- URN implementation -->
                 <groupId>com.jcabi</groupId>
                 <artifactId>jcabi-urn</artifactId>
-                <version since="18 Nov 2012">1.0-SNAPSHOT</version>
+                <version>${jcabi.version}</version>
             </dependency>
             <dependency>
                 <!-- URN implementation -->
                 <groupId>com.jcabi</groupId>
                 <artifactId>jcabi-urn</artifactId>
-                <version since="18 Nov 2012">1.0-SNAPSHOT</version>
+                <version>${jcabi.version}</version>
                 <classifier>mock</classifier>
                 <scope>test</scope>
             </dependency>
@@ -284,7 +300,6 @@
             </dependency>
         </dependencies>
     </dependencyManagement>
-
     <profiles>
         <profile>
             <!--
@@ -294,7 +309,9 @@
             -->
             <id>continuous-integration</id>
             <activation>
-                <property><name>ci</name></property>
+                <property>
+                    <name>ci</name>
+                </property>
             </activation>
             <build>
                 <plugins>
@@ -351,7 +368,7 @@
                             <dependency>
                                 <groupId>com.jcabi</groupId>
                                 <artifactId>jcabi-assembly</artifactId>
-                                <version since="8 Nov 2012">0.5.2</version>
+                                <version>${jcabi.version}</version>
                             </dependency>
                         </dependencies>
                         <executions>
@@ -379,10 +396,31 @@
             -->
             <id>live-site</id>
             <activation>
-                <property><name>site</name></property>
+                <property>
+                    <name>site</name>
+                </property>
             </activation>
             <build>
                 <plugins>
+                    <plugin>
+                        <artifactId>maven-doap-plugin</artifactId>
+                        <version since="19 Nov 2012">1.1</version>
+                        <inherited>false</inherited>
+                        <configuration>
+                            <doapOptions>
+                                <shortdesc>Netbout.com Communication Platform SPI</shortdesc>
+                            </doapOptions>
+                            <doapFile>netbout.rdf</doapFile>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <phase>pre-site</phase>
+                                <goals>
+                                    <goal>generate</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
                     <plugin>
                         <artifactId>maven-site-plugin</artifactId>
                         <configuration>
@@ -405,6 +443,24 @@
                                         <report>scm</report>
                                         <report>summary</report>
                                     </reports>
+                                </plugin>
+                                <plugin>
+                                    <artifactId>maven-changes-plugin</artifactId>
+                                    <version since="19 Nov 2012">2.8</version>
+                                    <configuration>
+                                        <tracUser>${trac.user}</tracUser>
+                                        <tracPassword>${trac.password}</tracPassword>
+                                        <query>component=${project.artifactId}&amp;status=closed&amp;desc=1&amp;order=id</query>
+                                        <columnNames>Id, Priority, Summary, Reporter, Resolution</columnNames>
+                                    </configuration>
+                                    <reportSets>
+                                        <reportSet>
+                                            <reports>
+                                                <report>trac-report</report>
+                                                <report>changes-report</report>
+                                            </reports>
+                                        </reportSet>
+                                    </reportSets>
                                 </plugin>
                                 <plugin>
                                     <artifactId>maven-javadoc-plugin</artifactId>
@@ -481,7 +537,9 @@
             -->
             <id>gpg</id>
             <activation>
-                <property><name>gpg.keyname</name></property>
+                <property>
+                    <name>gpg.keyname</name>
+                </property>
             </activation>
             <build>
                 <plugins>
@@ -508,7 +566,6 @@
             </build>
         </profile>
     </profiles>
-
     <build>
         <extensions>
             <extension>
@@ -613,7 +670,7 @@
             <plugin>
                 <groupId>com.jcabi</groupId>
                 <artifactId>jcabi-ssl-maven-plugin</artifactId>
-                <version since="8 Nov 2012">0.5.2</version>
+                <version>${jcabi.version}</version>
                 <executions>
                     <execution>
                         <goals>
@@ -666,7 +723,36 @@
                     </execution>
                 </executions>
             </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>aspectj-maven-plugin</artifactId>
+                <version since="27 May 2012">1.4</version>
+                <configuration>
+                    <complianceLevel>1.6</complianceLevel>
+                    <encoding>${project.build.sourceEncoding}</encoding>
+                    <showWeaveInfo>false</showWeaveInfo>
+                    <source>1.6</source>
+                    <target>1.6</target>
+                    <verbose>false</verbose>
+                    <Xlint>warning</Xlint>
+                    <argumentFileName>builddef-${project.name}.lst</argumentFileName>
+                    <aspectLibraries>
+                        <aspectLibrary>
+                            <groupId>com.jcabi</groupId>
+                            <artifactId>jcabi-aspects</artifactId>
+                        </aspectLibrary>
+                    </aspectLibraries>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>weave-classes</id>
+                        <phase>process-classes</phase>
+                        <goals>
+                            <goal>compile</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
     </build>
-
 </project>

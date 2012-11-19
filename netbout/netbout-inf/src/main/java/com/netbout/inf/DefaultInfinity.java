@@ -29,18 +29,19 @@ package com.netbout.inf;
 import com.jcabi.log.Logger;
 import com.jcabi.log.VerboseRunnable;
 import com.jcabi.log.VerboseThreads;
+import com.jcabi.manifests.Manifests;
 import com.jcabi.urn.URN;
 import com.netbout.ih.StageFarm;
 import com.netbout.inf.functors.DefaultStore;
 import com.netbout.inf.ray.MemRay;
 import com.netbout.spi.Query;
-import com.rexsl.core.Manifests;
 import java.io.File;
 import java.io.IOException;
 import java.util.Set;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+import javax.validation.constraints.NotNull;
 import org.apache.commons.io.FileUtils;
 
 /**
@@ -175,7 +176,7 @@ public final class DefaultInfinity implements Infinity {
      * hasn't been intialized yet.
      */
     @Override
-    public long eta(final URN... who) {
+    public long eta(@NotNull final URN... who) {
         long eta = this.mux.eta(who);
         if (eta == 0 && this.maximum() == 0) {
             eta = 1;
@@ -187,7 +188,7 @@ public final class DefaultInfinity implements Infinity {
      * {@inheritDoc}
      */
     @Override
-    public Iterable<Long> messages(final Query query)
+    public Iterable<Long> messages(@NotNull final Query query)
         throws InvalidSyntaxException {
         final Term term = new ParserAdapter(this.store)
             .parse(query)
@@ -208,7 +209,7 @@ public final class DefaultInfinity implements Infinity {
      * {@inheritDoc}
      */
     @Override
-    public Set<URN> see(final Notice notice) {
+    public Set<URN> see(@NotNull final Notice notice) {
         try {
             if (!this.folder.isWritable()) {
                 throw new IllegalStateException("Folder is not writable");

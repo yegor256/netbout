@@ -40,17 +40,13 @@
  * @link http://maven.apache.org/
  * @link http://en.wikipedia.org/wiki/List_of_build_automation_software
  -->
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.netbout</groupId>
     <artifactId>netbout</artifactId>
     <version netbout="yes">2.0-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>netbout</name>
-
     <modules>
         <module>netbout-db</module>
         <module>netbout-bus</module>
@@ -58,16 +54,13 @@
         <module>netbout-hub</module>
         <module>netbout-rest</module>
     </modules>
-
     <description>Persistent Communications Online</description>
     <url>http://www.netbout.com</url>
     <inceptionYear>2010</inceptionYear>
-
     <organization>
         <name>Netbout Inc.</name>
         <url>http://www.netbout.com</url>
     </organization>
-
     <licenses>
         <license>
             <name>Netbout persistent communications</name>
@@ -76,7 +69,6 @@
             <comments>This is a proprietary software, you can't redistribute it</comments>
         </license>
     </licenses>
-
     <developers>
         <developer>
             <id>1</id>
@@ -91,18 +83,15 @@
             <timezone>-7</timezone>
         </developer>
     </developers>
-
     <issueManagement>
         <system>trac</system>
         <url>http://trac.netbout.com/netbout</url>
     </issueManagement>
-
     <scm>
         <connection>scm:svn:svn://svn.netbout.com/netbout/trunk/netbout</connection>
         <developerConnection>scm:svn:svn://svn.netbout.com/netbout/trunk/netbout</developerConnection>
         <url>svn://svn.netbout.com/netbout/trunk/netbout</url>
     </scm>
-
     <distributionManagement>
         <snapshotRepository>
             <!--
@@ -131,18 +120,16 @@
             <url>s3://maven.netbout.com/</url>
         </site>
     </distributionManagement>
-
     <prerequisites>
         <maven>3.0</maven>
     </prerequisites>
-
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.build.timestamp.format>yyyy-MM-dd</maven.build.timestamp.format>
         <rempl.dir>${basedir}</rempl.dir>
-        <rexsl.version since="18 Nov 2012">0.4.2</rexsl.version>
+        <rexsl.version since="19 Nov 2012">0.4.4</rexsl.version>
+        <jcabi.version since="19 Nov 2012">0.7</jcabi.version>
     </properties>
-
     <repositories>
         <repository>
             <id>oss.sonatype.org</id>
@@ -153,14 +140,38 @@
             <url>s3://repo.netbout.com/snapshot</url>
         </repository>
     </repositories>
-
     <pluginRepositories>
         <pluginRepository>
             <id>oss.sonatype.org</id>
             <url>https://oss.sonatype.org/content/repositories/snapshots/</url>
         </pluginRepository>
     </pluginRepositories>
-
+    <dependencies>
+        <dependency>
+            <!-- Aspects -->
+            <groupId>com.jcabi</groupId>
+            <artifactId>jcabi-aspects</artifactId>
+            <version>${jcabi.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.aspectj</groupId>
+            <artifactId>aspectjrt</artifactId>
+            <!-- this one is compliant with aspectj-maven-plugin -->
+            <version since="27 May 2012">1.6.11</version>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>javax.validation</groupId>
+            <artifactId>validation-api</artifactId>
+            <version since="27 May 2012">1.1.0.Alpha1</version>
+        </dependency>
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-validator</artifactId>
+            <version since="27 May 2012">4.3.0.Final</version>
+            <scope>runtime</scope>
+        </dependency>
+    </dependencies>
     <dependencyManagement>
         <dependencies>
             <dependency>
@@ -173,21 +184,51 @@
                 <!-- Logging facility, on top of SLF4J. -->
                 <groupId>com.jcabi</groupId>
                 <artifactId>jcabi-log</artifactId>
-                <version since="8 Nov 2012">0.5.2</version>
+                <version>${jcabi.version}</version>
+            </dependency>
+            <dependency>
+                <!-- reader of META-INF/MANIFEST.MF files -->
+                <groupId>com.jcabi</groupId>
+                <artifactId>jcabi-manifests</artifactId>
+                <version>${jcabi.version}</version>
             </dependency>
             <dependency>
                 <!-- URN implementation -->
                 <groupId>com.jcabi</groupId>
                 <artifactId>jcabi-urn</artifactId>
-                <version since="18 Nov 2012">1.0-SNAPSHOT</version>
+                <version>${jcabi.version}</version>
             </dependency>
             <dependency>
                 <!-- URN implementation -->
                 <groupId>com.jcabi</groupId>
                 <artifactId>jcabi-urn</artifactId>
-                <version since="18 Nov 2012">1.0-SNAPSHOT</version>
+                <version>${jcabi.version}</version>
                 <classifier>mock</classifier>
                 <scope>test</scope>
+            </dependency>
+            <dependency>
+                <!-- Aspects -->
+                <groupId>com.jcabi</groupId>
+                <artifactId>jcabi-aspects</artifactId>
+                <version>${jcabi.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.aspectj</groupId>
+                <artifactId>aspectjrt</artifactId>
+                <!-- this one is compliant with aspectj-maven-plugin -->
+                <version since="27 May 2012">1.6.11</version>
+                <scope>runtime</scope>
+            </dependency>
+            <dependency>
+                <groupId>javax.validation</groupId>
+                <artifactId>validation-api</artifactId>
+                <version since="27 May 2012">1.1.0.Alpha1</version>
+            </dependency>
+            <dependency>
+                <groupId>org.hibernate</groupId>
+                <artifactId>hibernate-validator</artifactId>
+                <version since="27 May 2012">4.3.0.Final</version>
+                <scope>runtime</scope>
             </dependency>
             <dependency>
                 <!--
@@ -305,7 +346,6 @@
             </dependency>
         </dependencies>
     </dependencyManagement>
-
     <profiles>
         <profile>
             <!--
@@ -315,7 +355,9 @@
             -->
             <id>continuous-integration</id>
             <activation>
-                <property><name>ci</name></property>
+                <property>
+                    <name>ci</name>
+                </property>
             </activation>
             <build>
                 <plugins>
@@ -365,7 +407,9 @@
             -->
             <id>live-site</id>
             <activation>
-                <property><name>site</name></property>
+                <property>
+                    <name>site</name>
+                </property>
             </activation>
             <build>
                 <plugins>
@@ -394,24 +438,22 @@
                                     </reports>
                                 </plugin>
                                 <plugin>
-                                    <groupId>org.codehaus.mojo</groupId>
-                                    <artifactId>taglist-maven-plugin</artifactId>
-                                    <version since="15 Nov 2010">2.4</version>
+                                    <artifactId>maven-changes-plugin</artifactId>
+                                    <version since="19 Nov 2012">2.8</version>
                                     <configuration>
-                                        <tagListOptions>
-                                            <tagClasses>
-                                                <tagClass>
-                                                    <displayName>ToDo</displayName>
-                                                    <tags>
-                                                        <tag>
-                                                            <matchString>@todo</matchString>
-                                                            <matchType>exact</matchType>
-                                                        </tag>
-                                                    </tags>
-                                                </tagClass>
-                                            </tagClasses>
-                                        </tagListOptions>
+                                        <tracUser>${trac.user}</tracUser>
+                                        <tracPassword>${trac.password}</tracPassword>
+                                        <query>component=${project.artifactId}&amp;status=closed&amp;desc=1&amp;order=id</query>
+                                        <columnNames>Id, Priority, Summary, Reporter, Resolution</columnNames>
                                     </configuration>
+                                    <reportSets>
+                                        <reportSet>
+                                            <reports>
+                                                <report>trac-report</report>
+                                                <report>changes-report</report>
+                                            </reports>
+                                        </reportSet>
+                                    </reportSets>
                                 </plugin>
                                 <plugin>
                                     <artifactId>maven-javadoc-plugin</artifactId>
@@ -483,7 +525,9 @@
             -->
             <id>mock</id>
             <activation>
-                <file><exists>${basedir}/src/mock</exists></file>
+                <file>
+                    <exists>${basedir}/src/mock</exists>
+                </file>
             </activation>
             <build>
                 <plugins>
@@ -536,7 +580,6 @@
             </build>
         </profile>
     </profiles>
-
     <build>
         <resources>
             <!--
@@ -656,7 +699,7 @@
             <plugin>
                 <groupId>com.jcabi</groupId>
                 <artifactId>jcabi-ssl-maven-plugin</artifactId>
-                <version since="8 Nov 2012">0.5.2</version>
+                <version>${jcabi.version}</version>
                 <executions>
                     <execution>
                         <goals>
@@ -665,7 +708,36 @@
                     </execution>
                 </executions>
             </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>aspectj-maven-plugin</artifactId>
+                <version since="27 May 2012">1.4</version>
+                <configuration>
+                    <complianceLevel>1.6</complianceLevel>
+                    <encoding>${project.build.sourceEncoding}</encoding>
+                    <showWeaveInfo>false</showWeaveInfo>
+                    <source>1.6</source>
+                    <target>1.6</target>
+                    <verbose>false</verbose>
+                    <Xlint>warning</Xlint>
+                    <argumentFileName>builddef-${project.name}.lst</argumentFileName>
+                    <aspectLibraries>
+                        <aspectLibrary>
+                            <groupId>com.jcabi</groupId>
+                            <artifactId>jcabi-aspects</artifactId>
+                        </aspectLibrary>
+                    </aspectLibraries>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>weave-classes</id>
+                        <phase>process-classes</phase>
+                        <goals>
+                            <goal>compile</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
     </build>
-
 </project>
