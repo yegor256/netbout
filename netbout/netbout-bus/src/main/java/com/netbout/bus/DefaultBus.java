@@ -82,7 +82,7 @@ public final class DefaultBus implements Bus, StatsProvider {
      * {@inheritDoc}
      */
     @Override
-    public void register(@NotNull final Identity identity, 
+    public void register(@NotNull final Identity identity,
         @NotNull final Helper helper) {
         this.controller.register(identity, helper);
     }
