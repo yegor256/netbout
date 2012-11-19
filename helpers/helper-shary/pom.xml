@@ -28,10 +28,7 @@
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  -->
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>com.netbout</groupId>
@@ -42,7 +39,6 @@
     <artifactId>helper-shary</artifactId>
     <packaging>jar</packaging>
     <name>helper-shary</name>
-
     <dependencies>
         <dependency>
             <groupId>com.netbout.spi</groupId>
@@ -110,7 +106,6 @@
             <scope>provided</scope>
         </dependency>
     </dependencies>
-
     <build>
         <plugins>
             <plugin>
@@ -124,7 +119,7 @@
                         </goals>
                         <configuration>
                             <target>
-                                <mkdir dir="${project.build.directory}/classes/com/netbout/shary" />
+                                <mkdir dir="${project.build.directory}/classes/com/netbout/shary"/>
                             </target>
                         </configuration>
                     </execution>
@@ -143,10 +138,10 @@
                                 <include>com/netbout/shary/Slip.java</include>
                             </includes>
                             <schemas>
-                                 <schema>
-                                     <namespace>urn:netbout:ns:shary/Slip</namespace>
-                                     <file>com/netbout/shary/Slip.xsd</file>
-                                 </schema>
+                                <schema>
+                                    <namespace>urn:netbout:ns:shary/Slip</namespace>
+                                    <file>com/netbout/shary/Slip.xsd</file>
+                                </schema>
                             </schemas>
                         </configuration>
                     </execution>
@@ -154,5 +149,4 @@
             </plugin>
         </plugins>
     </build>
-
 </project>

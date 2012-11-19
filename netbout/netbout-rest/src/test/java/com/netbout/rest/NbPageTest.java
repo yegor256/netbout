@@ -61,7 +61,7 @@ public final class NbPageTest {
                 Matchers.hasProperty(
                     "metadata",
                     Matchers.allOf(
-                        Matchers.hasKey("Netbout-Version"),
+                        Matchers.hasKey("X-Netbout-Version"),
                         Matchers.hasKey(HttpHeaders.SET_COOKIE),
                         Matchers.hasEntry(
                             Matchers.equalTo(HttpHeaders.CONTENT_TYPE),

@@ -188,6 +188,12 @@
                 <version>${jcabi.version}</version>
             </dependency>
             <dependency>
+                <!-- reader of META-INF/MANIFEST.MF files -->
+                <groupId>com.jcabi</groupId>
+                <artifactId>jcabi-manifests</artifactId>
+                <version>${jcabi.version}</version>
+            </dependency>
+            <dependency>
                 <!-- URN implementation -->
                 <groupId>com.jcabi</groupId>
                 <artifactId>jcabi-urn</artifactId>
