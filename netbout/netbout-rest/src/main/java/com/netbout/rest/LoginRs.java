@@ -26,7 +26,7 @@
  */
 package com.netbout.rest;
 
-import com.rexsl.core.Manifests;
+import com.jcabi.manifests.Manifests;
 import com.rexsl.page.Link;
 import com.rexsl.page.PageBuilder;
 import javax.ws.rs.GET;

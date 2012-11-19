@@ -27,8 +27,8 @@
 package com.netbout.db;
 
 import com.jcabi.log.Logger;
+import com.jcabi.manifests.Manifests;
 import com.jolbox.bonecp.BoneCPDataSource;
-import com.rexsl.core.Manifests;
 import java.sql.Connection;
 import java.sql.SQLException;
 import javax.sql.DataSource;

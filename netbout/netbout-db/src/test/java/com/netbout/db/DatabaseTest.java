@@ -26,7 +26,7 @@
  */
 package com.netbout.db;
 
-import com.rexsl.core.Manifests;
+import com.jcabi.manifests.Manifests;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import org.junit.After;

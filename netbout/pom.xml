@@ -401,24 +401,22 @@
                                     </reports>
                                 </plugin>
                                 <plugin>
-                                    <groupId>org.codehaus.mojo</groupId>
-                                    <artifactId>taglist-maven-plugin</artifactId>
-                                    <version since="15 Nov 2010">2.4</version>
+                                    <artifactId>maven-changes-plugin</artifactId>
+                                    <version since="19 Nov 2012">2.8</version>
                                     <configuration>
-                                        <tagListOptions>
-                                            <tagClasses>
-                                                <tagClass>
-                                                    <displayName>ToDo</displayName>
-                                                    <tags>
-                                                        <tag>
-                                                            <matchString>@todo</matchString>
-                                                            <matchType>exact</matchType>
-                                                        </tag>
-                                                    </tags>
-                                                </tagClass>
-                                            </tagClasses>
-                                        </tagListOptions>
+                                        <tracUser>${trac.user}</tracUser>
+                                        <tracPassword>${trac.password}</tracPassword>
+                                        <query>component=${project.artifactId}&amp;status=closed&amp;desc=1&amp;order=id</query>
+                                        <columnNames>Id, Priority, Summary, Reporter, Resolution</columnNames>
                                     </configuration>
+                                    <reportSets>
+                                        <reportSet>
+                                            <reports>
+                                                <report>trac-report</report>
+                                                <report>changes-report</report>
+                                            </reports>
+                                        </reportSet>
+                                    </reportSets>
                                 </plugin>
                                 <plugin>
                                     <artifactId>maven-javadoc-plugin</artifactId>

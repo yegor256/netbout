@@ -27,10 +27,10 @@
 package com.netbout.rest.auth;
 
 import com.jcabi.log.Logger;
+import com.jcabi.manifests.Manifests;
 import com.jcabi.urn.URN;
 import com.netbout.hub.URNResolver;
 import com.netbout.spi.Identity;
-import com.rexsl.core.Manifests;
 import com.sun.jersey.api.client.Client;
 import java.io.IOException;
 import java.net.URI;

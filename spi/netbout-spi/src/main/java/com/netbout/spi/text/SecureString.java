@@ -29,7 +29,7 @@
  */
 package com.netbout.spi.text;
 
-import com.rexsl.core.Manifests;
+import com.jcabi.manifests.Manifests;
 import org.apache.commons.lang.CharEncoding;
 
 /**

@@ -27,11 +27,11 @@
 package com.netbout.notifiers.email;
 
 import com.jcabi.log.Logger;
+import com.jcabi.manifests.Manifests;
 import com.netbout.hub.Hub;
 import com.netbout.spi.Bout;
 import com.netbout.spi.cpa.Farm;
 import com.netbout.spi.cpa.Operation;
-import com.rexsl.core.Manifests;
 import java.util.Properties;
 import javax.mail.Address;
 import javax.mail.Flags;

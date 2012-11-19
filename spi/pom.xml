@@ -43,31 +43,24 @@
  * @link http://maven.apache.org/
  * @link http://en.wikipedia.org/wiki/List_of_build_automation_software
  -->
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.netbout.spi</groupId>
     <artifactId>netbout</artifactId>
     <version netbout="yes">2.0-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>spi:netbout</name>
-
     <modules>
         <module>netbout-spi</module>
         <module>netbout-lite</module>
     </modules>
-
     <description>Service Programming Interface for NetBout.com</description>
     <url>http://spi.netbout.com</url>
     <inceptionYear>2011</inceptionYear>
-
     <organization>
         <name>Netbout.com</name>
         <url>http://spi.netbout.com</url>
     </organization>
-
     <licenses>
         <license>
             <name>Netbout persistent communications</name>
@@ -76,7 +69,6 @@
             <comments>This is an open-source software</comments>
         </license>
     </licenses>
-
     <developers>
         <developer>
             <id>1</id>
@@ -91,23 +83,19 @@
             <timezone>-7</timezone>
         </developer>
     </developers>
-
     <ciManagement>
         <system>jenkins</system>
         <url>http://ci.netbout.com:8080/job/netbout-spi</url>
     </ciManagement>
-
     <issueManagement>
         <system>trac</system>
         <url>http://trac.netbout.com/netbout</url>
     </issueManagement>
-
     <scm>
         <connection>scm:svn:svn://svn.netbout.com/netbout/trunk/spi</connection>
         <developerConnection>scm:svn:svn://svn.netbout.com/netbout/trunk/spi</developerConnection>
         <url>svn://svn.netbout.com/netbout/trunk/spi</url>
     </scm>
-
     <distributionManagement>
         <downloadUrl>https://oss.sonatype.org/content/groups/public</downloadUrl>
         <repository>
@@ -128,17 +116,14 @@
             <url>s3://spi.netbout.com/</url>
         </site>
     </distributionManagement>
-
     <prerequisites>
         <maven>3.0</maven>
     </prerequisites>
-
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <rexsl.version since="19 Nov 2012">0.4.4</rexsl.version>
         <jcabi.version since="19 Nov 2012">0.7</jcabi.version>
     </properties>
-
     <repositories>
         <!-- intentionally empty -->
         <repository>
@@ -147,11 +132,9 @@
             <url>https://oss.sonatype.org/content/repositories/snapshots/</url>
         </repository>
     </repositories>
-
     <pluginRepositories>
         <!-- intentionally empty -->
     </pluginRepositories>
-
     <dependencyManagement>
         <dependencies>
             <dependency>
@@ -291,7 +274,6 @@
             </dependency>
         </dependencies>
     </dependencyManagement>
-
     <profiles>
         <profile>
             <!--
@@ -301,7 +283,9 @@
             -->
             <id>continuous-integration</id>
             <activation>
-                <property><name>ci</name></property>
+                <property>
+                    <name>ci</name>
+                </property>
             </activation>
             <build>
                 <plugins>
@@ -386,10 +370,31 @@
             -->
             <id>live-site</id>
             <activation>
-                <property><name>site</name></property>
+                <property>
+                    <name>site</name>
+                </property>
             </activation>
             <build>
                 <plugins>
+                    <plugin>
+                        <artifactId>maven-doap-plugin</artifactId>
+                        <version since="19 Nov 2012">1.1</version>
+                        <inherited>false</inherited>
+                        <configuration>
+                            <doapOptions>
+                                <shortdesc>Netbout.com Communication Platform SPI</shortdesc>
+                            </doapOptions>
+                            <doapFile>netbout.rdf</doapFile>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <phase>pre-site</phase>
+                                <goals>
+                                    <goal>generate</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
                     <plugin>
                         <artifactId>maven-site-plugin</artifactId>
                         <configuration>
@@ -412,6 +417,24 @@
                                         <report>scm</report>
                                         <report>summary</report>
                                     </reports>
+                                </plugin>
+                                <plugin>
+                                    <artifactId>maven-changes-plugin</artifactId>
+                                    <version since="19 Nov 2012">2.8</version>
+                                    <configuration>
+                                        <tracUser>${trac.user}</tracUser>
+                                        <tracPassword>${trac.password}</tracPassword>
+                                        <query>component=${project.artifactId}&amp;status=closed&amp;desc=1&amp;order=id</query>
+                                        <columnNames>Id, Priority, Summary, Reporter, Resolution</columnNames>
+                                    </configuration>
+                                    <reportSets>
+                                        <reportSet>
+                                            <reports>
+                                                <report>trac-report</report>
+                                                <report>changes-report</report>
+                                            </reports>
+                                        </reportSet>
+                                    </reportSets>
                                 </plugin>
                                 <plugin>
                                     <artifactId>maven-javadoc-plugin</artifactId>
@@ -488,7 +511,9 @@
             -->
             <id>gpg</id>
             <activation>
-                <property><name>gpg.keyname</name></property>
+                <property>
+                    <name>gpg.keyname</name>
+                </property>
             </activation>
             <build>
                 <plugins>
@@ -515,7 +540,6 @@
             </build>
         </profile>
     </profiles>
-
     <build>
         <extensions>
             <extension>
@@ -675,5 +699,4 @@
             </plugin>
         </plugins>
     </build>
-
 </project>

@@ -27,6 +27,7 @@
 package com.netbout.rest.auth;
 
 import com.jcabi.log.Logger;
+import com.jcabi.manifests.Manifests;
 import com.jcabi.urn.URN;
 import com.netbout.rest.BaseRs;
 import com.netbout.rest.LoginRequiredException;
@@ -35,7 +36,6 @@ import com.netbout.spi.Identity;
 import com.restfb.DefaultFacebookClient;
 import com.restfb.FacebookClient;
 import com.restfb.types.User;
-import com.rexsl.core.Manifests;
 import com.rexsl.page.PageBuilder;
 import com.rexsl.test.RestTester;
 import java.io.IOException;
