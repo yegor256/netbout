@@ -27,9 +27,11 @@
 package com.netbout.servlets;
 
 import com.jcabi.log.Logger;
+import com.jcabi.log.VerboseThreads;
 import com.jcabi.urn.URN;
 import com.jcabi.velocity.VelocityPage;
 import com.netbout.bus.TxBuilder;
+import com.netbout.hub.DefaultHub;
 import com.netbout.hub.Hub;
 import com.netbout.hub.URNResolver;
 import com.netbout.spi.Helper;
@@ -37,7 +39,10 @@ import com.netbout.spi.Identity;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.concurrent.atomic.AtomicReference;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.Response;
@@ -58,14 +63,40 @@ final class LazyHub implements Hub {
     /**
      * Reference to the real hub.
      */
-    private final transient AtomicReference<Hub> ref;
+    private final transient Future<Hub> future;
 
     /**
      * Public ctor.
      * @param origin Reference to the original hub to use
      */
-    public LazyHub(final AtomicReference<Hub> origin) {
-        this.ref = origin;
+    private LazyHub(final Future<Hub> origin) {
+        this.future = origin;
+    }
+
+    /**
+     * Build it.
+     * @return The hub built
+     */
+    public static Hub build() {
+        final ExecutorService svc =
+            Executors.newSingleThreadExecutor(new VerboseThreads());
+        final Future<Hub> ftr = svc.submit(
+            new Callable<Hub>() {
+                @Override
+                public Hub call() throws Exception {
+                    final long start = System.currentTimeMillis();
+                    final Hub hub = new DefaultHub();
+                    Logger.info(
+                        this,
+                        "#call(): HUB built in %[ms]s",
+                        System.currentTimeMillis() - start
+                    );
+                    return hub;
+                }
+            }
+        );
+        svc.shutdown();
+        return new LazyHub(ftr);
     }
 
     /**
@@ -123,7 +154,7 @@ final class LazyHub implements Hub {
      * @return The hub
      */
     private Hub origin() {
-        if (this.ref.get() == null) {
+        if (!this.future.isDone()) {
             throw new WebApplicationException(
                 Response.status(HttpURLConnection.HTTP_UNAVAILABLE).entity(
                     new VelocityPage("com/netbout/servlets/wait.html.vm").set(
@@ -136,7 +167,14 @@ final class LazyHub implements Hub {
                 ).header(HttpHeaders.CACHE_CONTROL, "no-cache").build()
             );
         }
-        return this.ref.get();
+        try {
+            return this.future.get();
+        } catch (InterruptedException ex) {
+            Thread.currentThread().interrupt();
+            throw new IllegalStateException(ex);
+        } catch (java.util.concurrent.ExecutionException ex) {
+            throw new IllegalStateException(ex);
+        }
     }
 
 }
