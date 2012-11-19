@@ -135,7 +135,7 @@ public final class FriendsRs extends BaseRs {
                     HttpHeaders.CONTENT_LENGTH,
                     conn.getContentLength()
                 );
-                builder.header("Netbout-Original", url.toString());
+                builder.header("X-Netbout-Original", url.toString());
                 builder.entity(conn.getInputStream());
                 break;
             }

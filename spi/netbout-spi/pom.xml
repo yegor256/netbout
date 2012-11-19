@@ -40,7 +40,7 @@
     </parent>
     <artifactId>netbout-spi</artifactId>
     <packaging>jar</packaging>
-    <name>spi:netbout-spi</name>
+    <name>netbout-spi</name>
     <dependencies>
         <dependency>
             <groupId>commons-lang</groupId>
