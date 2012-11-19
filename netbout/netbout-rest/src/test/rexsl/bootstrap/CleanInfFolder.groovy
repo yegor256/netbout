@@ -29,7 +29,7 @@
  */
 package com.netbout.rest.rexsl.bootstrap
 
-import com.rexsl.core.Manifests
+import com.jcabi.manifests.Manifests
 import org.apache.commons.io.FileUtils
 
 FileUtils.deleteDirectory(new File(Manifests.read('Netbout-InfMount')))

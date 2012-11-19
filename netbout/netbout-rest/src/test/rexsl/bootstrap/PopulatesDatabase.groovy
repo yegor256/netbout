@@ -30,8 +30,8 @@
 package com.netbout.rest.rexsl.bootstrap
 
 import com.jcabi.jdbc.JdbcSession
+import com.jcabi.manifests.Manifests
 import com.netbout.db.Database
-import com.rexsl.core.Manifests
 import com.jcabi.log.Logger
 import java.security.SecureRandom
 

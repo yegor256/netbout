@@ -29,11 +29,11 @@
  */
 package com.netbout.rest.rexsl.scripts.catapult
 
+import com.jcabi.manifests.Manifests
 import com.jcabi.urn.URN
 import com.netbout.spi.client.RestSession
 import com.netbout.spi.client.RestUriBuilder
 import com.netbout.spi.text.SecureString
-import com.rexsl.core.Manifests
 import com.rexsl.test.RestTester
 import javax.ws.rs.core.HttpHeaders
 import javax.ws.rs.core.MediaType
