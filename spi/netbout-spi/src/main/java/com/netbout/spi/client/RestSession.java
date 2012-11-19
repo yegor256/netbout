@@ -35,6 +35,7 @@ import com.netbout.spi.Identity;
 import com.rexsl.test.RestTester;
 import java.net.HttpURLConnection;
 import java.net.URI;
+import javax.validation.constraints.NotNull;
 import javax.ws.rs.core.UriBuilder;
 import org.hamcrest.Matchers;
 
@@ -111,7 +112,7 @@ public final class RestSession {
      * @param uri Home URI
      * @param secret Super user secret
      */
-    public RestSession(final URI uri, final String secret) {
+    public RestSession(@NotNull final URI uri, @NotNull final String secret) {
         if (!uri.isAbsolute()) {
             throw new IllegalArgumentException(
                 Logger.format(
@@ -128,7 +129,7 @@ public final class RestSession {
      * Public ctor.
      * @param uri Home URI
      */
-    public RestSession(final URI uri) {
+    public RestSession(@NotNull final URI uri) {
         this(uri, "");
     }
 
@@ -138,7 +139,8 @@ public final class RestSession {
      * @param secret The secret word to use
      * @return The identity to work with
      */
-    public Identity authenticate(final URN iname, final String secret) {
+    public Identity authenticate(@NotNull final URN iname,
+        @NotNull final String secret) {
         return new RestIdentity(
             new RexslRestClient(
                 RestTester.start(this.home),

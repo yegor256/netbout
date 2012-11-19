@@ -32,6 +32,7 @@ import com.netbout.bh.StatsProvider;
 import com.netbout.bus.cache.EmptyTokenCache;
 import com.netbout.spi.Helper;
 import com.netbout.spi.Identity;
+import javax.validation.constraints.NotNull;
 
 /**
  * Default implementation of {@link Bus}.
@@ -73,7 +74,7 @@ public final class DefaultBus implements Bus, StatsProvider {
      * {@inheritDoc}
      */
     @Override
-    public TxBuilder make(final String mnemo) {
+    public TxBuilder make(@NotNull final String mnemo) {
         return new DefaultTxBuilder(this.controller, mnemo);
     }
 
@@ -81,7 +82,8 @@ public final class DefaultBus implements Bus, StatsProvider {
      * {@inheritDoc}
      */
     @Override
-    public void register(final Identity identity, final Helper helper) {
+    public void register(@NotNull final Identity identity, 
+        @NotNull final Helper helper) {
         this.controller.register(identity, helper);
     }
 

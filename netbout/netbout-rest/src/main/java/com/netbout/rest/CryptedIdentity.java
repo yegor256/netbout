@@ -31,6 +31,7 @@ import com.jcabi.urn.URN;
 import com.netbout.hub.Hub;
 import com.netbout.spi.Identity;
 import com.netbout.spi.text.SecureString;
+import javax.validation.constraints.NotNull;
 
 /**
  * Identity with encrypted {@link #toString()}.
@@ -49,7 +50,7 @@ public final class CryptedIdentity {
      * Public ctor.
      * @param identity The identity
      */
-    public CryptedIdentity(final Identity identity) {
+    public CryptedIdentity(@NotNull final Identity identity) {
         this.idnt = identity;
     }
 
@@ -68,7 +69,7 @@ public final class CryptedIdentity {
      * @return The name found in it
      * @throws CryptedIdentity.DecryptionException If we can't decrypt it
      */
-    public static Identity parse(final Hub hub, final String hash)
+    public static Identity parse(@NotNull final Hub hub, final String hash)
         throws CryptedIdentity.DecryptionException {
         if (hash == null) {
             throw new CryptedIdentity.DecryptionException();

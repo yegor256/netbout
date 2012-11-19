@@ -46,6 +46,7 @@ import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
+import javax.validation.constraints.NotNull;
 import org.apache.commons.math.stat.descriptive.DescriptiveStatistics;
 
 /**
@@ -145,7 +146,8 @@ final class Mux implements Closeable {
      * @param str The store to use
      * @throws IOException If some I/O problem inside
      */
-    public Mux(final Ray iray, final Store str) throws IOException {
+    public Mux(@NotNull final Ray iray,
+        @NotNull final Store str) throws IOException {
         this.ray = iray;
         this.store = str;
         int stashed = 0;
@@ -185,7 +187,7 @@ final class Mux implements Closeable {
      * @param who Who is asking
      * @return Estimated number of nanoseconds
      */
-    public long eta(final URN... who) {
+    public long eta(@NotNull final URN... who) {
         long eta = 0L;
         if (who.length > 0) {
             for (URN urn : who) {
@@ -214,7 +216,7 @@ final class Mux implements Closeable {
      * @throws IOException If some IO problem inside
      */
     @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
-    public Set<URN> add(final Notice notice) throws IOException {
+    public Set<URN> add(@NotNull final Notice notice) throws IOException {
         this.ray.stash().add(notice);
         final MuxTask task = new MuxTask(notice, this.ray, this.store);
         final Set<URN> deps = new HashSet<URN>();
