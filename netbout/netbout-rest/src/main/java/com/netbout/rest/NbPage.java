@@ -266,7 +266,7 @@ public class NbPage extends BasePage<NbPage, NbResource> {
         if (this.srchbl) {
             this.link(new Link("search", "."));
         }
-        this.builder.header("Netbout-Version", NbPage.VERSION);
+        this.builder.header("X-Netbout-Version", NbPage.VERSION);
     }
 
     /**

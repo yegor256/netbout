@@ -124,7 +124,7 @@
         <dependency>
             <groupId>com.jcabi</groupId>
             <artifactId>jcabi-velocity</artifactId>
-            <version since="8 Nov 2012">0.5.2</version>
+            <version>${jcabi.version}</version>
         </dependency>
         <dependency>
             <groupId>com.rexsl</groupId>
@@ -864,7 +864,7 @@
                     <plugin>
                         <groupId>com.jcabi</groupId>
                         <artifactId>jcabi-heroku-maven-plugin</artifactId>
-                        <version since="8 Nov 2012">0.5.2</version>
+                        <version>${jcabi.version}</version>
                         <executions>
                             <execution>
                                 <id>deploy-to-heroku</id>
@@ -924,7 +924,7 @@
                     <plugin>
                         <groupId>com.jcabi</groupId>
                         <artifactId>jcabi-beanstalk-maven-plugin</artifactId>
-                        <version since="15 Nov 2012">0.5.5</version>
+                        <version>${jcabi.version}</version>
                         <configuration>
                             <swap>false</swap>
                             <name>netbout</name>
