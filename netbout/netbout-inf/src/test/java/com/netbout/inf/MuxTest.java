@@ -32,6 +32,7 @@ import com.jcabi.log.VerboseThreads;
 import com.jcabi.manifests.Manifests;
 import com.jcabi.urn.URNMocker;
 import com.netbout.inf.notices.MessagePostedNotice;
+import com.netbout.inf.ray.MemRay;
 import com.netbout.spi.Bout;
 import com.netbout.spi.BoutMocker;
 import com.netbout.spi.Message;
@@ -47,7 +48,9 @@ import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
 import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
@@ -70,6 +73,13 @@ public final class MuxTest {
      * Snapshot of manifests.
      */
     private static byte[] snapshot;
+
+    /**
+     * Temporary folder.
+     * @checkstyle VisibilityModifier (3 lines)
+     */
+    @Rule
+    public transient TemporaryFolder temp = new TemporaryFolder();
 
     /**
      * Pre-configure Mux.
@@ -143,6 +153,20 @@ public final class MuxTest {
         MatcherAssert.assertThat(
             new Mux(new RayMocker().mock(), new StoreMocker().mock()),
             Matchers.hasToString(Matchers.notNullValue())
+        );
+    }
+
+    /**
+     * Mux can start with non-empty stash.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void startsWithNonEmptyStash() throws Exception {
+        final Ray ray = new MemRay(this.temp.newFolder("mem-ray"));
+        ray.stash().add(MuxTest.notice());
+        MatcherAssert.assertThat(
+            new Mux(ray, new StoreMocker().mock()),
+            Matchers.notNullValue()
         );
     }
 
@@ -258,23 +282,30 @@ public final class MuxTest {
      * @throws Exception If there is some problem inside
      */
     private static void pushTo(final Mux mux) throws Exception {
-        mux.add(
-            new MessagePostedNotice() {
-                @Override
-                public Message message() {
-                    return new MessageMocker()
-                        .withNumber(MuxTest.NUMBER.incrementAndGet())
-                        .mock();
-                }
-                @Override
-                public Bout bout() {
-                    return new BoutMocker()
-                        .withNumber(MuxTest.NUMBER.incrementAndGet())
-                        .withParticipant(new URNMocker().mock())
-                        .mock();
-                }
+        mux.add(MuxTest.notice());
+    }
+
+    /**
+     * Make a test notice.
+     * @return The notice
+     * @throws Exception If there is some problem inside
+     */
+    private static Notice notice() throws Exception {
+        return new MessagePostedNotice() {
+            @Override
+            public Message message() {
+                return new MessageMocker()
+                    .withNumber(MuxTest.NUMBER.incrementAndGet())
+                    .mock();
             }
-        );
+            @Override
+            public Bout bout() {
+                return new BoutMocker()
+                    .withNumber(MuxTest.NUMBER.incrementAndGet())
+                    .withParticipant(new URNMocker().mock())
+                    .mock();
+            }
+        };
     }
 
 }

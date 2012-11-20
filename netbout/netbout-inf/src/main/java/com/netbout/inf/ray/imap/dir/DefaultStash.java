@@ -92,7 +92,7 @@ final class DefaultStash implements Stash {
     @Override
     public void close() throws IOException {
         this.lock.close();
-        Logger.debug(
+        Logger.info(
             this,
             "#close(..): closed with %d done notices",
             this.done.size()
@@ -222,7 +222,7 @@ final class DefaultStash implements Stash {
                 files.add(file);
             }
         }
-        Logger.debug(
+        Logger.info(
             this,
             "#files(): %d files found",
             files.size()
