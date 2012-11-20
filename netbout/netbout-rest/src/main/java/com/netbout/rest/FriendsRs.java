@@ -117,42 +117,62 @@ public final class FriendsRs extends BaseRs {
         } else {
             friend = self.friend(urn);
         }
-        final URL[] opts = new URL[] {
-            friend.profile().photo(),
-            new URL("http://img.netbout.com/unknown.png"),
-        };
-        final Response.ResponseBuilder builder =
-            Response.status(HttpURLConnection.HTTP_OK);
-        for (URL url : opts) {
-            final HttpURLConnection conn =
-                HttpURLConnection.class.cast(url.openConnection());
-            if (conn.getResponseCode() == HttpURLConnection.HTTP_OK) {
-                builder.header(
-                    HttpHeaders.CONTENT_TYPE,
-                    conn.getContentType()
-                );
-                builder.header(
-                    HttpHeaders.CONTENT_LENGTH,
-                    conn.getContentLength()
-                );
-                builder.header("X-Netbout-Original", url.toString());
-                builder.entity(conn.getInputStream());
-                break;
+        Response response = this.fetch(friend.profile().photo());
+        if (response.getStatus() == HttpURLConnection.HTTP_NOT_FOUND) {
+            response = this.fetch(
+                new URL("http://img.netbout.com/unknown.png")
+            );
+        }
+        return response;
+    }
+
+    /**
+     * Fetch foto from the URL.
+     * @param url The URL to fetch from
+     * @return The JAX-RS response with a picture inside
+     * @throws Exception If anything is wrong
+     */
+    private Response fetch(final URL url) throws Exception {
+        final Response.ResponseBuilder builder = Response.ok();
+        final HttpURLConnection conn =
+            HttpURLConnection.class.cast(url.openConnection());
+        final List<String> ifmodified = this.httpHeaders()
+            .getRequestHeader(HttpHeaders.IF_MODIFIED_SINCE);
+        if (ifmodified != null && !ifmodified.isEmpty()) {
+            conn.setRequestProperty(
+                HttpHeaders.IF_MODIFIED_SINCE,
+                ifmodified.get(0)
+            );
+        }
+        if (conn.getResponseCode() == HttpURLConnection.HTTP_OK
+            || conn.getResponseCode() == HttpURLConnection.HTTP_NOT_MODIFIED) {
+            builder.status(conn.getResponseCode());
+            final String[] headers = new String[] {
+                HttpHeaders.CACHE_CONTROL,
+                HttpHeaders.CONTENT_TYPE,
+                HttpHeaders.CONTENT_LENGTH,
+                HttpHeaders.ETAG,
+                HttpHeaders.EXPIRES,
+                HttpHeaders.LAST_MODIFIED,
+            };
+            for (String header : headers) {
+                final String value = conn.getHeaderField(header);
+                if (value != null) {
+                    builder.header(header, value);
+                }
             }
+            builder.header("X-Netbout-Original", url.toString());
+            builder.entity(conn.getInputStream());
+            Logger.debug(this, "#fetch('%s'): fetched", url);
+        } else {
+            builder.status(HttpURLConnection.HTTP_NOT_FOUND);
             Logger.warn(
                 this,
-                "#photo('%s'): failed to fetch from '%s' (code=%d)",
-                urn,
+                "#fetch('%s'): failed to fetch from (code=%d)",
                 url,
                 conn.getResponseCode()
             );
         }
-        Logger.debug(
-            this,
-            "#photo('%s'): fetched from '%s'",
-            urn,
-            friend.profile().photo()
-        );
         return builder.build();
     }
 
