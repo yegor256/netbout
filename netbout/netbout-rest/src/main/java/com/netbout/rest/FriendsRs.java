@@ -118,7 +118,7 @@ public final class FriendsRs extends BaseRs {
             friend = self.friend(urn);
         }
         Response response = this.fetch(friend.profile().photo());
-        if (response.getStatus() != HttpURLConnection.HTTP_OK) {
+        if (response.getStatus() == HttpURLConnection.HTTP_NOT_FOUND) {
             response = this.fetch(
                 new URL("http://img.netbout.com/unknown.png")
             );
@@ -136,7 +136,17 @@ public final class FriendsRs extends BaseRs {
         final Response.ResponseBuilder builder = Response.ok();
         final HttpURLConnection conn =
             HttpURLConnection.class.cast(url.openConnection());
-        if (conn.getResponseCode() == HttpURLConnection.HTTP_OK) {
+        final List<String> ifmodified = this.httpHeaders()
+            .getRequestHeader(HttpHeaders.IF_MODIFIED_SINCE);
+        if (ifmodified != null && !ifmodified.isEmpty()) {
+            conn.setRequestProperty(
+                HttpHeaders.IF_MODIFIED_SINCE,
+                ifmodified.get(0)
+            );
+        }
+        if (conn.getResponseCode() == HttpURLConnection.HTTP_OK
+            || conn.getResponseCode() == HttpURLConnection.HTTP_NOT_MODIFIED) {
+            builder.status(conn.getResponseCode());
             final String[] headers = new String[] {
                 HttpHeaders.CACHE_CONTROL,
                 HttpHeaders.CONTENT_TYPE,
