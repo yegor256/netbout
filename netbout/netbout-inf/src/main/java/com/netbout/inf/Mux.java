@@ -150,12 +150,7 @@ final class Mux implements Closeable {
         @NotNull final Store str) throws IOException {
         this.ray = iray;
         this.store = str;
-        int stashed = 0;
-        for (Notice notice : this.ray.stash()) {
-            this.add(notice);
-            this.ray.stash().remove(notice);
-            ++stashed;
-        }
+        this.apply(this.ray.stash());
         final Runnable runnable = new VerboseRunnable(
             new Callable<Boolean>() {
                 @Override
@@ -175,8 +170,7 @@ final class Mux implements Closeable {
         }
         Logger.info(
             this,
-            "#Mux(..): %d notice(s) from stash, %d threads, %[ms]s delay",
-            stashed,
+            "#Mux(..): %d threads, %[ms]s delay",
             Mux.THREADS,
             this.period
         );
@@ -297,7 +291,7 @@ final class Mux implements Closeable {
         this.service.shutdown();
         try {
             if (this.service.awaitTermination(1, TimeUnit.SECONDS)) {
-                Logger.debug(this, "#close(): shutdown() succeeded");
+                Logger.info(this, "#close(): shutdown() succeeded");
             } else {
                 Logger.warn(this, "#close(): shutdown() failed");
                 this.service.shutdownNow();
@@ -394,6 +388,37 @@ final class Mux implements Closeable {
             Thread.currentThread().interrupt();
         }
         return dispatched;
+    }
+
+    /**
+     * Apply stash to this Mux.
+     * @param stash The stash to apply
+     * @throws IOException If fails
+     */
+    private void apply(final Stash stash) throws IOException {
+        final long start = System.currentTimeMillis();
+        int imported = 0;
+        for (Notice notice : stash) {
+            this.add(notice);
+            stash.remove(notice);
+            ++imported;
+            // @checkstyle MagicNumber (1 line)
+            if (imported > 0 && imported % 100 == 0) {
+                Logger.info(
+                    this,
+                    "#import(..): imported %d notice(s), %[ms]s spent",
+                    imported,
+                    System.currentTimeMillis() - start
+                );
+            }
+        }
+        Logger.info(
+            this,
+            "#import(%s): %d notice(s) imported in %[ms]s",
+            stash,
+            imported,
+            System.currentTimeMillis() - start
+        );
     }
 
 }
