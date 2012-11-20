@@ -406,7 +406,7 @@ final class Mux implements Closeable {
             if (imported > 0 && imported % 100 == 0) {
                 Logger.info(
                     this,
-                    "#import(..): imported %d notice(s), %[ms]s spent",
+                    "#apply(..): imported %d notice(s), %[ms]s spent",
                     imported,
                     System.currentTimeMillis() - start
                 );
@@ -414,7 +414,7 @@ final class Mux implements Closeable {
         }
         Logger.info(
             this,
-            "#import(%s): %d notice(s) imported in %[ms]s",
+            "#apply(%s): %d notice(s) imported in %[ms]s",
             stash,
             imported,
             System.currentTimeMillis() - start
