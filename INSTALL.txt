@@ -104,7 +104,7 @@ How to release new version to Maven Central:
 
     6. Run in SPI folder:
 
-        cd spi && mvn -Dci -Pnetbout-production clean deploy
+        cd spi && mvn -Dci -Pnetbout-production clean deploy -Psonatype
 
         Make sure that you have this profile in ~/.m2/settings.xml:
 
