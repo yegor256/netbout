@@ -33,6 +33,8 @@ import com.netbout.inf.Ray;
 import com.netbout.inf.Term;
 import com.netbout.inf.atoms.TextAtom;
 import com.netbout.inf.notices.MessagePostedNotice;
+import com.netbout.spi.Message;
+import com.netbout.spi.xml.DomParser;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -88,9 +90,17 @@ final class Matches implements Functor {
      */
     @Noticable
     public void see(final Ray ray, final MessagePostedNotice notice) {
-        final long number = ray.msg(notice.message().number()).number();
-        for (String word : Matches.words(notice.message().text())) {
-            ray.cursor().add(ray.builder().picker(number), Matches.ATTR, word);
+        final Message message = notice.message();
+        final DomParser parser = new DomParser(message.text());
+        if (!parser.isXml()) {
+            final long number = ray.msg(message.number()).number();
+            for (String word : Matches.words(message.text())) {
+                ray.cursor().add(
+                    ray.builder().picker(number),
+                    Matches.ATTR,
+                    word
+                );
+            }
         }
     }
 
