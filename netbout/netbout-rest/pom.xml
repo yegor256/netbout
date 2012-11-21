@@ -33,7 +33,7 @@
     <parent>
         <groupId>com.netbout</groupId>
         <artifactId>netbout</artifactId>
-        <version netbout="yes">2.0-SNAPSHOT</version>
+        <version netbout="yes">1.5.8</version>
     </parent>
     <artifactId>netbout-rest</artifactId>
     <packaging>war</packaging>
@@ -56,51 +56,46 @@
         <dependency>
             <groupId>com.netbout</groupId>
             <artifactId>netbout-inf</artifactId>
-            <version netbout="yes">2.0-SNAPSHOT</version>
+            <version netbout="yes">1.5.8</version>
         </dependency>
         <dependency>
             <groupId>com.netbout</groupId>
             <artifactId>netbout-hub</artifactId>
-            <version netbout="yes">2.0-SNAPSHOT</version>
+            <version netbout="yes">1.5.8</version>
         </dependency>
         <dependency>
             <groupId>com.netbout</groupId>
             <artifactId>netbout-hub</artifactId>
-            <version netbout="yes">2.0-SNAPSHOT</version>
+            <version netbout="yes">1.5.8</version>
             <classifier>mock</classifier>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>com.netbout</groupId>
             <artifactId>netbout-bus</artifactId>
-            <version netbout="yes">2.0-SNAPSHOT</version>
+            <version netbout="yes">1.5.8</version>
         </dependency>
         <dependency>
             <groupId>com.netbout</groupId>
             <artifactId>netbout-bus</artifactId>
-            <version netbout="yes">2.0-SNAPSHOT</version>
+            <version netbout="yes">1.5.8</version>
             <classifier>mock</classifier>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>com.netbout</groupId>
             <artifactId>netbout-db</artifactId>
-            <version netbout="yes">2.0-SNAPSHOT</version>
+            <version netbout="yes">1.5.8</version>
             <scope>runtime</scope>
         </dependency>
         <dependency>
             <groupId>com.netbout.spi</groupId>
-            <artifactId>netbout-client</artifactId>
-            <version netbout="yes">2.0-SNAPSHOT</version>
-        </dependency>
-        <dependency>
-            <groupId>com.netbout.spi</groupId>
             <artifactId>netbout-spi</artifactId>
         </dependency>
         <dependency>
             <groupId>com.netbout.spi</groupId>
             <artifactId>netbout-spi</artifactId>
-            <version netbout="yes">2.0-SNAPSHOT</version>
+            <version netbout="yes">1.5.8</version>
             <classifier>mock</classifier>
             <scope>test</scope>
         </dependency>
@@ -354,7 +349,7 @@
         <dependency>
             <groupId>com.netbout.helpers</groupId>
             <artifactId>helper-shary</artifactId>
-            <version netbout="yes">2.0-SNAPSHOT</version>
+            <version netbout="yes">1.5.8</version>
             <scope>runtime</scope>
         </dependency>
     </dependencies>
@@ -369,7 +364,7 @@
                         <dependency>
                             <groupId>com.netbout.spi</groupId>
                             <artifactId>netbout-spi</artifactId>
-                            <version netbout="yes">2.0-SNAPSHOT</version>
+                            <version netbout="yes">1.5.8</version>
                         </dependency>
                     </dependencies>
                 </plugin>
@@ -814,12 +809,6 @@
         </profile>
         <profile>
             <id>netbout-test</id>
-            <repositories>
-                <repository>
-                    <id>repo.woquo.com</id>
-                    <url>s3://repo.woquo.com/snapshot</url>
-                </repository>
-            </repositories>
             <dependencies>
                 <dependency>
                     <groupId>com.rexsl</groupId>
@@ -827,12 +816,6 @@
                     <version>${rexsl.version}</version>
                     <classifier>bin</classifier>
                     <scope>test</scope>
-                </dependency>
-                <dependency>
-                    <groupId>com.woquo</groupId>
-                    <artifactId>woquo-helper</artifactId>
-                    <version since="9 Jan 2012">1.0-SNAPSHOT</version>
-                    <scope>runtime</scope>
                 </dependency>
             </dependencies>
             <build>
@@ -888,38 +871,6 @@
         </profile>
         <profile>
             <id>netbout-production</id>
-            <repositories>
-                <repository>
-                    <id>repo.woquo.com</id>
-                    <url>s3://repo.woquo.com/release</url>
-                </repository>
-            </repositories>
-            <dependencies>
-                <dependency>
-                    <groupId>com.woquo</groupId>
-                    <artifactId>woquo-umpa</artifactId>
-                    <version since="9 Jan 2012">0.3</version>
-                    <scope>runtime</scope>
-                </dependency>
-                <dependency>
-                    <groupId>com.woquo</groupId>
-                    <artifactId>woquo-nebo-helper</artifactId>
-                    <version since="9 Jan 2012">0.3</version>
-                    <scope>runtime</scope>
-                </dependency>
-                <dependency>
-                    <groupId>com.woquo</groupId>
-                    <artifactId>woquo-mentor-helper</artifactId>
-                    <version since="9 Jan 2012">0.3</version>
-                    <scope>runtime</scope>
-                </dependency>
-                <dependency>
-                    <groupId>com.woquo</groupId>
-                    <artifactId>woquo-board-helper</artifactId>
-                    <version since="9 Jan 2012">0.3</version>
-                    <scope>runtime</scope>
-                </dependency>
-            </dependencies>
             <build>
                 <plugins>
                     <plugin>
