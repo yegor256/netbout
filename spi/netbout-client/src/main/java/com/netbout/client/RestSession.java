@@ -40,7 +40,7 @@ import javax.ws.rs.core.UriBuilder;
 import org.hamcrest.Matchers;
 
 /**
- * Restful session.
+ * RESTful Netbout session.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$

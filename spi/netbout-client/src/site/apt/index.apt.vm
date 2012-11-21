@@ -40,6 +40,23 @@
 
 Netbout RESTful Client
 
+  Start with {{{./apidocs-${project.version}/com/netbout/client/RestSession.html}<<<RestSession>>>}}:
+
++--
+Identity myself = new RestSession(new URI("https://www.netbout.com/"))
+    .authenticate(new URN("urn:test:JohnDoe"), "secret-password");
++--
+
+  Then, start a new bout, invite someone, and post a message:
+
++--
+Bout bout = myself.start();
+Friend barry = myself.friend(new URN("urn:test:Barry"));
+bout.rename("new conversation about business...");
+bout.invite(barry);
+bout.post("how are you doing?");
++--
+
   More details in {{{./apidocs-${project.version}}Javadocs API}}.
 
   The only dependency you need:
