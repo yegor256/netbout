@@ -27,12 +27,12 @@
 package com.netbout.rest;
 
 import com.jcabi.manifests.Manifests;
+import com.netbout.client.RestSession;
 import com.netbout.rest.auth.FacebookRs;
 import com.netbout.rest.jaxb.LongHelper;
 import com.netbout.rest.jaxb.LongIdentity;
 import com.netbout.spi.Helper;
 import com.netbout.spi.Identity;
-import com.netbout.spi.client.RestSession;
 import com.rexsl.page.BasePage;
 import com.rexsl.page.CookieBuilder;
 import com.rexsl.page.JaxbBundle;

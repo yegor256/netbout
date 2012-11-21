@@ -31,8 +31,8 @@ package com.netbout.rest.rexsl.setup
 
 import com.jcabi.log.Logger
 import com.jcabi.urn.URN
-import com.netbout.spi.client.RestExpert
-import com.netbout.spi.client.RestSession
+import com.netbout.client.RestExpert
+import com.netbout.client.RestSession
 import javax.ws.rs.core.UriBuilder
 import org.hamcrest.MatcherAssert
 import org.hamcrest.Matchers

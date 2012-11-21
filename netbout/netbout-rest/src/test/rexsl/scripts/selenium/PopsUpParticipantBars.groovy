@@ -30,8 +30,8 @@
 package com.netbout.rest.rexsl.scripts.selenium
 
 import com.jcabi.urn.URN
-import com.netbout.spi.client.RestSession
-import com.netbout.spi.client.RestUriBuilder
+import com.netbout.client.RestSession
+import com.netbout.client.RestUriBuilder
 import java.util.concurrent.TimeUnit
 import org.hamcrest.MatcherAssert
 import org.hamcrest.Matchers
