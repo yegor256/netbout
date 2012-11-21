@@ -29,6 +29,7 @@
  */
 package com.netbout.client;
 
+import com.jcabi.manifests.Manifests;
 import com.rexsl.test.ContainerMocker;
 import com.rexsl.test.RestTester;
 import com.rexsl.test.TestClient;
@@ -87,8 +88,11 @@ public final class RexslRestClientTest {
             .expectHeader(HttpHeaders.COOKIE, Matchers.equalTo(cookie))
             .expectHeader(HttpHeaders.ACCEPT, MediaType.APPLICATION_XML)
             .returnBody(
-                // @checkstyle LineLength (1 line)
-                "<page><version><name>1.0-TEST</name></version><identity><eta>0</eta></identity><a/></page>"
+                String.format(
+                    // @checkstyle LineLength (1 line)
+                    "<page><version><name>%s</name></version><identity><eta>0</eta></identity><a/></page>",
+                    Manifests.read("Netbout-Version")
+                )
             )
             .returnStatus(HttpURLConnection.HTTP_OK)
             .mock();
