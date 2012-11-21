@@ -30,6 +30,7 @@ import com.jcabi.log.Logger;
 import java.io.File;
 import java.io.IOException;
 import java.util.UUID;
+import javax.validation.constraints.NotNull;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 
@@ -58,7 +59,7 @@ final class Versions {
      * @param file The directory
      * @throws IOException If some I/O problem inside
      */
-    public Versions(final File file) throws IOException {
+    public Versions(@NotNull final File file) throws IOException {
         this.dir = file;
     }
 
@@ -90,7 +91,7 @@ final class Versions {
      * @param version New version
      * @throws IOException If some I/O problem inside
      */
-    public void rebase(final String version) throws IOException {
+    public void rebase(@NotNull final String version) throws IOException {
         final String previous = FileUtils.readFileToString(
             new File(this.dir, Versions.MARKER)
         );

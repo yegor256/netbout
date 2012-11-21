@@ -35,6 +35,7 @@ import java.io.PrintStream;
 import java.lang.management.ManagementFactory;
 import java.nio.channels.FileChannel;
 import java.nio.channels.FileLock;
+import javax.validation.constraints.NotNull;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 
@@ -79,8 +80,7 @@ final class Lock implements Closeable {
      * @throws IOException If some I/O problem inside or this directory is
      *  already locked by another thread/class
      */
-    public Lock(final File dir) throws IOException {
-        assert dir != null;
+    public Lock(@NotNull final File dir) throws IOException {
         this.directory = dir;
         final File file = new File(this.directory, Lock.NAME);
         file.getParentFile().mkdirs();

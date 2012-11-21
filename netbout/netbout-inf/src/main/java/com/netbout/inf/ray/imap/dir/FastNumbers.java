@@ -39,6 +39,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
+import javax.validation.constraints.NotNull;
 
 /**
  * Fast implemenation of {@link Numbers}.
@@ -235,7 +236,8 @@ public class FastNumbers implements Numbers {
      * {@inheritDoc}
      */
     @Override
-    public final long save(final OutputStream stream) throws IOException {
+    public final long save(@NotNull final OutputStream stream)
+        throws IOException {
         final DataOutputStream data = new DataOutputStream(stream);
         long written = 0;
         for (int pos = 0; pos < this.size; ++pos) {
@@ -256,7 +258,8 @@ public class FastNumbers implements Numbers {
      * {@inheritDoc}
      */
     @Override
-    public final void load(final InputStream stream) throws IOException {
+    public final void load(@NotNull final InputStream stream)
+        throws IOException {
         this.size = 0;
         final DataInputStream data = new DataInputStream(stream);
         long previous = Long.MAX_VALUE;
@@ -311,8 +314,8 @@ public class FastNumbers implements Numbers {
      * @param value The value these numbers are used for
      * @param reverse The reverse
      */
-    public final void audit(final Audit audit, final String value,
-        final SimpleReverse reverse) {
+    public final void audit(@NotNull final Audit audit,
+        @NotNull final String value, @NotNull final SimpleReverse reverse) {
         reverse.audit(
             audit,
             value,

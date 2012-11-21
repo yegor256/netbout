@@ -32,6 +32,7 @@ import com.netbout.inf.Stash;
 import java.io.File;
 import java.io.IOException;
 import java.util.concurrent.atomic.AtomicInteger;
+import javax.validation.constraints.NotNull;
 import org.apache.commons.io.FileUtils;
 
 /**
@@ -54,7 +55,7 @@ final class Baseline extends AbstractVersion {
      * @param lock The directory where to work
      * @throws IOException If some I/O problem inside
      */
-    public Baseline(final Lock lock) throws IOException {
+    public Baseline(@NotNull final Lock lock) throws IOException {
         super(lock);
         this.istash = new DefaultStash(new File(this.dir(), "_stash"));
         final AtomicInteger failures = new AtomicInteger();
@@ -91,7 +92,7 @@ final class Baseline extends AbstractVersion {
      * @return File name
      * @throws IOException If some I/O problem inside
      */
-    public File data(final Attribute attr) throws IOException {
+    public File data(@NotNull final Attribute attr) throws IOException {
         final File file = new File(
             this.dir(),
             String.format("/%s/data.inf", attr)
@@ -106,7 +107,7 @@ final class Baseline extends AbstractVersion {
      * @return The catalog
      * @throws IOException If some I/O problem inside
      */
-    public Catalog catalog(final Attribute attr) throws IOException {
+    public Catalog catalog(@NotNull final Attribute attr) throws IOException {
         return new Catalog(
             new File(
                 this.dir(),

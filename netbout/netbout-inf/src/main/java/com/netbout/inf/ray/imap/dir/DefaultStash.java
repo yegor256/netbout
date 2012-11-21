@@ -51,6 +51,11 @@ import org.apache.commons.lang.StringUtils;
 final class DefaultStash implements Stash {
 
     /**
+     * Extension of all stash files.
+     */
+    private static final String EXTENSION = "ser";
+
+    /**
      * Lock on the directory.
      */
     private final transient Lock lock;
@@ -210,7 +215,7 @@ final class DefaultStash implements Stash {
     private Collection<File> files() throws IOException {
         final Collection<File> files = new ConcurrentSkipListSet<File>();
         final Collection<File> all = FileUtils.listFiles(
-            this.lock.dir(), new String[] {"ser"}, true
+            this.lock.dir(), new String[] {DefaultStash.EXTENSION}, true
         );
         for (File file : all) {
             if (this.done.contains(file)) {
@@ -220,8 +225,9 @@ final class DefaultStash implements Stash {
         }
         Logger.info(
             this,
-            "#files(): %d file(s) found",
-            files.size()
+            "#files(): %d file(s) found with '%s' extension",
+            files.size(),
+            DefaultStash.EXTENSION
         );
         return files;
     }
@@ -245,11 +251,12 @@ final class DefaultStash implements Stash {
         return new File(
             this.lock.dir(),
             String.format(
-                "%s/%s/%s.ser",
+                "%s/%s/%s.%s",
                 key.substring(0, 2),
                 // @checkstyle MagicNumber (2 lines)
                 key.substring(2, 4),
-                key.substring(4, key.length() - 4)
+                key.substring(4, key.length() - 4),
+                DefaultStash.EXTENSION
             )
         );
     }

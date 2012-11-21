@@ -33,6 +33,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
+import javax.validation.constraints.NotNull;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 
@@ -56,7 +57,7 @@ abstract class AbstractVersion implements Closeable {
      * @param lck The directory where to work
      * @throws IOException If some I/O problem inside
      */
-    public AbstractVersion(final Lock lck) throws IOException {
+    public AbstractVersion(@NotNull final Lock lck) throws IOException {
         this.lock = lck;
     }
 

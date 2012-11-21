@@ -32,6 +32,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
+import javax.validation.constraints.NotNull;
 import org.apache.commons.io.FileUtils;
 
 /**
@@ -59,7 +60,7 @@ final class Draft extends AbstractVersion {
      * @return File name
      * @throws IOException If some I/O problem inside
      */
-    public File numbers(final Attribute attr) throws IOException {
+    public File numbers(@NotNull final Attribute attr) throws IOException {
         final File folder = new File(this.dir(), attr.toString());
         folder.mkdirs();
         return File.createTempFile("numbers-", ".inf", folder);
@@ -72,8 +73,8 @@ final class Draft extends AbstractVersion {
      * @return File name
      * @throws IOException If some I/O problem inside
      */
-    public File numbers(final Attribute attr,
-        final String name) throws IOException {
+    public File numbers(@NotNull final Attribute attr,
+        @NotNull final String name) throws IOException {
         final File folder = new File(this.dir(), attr.toString());
         folder.mkdirs();
         return new File(folder, name);
@@ -85,7 +86,7 @@ final class Draft extends AbstractVersion {
      * @return The catalog
      * @throws IOException If some I/O problem inside
      */
-    public Backlog backlog(final Attribute attr) throws IOException {
+    public Backlog backlog(@NotNull final Attribute attr) throws IOException {
         return new Backlog(
             new File(
                 this.dir(),
@@ -100,8 +101,8 @@ final class Draft extends AbstractVersion {
      * @param src Original baseline
      * @throws IOException If some I/O problem inside
      */
-    public void baseline(final Baseline dest,
-        final Baseline src) throws IOException {
+    public void baseline(@NotNull final Baseline dest,
+        @NotNull final Baseline src) throws IOException {
         final long start = System.currentTimeMillis();
         final Set<Attribute> attrs = new HashSet<Attribute>();
         attrs.addAll(this.attributes());

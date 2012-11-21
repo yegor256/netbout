@@ -36,6 +36,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Iterator;
 import java.util.concurrent.Semaphore;
+import javax.validation.constraints.NotNull;
 
 /**
  * Concurrent implementation of {@link Directory}.
@@ -74,7 +75,7 @@ public final class ConcurrentDirectory implements Directory {
      * @param file The directory
      * @throws IOException If some I/O problem inside
      */
-    public ConcurrentDirectory(final File file) throws IOException {
+    public ConcurrentDirectory(@NotNull final File file) throws IOException {
         this.dir = new DefaultDirectory(file);
     }
 
@@ -95,8 +96,8 @@ public final class ConcurrentDirectory implements Directory {
      * {@inheritDoc}
      */
     @Override
-    public void save(final Attribute attr, final String value,
-        final Numbers nums) throws IOException {
+    public void save(@NotNull final Attribute attr, @NotNull final String value,
+        @NotNull final Numbers nums) throws IOException {
         this.acquire(1);
         try {
             this.dir.save(attr, value, nums);
@@ -109,8 +110,8 @@ public final class ConcurrentDirectory implements Directory {
      * {@inheritDoc}
      */
     @Override
-    public void load(final Attribute attr, final String value,
-        final Numbers nums) throws IOException {
+    public void load(@NotNull final Attribute attr, @NotNull final String value,
+        @NotNull final Numbers nums) throws IOException {
         this.acquire(1);
         try {
             this.dir.load(attr, value, nums);
@@ -137,8 +138,8 @@ public final class ConcurrentDirectory implements Directory {
      * {@inheritDoc}
      */
     @Override
-    public void load(final Attribute attr,
-        final Reverse reverse) throws IOException {
+    public void load(@NotNull final Attribute attr,
+        @NotNull final Reverse reverse) throws IOException {
         this.acquire(1);
         try {
             this.dir.load(attr, reverse);
