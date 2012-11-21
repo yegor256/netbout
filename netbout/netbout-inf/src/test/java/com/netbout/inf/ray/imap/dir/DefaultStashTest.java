@@ -173,4 +173,13 @@ public final class DefaultStashTest {
         stash.close();
     }
 
+    /**
+     * DefaultStash can reject a call if not a directory.
+     * @throws Exception If there is some problem inside
+     */
+    @Test(expected = IllegalArgumentException.class)
+    public void rejectsIfDirectoryIsNotValid() throws Exception {
+        new DefaultStash(this.temp.newFile("foo-9898"));
+    }
+
 }

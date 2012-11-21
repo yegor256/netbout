@@ -85,7 +85,7 @@ public enum VariableAtom implements Atom<String> {
      * Public ctor.
      * @param value The value of it
      */
-    VariableAtom(@NotNull final String value) {
+    VariableAtom(final String value) {
         this.name = value;
         if ("number".equals(value)) {
             this.attr = new VariableAtom.NumberAttribute();

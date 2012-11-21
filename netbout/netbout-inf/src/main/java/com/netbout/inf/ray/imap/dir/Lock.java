@@ -76,11 +76,19 @@ final class Lock implements Closeable {
 
     /**
      * Public ctor.
-     * @param dir The directory to lock
+     * @param dir The directory to lock (will be created automatically)
      * @throws IOException If some I/O problem inside or this directory is
      *  already locked by another thread/class
      */
     public Lock(@NotNull final File dir) throws IOException {
+        if (dir.exists() && !dir.isDirectory()) {
+            throw new IllegalArgumentException(
+                String.format(
+                    "file %s already exists and is not a directory",
+                    dir
+                )
+            );
+        }
         this.directory = dir;
         final File file = new File(this.directory, Lock.NAME);
         file.getParentFile().mkdirs();

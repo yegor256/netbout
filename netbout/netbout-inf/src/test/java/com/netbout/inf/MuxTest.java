@@ -150,10 +150,15 @@ public final class MuxTest {
      */
     @Test
     public void rendersStatistics() throws Exception {
+        final Mux mux = new Mux(
+            new RayMocker().mock(),
+            new StoreMocker().mock()
+        );
         MatcherAssert.assertThat(
-            new Mux(new RayMocker().mock(), new StoreMocker().mock()),
+            mux,
             Matchers.hasToString(Matchers.notNullValue())
         );
+        mux.close();
     }
 
     /**
@@ -164,10 +169,12 @@ public final class MuxTest {
     public void startsWithNonEmptyStash() throws Exception {
         final Ray ray = new MemRay(this.temp.newFolder("mem-ray"));
         ray.stash().add(MuxTest.notice());
+        final Mux mux = new Mux(ray, new StoreMocker().mock());
         MatcherAssert.assertThat(
-            new Mux(ray, new StoreMocker().mock()),
+            mux,
             Matchers.notNullValue()
         );
+        mux.close();
     }
 
     /**
