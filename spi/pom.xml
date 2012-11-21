@@ -49,7 +49,7 @@
     <artifactId>netbout</artifactId>
     <version netbout="yes">2.0-SNAPSHOT</version>
     <packaging>pom</packaging>
-    <name>spi:netbout</name>
+    <name>spi</name>
     <modules>
         <module>netbout-spi</module>
         <module>netbout-client</module>

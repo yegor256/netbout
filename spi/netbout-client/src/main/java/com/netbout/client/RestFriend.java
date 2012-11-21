@@ -1,5 +1,4 @@
-<?xml version="1.0"?>
-<!--
+/**
  * Copyright (c) 2009-2012, Netbout.com
  * All rights reserved.
  *
@@ -27,17 +26,66 @@
  * STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
  * OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+package com.netbout.client;
+
+import com.jcabi.urn.URN;
+import com.netbout.spi.Friend;
+import com.netbout.spi.Profile;
+
+/**
+ * Implementation of {@link Friend}, with no connection to REST API.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
- -->
-<project xmlns="http://maven.apache.org/DECORATION/1.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/DECORATION/1.0.0     http://maven.apache.org/xsd/decoration-1.0.0.xsd" name="netbout-client">
-    <body>
-        <menu ref="parent"/>
-        <menu name="Overview">
-            <item name="Introduction" href="index.html"/>
-            <item name="API ${project.version} (JavaDoc)" href="./apidocs-${project.version}/index.html"/>
-        </menu>
-        <menu ref="reports"/>
-    </body>
-</project>
+ */
+final class RestFriend implements Friend {
+
+    /**
+     * Name of it.
+     */
+    private final transient URN iname;
+
+    /**
+     * Public ctor.
+     * @param name The name of it
+     */
+    public RestFriend(final URN name) {
+        this.iname = name;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String toString() {
+        return this.name().toString();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public int compareTo(final Friend friend) {
+        return this.iname.compareTo(friend.name());
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public URN name() {
+        return this.iname;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Profile profile() {
+        throw new UnsupportedOperationException(
+            "Friend#profile() is not implemented yet"
+        );
+    }
+
+}

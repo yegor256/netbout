@@ -1,5 +1,4 @@
-<?xml version="1.0"?>
-<!--
+/**
  * Copyright (c) 2009-2012, Netbout.com
  * All rights reserved.
  *
@@ -27,17 +26,52 @@
  * STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
  * OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+package com.netbout.client;
+
+import com.jcabi.log.Logger;
+import com.jcabi.manifests.Manifests;
+import com.rexsl.test.AssertionPolicy;
+import com.rexsl.test.TestResponse;
+import java.net.HttpURLConnection;
+
+/**
+ * Asserts that versions of the server and the client are the same.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
- -->
-<project xmlns="http://maven.apache.org/DECORATION/1.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/DECORATION/1.0.0     http://maven.apache.org/xsd/decoration-1.0.0.xsd" name="netbout-client">
-    <body>
-        <menu ref="parent"/>
-        <menu name="Overview">
-            <item name="Introduction" href="index.html"/>
-            <item name="API ${project.version} (JavaDoc)" href="./apidocs-${project.version}/index.html"/>
-        </menu>
-        <menu ref="reports"/>
-    </body>
-</project>
+ */
+@AssertionPolicy.Quiet
+final class VersionAssertion implements AssertionPolicy {
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void assertThat(final TestResponse response) {
+        if (response.getStatus() == HttpURLConnection.HTTP_OK) {
+            final String srv = response
+                .xpath("/page/version/name/text()")
+                .get(0);
+            final String client = Manifests.read("Netbout-Version");
+            if (!client.equals(srv)) {
+                throw new AssertionError(
+                    Logger.format(
+                        "Server's version '%s' doesn't match client's one '%s'",
+                        srv,
+                        client
+                    )
+                );
+            }
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean isRetryNeeded(final int attempt) {
+        return false;
+    }
+
+}

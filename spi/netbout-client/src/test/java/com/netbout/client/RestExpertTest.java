@@ -1,5 +1,4 @@
-<?xml version="1.0"?>
-<!--
+/**
  * Copyright (c) 2009-2012, Netbout.com
  * All rights reserved.
  *
@@ -27,17 +26,25 @@
  * STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
  * OF THE POSSIBILITY OF SUCH DAMAGE.
- *
+ */
+package com.netbout.client;
+
+import org.junit.Test;
+
+/**
+ * Test case for {@link RestExpert}.
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
- -->
-<project xmlns="http://maven.apache.org/DECORATION/1.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/DECORATION/1.0.0     http://maven.apache.org/xsd/decoration-1.0.0.xsd" name="netbout-client">
-    <body>
-        <menu ref="parent"/>
-        <menu name="Overview">
-            <item name="Introduction" href="index.html"/>
-            <item name="API ${project.version} (JavaDoc)" href="./apidocs-${project.version}/index.html"/>
-        </menu>
-        <menu ref="reports"/>
-    </body>
-</project>
+ */
+public final class RestExpertTest {
+
+    /**
+     * RestExpert can register new namespaces.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void registersNewNamespaces() throws Exception {
+        // todo...
+    }
+
+}

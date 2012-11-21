@@ -1,5 +1,4 @@
-<?xml version="1.0"?>
-<!--
+/**
  * Copyright (c) 2009-2012, Netbout.com
  * All rights reserved.
  *
@@ -27,17 +26,76 @@
  * STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
  * OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+package com.netbout.client;
+
+import java.net.URI;
+
+/**
+ * Client that loads XML through HTTP.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
- -->
-<project xmlns="http://maven.apache.org/DECORATION/1.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/DECORATION/1.0.0     http://maven.apache.org/xsd/decoration-1.0.0.xsd" name="netbout-client">
-    <body>
-        <menu ref="parent"/>
-        <menu name="Overview">
-            <item name="Introduction" href="index.html"/>
-            <item name="API ${project.version} (JavaDoc)" href="./apidocs-${project.version}/index.html"/>
-        </menu>
-        <menu ref="reports"/>
-    </body>
-</project>
+ */
+interface RestClient {
+
+    /**
+     * GET method.
+     */
+    String GET = "GET";
+
+    /**
+     * POST method.
+     */
+    String POST = "POST";
+
+    /**
+     * Provide query param.
+     * @param name Name of the parameter
+     * @param value The value of it
+     * @return This object
+     */
+    RestClient queryParam(String name, String value);
+
+    /**
+     * Fetch HTTP GET response.
+     * @param message Explanation of the operation
+     * @return This object
+     */
+    RestResponse get(String message);
+
+    /**
+     * Fetch HTTP POST response.
+     * @param message Explanation of the operation
+     * @param params Form names and params
+     * @return This object
+     */
+    RestResponse post(String message, String... params);
+
+    /**
+     * Just clone this client.
+     * @return New client
+     */
+    RestClient copy();
+
+    /**
+     * Clone this client with a new URI.
+     * @param uri New entry point
+     * @return New client
+     */
+    RestClient copy(URI uri);
+
+    /**
+     * Clone this client with a new URI.
+     * @param uri New entry point
+     * @return New client
+     */
+    RestClient copy(String uri);
+
+    /**
+     * Get URI of this client.
+     * @return The URI
+     */
+    URI uri();
+
+}

@@ -1,5 +1,4 @@
-<?xml version="1.0"?>
-<!--
+/**
  * Copyright (c) 2009-2012, Netbout.com
  * All rights reserved.
  *
@@ -27,17 +26,53 @@
  * STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
  * OF THE POSSIBILITY OF SUCH DAMAGE.
- *
+ */
+package com.netbout.client;
+
+import com.jcabi.urn.URN;
+import com.netbout.spi.Identity;
+import com.rexsl.test.ContainerMocker;
+import java.net.HttpURLConnection;
+import java.net.URI;
+import org.hamcrest.MatcherAssert;
+import org.hamcrest.Matchers;
+import org.junit.Test;
+
+/**
+ * Test case for {@link RestSession}.
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
- -->
-<project xmlns="http://maven.apache.org/DECORATION/1.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/DECORATION/1.0.0     http://maven.apache.org/xsd/decoration-1.0.0.xsd" name="netbout-client">
-    <body>
-        <menu ref="parent"/>
-        <menu name="Overview">
-            <item name="Introduction" href="index.html"/>
-            <item name="API ${project.version} (JavaDoc)" href="./apidocs-${project.version}/index.html"/>
-        </menu>
-        <menu ref="reports"/>
-    </body>
-</project>
+ */
+public final class RestSessionTest {
+
+    /**
+     * RestSession can perform authentication and obtain auth token.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void performsAuthentication() throws Exception {
+        final URI home = new ContainerMocker()
+            .returnHeader(RestSession.AUTH_HEADER, "abc")
+            .returnStatus(HttpURLConnection.HTTP_SEE_OTHER)
+            .mock()
+            .home();
+        final RestSession session = new RestSession(home);
+        final Identity identity = session.authenticate(new URN(), "");
+        MatcherAssert.assertThat(identity, Matchers.notNullValue());
+    }
+
+    /**
+     * RestSession can throw exception if HTTP status is not valid.
+     * @throws Exception If there is some problem inside
+     */
+    @Test(expected = AssertionError.class)
+    public void throwsExceptionOnInvalidHttpStatusCode() throws Exception {
+        final URI home = new ContainerMocker()
+            .returnHeader(RestSession.AUTH_HEADER, "foo")
+            .returnStatus(HttpURLConnection.HTTP_NOT_FOUND)
+            .mock()
+            .home();
+        new RestSession(home).authenticate(new URN(), "");
+    }
+
+}
