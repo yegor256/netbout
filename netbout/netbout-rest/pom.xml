@@ -54,6 +54,11 @@
             <scope>compile</scope>
         </dependency>
         <dependency>
+            <groupId>com.netbout.spi</groupId>
+            <artifactId>netbout-client</artifactId>
+            <version netbout="yes">2.0-SNAPSHOT</version>
+        </dependency>
+        <dependency>
             <groupId>com.netbout</groupId>
             <artifactId>netbout-inf</artifactId>
             <version netbout="yes">2.0-SNAPSHOT</version>
@@ -87,11 +92,6 @@
             <artifactId>netbout-db</artifactId>
             <version netbout="yes">2.0-SNAPSHOT</version>
             <scope>runtime</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.netbout.spi</groupId>
-            <artifactId>netbout-client</artifactId>
-            <version netbout="yes">2.0-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>com.netbout.spi</groupId>
@@ -814,12 +814,6 @@
         </profile>
         <profile>
             <id>netbout-test</id>
-            <repositories>
-                <repository>
-                    <id>repo.woquo.com</id>
-                    <url>s3://repo.woquo.com/snapshot</url>
-                </repository>
-            </repositories>
             <dependencies>
                 <dependency>
                     <groupId>com.rexsl</groupId>
@@ -827,12 +821,6 @@
                     <version>${rexsl.version}</version>
                     <classifier>bin</classifier>
                     <scope>test</scope>
-                </dependency>
-                <dependency>
-                    <groupId>com.woquo</groupId>
-                    <artifactId>woquo-helper</artifactId>
-                    <version since="9 Jan 2012">1.0-SNAPSHOT</version>
-                    <scope>runtime</scope>
                 </dependency>
             </dependencies>
             <build>
@@ -888,38 +876,6 @@
         </profile>
         <profile>
             <id>netbout-production</id>
-            <repositories>
-                <repository>
-                    <id>repo.woquo.com</id>
-                    <url>s3://repo.woquo.com/release</url>
-                </repository>
-            </repositories>
-            <dependencies>
-                <dependency>
-                    <groupId>com.woquo</groupId>
-                    <artifactId>woquo-umpa</artifactId>
-                    <version since="9 Jan 2012">0.3</version>
-                    <scope>runtime</scope>
-                </dependency>
-                <dependency>
-                    <groupId>com.woquo</groupId>
-                    <artifactId>woquo-nebo-helper</artifactId>
-                    <version since="9 Jan 2012">0.3</version>
-                    <scope>runtime</scope>
-                </dependency>
-                <dependency>
-                    <groupId>com.woquo</groupId>
-                    <artifactId>woquo-mentor-helper</artifactId>
-                    <version since="9 Jan 2012">0.3</version>
-                    <scope>runtime</scope>
-                </dependency>
-                <dependency>
-                    <groupId>com.woquo</groupId>
-                    <artifactId>woquo-board-helper</artifactId>
-                    <version since="9 Jan 2012">0.3</version>
-                    <scope>runtime</scope>
-                </dependency>
-            </dependencies>
             <build>
                 <plugins>
                     <plugin>
