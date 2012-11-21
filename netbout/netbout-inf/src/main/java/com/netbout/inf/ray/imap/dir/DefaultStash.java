@@ -37,6 +37,7 @@ import java.util.concurrent.ConcurrentSkipListSet;
 import org.apache.commons.codec.binary.Base32;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.lang.StringUtils;
 
 /**
  * Default implementation of {@link Stash}.
@@ -208,23 +209,18 @@ final class DefaultStash implements Stash {
      */
     private Collection<File> files() throws IOException {
         final Collection<File> files = new ConcurrentSkipListSet<File>();
-        final File[] list = this.lock.dir().listFiles();
-        if (list == null) {
-            throw new IOException(
-                String.format("can't list files in %s", this.lock.dir())
-            );
-        }
-        for (File file : list) {
+        final Collection<File> all = FileUtils.listFiles(
+            this.lock.dir(), new String[] {"ser"}, true
+        );
+        for (File file : all) {
             if (this.done.contains(file)) {
                 continue;
             }
-            if (FilenameUtils.getName(file.getPath()).startsWith("ntc-")) {
-                files.add(file);
-            }
+            files.add(file);
         }
         Logger.info(
             this,
-            "#files(): %d files found",
+            "#files(): %d file(s) found",
             files.size()
         );
         return files;
@@ -238,13 +234,22 @@ final class DefaultStash implements Stash {
      */
     private File file(final Notice.SerializableNotice notice)
         throws IOException {
+        final String key = new StringBuffer(
+            StringUtils.strip(
+                new Base32(true).encodeToString(
+                    notice.toString().getBytes()
+                ),
+                "="
+            )
+        ).reverse().toString();
         return new File(
             this.lock.dir(),
             String.format(
-                "ntc-%s.ser",
-                new Base32(true).encodeToString(
-                    notice.toString().getBytes()
-                )
+                "%s/%s/%s.ser",
+                key.substring(0, 2),
+                // @checkstyle MagicNumber (2 lines)
+                key.substring(2, 4),
+                key.substring(4, key.length() - 4)
             )
         );
     }
