@@ -33,7 +33,7 @@
     <parent>
         <groupId>com.netbout</groupId>
         <artifactId>netbout</artifactId>
-        <version netbout="yes">2.0-SNAPSHOT</version>
+        <version netbout="yes">1.5.9</version>
     </parent>
     <artifactId>netbout-inf</artifactId>
     <packaging>jar</packaging>
@@ -56,7 +56,7 @@
         <dependency>
             <groupId>com.netbout</groupId>
             <artifactId>netbout-bus</artifactId>
-            <version netbout="yes">2.0-SNAPSHOT</version>
+            <version netbout="yes">1.5.9</version>
             <classifier>mock</classifier>
             <scope>test</scope>
         </dependency>
@@ -67,7 +67,7 @@
         <dependency>
             <groupId>com.netbout.spi</groupId>
             <artifactId>netbout-spi</artifactId>
-            <version netbout="yes">2.0-SNAPSHOT</version>
+            <version netbout="yes">1.5.9</version>
             <classifier>mock</classifier>
             <scope>test</scope>
         </dependency>
