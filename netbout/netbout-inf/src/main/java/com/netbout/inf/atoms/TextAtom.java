@@ -27,6 +27,7 @@
 package com.netbout.inf.atoms;
 
 import com.netbout.inf.Atom;
+import javax.validation.constraints.NotNull;
 
 /**
  * Text atom.
@@ -47,7 +48,7 @@ public final class TextAtom implements Atom<String> {
      * Public ctor.
      * @param value The value of it
      */
-    public TextAtom(final Object value) {
+    public TextAtom(@NotNull final Object value) {
         this.text = value.toString();
     }
 

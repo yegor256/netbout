@@ -34,6 +34,7 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.concurrent.ConcurrentSkipListSet;
+import javax.validation.constraints.NotNull;
 import org.apache.commons.codec.binary.Base32;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
@@ -71,7 +72,7 @@ final class DefaultStash implements Stash {
      * @param path The directory where to save files
      * @throws IOException If some I/O problem inside
      */
-    public DefaultStash(final File path) throws IOException {
+    public DefaultStash(@NotNull final File path) throws IOException {
         this.lock = new Lock(path);
     }
 
@@ -109,7 +110,7 @@ final class DefaultStash implements Stash {
      * {@inheritDoc}
      */
     @Override
-    public void add(final Notice notice) throws IOException {
+    public void add(@NotNull final Notice notice) throws IOException {
         final Notice.SerializableNotice ser =
             new Notice.SerializableNotice(notice);
         final byte[] bytes = ser.serialize();
@@ -128,7 +129,7 @@ final class DefaultStash implements Stash {
      * {@inheritDoc}
      */
     @Override
-    public void remove(final Notice notice) throws IOException {
+    public void remove(@NotNull final Notice notice) throws IOException {
         final Notice.SerializableNotice ser =
             new Notice.SerializableNotice(notice);
         final File file = this.file(new Notice.SerializableNotice(notice));
@@ -145,7 +146,7 @@ final class DefaultStash implements Stash {
      * {@inheritDoc}
      */
     @Override
-    public void copyTo(final Stash stash) throws IOException {
+    public void copyTo(@NotNull final Stash stash) throws IOException {
         int count = 0;
         for (File file : this.files()) {
             FileUtils.copyFileToDirectory(
