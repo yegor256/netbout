@@ -57,6 +57,17 @@ bout.invite(barry);
 bout.post("how are you doing?");
 +--
 
+  You can also make queries and find bouts and messages inside them:
+
++--
+Iterable<Bout> bouts = myself.inbox(new Query.Textual("cats"));
+for (Bout bout : bouts) {
+  for (Message message : bout.messages(new Query.Textual("dogs"))) {
+    System.out.println("author: " + message.author());
+  }
+}
++--
+
   More details in {{{./apidocs-${project.version}}Javadocs API}}.
 
   The only dependency you need:
