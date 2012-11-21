@@ -28,30 +28,23 @@
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  -->
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.netbout</groupId>
     <artifactId>helpers</artifactId>
     <version netbout="yes">2.0-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>helpers</name>
-
     <modules>
         <module>helper-shary</module>
     </modules>
-
     <description>Netbout built-in helpers</description>
     <url>http://www.netbout.com</url>
     <inceptionYear>2012</inceptionYear>
-
     <organization>
         <name>netBout Inc.</name>
         <url>http://www.netbout.com</url>
     </organization>
-
     <licenses>
         <license>
             <name>netBout persistent communications</name>
@@ -60,7 +53,6 @@
             <comments>This is a proprietary software, you can't redistribute it</comments>
         </license>
     </licenses>
-
     <developers>
         <developer>
             <id>1</id>
@@ -75,18 +67,15 @@
             <timezone>-7</timezone>
         </developer>
     </developers>
-
     <issueManagement>
         <system>trac</system>
         <url>http://trac.netbout.com/netbout</url>
     </issueManagement>
-
     <scm>
         <connection>scm:svn:svn://svn.netbout.com/netbout/trunk/netbout</connection>
         <developerConnection>scm:svn:svn://svn.netbout.com/netbout/trunk/netbout</developerConnection>
         <url>svn://svn.netbout.com/netbout/trunk/netbout</url>
     </scm>
-
     <distributionManagement>
         <snapshotRepository>
             <!--
@@ -115,11 +104,9 @@
             <url>s3://maven.netbout.com/</url>
         </site>
     </distributionManagement>
-
     <prerequisites>
         <maven>3.0</maven>
     </prerequisites>
-
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.build.timestamp.format>yyyy-MM-dd</maven.build.timestamp.format>
@@ -127,7 +114,6 @@
         <rexsl.version since="19 Nov 2012">0.4.4</rexsl.version>
         <jcabi.version since="19 Nov 2012">0.7</jcabi.version>
     </properties>
-
     <repositories>
         <repository>
             <id>repo.netbout.com</id>
@@ -138,11 +124,9 @@
             <url>https://oss.sonatype.org/content/repositories/snapshots/</url>
         </repository>
     </repositories>
-
     <pluginRepositories>
         <!-- intentionally empty -->
     </pluginRepositories>
-
     <dependencyManagement>
         <dependencies>
             <dependency>
@@ -272,7 +256,6 @@
             </dependency>
         </dependencies>
     </dependencyManagement>
-
     <profiles>
         <profile>
             <!--
@@ -282,7 +265,9 @@
             -->
             <id>continuous-integration</id>
             <activation>
-                <property><name>ci</name></property>
+                <property>
+                    <name>ci</name>
+                </property>
             </activation>
             <build>
                 <plugins>
@@ -331,7 +316,9 @@
             -->
             <id>live-site</id>
             <activation>
-                <property><name>site</name></property>
+                <property>
+                    <name>site</name>
+                </property>
             </activation>
             <build>
                 <plugins>
@@ -358,26 +345,6 @@
                                         <report>scm</report>
                                         <report>summary</report>
                                     </reports>
-                                </plugin>
-                                <plugin>
-                                    <groupId>org.codehaus.mojo</groupId>
-                                    <artifactId>taglist-maven-plugin</artifactId>
-                                    <version since="15 Nov 2010">2.4</version>
-                                    <configuration>
-                                        <tagListOptions>
-                                            <tagClasses>
-                                                <tagClass>
-                                                    <displayName>ToDo</displayName>
-                                                    <tags>
-                                                        <tag>
-                                                            <matchString>@todo</matchString>
-                                                            <matchType>exact</matchType>
-                                                        </tag>
-                                                    </tags>
-                                                </tagClass>
-                                            </tagClasses>
-                                        </tagListOptions>
-                                    </configuration>
                                 </plugin>
                                 <plugin>
                                     <artifactId>maven-javadoc-plugin</artifactId>
@@ -424,14 +391,11 @@
                                         <rom>${basedir}/src/rempl/rom.xml</rom>
                                     </configuration>
                                 </plugin>
-                                <!--
-                                @see https://jira.codehaus.org/browse/MCOBERTURA-169
                                 <plugin>
                                     <groupId>org.codehaus.mojo</groupId>
                                     <artifactId>cobertura-maven-plugin</artifactId>
                                     <version since="2 Oct 2011">2.5.1</version>
                                 </plugin>
-                                -->
                             </reportPlugins>
                         </configuration>
                         <executions>
@@ -449,7 +413,9 @@
         <profile>
             <id>jdk7-fix</id>
             <activation>
-                <file><exists>${java.home}/../lib/tools.jar</exists></file>
+                <file>
+                    <exists>${java.home}/../lib/tools.jar</exists>
+                </file>
             </activation>
             <build>
                 <pluginManagement>
@@ -472,7 +438,6 @@
             </build>
         </profile>
     </profiles>
-
     <build>
         <extensions>
             <extension>
@@ -522,20 +487,6 @@
                     -->
                     <artifactId>maven-failsafe-plugin</artifactId>
                     <version since="2 Oct 2011">2.9</version>
-                    <configuration>
-                        <argLine>-Dfile.encoding=UTF8</argLine>
-                        <runOrder>random</runOrder>
-                        <useFile>false</useFile>
-                    </configuration>
-                </plugin>
-                <plugin>
-                    <!--
-                    Starts unit tests, protocols their results and creates
-                    a summary report. It is required to send testing protocol
-                    to the STDOUT as well, not only to the file.
-                    -->
-                    <artifactId>maven-surefire-plugin</artifactId>
-                    <version since="13 Dec 2011">2.11</version>
                     <configuration>
                         <argLine>-Dfile.encoding=UTF8</argLine>
                         <runOrder>random</runOrder>
@@ -594,5 +545,4 @@
             </plugin>
         </plugins>
     </build>
-
 </project>
