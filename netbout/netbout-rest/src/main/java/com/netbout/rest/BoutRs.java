@@ -27,13 +27,13 @@
 package com.netbout.rest;
 
 import com.jcabi.urn.URN;
+import com.netbout.client.RestSession;
 import com.netbout.rest.jaxb.Invitee;
 import com.netbout.rest.jaxb.LongBout;
 import com.netbout.spi.Bout;
 import com.netbout.spi.Friend;
 import com.netbout.spi.Identity;
 import com.netbout.spi.Message;
-import com.netbout.spi.client.RestSession;
 import com.rexsl.page.CookieBuilder;
 import com.rexsl.page.JaxbBundle;
 import com.rexsl.page.JaxbGroup;

@@ -32,6 +32,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.concurrent.atomic.AtomicReference;
+import javax.validation.constraints.NotNull;
 
 /**
  * Output stream with {@link Catalog} items.
@@ -59,7 +60,7 @@ final class CatalogOutputStream implements Closeable {
      * @param file The file to use
      * @throws IOException If some I/O problem inside
      */
-    public CatalogOutputStream(final File file) throws IOException {
+    public CatalogOutputStream(@NotNull final File file) throws IOException {
         this.output = new DataOutputStream(new FileOutputStream(file));
     }
 
@@ -77,7 +78,7 @@ final class CatalogOutputStream implements Closeable {
      * @param item The items to add
      * @throws IOException If some I/O problem inside
      */
-    public void write(final Catalog.Item item) throws IOException {
+    public void write(@NotNull final Catalog.Item item) throws IOException {
         this.flush();
         this.buffer.set(item);
     }

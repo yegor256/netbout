@@ -30,7 +30,7 @@
 package com.netbout.rest.rexsl.scripts
 
 import com.jcabi.urn.URN
-import com.netbout.spi.client.RestSession
+import com.netbout.client.RestSession
 import org.hamcrest.MatcherAssert
 import org.hamcrest.Matchers
 

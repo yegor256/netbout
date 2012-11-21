@@ -31,6 +31,7 @@ import java.util.Iterator;
 import java.util.NoSuchElementException;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
+import javax.validation.constraints.NotNull;
 import org.apache.commons.lang.StringUtils;
 
 /**
@@ -64,7 +65,7 @@ final class LazyMessages implements Iterable<Long> {
      * @param iray The ray to use
      * @param trm The term
      */
-    public LazyMessages(final Ray iray, final Term trm) {
+    public LazyMessages(@NotNull final Ray iray, @NotNull final Term trm) {
         this.ray = iray;
         this.term = trm;
     }

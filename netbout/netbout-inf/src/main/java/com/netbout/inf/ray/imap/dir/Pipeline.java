@@ -49,6 +49,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
+import javax.validation.constraints.NotNull;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 
@@ -135,8 +136,9 @@ final class Pipeline implements Closeable, Iterator<Catalog.Item> {
      * @throws IOException If some IO problem inside
      * @checkstyle ParameterNumber (4 lines)
      */
-    public Pipeline(final Draft drft, final Baseline dest, final Baseline src,
-        final Attribute attr) throws IOException {
+    public Pipeline(@NotNull final Draft drft, @NotNull final Baseline dest,
+        @NotNull final Baseline src, @NotNull final Attribute attr)
+        throws IOException {
         this.attribute = attr;
         this.catalog = src.catalog(this.attribute);
         this.draft = drft;

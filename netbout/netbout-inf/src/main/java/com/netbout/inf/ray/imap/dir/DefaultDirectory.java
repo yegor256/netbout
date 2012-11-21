@@ -44,6 +44,7 @@ import java.io.OutputStream;
 import java.io.RandomAccessFile;
 import java.nio.channels.Channels;
 import java.util.concurrent.atomic.AtomicReference;
+import javax.validation.constraints.NotNull;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 
@@ -86,7 +87,7 @@ public final class DefaultDirectory implements Directory {
      * @param file The directory
      * @throws IOException If some I/O problem inside
      */
-    public DefaultDirectory(final File file) throws IOException {
+    public DefaultDirectory(@NotNull final File file) throws IOException {
         this.lock = new Lock(file);
         this.versions = new Versions(this.lock.dir());
         this.versions.clear();

@@ -28,20 +28,15 @@
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  -->
-<project xmlns="http://maven.apache.org/DECORATION/1.0.0"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://maven.apache.org/DECORATION/1.0.0
-    http://maven.apache.org/xsd/decoration-1.0.0.xsd"
-    name="netbout-rest">
-
+<project xmlns="http://maven.apache.org/DECORATION/1.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/DECORATION/1.0.0     http://maven.apache.org/xsd/decoration-1.0.0.xsd" name="netbout-rest">
     <body>
-        <menu ref="parent" />
+        <menu ref="parent"/>
         <menu name="Overview">
-            <item name="Introduction" href="index.html" />
-            <item name="JavaDoc" href="apidocs/index.html" />
-            <item name="Test Coverage" href="cobertura/index.html" />
+            <item name="Introduction" href="index.html"/>
+            <item name="JavaDoc" href="apidocs/index.html"/>
+            <item name="Test Coverage" href="cobertura/index.html"/>
+            <item name="Release History" href="changes-report.html"/>
         </menu>
-        <menu ref="reports" />
+        <menu ref="reports"/>
     </body>
-
 </project>

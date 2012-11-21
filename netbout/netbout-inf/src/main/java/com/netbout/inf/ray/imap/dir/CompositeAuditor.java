@@ -28,6 +28,7 @@ package com.netbout.inf.ray.imap.dir;
 
 import com.jcabi.log.Logger;
 import java.io.IOException;
+import javax.validation.constraints.NotNull;
 import org.apache.commons.lang.StringUtils;
 
 /**
@@ -44,8 +45,8 @@ final class CompositeAuditor implements Auditor {
      * {@inheritDoc}
      */
     @Override
-    public void audit(final Baseline base,
-        final Audit audit) throws IOException {
+    public void audit(@NotNull final Baseline base,
+        @NotNull final Audit audit) throws IOException {
         final long start = System.currentTimeMillis();
         final Auditor[] auditors = new Auditor[] {
             new NumbersAuditor(),

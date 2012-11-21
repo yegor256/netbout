@@ -38,6 +38,8 @@
             <item name="Introduction" href="index.html"/>
             <item name="API ${project.version} (JavaDoc)" href="./apidocs-${project.version}/index.html"/>
             <item name="Mock API ${project.version}" href="./testapidocs-${project.version}/index.html"/>
+            <item name="Test Coverage" href="cobertura/index.html" />
+            <item name="Release History" href="changes-report.html"/>
         </menu>
         <menu ref="reports"/>
     </body>

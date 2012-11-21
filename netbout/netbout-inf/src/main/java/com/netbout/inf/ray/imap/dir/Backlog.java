@@ -38,6 +38,7 @@ import java.util.Iterator;
 import java.util.NoSuchElementException;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
+import javax.validation.constraints.NotNull;
 import org.apache.commons.io.FileUtils;
 
 /**
@@ -92,7 +93,7 @@ class Backlog {
      * @param bck The back log
      * @throws IOException If some I/O problem inside
      */
-    public Backlog(final File bck) throws IOException {
+    public Backlog(@NotNull final File bck) throws IOException {
         this.ifile = bck;
         FileUtils.touch(this.ifile);
         if (this.ifile.length() == 0) {

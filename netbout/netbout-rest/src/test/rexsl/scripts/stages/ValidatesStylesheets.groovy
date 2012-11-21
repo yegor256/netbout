@@ -30,8 +30,8 @@
 package com.netbout.rest.rexsl.scripts.stages
 
 import com.jcabi.urn.URN
-import com.netbout.spi.client.RestSession
-import com.netbout.spi.client.RestUriBuilder
+import com.netbout.client.RestSession
+import com.netbout.client.RestUriBuilder
 import com.rexsl.test.RestTester
 
 def jeff = new RestSession(rexsl.home).authenticate(new URN('urn:test:jeff'), '')

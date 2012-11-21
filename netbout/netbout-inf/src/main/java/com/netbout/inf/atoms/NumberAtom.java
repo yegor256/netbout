@@ -27,6 +27,7 @@
 package com.netbout.inf.atoms;
 
 import com.netbout.inf.Atom;
+import javax.validation.constraints.NotNull;
 
 /**
  * Number atom.
@@ -47,7 +48,7 @@ public final class NumberAtom implements Atom<Long> {
      * Public ctor.
      * @param value The value of it
      */
-    public NumberAtom(final Long value) {
+    public NumberAtom(@NotNull final Long value) {
         this.number = value;
     }
 

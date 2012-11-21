@@ -31,6 +31,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.util.Iterator;
+import javax.validation.constraints.NotNull;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 
@@ -62,7 +63,7 @@ final class Catalog {
      * @param ctlg The file to use
      * @throws IOException If some I/O problem inside
      */
-    public Catalog(final File ctlg) throws IOException {
+    public Catalog(@NotNull final File ctlg) throws IOException {
         this.fast = ctlg;
         FileUtils.touch(this.fast);
         this.slow = new Slowlog(
@@ -155,7 +156,7 @@ final class Catalog {
      * @return Position in data file or -1 if not found
      * @throws IOException If some I/O problem inside
      */
-    public long seek(final String value) throws IOException {
+    public long seek(@NotNull final String value) throws IOException {
         final int target = value.hashCode();
         // @checkstyle MultipleStringLiterals (1 line)
         final RandomAccessFile data = new RandomAccessFile(this.fast, "r");
@@ -202,7 +203,8 @@ final class Catalog {
      * @checkstyle ExecutableStatementCount (100 lines)
      */
     @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
-    public void create(final Iterator<Catalog.Item> items) throws IOException {
+    public void create(@NotNull final Iterator<Catalog.Item> items)
+        throws IOException {
         final long start = System.currentTimeMillis();
         final CatalogOutputStream output = new CatalogOutputStream(this.fast);
         final BacklogOutputStream slowlog = this.slow.open();

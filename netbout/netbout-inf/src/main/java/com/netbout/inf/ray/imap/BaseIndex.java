@@ -35,6 +35,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.atomic.AtomicLong;
+import javax.validation.constraints.NotNull;
 
 /**
  * Base implemenation of {@link Index}.
@@ -94,7 +95,8 @@ class BaseIndex implements FlushableIndex {
      * @param attr Attribute to work with
      * @param dir Directory with files
      */
-    public BaseIndex(final Attribute attr, final Directory dir) {
+    public BaseIndex(@NotNull final Attribute attr,
+        @NotNull final Directory dir) {
         this.attribute = attr;
         this.directory = dir;
     }

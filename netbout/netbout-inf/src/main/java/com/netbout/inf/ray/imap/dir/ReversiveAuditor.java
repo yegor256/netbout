@@ -35,6 +35,7 @@ import java.io.InputStream;
 import java.io.RandomAccessFile;
 import java.nio.channels.Channels;
 import java.util.Iterator;
+import javax.validation.constraints.NotNull;
 
 /**
  * Auditor of reversive data links.
@@ -51,8 +52,8 @@ final class ReversiveAuditor implements Auditor {
      */
     @Override
     @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
-    public void audit(final Baseline base,
-        final Audit audit) throws IOException {
+    public void audit(@NotNull final Baseline base,
+        @NotNull final Audit audit) throws IOException {
         final SimpleReverse reverse = new SimpleReverse();
         for (Attribute attr : base.attributes()) {
             final File rfile = base.reverse(attr);

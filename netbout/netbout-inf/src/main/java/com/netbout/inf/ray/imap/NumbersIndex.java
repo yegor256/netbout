@@ -30,6 +30,7 @@ import com.netbout.inf.Attribute;
 import com.netbout.inf.Lattice;
 import com.netbout.inf.ray.imap.dir.FastNumbers;
 import java.io.IOException;
+import javax.validation.constraints.NotNull;
 
 /**
  * Index of message numbers.
@@ -63,8 +64,8 @@ final class NumbersIndex implements FlushableIndex {
      * @param dir The directory to work with
      * @throws IOException If some IO error
      */
-    public NumbersIndex(final Attribute attr, final Directory dir)
-        throws IOException {
+    public NumbersIndex(@NotNull final Attribute attr,
+        @NotNull final Directory dir) throws IOException {
         this.attribute = attr;
         this.directory = dir;
         this.directory.load(

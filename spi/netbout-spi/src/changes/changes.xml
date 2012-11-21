@@ -30,7 +30,7 @@
  -->
 <document xmlns="http://maven.apache.org/changes/1.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/changes/1.0.0 http://maven.apache.org/xsd/changes-1.0.0.xsd">
     <body>
-        <release version="???" date="???" description="">
+        <release version="1.5.8" date="20 Nov 2012" description="ReXSL 0.4.4 and JCabi 0.7">
             <action dev="yegor" issue="506" type="add">
                 REXSL and JCABI are updated to versions 0.4.4 and 0.7
                 respectively. These changes mostly affected our usage

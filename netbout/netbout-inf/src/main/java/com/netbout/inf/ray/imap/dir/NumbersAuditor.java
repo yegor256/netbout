@@ -33,6 +33,7 @@ import java.io.InputStream;
 import java.io.RandomAccessFile;
 import java.nio.channels.Channels;
 import java.util.Iterator;
+import javax.validation.constraints.NotNull;
 
 /**
  * Auditor of numbers data file.
@@ -48,8 +49,8 @@ final class NumbersAuditor implements Auditor {
      * {@inheritDoc}
      */
     @Override
-    public void audit(final Baseline base,
-        final Audit audit) throws IOException {
+    public void audit(@NotNull final Baseline base,
+        @NotNull final Audit audit) throws IOException {
         for (Attribute attr : base.attributes()) {
             this.audit(base, attr);
         }

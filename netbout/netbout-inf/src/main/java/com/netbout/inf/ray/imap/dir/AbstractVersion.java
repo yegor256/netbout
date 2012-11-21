@@ -33,6 +33,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
+import javax.validation.constraints.NotNull;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 
@@ -56,7 +57,7 @@ abstract class AbstractVersion implements Closeable {
      * @param lck The directory where to work
      * @throws IOException If some I/O problem inside
      */
-    public AbstractVersion(final Lock lck) throws IOException {
+    public AbstractVersion(@NotNull final Lock lck) throws IOException {
         this.lock = lck;
     }
 
@@ -130,24 +131,27 @@ abstract class AbstractVersion implements Closeable {
     @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
     public final Set<Attribute> attributes() throws IOException {
         final Set<Attribute> attrs = new HashSet<Attribute>();
-        for (File file : this.lock.dir().listFiles()) {
-            if (!file.isDirectory()) {
-                continue;
+        final File[] dirs = this.lock.dir().listFiles();
+        if (dirs != null) {
+            for (File file : dirs) {
+                if (!file.isDirectory()) {
+                    continue;
+                }
+                final String name = FilenameUtils.getName(file.getPath());
+                if (name.charAt(0) == '_') {
+                    continue;
+                }
+                if (!name.matches("[a-z][a-z0-9\\-]+")) {
+                    throw new IOException(
+                        String.format(
+                            "invalid name of attribute '%s' in %s",
+                            name,
+                            file
+                        )
+                    );
+                }
+                attrs.add(new Attribute(name));
             }
-            final String name = FilenameUtils.getName(file.getPath());
-            if (name.charAt(0) == '_') {
-                continue;
-            }
-            if (!name.matches("[a-z][a-z0-9\\-]+")) {
-                throw new IOException(
-                    String.format(
-                        "invalid name of attribute '%s' in %s",
-                        name,
-                        file
-                    )
-                );
-            }
-            attrs.add(new Attribute(name));
         }
         return attrs;
     }

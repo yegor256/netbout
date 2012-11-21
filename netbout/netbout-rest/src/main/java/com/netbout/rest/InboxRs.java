@@ -28,13 +28,13 @@ package com.netbout.rest;
 
 import com.jcabi.log.Logger;
 import com.jcabi.urn.URN;
+import com.netbout.client.RestSession;
 import com.netbout.rest.jaxb.ShortBout;
 import com.netbout.rest.period.Period;
 import com.netbout.rest.period.PeriodsBuilder;
 import com.netbout.spi.Bout;
 import com.netbout.spi.Identity;
 import com.netbout.spi.Query;
-import com.netbout.spi.client.RestSession;
 import com.rexsl.page.JaxbBundle;
 import com.rexsl.page.JaxbGroup;
 import com.rexsl.page.Link;

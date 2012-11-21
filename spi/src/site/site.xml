@@ -52,6 +52,7 @@
         </breadcrumbs>
         <menu name="Overview">
             <item name="Introduction" href="index.html"/>
+            <item name="Release History" href="changes-report.html"/>
         </menu>
         <menu ref="modules"/>
         <menu ref="reports"/>

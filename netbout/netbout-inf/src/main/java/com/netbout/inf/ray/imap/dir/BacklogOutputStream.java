@@ -31,6 +31,7 @@ import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import javax.validation.constraints.NotNull;
 
 /**
  * Output stream with {@link Backlog} items.
@@ -47,7 +48,7 @@ final class BacklogOutputStream extends DataOutputStream {
      * @param file The file to use
      * @throws IOException If some I/O problem inside
      */
-    public BacklogOutputStream(final File file) throws IOException {
+    public BacklogOutputStream(@NotNull final File file) throws IOException {
         super(new FileOutputStream(file));
         this.writeInt(Backlog.START_MARKER);
     }
@@ -73,7 +74,7 @@ final class BacklogOutputStream extends DataOutputStream {
      * @return Position where this writing happened
      * @throws IOException If some I/O problem inside
      */
-    public long write(final Backlog.Item item) throws IOException {
+    public long write(@NotNull final Backlog.Item item) throws IOException {
         final long pos = this.written;
         this.writeUTF(item.value());
         this.writeUTF(item.path());

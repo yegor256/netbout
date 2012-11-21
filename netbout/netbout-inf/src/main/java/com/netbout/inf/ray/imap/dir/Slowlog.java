@@ -30,6 +30,7 @@ import com.jcabi.log.Logger;
 import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
+import javax.validation.constraints.NotNull;
 
 /**
  * Slow log for Catalog.
@@ -46,7 +47,7 @@ final class Slowlog extends Backlog {
      * @param file The file to use
      * @throws IOException If some I/O problem inside
      */
-    public Slowlog(final File file) throws IOException {
+    public Slowlog(@NotNull final File file) throws IOException {
         super(file);
     }
 

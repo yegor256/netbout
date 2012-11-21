@@ -28,6 +28,7 @@ package com.netbout.inf.atoms;
 
 import com.netbout.inf.Atom;
 import com.netbout.inf.Attribute;
+import javax.validation.constraints.NotNull;
 
 /**
  * Variable atom.
@@ -126,7 +127,7 @@ public enum VariableAtom implements Atom<String> {
      * @param text Some text to parse
      * @return The atom
      */
-    public static VariableAtom parse(final String text) {
+    public static VariableAtom parse(@NotNull final String text) {
         VariableAtom atom;
         if (text.equals(VariableAtom.TEXT.name)) {
             atom = VariableAtom.TEXT;

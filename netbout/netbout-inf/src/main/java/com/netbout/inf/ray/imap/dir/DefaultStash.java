@@ -34,6 +34,7 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.concurrent.ConcurrentSkipListSet;
+import javax.validation.constraints.NotNull;
 import org.apache.commons.codec.binary.Base32;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
@@ -51,6 +52,11 @@ import org.apache.commons.lang.StringUtils;
 final class DefaultStash implements Stash {
 
     /**
+     * Extension of all stash files.
+     */
+    private static final String EXTENSION = "ser";
+
+    /**
      * Lock on the directory.
      */
     private final transient Lock lock;
@@ -66,7 +72,7 @@ final class DefaultStash implements Stash {
      * @param path The directory where to save files
      * @throws IOException If some I/O problem inside
      */
-    public DefaultStash(final File path) throws IOException {
+    public DefaultStash(@NotNull final File path) throws IOException {
         this.lock = new Lock(path);
     }
 
@@ -104,7 +110,7 @@ final class DefaultStash implements Stash {
      * {@inheritDoc}
      */
     @Override
-    public void add(final Notice notice) throws IOException {
+    public void add(@NotNull final Notice notice) throws IOException {
         final Notice.SerializableNotice ser =
             new Notice.SerializableNotice(notice);
         final byte[] bytes = ser.serialize();
@@ -123,7 +129,7 @@ final class DefaultStash implements Stash {
      * {@inheritDoc}
      */
     @Override
-    public void remove(final Notice notice) throws IOException {
+    public void remove(@NotNull final Notice notice) throws IOException {
         final Notice.SerializableNotice ser =
             new Notice.SerializableNotice(notice);
         final File file = this.file(new Notice.SerializableNotice(notice));
@@ -140,7 +146,7 @@ final class DefaultStash implements Stash {
      * {@inheritDoc}
      */
     @Override
-    public void copyTo(final Stash stash) throws IOException {
+    public void copyTo(@NotNull final Stash stash) throws IOException {
         int count = 0;
         for (File file : this.files()) {
             FileUtils.copyFileToDirectory(
@@ -210,7 +216,7 @@ final class DefaultStash implements Stash {
     private Collection<File> files() throws IOException {
         final Collection<File> files = new ConcurrentSkipListSet<File>();
         final Collection<File> all = FileUtils.listFiles(
-            this.lock.dir(), new String[] {"ser"}, true
+            this.lock.dir(), new String[] {DefaultStash.EXTENSION}, true
         );
         for (File file : all) {
             if (this.done.contains(file)) {
@@ -220,8 +226,9 @@ final class DefaultStash implements Stash {
         }
         Logger.info(
             this,
-            "#files(): %d file(s) found",
-            files.size()
+            "#files(): %d file(s) found with '%s' extension",
+            files.size(),
+            DefaultStash.EXTENSION
         );
         return files;
     }
@@ -245,11 +252,12 @@ final class DefaultStash implements Stash {
         return new File(
             this.lock.dir(),
             String.format(
-                "%s/%s/%s.ser",
+                "%s/%s/%s.%s",
                 key.substring(0, 2),
                 // @checkstyle MagicNumber (2 lines)
                 key.substring(2, 4),
-                key.substring(4, key.length() - 4)
+                key.substring(4, key.length() - 4),
+                DefaultStash.EXTENSION
             )
         );
     }

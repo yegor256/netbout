@@ -30,8 +30,8 @@
 package com.netbout.rest.rexsl.scripts
 
 import com.jcabi.urn.URN
+import com.netbout.client.RestSession
 import com.netbout.spi.Query
-import com.netbout.spi.client.RestSession
 import java.security.SecureRandom
 import org.hamcrest.MatcherAssert
 import org.hamcrest.Matchers

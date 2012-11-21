@@ -44,6 +44,7 @@ import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import javax.validation.constraints.NotNull;
 
 /**
  * Default implemenation of {@link IndexMap}.
@@ -74,7 +75,7 @@ public final class DefaultIndexMap implements IndexMap {
      * @param dir Directory where files are kept
      * @throws IOException If some IO error
      */
-    public DefaultIndexMap(final File dir) throws IOException {
+    public DefaultIndexMap(@NotNull final File dir) throws IOException {
         this.directory = new ConcurrentDirectory(dir);
     }
 

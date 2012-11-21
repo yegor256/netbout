@@ -27,8 +27,8 @@
 
 import com.jcabi.log.Logger;
 import com.jcabi.urn.URN;
+import com.netbout.client.RestSession;
 import com.netbout.spi.Query;
-import com.netbout.spi.client.RestSession;
 import de.svenjacobs.loremipsum.LoremIpsum;
 import java.util.Random;
 

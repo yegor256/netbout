@@ -33,6 +33,7 @@ import com.netbout.inf.Ray;
 import com.netbout.inf.Term;
 import java.util.ArrayList;
 import java.util.List;
+import javax.validation.constraints.NotNull;
 import org.apache.commons.lang.StringUtils;
 
 /**
@@ -66,8 +67,8 @@ public final class PredicateAtom implements Atom<String> {
      * @param atoms Arguments
      * @param fnctr The functor
      */
-    public PredicateAtom(final String txt, final List<Atom<?>> atoms,
-        final Functor fnctr) {
+    public PredicateAtom(@NotNull final String txt,
+        @NotNull final List<Atom<?>> atoms, @NotNull final Functor fnctr) {
         this.name = txt;
         this.args = new ArrayList<Atom<?>>(atoms);
         this.functor = fnctr;
@@ -116,7 +117,7 @@ public final class PredicateAtom implements Atom<String> {
      * @return The term
      * @throws InvalidSyntaxException If can't build it
      */
-    public Term term(final Ray ray) throws InvalidSyntaxException {
+    public Term term(@NotNull final Ray ray) throws InvalidSyntaxException {
         return this.functor.build(ray, this.args);
     }
 

@@ -31,6 +31,7 @@ import com.netbout.inf.Term;
 import java.util.BitSet;
 import java.util.Collection;
 import java.util.concurrent.atomic.AtomicBoolean;
+import javax.validation.constraints.NotNull;
 
 /**
  * Builder of Lattice.
@@ -74,7 +75,7 @@ public final class LatticeBuilder {
      * @param feeder The numbers to use
      * @return This object
      */
-    public LatticeBuilder fill(final Feeder feeder) {
+    public LatticeBuilder fill(@NotNull final Feeder feeder) {
         synchronized (this.started) {
             this.main.clear(0, BitsetLattice.BITS);
             this.reverse.clear(0, BitsetLattice.BITS);
@@ -117,7 +118,7 @@ public final class LatticeBuilder {
      * @param lattice The lattice to copy
      * @return This object
      */
-    public LatticeBuilder copy(final Lattice lattice) {
+    public LatticeBuilder copy(@NotNull final Lattice lattice) {
         synchronized (this.started) {
             this.main = BitSet.class.cast(
                 BitsetLattice.class.cast(lattice).main.clone()
@@ -161,7 +162,7 @@ public final class LatticeBuilder {
      * @param terms Terms to get lattices from
      * @return This object
      */
-    public LatticeBuilder and(final Collection<Term> terms) {
+    public LatticeBuilder and(@NotNull final Collection<Term> terms) {
         if (!this.started.get()) {
             throw new LatticeException(
                 "can't call #and(), start with always(), fill(), or never()"
@@ -185,7 +186,7 @@ public final class LatticeBuilder {
      * @checkstyle MethodName (4 lines)
      */
     @SuppressWarnings("PMD.ShortMethodName")
-    public LatticeBuilder or(final Collection<Term> terms) {
+    public LatticeBuilder or(@NotNull final Collection<Term> terms) {
         if (!this.started.get()) {
             throw new LatticeException(
                 "can't call #or(), start with always(), fill(), or never()"

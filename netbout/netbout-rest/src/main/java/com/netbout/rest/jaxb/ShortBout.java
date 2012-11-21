@@ -26,11 +26,11 @@
  */
 package com.netbout.rest.jaxb;
 
+import com.netbout.client.RestSession;
 import com.netbout.spi.Bout;
 import com.netbout.spi.Identity;
 import com.netbout.spi.Participant;
 import com.netbout.spi.Query;
-import com.netbout.spi.client.RestSession;
 import com.rexsl.page.JaxbBundle;
 import com.rexsl.page.Link;
 import java.util.Collection;

@@ -40,18 +40,27 @@
 
 Service Provider Interface (SPI)
 
-  Two main modules are:
+  Netbout.com is an open communication platform that facilitates
+  online conversations between humans and computers.
+  The concept is pending USPTO patent,
+  {{{http://www.google.com/patents/US20120117164}app. no. 12/943,022}}.
+  More details you can get at {{{http://www.netbout.com/a/en/index}}about page}}
+  of the Netbout.com.
 
-   * {{{./netbout-spi/}netbout-spi}} -- Service Programming Interface that
-     you extend in your helpers in order to develop for the Netbout platform.
+  This SPI is an open source component of the Netbout platform that
+  consists of Java interfaces (and a few classes), which are implemented
+  by the platform. To connect your software with the Netbout you should
+  use {{{./netbout-client}<<<netbout-client>>>}}, a RESTful client.
 
-   * {{{./netbout-lite/}netbout-lite}} -- Lightweight implementation of the SPI
-     that you use for unit/integration testing of your helpers.
+  For unit testing of your components we recommend to use our embedded
+  implementation of the SPI from {{{./netbout-lite}<<<netbout-lite>>>}}.
 
   Latest release of the system is running at
   {{{http://www.netbout.com}www.netbout.com}}.
   Cutting edge version you can see here:
-  {{{http://test.netbout.com}test.netbout.com}}.
+  {{{http://test.netbout.com}test.netbout.com}} (this is a testing platform
+  where the newest cutting edge features are being manually tested by our
+  team).
 
   Released version: <<<${project.version}>>>.
 

@@ -29,7 +29,7 @@
  */
 package com.netbout.rest.rexsl.scripts
 
-import com.netbout.spi.client.RestSession
+import com.netbout.client.RestSession
 import com.rexsl.test.RestTester
 import javax.ws.rs.core.HttpHeaders
 import javax.ws.rs.core.MediaType
