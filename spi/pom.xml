@@ -52,6 +52,7 @@
     <name>spi:netbout</name>
     <modules>
         <module>netbout-spi</module>
+        <module>netbout-client</module>
         <module>netbout-lite</module>
     </modules>
     <description>Service Programming Interface for NetBout.com</description>
