@@ -120,6 +120,10 @@ final class PatronizedRunnables implements Closeable {
 
     /**
      * Patronize them all.
+     *
+     * <p>This method can interrupt threads using {@code thread.interrupt()},
+     * however we're not doing this, to avoid collissions. Some threads
+     * may really take some time in WAITING status when they are flushing.
      */
     private void patronize() {
         final Collection<String> slow = new LinkedList<String>();
@@ -140,7 +144,7 @@ final class PatronizedRunnables implements Closeable {
                 );
             }
             // @checkstyle MagicNumber (1 line)
-            if (age > 5 * 1000
+            if (age > 30 * 1000
                 && thread.getState().equals(Thread.State.WAITING)) {
                 Logger.warn(
                     this,
@@ -150,7 +154,6 @@ final class PatronizedRunnables implements Closeable {
                     age,
                     PatronizedRunnables.stack(thread.getStackTrace())
                 );
-                thread.interrupt();
             }
         }
         if (!slow.isEmpty()) {

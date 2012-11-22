@@ -27,54 +27,36 @@
 package com.netbout.inf;
 
 import java.io.File;
-import java.util.Random;
-import org.mockito.Mockito;
+import org.hamcrest.MatcherAssert;
+import org.hamcrest.Matchers;
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
 
 /**
- * Mocker of {@link Folder}.
+ * Test case of {@link Folder}.
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class FolderMocker {
+public final class FolderTest {
 
     /**
-     * The object.
+     * Temporary folder.
+     * @checkstyle VisibilityModifier (3 lines)
      */
-    private final transient Folder folder = Mockito.mock(Folder.class);
+    @Rule
+    public transient TemporaryFolder temp = new TemporaryFolder();
 
     /**
-     * Public ctor.
+     * Folder.Plain can return folder name.
+     * @throws Exception If there is some problem inside
      */
-    public FolderMocker() {
-        this.withPath(
-            new File(
-                System.getProperty("java.io.tmpdir"),
-                String.format("FolderMocker-%d", new Random().nextLong())
-            )
-        );
-    }
-
-    /**
-     * With this path.
-     * @param dir The path
-     * @return This object
-     */
-    public FolderMocker withPath(final File dir) {
-        dir.mkdirs();
-        try {
-            Mockito.doReturn(dir).when(this.folder).path();
-        } catch (java.io.IOException ex) {
-            throw new IllegalStateException(ex);
-        }
-        return this;
-    }
-
-    /**
-     * Build it.
-     * @return The predicate
-     */
-    public Folder mock() {
-        return this.folder;
+    @Test
+    public void returnsCorrectDirectoryPath() throws Exception {
+        final File dir = this.temp.newFolder("foo-3");
+        final Folder folder = new Folder.Plain(dir);
+        MatcherAssert.assertThat(folder.path(), Matchers.equalTo(dir));
+        folder.close();
     }
 
 }

@@ -24,57 +24,40 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.inf;
+package com.netbout.inf.notices;
 
-import java.io.File;
-import java.util.Random;
-import org.mockito.Mockito;
+import com.netbout.inf.MsgMocker;
+import com.netbout.spi.Bout;
+import com.netbout.spi.BoutMocker;
+import com.netbout.spi.Message;
+import com.netbout.spi.MessageMocker;
 
 /**
- * Mocker of {@link Folder}.
+ * Mocker of {@link MessagePostedNotice}.
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class FolderMocker {
-
-    /**
-     * The object.
-     */
-    private final transient Folder folder = Mockito.mock(Folder.class);
-
-    /**
-     * Public ctor.
-     */
-    public FolderMocker() {
-        this.withPath(
-            new File(
-                System.getProperty("java.io.tmpdir"),
-                String.format("FolderMocker-%d", new Random().nextLong())
-            )
-        );
-    }
-
-    /**
-     * With this path.
-     * @param dir The path
-     * @return This object
-     */
-    public FolderMocker withPath(final File dir) {
-        dir.mkdirs();
-        try {
-            Mockito.doReturn(dir).when(this.folder).path();
-        } catch (java.io.IOException ex) {
-            throw new IllegalStateException(ex);
-        }
-        return this;
-    }
+public final class MessagePostedNoticeMocker {
 
     /**
      * Build it.
-     * @return The predicate
+     * @return The notice
      */
-    public Folder mock() {
-        return this.folder;
+    public MessagePostedNotice mock() {
+        final long number = MsgMocker.number();
+        return new MessagePostedNotice() {
+            @Override
+            public Message message() {
+                return new MessageMocker()
+                    .withText("some text to index")
+                    .withNumber(number)
+                    .mock();
+            }
+            @Override
+            public Bout bout() {
+                return new BoutMocker().mock();
+            }
+        };
     }
 
 }

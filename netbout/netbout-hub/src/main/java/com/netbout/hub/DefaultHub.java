@@ -147,7 +147,7 @@ public final class DefaultHub implements PowerHub {
                 )
             );
         }
-        Logger.debug(
+        Logger.info(
             this,
             "#DefaultHub(%[type]s): instantiated",
             bus
@@ -276,7 +276,7 @@ public final class DefaultHub implements PowerHub {
         }
         this.all.remove(existing);
         this.save(new HelperIdentity((HubIdentity) identity, helper));
-        Logger.debug(
+        Logger.info(
             this,
             "#promote('%s', '%[type]s'): replaced existing identity (%[type]s)",
             identity.name(),
@@ -387,7 +387,7 @@ public final class DefaultHub implements PowerHub {
             .synchronously()
             .asDefault(new ArrayList<URN>())
             .exec();
-        Logger.debug(this, "#promote(): promoting %[list]s", helpers);
+        Logger.info(this, "#promote(): promoting %[list]s", helpers);
         for (URN name : helpers) {
             if (name.equals(persister.name())) {
                 continue;
@@ -407,7 +407,7 @@ public final class DefaultHub implements PowerHub {
                 );
             }
         }
-        Logger.debug(
+        Logger.info(
             this,
             "#promote(): done with all helpers in %[nano]s: %[list]s",
             System.nanoTime() - start,
