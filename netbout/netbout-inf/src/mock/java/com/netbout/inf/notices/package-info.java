@@ -24,51 +24,11 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.inf.ray.imap.dir;
-
-import com.jcabi.log.Logger;
-import java.io.IOException;
-import javax.validation.constraints.NotNull;
-import org.apache.commons.lang.StringUtils;
 
 /**
- * Composite auditor of a baseline.
- *
- * <p>Class is immutable and thread-safe.
+ * Notices, mocks.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-final class CompositeAuditor implements Auditor {
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void audit(@NotNull final Baseline base,
-        @NotNull final Audit audit) throws IOException {
-        final long start = System.currentTimeMillis();
-        final Auditor[] auditors = new Auditor[] {
-            new NumbersAuditor(),
-            new ReversiveAuditor(),
-        };
-        if (StringUtils.equals(System.getProperty("netbout.prof"), "true")) {
-            Logger.warn(
-                this,
-                "#audit('%s'): skipped because of 'netbout.prof' system var",
-                base
-            );
-        } else {
-            for (Auditor auditor : auditors) {
-                auditor.audit(base, audit);
-            }
-            Logger.info(
-                this,
-                "#audit('%s', ..): done in %[ms]s",
-                base,
-                System.currentTimeMillis() - start
-            );
-        }
-    }
-
-}
+package com.netbout.inf.notices;

@@ -24,51 +24,40 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.inf.ray.imap.dir;
+package com.netbout.inf.notices;
 
-import com.jcabi.log.Logger;
-import java.io.IOException;
-import javax.validation.constraints.NotNull;
-import org.apache.commons.lang.StringUtils;
+import com.netbout.inf.MsgMocker;
+import com.netbout.spi.Bout;
+import com.netbout.spi.BoutMocker;
+import com.netbout.spi.Message;
+import com.netbout.spi.MessageMocker;
 
 /**
- * Composite auditor of a baseline.
- *
- * <p>Class is immutable and thread-safe.
- *
+ * Mocker of {@link MessagePostedNotice}.
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-final class CompositeAuditor implements Auditor {
+public final class MessagePostedNoticeMocker {
 
     /**
-     * {@inheritDoc}
+     * Build it.
+     * @return The notice
      */
-    @Override
-    public void audit(@NotNull final Baseline base,
-        @NotNull final Audit audit) throws IOException {
-        final long start = System.currentTimeMillis();
-        final Auditor[] auditors = new Auditor[] {
-            new NumbersAuditor(),
-            new ReversiveAuditor(),
-        };
-        if (StringUtils.equals(System.getProperty("netbout.prof"), "true")) {
-            Logger.warn(
-                this,
-                "#audit('%s'): skipped because of 'netbout.prof' system var",
-                base
-            );
-        } else {
-            for (Auditor auditor : auditors) {
-                auditor.audit(base, audit);
+    public MessagePostedNotice mock() {
+        final long number = MsgMocker.number();
+        return new MessagePostedNotice() {
+            @Override
+            public Message message() {
+                return new MessageMocker()
+                    .withText("some text to index")
+                    .withNumber(number)
+                    .mock();
             }
-            Logger.info(
-                this,
-                "#audit('%s', ..): done in %[ms]s",
-                base,
-                System.currentTimeMillis() - start
-            );
-        }
+            @Override
+            public Bout bout() {
+                return new BoutMocker().mock();
+            }
+        };
     }
 
 }

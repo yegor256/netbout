@@ -54,7 +54,7 @@ final class DefaultStash implements Stash {
     /**
      * Extension of all stash files.
      */
-    private static final String EXTENSION = "ser";
+    private static final String EXTENSION = "ntc";
 
     /**
      * Lock on the directory.
@@ -147,6 +147,9 @@ final class DefaultStash implements Stash {
      */
     @Override
     public void copyTo(@NotNull final Stash stash) throws IOException {
+        if (!(stash instanceof DefaultStash)) {
+            throw new IllegalArgumentException("can copy only to DefaultStash");
+        }
         int count = 0;
         for (File file : this.files()) {
             FileUtils.copyFileToDirectory(
@@ -156,7 +159,7 @@ final class DefaultStash implements Stash {
             ++count;
         }
         this.done.clear();
-        Logger.debug(
+        Logger.info(
             this,
             "#copyTo(..): copied %d files",
             count

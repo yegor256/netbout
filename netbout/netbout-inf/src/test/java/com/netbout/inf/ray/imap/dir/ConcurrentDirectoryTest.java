@@ -31,14 +31,10 @@ import com.jcabi.log.VerboseThreads;
 import com.netbout.inf.Attribute;
 import com.netbout.inf.MsgMocker;
 import com.netbout.inf.Stash;
-import com.netbout.inf.notices.MessagePostedNotice;
+import com.netbout.inf.notices.MessagePostedNoticeMocker;
 import com.netbout.inf.ray.imap.Directory;
 import com.netbout.inf.ray.imap.Numbers;
 import com.netbout.inf.ray.imap.Reverse;
-import com.netbout.spi.Bout;
-import com.netbout.spi.BoutMocker;
-import com.netbout.spi.Message;
-import com.netbout.spi.MessageMocker;
 import de.svenjacobs.loremipsum.LoremIpsum;
 import java.io.File;
 import java.util.ArrayList;
@@ -189,18 +185,7 @@ public final class ConcurrentDirectoryTest {
                         public Void call() throws Exception {
                             final Stash stash = dir.stash();
                             start.await();
-                            stash.add(
-                                new MessagePostedNotice() {
-                                    @Override
-                                    public Message message() {
-                                        return new MessageMocker().mock();
-                                    }
-                                    @Override
-                                    public Bout bout() {
-                                        return new BoutMocker().mock();
-                                    }
-                                }
-                            );
+                            stash.add(new MessagePostedNoticeMocker().mock());
                             latch.countDown();
                             return null;
                         }

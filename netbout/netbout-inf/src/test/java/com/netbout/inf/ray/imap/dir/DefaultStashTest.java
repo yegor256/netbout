@@ -28,14 +28,10 @@ package com.netbout.inf.ray.imap.dir;
 
 import com.jcabi.log.VerboseRunnable;
 import com.jcabi.log.VerboseThreads;
-import com.netbout.inf.MsgMocker;
 import com.netbout.inf.Notice;
 import com.netbout.inf.Stash;
 import com.netbout.inf.notices.MessagePostedNotice;
-import com.netbout.spi.Bout;
-import com.netbout.spi.BoutMocker;
-import com.netbout.spi.Message;
-import com.netbout.spi.MessageMocker;
+import com.netbout.inf.notices.MessagePostedNoticeMocker;
 import java.io.File;
 import java.util.concurrent.Callable;
 import java.util.concurrent.CountDownLatch;
@@ -71,20 +67,7 @@ public final class DefaultStashTest {
     @Test
     public void savesNoticesAndRetrievesThem() throws Exception {
         final File dir = this.temp.newFolder("foo");
-        final long number = MsgMocker.number();
-        final Notice notice = new MessagePostedNotice() {
-            @Override
-            public Message message() {
-                return new MessageMocker()
-                    .withText("some text to index")
-                    .withNumber(number)
-                    .mock();
-            }
-            @Override
-            public Bout bout() {
-                return new BoutMocker().mock();
-            }
-        };
+        final Notice notice = new MessagePostedNoticeMocker().mock();
         final Stash first = new DefaultStash(dir);
         first.add(notice);
         first.close();
@@ -139,19 +122,8 @@ public final class DefaultStashTest {
             new Callable<Void>() {
                 public Void call() throws Exception {
                     start.await();
-                    final long number = MsgMocker.number();
-                    final Notice notice = new MessagePostedNotice() {
-                        @Override
-                        public Message message() {
-                            return new MessageMocker()
-                                .withNumber(number)
-                                .mock();
-                        }
-                        @Override
-                        public Bout bout() {
-                            return new BoutMocker().mock();
-                        }
-                    };
+                    final Notice notice =
+                        new MessagePostedNoticeMocker().mock();
                     stash.add(notice);
                     stash.remove(notice);
                     done.countDown();
@@ -180,6 +152,45 @@ public final class DefaultStashTest {
     @Test(expected = IllegalArgumentException.class)
     public void rejectsIfDirectoryIsNotValid() throws Exception {
         new DefaultStash(this.temp.newFile("foo-9898"));
+    }
+
+    /**
+     * DefaultStash can ignore deleted notices during copying.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void ignoresDeletedDuringCopying() throws Exception {
+        final Notice notice = new MessagePostedNoticeMocker().mock();
+        final Stash first = new DefaultStash(this.temp.newFolder("f-1"));
+        first.add(notice);
+        first.remove(notice);
+        final Stash second = new DefaultStash(this.temp.newFolder("f-2"));
+        first.copyTo(second);
+        first.close();
+        MatcherAssert.assertThat(
+            second,
+            Matchers.<Notice>emptyIterable()
+        );
+        second.close();
+    }
+
+    /**
+     * DefaultStash can copy undone notices.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void copyesNoticesWhichAreNotDone() throws Exception {
+        final Notice notice = new MessagePostedNoticeMocker().mock();
+        final Stash first = new DefaultStash(this.temp.newFolder("x-1"));
+        first.add(notice);
+        final Stash second = new DefaultStash(this.temp.newFolder("x-2"));
+        first.copyTo(second);
+        first.close();
+        MatcherAssert.assertThat(
+            second,
+            Matchers.not(Matchers.<Notice>emptyIterable())
+        );
+        second.close();
     }
 
 }
