@@ -29,12 +29,8 @@
  * @version $Id$
  -->
 <project name="candidates">
-
     <target name="deploy" description="attempting to deploy all release candidates">
-
-        <taskdef resource="net/sf/antcontrib/antcontrib.properties"
-            classpathref="maven.plugin.classpath"/>
-
+        <taskdef resource="net/sf/antcontrib/antcontrib.properties" classpathref="maven.plugin.classpath"/>
         <exec dir="${basedir}" executable="svn" failonerror="true" outputproperty="branches">
             <arg value="ls"/>
             <arg value="--username"/>
@@ -45,21 +41,17 @@
             <arg value="--non-interactive"/>
             <arg value="svn://svn.netbout.com/netbout/branches"/>
         </exec>
-
         <exec dir="${basedir}" executable="sh" failonerror="true" outputproperty="tags" inputstring="branches">
             <arg value="-c"/>
             <arg value="grep '\-RC' | sed 's/\///' | sed 's/^/netbout-/'"/>
         </exec>
-        <echo message="release candidates: '${tags}'" />
-
+        <echo message="release candidates: '${tags}'"/>
         <exec dir="${basedir}" executable="mvn" outputproperty="apps">
             <arg value="-Pnetbout-production"/>
             <arg value="--settings"/>
             <arg value="${maven.settings}"/>
             <arg value="beanstalk:describe-environments"/>
         </exec>
-        <echo message="not implemented yet..." />
-
+        <echo message="not implemented yet..."/>
     </target>
-
 </project>

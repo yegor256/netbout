@@ -29,18 +29,13 @@
  * @version $Id$
  -->
 <project name="production">
-
     <target name="deploy" description="attempting to deploy new stable version to production">
-
-        <taskdef resource="net/sf/antcontrib/antcontrib.properties"
-            classpathref="maven.plugin.classpath"/>
-
+        <taskdef resource="net/sf/antcontrib/antcontrib.properties" classpathref="maven.plugin.classpath"/>
         <exec executable="sh" outputproperty="tag.current">
             <arg value="-c"/>
             <arg value="curl -s -H Accept:application/xml http://www.netbout.com/g | xmllint --xpath '//name/text()' -"/>
         </exec>
-        <echo message="currently deployed: '${tag.current}'" />
-
+        <echo message="currently deployed: '${tag.current}'"/>
         <exec dir="${basedir}" executable="svn" failonerror="true" outputproperty="tags">
             <arg value="ls"/>
             <arg value="--username"/>
@@ -51,20 +46,18 @@
             <arg value="--non-interactive"/>
             <arg value="svn://svn.netbout.com/netbout/tags"/>
         </exec>
-
         <exec dir="${basedir}" executable="sh" failonerror="true" outputproperty="tag.new" inputstring="${tags}">
             <arg value="-c"/>
             <arg value="grep netbout\- | tail -1 | sed 's/\///' | sed 's/netbout-//'"/>
         </exec>
-        <echo message="ready for deployment: '${tag.new}'" />
-
+        <echo message="ready for deployment: '${tag.new}'"/>
         <if>
-            <equals arg1="${tag.current}" arg2="${tag.new}" />
+            <equals arg1="${tag.current}" arg2="${tag.new}"/>
             <then>
-                <echo message="tag /tags/netbout-${tag.current} is the latest, no need to deploy" />
+                <echo message="tag /tags/netbout-${tag.current} is the latest, no need to deploy"/>
             </then>
             <else>
-                <echo message="replacing '${tag.current}' with '${tag.new}'..." />
+                <echo message="replacing '${tag.current}' with '${tag.new}'..."/>
                 <exec dir="${basedir}/target" executable="svn" failonerror="true">
                     <arg value="checkout"/>
                     <arg value="--username"/>
@@ -91,7 +84,5 @@
                 </exec>
             </else>
         </if>
-
     </target>
-
 </project>
