@@ -120,6 +120,10 @@ final class PatronizedRunnables implements Closeable {
 
     /**
      * Patronize them all.
+     *
+     * <p>This method can interrupt threads using {@code thread.interrupt()},
+     * however we're not doing this, to avoid collissions. Some threads
+     * may really take some time in WAITING status when they are flushing.
      */
     private void patronize() {
         final Collection<String> slow = new LinkedList<String>();
