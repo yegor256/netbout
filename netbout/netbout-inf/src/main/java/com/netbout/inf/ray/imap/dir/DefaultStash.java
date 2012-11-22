@@ -54,7 +54,7 @@ final class DefaultStash implements Stash {
     /**
      * Extension of all stash files.
      */
-    private static final String EXTENSION = "ntc";
+    private static final String EXTENSION = "nser";
 
     /**
      * Lock on the directory.
