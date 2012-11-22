@@ -140,7 +140,7 @@ final class PatronizedRunnables implements Closeable {
                 );
             }
             // @checkstyle MagicNumber (1 line)
-            if (age > 5 * 1000
+            if (age > 15 * 1000
                 && thread.getState().equals(Thread.State.WAITING)) {
                 Logger.warn(
                     this,
