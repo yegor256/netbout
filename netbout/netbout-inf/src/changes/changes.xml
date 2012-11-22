@@ -27,5 +27,11 @@
  -->
 <document xmlns="http://maven.apache.org/changes/1.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/changes/1.0.0 http://maven.apache.org/xsd/changes-1.0.0.xsd">
     <body>
+        <release version="1.5.9" date="22 Nov 2012" description="deployment stability">
+            <action dev="yegor" issue="515" type="remove">
+                NfsFolder class completely removed, since we're not going to
+                use the NFS strategy of data sharing (it's too slow)
+            </action>
+        </release>
     </body>
 </document>

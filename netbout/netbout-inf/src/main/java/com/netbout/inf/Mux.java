@@ -406,9 +406,11 @@ final class Mux implements Closeable {
             if (imported > 0 && imported % 100 == 0) {
                 Logger.info(
                     this,
-                    "#apply(..): imported %d notice(s), %[ms]s spent",
+                    "#apply(..): imported %d notice(s), %[ms]s spent, %d/sec",
                     imported,
-                    System.currentTimeMillis() - start
+                    System.currentTimeMillis() - start,
+                    // @checkstyle MagicNumber (1 line)
+                    imported * 1000 / (System.currentTimeMillis() - start)
                 );
             }
         }
