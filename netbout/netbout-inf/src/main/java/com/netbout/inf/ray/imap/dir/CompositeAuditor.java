@@ -62,7 +62,7 @@ final class CompositeAuditor implements Auditor {
             for (Auditor auditor : auditors) {
                 auditor.audit(base, audit);
             }
-            Logger.debug(
+            Logger.info(
                 this,
                 "#audit('%s', ..): done in %[ms]s",
                 base,

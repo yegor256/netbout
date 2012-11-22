@@ -120,7 +120,7 @@ abstract class AbstractVersion implements Closeable {
     public final void close() throws IOException {
         this.closeDeps();
         this.lock.close();
-        Logger.debug(this, "#close(): closed");
+        Logger.info(this, "#close(): closed with %s", this.lock);
     }
 
     /**

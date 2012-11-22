@@ -103,8 +103,8 @@ public final class DefaultInfinity implements Infinity {
         return Logger.format(
             // @checkstyle LineLength (3 lines)
             // @checkstyle StringLiteralsConcatenation (2 lines)
-            "maximum(): %d\n%[type]s:\n%s\n%[type]s:\n%s\n%[type]s:\n%s\n%[type]s:\n%s\n"
-            + "Runtime:\n  availableProcessors(): %d\n  freeMemory(): %s\n  maxMemory(): %s\n  totalMemory(): %s",
+            "maximum(): %d\n\n%[type]s:\n%s\n\n%[type]s:\n%s\n\n%[type]s:\n%s\n\n%[type]s:\n%s"
+            + "\n\nRuntime:\n  availableProcessors(): %d\n  freeMemory(): %s\n  maxMemory(): %s\n  totalMemory(): %s",
             this.maximum(),
             this.mux,
             this.mux,

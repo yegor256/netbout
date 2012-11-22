@@ -85,14 +85,15 @@ public final class DefaultIndexMap implements IndexMap {
     @Override
     public String toString() {
         final StringBuilder text = new StringBuilder();
-        text.append('{');
+        text.append("{\n");
         for (Attribute attr : this.map.keySet()) {
-            text.append(attr.toString())
-                .append(':')
+            text.append("  ")
+                .append(attr.toString())
+                .append(": ")
                 .append(this.map.get(attr).toString())
-                .append(' ');
+                .append('\n');
         }
-        text.append("} ");
+        text.append('}');
         long sizeof = 0L;
         for (FlushableIndex idx : this.map.values()) {
             sizeof += idx.sizeof();
@@ -178,7 +179,7 @@ public final class DefaultIndexMap implements IndexMap {
         }
         service.shutdown();
         this.directory.baseline();
-        Logger.debug(
+        Logger.info(
             this,
             "#flush(): saved %d indexes %[list]s to %s in %[ms]s",
             this.map.size(),

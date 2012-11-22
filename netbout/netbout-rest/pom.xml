@@ -362,6 +362,12 @@
         <pluginManagement>
             <plugins>
                 <plugin>
+                    <artifactId>maven-deploy-plugin</artifactId>
+                    <configuration>
+                        <skip>true</skip>
+                    </configuration>
+                </plugin>
+                <plugin>
                     <groupId>com.rexsl</groupId>
                     <artifactId>rexsl-maven-plugin</artifactId>
                     <version>${rexsl.version}</version>

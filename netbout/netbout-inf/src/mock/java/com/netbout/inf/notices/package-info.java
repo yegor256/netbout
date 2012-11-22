@@ -1,5 +1,4 @@
-<?xml version="1.0"?>
-<!--
+/**
  * Copyright (c) 2009-2012, Netbout.com
  * All rights reserved.
  *
@@ -10,7 +9,7 @@
  * Federal copyright law prohibits unauthorized reproduction by any means
  * and imposes fines up to $25,000 for violation. If you received
  * this code accidentally and without intent to use it, please report this
- * incident to the author by email: privacy@netbout.com.
+ * incident to the author by email.
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -24,34 +23,12 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
+ */
+
+/**
+ * Notices, mocks.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
- -->
-<project name="candidates">
-    <target name="deploy" description="attempting to deploy all release candidates">
-        <taskdef resource="net/sf/antcontrib/antcontrib.properties" classpathref="maven.plugin.classpath"/>
-        <exec dir="${basedir}" executable="svn" failonerror="true" outputproperty="branches">
-            <arg value="ls"/>
-            <arg value="--username"/>
-            <arg value="${svn.username}"/>
-            <arg value="--password"/>
-            <arg value="${svn.password}"/>
-            <arg value="--no-auth-cache"/>
-            <arg value="--non-interactive"/>
-            <arg value="svn://svn.netbout.com/netbout/branches"/>
-        </exec>
-        <exec dir="${basedir}" executable="sh" failonerror="true" outputproperty="tags" inputstring="branches">
-            <arg value="-c"/>
-            <arg value="grep '\-RC' | sed 's/\///' | sed 's/^/netbout-/'"/>
-        </exec>
-        <echo message="release candidates: '${tags}'"/>
-        <exec dir="${basedir}" executable="mvn" outputproperty="apps">
-            <arg value="-Pnetbout-production"/>
-            <arg value="--settings"/>
-            <arg value="${maven.settings}"/>
-            <arg value="beanstalk:describe-environments"/>
-        </exec>
-        <echo message="not implemented yet..."/>
-    </target>
-</project>
+ */
+package com.netbout.inf.notices;

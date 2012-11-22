@@ -133,7 +133,7 @@ public final class CpaHelper implements Helper {
         final long start = System.nanoTime();
         final ConcurrentMap<String, HelpTarget> found =
             new OpDiscoverer(this.identity).discover(url);
-        Logger.debug(
+        Logger.info(
             this,
             "#init('%s'): %d operations discovered in %[nano]s: %[list]s",
             url,

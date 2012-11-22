@@ -131,6 +131,11 @@ final class Mux implements Closeable {
         new AtomicLong(System.currentTimeMillis());
 
     /**
+     * How many notices were added after recent flush?
+     */
+    private final transient AtomicLong notices = new AtomicLong();
+
+    /**
      * Patronized runnables.
      */
     private final transient PatronizedRunnables patronized =
@@ -229,9 +234,10 @@ final class Mux implements Closeable {
             this.queue.add(task);
             Logger.debug(
                 this,
-                "#add('%s'): #%d in queue",
+                "#add('%s'): #%d in queue (#%d after recent flush)",
                 task,
-                this.queue.size()
+                this.queue.size(),
+                this.notices.incrementAndGet()
             );
         }
         return deps;
@@ -332,10 +338,13 @@ final class Mux implements Closeable {
      */
     private void flush() throws Exception {
         synchronized (this.flushed) {
-            if (System.currentTimeMillis() - this.flushed.get() > this.period) {
+            if (System.currentTimeMillis() - this.flushed.get() > this.period
+                // @checkstyle MagicNumber (1 line)
+                || this.notices.get() > 1000) {
                 this.semaphore.acquire(Mux.THREADS);
                 try {
                     this.ray.flush();
+                    this.notices.set(0L);
                 } finally {
                     this.semaphore.release(Mux.THREADS);
                     this.flushed.set(System.currentTimeMillis());

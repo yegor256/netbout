@@ -38,6 +38,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
+import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.regex.Pattern;
@@ -190,7 +191,7 @@ public final class HubProfile implements OwnProfile {
      */
     @Override
     public Set<String> aliases() {
-        final Set<String> list = new TreeSet<String>(
+        final SortedSet<String> list = new TreeSet<String>(
             new Comparator<String>() {
                 private final transient Pattern pattern =
                     Pattern.compile("[a-zA-Z ]+");
@@ -212,7 +213,7 @@ public final class HubProfile implements OwnProfile {
             "#aliases(): %d returned",
             list.size()
         );
-        return Collections.unmodifiableSet(list);
+        return Collections.unmodifiableSortedSet(list);
     }
 
     /**

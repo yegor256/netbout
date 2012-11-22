@@ -101,7 +101,7 @@ public final class DefaultDirectory implements Directory {
                 new Lock(new File(this.lock.dir(), this.versions.draft()))
             )
         );
-        Logger.debug(
+        Logger.info(
             this,
             "#DefaultDirectory('/%s'): started",
             FilenameUtils.getName(file.getPath())
