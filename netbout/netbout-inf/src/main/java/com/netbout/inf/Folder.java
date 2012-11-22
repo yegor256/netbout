@@ -26,9 +26,11 @@
  */
 package com.netbout.inf;
 
+import com.jcabi.log.Logger;
 import java.io.Closeable;
 import java.io.File;
 import java.io.IOException;
+import javax.validation.constraints.NotNull;
 
 /**
  * Folder in file system.
@@ -46,10 +48,46 @@ public interface Folder extends Closeable {
     File path() throws IOException;
 
     /**
-     * Is it writable?
-     * @return TRUE if we can write to the folder
-     * @throws IOException If some IO problem inside
+     * Plain simple implementation of the folder.
      */
-    boolean isWritable() throws IOException;
+    final class Plain implements Folder {
+        /**
+         * The directory.
+         */
+        private final transient File directory;
+        /**
+         * Public ctor.
+         * @param path Directory, where to mount locally
+         * @throws IOException If some error inside
+         */
+        public Plain(@NotNull final File path) throws IOException {
+            this.directory = path;
+            Logger.debug(this, "#Plain(%s): ready to serve", path);
+        }
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public void close() throws IOException {
+            Logger.debug(this, "#close(): nothing to do");
+        }
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public String toString() {
+            return String.format(
+                "plain:%s",
+                this.directory.getAbsolutePath()
+            );
+        }
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public File path() throws IOException {
+            return this.directory;
+        }
+    }
 
 }
