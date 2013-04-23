@@ -255,27 +255,24 @@ public final class PeriodsBuilder {
      * @param num How many of them
      * @return The text
      */
-    @SuppressWarnings({ "PMD.UseConcurrentHashMap", "unchecked" })
     private static String plural(final String noun, final int num) {
-        final Map<String, String> digits = ArrayUtils.toMap(
-            new String[][] {
-                {"1", "a"},
-                {"2", "two"},
-                {"3", "three"},
-                {"4", "four"},
-                {"5", "five"},
-                {"6", "six"},
-                {"7", "seven"},
-                {"8", "eight"},
-                {"9", "nine"},
-                {"10", "ten"},
-                {"11", "eleven"},
-                {"12", "twelve"},
-            }
-        );
+        final String[] digits = new String[] {
+            "a",
+            "two",
+            "three",
+            "four",
+            "five",
+            "six",
+            "seven",
+            "eight",
+            "nine",
+            "ten",
+            "eleven",
+            "twelve",
+        };
         String count = Integer.toString(num);
-        if (digits.containsKey(count)) {
-            count = digits.get(count);
+        if (num > 0 && num - 1 < digits.length) {
+            count = digits[num - 1];
         }
         return String.format(
             "%s %s%s",

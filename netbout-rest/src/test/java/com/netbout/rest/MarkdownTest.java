@@ -27,8 +27,6 @@
 package com.netbout.rest;
 
 import com.rexsl.test.XhtmlMatchers;
-import java.util.Map;
-import org.apache.commons.lang3.ArrayUtils;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;
@@ -106,30 +104,24 @@ public final class MarkdownTest {
      * @throws Exception If there is some problem inside
      */
     @Test
-    @SuppressWarnings({
-        "PMD.AvoidInstantiatingObjectsInLoops",
-        "PMD.UseConcurrentHashMap",
-        "unchecked"
-    })
+    @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
     public void formatsTextFragmentsToHtml() throws Exception {
-        final Map<String, String> texts = ArrayUtils.toMap(
-            new Object[][] {
-                {"hi, *dude*!", "<p>hi, <em>dude</em>!</p>"},
-                {"hello, **dude**!", "<p>hello, <strong>dude</strong>!</p>"},
-                {
+        final String[][] texts = new String[][] {
+            new String[] {"hi, *dude*!", "<p>hi, <em>dude</em>!</p>"},
+            new String[] {"hello, **dude**!", "<p>hello, <strong>dude</strong>!</p>"},
+            new String[] {
                     "wazzup, ***dude***!",
                     "<p>wazzup, <strong><em>dude</em></strong>!</p>",
                 },
-                {"hey, _man_!", "<p>hey, <em>man</em>!</p>"},
-                {"x: `oops`", "<p>x: <code>oops</code></p>"},
-                {"[a](http://foo)", "<p><a href=\"http://foo\">a</a></p>"},
-                {"}}}\n", "<p>}}}</p>"},
-            }
-        );
-        for (Map.Entry<String, String> entry : texts.entrySet()) {
+            new String[] {"hey, _man_!", "<p>hey, <em>man</em>!</p>"},
+            new String[] {"x: `oops`", "<p>x: <code>oops</code></p>"},
+            new String[] {"[a](http://foo)", "<p><a href=\"http://foo\">a</a></p>"},
+            new String[] {"}}}\n", "<p>}}}</p>"},
+        };
+        for (String[] pair : texts) {
             MatcherAssert.assertThat(
-                new Markdown(entry.getKey()).html().trim(),
-                Matchers.equalTo(entry.getValue())
+                new Markdown(pair[0]).html().trim(),
+                Matchers.equalTo(pair[1])
             );
         }
     }

@@ -91,6 +91,16 @@
             <scope>test</scope>
         </dependency>
         <dependency>
+            <groupId>org.hamcrest</groupId>
+            <artifactId>hamcrest-library</artifactId>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.hamcrest</groupId>
+            <artifactId>hamcrest-core</artifactId>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
             <groupId>com.jcabi</groupId>
             <artifactId>jcabi-manifests</artifactId>
         </dependency>
@@ -355,7 +365,7 @@
                         <warSourceExcludes>js/**, css/**, xsl/**</warSourceExcludes>
                         <archive>
                             <manifestEntries>
-                                <Netbout-Revision>${build.number}</Netbout-Revision>
+                                <Netbout-Revision>${buildNumber}</Netbout-Revision>
                                 <Netbout-Version>${project.version}</Netbout-Version>
                                 <Netbout-Date>${maven.build.timestamp}</Netbout-Date>
                                 <Netbout-AboutPwd>${about.pwd}</Netbout-AboutPwd>
@@ -430,31 +440,6 @@
                             <goal>check</goal>
                             <goal>package</goal>
                         </goals>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <!--
-                This plugin will collect current build number
-                from Subversion and save it into Maven property "build.number".
-                -->
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>buildnumber-maven-plugin</artifactId>
-                <version>1.1</version>
-                <executions>
-                    <execution>
-                        <phase>generate-resources</phase>
-                        <goals>
-                            <goal>create</goal>
-                            <goal>create-timestamp</goal>
-                        </goals>
-                        <configuration>
-                            <buildNumberPropertyName>build.number</buildNumberPropertyName>
-                            <timestampPropertyName>timestamp.number</timestampPropertyName>
-                            <doCheck>false</doCheck>
-                            <doUpdate>false</doUpdate>
-                            <getRevisionOnlyOnce>true</getRevisionOnlyOnce>
-                        </configuration>
                     </execution>
                 </executions>
             </plugin>
@@ -823,7 +808,7 @@
                             <swap>false</swap>
                             <name>netbout</name>
                             <bucket>webapps.netbout.com</bucket>
-                            <key>${project.build.finalName}-${build.number}.${project.packaging}</key>
+                            <key>${project.build.finalName}-${buildNumber}.${project.packaging}</key>
                             <template>netbout</template>
                         </configuration>
                         <executions>

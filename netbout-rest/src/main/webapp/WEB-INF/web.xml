@@ -35,7 +35,7 @@
         http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd">
 
     <display-name>netbout</display-name>
-    <description>netBout.com r${build.number}</description>
+    <description>netBout.com r${buildNumber}</description>
 
     <context-param>
         <param-name>Webmaster</param-name>

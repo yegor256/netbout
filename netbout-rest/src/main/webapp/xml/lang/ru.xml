@@ -28,7 +28,7 @@
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  -->
-<texts revision="${build.number}">
+<texts revision="${buildNumber}">
     <About>О нас</About>
     <AKA>Имена</AKA>
     <Identity>Идентификатор</Identity>
