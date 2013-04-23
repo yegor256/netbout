@@ -33,7 +33,7 @@ import com.netbout.spi.IdentityMocker;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
-import org.apache.commons.lang.RandomStringUtils;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;

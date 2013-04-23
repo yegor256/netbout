@@ -39,7 +39,7 @@ import com.netbout.spi.cpa.Operation;
 import com.netbout.spi.xml.JaxbPrinter;
 import java.util.List;
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang.CharEncoding;
+import org.apache.commons.lang3.CharEncoding;
 
 /**
  * Stats.

@@ -29,7 +29,7 @@ package com.netbout.inf.ray.imap.dir;
 import com.jcabi.log.Logger;
 import java.io.IOException;
 import javax.validation.constraints.NotNull;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * Composite auditor of a baseline.

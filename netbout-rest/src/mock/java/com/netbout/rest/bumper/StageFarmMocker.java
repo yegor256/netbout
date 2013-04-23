@@ -34,7 +34,7 @@ import com.netbout.spi.cpa.Operation;
 import java.net.URL;
 import java.net.URLDecoder;
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang.CharEncoding;
+import org.apache.commons.lang3.CharEncoding;
 
 /**
  * The stage.

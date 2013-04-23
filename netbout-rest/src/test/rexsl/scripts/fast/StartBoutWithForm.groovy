@@ -37,7 +37,7 @@ import com.rexsl.test.RestTester
 import javax.ws.rs.core.HttpHeaders
 import javax.ws.rs.core.MediaType
 import javax.ws.rs.core.UriBuilder
-import org.apache.commons.lang.CharEncoding
+import org.apache.commons.lang3.CharEncoding
 
 def message = 'Hi, how are you doing there?\nI\'m fine by the way!\n'
 def first = 'urn:test:bratt'

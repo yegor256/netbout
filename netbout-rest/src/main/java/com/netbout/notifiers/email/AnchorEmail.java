@@ -34,7 +34,7 @@ import com.netbout.spi.Identity;
 import com.netbout.spi.text.SecureString;
 import java.util.regex.Pattern;
 import javax.mail.internet.InternetAddress;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * The email we use to identify senders and recipients.
