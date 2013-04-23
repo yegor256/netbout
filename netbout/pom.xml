@@ -84,13 +84,13 @@
         </developer>
     </developers>
     <issueManagement>
-        <system>trac</system>
-        <url>http://trac.netbout.com/netbout</url>
+        <system>github</system>
+        <url>https://github.com/yegor256/netbout/issues</url>
     </issueManagement>
     <scm>
-        <connection>scm:svn:svn://svn.netbout.com/netbout/trunk/netbout</connection>
-        <developerConnection>scm:svn:svn://svn.netbout.com/netbout/trunk/netbout</developerConnection>
-        <url>svn://svn.netbout.com/netbout/trunk/netbout</url>
+        <connection>scm:git:github.com:yegor256/netbout.git</connection>
+        <developerConnection>scm:git:github.com:yegor256/netbout.git</developerConnection>
+        <url>https://github.com/yegor256/netbout</url>
     </scm>
     <distributionManagement>
         <snapshotRepository>
