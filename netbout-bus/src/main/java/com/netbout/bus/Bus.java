@@ -29,6 +29,7 @@ package com.netbout.bus;
 import com.netbout.spi.Helper;
 import com.netbout.spi.Identity;
 import java.io.Closeable;
+import javax.validation.constraints.NotNull;
 
 /**
  * Common bus of all transactions processed by helpers.
@@ -60,7 +61,7 @@ public interface Bus extends Closeable {
      * @param mnemo Mnemo-code of the transation
      * @return The transaction builder
      */
-    TxBuilder make(String mnemo);
+    TxBuilder make(@NotNull String mnemo);
 
     /**
      * A convenient static method to register new helper.

@@ -32,6 +32,7 @@ import com.jolbox.bonecp.BoneCPDataSource;
 import java.sql.Connection;
 import java.sql.SQLException;
 import javax.sql.DataSource;
+import javax.validation.constraints.NotNull;
 import liquibase.Liquibase;
 import liquibase.database.jvm.JdbcConnection;
 import liquibase.resource.ClassLoaderResourceAccessor;
@@ -74,6 +75,7 @@ public final class Database {
      * Convenient method to get a new JDBC connection.
      * @return New JDBC connection
      */
+    @NotNull
     public static DataSource source() {
         return Database.INSTANCE.src;
     }
