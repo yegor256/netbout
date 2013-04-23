@@ -115,6 +115,7 @@
     <properties>
         <rempl.dir>${basedir}</rempl.dir>
         <rexsl.version>0.4.4</rexsl.version>
+        <spi.version>2.0-SNAPSHOT</spi.version>
     </properties>
     <repositories>
         <repository>
@@ -128,7 +129,7 @@
                 <!-- Service programming interface of the netbout -->
                 <groupId>com.netbout.spi</groupId>
                 <artifactId>netbout-spi</artifactId>
-                <version netbout="yes">2.0-SNAPSHOT</version>
+                <version>${spi.version}</version>
             </dependency>
             <dependency>
                 <!-- URN implementation -->
@@ -147,14 +148,13 @@
                 -->
                 <groupId>xerces</groupId>
                 <artifactId>xercesImpl</artifactId>
-                <version since="9 Mar 2011">2.9.1</version>
-                <scope>runtime</scope>
+                <version>2.9.1</version>
             </dependency>
             <dependency>
                 <!-- Generator of random texts. -->
                 <groupId>de.sven-jacobs</groupId>
                 <artifactId>loremipsum</artifactId>
-                <version since="20 Aug 2012">1.0</version>
+                <version>1.0</version>
                 <scope>test</scope>
             </dependency>
         </dependencies>

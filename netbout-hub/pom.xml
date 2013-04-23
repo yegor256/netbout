@@ -33,7 +33,7 @@
     <parent>
         <groupId>com.netbout</groupId>
         <artifactId>netbout</artifactId>
-        <version netbout="yes">2.0-SNAPSHOT</version>
+        <version>2.0-SNAPSHOT</version>
     </parent>
     <artifactId>netbout-hub</artifactId>
     <packaging>jar</packaging>
@@ -42,24 +42,24 @@
         <dependency>
             <groupId>com.netbout</groupId>
             <artifactId>netbout-inf</artifactId>
-            <version netbout="yes">2.0-SNAPSHOT</version>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>com.netbout</groupId>
             <artifactId>netbout-inf</artifactId>
-            <version netbout="yes">2.0-SNAPSHOT</version>
+            <version>${spi.version}</version>
             <classifier>mock</classifier>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>com.netbout</groupId>
             <artifactId>netbout-bus</artifactId>
-            <version netbout="yes">2.0-SNAPSHOT</version>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>com.netbout</groupId>
             <artifactId>netbout-bus</artifactId>
-            <version netbout="yes">2.0-SNAPSHOT</version>
+            <version>${project.version}</version>
             <classifier>mock</classifier>
             <scope>test</scope>
         </dependency>
@@ -70,7 +70,7 @@
         <dependency>
             <groupId>com.netbout.spi</groupId>
             <artifactId>netbout-spi</artifactId>
-            <version netbout="yes">2.0-SNAPSHOT</version>
+            <version>${spi.version}</version>
             <classifier>mock</classifier>
             <scope>test</scope>
         </dependency>
@@ -103,6 +103,7 @@
         <dependency>
             <groupId>xerces</groupId>
             <artifactId>xercesImpl</artifactId>
+            <scope>runtime</scope>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
@@ -113,46 +114,12 @@
             <artifactId>log4j</artifactId>
         </dependency>
         <dependency>
-            <groupId>commons-lang</groupId>
-            <artifactId>commons-lang</artifactId>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
         </dependency>
         <dependency>
             <groupId>commons-io</groupId>
             <artifactId>commons-io</artifactId>
         </dependency>
-        <dependency>
-            <groupId>org.hamcrest</groupId>
-            <artifactId>hamcrest-library</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.hamcrest</groupId>
-            <artifactId>hamcrest-core</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit-dep</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.mockito</groupId>
-            <artifactId>mockito-core</artifactId>
-        </dependency>
     </dependencies>
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.antlr</groupId>
-                <artifactId>antlr3-maven-plugin</artifactId>
-                <version since="6 Jan 2012">3.4</version>
-                <executions>
-                    <execution>
-                        <id>antlr</id>
-                        <goals>
-                            <goal>antlr</goal>
-                        </goals>
-                        <phase>generate-sources</phase>
-                    </execution>
-                </executions>
-            </plugin>
-        </plugins>
-    </build>
 </project>

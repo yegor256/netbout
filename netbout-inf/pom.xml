@@ -33,7 +33,7 @@
     <parent>
         <groupId>com.netbout</groupId>
         <artifactId>netbout</artifactId>
-        <version netbout="yes">2.0-SNAPSHOT</version>
+        <version>2.0-SNAPSHOT</version>
     </parent>
     <artifactId>netbout-inf</artifactId>
     <packaging>jar</packaging>
@@ -56,7 +56,7 @@
         <dependency>
             <groupId>com.netbout</groupId>
             <artifactId>netbout-bus</artifactId>
-            <version netbout="yes">2.0-SNAPSHOT</version>
+            <version>${project.version}</version>
             <classifier>mock</classifier>
             <scope>test</scope>
         </dependency>
@@ -67,29 +67,29 @@
         <dependency>
             <groupId>com.netbout.spi</groupId>
             <artifactId>netbout-spi</artifactId>
-            <version netbout="yes">2.0-SNAPSHOT</version>
+            <version>${spi.version}</version>
             <classifier>mock</classifier>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>com.amazonaws</groupId>
             <artifactId>aws-java-sdk</artifactId>
-            <version since="1 Oct 2012">1.3.21.1</version>
+            <version>1.3.21.1</version>
         </dependency>
         <dependency>
             <groupId>com.sleepycat</groupId>
             <artifactId>je</artifactId>
-            <version since="10 Apr 2012">4.0.92</version>
+            <version>4.0.92</version>
         </dependency>
         <dependency>
             <groupId>org.hsqldb</groupId>
             <artifactId>hsqldb</artifactId>
-            <version since="10 Apr 2012">2.2.8</version>
+            <version>2.2.8</version>
         </dependency>
         <dependency>
             <groupId>com.jolbox</groupId>
             <artifactId>bonecp</artifactId>
-            <version since="10 Apr 2012">0.7.1.RELEASE</version>
+            <version>0.7.1.RELEASE</version>
             <exclusions>
                 <exclusion>
                     <groupId>org.slf4j</groupId>
@@ -100,12 +100,12 @@
         <dependency>
             <groupId>commons-dbutils</groupId>
             <artifactId>commons-dbutils</artifactId>
-            <version since="3 Feb 2012">1.4</version>
+            <version>1.4</version>
         </dependency>
         <dependency>
             <groupId>org.reflections</groupId>
             <artifactId>reflections</artifactId>
-            <version since="8 Dec 2011">0.9.5</version>
+            <version>0.9.5</version>
         </dependency>
         <dependency>
             <groupId>com.rexsl</groupId>
@@ -115,7 +115,7 @@
         <dependency>
             <groupId>commons-math</groupId>
             <artifactId>commons-math</artifactId>
-            <version since="2 Feb 2012">1.2</version>
+            <version>1.2</version>
         </dependency>
         <dependency>
             <groupId>com.jcabi</groupId>
@@ -129,22 +129,6 @@
             <groupId>com.jcabi</groupId>
             <artifactId>jcabi-urn</artifactId>
             <classifier>mock</classifier>
-        </dependency>
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-log4j12</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>log4j</groupId>
-            <artifactId>log4j</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit-dep</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.mockito</groupId>
-            <artifactId>mockito-core</artifactId>
         </dependency>
         <dependency>
             <groupId>commons-io</groupId>
@@ -161,7 +145,7 @@
             -->
             <groupId>org.antlr</groupId>
             <artifactId>antlr-runtime</artifactId>
-            <version since="9 Jan 2012">3.4</version>
+            <version>3.4</version>
         </dependency>
         <dependency>
             <groupId>com.rexsl</groupId>
@@ -180,7 +164,7 @@
         <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava-io</artifactId>
-            <version since="4 Dec 2011">r03</version>
+            <version>r03</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -201,7 +185,7 @@
                     <plugin>
                         <groupId>org.codehaus.mojo</groupId>
                         <artifactId>build-helper-maven-plugin</artifactId>
-                        <version since="2 Dec 2011">1.7</version>
+                        <version>1.7</version>
                         <executions>
                             <execution>
                                 <id>add-prof-sources</id>
@@ -220,7 +204,7 @@
                     <plugin>
                         <groupId>org.codehaus.mojo</groupId>
                         <artifactId>exec-maven-plugin</artifactId>
-                        <version since="22 May 2012">1.2.1</version>
+                        <version>1.2.1</version>
                         <executions>
                             <execution>
                                 <id>profile-infinity</id>
@@ -267,7 +251,7 @@
                     <plugin>
                         <groupId>org.codehaus.gmaven</groupId>
                         <artifactId>gmaven-plugin</artifactId>
-                        <version since="10 Nov 2011">1.3</version>
+                        <version>1.3</version>
                         <executions>
                             <execution>
                                 <id>verify-prof</id>
@@ -288,22 +272,4 @@
             </build>
         </profile>
     </profiles>
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.antlr</groupId>
-                <artifactId>antlr3-maven-plugin</artifactId>
-                <version since="6 Jan 2012">3.4</version>
-                <executions>
-                    <execution>
-                        <id>antlr</id>
-                        <goals>
-                            <goal>antlr</goal>
-                        </goals>
-                        <phase>generate-sources</phase>
-                    </execution>
-                </executions>
-            </plugin>
-        </plugins>
-    </build>
 </project>

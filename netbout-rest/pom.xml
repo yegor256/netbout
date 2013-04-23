@@ -33,64 +33,50 @@
     <parent>
         <groupId>com.netbout</groupId>
         <artifactId>netbout</artifactId>
-        <version netbout="yes">2.0-SNAPSHOT</version>
+        <version>2.0-SNAPSHOT</version>
     </parent>
     <artifactId>netbout-rest</artifactId>
     <packaging>war</packaging>
     <name>netbout-rest</name>
     <dependencies>
         <dependency>
-            <!-- this one has to stay on top of others, and remain in "compile"
-            until we have WOQUO deps in this module -->
-            <groupId>org.hamcrest</groupId>
-            <artifactId>hamcrest-library</artifactId>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <!-- this one has to stay on top of others, and remain in "compile"
-            until we have WOQUO deps in this module -->
-            <groupId>org.hamcrest</groupId>
-            <artifactId>hamcrest-core</artifactId>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
             <groupId>com.netbout.spi</groupId>
             <artifactId>netbout-client</artifactId>
-            <version netbout="yes">2.0-SNAPSHOT</version>
+            <version>${spi.version}</version>
         </dependency>
         <dependency>
             <groupId>com.netbout</groupId>
             <artifactId>netbout-inf</artifactId>
-            <version netbout="yes">2.0-SNAPSHOT</version>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>com.netbout</groupId>
             <artifactId>netbout-hub</artifactId>
-            <version netbout="yes">2.0-SNAPSHOT</version>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>com.netbout</groupId>
             <artifactId>netbout-hub</artifactId>
-            <version netbout="yes">2.0-SNAPSHOT</version>
+            <version>${project.version}</version>
             <classifier>mock</classifier>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>com.netbout</groupId>
             <artifactId>netbout-bus</artifactId>
-            <version netbout="yes">2.0-SNAPSHOT</version>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>com.netbout</groupId>
             <artifactId>netbout-bus</artifactId>
-            <version netbout="yes">2.0-SNAPSHOT</version>
+            <version>${project.version}</version>
             <classifier>mock</classifier>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>com.netbout</groupId>
             <artifactId>netbout-db</artifactId>
-            <version netbout="yes">2.0-SNAPSHOT</version>
+            <version>${project.version}</version>
             <scope>runtime</scope>
         </dependency>
         <dependency>
@@ -100,7 +86,7 @@
         <dependency>
             <groupId>com.netbout.spi</groupId>
             <artifactId>netbout-spi</artifactId>
-            <version netbout="yes">2.0-SNAPSHOT</version>
+            <version>${spi.version}</version>
             <classifier>mock</classifier>
             <scope>test</scope>
         </dependency>
@@ -124,12 +110,11 @@
         <dependency>
             <groupId>org.tautua.markdownpapers</groupId>
             <artifactId>markdownpapers-core</artifactId>
-            <version since="12 Nov 2012">1.3.2</version>
+            <version>1.3.2</version>
         </dependency>
         <dependency>
             <groupId>com.jcabi</groupId>
             <artifactId>jcabi-velocity</artifactId>
-            <version>${jcabi.version}</version>
         </dependency>
         <dependency>
             <groupId>com.rexsl</groupId>
@@ -172,7 +157,7 @@
             <!-- Selenium web testing framework -->
             <groupId>org.seleniumhq.selenium</groupId>
             <artifactId>selenium-java</artifactId>
-            <version since="30 Oct 2011">2.9.0</version>
+            <version>2.9.0</version>
             <scope>test</scope>
             <exclusions>
                 <exclusion>
@@ -189,53 +174,53 @@
             <!-- HTTP components, to unify its version in the project -->
             <groupId>org.apache.httpcomponents</groupId>
             <artifactId>httpclient</artifactId>
-            <version since="4 Jul 2012">4.2-beta1</version>
+            <version>4.2-beta1</version>
         </dependency>
         <dependency>
             <!-- HTTP components, to unify its version in the project -->
             <groupId>org.apache.httpcomponents</groupId>
             <artifactId>httpcore</artifactId>
-            <version since="4 Jul 2012">4.2-beta1</version>
+            <version>4.2-beta1</version>
         </dependency>
         <dependency>
             <!-- JavaMail API 1.4 -->
             <groupId>javax.mail</groupId>
             <artifactId>mailapi</artifactId>
-            <version since="8 Feb 2012">1.4.3</version>
+            <version>1.4.3</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <!-- Java Mail reference implementation from Sun -->
             <groupId>com.sun.mail</groupId>
             <artifactId>javax.mail</artifactId>
-            <version since="7 Feb 2012">1.4.4</version>
+            <version>1.4.4</version>
             <scope>runtime</scope>
         </dependency>
         <dependency>
             <!-- In-memory JDBC database to be used in unit tests -->
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>
-            <version since="14 Jan 2012">1.3.163</version>
+            <version>1.3.163</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <!-- JDBC connector to MySQL -->
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
-            <version since="6 May 2012">5.1.20</version>
+            <version>5.1.20</version>
             <scope>runtime</scope>
         </dependency>
         <dependency>
             <!-- Javax Servlet API 2.4. -->
             <groupId>javax.servlet</groupId>
             <artifactId>servlet-api</artifactId>
-            <version since="26 Oct 2011">2.4</version>
+            <version>2.4</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.amazonaws</groupId>
             <artifactId>aws-java-sdk</artifactId>
-            <version since="1 Oct 2012">1.3.21.1</version>
+            <version>1.3.21.1</version>
             <exclusions>
                 <exclusion>
                     <groupId>org.apache.httpcomponents</groupId>
@@ -250,7 +235,7 @@
         <dependency>
             <groupId>joda-time</groupId>
             <artifactId>joda-time</artifactId>
-            <version since="14 Nov 2011">2.0</version>
+            <version>2.0</version>
         </dependency>
         <dependency>
             <!--
@@ -259,11 +244,12 @@
             -->
             <groupId>com.restfb</groupId>
             <artifactId>restfb</artifactId>
-            <version since="10 Nov 2011">1.6.9</version>
+            <version>1.6.9</version>
         </dependency>
         <dependency>
             <groupId>xerces</groupId>
             <artifactId>xercesImpl</artifactId>
+            <scope>runtime</scope>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
@@ -279,14 +265,14 @@
             <!-- JSR 311 (JAX-RS) API. -->
             <groupId>javax.ws.rs</groupId>
             <artifactId>jsr311-api</artifactId>
-            <version since="2 Sep 2011">1.1.1</version>
+            <version>1.1.1</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <!-- JAXB 2.0 API. -->
             <groupId>javax.xml.bind</groupId>
             <artifactId>jaxb-api</artifactId>
-            <version since="2 Sep 2011">2.0</version>
+            <version>2.0</version>
             <exclusions>
                 <exclusion>
                     <groupId>javax.xml.bind</groupId>
@@ -297,7 +283,7 @@
         <dependency>
             <groupId>com.ymock</groupId>
             <artifactId>ymock-server</artifactId>
-            <version since="2 Mar 2012">1.0.5</version>
+            <version>1.0.5</version>
             <scope>test</scope>
             <exclusions>
                 <exclusion>
@@ -321,12 +307,12 @@
         <dependency>
             <groupId>com.sun.jersey</groupId>
             <artifactId>jersey-client</artifactId>
-            <version since="6 May 2012">1.12</version>
+            <version>${jersey.version}</version>
         </dependency>
         <dependency>
             <groupId>com.ymock.mock</groupId>
             <artifactId>mock-socket</artifactId>
-            <version since="2 Mar 2012">1.0.5</version>
+            <version>1.0.5</version>
             <scope>test</scope>
             <exclusions>
                 <exclusion>
@@ -334,14 +320,6 @@
                     <artifactId>mockito-all</artifactId>
                 </exclusion>
             </exclusions>
-        </dependency>
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit-dep</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.mockito</groupId>
-            <artifactId>mockito-core</artifactId>
         </dependency>
         <dependency>
             <groupId>commons-io</groupId>
@@ -354,7 +332,7 @@
         <dependency>
             <groupId>com.netbout.helpers</groupId>
             <artifactId>helper-shary</artifactId>
-            <version netbout="yes">2.0-SNAPSHOT</version>
+            <version>2.0-SNAPSHOT</version>
             <scope>runtime</scope>
         </dependency>
     </dependencies>
@@ -375,13 +353,13 @@
                         <dependency>
                             <groupId>com.netbout.spi</groupId>
                             <artifactId>netbout-spi</artifactId>
-                            <version netbout="yes">2.0-SNAPSHOT</version>
+                            <version>2.0-SNAPSHOT</version>
                         </dependency>
                     </dependencies>
                 </plugin>
                 <plugin>
                     <artifactId>maven-war-plugin</artifactId>
-                    <version since="2 Dec 2010">2.1</version>
+                    <version>2.1</version>
                     <configuration>
                         <warSourceExcludes>js/**, css/**, xsl/**</warSourceExcludes>
                         <archive>
@@ -424,7 +402,7 @@
                         <dependency>
                             <groupId>mysql</groupId>
                             <artifactId>mysql-connector-java</artifactId>
-                            <version since="6 May 2012">5.1.20</version>
+                            <version>5.1.20</version>
                         </dependency>
                         <dependency>
                             <groupId>ant-contrib</groupId>
@@ -442,7 +420,7 @@
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>
                     <artifactId>build-helper-maven-plugin</artifactId>
-                    <version since="2 Dec 2011">1.7</version>
+                    <version>1.7</version>
                 </plugin>
             </plugins>
         </pluginManagement>
@@ -471,7 +449,7 @@
                 -->
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>buildnumber-maven-plugin</artifactId>
-                <version since="5 Aug 2012">1.1</version>
+                <version>1.1</version>
                 <executions>
                     <execution>
                         <phase>generate-resources</phase>
@@ -745,7 +723,7 @@
                     <plugin>
                         <groupId>org.apache.tomcat.maven</groupId>
                         <artifactId>tomcat7-maven-plugin</artifactId>
-                        <version since="30 Oct 2012">2.0</version>
+                        <version>2.0</version>
                         <configuration>
                             <systemProperties>
                                 <log4j.configuration>file:${basedir}/src/test/resources/log4j-tomcat.properties</log4j.configuration>
@@ -868,7 +846,7 @@
                     <plugin>
                         <groupId>br.com.ingenieux</groupId>
                         <artifactId>cloudfront-maven-plugin</artifactId>
-                        <version since="19 Mar 2012">0.2.7-RC1</version>
+                        <version>0.2.7-RC1</version>
                         <configuration>
                             <webappDirectory>${basedir}/src/main/webapp</webappDirectory>
                             <distributions>
