@@ -156,7 +156,6 @@ public final class InboxRs extends BaseRs {
             .append(JaxbGroup.build(bouts, "bouts"))
             .append(JaxbGroup.build(periods.links(), "periods"))
             .link(new Link("friends", "/f"))
-            .render()
             .authenticated(identity)
             .build();
     }

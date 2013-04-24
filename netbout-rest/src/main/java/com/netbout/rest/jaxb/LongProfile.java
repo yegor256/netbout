@@ -99,7 +99,7 @@ public final class LongProfile {
                         .replaceQueryParam("l", "{locale}")
                         .build(locale)
                 )
-                    .with(new JaxbBundle("code", locale).element())
+                    .with(new JaxbBundle("code", locale.toString()).element())
                     .with(
                         new JaxbBundle("name", locale.getDisplayName(current))
                     )

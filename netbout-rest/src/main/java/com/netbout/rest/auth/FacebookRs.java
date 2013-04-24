@@ -140,7 +140,6 @@ public final class FacebookRs extends BaseRs {
         return new PageBuilder()
             .build(NbPage.class)
             .init(this)
-            .render()
             .authenticated(identity)
             .build();
     }

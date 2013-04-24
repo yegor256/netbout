@@ -62,7 +62,6 @@ public final class NbRs extends BaseRs {
         return new PageBuilder()
             .build(NbPage.class)
             .init(this)
-            .render()
             .authenticated(this.authenticate(iname, secret))
             .build();
     }

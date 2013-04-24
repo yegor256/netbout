@@ -74,7 +74,6 @@ public final class ProfileRs extends BaseRs {
             .link(new Link("namespaces", "/pf/namespaces"))
             .append(JaxbGroup.build(this.namespaces(), "namespaces"))
             .append(profile)
-            .render()
             .authenticated(this.identity())
             .build();
     }

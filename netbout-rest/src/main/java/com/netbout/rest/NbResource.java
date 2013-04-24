@@ -26,7 +26,6 @@
  */
 package com.netbout.rest;
 
-import com.netbout.rest.log.LogList;
 import com.netbout.spi.Identity;
 import com.rexsl.page.Resource;
 import javax.ws.rs.core.UriBuilder;
@@ -51,12 +50,6 @@ public interface NbResource extends Resource {
      * @return The message
      */
     String message();
-
-    /**
-     * Log list.
-     * @return The log
-     */
-    LogList log();
 
     /**
      * Base URI builder.

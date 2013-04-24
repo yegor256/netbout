@@ -196,9 +196,14 @@ public final class ShortBout {
                 this.builder.clone().path("/../{num}").build(item.number())
             );
             links.add(
-                link.with(new JaxbBundle("number", item.number()))
+                link.with(new JaxbBundle("number", item.number().toString()))
                     .with(new JaxbBundle("title", item.title()))
-                    .with(new JaxbBundle("unseen", !item.seen()))
+                    .with(
+                        new JaxbBundle(
+                            "unseen",
+                            Boolean.toString(!item.seen())
+                        )
+                    )
             );
         }
         if (max == 0) {

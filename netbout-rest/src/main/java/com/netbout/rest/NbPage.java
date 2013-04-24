@@ -86,28 +86,12 @@ public class NbPage extends BasePage<NbPage, NbResource> {
     private final transient Response.ResponseBuilder builder = Response.ok();
 
     /**
-     * Collection of log events.
-     */
-    private transient Collection<String> log;
-
-    /**
      * The page is searchable.
      * @param srch Is this page searcheable?
      * @return This object
      */
     public final NbPage searcheable(final boolean srch) {
         this.srchbl = srch;
-        return this;
-    }
-
-    /**
-     * Render it.
-     * @return This object
-     */
-    public final NbPage render() {
-        this.builder.entity(this);
-        this.log = this.home().log().events();
-        this.home().log().clear();
         return this;
     }
 
@@ -145,13 +129,6 @@ public class NbPage extends BasePage<NbPage, NbResource> {
             .header(
                 HttpHeaders.SET_COOKIE,
                 this.nocookie(RestSession.MESSAGE_COOKIE)
-            )
-            .cookie(
-                new CookieBuilder(this.home().base())
-                    .name(RestSession.LOG_COOKIE)
-                    .value(this.home().log().toString())
-                    .temporary()
-                    .build()
             )
             .cookie(
                 new CookieBuilder(this.home().base())
@@ -199,16 +176,6 @@ public class NbPage extends BasePage<NbPage, NbResource> {
             bldr = this.anonymous();
         }
         return bldr;
-    }
-
-    /**
-     * Get all log events.
-     * @return Full list of events
-     */
-    @XmlElement(name = "event")
-    @XmlElementWrapper(name = "log")
-    public final Collection<String> getLog() {
-        return this.log;
     }
 
     /**

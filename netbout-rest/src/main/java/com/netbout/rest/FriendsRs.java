@@ -88,7 +88,6 @@ public final class FriendsRs extends BaseRs {
             .init(this)
             .append(new JaxbBundle("mask", mask))
             .append(JaxbGroup.build(invitees, "invitees"))
-            .render()
             .authenticated(this.identity())
             .build();
     }

@@ -71,12 +71,11 @@ public final class MiscRs extends BaseRs {
             .init(this)
             .append(
                 new JaxbBundle("error")
-                    .add("code", code)
+                    .add("code", code.toString())
                     .up()
                     .add("message", message)
                     .up()
             )
-            .render()
             .preserved()
             .status(code)
             .build();

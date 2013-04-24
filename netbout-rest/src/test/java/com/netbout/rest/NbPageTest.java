@@ -52,7 +52,7 @@ public final class NbPageTest {
         final BaseRs rest = new NbResourceMocker().mock(BaseRs.class);
         page.init(rest);
         MatcherAssert.assertThat(
-            page.render().anonymous().build(),
+            page.anonymous().build(),
             Matchers.allOf(
                 Matchers.hasProperty(
                     "status",
@@ -87,7 +87,7 @@ public final class NbPageTest {
         final BaseRs rest = new NbResourceMocker().mock(BaseRs.class);
         page.init(rest);
         MatcherAssert.assertThat(
-            JaxbConverter.the(page.render().anonymous().build().getEntity()),
+            JaxbConverter.the(page.anonymous().build().getEntity()),
             XhtmlMatchers.hasXPaths(
                 "/page/log",
                 "/page/message",

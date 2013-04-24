@@ -67,7 +67,6 @@ public final class AboutRs extends BaseRs {
             .init(this)
             .append(new JaxbBundle("name", page))
             .append(new JaxbBundle("content", html))
-            .render()
             .preserved()
             .build();
     }

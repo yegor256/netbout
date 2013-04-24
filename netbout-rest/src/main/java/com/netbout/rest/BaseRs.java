@@ -32,15 +32,17 @@ import com.netbout.hub.Hub;
 import com.netbout.rest.log.LogList;
 import com.netbout.spi.Identity;
 import com.netbout.spi.text.SecureString;
+import com.rexsl.page.BasePage;
 import com.rexsl.page.BaseResource;
+import com.rexsl.page.CookieBuilder;
+import com.rexsl.page.Inset;
+import com.rexsl.page.JaxbBundle;
 import com.rexsl.page.Resource;
 import java.net.URI;
 import java.util.Locale;
-import javax.servlet.ServletContext;
 import javax.ws.rs.CookieParam;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.WebApplicationException;
-import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
 
@@ -59,11 +61,6 @@ public class BaseRs extends BaseResource implements NbResource {
     private final transient LogList loglist = new LogList();
 
     /**
-     * Hub to work with.
-     */
-    private transient Hub ihub;
-
-    /**
      * Cookie.
      */
     private transient String icookie;
@@ -79,11 +76,35 @@ public class BaseRs extends BaseResource implements NbResource {
     private transient String imessage = "";
 
     /**
-     * {@inheritDoc}
+     * Log inset.
+     * @return The inset
      */
-    @Override
-    public final LogList log() {
-        return this.loglist;
+    @Inset.Runtime
+    public Inset logs() {
+        return new Inset() {
+            @Override
+            public void render(final BasePage<?, ?> page,
+                final Response.ResponseBuilder builder) {
+                page.append(
+                    new JaxbBundle("log").add(
+                        new JaxbBundle.Group<String>(BaseRs.this.loglist.events()) {
+                            @Override
+                            public JaxbBundle bundle(final String event) {
+                                return new JaxbBundle("event", event);
+                            }
+                        }
+                    )
+                );
+                builder.cookie(
+                    new CookieBuilder(BaseRs.this.base())
+                        .name(RestSession.LOG_COOKIE)
+                        .value(BaseRs.this.loglist.toString())
+                        .temporary()
+                        .build()
+                );
+                BaseRs.this.loglist.clear();
+            }
+        };
     }
 
     /**
@@ -94,7 +115,7 @@ public class BaseRs extends BaseResource implements NbResource {
     public final Identity identity() {
         Identity identity;
         try {
-            identity = CryptedIdentity.parse(this.ihub, this.icookie);
+            identity = CryptedIdentity.parse(this.hub(), this.icookie);
         } catch (CryptedIdentity.DecryptionException ex) {
             Logger.debug(
                 this,
@@ -218,27 +239,6 @@ public class BaseRs extends BaseResource implements NbResource {
     }
 
     /**
-     * Inject servlet context. Should be called by JAX-RS implemenation
-     * because of <tt>&#64;Context</tt> annotation. Servlet attributes are
-     * injected into context by {@link com.netbout.servlets.Starter} servlet
-     * listener.
-     * @param context The context
-     */
-    @Context
-    public final void setServletContext(final ServletContext context) {
-        this.ihub = Hub.class.cast(context.getAttribute(Hub.class.getName()));
-        if (this.ihub == null) {
-            throw new IllegalStateException("HUB is not initialized");
-        }
-        com.netbout.notifiers.email.RoutineFarm.setHub(this.ihub);
-        Logger.debug(
-            this,
-            "#setServletContext(%[type]s): injected",
-            context
-        );
-    }
-
-    /**
      * Initialize all fields from another resource.
      * @param res The parent resource
      * @return This object
@@ -246,7 +246,7 @@ public class BaseRs extends BaseResource implements NbResource {
      */
     @SuppressWarnings("unchecked")
     public final <T> T duplicate(final BaseRs res) {
-        this.ihub = res.hub();
+        this.servletContext().setAttribute(Hub.class.getName(), res.hub());
         this.setProviders(res.providers());
         this.setHttpHeaders(res.httpHeaders());
         this.setUriInfo(res.uriInfo());
@@ -272,15 +272,14 @@ public class BaseRs extends BaseResource implements NbResource {
      * @return The hub
      */
     protected final Hub hub() {
-        if (this.ihub == null) {
-            throw new IllegalStateException(
-                Logger.format(
-                    "%[type]s#hub was never injected by container",
-                    this
-                )
-            );
+        final Hub hub = Hub.class.cast(
+            this.servletContext().getAttribute(Hub.class.getName())
+        );
+        if (hub == null) {
+            throw new IllegalStateException("HUB is not initialized");
         }
-        return this.ihub;
+        com.netbout.notifiers.email.RoutineFarm.setHub(hub);
+        return hub;
     }
 
     /**
