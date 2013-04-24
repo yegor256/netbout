@@ -29,11 +29,10 @@
  */
 package com.netbout.rest.rexsl.setup
 
-import com.ymock.mock.socket.SMSocketImplFactory
-
 /**
 @todo #163 This mechanism doesn't work, because it's not implemented
  in YMOCK yet. Here is the latest problem: http://stackoverflow.com/questions/8563290
+import com.ymock.mock.socket.SMSocketImplFactory
 SMSocketImplFactory.INSTANCE
     .start()
     .match("graph.facebook.com")
