@@ -146,6 +146,17 @@ public final class NbResourceMocker {
      * @throws Exception If any
      */
     public <T extends Resource> T mock(final Class<T> type) throws Exception {
+        return type.cast(this.mock(BaseRs.class.cast(type.newInstance())));
+    }
+
+    /**
+     * Extend a resource.
+     * @param rest The resource
+     * @param <T> The type of it
+     * @return The resource extended
+     * @throws Exception If any
+     */
+    public <T extends BaseRs> T mock(final T rest) throws Exception {
         if (this.hub == null) {
             final URN iname = this.identity.name();
             this.hub = new HubMocker()
@@ -158,8 +169,6 @@ public final class NbResourceMocker {
                 Mockito.doReturn(resolver).when(this.hub).resolver();
             }
         }
-        // @checkstyle IllegalType (1 line)
-        final BaseRs rest = (BaseRs) type.newInstance();
         rest.setMessage(this.message);
         final Resource res = this.resource.mock();
         rest.setUriInfo(res.uriInfo());
@@ -171,7 +180,7 @@ public final class NbResourceMocker {
         Mockito.doReturn(this.hub).when(context)
             .getAttribute(Hub.class.getName());
         rest.setServletContext(context);
-        return type.cast(rest);
+        return rest;
     }
 
     /**

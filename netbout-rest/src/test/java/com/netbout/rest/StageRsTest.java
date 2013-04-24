@@ -63,13 +63,11 @@ public final class StageRsTest {
                 "render-stage-resource"
         )
             .mock();
-        final BoutRs root = new NbResourceMocker()
+        final StageCoordinates coords = new StageCoordinates();
+        final StageRs rest = new NbResourceMocker()
             .withHub(hub)
             .withIdentity(identity)
-            .mock(BoutRs.class);
-        final StageCoordinates coords = new StageCoordinates();
-        final StageRs rest = new StageRs(bout, coords);
-        rest.duplicate(root);
+            .mock(new StageRs(bout, coords));
         final Response response = rest.get("some-path.xml");
         MatcherAssert.assertThat(
             response.getEntity().toString(),

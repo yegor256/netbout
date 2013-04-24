@@ -356,7 +356,7 @@ public final class BoutRs extends BaseRs {
      */
     @Path("/s")
     public StageRs stageDispatcher() {
-        return new StageRs(this.bout(), this.coords).duplicate(this);
+        return new StageRs(this.bout(), this.coords);
     }
 
     /**

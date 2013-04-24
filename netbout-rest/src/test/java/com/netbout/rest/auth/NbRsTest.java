@@ -54,7 +54,7 @@ public final class NbRsTest {
         final String secret = new SecureString(iname).toString();
         final Response response = rest.auth(iname, secret);
         MatcherAssert.assertThat(
-            NbResourceMocker.the((NbPage) response.getEntity(), rest),
+            NbResourceMocker.the(NbPage.class.cast(response.getEntity()), rest),
             XhtmlMatchers.hasXPaths(
                 "//identity[alias='hh']",
                 "//identity[name='urn:netbout:hh']",

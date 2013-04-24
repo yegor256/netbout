@@ -239,28 +239,6 @@ public class BaseRs extends BaseResource implements NbResource {
     }
 
     /**
-     * Initialize all fields from another resource.
-     * @param res The parent resource
-     * @return This object
-     * @param <T> The type of it
-     */
-    @SuppressWarnings("unchecked")
-    public final <T> T duplicate(final BaseRs res) {
-        this.servletContext().setAttribute(Hub.class.getName(), res.hub());
-        this.setProviders(res.providers());
-        this.setHttpHeaders(res.httpHeaders());
-        this.setUriInfo(res.uriInfo());
-        this.setHttpServletRequest(res.httpServletRequest());
-        this.setMessage(res.message());
-        if (res.addAuthToURIs) {
-            this.setAuth(res.icookie);
-        } else {
-            this.setCookie(res.icookie);
-        }
-        return (T) this;
-    }
-
-    /**
      * Forget current identity, if it exists.
      */
     protected final void logoff() {
