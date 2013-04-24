@@ -37,7 +37,6 @@ import com.rexsl.page.BasePage;
 import com.rexsl.page.CookieBuilder;
 import com.rexsl.page.JaxbBundle;
 import com.rexsl.page.Link;
-import java.util.Collection;
 import java.util.Locale;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
@@ -45,8 +44,6 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
@@ -66,24 +63,9 @@ import javax.xml.bind.annotation.XmlRootElement;
 public class NbPage extends BasePage<NbPage, NbResource> {
 
     /**
-     * Version of the system, to show in header.
-     */
-    private static final String VERSION = String.format(
-        "%s/%s built on %s",
-        Manifests.read("Netbout-Version"),
-        Manifests.read("Netbout-Revision"),
-        Manifests.read("Netbout-Date")
-    );
-
-    /**
      * Is this page searcheable?
      */
     private transient boolean srchbl;
-
-    /**
-     * The response builder to return.
-     */
-    private final transient Response.ResponseBuilder builder = Response.ok();
 
     /**
      * The page is searchable.
@@ -123,8 +105,7 @@ public class NbPage extends BasePage<NbPage, NbResource> {
         } else {
             this.link(new Link("re-login", "/g/re"));
         }
-        this.extend();
-        return this.builder
+        return this.extended()
             .header(HttpHeaders.VARY, "Cookie")
             .header(
                 HttpHeaders.SET_COOKIE,
@@ -147,8 +128,7 @@ public class NbPage extends BasePage<NbPage, NbResource> {
     public final Response.ResponseBuilder anonymous() {
         this.link(NbPage.about(Locale.ENGLISH));
         this.link(new Link("login", "/g"));
-        this.extend();
-        return this.builder
+        return this.extended()
             .header(
                 HttpHeaders.SET_COOKIE,
                 this.nocookie(RestSession.MESSAGE_COOKIE)
@@ -207,18 +187,9 @@ public class NbPage extends BasePage<NbPage, NbResource> {
 
     /**
      * Extend page with mandatory elements.
+     * @return The response builder
      */
-    private void extend() {
-        this.append(
-            new JaxbBundle("version")
-                .add("name", Manifests.read("Netbout-Version"))
-                .up()
-                .add("revision", Manifests.read("Netbout-Revision"))
-                .up()
-                .add("date", Manifests.read("Netbout-Date"))
-                .up()
-        );
-        this.append(new JaxbBundle("message", this.home().message()));
+    private Response.ResponseBuilder extended() {
         final String qauth = this.home().qauth();
         if (!qauth.isEmpty()) {
             for (Link link : this.getLinks()) {
@@ -233,7 +204,7 @@ public class NbPage extends BasePage<NbPage, NbResource> {
         if (this.srchbl) {
             this.link(new Link("search", "."));
         }
-        this.builder.header("X-Netbout-Version", NbPage.VERSION);
+        return this.render();
     }
 
     /**

@@ -39,6 +39,7 @@ import com.rexsl.test.XhtmlMatchers;
 import java.io.StringWriter;
 import java.net.URL;
 import javax.servlet.ServletContext;
+import javax.validation.constraints.NotNull;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.UriInfo;
@@ -83,7 +84,7 @@ public final class NbResourceMocker {
      * @param url The URL
      * @return This object
      */
-    public NbResourceMocker withNamespaceURL(final URL url) {
+    public NbResourceMocker withNamespaceURL(@NotNull final URL url) {
         this.namespaceUrl = url;
         return this;
     }
@@ -93,7 +94,7 @@ public final class NbResourceMocker {
      * @param msg The message
      * @return This object
      */
-    public NbResourceMocker withMessage(final String msg) {
+    public NbResourceMocker withMessage(@NotNull final String msg) {
         this.message = msg;
         return this;
     }
@@ -103,7 +104,7 @@ public final class NbResourceMocker {
      * @param idnt The identity
      * @return This object
      */
-    public NbResourceMocker withIdentity(final Identity idnt) {
+    public NbResourceMocker withIdentity(@NotNull final Identity idnt) {
         this.identity = idnt;
         return this;
     }
@@ -113,7 +114,7 @@ public final class NbResourceMocker {
      * @param info The object
      * @return This object
      */
-    public NbResourceMocker withUriInfo(final UriInfo info) {
+    public NbResourceMocker withUriInfo(@NotNull final UriInfo info) {
         this.resource.withUriInfo(info);
         return this;
     }
@@ -123,7 +124,8 @@ public final class NbResourceMocker {
      * @param headers The headers
      * @return This object
      */
-    public NbResourceMocker withHttpHeaders(final HttpHeaders headers) {
+    public NbResourceMocker withHttpHeaders(
+        @NotNull final HttpHeaders headers) {
         this.resource.withHttpHeaders(headers);
         return this;
     }
@@ -133,7 +135,7 @@ public final class NbResourceMocker {
      * @param ihub The hub
      * @return This object
      */
-    public NbResourceMocker withHub(final Hub ihub) {
+    public NbResourceMocker withHub(@NotNull final Hub ihub) {
         this.hub = ihub;
         return this;
     }
@@ -145,7 +147,8 @@ public final class NbResourceMocker {
      * @return The resource just created
      * @throws Exception If any
      */
-    public <T extends Resource> T mock(final Class<T> type) throws Exception {
+    public <T extends Resource> T mock(@NotNull final Class<T> type)
+        throws Exception {
         return type.cast(this.mock(BaseRs.class.cast(type.newInstance())));
     }
 
@@ -156,7 +159,7 @@ public final class NbResourceMocker {
      * @return The resource extended
      * @throws Exception If any
      */
-    public <T extends BaseRs> T mock(final T rest) throws Exception {
+    public <T extends BaseRs> T mock(@NotNull final T rest) throws Exception {
         if (this.hub == null) {
             final URN iname = this.identity.name();
             this.hub = new HubMocker()
@@ -174,6 +177,7 @@ public final class NbResourceMocker {
         rest.setUriInfo(res.uriInfo());
         rest.setHttpHeaders(res.httpHeaders());
         rest.setHttpServletRequest(res.httpServletRequest());
+        rest.setSecurityContext(res.securityContext());
         rest.setProviders(res.providers());
         rest.setCookie(new CryptedIdentity(this.identity).toString());
         final ServletContext context = Mockito.mock(ServletContext.class);
@@ -190,13 +194,14 @@ public final class NbResourceMocker {
      * @return The XML
      * @throws Exception If any
      */
-    public static String the(final NbPage page, final NbResource resource)
-        throws Exception {
-        final XslResolver resolver = (XslResolver) resource.providers()
-            .getContextResolver(
+    public static String the(@NotNull final NbPage page,
+        @NotNull final NbResource resource) throws Exception {
+        final XslResolver resolver = XslResolver.class.cast(
+            resource.providers().getContextResolver(
                 Marshaller.class,
                 MediaType.APPLICATION_XML_TYPE
-            );
+            )
+        );
         final Marshaller mrsh = resolver.getContext(page.getClass());
         mrsh.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
         final StringWriter writer = new StringWriter();

@@ -27,6 +27,7 @@
 package com.netbout.rest;
 
 import com.jcabi.log.Logger;
+import com.jcabi.manifests.Manifests;
 import com.netbout.client.RestSession;
 import com.netbout.hub.Hub;
 import com.netbout.rest.log.LogList;
@@ -38,6 +39,8 @@ import com.rexsl.page.CookieBuilder;
 import com.rexsl.page.Inset;
 import com.rexsl.page.JaxbBundle;
 import com.rexsl.page.Resource;
+import com.rexsl.page.inset.LinksInset;
+import com.rexsl.page.inset.VersionInset;
 import java.net.URI;
 import java.util.Locale;
 import javax.ws.rs.CookieParam;
@@ -53,7 +56,18 @@ import javax.ws.rs.core.UriBuilder;
  * @version $Id$
  */
 @Resource.Forwarded
+@Inset.Default(LinksInset.class)
 public class BaseRs extends BaseResource implements NbResource {
+
+    /**
+     * Version of the system, to show in header.
+     */
+    private static final String VERSION = String.format(
+        "%s/%s built on %s",
+        Manifests.read("Netbout-Version"),
+        Manifests.read("Netbout-Revision"),
+        Manifests.read("Netbout-Date")
+    );
 
     /**
      * List of log events.
@@ -105,6 +119,35 @@ public class BaseRs extends BaseResource implements NbResource {
                 BaseRs.this.loglist.clear();
             }
         };
+    }
+
+    /**
+     * Supplementary inset.
+     * @return The inset
+     */
+    @Inset.Runtime
+    public Inset supplementary() {
+        return new Inset() {
+            @Override
+            public void render(final BasePage<?, ?> page,
+                final Response.ResponseBuilder builder) {
+                builder.header("X-Netbout-Version", BaseRs.VERSION);
+                page.append(new JaxbBundle("message", BaseRs.this.message()));
+            }
+        };
+    }
+
+    /**
+     * Version inset.
+     * @return The inset
+     */
+    @Inset.Runtime
+    public Inset version() {
+        return new VersionInset(
+            Manifests.read("Netbout-Version"),
+            Manifests.read("Netbout-Revision"),
+            Manifests.read("Netbout-Date")
+        );
     }
 
     /**
