@@ -145,6 +145,10 @@ public final class InboxRs extends BaseRs {
                 break;
             }
         }
+        String aview = view;
+        if (aview == null) {
+            aview = "";
+        }
         return new PageBuilder()
             .schema("")
             .stylesheet("/xsl/inbox.xsl")
@@ -152,7 +156,7 @@ public final class InboxRs extends BaseRs {
             .init(this)
             .searcheable(true)
             .append(new JaxbBundle("query", this.query))
-            .append(new JaxbBundle("view", view))
+            .append(new JaxbBundle("view", aview))
             .append(JaxbGroup.build(bouts, "bouts"))
             .append(JaxbGroup.build(periods.links(), "periods"))
             .link(new Link("friends", "/f"))
