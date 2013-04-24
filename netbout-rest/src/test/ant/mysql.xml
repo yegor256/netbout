@@ -29,10 +29,8 @@
  * @version $Id$
  -->
 <project name="mysql">
-
     <!-- MySQL 5.5 has to be installed at this folder -->
     <property name="mysql.dir" value="/usr/local/mysql-bin"/>
-
     <target name="start" description="starting MySQL server">
         <delete dir="${directory}/mysql-${database}" quiet="true"/>
         <mkdir dir="${directory}/mysql-${database}"/>
@@ -45,6 +43,7 @@
             <arg value="--basedir=."/>
             <arg value="--datadir=${directory}/mysql-${database}"/>
         </exec>
+        <echo message="MySQL data directory initialized: ${directory}/mysql-${database}"/>
         <exec dir="${mysql.dir}" executable="./bin/mysqld" failonerror="true" outputproperty="version">
             <arg value="--version"/>
         </exec>
@@ -55,7 +54,8 @@
                 </not>
             </condition>
         </fail>
-        <echo message="starting MySQL ${version} at localhost:${mysql.port.rest}..." />
+        <echo message="MySQL server version: ${version}"/>
+        <echo message="Starting MySQL at localhost:${mysql.port.rest}..."/>
         <exec dir="${mysql.dir}" executable="./bin/mysqld" spawn="true">
             <arg value="--basedir=."/>
             <arg value="--lc-messages-dir=./share"/>
@@ -70,6 +70,7 @@
             <arg value="--pid-file=${directory}/mysql-${database}.pid"/>
             <arg value="--port=${port}"/>
         </exec>
+        <echo message="MySQL started as daemon"/>
         <waitfor maxwait="180" maxwaitunit="second" timeoutproperty="timeout">
             <available file="${directory}/mysql-${database}.sock"/>
         </waitfor>
@@ -83,7 +84,7 @@
                 <striplinebreaks/>
             </filterchain>
         </loadfile>
-        <echo message="MySQL '${database}' is ready at 'localhost:${port}', pid: '${pid}'" />
+        <echo message="MySQL '${database}' is ready at 'localhost:${port}', pid: '${pid}'"/>
         <exec dir="${mysql.dir}" spawn="true" executable="sh">
             <arg value="-c"/>
             <arg value="sleep 3600; kill -9 ${pid}"/>
@@ -95,18 +96,14 @@
             <arg value="password"/>
             <arg value="root"/>
         </exec>
-        <exec dir="${mysql.dir}" executable="./bin/mysql" failonerror="true"
-            inputstring="CREATE DATABASE ${database};">
+        <exec dir="${mysql.dir}" executable="./bin/mysql" failonerror="true" inputstring="CREATE DATABASE ${database};">
             <arg value="--port=${port}"/>
             <arg value="--user=root"/>
             <arg value="--password=root"/>
             <arg value="--socket=${directory}/mysql-${database}.sock"/>
         </exec>
-        <sql driver="com.mysql.jdbc.Driver"
-            url="jdbc:mysql://localhost:${port}/${database}"
-            userid="root" password="root" print="true">SHOW TABLES</sql>
+        <sql driver="com.mysql.jdbc.Driver" url="jdbc:mysql://localhost:${port}/${database}" userid="root" password="root" print="true">SHOW TABLES</sql>
     </target>
-
     <target name="stop" description="stopping MySQL server">
         <loadfile srcfile="${directory}/mysql-${database}.pid" property="pid">
             <filterchain>
@@ -122,5 +119,4 @@
         </exec>
         <echo message="MySQL of '${database}' is shutdown, PID: '${pid}'"/>
     </target>
-
 </project>
