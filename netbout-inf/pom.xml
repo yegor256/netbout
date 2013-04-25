@@ -78,7 +78,13 @@
         <dependency>
             <groupId>org.reflections</groupId>
             <artifactId>reflections</artifactId>
-            <version>0.9.5</version>
+            <version>0.9.9-RC1</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.javassist</groupId>
+                        <artifactId>javassist</artifactId>
+                    </exclusion>
+                </exclusions>
         </dependency>
         <dependency>
             <groupId>com.rexsl</groupId>
@@ -124,13 +130,8 @@
             <artifactId>commons-collections</artifactId>
         </dependency>
         <dependency>
-            <!--
-            ANTLR3 Parser/Lexer
-            @link http://www.antlr.org/
-            -->
             <groupId>org.antlr</groupId>
             <artifactId>antlr-runtime</artifactId>
-            <version>3.4</version>
         </dependency>
         <dependency>
             <groupId>com.rexsl</groupId>
@@ -143,7 +144,7 @@
             <!-- Embedded Java Servlet Container, for tests only. -->
             <groupId>com.sun.grizzly</groupId>
             <artifactId>grizzly-servlet-webserver</artifactId>
-            <version>1.9.10</version>
+            <version>1.9.57</version>
             <scope>test</scope>
         </dependency>
         <dependency>

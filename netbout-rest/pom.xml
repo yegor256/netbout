@@ -379,7 +379,6 @@
                 </plugin>
                 <plugin>
                     <artifactId>maven-war-plugin</artifactId>
-                    <version>2.1</version>
                     <configuration>
                         <warSourceExcludes>js/**, css/**, xsl/**</warSourceExcludes>
                         <archive>
@@ -675,6 +674,7 @@
                                     <goal>exploded</goal>
                                 </goals>
                                 <configuration>
+                                    <warSourceExcludes>nothing</warSourceExcludes>
                                     <webappDirectory>${project.build.directory}/webapp-catapult</webappDirectory>
                                 </configuration>
                             </execution>
@@ -816,7 +816,7 @@
             </build>
         </profile>
         <profile>
-            <id>netbout-production</id>
+            <id>netbout-live</id>
             <build>
                 <plugins>
                     <plugin>

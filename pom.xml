@@ -150,12 +150,13 @@
                 -->
                 <groupId>xerces</groupId>
                 <artifactId>xercesImpl</artifactId>
+                <!-- Version should be 2.9.1 always, higher versions don't work -->
                 <version>2.9.1</version>
             </dependency>
             <dependency>
                 <groupId>javax.xml.bind</groupId>
                 <artifactId>jaxb-api</artifactId>
-                <version>2.2.3</version>
+                <version>2.2.9</version>
                 <exclusions>
                     <exclusion>
                         <groupId>javax.xml.bind</groupId>
@@ -166,7 +167,7 @@
             <dependency>
                 <groupId>joda-time</groupId>
                 <artifactId>joda-time</artifactId>
-                <version>2.0</version>
+                <version>2.2</version>
             </dependency>
             <dependency>
                 <!-- Generator of random texts. -->
