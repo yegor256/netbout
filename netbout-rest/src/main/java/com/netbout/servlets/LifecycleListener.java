@@ -63,7 +63,7 @@ public final class LifecycleListener implements ServletContextListener {
     @Override
     public void contextInitialized(final ServletContextEvent event) {
         final long start = System.nanoTime();
-        new RestSession(URI.create("#")).toString();
+        new RestSession(URI.create("http://www.netbout.com/")).toString();
         try {
             Manifests.append(event.getServletContext());
             this.hub = LazyHub.build();
