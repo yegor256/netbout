@@ -108,14 +108,20 @@ public final class MarkdownTest {
     public void formatsTextFragmentsToHtml() throws Exception {
         final String[][] texts = new String[][] {
             new String[] {"hi, *dude*!", "<p>hi, <em>dude</em>!</p>"},
-            new String[] {"hello, **dude**!", "<p>hello, <strong>dude</strong>!</p>"},
             new String[] {
-                    "wazzup, ***dude***!",
-                    "<p>wazzup, <strong><em>dude</em></strong>!</p>",
-                },
+                "hello, **dude**!",
+                "<p>hello, <strong>dude</strong>!</p>",
+            },
+            new String[] {
+                "wazzup, ***dude***!",
+                "<p>wazzup, <strong><em>dude</em></strong>!</p>",
+            },
             new String[] {"hey, _man_!", "<p>hey, <em>man</em>!</p>"},
             new String[] {"x: `oops`", "<p>x: <code>oops</code></p>"},
-            new String[] {"[a](http://foo)", "<p><a href=\"http://foo\">a</a></p>"},
+            new String[] {
+                "[a](http://foo)",
+                "<p><a href=\"http://foo\">a</a></p>",
+            },
             new String[] {"}}}\n", "<p>}}}</p>"},
         };
         for (String[] pair : texts) {

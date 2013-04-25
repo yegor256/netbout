@@ -54,16 +54,19 @@ import javax.ws.rs.core.UriBuilder;
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
+ * @checkstyle ClassDataAbstractionCoupling (500 lines)
  */
 @Resource.Forwarded
 @Inset.Default(LinksInset.class)
+@SuppressWarnings("PMD.TooManyMethods")
 public class BaseRs extends BaseResource implements NbResource {
 
     /**
      * Version of the system, to show in header.
      */
-    private static final String VERSION = String.format(
+    private static final String VERSION_LABEL = String.format(
         "%s/%s built on %s",
+        // @checkstyle MultipleStringLiterals (3 lines)
         Manifests.read("Netbout-Version"),
         Manifests.read("Netbout-Revision"),
         Manifests.read("Netbout-Date")
@@ -94,14 +97,16 @@ public class BaseRs extends BaseResource implements NbResource {
      * @return The inset
      */
     @Inset.Runtime
-    public Inset logs() {
+    public final Inset logs() {
+        // @checkstyle AnonInnerLength (50 lines)
         return new Inset() {
             @Override
             public void render(final BasePage<?, ?> page,
                 final Response.ResponseBuilder builder) {
                 page.append(
                     new JaxbBundle("log").add(
-                        new JaxbBundle.Group<String>(BaseRs.this.loglist.events()) {
+                        new JaxbBundle.Group<String>(
+                            BaseRs.this.loglist.events()) {
                             @Override
                             public JaxbBundle bundle(final String event) {
                                 return new JaxbBundle("event", event);
@@ -126,12 +131,12 @@ public class BaseRs extends BaseResource implements NbResource {
      * @return The inset
      */
     @Inset.Runtime
-    public Inset supplementary() {
+    public final Inset supplementary() {
         return new Inset() {
             @Override
             public void render(final BasePage<?, ?> page,
                 final Response.ResponseBuilder builder) {
-                builder.header("X-Netbout-Version", BaseRs.VERSION);
+                builder.header("X-Netbout-Version", BaseRs.VERSION_LABEL);
                 page.append(new JaxbBundle("message", BaseRs.this.message()));
             }
         };
@@ -142,7 +147,7 @@ public class BaseRs extends BaseResource implements NbResource {
      * @return The inset
      */
     @Inset.Runtime
-    public Inset version() {
+    public final Inset version() {
         return new VersionInset(
             Manifests.read("Netbout-Version"),
             Manifests.read("Netbout-Revision"),

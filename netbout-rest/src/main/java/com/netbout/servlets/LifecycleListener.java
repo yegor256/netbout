@@ -28,8 +28,10 @@ package com.netbout.servlets;
 
 import com.jcabi.log.Logger;
 import com.jcabi.manifests.Manifests;
+import com.netbout.client.RestSession;
 import com.netbout.hub.Hub;
 import com.netbout.notifiers.email.EmailFarm;
+import java.net.URI;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 
@@ -61,6 +63,7 @@ public final class LifecycleListener implements ServletContextListener {
     @Override
     public void contextInitialized(final ServletContextEvent event) {
         final long start = System.nanoTime();
+        new RestSession(URI.create("#")).toString();
         try {
             Manifests.append(event.getServletContext());
             this.hub = LazyHub.build();

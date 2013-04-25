@@ -26,7 +26,6 @@
  */
 package com.netbout.rest;
 
-import com.jcabi.manifests.Manifests;
 import com.netbout.client.RestSession;
 import com.netbout.rest.auth.FacebookRs;
 import com.netbout.rest.jaxb.LongHelper;
@@ -128,11 +127,12 @@ public class NbPage extends BasePage<NbPage, NbResource> {
     public final Response.ResponseBuilder anonymous() {
         this.link(NbPage.about(Locale.ENGLISH));
         this.link(new Link("login", "/g"));
-        return this.extended()
+        return this
+            .extended()
             .header(
                 HttpHeaders.SET_COOKIE,
                 this.nocookie(RestSession.MESSAGE_COOKIE)
-        )
+            )
             .header(
                 HttpHeaders.SET_COOKIE,
                 this.nocookie(RestSession.LOG_COOKIE)
