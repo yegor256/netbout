@@ -48,6 +48,12 @@
             <groupId>com.netbout</groupId>
             <artifactId>netbout-inf</artifactId>
             <version>${project.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.javassist</groupId>
+                    <artifactId>javassist</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>com.netbout</groupId>

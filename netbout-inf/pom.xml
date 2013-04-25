@@ -79,12 +79,6 @@
             <groupId>org.reflections</groupId>
             <artifactId>reflections</artifactId>
             <version>0.9.9-RC1</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>org.javassist</groupId>
-                        <artifactId>javassist</artifactId>
-                    </exclusion>
-                </exclusions>
         </dependency>
         <dependency>
             <groupId>com.rexsl</groupId>
