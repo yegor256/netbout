@@ -356,7 +356,15 @@ public final class BoutRs extends BaseRs {
      */
     @Path("/s")
     public StageRs stageDispatcher() {
-        return new StageRs(this.bout(), this.coords);
+        final StageRs stage = new StageRs(this.bout(), this.coords);
+        stage.setAuth(this.qauth());
+        stage.setHttpHeaders(this.httpHeaders());
+        stage.setHttpServletRequest(this.httpServletRequest());
+        stage.setProviders(this.providers());
+        stage.setSecurityContext(this.securityContext());
+        stage.setServletContext(this.servletContext());
+        stage.setUriInfo(this.uriInfo());
+        return stage;
     }
 
     /**
