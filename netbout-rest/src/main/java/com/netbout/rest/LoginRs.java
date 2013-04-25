@@ -65,7 +65,7 @@ public final class LoginRs extends BaseRs {
             .build(NbPage.class)
             .init(this)
             .link(new Link("facebook", fburi))
-            .render()
+            .preserved()
             .build();
     }
 

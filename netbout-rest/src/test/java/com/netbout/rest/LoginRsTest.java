@@ -49,7 +49,10 @@ public final class LoginRsTest {
         final Response response = rest.login();
         MatcherAssert.assertThat(
             NbResourceMocker.the((NbPage) response.getEntity(), rest),
-            XhtmlMatchers.hasXPath("/page/links/link[@rel='facebook']")
+            XhtmlMatchers.hasXPath(
+                "/page/links/link[@rel='facebook']",
+                "/page/links/link[@rel='about']"
+            )
         );
     }
 

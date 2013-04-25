@@ -50,7 +50,8 @@ public final class AboutRsTest {
             NbResourceMocker.the((NbPage) response.getEntity(), rest),
             XhtmlMatchers.hasXPaths(
                 "/page/content",
-                "/page[name='index']"
+                "/page[name='index']",
+                "/page/links/link[@rel='about']"
             )
         );
     }
