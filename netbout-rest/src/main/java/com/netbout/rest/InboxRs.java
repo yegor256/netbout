@@ -72,7 +72,7 @@ public final class InboxRs extends BaseRs {
     /**
      * Use bundle?
      */
-    private transient boolean bundle = true;
+    private transient boolean bundle = false;
 
     /**
      * Set filtering keyword.

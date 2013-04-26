@@ -28,7 +28,6 @@ package com.netbout.notifiers.facebook;
 
 import com.jcabi.urn.URN;
 import com.netbout.spi.cpa.Farm;
-import com.netbout.spi.cpa.Operation;
 import com.restfb.DefaultFacebookClient;
 
 /**
@@ -47,8 +46,9 @@ public final class RemindFarm {
      * Remind identity which is silent for a long time.
      * @param name Name of identity
      * @param marker The marker to avoid duplicate reminders
+     * @todo #520 This method should be annotated with
+     *  Operation("remind-silent-identity"), but it is disabled now
      */
-    @Operation("remind-silent-identity")
     public void remindSilentIdentity(final URN name, final String marker) {
         final Requests requests = new Requests(
             new DefaultFacebookClient(new TokenBuilder().build()),
