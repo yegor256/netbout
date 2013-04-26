@@ -855,7 +855,6 @@
                         <artifactId>jcabi-beanstalk-maven-plugin</artifactId>
                         <version>${jcabi.version}</version>
                         <configuration>
-                            <swap>false</swap>
                             <name>netbout</name>
                             <bucket>webapps.netbout.com</bucket>
                             <key>${project.build.finalName}-${buildNumber}.${project.packaging}</key>
@@ -864,7 +863,7 @@
                         <executions>
                             <execution>
                                 <goals>
-                                    <goal>deploy</goal>
+                                    <goal>update</goal>
                                 </goals>
                             </execution>
                         </executions>
