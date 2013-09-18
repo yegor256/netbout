@@ -26,6 +26,7 @@
  */
 package com.netbout.db;
 
+import com.jcabi.aspects.Tv;
 import com.jcabi.log.Logger;
 import com.jcabi.manifests.Manifests;
 import com.jolbox.bonecp.BoneCPDataSource;
@@ -65,8 +66,8 @@ public final class Database {
         this.src.setJdbcUrl(Manifests.read("Netbout-JdbcUrl"));
         this.src.setUsername(Manifests.read("Netbout-JdbcUser"));
         this.src.setPassword(Manifests.read("Netbout-JdbcPassword"));
-        // @checkstyle MagicNumber (1 line)
-        this.src.setMaxConnectionsPerPartition(50);
+        this.src.setPartitionCount(2);
+        this.src.setMaxConnectionsPerPartition(Tv.THREE);
         this.liquibase();
         Logger.info(Database.class, "#Database(): ready");
     }
