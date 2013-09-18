@@ -50,9 +50,11 @@ public final class AliasFarm {
      * Primary alias was added to the identity.
      * @param identity The identity
      * @param alias The alias just added
+     * @throws SQLException If fails
      */
     @Operation("added-identity-alias")
-    public void addedIdentityAlias(final URN identity, final String alias) {
+    public void addedIdentityAlias(final URN identity, final String alias)
+        throws SQLException {
         new JdbcSession(Database.source())
             .sql("INSERT INTO alias (identity, name, date) VALUES (?, ?, ?)")
             .set(identity)
@@ -65,9 +67,11 @@ public final class AliasFarm {
      * Get list of aliases that belong to some identity.
      * @param name The identity of bout participant
      * @return List of aliases
+     * @throws SQLException If fails
      */
     @Operation("get-aliases-of-identity")
-    public List<String> getAliasesOfIdentity(final URN name) {
+    public List<String> getAliasesOfIdentity(final URN name)
+        throws SQLException {
         return new JdbcSession(Database.source())
             .sql("SELECT name FROM alias WHERE identity = ?")
             .set(name)

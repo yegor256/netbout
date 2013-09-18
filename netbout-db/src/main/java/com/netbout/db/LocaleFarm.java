@@ -33,6 +33,7 @@ import com.jcabi.jdbc.VoidHandler;
 import com.jcabi.urn.URN;
 import com.netbout.spi.cpa.Farm;
 import com.netbout.spi.cpa.Operation;
+import java.sql.SQLException;
 
 /**
  * Manipulations with locales.
@@ -47,9 +48,11 @@ public final class LocaleFarm {
      * Set locale for identity.
      * @param identity The identity
      * @param locale The locale to set
+     * @throws SQLException If fails
      */
     @Operation("set-identity-locale")
-    public void setIdentityLocale(final URN identity, final String locale) {
+    public void setIdentityLocale(final URN identity, final String locale)
+        throws SQLException {
         if (this.getLocaleOfIdentity(identity) == null) {
             new JdbcSession(Database.source())
                 // @checkstyle LineLength (1 line)
@@ -73,9 +76,10 @@ public final class LocaleFarm {
      * Get locale of identity.
      * @param name The identity
      * @return The locale
+     * @throws SQLException If fails
      */
     @Operation("get-locale-of-identity")
-    public String getLocaleOfIdentity(final URN name) {
+    public String getLocaleOfIdentity(final URN name) throws SQLException {
         return new JdbcSession(Database.source())
             .sql("SELECT locale FROM locale WHERE identity = ?")
             .set(name)

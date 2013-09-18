@@ -53,9 +53,10 @@ public final class HelperFarm {
     /**
      * Find all helpers.
      * @return List of identities, which are helpers
+     * @throws SQLException If fails
      */
     @Operation("get-all-helpers")
-    public List<URN> getAllHelpers() {
+    public List<URN> getAllHelpers() throws SQLException {
         return new JdbcSession(Database.source())
             .sql("SELECT identity FROM helper")
             .select(
@@ -77,9 +78,11 @@ public final class HelperFarm {
      * Identity was promoted to helper.
      * @param name The name of identity
      * @param url URL of helper
+     * @throws SQLException If fails
      */
     @Operation("identity-promoted")
-    public void identityPromoted(final URN name, final URL url) {
+    public void identityPromoted(final URN name, final URL url)
+        throws SQLException {
         final Boolean exists = new JdbcSession(Database.source())
             .sql("SELECT url FROM helper WHERE identity = ? ")
             .set(name)
@@ -112,9 +115,10 @@ public final class HelperFarm {
      * Get URL of the helper.
      * @param name The identity of bout participant
      * @return The URL
+     * @throws SQLException If fails
      */
     @Operation("get-helper-url")
-    public URL getHelperUrl(final URN name) {
+    public URL getHelperUrl(final URN name) throws SQLException {
         final String location = new JdbcSession(Database.source())
             .sql("SELECT url FROM helper WHERE identity = ?")
             .set(name)

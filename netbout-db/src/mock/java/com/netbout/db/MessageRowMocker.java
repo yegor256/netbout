@@ -27,6 +27,7 @@
 package com.netbout.db;
 
 import com.jcabi.urn.URN;
+import java.sql.SQLException;
 import java.util.Date;
 
 /**
@@ -54,13 +55,15 @@ public final class MessageRowMocker {
     /**
      * Author of bout.
      */
-    private transient URN author = new IdentityRowMocker().mock();
+    private transient URN author;
 
     /**
      * Public ctor.
      * @param number The bout
+     * @throws SQLException If fails
      */
-    public MessageRowMocker(final Long number) {
+    public MessageRowMocker(final Long number) throws SQLException {
+        this.author = new IdentityRowMocker().mock();
         this.bout = number;
     }
 
@@ -97,8 +100,9 @@ public final class MessageRowMocker {
     /**
      * Mock it and return its number.
      * @return The number of just mocked message
+     * @throws SQLException If fails
      */
-    public Long mock() {
+    public Long mock() throws SQLException {
         final MessageFarm farm = new MessageFarm();
         Long number;
         number = farm.createBoutMessage(this.bout);

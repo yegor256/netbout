@@ -32,6 +32,7 @@ import com.jcabi.jdbc.SingleHandler;
 import com.jcabi.jdbc.Utc;
 import com.netbout.spi.cpa.Farm;
 import com.netbout.spi.cpa.Operation;
+import java.sql.SQLException;
 import java.util.Date;
 
 /**
@@ -46,9 +47,10 @@ public final class BoutFarm {
     /**
      * Read next bout number.
      * @return Next bout number
+     * @throws SQLException If fails
      */
     @Operation("get-next-bout-number")
-    public Long getNextBoutNumber() {
+    public Long getNextBoutNumber() throws SQLException {
         return new JdbcSession(Database.source())
             .sql("INSERT INTO bout (date) VALUES (?)")
             .set(new Utc())
@@ -59,9 +61,10 @@ public final class BoutFarm {
      * Check bout existence.
      * @param number Bout number to check
      * @return It exists?
+     * @throws SQLException If fails
      */
     @Operation("check-bout-existence")
-    public Boolean checkBoutExistence(final Long number) {
+    public Boolean checkBoutExistence(final Long number) throws SQLException {
         return new JdbcSession(Database.source())
             // @checkstyle LineLength (1 line)
             .sql("SELECT number FROM bout WHERE number = ? AND title IS NOT NULL")
@@ -72,9 +75,10 @@ public final class BoutFarm {
     /**
      * New bout was just started.
      * @param number Number of the bout just started
+     * @throws SQLException If fails
      */
     @Operation("started-new-bout")
-    public void startedNewBout(final Long number) {
+    public void startedNewBout(final Long number) throws SQLException {
         final Boolean exists = new JdbcSession(Database.source())
             .sql("SELECT number FROM bout WHERE number = ?")
             .set(number)
@@ -91,9 +95,10 @@ public final class BoutFarm {
      * Get number of first bout message.
      * @param number Number of bout
      * @return The message number or NULL if it's absent
+     * @throws SQLException If fails
      */
     @Operation("first-bout-message")
-    public Long firstBoutMessage(final Long number) {
+    public Long firstBoutMessage(final Long number) throws SQLException {
         return new JdbcSession(Database.source())
             .sql("SELECT MAX(number) FROM message WHERE bout = ?")
             .set(number)
@@ -104,9 +109,10 @@ public final class BoutFarm {
      * Get bout title.
      * @param number Number of bout
      * @return The title
+     * @throws SQLException If fails
      */
     @Operation("get-bout-title")
-    public String getBoutTitle(final Long number) {
+    public String getBoutTitle(final Long number) throws SQLException {
         return new JdbcSession(Database.source())
             .sql("SELECT title FROM bout WHERE number = ?")
             .set(number)
@@ -117,9 +123,10 @@ public final class BoutFarm {
      * Get bout date.
      * @param number Number of bout
      * @return The date
+     * @throws SQLException If fails
      */
     @Operation("get-bout-date")
-    public Date getBoutDate(final Long number) {
+    public Date getBoutDate(final Long number) throws SQLException {
         return new JdbcSession(Database.source())
             .sql("SELECT date FROM bout WHERE number = ?")
             .set(number)
@@ -131,9 +138,11 @@ public final class BoutFarm {
      * Bout title was just changed.
      * @param number Number of bout
      * @param title New title
+     * @throws SQLException If fails
      */
     @Operation("changed-bout-title")
-    public void changedBoutTitle(final Long number, final String title) {
+    public void changedBoutTitle(final Long number, final String title)
+        throws SQLException {
         new JdbcSession(Database.source())
             .sql("UPDATE bout SET title = ? WHERE number = ?")
             .set(title)

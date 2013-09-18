@@ -33,6 +33,7 @@ import com.jcabi.jdbc.VoidHandler;
 import com.jcabi.urn.URN;
 import com.netbout.spi.cpa.Farm;
 import com.netbout.spi.cpa.Operation;
+import java.sql.SQLException;
 
 /**
  * Seen statuses.
@@ -47,9 +48,11 @@ public final class SeenFarm {
      * Mark this message as seen by the specified identity.
      * @param msg The number of the message
      * @param identity The viewer
+     * @throws SQLException If fails
      */
     @Operation("message-was-seen")
-    public void messageWasSeen(final Long msg, final URN identity) {
+    public void messageWasSeen(final Long msg, final URN identity)
+        throws SQLException {
         new JdbcSession(Database.source())
             .sql("INSERT INTO seen (message, identity, date) VALUES (?, ?, ?)")
             .set(msg)
@@ -63,9 +66,11 @@ public final class SeenFarm {
      * @param msg The number of the message
      * @param identity The viewer
      * @return Was it seen?
+     * @throws SQLException If fails
      */
     @Operation("was-message-seen")
-    public Boolean wasMessageSeen(final Long msg, final URN identity) {
+    public Boolean wasMessageSeen(final Long msg, final URN identity)
+        throws SQLException {
         return new JdbcSession(Database.source())
             .sql("SELECT message FROM seen WHERE message = ? AND identity = ?")
             .set(msg)

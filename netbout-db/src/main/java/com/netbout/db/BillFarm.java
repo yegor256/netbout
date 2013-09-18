@@ -32,6 +32,7 @@ import com.jcabi.jdbc.VoidHandler;
 import com.jcabi.urn.URN;
 import com.netbout.spi.cpa.Farm;
 import com.netbout.spi.cpa.Operation;
+import java.sql.SQLException;
 import java.util.List;
 import org.joda.time.format.ISODateTimeFormat;
 
@@ -47,11 +48,12 @@ public final class BillFarm {
     /**
      * Save a collection of incoming bills, from BUS.
      * @param lines Text forms of them
+     * @throws SQLException If fails
      * @checkstyle MagicNumber (30 lines)
      */
     @Operation("save-bills")
     @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
-    public void saveBills(final List<String> lines) {
+    public void saveBills(final List<String> lines) throws SQLException {
         final JdbcSession session = new JdbcSession(Database.source());
         session.autocommit(false);
         final JdbcSession.Handler<Void> handler = new VoidHandler();

@@ -59,10 +59,11 @@ public final class IdentityFarm {
      * @param who Who is searching for them
      * @param keyword The keyword
      * @return List of identities
+     * @throws SQLException If fails
      */
     @Operation("find-identities-by-keyword")
     public List<URN> findIdentitiesByKeyword(final URN who,
-        final String keyword) {
+        final String keyword) throws SQLException {
         final String matcher = String.format(
             "%%%s%%",
             keyword.toUpperCase(Locale.ENGLISH)
@@ -92,9 +93,10 @@ public final class IdentityFarm {
      * Get identity photo.
      * @param name The name of the identity
      * @return Photo of the identity
+     * @throws SQLException If fails
      */
     @Operation("get-identity-photo")
-    public URL getIdentityPhoto(final URN name) {
+    public URL getIdentityPhoto(final URN name) throws SQLException {
         return new JdbcSession(Database.source())
             .sql("SELECT photo FROM identity WHERE name = ?")
             .set(name)
@@ -124,9 +126,10 @@ public final class IdentityFarm {
     /**
      * Identity was mentioned in the app and should be registed here.
      * @param name The name of identity
+     * @throws SQLException If fails
      */
     @Operation("identity-mentioned")
-    public void identityMentioned(final URN name) {
+    public void identityMentioned(final URN name) throws SQLException {
         final Boolean exists = new JdbcSession(Database.source())
             .sql("SELECT name FROM identity WHERE name = ?")
             .set(name)
@@ -146,9 +149,11 @@ public final class IdentityFarm {
      * Identities were joined.
      * @param main The name of main identity
      * @param child The name of child identity
+     * @throws SQLException If fails
      */
     @Operation("identities-joined")
-    public void identitiesJoined(final URN main, final URN child) {
+    public void identitiesJoined(final URN main, final URN child)
+        throws SQLException {
         new JdbcSession(Database.source())
             .autocommit(false)
             // @checkstyle LineLength (1 line)
@@ -195,9 +200,11 @@ public final class IdentityFarm {
      * Changed identity photo.
      * @param name The name of identity
      * @param photo The photo to set
+     * @throws SQLException If fails
      */
     @Operation("changed-identity-photo")
-    public void changedIdentityPhoto(final URN name, final URL photo) {
+    public void changedIdentityPhoto(final URN name, final URL photo)
+        throws SQLException {
         new JdbcSession(Database.source())
             .sql("UPDATE identity SET photo = ? WHERE name = ?")
             .set(photo)
@@ -208,9 +215,10 @@ public final class IdentityFarm {
     /**
      * Find silent identities.
      * @return List of their names
+     * @throws SQLException If fails
      */
     @Operation("find-silent-identities")
-    public List<URN> findSilentIdentities() {
+    public List<URN> findSilentIdentities() throws SQLException {
         final Calendar cal = new GregorianCalendar();
         cal.add(Calendar.HOUR, -1);
         return new JdbcSession(Database.source()).sql(
@@ -228,9 +236,10 @@ public final class IdentityFarm {
      * Get marker of silence of this identity.
      * @param name The name of identity
      * @return The marker
+     * @throws SQLException If fails
      */
     @Operation("get-silence-marker")
-    public String getSilenceMarker(final URN name) {
+    public String getSilenceMarker(final URN name) throws SQLException {
         final Date recent = new JdbcSession(Database.source()).sql(
             // @checkstyle StringLiteralsConcatenation (4 lines)
             "SELECT message.date FROM message"

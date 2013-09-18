@@ -27,6 +27,7 @@
 package com.netbout.db;
 
 import com.jcabi.urn.URN;
+import java.sql.SQLException;
 
 /**
  * Mocker of {@code NAMESPACE} row in a database.
@@ -52,8 +53,9 @@ public final class NamespaceRowMocker {
 
     /**
      * Public ctor.
+     * @throws SQLException If fails
      */
-    public NamespaceRowMocker() {
+    public NamespaceRowMocker() throws SQLException {
         this.identity = new IdentityRowMocker().mock();
     }
 
@@ -90,8 +92,9 @@ public final class NamespaceRowMocker {
     /**
      * Mock it and return its name.
      * @return Just created namespace
+     * @throws SQLException If fails
      */
-    public String mock() {
+    public String mock() throws SQLException {
         final NamespaceFarm farm = new NamespaceFarm();
         farm.namespaceWasRegistered(
             this.identity,

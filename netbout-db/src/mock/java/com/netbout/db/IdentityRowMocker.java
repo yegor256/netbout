@@ -29,6 +29,7 @@ package com.netbout.db;
 import com.jcabi.urn.URN;
 import com.jcabi.urn.URNMocker;
 import java.net.URL;
+import java.sql.SQLException;
 import java.util.HashSet;
 import java.util.Random;
 import java.util.Set;
@@ -89,9 +90,10 @@ public final class IdentityRowMocker {
     /**
      * Mock it and return its URN.
      * @return Name of just mocked identity
+     * @throws SQLException If fails
      */
     @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
-    public URN mock() {
+    public URN mock() throws SQLException {
         final IdentityFarm farm = new IdentityFarm();
         try {
             farm.identityMentioned(this.identity);

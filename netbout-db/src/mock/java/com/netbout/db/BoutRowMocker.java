@@ -27,6 +27,7 @@
 package com.netbout.db;
 
 import com.jcabi.urn.URN;
+import java.sql.SQLException;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -55,9 +56,10 @@ public final class BoutRowMocker {
     /**
      * Mock it and return its number.
      * @return Number of just mocked bout
+     * @throws SQLException If fails
      */
     @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
-    public Long mock() {
+    public Long mock() throws SQLException {
         final BoutFarm farm = new BoutFarm();
         final Long bout = farm.getNextBoutNumber();
         farm.startedNewBout(bout);

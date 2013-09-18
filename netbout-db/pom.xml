@@ -76,7 +76,7 @@
         <dependency>
             <groupId>com.jcabi</groupId>
             <artifactId>jcabi-jdbc</artifactId>
-            <version>${jcabi.version}</version>
+            <version>0.8</version>
         </dependency>
         <dependency>
             <!--

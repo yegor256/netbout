@@ -27,6 +27,7 @@
 package com.netbout.db;
 
 import com.jcabi.urn.URN;
+import java.sql.SQLException;
 import java.util.Random;
 
 /**
@@ -76,8 +77,9 @@ public final class AliasRowMocker {
     /**
      * Mock it and return its text.
      * @return Just mocked alias
+     * @throws SQLException If fails
      */
-    public String mock() {
+    public String mock() throws SQLException {
         final AliasFarm afarm = new AliasFarm();
         afarm.addedIdentityAlias(this.identity, this.alias);
         return this.alias;

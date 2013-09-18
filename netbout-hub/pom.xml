@@ -47,7 +47,7 @@
         <dependency>
             <groupId>com.netbout</groupId>
             <artifactId>netbout-inf</artifactId>
-            <version>${spi.version}</version>
+            <version>${project.version}</version>
             <classifier>mock</classifier>
             <scope>test</scope>
         </dependency>
@@ -103,11 +103,6 @@
             <version>${rexsl.version}</version>
             <classifier>mock</classifier>
             <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>xerces</groupId>
-            <artifactId>xercesImpl</artifactId>
-            <scope>runtime</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.commons</groupId>

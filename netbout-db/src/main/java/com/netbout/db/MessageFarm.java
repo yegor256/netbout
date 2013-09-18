@@ -53,9 +53,10 @@ public final class MessageFarm {
      * Create new message in a bout and return its unique number.
      * @param bout The bout
      * @return The number of the message
+     * @throws SQLException If fails
      */
     @Operation("create-bout-message")
-    public Long createBoutMessage(final Long bout) {
+    public Long createBoutMessage(final Long bout) throws SQLException {
         return new JdbcSession(Database.source())
             .sql("INSERT INTO message (bout, date) VALUES (?, ?)")
             .set(bout)
@@ -68,9 +69,11 @@ public final class MessageFarm {
      * @param since Number of the message, since when we need more numbers
      * @param length Maximum length of the chunk
      * @return The list of numbers
+     * @throws SQLException If fails
      */
     @Operation("get-messages-chunk")
-    public List<Long> getMessagesChunk(final Long since, final Long length) {
+    public List<Long> getMessagesChunk(final Long since, final Long length)
+        throws SQLException {
         return new JdbcSession(Database.source()).sql(
             // @checkstyle StringLiteralsConcatenation (2 lines)
             "SELECT number FROM message WHERE number > ?"
@@ -98,9 +101,11 @@ public final class MessageFarm {
      * @param bout Bout number to check
      * @param msg Message number to check
      * @return It exists?
+     * @throws SQLException If fails
      */
     @Operation("check-message-existence")
-    public Boolean checkMessageExistence(final Long bout, final Long msg) {
+    public Boolean checkMessageExistence(final Long bout, final Long msg)
+        throws SQLException {
         return new JdbcSession(Database.source())
             .sql("SELECT number FROM message WHERE number = ? AND bout = ?")
             .set(msg)
@@ -112,9 +117,10 @@ public final class MessageFarm {
      * Get bout of message.
      * @param msg Message number to check
      * @return Number of bout or ZERO if such a message is not found
+     * @throws SQLException If fails
      */
     @Operation("get-bout-of-message")
-    public Long getBoutOfMessage(final Long msg) {
+    public Long getBoutOfMessage(final Long msg) throws SQLException {
         return new JdbcSession(Database.source())
             .sql("SELECT bout FROM message WHERE number = ?")
             .set(msg)
@@ -139,9 +145,10 @@ public final class MessageFarm {
      * Get message date.
      * @param number Number of the message
      * @return The date
+     * @throws SQLException If fails
      */
     @Operation("get-message-date")
-    public Date getMessageDate(final Long number) {
+    public Date getMessageDate(final Long number) throws SQLException {
         return new JdbcSession(Database.source())
             .sql("SELECT date FROM message WHERE number = ?")
             .set(number)
@@ -153,9 +160,11 @@ public final class MessageFarm {
      * Changed message date.
      * @param number The bout where it happened
      * @param date The date of the message to change
+     * @throws SQLException If fails
      */
     @Operation("changed-message-date")
-    public void changedMessageDate(final Long number, final Date date) {
+    public void changedMessageDate(final Long number, final Date date)
+        throws SQLException {
         new JdbcSession(Database.source())
             .sql("UPDATE message SET date = ? WHERE number = ?")
             .set(new Utc(date))
@@ -167,9 +176,10 @@ public final class MessageFarm {
      * Get message author.
      * @param number Number of the message
      * @return Name of the author
+     * @throws SQLException If fails
      */
     @Operation("get-message-author")
-    public URN getMessageAuthor(final Long number) {
+    public URN getMessageAuthor(final Long number) throws SQLException {
         return new JdbcSession(Database.source())
             .sql("SELECT author FROM message WHERE number = ?")
             .set(number)
@@ -196,9 +206,11 @@ public final class MessageFarm {
      * Changed message author.
      * @param number The bout where it happened
      * @param author The author of the message to change
+     * @throws SQLException If fails
      */
     @Operation("changed-message-author")
-    public void changedMessageAuthor(final Long number, final URN author) {
+    public void changedMessageAuthor(final Long number, final URN author)
+        throws SQLException {
         new JdbcSession(Database.source())
             .sql("UPDATE message SET author = ? WHERE number = ?")
             .set(author)
@@ -210,9 +222,10 @@ public final class MessageFarm {
      * Get message text.
      * @param number The number of the message
      * @return Text of the message
+     * @throws SQLException If fails
      */
     @Operation("get-message-text")
-    public String getMessageText(final Long number) {
+    public String getMessageText(final Long number) throws SQLException {
         return new JdbcSession(Database.source())
             .sql("SELECT text FROM message WHERE number = ?")
             .set(number)
@@ -223,9 +236,11 @@ public final class MessageFarm {
      * Changed message text.
      * @param number The bout where it happened
      * @param text The text to set
+     * @throws SQLException If fails
      */
     @Operation("changed-message-text")
-    public void changedMessageText(final Long number, final String text) {
+    public void changedMessageText(final Long number, final String text)
+        throws SQLException {
         new JdbcSession(Database.source())
             .sql("UPDATE message SET text = ? WHERE number = ?")
             .set(text)

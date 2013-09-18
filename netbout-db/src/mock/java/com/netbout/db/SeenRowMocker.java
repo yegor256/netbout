@@ -27,6 +27,7 @@
 package com.netbout.db;
 
 import com.jcabi.urn.URN;
+import java.sql.SQLException;
 
 /**
  * Mocker of {@code SEEN} row in a database.
@@ -57,8 +58,9 @@ public final class SeenRowMocker {
 
     /**
      * Mock it.
+     * @throws SQLException If fails
      */
-    public void mock() {
+    public void mock() throws SQLException {
         final SeenFarm farm = new SeenFarm();
         farm.messageWasSeen(this.message, this.identity);
     }

@@ -28,6 +28,7 @@ package com.netbout.db;
 
 import com.jcabi.urn.URN;
 import com.jcabi.urn.URNMocker;
+import java.sql.SQLException;
 
 /**
  * Mocker of {@code PARTICIPANT} row in a database.
@@ -77,8 +78,9 @@ public final class ParticipantRowMocker {
     /**
      * Mock it and return its name.
      * @return The URN of just created participant
+     * @throws SQLException If fails
      */
-    public URN mock() {
+    public URN mock() throws SQLException {
         final IdentityFarm ifarm = new IdentityFarm();
         ifarm.identityMentioned(this.identity);
         final ParticipantFarm farm = new ParticipantFarm();

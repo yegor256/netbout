@@ -53,10 +53,11 @@ public final class NamespaceFarm {
      * @param owner The owner of it
      * @param name The name of namespace
      * @param template The template of it
+     * @throws SQLException If fails
      */
     @Operation("namespace-was-registered")
     public void namespaceWasRegistered(final URN owner, final String name,
-        final String template) {
+        final String template) throws SQLException {
         final Boolean exists = new JdbcSession(Database.source())
             .sql("SELECT name FROM namespace WHERE name = ?")
             .set(name)
@@ -84,9 +85,10 @@ public final class NamespaceFarm {
     /**
      * Find all namespaces.
      * @return List of them
+     * @throws SQLException If fails
      */
     @Operation("get-all-namespaces")
-    public List<String> getAllNamespaces() {
+    public List<String> getAllNamespaces() throws SQLException {
         return new JdbcSession(Database.source())
             .sql("SELECT name FROM namespace")
             .select(
@@ -108,9 +110,10 @@ public final class NamespaceFarm {
      * Get owner of namespace.
      * @param name The name of namespace
      * @return Photo of the identity
+     * @throws SQLException If fails
      */
     @Operation("get-namespace-owner")
-    public URN getNamespaceOwner(final String name) {
+    public URN getNamespaceOwner(final String name) throws SQLException {
         return new JdbcSession(Database.source())
             .sql("SELECT identity FROM namespace WHERE name = ?")
             .set(name)
@@ -137,9 +140,10 @@ public final class NamespaceFarm {
      * Get template of namespace.
      * @param name The name of namespace
      * @return Photo of the identity
+     * @throws SQLException If fails
      */
     @Operation("get-namespace-template")
-    public String getNamespaceTemplate(final String name) {
+    public String getNamespaceTemplate(final String name) throws SQLException {
         return new JdbcSession(Database.source())
             .sql("SELECT template FROM namespace WHERE name = ?")
             .set(name)

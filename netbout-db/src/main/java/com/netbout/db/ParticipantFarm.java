@@ -71,9 +71,10 @@ public final class ParticipantFarm {
      * Get list of names of bout participants.
      * @param bout The number of the bout
      * @return List of names
+     * @throws SQLException If fails
      */
     @Operation("get-bout-participants")
-    public List<URN> getBoutParticipants(final Long bout) {
+    public List<URN> getBoutParticipants(final Long bout) throws SQLException {
         return new JdbcSession(Database.source())
             // @checkstyle LineLength (1 line)
             .sql("SELECT identity FROM participant JOIN bout ON bout.number = participant.bout WHERE bout = ?")
@@ -97,9 +98,11 @@ public final class ParticipantFarm {
      * Added new participant to the bout.
      * @param bout The bout
      * @param identity The name of the person
+     * @throws SQLException If fails
      */
     @Operation("added-bout-participant")
-    public void addedBoutParticipant(final Long bout, final URN identity) {
+    public void addedBoutParticipant(final Long bout, final URN identity)
+        throws SQLException {
         new JdbcSession(Database.source())
             // @checkstyle LineLength (1 line)
             .sql("INSERT INTO participant (bout, identity, date) VALUES (?, ?, ?)")
@@ -113,9 +116,11 @@ public final class ParticipantFarm {
      * Removed participant of the bout.
      * @param bout The bout
      * @param identity The name of the person
+     * @throws SQLException If fails
      */
     @Operation("removed-bout-participant")
-    public void removedBoutParticipant(final Long bout, final URN identity) {
+    public void removedBoutParticipant(final Long bout, final URN identity)
+        throws SQLException {
         new JdbcSession(Database.source())
             .sql("DELETE FROM participant WHERE bout = ? AND identity = ?")
             .set(bout)
@@ -128,9 +133,11 @@ public final class ParticipantFarm {
      * @param bout The number of the bout
      * @param identity The participant
      * @return Status of the participant
+     * @throws SQLException If fails
      */
     @Operation("get-participant-status")
-    public Boolean getParticipantStatus(final Long bout, final URN identity) {
+    public Boolean getParticipantStatus(final Long bout, final URN identity)
+        throws SQLException {
         return new JdbcSession(Database.source())
             // @checkstyle LineLength (1 line)
             .sql("SELECT confirmed FROM participant WHERE bout = ? AND identity = ?")
@@ -144,10 +151,11 @@ public final class ParticipantFarm {
      * @param bout The number of the bout
      * @param identity The participant
      * @param status The status to set
+     * @throws SQLException If fails
      */
     @Operation("changed-participant-status")
     public void changedParticipantStatus(final Long bout,
-        final URN identity, final Boolean status) {
+        final URN identity, final Boolean status) throws SQLException {
         new JdbcSession(Database.source())
             // @checkstyle LineLength (1 line)
             .sql("UPDATE participant SET confirmed = ? WHERE bout = ? AND identity = ?")
@@ -162,10 +170,11 @@ public final class ParticipantFarm {
      * @param bout The number of the bout
      * @param identity The participant
      * @return Status of the participant
+     * @throws SQLException If fails
      */
     @Operation("get-participant-leadership")
     public Boolean getParticipantLeadership(final Long bout,
-        final URN identity) {
+        final URN identity) throws SQLException {
         return new JdbcSession(Database.source())
             // @checkstyle LineLength (1 line)
             .sql("SELECT leader FROM participant WHERE bout = ? AND identity = ?")
@@ -179,10 +188,11 @@ public final class ParticipantFarm {
      * @param bout The number of the bout
      * @param identity The participant
      * @param status The status to set
+     * @throws SQLException If fails
      */
     @Operation("changed-participant-leadership")
     public void changedParticipantLeadership(final Long bout,
-        final URN identity, final Boolean status) {
+        final URN identity, final Boolean status) throws SQLException {
         new JdbcSession(Database.source())
             // @checkstyle LineLength (1 line)
             .sql("UPDATE participant SET leader = ? WHERE bout = ? AND identity = ?")
