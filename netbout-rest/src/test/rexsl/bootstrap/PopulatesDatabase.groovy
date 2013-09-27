@@ -85,7 +85,7 @@ def total = 150 + rand.nextInt(50)
 }
 
 queries.each { query ->
-    new JdbcSession(Database.source()).sql(query).update()
+    new JdbcSession(Database.source()).sql(query).execute()
 }
 Logger.info(
     this,

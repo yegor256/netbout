@@ -102,6 +102,60 @@ class Backlog {
     }
 
     /**
+     * Open output stream of this backlog.
+     * @return The output stream
+     * @throws IOException If some I/O problem inside
+     */
+    public final BacklogOutputStream open() throws IOException {
+        return new BacklogOutputStream(this.ifile);
+    }
+
+    /**
+     * Register new reference in the backlog.
+     *
+     * <p>The method is NOT thread-safe.
+     *
+     * @param item The item to add
+     * @throws IOException If some I/O problem inside
+     */
+    public final void add(final Item item) throws IOException {
+        final RandomAccessFile data = new RandomAccessFile(this.ifile, "rw");
+        try {
+            data.seek(this.ifile.length() - Backlog.eofMarkerLength * 2);
+            data.writeUTF(item.value());
+            data.writeUTF(item.path());
+            data.writeUTF(Backlog.EOF_MARKER);
+            data.writeUTF(Backlog.EOF_MARKER);
+        } finally {
+            data.close();
+        }
+        Logger.debug(
+            this,
+            "#add('%[text]s', '%s'): added",
+            item.value(),
+            item.path()
+        );
+    }
+
+    /**
+     * Get an iterator of them items.
+     * @return The thread-safe iterator
+     * @throws IOException If some I/O problem inside
+     */
+    public Iterator<Backlog.Item> iterator() throws IOException {
+        return new Backlog.ItemsIterator();
+    }
+
+    /**
+     * Get name of the file we're working with.
+     * @return The file name
+     * @throws IOException If some I/O problem inside
+     */
+    protected final File file() throws IOException {
+        return this.ifile;
+    }
+
+    /**
      * One item.
      *
      * <p>The class is immutable and thread-safe;
@@ -162,60 +216,6 @@ class Backlog {
         public String path() {
             return this.name;
         }
-    }
-
-    /**
-     * Open output stream of this backlog.
-     * @return The output stream
-     * @throws IOException If some I/O problem inside
-     */
-    public final BacklogOutputStream open() throws IOException {
-        return new BacklogOutputStream(this.ifile);
-    }
-
-    /**
-     * Register new reference in the backlog.
-     *
-     * <p>The method is NOT thread-safe.
-     *
-     * @param item The item to add
-     * @throws IOException If some I/O problem inside
-     */
-    public final void add(final Item item) throws IOException {
-        final RandomAccessFile data = new RandomAccessFile(this.ifile, "rw");
-        try {
-            data.seek(this.ifile.length() - Backlog.eofMarkerLength * 2);
-            data.writeUTF(item.value());
-            data.writeUTF(item.path());
-            data.writeUTF(Backlog.EOF_MARKER);
-            data.writeUTF(Backlog.EOF_MARKER);
-        } finally {
-            data.close();
-        }
-        Logger.debug(
-            this,
-            "#add('%[text]s', '%s'): added",
-            item.value(),
-            item.path()
-        );
-    }
-
-    /**
-     * Get an iterator of them items.
-     * @return The thread-safe iterator
-     * @throws IOException If some I/O problem inside
-     */
-    public Iterator<Backlog.Item> iterator() throws IOException {
-        return new Backlog.ItemsIterator();
-    }
-
-    /**
-     * Get name of the file we're working with.
-     * @return The file name
-     * @throws IOException If some I/O problem inside
-     */
-    protected final File file() throws IOException {
-        return this.ifile;
     }
 
     /**

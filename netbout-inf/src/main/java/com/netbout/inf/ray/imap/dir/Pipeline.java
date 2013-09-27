@@ -66,30 +66,6 @@ import org.apache.commons.io.IOUtils;
 final class Pipeline implements Closeable, Iterator<Catalog.Item> {
 
     /**
-     * Token.
-     */
-    interface Token {
-        /**
-         * Get its value.
-         * @return The value
-         */
-        String value();
-        /**
-         * Convert it to item.
-         * @return The item
-         * @throws IOException If some IO problem inside
-         */
-        Catalog.Item item() throws IOException;
-    }
-
-    /**
-     * Comparable token.
-     */
-    interface ComparableToken
-        extends Pipeline.Token, Comparable<Pipeline.Token> {
-    }
-
-    /**
      * Source draft.
      */
     private final transient Draft draft;
@@ -217,6 +193,30 @@ final class Pipeline implements Closeable, Iterator<Catalog.Item> {
         }
         Collections.sort(items);
         return items.iterator();
+    }
+
+    /**
+     * Comparable token.
+     */
+    interface ComparableToken
+        extends Pipeline.Token, Comparable<Pipeline.Token> {
+    }
+
+    /**
+     * Token.
+     */
+    interface Token {
+        /**
+         * Get its value.
+         * @return The value
+         */
+        String value();
+        /**
+         * Convert it to item.
+         * @return The item
+         * @throws IOException If some IO problem inside
+         */
+        Catalog.Item item() throws IOException;
     }
 
     /**

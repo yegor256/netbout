@@ -169,7 +169,7 @@ public final class MessageFarm {
             .sql("UPDATE message SET date = ? WHERE number = ?")
             .set(new Utc(date))
             .set(number)
-            .update();
+            .execute();
     }
 
     /**
@@ -215,7 +215,7 @@ public final class MessageFarm {
             .sql("UPDATE message SET author = ? WHERE number = ?")
             .set(author)
             .set(number)
-            .update();
+            .execute();
     }
 
     /**
@@ -245,7 +245,7 @@ public final class MessageFarm {
             .sql("UPDATE message SET text = ? WHERE number = ?")
             .set(text)
             .set(number)
-            .update();
+            .execute();
     }
 
 }

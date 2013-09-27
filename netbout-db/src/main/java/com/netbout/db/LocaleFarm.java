@@ -68,7 +68,7 @@ public final class LocaleFarm {
                 .set(locale)
                 .set(new Utc())
                 .set(identity)
-                .update();
+                .execute();
         }
     }
 

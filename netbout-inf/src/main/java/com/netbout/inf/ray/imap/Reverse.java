@@ -48,30 +48,6 @@ public interface Reverse {
     long sizeof();
 
     /**
-     * If value is not found.
-     */
-    class ValueNotFoundException extends Exception {
-        /**
-         * Serialization marker.
-         */
-        private static final long serialVersionUID = 0x7549F8789ED28479L;
-        /**
-         * Public ctor.
-         * @param cause The cause of it
-         */
-        public ValueNotFoundException(final Throwable cause) {
-            super(cause);
-        }
-        /**
-         * Public ctor.
-         * @param cause The cause of it
-         */
-        public ValueNotFoundException(final String cause) {
-            super(cause);
-        }
-    }
-
-    /**
      * Get value by message number (throws runtime exception if message
      * is not found).
      * @param msg The number of the message
@@ -107,5 +83,29 @@ public interface Reverse {
      * @throws IOException If some I/O problem inside
      */
     void load(InputStream stream) throws IOException;
+
+    /**
+     * If value is not found.
+     */
+    class ValueNotFoundException extends Exception {
+        /**
+         * Serialization marker.
+         */
+        private static final long serialVersionUID = 0x7549F8789ED28479L;
+        /**
+         * Public ctor.
+         * @param cause The cause of it
+         */
+        public ValueNotFoundException(final Throwable cause) {
+            super(cause);
+        }
+        /**
+         * Public ctor.
+         * @param cause The cause of it
+         */
+        public ValueNotFoundException(final String cause) {
+            super(cause);
+        }
+    }
 
 }

@@ -66,31 +66,6 @@ class BaseIndex implements FlushableIndex {
         new ConcurrentHashMap<String, BaseIndex.LruNumbers>();
 
     /**
-     * Numbers that has expiration date (least recently used).
-     */
-    private static final class LruNumbers extends FastNumbers {
-        /**
-         * When was it accessed last time.
-         */
-        private final transient AtomicLong time = new AtomicLong();
-        /**
-         * Mark access time.
-         */
-        public void ping() {
-            this.time.set(System.currentTimeMillis());
-        }
-        /**
-         * Is it already expired and may be removed from memory?
-         * @return TRUE if yes
-         */
-        public boolean expired() {
-            return System.currentTimeMillis() - this.time.get()
-                // @checkstyle MagicNumber (1 line)
-                > 60 * 60 * 1000;
-        }
-    }
-
-    /**
      * Public ctor.
      * @param attr Attribute to work with
      * @param dir Directory with files
@@ -256,6 +231,31 @@ class BaseIndex implements FlushableIndex {
         final BaseIndex.LruNumbers nums = this.map.get(text);
         nums.ping();
         return nums;
+    }
+
+    /**
+     * Numbers that has expiration date (least recently used).
+     */
+    private static final class LruNumbers extends FastNumbers {
+        /**
+         * When was it accessed last time.
+         */
+        private final transient AtomicLong time = new AtomicLong();
+        /**
+         * Mark access time.
+         */
+        public void ping() {
+            this.time.set(System.currentTimeMillis());
+        }
+        /**
+         * Is it already expired and may be removed from memory?
+         * @return TRUE if yes
+         */
+        public boolean expired() {
+            return System.currentTimeMillis() - this.time.get()
+                // @checkstyle MagicNumber (1 line)
+                > 60 * 60 * 1000;
+        }
     }
 
 }

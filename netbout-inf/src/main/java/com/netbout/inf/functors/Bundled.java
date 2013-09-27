@@ -116,6 +116,19 @@ final class Bundled implements Functor {
     }
 
     /**
+     * Create marker from bout.
+     * @param bout The bout
+     * @return Marker
+     */
+    private static String marker(final Bout bout) {
+        final Set<URN> names = new TreeSet<URN>();
+        for (Participant dude : bout.participants()) {
+            names.add(dude.name());
+        }
+        return Logger.format("%[list]s", names);
+    }
+
+    /**
      * The term to instantiate here.
      */
     private static final class BundledTerm implements Term {
@@ -203,19 +216,6 @@ final class Bundled implements Functor {
                 .and(this.terms.values())
                 .build();
         }
-    }
-
-    /**
-     * Create marker from bout.
-     * @param bout The bout
-     * @return Marker
-     */
-    private static String marker(final Bout bout) {
-        final Set<URN> names = new TreeSet<URN>();
-        for (Participant dude : bout.participants()) {
-            names.add(dude.name());
-        }
-        return Logger.format("%[list]s", names);
     }
 
 }

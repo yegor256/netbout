@@ -77,6 +77,7 @@ public final class InfinityTest {
             InfinityMocker.waitFor(inf);
             for (XmlDocument query : scene.nodes("query")) {
                 final String nums = query.xpath("messages/text()").get(0);
+                // @checkstyle NestedForDepth (1 line)
                 for (int retry = 0; retry < 1; ++retry) {
                     MatcherAssert.assertThat(
                         InfinityTest.toList(

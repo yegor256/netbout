@@ -125,7 +125,7 @@ public final class ParticipantFarm {
             .sql("DELETE FROM participant WHERE bout = ? AND identity = ?")
             .set(bout)
             .set(identity)
-            .update();
+            .execute();
     }
 
     /**
@@ -162,7 +162,7 @@ public final class ParticipantFarm {
             .set(status)
             .set(bout)
             .set(identity)
-            .update();
+            .execute();
     }
 
     /**
@@ -199,7 +199,7 @@ public final class ParticipantFarm {
             .set(status)
             .set(bout)
             .set(identity)
-            .update();
+            .execute();
     }
 
     private static final class BooleanHandler

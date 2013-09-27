@@ -37,6 +37,15 @@ package com.netbout.inf;
 public interface Lattice {
 
     /**
+     * Correct this cursor and return a new one, which is more likely to
+     * match one of the numbers in the lattice.
+     * @param cursor The cursor to start from
+     * @param shifter The shifter to use
+     * @return The new cursor
+     */
+    Cursor correct(Cursor cursor, Lattice.Shifter shifter);
+
+    /**
      * Shifter of a cursor.
      */
     interface Shifter {
@@ -48,14 +57,5 @@ public interface Lattice {
          */
         Cursor shift(Cursor cursor, long msg);
     }
-
-    /**
-     * Correct this cursor and return a new one, which is more likely to
-     * match one of the numbers in the lattice.
-     * @param cursor The cursor to start from
-     * @param shifter The shifter to use
-     * @return The new cursor
-     */
-    Cursor correct(Cursor cursor, Lattice.Shifter shifter);
 
 }

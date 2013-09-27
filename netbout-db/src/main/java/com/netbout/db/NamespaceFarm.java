@@ -69,7 +69,7 @@ public final class NamespaceFarm {
                 .set(owner)
                 .set(template)
                 .set(name)
-                .update();
+                .execute();
         } else {
             new JdbcSession(Database.source())
                 // @checkstyle LineLength (1 line)

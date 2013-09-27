@@ -79,74 +79,6 @@ final class Catalog {
     }
 
     /**
-     * One item.
-     *
-     * <p>The class is immutable and thread-safe;
-     */
-    public static final class Item implements Comparable<Catalog.Item> {
-        /**
-         * Size of Item in bytes (INT + LONG).
-         * @checkstyle MagicNumber (2 lines)
-         */
-        public static final int SIZE = 4 + 8;
-        /**
-         * Value.
-         */
-        private final transient String val;
-        /**
-         * Position.
-         */
-        private final transient long pos;
-        /**
-         * Public ctor.
-         * @param value The value
-         * @param postn The position
-         */
-        public Item(final String value, final long postn) {
-            this.val = value;
-            this.pos = postn;
-        }
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public int hashCode() {
-            return this.val.hashCode();
-        }
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public boolean equals(final Object item) {
-            return this == item || (item instanceof Item
-                && item.hashCode() == this.hashCode());
-        }
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public int compareTo(final Item item) {
-            return new Integer(this.hashCode()).compareTo(
-                new Integer(item.hashCode())
-            );
-        }
-        /**
-         * Get value.
-         * @return The value
-         */
-        public String value() {
-            return this.val;
-        }
-        /**
-         * Get position.
-         * @return The pos
-         */
-        public long position() {
-            return this.pos;
-        }
-    }
-
-    /**
      * Get position of numbers in data file, for the given value,
      * or less than ZERO if such a value is not found in catalog.
      *
@@ -285,6 +217,74 @@ final class Catalog {
                 throw new UnsupportedOperationException("#remove");
             }
         };
+    }
+
+    /**
+     * One item.
+     *
+     * <p>The class is immutable and thread-safe;
+     */
+    public static final class Item implements Comparable<Catalog.Item> {
+        /**
+         * Size of Item in bytes (INT + LONG).
+         * @checkstyle MagicNumber (2 lines)
+         */
+        public static final int SIZE = 4 + 8;
+        /**
+         * Value.
+         */
+        private final transient String val;
+        /**
+         * Position.
+         */
+        private final transient long pos;
+        /**
+         * Public ctor.
+         * @param value The value
+         * @param postn The position
+         */
+        public Item(final String value, final long postn) {
+            this.val = value;
+            this.pos = postn;
+        }
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public int hashCode() {
+            return this.val.hashCode();
+        }
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public boolean equals(final Object item) {
+            return this == item || (item instanceof Item
+                && item.hashCode() == this.hashCode());
+        }
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public int compareTo(final Item item) {
+            return new Integer(this.hashCode()).compareTo(
+                new Integer(item.hashCode())
+            );
+        }
+        /**
+         * Get value.
+         * @return The value
+         */
+        public String value() {
+            return this.val;
+        }
+        /**
+         * Get position.
+         * @return The pos
+         */
+        public long position() {
+            return this.pos;
+        }
     }
 
 }

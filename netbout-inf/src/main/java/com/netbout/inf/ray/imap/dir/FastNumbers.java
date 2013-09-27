@@ -329,52 +329,6 @@ public class FastNumbers implements Numbers {
     }
 
     /**
-     * Iterator of all numbers, for internal needs.
-     *
-     * <p>The class is NOT thread-safe.
-     */
-    private final class FastIterator implements Iterator<Long> {
-        /**
-         * Current position.
-         */
-        private transient int pos;
-        /**
-         * Recently seen number.
-         */
-        private transient long recent = Long.MAX_VALUE;
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public boolean hasNext() {
-            return this.pos < FastNumbers.this.size - 1;
-        }
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public Long next() {
-            if (!this.hasNext()) {
-                throw new NoSuchElementException();
-            }
-            long next = FastNumbers.this.nums[this.pos];
-            ++this.pos;
-            if (next == Long.MAX_VALUE) {
-                next = this.recent - 1;
-            }
-            this.recent = next;
-            return next;
-        }
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public void remove() {
-            throw new UnsupportedOperationException();
-        }
-    }
-
-    /**
      * Find position of NUM or any number that is the biggest
      * one of all numbers that are smaller than NUM.
      *
@@ -509,6 +463,52 @@ public class FastNumbers implements Numbers {
             Logger.warn(this, "#sanity(): pos=#%d, size=%d", pos, this.size);
         }
         return valid;
+    }
+
+    /**
+     * Iterator of all numbers, for internal needs.
+     *
+     * <p>The class is NOT thread-safe.
+     */
+    private final class FastIterator implements Iterator<Long> {
+        /**
+         * Current position.
+         */
+        private transient int pos;
+        /**
+         * Recently seen number.
+         */
+        private transient long recent = Long.MAX_VALUE;
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public boolean hasNext() {
+            return this.pos < FastNumbers.this.size - 1;
+        }
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public Long next() {
+            if (!this.hasNext()) {
+                throw new NoSuchElementException();
+            }
+            long next = FastNumbers.this.nums[this.pos];
+            ++this.pos;
+            if (next == Long.MAX_VALUE) {
+                next = this.recent - 1;
+            }
+            this.recent = next;
+            return next;
+        }
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public void remove() {
+            throw new UnsupportedOperationException();
+        }
     }
 
 }

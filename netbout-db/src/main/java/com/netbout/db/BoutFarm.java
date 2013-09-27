@@ -30,6 +30,7 @@ import com.jcabi.jdbc.JdbcSession;
 import com.jcabi.jdbc.NotEmptyHandler;
 import com.jcabi.jdbc.SingleHandler;
 import com.jcabi.jdbc.Utc;
+import com.jcabi.jdbc.VoidHandler;
 import com.netbout.spi.cpa.Farm;
 import com.netbout.spi.cpa.Operation;
 import java.sql.SQLException;
@@ -147,7 +148,7 @@ public final class BoutFarm {
             .sql("UPDATE bout SET title = ? WHERE number = ?")
             .set(title)
             .set(number)
-            .update();
+            .update(new VoidHandler());
     }
 
 }

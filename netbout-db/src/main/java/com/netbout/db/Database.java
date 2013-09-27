@@ -36,6 +36,7 @@ import javax.sql.DataSource;
 import javax.validation.constraints.NotNull;
 import liquibase.Liquibase;
 import liquibase.database.jvm.JdbcConnection;
+import liquibase.exception.LiquibaseException;
 import liquibase.resource.ClassLoaderResourceAccessor;
 
 /**
@@ -94,7 +95,7 @@ public final class Database {
                     new ClassLoaderResourceAccessor(),
                     new JdbcConnection(conn)
                 ).update("netbout");
-            } catch (liquibase.exception.LiquibaseException ex) {
+            } catch (LiquibaseException ex) {
                 throw new IllegalStateException(ex);
             } finally {
                 conn.close();

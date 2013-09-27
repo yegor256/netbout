@@ -51,24 +51,6 @@ public interface URNResolver {
     String statistics();
 
     /**
-     * If exception is already registered.
-     */
-    class DuplicateNamespaceException extends Exception {
-        /**
-         * Serialization marker.
-         */
-        private static final long serialVersionUID = 0x7529FA789EEEE479L;
-        /**
-         * Public ctor.
-         * @param owner Already registered owner
-         * @param nsp The namespace
-         */
-        public DuplicateNamespaceException(final URN owner, final String nsp) {
-            super(String.format("'%s' registered by '%s'", nsp, owner));
-        }
-    }
-
-    /**
      * Register namespace.
      * @param owner Who is registering
      * @param namespace The namespace to register
@@ -93,5 +75,23 @@ public interface URNResolver {
      * @checkstyle RedundantThrows (2 lines)
      */
     URL authority(URN urn) throws Identity.UnreachableURNException;
+
+    /**
+     * If exception is already registered.
+     */
+    class DuplicateNamespaceException extends Exception {
+        /**
+         * Serialization marker.
+         */
+        private static final long serialVersionUID = 0x7529FA789EEEE479L;
+        /**
+         * Public ctor.
+         * @param owner Already registered owner
+         * @param nsp The namespace
+         */
+        public DuplicateNamespaceException(final URN owner, final String nsp) {
+            super(String.format("'%s' registered by '%s'", nsp, owner));
+        }
+    }
 
 }
