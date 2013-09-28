@@ -381,7 +381,7 @@
         <dependency>
             <groupId>com.netbout.helpers</groupId>
             <artifactId>helper-shary</artifactId>
-            <version>0.7.22</version>
+            <version>0.1</version>
             <scope>runtime</scope>
         </dependency>
     </dependencies>
