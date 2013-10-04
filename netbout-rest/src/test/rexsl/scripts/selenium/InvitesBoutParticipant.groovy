@@ -32,6 +32,7 @@ package com.netbout.rest.rexsl.scripts.selenium
 import com.jcabi.urn.URN
 import com.netbout.client.RestSession
 import com.netbout.client.RestUriBuilder
+import java.util.concurrent.TimeUnit
 import org.hamcrest.MatcherAssert
 import org.hamcrest.Matchers
 import org.openqa.selenium.By
@@ -51,9 +52,10 @@ driver.navigate().to(RestUriBuilder.from(bout).build().toURL())
 def ibox = driver.findElementByCssSelector('form#invite input[name="mask"]')
 ibox.sendKeys(anna.name().toString())
 ibox.submit()
+TimeUnit.SECONDS.sleep(5)
 
 def invitees = driver.findElementById('invite-list')
 MatcherAssert.assertThat(
-    invitees.findElements(By.cssSelector('li')).size(),
-    Matchers.greaterThan(0)
+    invitees.findElements(By.cssSelector('li')),
+    Matchers.not(Matchers.empty())
 )
