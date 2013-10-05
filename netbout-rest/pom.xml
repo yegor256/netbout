@@ -596,6 +596,8 @@
                             <artifactId>rexsl-maven-plugin</artifactId>
                             <configuration>
                                 <systemPropertyVariables>
+                                    <javax.net.ssl.keyStore>${javax.net.ssl.keyStore}</javax.net.ssl.keyStore>
+                                    <javax.net.ssl.keyStorePassword>${javax.net.ssl.keyStorePassword}</javax.net.ssl.keyStorePassword>
                                     <catapult.home>http://localhost:${maven.tomcat.port}${catapult.context}</catapult.home>
                                     <catapult.https.port>${maven.tomcat.httpsPort}</catapult.https.port>
                                 </systemPropertyVariables>
