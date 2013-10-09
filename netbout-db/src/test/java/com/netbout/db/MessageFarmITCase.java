@@ -83,8 +83,11 @@ public final class MessageFarmITCase {
         final Date date = new Date();
         this.farm.changedMessageDate(message, date);
         MatcherAssert.assertThat(
-            this.farm.getMessageDate(message),
-            Matchers.equalTo(date)
+            this.farm.getMessageDate(message).getTime(),
+            Matchers.describedAs(
+                String.format("%s as %d", date, date.getTime()),
+                Matchers.equalTo(date.getTime())
+            )
         );
     }
 
