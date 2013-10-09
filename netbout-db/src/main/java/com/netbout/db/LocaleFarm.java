@@ -34,6 +34,9 @@ import com.jcabi.urn.URN;
 import com.netbout.spi.cpa.Farm;
 import com.netbout.spi.cpa.Operation;
 import java.sql.SQLException;
+import java.util.Calendar;
+import java.util.Date;
+import org.apache.commons.lang3.time.DateUtils;
 
 /**
  * Manipulations with locales.
@@ -59,14 +62,14 @@ public final class LocaleFarm {
                 .sql("INSERT INTO locale (identity, locale, date) VALUES (?, ?, ?)")
                 .set(identity)
                 .set(locale)
-                .set(new Utc())
+                .set(new Utc(DateUtils.round(new Date(), Calendar.SECOND)))
                 .insert(new VoidHandler());
         } else {
             new JdbcSession(Database.source())
                 // @checkstyle LineLength (1 line)
                 .sql("UPDATE locale SET locale = ?, date = ? WHERE identity = ?")
                 .set(locale)
-                .set(new Utc())
+                .set(new Utc(DateUtils.round(new Date(), Calendar.SECOND)))
                 .set(identity)
                 .execute();
         }

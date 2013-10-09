@@ -43,6 +43,7 @@ import java.util.GregorianCalendar;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
+import org.apache.commons.lang3.time.DateUtils;
 
 /**
  * Manipulations on the level of identity.
@@ -140,7 +141,7 @@ public final class IdentityFarm {
                 .sql("INSERT INTO identity (name, photo, date) VALUES (?, ?, ?)")
                 .set(name)
                 .set("http://img.netbout.com/unknown.png")
-                .set(new Utc())
+                .set(new Utc(DateUtils.round(new Date(), Calendar.SECOND)))
                 .insert(new VoidHandler());
         }
     }
@@ -159,7 +160,7 @@ public final class IdentityFarm {
             // @checkstyle LineLength (1 line)
             .sql("INSERT INTO alias (name, identity, date) SELECT l.name, ?, ? FROM alias l LEFT JOIN alias r ON l.name = r.name AND r.identity = ? WHERE l.identity = ? AND r.identity IS NULL GROUP BY l.name")
             .set(main)
-            .set(new Utc())
+            .set(new Utc(DateUtils.round(new Date(), Calendar.SECOND)))
             .set(main)
             .set(child)
             .execute()
@@ -173,7 +174,7 @@ public final class IdentityFarm {
             // @checkstyle LineLength (1 line)
             .sql("INSERT INTO participant (bout, identity, confirmed, date) SELECT l.bout, ?, l.confirmed, ? FROM participant l LEFT JOIN participant r ON l.bout = r.bout AND r.identity = ? WHERE l.identity = ? AND r.identity IS NULL GROUP BY l.bout")
             .set(main)
-            .set(new Utc())
+            .set(new Utc(DateUtils.round(new Date(), Calendar.SECOND)))
             .set(main)
             .set(child)
             .execute()
@@ -183,7 +184,7 @@ public final class IdentityFarm {
             // @checkstyle LineLength (1 line)
             .sql("INSERT INTO seen (message, identity, date) SELECT l.message, ?, ? FROM seen l LEFT JOIN seen r ON l.message = r.message AND r.identity = ? WHERE l.identity = ? AND r.identity IS NULL GROUP BY l.message")
             .set(main)
-            .set(new Utc())
+            .set(new Utc(DateUtils.round(new Date(), Calendar.SECOND)))
             .set(main)
             .set(child)
             .execute()

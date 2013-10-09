@@ -34,7 +34,9 @@ import com.jcabi.jdbc.VoidHandler;
 import com.netbout.spi.cpa.Farm;
 import com.netbout.spi.cpa.Operation;
 import java.sql.SQLException;
+import java.util.Calendar;
 import java.util.Date;
+import org.apache.commons.lang3.time.DateUtils;
 
 /**
  * Bout manipulations.
@@ -54,7 +56,7 @@ public final class BoutFarm {
     public Long getNextBoutNumber() throws SQLException {
         return new JdbcSession(Database.source())
             .sql("INSERT INTO bout (date) VALUES (?)")
-            .set(new Utc())
+            .set(new Utc(DateUtils.round(new Date(), Calendar.SECOND)))
             .insert(new SingleHandler<Long>(Long.class));
     }
 
