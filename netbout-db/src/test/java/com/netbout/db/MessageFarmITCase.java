@@ -28,6 +28,7 @@ package com.netbout.db;
 
 import com.jcabi.urn.URN;
 import java.util.Date;
+import java.util.concurrent.TimeUnit;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;
@@ -83,10 +84,11 @@ public final class MessageFarmITCase {
         final Date date = new Date();
         this.farm.changedMessageDate(message, date);
         MatcherAssert.assertThat(
-            this.farm.getMessageDate(message).getTime(),
+            this.farm.getMessageDate(message).getTime()
+                / TimeUnit.SECONDS.toMillis(1),
             Matchers.describedAs(
                 String.format("%s as %d", date, date.getTime()),
-                Matchers.equalTo(date.getTime())
+                Matchers.equalTo(date.getTime() / TimeUnit.SECONDS.toMillis(1))
             )
         );
     }
