@@ -47,7 +47,6 @@ import org.apache.commons.lang3.time.DateUtils;
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
- * @checkstyle ClassDataAbstractionCoupling (500 lines)
  */
 @Farm
 public final class NamespaceFarm {

@@ -27,9 +27,7 @@
 package com.netbout.db;
 
 import com.jcabi.urn.URN;
-import java.util.Calendar;
 import java.util.Date;
-import org.apache.commons.lang3.time.DateUtils;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;
@@ -82,7 +80,7 @@ public final class MessageFarmITCase {
     public void setsAndReadsMessageDate() throws Exception {
         final Long message =
             new MessageRowMocker(new BoutRowMocker().mock()).mock();
-        final Date date = DateUtils.truncate(new Date(), Calendar.SECOND);
+        final Date date = new Date();
         this.farm.changedMessageDate(message, date);
         MatcherAssert.assertThat(
             this.farm.getMessageDate(message).getTime(),
