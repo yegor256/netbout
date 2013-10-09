@@ -126,6 +126,10 @@
             <id>repo.netbout.com</id>
             <url>s3://repo.netbout.com/snapshot</url>
         </repository>
+        <repository>
+            <id>jcabi-mysql-maven-plugin</id>
+            <url>http://repo.jcabi.com/releases</url>
+        </repository>
     </repositories>
     <dependencyManagement>
         <dependencies>
