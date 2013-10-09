@@ -82,7 +82,7 @@ public final class ConcurrentDirectoryTest {
     @Test
     public void savesAndRestoresNumbers() throws Exception {
         final Directory dir = new ConcurrentDirectory(
-            new File(this.temp.newFolder("foo"), "/some/directory")
+            new File(this.temp.newFolder(), "/some/directory")
         );
         final Numbers numbers = new FastNumbers();
         final long msg = MsgMocker.number();
@@ -103,9 +103,7 @@ public final class ConcurrentDirectoryTest {
      */
     @Test
     public void savesAndRestoresReverse() throws Exception {
-        final Directory dir = new ConcurrentDirectory(
-            this.temp.newFolder("foo-2")
-        );
+        final Directory dir = new ConcurrentDirectory(this.temp.newFolder());
         final Reverse reverse = new SimpleReverse();
         final long msg = MsgMocker.number();
         final String value = "some value 2, \u0433";
@@ -124,9 +122,7 @@ public final class ConcurrentDirectoryTest {
      */
     @Test
     public void convertsItselfToString() throws Exception {
-        final Directory dir = new ConcurrentDirectory(
-            this.temp.newFolder("bar-88")
-        );
+        final Directory dir = new ConcurrentDirectory(this.temp.newFolder());
         MatcherAssert.assertThat(
             dir,
             Matchers.hasToString(Matchers.notNullValue())
@@ -140,7 +136,7 @@ public final class ConcurrentDirectoryTest {
      */
     @Test
     public void resolvesMultiThreadedCallsToStash() throws Exception {
-        final Directory dir = new ConcurrentDirectory(this.temp.newFolder("x"));
+        final Directory dir = new ConcurrentDirectory(this.temp.newFolder());
         final Numbers numbers = new FastNumbers();
         final long msg = MsgMocker.number();
         numbers.add(msg);
@@ -214,7 +210,7 @@ public final class ConcurrentDirectoryTest {
      */
     @Test
     public void resolvesMultiThreadedCallsToSave() throws Exception {
-        final Directory dir = new ConcurrentDirectory(this.temp.newFolder("z"));
+        final Directory dir = new ConcurrentDirectory(this.temp.newFolder());
         final ScheduledExecutorService routine =
             Executors.newSingleThreadScheduledExecutor(new VerboseThreads());
         final AtomicInteger errors = new AtomicInteger();

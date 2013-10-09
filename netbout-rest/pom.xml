@@ -475,6 +475,11 @@
                     <artifactId>build-helper-maven-plugin</artifactId>
                     <version>1.7</version>
                 </plugin>
+                <plugin>
+                    <groupId>com.jcabi</groupId>
+                    <artifactId>jcabi-mysql-maven-plugin</artifactId>
+                    <version>0.2</version>
+                </plugin>
             </plugins>
         </pluginManagement>
         <plugins>
@@ -520,6 +525,40 @@
                     </execution>
                 </executions>
             </plugin>
+            <plugin>
+                <groupId>com.jcabi</groupId>
+                <artifactId>jcabi-mysql-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>classify</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>unpack</goal>
+                        </goals>
+                        <configuration>
+                            <artifactItems>
+                                <artifactItem>
+                                    <groupId>com.jcabi</groupId>
+                                    <artifactId>mysql-dist</artifactId>
+                                    <version>5.6.14</version>
+                                    <classifier>${mysql.classifier}</classifier>
+                                    <type>zip</type>
+                                    <overWrite>false</overWrite>
+                                    <outputDirectory>${project.build.directory}/mysql-dist</outputDirectory>
+                                </artifactItem>
+                            </artifactItems>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
     </build>
     <profiles>
@@ -533,38 +572,18 @@
             <build>
                 <plugins>
                     <plugin>
-                        <artifactId>maven-antrun-plugin</artifactId>
+                        <groupId>com.jcabi</groupId>
+                        <artifactId>jcabi-mysql-maven-plugin</artifactId>
                         <executions>
                             <execution>
-                                <id>start-mysql</id>
-                                <phase>pre-integration-test</phase>
+                                <id>mysql-test</id>
                                 <goals>
-                                    <goal>run</goal>
+                                    <goal>start</goal>
+                                    <goal>stop</goal>
                                 </goals>
                                 <configuration>
-                                    <target description="start MySQL for ReXSL tests">
-                                        <ant antfile="${basedir}/src/test/ant/mysql.xml" target="start">
-                                            <property name="database" value="netbout"/>
-                                            <property name="port" value="${mysql.port.rest}"/>
-                                            <property name="directory" value="${project.build.directory}"/>
-                                        </ant>
-                                    </target>
-                                </configuration>
-                            </execution>
-                            <execution>
-                                <id>stop-mysql</id>
-                                <phase>post-integration-test</phase>
-                                <goals>
-                                    <goal>run</goal>
-                                </goals>
-                                <configuration>
-                                    <target description="stop MySQL for ReXSL tests">
-                                        <ant antfile="${basedir}/src/test/ant/mysql.xml" target="stop">
-                                            <property name="database" value="netbout"/>
-                                            <property name="port" value="${mysql.port.rest}"/>
-                                            <property name="directory" value="${project.build.directory}"/>
-                                        </ant>
-                                    </target>
+                                    <port>${mysql.port.rest}</port>
+                                    <data>${project.build.directory}/mysql-data</data>
                                 </configuration>
                             </execution>
                         </executions>
@@ -627,40 +646,25 @@
                         </executions>
                     </plugin>
                     <plugin>
-                        <artifactId>maven-antrun-plugin</artifactId>
+                        <groupId>com.jcabi</groupId>
+                        <artifactId>jcabi-mysql-maven-plugin</artifactId>
                         <executions>
                             <execution>
-                                <id>start-catapult-mysql</id>
-                                <phase>pre-integration-test</phase>
+                                <id>mysql-catapult-test</id>
                                 <goals>
-                                    <goal>run</goal>
+                                    <goal>start</goal>
+                                    <goal>stop</goal>
                                 </goals>
                                 <configuration>
-                                    <target description="start MySQL for ReXSL/catapult tests">
-                                        <ant antfile="${basedir}/src/test/ant/mysql.xml" target="start">
-                                            <property name="database" value="catapult"/>
-                                            <property name="port" value="${mysql.port.catapult}"/>
-                                            <property name="directory" value="${project.build.directory}"/>
-                                        </ant>
-                                    </target>
+                                    <port>${mysql.port.catapult}</port>
+                                    <data>${project.build.directory}/mysql-data-catapult</data>
                                 </configuration>
                             </execution>
-                            <execution>
-                                <id>stop-catapult-mysql</id>
-                                <phase>post-integration-test</phase>
-                                <goals>
-                                    <goal>run</goal>
-                                </goals>
-                                <configuration>
-                                    <target description="stop MySQL for ReXSL/catapult tests">
-                                        <ant antfile="${basedir}/src/test/ant/mysql.xml" target="stop">
-                                            <property name="database" value="catapult"/>
-                                            <property name="port" value="${mysql.port.catapult}"/>
-                                            <property name="directory" value="${project.build.directory}"/>
-                                        </ant>
-                                    </target>
-                                </configuration>
-                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <artifactId>maven-antrun-plugin</artifactId>
+                        <executions>
                             <execution>
                                 <id>jmeter</id>
                                 <phase>integration-test</phase>
@@ -736,7 +740,7 @@
                                             <Netbout-FbId>123456</Netbout-FbId>
                                             <Netbout-FbSecret>secret</Netbout-FbSecret>
                                             <Netbout-JdbcDriver>com.mysql.jdbc.Driver</Netbout-JdbcDriver>
-                                            <Netbout-JdbcUrl>jdbc:mysql://localhost:${mysql.port.catapult}/catapult?useUnicode=true&amp;characterEncoding=utf-8&amp;useGmtMillisForDatetimes=true&amp;useJDBCCompliantTimezoneShift=true&amp;useLegacyDatetimeCode=false&amp;useTimezone=true&amp;serverTimezone=UTC</Netbout-JdbcUrl>
+                                            <Netbout-JdbcUrl>jdbc:mysql://localhost:${mysql.port.catapult}/root?useUnicode=true&amp;characterEncoding=utf-8&amp;useGmtMillisForDatetimes=true&amp;useJDBCCompliantTimezoneShift=true&amp;useLegacyDatetimeCode=false&amp;useTimezone=true&amp;serverTimezone=UTC</Netbout-JdbcUrl>
                                             <Netbout-JdbcUser>root</Netbout-JdbcUser>
                                             <Netbout-JdbcPassword>root</Netbout-JdbcPassword>
                                             <Netbout-SmtpHost>smtp.netbout.com</Netbout-SmtpHost>

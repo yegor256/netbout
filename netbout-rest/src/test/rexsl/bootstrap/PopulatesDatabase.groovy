@@ -60,7 +60,7 @@ calendar.add(Calendar.YEAR, -5)
 def rand = new SecureRandom()
 def total = 150 + rand.nextInt(50)
 (5200..(5200 - total)).each {
-    calendar.add(Calendar.MINUTE, -rand.nextInt(120))
+    calendar.add(Calendar.MINUTE, -rand.nextInt(100))
     def date = String.format('%tF', calendar.time)
     queries.add(
         'INSERT IGNORE INTO bout (number, title, date) VALUES'
