@@ -40,7 +40,7 @@ import org.junit.Test;
  * @version $Id$
  * @checkstyle ClassDataAbstractionCoupling (500 lines)
  */
-public final class IdentityFarmTest {
+public final class IdentityFarmITCase {
 
     /**
      * Farm to work with.

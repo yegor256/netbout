@@ -27,45 +27,44 @@
 package com.netbout.db;
 
 import com.jcabi.urn.URN;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Locale;
+import org.hamcrest.MatcherAssert;
+import org.hamcrest.Matchers;
 import org.junit.Test;
 
 /**
- * Test case of {@link BillFarm}.
+ * Test case of {@link LocaleFarm}.
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class BillFarmTest {
+public final class LocaleFarmITCase {
 
     /**
      * Farm to work with.
      */
-    private final transient BillFarm farm = new BillFarm();
+    private final transient LocaleFarm farm = new LocaleFarm();
 
     /**
-     * BillFarm can save bills to DB.
+     * LocaleFarm can set locale for identity.
      * @throws Exception If there is some problem inside
      */
     @Test
-    public void savesBills() throws Exception {
-        final URN name = new IdentityRowMocker().mock();
-        final Long bout = new BoutRowMocker().mock();
-        final List<String> lines = new ArrayList<String>();
-        lines.add(
-            String.format(
-                "2012-01-29T21:07:41.405-08:00 some-mnemo %s 657 null",
-                name
-            )
+    public void setLocaleAndRetrievesItBack() throws Exception {
+        final URN identity = new IdentityRowMocker().mock();
+        MatcherAssert.assertThat(
+            this.farm.getLocaleOfIdentity(identity),
+            Matchers.nullValue()
         );
-        lines.add(
-            String.format(
-                "2012-01-24T21:08:41.405-05:00 txt %s 543 #%d",
-                name,
-                bout
-            )
+        this.farm.setIdentityLocale(identity, Locale.CHINA.toString());
+        MatcherAssert.assertThat(
+            this.farm.getLocaleOfIdentity(identity),
+            Matchers.equalTo(Locale.CHINA.toString())
         );
-        this.farm.saveBills(lines);
+        this.farm.setIdentityLocale(identity, Locale.FRANCE.toString());
+        MatcherAssert.assertThat(
+            this.farm.getLocaleOfIdentity(identity),
+            Matchers.equalTo(Locale.FRANCE.toString())
+        );
     }
 
 }

@@ -24,31 +24,48 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.dh;
+package com.netbout.db;
 
-import com.rexsl.test.JaxbConverter;
-import com.rexsl.test.XhtmlMatchers;
-import org.hamcrest.MatcherAssert;
+import com.jcabi.urn.URN;
+import java.util.ArrayList;
+import java.util.List;
 import org.junit.Test;
 
 /**
- * Test case for {@link Stage}.
+ * Test case of {@link BillFarm}.
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class StageTest {
+public final class BillFarmITCase {
 
     /**
-     * Stage can be converted to XML.
+     * Farm to work with.
+     */
+    private final transient BillFarm farm = new BillFarm();
+
+    /**
+     * BillFarm can save bills to DB.
      * @throws Exception If there is some problem inside
      */
     @Test
-    public void convertsToXml() throws Exception {
-        final Stage obj = new Stage("");
-        MatcherAssert.assertThat(
-            JaxbConverter.the(obj),
-            XhtmlMatchers.hasXPath("/data[text != '']")
+    public void savesBills() throws Exception {
+        final URN name = new IdentityRowMocker().mock();
+        final Long bout = new BoutRowMocker().mock();
+        final List<String> lines = new ArrayList<String>();
+        lines.add(
+            String.format(
+                "2012-01-29T21:07:41.405-08:00 some-mnemo %s 657 null",
+                name
+            )
         );
+        lines.add(
+            String.format(
+                "2012-01-24T21:08:41.405-05:00 txt %s 543 #%d",
+                name,
+                bout
+            )
+        );
+        this.farm.saveBills(lines);
     }
 
 }

@@ -27,40 +27,35 @@
 package com.netbout.db;
 
 import com.jcabi.urn.URN;
+import java.util.List;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;
 
 /**
- * Test case of {@link SeenFarm}.
+ * Test case of {@link AliasFarm}.
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class SeenFarmTest {
+public final class AliasFarmITCase {
 
     /**
      * Farm to work with.
      */
-    private final transient SeenFarm farm = new SeenFarm();
+    private final transient AliasFarm farm = new AliasFarm();
 
     /**
-     * Find bouts of some identity.
+     * AliasFarm can add alias to identity and find it then.
      * @throws Exception If there is some problem inside
      */
     @Test
-    public void testMessageSeenFlag() throws Exception {
-        final Long bout = new BoutRowMocker().mock();
-        final URN identity = new ParticipantRowMocker(bout).mock();
-        final Long msg = new MessageRowMocker(bout).mock();
-        MatcherAssert.assertThat(
-            this.farm.wasMessageSeen(msg, identity),
-            Matchers.equalTo(false)
-        );
-        this.farm.messageWasSeen(msg, identity);
-        MatcherAssert.assertThat(
-            this.farm.wasMessageSeen(msg, identity),
-            Matchers.equalTo(true)
-        );
+    public void addsAnAliasAndRetrievesItBack() throws Exception {
+        final String alias = "\u0443\u0440\u0430";
+        final URN identity = new IdentityRowMocker()
+            .withAlias(alias)
+            .mock();
+        final List<String> aliases = this.farm.getAliasesOfIdentity(identity);
+        MatcherAssert.assertThat(aliases, Matchers.hasItem(alias));
     }
 
 }

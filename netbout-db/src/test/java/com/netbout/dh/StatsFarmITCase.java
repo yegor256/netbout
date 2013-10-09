@@ -24,46 +24,61 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.db;
+package com.netbout.dh;
 
-import com.jcabi.urn.URN;
-import java.util.Locale;
+import com.netbout.db.BoutRowMocker;
+import com.netbout.db.IdentityRowMocker;
+import com.netbout.spi.Identity;
+import com.netbout.spi.IdentityMocker;
+import com.rexsl.test.XhtmlMatchers;
 import org.hamcrest.MatcherAssert;
-import org.hamcrest.Matchers;
 import org.junit.Test;
 
 /**
- * Test case of {@link LocaleFarm}.
+ * Test case of {@link StatsFarm}.
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class LocaleFarmTest {
+public final class StatsFarmITCase {
 
     /**
      * Farm to work with.
      */
-    private final transient LocaleFarm farm = new LocaleFarm();
+    private final transient StatsFarm farm = new StatsFarm();
 
     /**
-     * LocaleFarm can set locale for identity.
+     * Find aliases of some identity.
      * @throws Exception If there is some problem inside
      */
     @Test
-    public void setLocaleAndRetrievesItBack() throws Exception {
-        final URN identity = new IdentityRowMocker().mock();
-        MatcherAssert.assertThat(
-            this.farm.getLocaleOfIdentity(identity),
-            Matchers.nullValue()
+    public void testSummaryRendering() throws Exception {
+        final Long bout = new BoutRowMocker().mock();
+        final Identity identity =
+            new IdentityMocker().namedAs(new IdentityRowMocker().mock()).mock();
+        this.farm.init(identity);
+        final String xml = this.farm.renderStageXml(
+            bout, identity.name(), identity.name(), ""
         );
-        this.farm.setIdentityLocale(identity, Locale.CHINA.toString());
         MatcherAssert.assertThat(
-            this.farm.getLocaleOfIdentity(identity),
-            Matchers.equalTo(Locale.CHINA.toString())
+            xml,
+            XhtmlMatchers.hasXPath("/data/text")
         );
-        this.farm.setIdentityLocale(identity, Locale.FRANCE.toString());
+    }
+
+    /**
+     * Render XSL.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void testRenderingOfXslStylesheet() throws Exception {
+        final Long bout = new BoutRowMocker().mock();
+        final Identity identity =
+            new IdentityMocker().namedAs(new IdentityRowMocker().mock()).mock();
+        this.farm.init(identity);
+        final String xsl = this.farm.renderStageXsl(bout, identity.name());
         MatcherAssert.assertThat(
-            this.farm.getLocaleOfIdentity(identity),
-            Matchers.equalTo(Locale.FRANCE.toString())
+            xsl,
+            XhtmlMatchers.hasXPath("/xsl:stylesheet")
         );
     }
 

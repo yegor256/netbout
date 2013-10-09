@@ -37,7 +37,7 @@ import org.junit.Test;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class NamespaceFarmTest {
+public final class NamespaceFarmITCase {
 
     /**
      * Farm to work with.

@@ -37,7 +37,7 @@ import org.junit.Test;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  */
-public final class MessageFarmTest {
+public final class MessageFarmITCase {
 
     /**
      * Farm to work with.

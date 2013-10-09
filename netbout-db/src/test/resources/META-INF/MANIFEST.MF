@@ -1,4 +1,4 @@
-Netbout-JdbcDriver: org.h2.Driver
-Netbout-JdbcUrl: jdbc:h2:mem:db
-Netbout-JdbcUser: mem
-Netbout-JdbcPassword: mem
+Netbout-JdbcDriver: com.mysql.jdbc.Driver
+Netbout-JdbcUrl: jdbc:mysql://localhost:${mysql.port}/root?useUnicode=true&characterEncoding=utf-8&useGmtMillisForDatetimes=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&useTimezone=true&serverTimezone=UTC
+Netbout-JdbcUser: root
+Netbout-JdbcPassword: root
