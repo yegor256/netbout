@@ -35,12 +35,9 @@ import com.netbout.spi.cpa.Farm;
 import com.netbout.spi.cpa.Operation;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
-import org.apache.commons.lang3.time.DateUtils;
 
 /**
  * Messages manipulations.
@@ -63,7 +60,7 @@ public final class MessageFarm {
         return new JdbcSession(Database.source())
             .sql("INSERT INTO message (bout, date) VALUES (?, ?)")
             .set(bout)
-            .set(new Utc(DateUtils.round(new Date(), Calendar.SECOND)))
+            .set(new Utc())
             .insert(new SingleHandler<Long>(Long.class));
     }
 
@@ -168,13 +165,6 @@ public final class MessageFarm {
     @Operation("changed-message-date")
     public void changedMessageDate(final Long number, final Date date)
         throws SQLException {
-        if (date.getTime() % TimeUnit.SECONDS.toMillis(1) != 0) {
-            throw new IllegalArgumentException(
-                String.format(
-                    "date %s (%d) has milliseconds", date, date.getTime()
-                )
-            );
-        }
         new JdbcSession(Database.source())
             .sql("UPDATE message SET date = ? WHERE number = ?")
             .set(new Utc(date))

@@ -28,9 +28,7 @@ package com.netbout.db;
 
 import com.jcabi.urn.URN;
 import java.sql.SQLException;
-import java.util.Calendar;
 import java.util.Date;
-import org.apache.commons.lang3.time.DateUtils;
 
 /**
  * Mocker of {@code MESSAGE} row in a database.
@@ -47,12 +45,12 @@ public final class MessageRowMocker {
     /**
      * Date of bout.
      */
-    private transient Date date;
+    private transient Date date = new Date();
 
     /**
      * Text of message.
      */
-    private transient String text;
+    private transient String text = "hi there!";
 
     /**
      * Author of bout.
@@ -67,8 +65,6 @@ public final class MessageRowMocker {
     public MessageRowMocker(final Long number) throws SQLException {
         this.author = new IdentityRowMocker().mock();
         this.bout = number;
-        this.withDate(new Date());
-        this.withText("hi there!");
     }
 
     /**
@@ -87,7 +83,7 @@ public final class MessageRowMocker {
      * @return THis object
      */
     public MessageRowMocker withDate(final Date when) {
-        this.date = DateUtils.truncate(when, Calendar.SECOND);
+        this.date = when;
         return this;
     }
 

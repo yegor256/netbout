@@ -34,9 +34,6 @@ import com.jcabi.urn.URN;
 import com.netbout.spi.cpa.Farm;
 import com.netbout.spi.cpa.Operation;
 import java.sql.SQLException;
-import java.util.Calendar;
-import java.util.Date;
-import org.apache.commons.lang3.time.DateUtils;
 
 /**
  * Seen statuses.
@@ -60,7 +57,7 @@ public final class SeenFarm {
             .sql("INSERT INTO seen (message, identity, date) VALUES (?, ?, ?)")
             .set(msg)
             .set(identity)
-            .set(new Utc(DateUtils.round(new Date(), Calendar.SECOND)))
+            .set(new Utc())
             .insert(new VoidHandler());
     }
 

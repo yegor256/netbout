@@ -34,11 +34,8 @@ import com.netbout.spi.cpa.Farm;
 import com.netbout.spi.cpa.Operation;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
-import org.apache.commons.lang3.time.DateUtils;
 
 /**
  * Manipulations with aliases.
@@ -62,7 +59,7 @@ public final class AliasFarm {
             .sql("INSERT INTO alias (identity, name, date) VALUES (?, ?, ?)")
             .set(identity)
             .set(alias)
-            .set(new Utc(DateUtils.round(new Date(), Calendar.SECOND)))
+            .set(new Utc())
             .insert(new VoidHandler());
     }
 
