@@ -52,7 +52,7 @@ public final class BoutFarmITCase {
         final Long first = this.farm.getNextBoutNumber();
         MatcherAssert.assertThat(first, Matchers.greaterThan(0L));
         final Long second = this.farm.getNextBoutNumber();
-        MatcherAssert.assertThat(second, Matchers.equalTo(first + 1));
+        MatcherAssert.assertThat(second, Matchers.greaterThan(first));
     }
 
     /**

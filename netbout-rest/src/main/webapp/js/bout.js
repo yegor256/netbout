@@ -25,13 +25,15 @@
  * SUCH DAMAGE.
  */
 
+/*globals $:false */
+
 String.prototype.escaped = function() {
     return this.replace(/&/g, "&amp;")
         .replace(/</g, "&lt;")
         .replace(/>/g, "&gt;")
         .replace(/'/g, "&apos;")
         .replace(/"/g, "&quot;");
-}
+};
 
 /**
  * Pre-configure this page.
@@ -42,10 +44,10 @@ var setup = function() {
         $('h1 span.title')
             .blur(
                 function() {
-                    var $input = $("#rename input[name='title']");
-                    var previous = $input.val();
-                    var entered = $(this).text();
-                    if (entered != previous) {
+                    var $input = $("#rename input[name='title']"),
+                        previous = $input.val(),
+                        entered = $(this).text();
+                    if (entered !== previous) {
                         $input.val(entered);
                         $("#rename").submit();
                     }
@@ -53,7 +55,7 @@ var setup = function() {
             )
             .keydown(
                 function() {
-                    if (arguments[0].keyCode == 13) {
+                    if (arguments[0].keyCode === 13) {
                         $(this).blur();
                     }
                 }
@@ -94,11 +96,11 @@ var setup = function() {
                     if (html.length > 0) {
                         $ul.show();
                     }
-                },
+                }
             });
         }
     );
-}
+};
 
 $(document).ready(setup);
 

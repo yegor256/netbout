@@ -18,4 +18,4 @@ Netbout-PopHost: pop.gmail.com
 Netbout-PopPort: 995
 Netbout-SecurityKey: -test-security-key
 Netbout-SuperSecret: UY7lgj8POjfh7J
-Netbout-InfMount: ./target/temp-InfMount
+Netbout-InfMount: ${basedir}/target/temp-InfMount

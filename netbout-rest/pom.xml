@@ -679,7 +679,7 @@
                                             <entry key="port" value="${maven.tomcat.port}"/>
                                         </propertyfile>
                                         <apply executable="jmeter" failonerror="true" dir="${basedir}">
-                                            <arg value="-Dlog4j.configuration=file:./src/test/jmeter/log4j.properties"/>
+                                            <arg value="-Dlog4j.configuration=file:${basedir}/src/test/jmeter/log4j.properties"/>
                                             <arg value="--nongui"/>
                                             <arg value="--jmeterlogfile"/>
                                             <arg value="${project.build.directory}/jmeter.log"/>
@@ -688,7 +688,7 @@
                                             <arg value="--loglevel"/>
                                             <arg value="jmeter=INFO"/>
                                             <arg value="--testfile"/>
-                                            <fileset dir="./src/test/jmeter">
+                                            <fileset dir="${basedir}/src/test/jmeter">
                                                 <patternset>
                                                     <include name="**/*.jmx"/>
                                                 </patternset>

@@ -25,6 +25,8 @@
  * SUCH DAMAGE.
  */
 
+/*globals $:false */
+
 $(document).ready(
     function() {
         $('div.bar')
