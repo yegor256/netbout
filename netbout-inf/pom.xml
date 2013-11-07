@@ -103,6 +103,11 @@
             <artifactId>commons-lang3</artifactId>
         </dependency>
         <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
             <groupId>com.jcabi</groupId>
             <artifactId>jcabi-log</artifactId>
         </dependency>
@@ -152,6 +157,16 @@
             <artifactId>loremipsum</artifactId>
         </dependency>
     </dependencies>
+    <build>
+        <plugins>
+            <plugin>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <parallel>none</parallel>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
     <profiles>
         <profile>
             <id>inf-profiling</id>
