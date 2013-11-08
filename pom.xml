@@ -161,7 +161,6 @@
             <plugin>
                 <groupId>com.jcabi</groupId>
                 <artifactId>jcabi-ssl-maven-plugin</artifactId>
-                <version>0.8</version>
                 <executions>
                     <execution>
                         <goals>

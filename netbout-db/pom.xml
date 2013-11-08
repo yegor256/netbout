@@ -133,6 +133,9 @@
                         </goals>
                     </execution>
                 </executions>
+                <configuration>
+                    <parallel>none</parallel>
+                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
