@@ -48,7 +48,6 @@
         <dependency>
             <groupId>com.jcabi</groupId>
             <artifactId>jcabi-jdbc</artifactId>
-            <version>0.9</version>
             <scope>runtime</scope>
         </dependency>
         <dependency>

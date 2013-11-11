@@ -129,6 +129,11 @@
     <dependencyManagement>
         <dependencies>
             <dependency>
+                <groupId>com.jcabi</groupId>
+                <artifactId>jcabi-jdbc</artifactId>
+                <version>0.10.2</version>
+            </dependency>
+            <dependency>
                 <!-- Service programming interface of the netbout -->
                 <groupId>com.netbout.spi</groupId>
                 <artifactId>netbout-spi</artifactId>
