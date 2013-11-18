@@ -55,6 +55,18 @@
                     qbaka.key="00dfa61ef8b0f3f6fe1e97790d64ef16"})(window,document);
                     qbaka.options={autoStacktrace:1,trackEvents:1};
                 ]]></script>
+                <!-- Pingdom RUM -->
+                <script type="text/javascript"><![CDATA[
+                    var _prum = [['id', '5289f7aaabe53def32000000'],
+                    ['mark', 'firstbyte', (new Date()).getTime()]];
+                    (function() {
+                    var s = document.getElementsByTagName('script')[0]
+                    , p = document.createElement('script');
+                    p.async = 'async';
+                    p.src = '//rum-static.pingdom.net/prum.min.js';
+                    s.parentNode.insertBefore(p, s);
+                    })();
+                ]]></script>
                 <script type="text/javascript">
                     <xsl:attribute name="src">
                         <xsl:call-template name="cdn">
