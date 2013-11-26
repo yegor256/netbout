@@ -1,4 +1,4 @@
 Netbout-JdbcDriver: com.mysql.jdbc.Driver
-Netbout-JdbcUrl: jdbc:mysql://localhost:${mysql.port}/root?useUnicode=true&characterEncoding=utf-8&useGmtMillisForDatetimes=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&useTimezone=true&serverTimezone=UTC
+Netbout-JdbcUrl: jdbc:mysql://localhost:${mysql.random.port}/root?useUnicode=true&characterEncoding=utf-8&useGmtMillisForDatetimes=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&useTimezone=true&serverTimezone=UTC
 Netbout-JdbcUser: root
 Netbout-JdbcPassword: root
