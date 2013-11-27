@@ -861,7 +861,7 @@
             </build>
         </profile>
         <profile>
-            <id>netbout-live</id>
+            <id>deploy-live</id>
             <build>
                 <plugins>
                     <plugin>
