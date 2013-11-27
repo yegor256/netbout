@@ -41,7 +41,11 @@ import javax.ws.rs.core.UriBuilder
 
 Manifests.append(new File(rexsl.basedir, 'src/test/resources/META-INF/MANIFEST.MF'))
 
-def home = new URI(System.getProperty('catapult.home'))
+def catapult = System.getProperty('catapult.home')
+if (catapult == null) {
+    return
+}
+def home = new URI(catapult)
 
 def starter = new RestSession(home, '9OLKJ8JHGytfh6JGJF0LKF').authenticate(new URN(), '')
 def text = 'netbout=' + UriBuilder.fromUri(home).path('/nb').build()
