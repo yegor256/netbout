@@ -27,6 +27,17 @@
 
 /* JIGSAW IGNORE: there is some problem in w3c server now */
 
+@font-face {
+	font-family: 'icomoon';
+	src:url('http://img.netbout.com/fonts/icomoon.eot?-cfp6bb');
+	src:url('http://img.netbout.com/fonts/icomoon.eot?#iefix-cfp6bb') format('embedded-opentype'),
+		url('http://img.netbout.com/fonts/icomoon.woff?-cfp6bb') format('woff'),
+		url('http://img.netbout.com/fonts/icomoon.ttf?-cfp6bb') format('truetype'),
+		url('http://img.netbout.com/fonts/icomoon.svg?-cfp6bb#icomoon') format('svg');
+	font-weight: normal;
+	font-style: normal;
+}
+
 /* all elements */
 a,
 img,
@@ -141,4 +152,3 @@ label {
     background-color: #e4e5e3;
     color: gray;
 }
-

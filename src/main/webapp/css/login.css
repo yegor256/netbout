@@ -55,14 +55,23 @@ body {
         font-size: 1.4em;
     }
 
-#logo {
-    width: 11.3em;
-    height: 3.7em;
+.logo {
+    width: 15em;
     margin-bottom: 1.5em;
 }
 
-#facebook {
-    width: 17.3em;
-    height: 2.8em;
+.buttons {
+    margin-top: 3em;
 }
 
+    .buttons a {
+        text-decoration: none;
+        margin-left: .2em;
+        margin-right: .2em;
+        color: gray;
+        font-size: 4em;
+        font-family: 'icomoon';
+    }
+    .buttons a:hover {
+        color: #211922;
+    }

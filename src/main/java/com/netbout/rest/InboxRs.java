@@ -51,6 +51,7 @@ public final class InboxRs extends BaseRs {
     @GET
     @Path("/")
     public Response inbox() {
+        this.identity();
         return new PageBuilder()
             .stylesheet("/xsl/inbox.xsl")
             .build(NbPage.class)

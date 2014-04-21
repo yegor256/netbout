@@ -77,63 +77,20 @@
                                 <xsl:attribute name="title">
                                     <xsl:text>back home</xsl:text>
                                 </xsl:attribute>
-                                <img id="logo" alt="back home">
+                                <img class="logo" alt="back home">
                                     <xsl:attribute name="src">
-                                        <xsl:text>http://img.netbout.com/logo-beta.png?</xsl:text>
+                                        <xsl:text>http://img.netbout.com/logo/logo-en.png?</xsl:text>
                                         <xsl:value-of select="/page/version/revision"/>
                                     </xsl:attribute>
                                 </img>
                             </a>
                         </div>
-                        <xsl:if test="/page[links/link[@rel='about'] and not(identity)]">
-                            <p>
-                                <a>
-                                    <xsl:attribute name="href">
-                                        <xsl:value-of select="/page/links/link[@rel='about']/@href"/>
-                                    </xsl:attribute>
-                                    <xsl:attribute name="title">
-                                        <xsl:text>What is Netbout?</xsl:text>
-                                    </xsl:attribute>
-                                    <xsl:text>What is Netbout and how it works?</xsl:text>
-                                </a>
-                            </p>
-                        </xsl:if>
-                        <xsl:if test="/page/identity">
-                            <p>
-                                <xsl:choose>
-                                    <xsl:when test="/page/links/link[@rel='re-login']">
-                                        <xsl:text>We know you as "</xsl:text>
-                                        <b><xsl:value-of select="/page/identity/alias"/></b>
-                                        <xsl:text>", please authenticate yourself or </xsl:text>
-                                        <a>
-                                            <xsl:attribute name="href">
-                                                <xsl:value-of select="/page/links/link[@rel='home']/@href"/>
-                                            </xsl:attribute>
-                                            <xsl:text>go back to inbox</xsl:text>
-                                        </a>
-                                        <xsl:text>.</xsl:text>
-                                    </xsl:when>
-                                    <xsl:otherwise>
-                                        <xsl:text>You're logged in already as "</xsl:text>
-                                        <b><xsl:value-of select="/page/identity/alias"/></b>
-                                        <xsl:text>", </xsl:text>
-                                        <a>
-                                            <xsl:attribute name="href">
-                                                <xsl:value-of select="/page/links/link[@rel='home']/@href"/>
-                                            </xsl:attribute>
-                                            <xsl:text>go back home</xsl:text>
-                                        </a>
-                                        <xsl:text> or click one those links if you're somebody else.</xsl:text>
-                                    </xsl:otherwise>
-                                </xsl:choose>
-                            </p>
-                        </xsl:if>
                         <xsl:if test="/page/message != ''">
                             <div class="error-message">
                                 <xsl:value-of select="/page/message"/>
                             </div>
                         </xsl:if>
-                        <div>
+                        <div class="buttons">
                             <a>
                                 <xsl:attribute name="href">
                                     <xsl:value-of select="/page/links/link[@rel='facebook']/@href" />
@@ -141,12 +98,25 @@
                                 <xsl:attribute name="title">
                                     <xsl:text>click to authenticate yourself via Facebook</xsl:text>
                                 </xsl:attribute>
-                                <img id="facebook" alt="login through facebook">
-                                    <xsl:attribute name="src">
-                                        <xsl:text>http://img.netbout.com/facebook.png?</xsl:text>
-                                        <xsl:value-of select="/page/version/revision"/>
-                                    </xsl:attribute>
-                                </img>
+                                <xsl:text>f</xsl:text>
+                            </a>
+                            <a>
+                                <xsl:attribute name="href">
+                                    <xsl:value-of select="/page/links/link[@rel='google']/@href" />
+                                </xsl:attribute>
+                                <xsl:attribute name="title">
+                                    <xsl:text>click to authenticate yourself via Google+</xsl:text>
+                                </xsl:attribute>
+                                <xsl:text>p</xsl:text>
+                            </a>
+                            <a>
+                                <xsl:attribute name="href">
+                                    <xsl:value-of select="/page/links/link[@rel='github']/@href" />
+                                </xsl:attribute>
+                                <xsl:attribute name="title">
+                                    <xsl:text>click to authenticate yourself via Github</xsl:text>
+                                </xsl:attribute>
+                                <xsl:text>g</xsl:text>
                             </a>
                         </div>
                     </div>
