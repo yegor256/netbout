@@ -29,7 +29,8 @@
  */
 package com.netbout.rest.rexsl.scripts
 
-import com.rexsl.test.RestTester
+import com.jcabi.http.request.JdkRequest
+import com.jcabi.http.response.RestResponse
 import javax.ws.rs.core.HttpHeaders
 import javax.ws.rs.core.MediaType
 import javax.ws.rs.core.UriBuilder
@@ -44,8 +45,10 @@ import javax.ws.rs.core.UriBuilder
     '/xsl/login.xsl',
     '/xml/lang/en.xml',
 ].each { path ->
-    RestTester.start(UriBuilder.fromUri(rexsl.home).path(path))
+    new JdkRequest(rexsl.home)
+        .uri().path(path).back()
         .header(HttpHeaders.ACCEPT, MediaType.TEXT_PLAIN)
-        .get('reading static resource')
+        .fetch()
+        .as(RestResponse)
         .assertStatus(HttpURLConnection.HTTP_OK)
 }

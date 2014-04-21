@@ -101,10 +101,7 @@
         <init-param>
             <param-name>com.rexsl.PACKAGES</param-name>
             <param-value>
-                com.netbout.notifiers.email,
-                com.netbout.notifiers.facebook,
                 com.netbout.rest,
-                com.netbout.rest.auth,
                 com.netbout.servlets
             </param-value>
         </init-param>

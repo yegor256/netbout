@@ -293,10 +293,10 @@
                             <Netbout-Date>${maven.build.timestamp}</Netbout-Date>
                             <Netbout-FbId>${fb.id}</Netbout-FbId>
                             <Netbout-FbSecret>${fb.secret}</Netbout-FbSecret>
-                            <Netbout-SmtpHost>${smtp.host}</Netbout-SmtpHost>
-                            <Netbout-SmtpPort>${smtp.port}</Netbout-SmtpPort>
-                            <Netbout-SmtpUser>${smtp.user}</Netbout-SmtpUser>
-                            <Netbout-SmtpPassword>${smtp.password}</Netbout-SmtpPassword>
+                            <Netbout-GoogleId>${google.id}</Netbout-GoogleId>
+                            <Netbout-GoogleSecret>${google.secret}</Netbout-GoogleSecret>
+                            <Netbout-GithubId>${github.id}</Netbout-GithubId>
+                            <Netbout-GithubSecret>${github.secret}</Netbout-GithubSecret>
                             <Netbout-SecurityKey>${security.key}</Netbout-SecurityKey>
                         </manifestEntries>
                     </archive>
@@ -315,7 +315,12 @@
                     <dependency>
                         <groupId>com.jcabi</groupId>
                         <artifactId>jcabi-aspects</artifactId>
-                        <version>0.8</version>
+                        <version>0.14</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>com.jcabi</groupId>
+                        <artifactId>jcabi-immutable</artifactId>
+                        <version>1.1</version>
                     </dependency>
                     <dependency>
                         <groupId>xml-apis</groupId>

@@ -7,8 +7,4 @@ Netbout-GoogleId: 555
 Netbout-GoogleSecret: secret
 Netbout-GithubId: 555
 Netbout-GithubSecret: secret
-Netbout-SmtpHost: relay.jangosmtp.net
-Netbout-SmtpPort: 2525
-Netbout-SmtpUser: yegor256
-Netbout-SmtpPassword: 201448CX
 Netbout-SecurityKey: -test-security-key

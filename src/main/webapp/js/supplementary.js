@@ -11,11 +11,11 @@ qbaka.options={autoStacktrace:1,trackEvents:1};
 var _prum = [['id', '5289f7aaabe53def32000000'],
 ['mark', 'firstbyte', (new Date()).getTime()]];
 (function() {
-var s = document.getElementsByTagName('script')[0]
-, p = document.createElement('script');
-p.async = 'async';
-p.src = '//rum-static.pingdom.net/prum.min.js';
-s.parentNode.insertBefore(p, s);
+  var s = document.getElementsByTagName('script')[0],
+    p = document.createElement('script');
+  p.async = 'async';
+  p.src = '//rum-static.pingdom.net/prum.min.js';
+  s.parentNode.insertBefore(p, s);
 })();
 
 // Google Analytics
@@ -23,7 +23,7 @@ var _gaq = _gaq || [];
 _gaq.push(['_setAccount', 'UA-1963507-24']);
 _gaq.push(['_trackPageview']);
 (function() {
-    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+  ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+  var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
 })();

@@ -29,7 +29,9 @@
  */
 package com.netbout.rest.rexsl.scripts
 
-import com.rexsl.test.RestTester
+import com.jcabi.http.request.JdkRequest
+import com.jcabi.http.response.RestResponse
+import com.jcabi.http.response.XmlResponse
 import javax.ws.rs.core.HttpHeaders
 import javax.ws.rs.core.MediaType
 import javax.ws.rs.core.UriBuilder
@@ -42,10 +44,13 @@ import javax.ws.rs.core.UriBuilder
     '/some-strange-name',
     '/-some-thing-else'
 ].each { path ->
-    RestTester.start(UriBuilder.fromUri(rexsl.home).path(path))
+    new JdkRequest(rexsl.home)
+        .uri().path(path).back()
         .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_XML)
-        .get('reading non-existing page')
+        .fetch()
+        .as(RestResponse.class)
         .assertStatus(HttpURLConnection.HTTP_NOT_FOUND)
+        .as(XmlResponse.class)
         .assertXPath("/page/links/link[@rel='self']")
         .assertXPath("/page/error[code='404']")
 }
