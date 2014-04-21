@@ -41,7 +41,7 @@ import java.util.Set;
  * Resolved identity, instantiated in {@link NbRs#authenticate(URN,String)},
  * {@link EmailRs#resolve(URN)}, and {@link FacebookRs#authenticate(String)}.
  *
- * @author Yegor Bugayenko (yegor@netbout.com)
+ * @author Yegor Bugayenko (yegor@tpc2.com)
  * @version $Id$
  */
 @SuppressWarnings("PMD.TooManyMethods")

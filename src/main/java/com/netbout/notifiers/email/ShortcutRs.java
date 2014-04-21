@@ -37,7 +37,7 @@ import javax.ws.rs.core.Response;
 /**
  * Shortcut for emails.
  *
- * @author Yegor Bugayenko (yegor@netbout.com)
+ * @author Yegor Bugayenko (yegor@tpc2.com)
  * @version $Id$
  */
 @Path("/e")

@@ -48,7 +48,7 @@ import javax.ws.rs.core.UriBuilder;
 /**
  * Email farm.
  *
- * @author Yegor Bugayenko (yegor@netbout.com)
+ * @author Yegor Bugayenko (yegor@tpc2.com)
  * @version $Id$
  * @checkstyle ClassDataAbstractionCoupling (500 lines)
  */

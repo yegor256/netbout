@@ -48,7 +48,7 @@ import javax.mail.internet.InternetAddress;
  * more commercial and reliable. For example: fusemail.com, emailhosting.com,
  * fastmail.com (google for "email hosting services").
  *
- * @author Yegor Bugayenko (yegor@netbout.com)
+ * @author Yegor Bugayenko (yegor@tpc2.com)
  * @version $Id$
  */
 @Farm

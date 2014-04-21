@@ -38,7 +38,7 @@ import java.util.Set;
 /**
  * Coordinates of a stage.
  *
- * @author Yegor Bugayenko (yegor@netbout.com)
+ * @author Yegor Bugayenko (yegor@tpc2.com)
  * @version $Id$
  */
 public final class StageCoordinates {

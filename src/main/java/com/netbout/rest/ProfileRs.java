@@ -49,7 +49,7 @@ import org.apache.commons.lang3.StringUtils;
 /**
  * User profile.
  *
- * @author Yegor Bugayenko (yegor@netbout.com)
+ * @author Yegor Bugayenko (yegor@tpc2.com)
  * @version $Id$
  */
 @Path("/pf")

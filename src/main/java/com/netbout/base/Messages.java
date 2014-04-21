@@ -29,7 +29,7 @@ package com.netbout.base;
 /**
  * Bout messages.
  *
- * @author Yegor Bugayenko (yegor@netbout.com)
+ * @author Yegor Bugayenko (yegor@tpc2.com)
  * @version $Id$
  * @since 2.0
  */

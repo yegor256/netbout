@@ -37,7 +37,7 @@ import org.apache.commons.lang3.StringEscapeUtils;
 /**
  * Stage-related requests.
  *
- * @author Yegor Bugayenko (yegor@netbout.com)
+ * @author Yegor Bugayenko (yegor@tpc2.com)
  * @version $Id$
  */
 @Path("/{num : [0-9]+}/xsl/{stage : [\\w:\\.\\-]+}")

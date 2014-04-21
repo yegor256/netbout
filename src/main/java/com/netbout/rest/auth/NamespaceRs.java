@@ -42,7 +42,7 @@ import org.apache.commons.io.IOUtils;
 /**
  * Front-end of all namespaces in WOQUO.com domain.
  *
- * @author Yegor Bugayenko (yegor@netbout.com)
+ * @author Yegor Bugayenko (yegor@tpc2.com)
  * @version $Id$
  */
 @Path("/ns/{name : [a-zA-Z/]+}.xsd")

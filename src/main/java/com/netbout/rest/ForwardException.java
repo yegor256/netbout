@@ -38,7 +38,7 @@ import javax.ws.rs.core.UriBuilder;
  * Thrown when necessary to forward user to another page and show a message
  * over there.
  *
- * @author Yegor Bugayenko (yegor@netbout.com)
+ * @author Yegor Bugayenko (yegor@tpc2.com)
  * @version $Id$
  */
 public class ForwardException extends WebApplicationException {

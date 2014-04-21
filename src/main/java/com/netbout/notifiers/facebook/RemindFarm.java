@@ -33,7 +33,7 @@ import com.restfb.DefaultFacebookClient;
 /**
  * Reminder farm.
  *
- * @author Yegor Bugayenko (yegor@netbout.com)
+ * @author Yegor Bugayenko (yegor@tpc2.com)
  * @version $Id$
  * @see <a href="http://developers.facebook.com/docs/reference/base/user/#apprequests">Graph API</a>
  * @see <a href="http://stackoverflow.com/questions/6072839">related discussion in SO</a>

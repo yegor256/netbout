@@ -28,7 +28,7 @@
 /**
  * Notifier through FB apprequests.
  *
- * @author Yegor Bugayenko (yegor@netbout.com)
+ * @author Yegor Bugayenko (yegor@tpc2.com)
  * @version $Id$
  * @see <a link="http://developers.facebook.com/docs/reference/base/user/#apprequests">Graph API</a>
  */

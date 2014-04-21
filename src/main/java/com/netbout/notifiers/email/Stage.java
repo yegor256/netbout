@@ -35,7 +35,7 @@ import javax.xml.bind.annotation.XmlType;
 /**
  * The stage to render with JAXB.
  *
- * @author Yegor Bugayenko (yegor@netbout.com)
+ * @author Yegor Bugayenko (yegor@tpc2.com)
  * @version $Id$
  */
 @XmlType(name = "data")

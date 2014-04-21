@@ -37,7 +37,7 @@ import javax.xml.bind.annotation.XmlRootElement;
  *
  * <p>The class has to be public because it's instantiated by JAXB.
  *
- * @author Yegor Bugayenko (yegor@netbout.com)
+ * @author Yegor Bugayenko (yegor@tpc2.com)
  * @version $Id$
  */
 @XmlRootElement(name = "page")

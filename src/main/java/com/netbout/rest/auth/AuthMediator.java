@@ -41,7 +41,7 @@ import javax.ws.rs.core.UriBuilder;
 /**
  * Mediator between us and remote authenticator.
  *
- * @author Yegor Bugayenko (yegor@netbout.com)
+ * @author Yegor Bugayenko (yegor@tpc2.com)
  * @version $Id$
  */
 public final class AuthMediator {

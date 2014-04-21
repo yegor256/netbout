@@ -43,7 +43,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 /**
  * Participant convertable to XML through JAXB.
  *
- * @author Yegor Bugayenko (yegor@netbout.com)
+ * @author Yegor Bugayenko (yegor@tpc2.com)
  * @version $Id$
  */
 @XmlRootElement(name = "participant")

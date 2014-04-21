@@ -39,7 +39,7 @@ import org.apache.commons.lang3.StringUtils;
 /**
  * The email we use to identify senders and recipients.
  *
- * @author Yegor Bugayenko (yegor@netbout.com)
+ * @author Yegor Bugayenko (yegor@tpc2.com)
  * @version $Id$
  */
 final class AnchorEmail {

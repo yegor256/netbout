@@ -32,7 +32,7 @@ import java.io.InputStream;
 /**
  * Binary.
  *
- * @author Yegor Bugayenko (yegor@netbout.com)
+ * @author Yegor Bugayenko (yegor@tpc2.com)
  * @version $Id$
  * @since 2.0
  */
@@ -43,6 +43,18 @@ public interface Binary {
      * @return Name of it
      */
     String name();
+
+    /**
+     * Is it visible to everybody?
+     * @return TRUE if visible
+     */
+    boolean visible();
+
+    /**
+     * Make it public or private.
+     * @param vsbl TRUE if it should be public
+     */
+    void visible(boolean vsbl);
 
     /**
      * Read content.

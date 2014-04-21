@@ -49,7 +49,7 @@ import org.apache.commons.lang3.LocaleUtils;
  *
  * <p>The class has to be public because it's instantiated by JAXB.
  *
- * @author Yegor Bugayenko (yegor@netbout.com)
+ * @author Yegor Bugayenko (yegor@tpc2.com)
  * @version $Id$
  */
 @XmlType(name = "identity")

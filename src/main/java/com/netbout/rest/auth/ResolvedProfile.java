@@ -36,7 +36,7 @@ import java.util.Set;
 /**
  * Resolved profile, instantiated in {@link ResolvedIdentity}.
  *
- * @author Yegor Bugayenko (yegor@netbout.com)
+ * @author Yegor Bugayenko (yegor@tpc2.com)
  * @version $Id$
  */
 final class ResolvedProfile implements OwnProfile {

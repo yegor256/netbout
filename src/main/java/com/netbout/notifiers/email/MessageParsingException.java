@@ -29,7 +29,7 @@ package com.netbout.notifiers.email;
 /**
  * When message can't be parsed.
  *
- * @author Yegor Bugayenko (yegor@netbout.com)
+ * @author Yegor Bugayenko (yegor@tpc2.com)
  * @version $Id$
  */
 final class MessageParsingException extends Exception {

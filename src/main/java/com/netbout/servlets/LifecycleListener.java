@@ -39,7 +39,7 @@ import javax.servlet.ServletContextListener;
  * Application-wide listener that initializes the application on start
  * and shuts it down on stop.
  *
- * @author Yegor Bugayenko (yegor@netbout.com)
+ * @author Yegor Bugayenko (yegor@tpc2.com)
  * @version $Id$
  */
 public final class LifecycleListener implements ServletContextListener {

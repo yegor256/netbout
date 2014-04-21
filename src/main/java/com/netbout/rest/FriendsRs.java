@@ -48,7 +48,7 @@ import javax.ws.rs.core.UriBuilder;
 /**
  * Friends finding service (used by RESTful client or AJAX).
  *
- * @author Yegor Bugayenko (yegor@netbout.com)
+ * @author Yegor Bugayenko (yegor@tpc2.com)
  * @version $Id$
  */
 @Path("/f")

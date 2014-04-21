@@ -29,7 +29,7 @@ package com.netbout.rest.period;
 /**
  * Violation of period organization rules.
  *
- * @author Yegor Bugayenko (yegor@netbout.com)
+ * @author Yegor Bugayenko (yegor@tpc2.com)
  * @version $Id$
  */
 public final class PeriodViolationException extends Exception {

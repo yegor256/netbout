@@ -39,7 +39,7 @@ import org.w3c.dom.Element;
 
 /**
  * Test case for {@link LongProfile}.
- * @author Yegor Bugayenko (yegor@netbout.com)
+ * @author Yegor Bugayenko (yegor@tpc2.com)
  * @version $Id$
  */
 public final class LongProfileTest {

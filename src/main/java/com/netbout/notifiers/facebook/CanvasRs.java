@@ -38,7 +38,7 @@ import javax.ws.rs.core.Response;
  * Facebook canvas (the URL of it should be configured in facebook developers
  * panel).
  *
- * @author Yegor Bugayenko (yegor@netbout.com)
+ * @author Yegor Bugayenko (yegor@tpc2.com)
  * @version $Id$
  */
 @Path("/canvas")

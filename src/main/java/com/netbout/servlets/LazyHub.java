@@ -50,7 +50,7 @@ import javax.ws.rs.core.Response;
 /**
  * Lazy HUB.
  *
- * @author Yegor Bugayenko (yegor@netbout.com)
+ * @author Yegor Bugayenko (yegor@tpc2.com)
  * @version $Id$
  */
 final class LazyHub implements Hub {

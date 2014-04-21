@@ -54,7 +54,7 @@ import javax.ws.rs.core.UriBuilder;
 /**
  * RESTful front of one Bout.
  *
- * @author Yegor Bugayenko (yegor@netbout.com)
+ * @author Yegor Bugayenko (yegor@tpc2.com)
  * @version $Id$
  * @checkstyle ClassDataAbstractionCoupling (400 lines)
  */

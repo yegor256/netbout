@@ -43,7 +43,7 @@ import javax.ws.rs.core.Response;
 /**
  * Authorizer of "urn:email:..." identities.
  *
- * @author Yegor Bugayenko (yegor@netbout.com)
+ * @author Yegor Bugayenko (yegor@tpc2.com)
  * @version $Id$
  */
 @Path("/email")

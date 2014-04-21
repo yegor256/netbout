@@ -35,7 +35,7 @@ import com.restfb.types.FacebookType;
 /**
  * Manager of AppRequests.
  *
- * @author Yegor Bugayenko (yegor@netbout.com)
+ * @author Yegor Bugayenko (yegor@tpc2.com)
  * @version $Id$
  * @see <a href="http://developers.facebook.com/docs/reference/base/user/#apprequests">Graph API</a>
  * @see <a href="http://developers.facebook.com/docs/authentication/#applogin">Authentication of apps</a>

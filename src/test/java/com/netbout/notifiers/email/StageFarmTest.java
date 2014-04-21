@@ -34,7 +34,7 @@ import org.junit.Test;
 
 /**
  * Test case of {@link StageFarm}.
- * @author Yegor Bugayenko (yegor@netbout.com)
+ * @author Yegor Bugayenko (yegor@tpc2.com)
  * @version $Id$
  */
 public final class StageFarmTest {

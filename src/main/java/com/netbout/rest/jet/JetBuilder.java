@@ -32,7 +32,7 @@ import javax.ws.rs.core.Response;
 /**
  * Build JAX-RX response builder.
  *
- * @author Yegor Bugayenko (yegor@netbout.com)
+ * @author Yegor Bugayenko (yegor@tpc2.com)
  * @version $Id$
  */
 public final class JetBuilder {

@@ -36,7 +36,7 @@ import org.hamcrest.Matchers;
 /**
  * Reminder farm.
  *
- * @author Yegor Bugayenko (yegor@netbout.com)
+ * @author Yegor Bugayenko (yegor@tpc2.com)
  * @version $Id$
  * @see <a href="http://developers.facebook.com/docs/authentication/#applogin">Authentication of apps</a>
  * @see <a href="http://developers.facebook.com/docs/reference/base/permissions/">App permissions</a>

@@ -36,7 +36,7 @@ import javax.validation.constraints.NotNull;
 /**
  * Identity with encrypted {@link #toString()}.
  *
- * @author Yegor Bugayenko (yegor@netbout.com)
+ * @author Yegor Bugayenko (yegor@tpc2.com)
  * @version $Id$
  */
 public final class CryptedIdentity {

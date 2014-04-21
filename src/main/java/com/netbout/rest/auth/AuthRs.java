@@ -49,7 +49,7 @@ import javax.ws.rs.core.Response;
 /**
  * REST authentication page.
  *
- * @author Yegor Bugayenko (yegor@netbout.com)
+ * @author Yegor Bugayenko (yegor@tpc2.com)
  * @version $Id$
  */
 @Path("/auth")
