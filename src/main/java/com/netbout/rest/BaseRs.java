@@ -26,40 +26,38 @@
  */
 package com.netbout.rest;
 
-import com.jcabi.log.Logger;
+import com.google.common.collect.Iterables;
 import com.jcabi.manifests.Manifests;
-import com.netbout.client.RestSession;
-import com.netbout.hub.Hub;
-import com.netbout.rest.log.LogList;
-import com.netbout.spi.Identity;
-import com.netbout.spi.text.SecureString;
+import com.netbout.base.Base;
+import com.netbout.base.Identities;
+import com.netbout.base.Identity;
+import com.netbout.base.User;
 import com.rexsl.page.BasePage;
 import com.rexsl.page.BaseResource;
-import com.rexsl.page.CookieBuilder;
 import com.rexsl.page.Inset;
-import com.rexsl.page.JaxbBundle;
 import com.rexsl.page.Resource;
+import com.rexsl.page.auth.AuthInset;
+import com.rexsl.page.auth.Facebook;
+import com.rexsl.page.auth.Github;
+import com.rexsl.page.auth.Google;
+import com.rexsl.page.inset.FlashInset;
 import com.rexsl.page.inset.LinksInset;
 import com.rexsl.page.inset.VersionInset;
-import java.net.URI;
-import java.util.Locale;
-import javax.ws.rs.CookieParam;
-import javax.ws.rs.QueryParam;
-import javax.ws.rs.WebApplicationException;
+import java.util.logging.Level;
+import javax.ws.rs.core.HttpHeaders;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.UriBuilder;
+import org.apache.commons.lang3.Validate;
 
 /**
- * Abstract RESTful resource.
+ * Base RESTful resource.
  *
  * @author Yegor Bugayenko (yegor@tpc2.com)
  * @version $Id$
- * @checkstyle ClassDataAbstractionCoupling (500 lines)
  */
 @Resource.Forwarded
-@Inset.Default(LinksInset.class)
-@SuppressWarnings("PMD.TooManyMethods")
-public class BaseRs extends BaseResource implements NbResource {
+@Inset.Default({ LinksInset.class, FlashInset.class })
+public class BaseRs extends BaseResource {
 
     /**
      * Version of the system, to show in header.
@@ -73,60 +71,6 @@ public class BaseRs extends BaseResource implements NbResource {
     );
 
     /**
-     * List of log events.
-     */
-    private final transient LogList loglist = new LogList();
-
-    /**
-     * Cookie.
-     */
-    private transient String icookie;
-
-    /**
-     * Shall we add AUTH to URLs?
-     */
-    private transient boolean addAuthToURIs;
-
-    /**
-     * The message to show.
-     */
-    private transient String imessage = "";
-
-    /**
-     * Log inset.
-     * @return The inset
-     */
-    @Inset.Runtime
-    public final Inset logs() {
-        // @checkstyle AnonInnerLength (50 lines)
-        return new Inset() {
-            @Override
-            public void render(final BasePage<?, ?> page,
-                final Response.ResponseBuilder builder) {
-                page.append(
-                    new JaxbBundle("log").add(
-                        new JaxbBundle.Group<String>(
-                            BaseRs.this.loglist.events()) {
-                            @Override
-                            public JaxbBundle bundle(final String event) {
-                                return new JaxbBundle("event", event);
-                            }
-                        }
-                    )
-                );
-                builder.cookie(
-                    new CookieBuilder(BaseRs.this.base())
-                        .name(RestSession.LOG_COOKIE)
-                        .value(BaseRs.this.loglist.toString())
-                        .temporary()
-                        .build()
-                );
-                BaseRs.this.loglist.clear();
-            }
-        };
-    }
-
-    /**
      * Supplementary inset.
      * @return The inset
      */
@@ -137,7 +81,8 @@ public class BaseRs extends BaseResource implements NbResource {
             public void render(final BasePage<?, ?> page,
                 final Response.ResponseBuilder builder) {
                 builder.header("X-Netbout-Version", BaseRs.VERSION_LABEL);
-                page.append(new JaxbBundle("message", BaseRs.this.message()));
+                builder.type(MediaType.TEXT_XML);
+                builder.header(HttpHeaders.VARY, "Cookie");
             }
         };
     }
@@ -156,188 +101,58 @@ public class BaseRs extends BaseResource implements NbResource {
     }
 
     /**
-     * {@inheritDoc}
-     * @todo #226 I think that we should cache this object somewhere here
+     * Authentication inset.
+     * @return The inset
      */
-    @Override
-    public final Identity identity() {
-        Identity identity;
-        try {
-            identity = CryptedIdentity.parse(this.hub(), this.icookie);
-        } catch (CryptedIdentity.DecryptionException ex) {
-            Logger.debug(
-                this,
-                "Decryption failure from %s calling '%s': %[exception]s",
-                this.httpServletRequest().getRemoteAddr(),
-                this.httpServletRequest().getRequestURI(),
-                ex
-            );
-            throw new LoginRequiredException(this, ex);
-        }
-        return this.secured(identity);
+    @Inset.Runtime
+    public final AuthInset auth() {
+        // @checkstyle LineLength (4 lines)
+        return new AuthInset(this, Manifests.read("Netbout-SecurityKey"))
+            .with(new Facebook(this, Manifests.read("Netbout-FbId"), Manifests.read("Netbout-FbSecret")))
+            .with(new Google(this, Manifests.read("Netbout-GoogleId"), Manifests.read("Netbout-GoogleSecret")))
+            .with(new Github(this, Manifests.read("Netbout-GithubId"), Manifests.read("Netbout-GithubSecret")));
     }
 
     /**
-     * {@inheritDoc}
+     * Get current user.
+     * @return Name of the user
      */
-    @Override
-    public final String message() {
-        return this.imessage;
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @see http://java.net/jira/browse/JERSEY-1081
-     */
-    @Override
-    public final UriBuilder base() {
-        final UriBuilder builder = this.uriInfo()
-            .getBaseUriBuilder()
-            .clone();
-        final String qauth = this.qauth();
-        if (!qauth.isEmpty()) {
-            builder.queryParam(RestSession.AUTH_PARAM, qauth);
-        }
-        return UriBuilder.fromUri(builder.build());
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public final String qauth() {
-        String qauth;
-        if (this.icookie == null || this.icookie.isEmpty()
-            || !this.addAuthToURIs) {
-            qauth = "";
-        } else {
-            qauth = this.icookie;
-        }
-        return qauth;
-    }
-
-    /**
-     * Inject message, if it was sent.
-     * @param msg The message
-     */
-    @CookieParam("netbout-msg")
-    public final void setMessage(final String msg) {
-        if (msg != null) {
-            try {
-                this.imessage = SecureString.valueOf(msg).text();
-            } catch (com.netbout.spi.text.StringDecryptionException ex) {
-                this.imessage = ex.getMessage();
-            }
-            Logger.debug(
-                this,
-                "#setMessage('%s'): injected as '%s'",
-                msg,
-                this.imessage
+    protected final Identity identity() {
+        final com.rexsl.page.auth.Identity identity = this.auth().identity();
+        if (identity.equals(com.rexsl.page.auth.Identity.ANONYMOUS)) {
+            throw FlashInset.forward(
+                this.uriInfo().getBaseUriBuilder().clone()
+                    .path(LoginRs.class)
+                    .build(),
+                "please login first",
+                Level.SEVERE
             );
         }
-    }
-
-    /**
-     * Set list of log events from previous page rendering.
-     * Should be called by JAX-RS implemenation
-     * because of <tt>&#64;CookieParam</tt> annotation.
-     * @param text Packed text
-     */
-    @CookieParam(RestSession.LOG_COOKIE)
-    public final void setLog(final String text) {
-        if (text != null) {
-            this.loglist.append(text);
-            Logger.debug(
-                this,
-                "#setLog('%s'): injected",
-                text
+        final User user = this.base().user(identity.urn());
+        final Identities identities = user.identities();
+        if (Iterables.isEmpty(identities)) {
+            throw FlashInset.forward(
+                this.uriInfo().getBaseUriBuilder().clone()
+                    .path(LoginRs.class)
+                    .path("start")
+                    .build(),
+                "please create a unique identity",
+                Level.SEVERE
             );
         }
+        return Iterables.get(identities, 0);
     }
 
     /**
-     * Set cookie. Should be called by JAX-RS implemenation
-     * because of <tt>&#64;CookieParam</tt> annotation.
-     * @param cookie The cookie to set
+     * Get base.
+     * @return The base
      */
-    @CookieParam(RestSession.AUTH_COOKIE)
-    public final void setCookie(final String cookie) {
-        if (cookie != null) {
-            this.icookie = cookie;
-            Logger.debug(
-                this,
-                "#setCookie('%s'): injected",
-                cookie
-            );
-        }
-    }
-
-    /**
-     * Set auth code. Should be called by JAX-RS implemenation
-     * because of <tt>&#64;CookieParam</tt> annotation.
-     * @param auth The auth code to set
-     */
-    @QueryParam(RestSession.AUTH_PARAM)
-    public final void setAuth(final String auth) {
-        if (auth != null) {
-            this.setCookie(auth);
-            this.addAuthToURIs = true;
-        }
-    }
-
-    /**
-     * Forget current identity, if it exists.
-     */
-    protected final void logoff() {
-        this.setCookie("");
-    }
-
-    /**
-     * Get hub.
-     * @return The hub
-     */
-    protected final Hub hub() {
-        final Hub hub = Hub.class.cast(
-            this.servletContext().getAttribute(Hub.class.getName())
+    protected final Base base() {
+        final Base base = Base.class.cast(
+            this.servletContext().getAttribute(Base.class.getName())
         );
-        if (hub == null) {
-            throw new IllegalStateException("HUB is not initialized");
-        }
-        com.netbout.notifiers.email.RoutineFarm.setHub(hub);
-        return hub;
-    }
-
-    /**
-     * Confirms that the page is secure and throws forwarding exception if not.
-     * @param identity The identity to secure
-     * @return Secured one
-     */
-    private Identity secured(final Identity identity) {
-        final String https = "https";
-        final URI base = this.uriInfo().getBaseUri();
-        final boolean forward =
-            !https.equals(base.getScheme().toLowerCase(Locale.ENGLISH))
-            && !"localhost".equals(base.getHost());
-        if (forward) {
-            throw new WebApplicationException(
-                Response.status(Response.Status.TEMPORARY_REDIRECT).location(
-                    this.uriInfo().getRequestUriBuilder()
-                        .clone()
-                        .scheme(https)
-                        .build()
-                ).entity(
-                    String.format(
-                        "base URI '%s' doesn't have '%s' scheme for '%s'",
-                        base,
-                        https,
-                        identity
-                    )
-                )
-                .build()
-            );
-        }
-        return identity;
+        Validate.notNull(base, "base is not initialized");
+        return base;
     }
 
 }

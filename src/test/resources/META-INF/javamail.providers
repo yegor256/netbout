@@ -1,2 +1,0 @@
-protocol=smtps; type=transport; class=com.netbout.notifiers.email.TransportMocker;
-protocol=pop3s; type=store; class=com.netbout.notifiers.email.StoreMocker;

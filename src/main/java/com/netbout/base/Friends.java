@@ -46,4 +46,10 @@ public interface Friends extends Iterable<Friend> {
      */
     void invite(String friend);
 
+    /**
+     * Kick him off.
+     * @param friend Identity of the friend
+     */
+    void kick(String friend);
+
 }

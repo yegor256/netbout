@@ -26,13 +26,10 @@
  */
 package com.netbout.rest;
 
-import com.jcabi.manifests.Manifests;
-import com.rexsl.page.Link;
 import com.rexsl.page.PageBuilder;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.UriBuilder;
 
 /**
  * RESTful front of login functions.
@@ -46,53 +43,14 @@ public final class LoginRs extends BaseRs {
     /**
      * Login page.
      * @return The JAX-RS response
-     * @see <a href="http://developers.facebook.com/docs/authentication/">facebook.com</a>
      */
     @GET
     public Response login() {
-        final UriBuilder fburi = UriBuilder.fromUri(
-            UriBuilder
-                .fromUri("https://www.facebook.com/dialog/oauth")
-                .queryParam("client_id", "{id}")
-                .queryParam("redirect_uri", "{uri}")
-                .build(
-                    Manifests.read("Netbout-FbId"),
-                    this.base().path("/fb/back").scheme("https").build()
-                )
-        );
         return new PageBuilder()
             .stylesheet("/xsl/login.xsl")
             .build(NbPage.class)
             .init(this)
-            .link(new Link("facebook", fburi))
-            .preserved()
-            .build();
-    }
-
-    /**
-     * Login page for those who are already logged in, but want to upgrade
-     * identity (or just to change it).
-     * @return The JAX-RS response
-     */
-    @GET
-    @Path("/re")
-    public Response relogin() {
-        return this.login();
-    }
-
-    /**
-     * Logout page.
-     * @return The JAX-RS response
-     */
-    @Path("/out")
-    @GET
-    public Response logout() {
-        return new PageBuilder()
-            .build(NbPage.class)
-            .init(this)
-            .anonymous()
-            .status(Response.Status.SEE_OTHER)
-            .location(this.base().build())
+            .render()
             .build();
     }
 

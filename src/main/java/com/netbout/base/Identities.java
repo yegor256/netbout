@@ -24,25 +24,28 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.notifiers.email;
-
-import org.junit.Test;
+package com.netbout.base;
 
 /**
- * Test case for {@link RoutineFarm}.
+ * User of the system.
+ *
  * @author Yegor Bugayenko (yegor@tpc2.com)
  * @version $Id$
+ * @since 2.0
  */
-public final class RoutineFarmTest {
+public interface Identities extends Iterable<Identity> {
 
     /**
-     * RoutineFarm can grab emails from POP3 inbox.
-     * @throws Exception If there is some problem inside
+     * Is it possible to assign this identity?
+     * @param name Identity to assign
+     * @return TRUE if it's available
      */
-    @Test
-    public void getsEmailsFromInbox() throws Exception {
-        final RoutineFarm farm = new RoutineFarm();
-        farm.routine();
-    }
+    boolean available(String name);
+
+    /**
+     * Try to assign this new identity to this user.
+     * @param name Identity to assign
+     */
+    void add(String name);
 
 }

@@ -43,9 +43,9 @@ public interface Identity extends Friend {
 
     /**
      * Start new bout.
-     * @return Bout started
+     * @return Bout number
      */
-    Bout start();
+    long start();
 
     /**
      * Get inbox of bouts.

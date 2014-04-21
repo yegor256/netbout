@@ -26,9 +26,6 @@
  */
 package com.netbout.rest;
 
-import com.rexsl.test.XhtmlMatchers;
-import javax.ws.rs.core.Response;
-import org.hamcrest.MatcherAssert;
 import org.junit.Test;
 
 /**
@@ -44,26 +41,6 @@ public final class LoginRsTest {
      */
     @Test
     public void rendersLoginPage() throws Exception {
-        final LoginRs rest = new NbResourceMocker().mock(LoginRs.class);
-        rest.setAuth("some-incorrect-auth-code");
-        final Response response = rest.login();
-        MatcherAssert.assertThat(
-            NbResourceMocker.the((NbPage) response.getEntity(), rest),
-            XhtmlMatchers.hasXPath(
-                "/page/links/link[@rel='facebook']",
-                "/page/links/link[@rel='about']"
-            )
-        );
-    }
-
-    /**
-     * LoginRs can detect a situation when a logged in user is trying to login,
-     * and still allow him to see the login page.
-     * @throws Exception If there is some problem inside
-     */
-    @Test
-    public void doesntForwardIfUserAlreadyLoggedIn() throws Exception {
-        new NbResourceMocker().mock(LoginRs.class).login();
     }
 
 }

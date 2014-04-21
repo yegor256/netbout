@@ -36,46 +36,9 @@ package com.netbout.base;
 public interface User {
 
     /**
-     * Get identity.
-     * @param uri URI of photo
+     * Get all identities.
+     * @return Identities
      */
-    void photo(String uri);
+    Identities identities();
 
-    /**
-     * Start new bout.
-     * @return Bout started
-     */
-    Bout start();
-
-    /**
-     * Get inbox of bouts.
-     * @return Bouts
-     */
-    Pageable<Bout> inbox();
-
-    /**
-     * Get bout by its number.
-     * @param number Bout number
-     * @return Bout found
-     * @throws Identity.BoutNotFoundException If not found
-     */
-    Bout bout(long number) throws Identity.BoutNotFoundException;
-
-    /**
-     * Thowable when bout is not found.
-     * @see Identity#bout(long)
-     */
-    class BoutNotFoundException extends Exception {
-        /**
-         * Serialization marker.
-         */
-        private static final long serialVersionUID = 0x7526FA78EED21470L;
-        /**
-         * Public ctor.
-         * @param num The number of bout not found
-         */
-        public BoutNotFoundException(final long num) {
-            super(String.format("Bout #%d not found", num));
-        }
-    }
 }

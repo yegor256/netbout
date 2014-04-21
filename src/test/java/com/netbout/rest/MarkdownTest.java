@@ -84,14 +84,14 @@ public final class MarkdownTest {
     @Test
     @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
     public void handlesBrokenFormattingGracefully() throws Exception {
-        final String[] texts = new String[] {
+        final String[] texts = {
             "**\n ",
             "__",
             "",
             "**hi there! {{{",
             "    \n  \n      \n     \n",
         };
-        for (String text : texts) {
+        for (final String text : texts) {
             MatcherAssert.assertThat(
                 String.format("<z>%s</z>", new Markdown(text).html()),
                 XhtmlMatchers.hasXPath("/z")
@@ -106,7 +106,7 @@ public final class MarkdownTest {
     @Test
     @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
     public void formatsTextFragmentsToHtml() throws Exception {
-        final String[][] texts = new String[][] {
+        final String[][] texts = {
             new String[] {"hi, *dude*!", "<p>hi, <em>dude</em>!</p>"},
             new String[] {
                 "hello, **dude**!",
@@ -124,7 +124,7 @@ public final class MarkdownTest {
             },
             new String[] {"}}}\n", "<p>}}}</p>"},
         };
-        for (String[] pair : texts) {
+        for (final String[] pair : texts) {
             MatcherAssert.assertThat(
                 new Markdown(pair[0]).html().trim(),
                 Matchers.equalTo(pair[1])

@@ -60,9 +60,7 @@ public final class MiscRs extends BaseRs {
             message = status.toString();
         }
         Logger.debug(
-            this,
-            "#error(#%d): at '%s'",
-            code,
+            this, "#error(#%d): at '%s'", code,
             this.uriInfo().getAbsolutePath()
         );
         return new PageBuilder()
@@ -76,7 +74,7 @@ public final class MiscRs extends BaseRs {
                     .add("message", message)
                     .up()
             )
-            .preserved()
+            .render()
             .status(code)
             .build();
     }

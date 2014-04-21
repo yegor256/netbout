@@ -26,12 +26,11 @@
  */
 package com.netbout.servlets;
 
+import com.jcabi.aspects.Loggable;
 import com.jcabi.log.Logger;
 import com.jcabi.manifests.Manifests;
-import com.netbout.client.RestSession;
-import com.netbout.hub.Hub;
-import com.netbout.notifiers.email.EmailFarm;
-import java.net.URI;
+import com.netbout.base.Base;
+import java.io.IOException;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 
@@ -42,60 +41,41 @@ import javax.servlet.ServletContextListener;
  * @author Yegor Bugayenko (yegor@tpc2.com)
  * @version $Id$
  */
+@Loggable(Loggable.DEBUG)
 public final class LifecycleListener implements ServletContextListener {
 
     /**
      * When was it started.
      */
-    private final transient long started = System.currentTimeMillis();
+    private final transient long start = System.currentTimeMillis();
 
     /**
-     * The hub.
+     * The base.
      */
-    private transient Hub hub;
+    private transient Base base;
 
-    /**
-     * {@inheritDoc}
-     *
-     * <p>These attributes is used later in
-     * {@link com.netbout.rest.BaseRs#setServletContext(ServletContext)}.
-     */
     @Override
     public void contextInitialized(final ServletContextEvent event) {
-        final long start = System.nanoTime();
-        new RestSession(URI.create("http://www.netbout.com/")).toString();
         try {
             Manifests.append(event.getServletContext());
-            this.hub = LazyHub.build();
-        } catch (java.io.IOException ex) {
+        } catch (final IOException ex) {
             Logger.error(
-                this,
-                "#contextInitialized(): %[exception]s",
-                ex
+                this, "#contextInitialized(): %[exception]s", ex
             );
             throw new IllegalStateException(ex);
         }
-        event.getServletContext().setAttribute(Hub.class.getName(), this.hub);
-        EmailFarm.setHub(this.hub);
-        Logger.info(
-            this,
-            "contextInitialized(): done in %[nano]s",
-            System.nanoTime() - start
-        );
+        this.base = new Base();
+        event.getServletContext().setAttribute(Base.class.getName(), this.base);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void contextDestroyed(final ServletContextEvent event) {
-        final long start = System.nanoTime();
-        if (this.hub == null) {
+        if (this.base == null) {
             Logger.warn(this, "#contextDestroyed(): HUB is null");
         } else {
             try {
-                this.hub.close();
-            } catch (java.io.IOException ex) {
+                this.base.close();
+            } catch (final IOException ex) {
                 Logger.error(
                     this,
                     "#contextDestroyed(): %[exception]s",
@@ -105,11 +85,9 @@ public final class LifecycleListener implements ServletContextListener {
         }
         Logger.info(
             this,
-            "#contextDestroyed(): done in %[nano]s (app was alive for %[ms]s)",
-            System.nanoTime() - start,
-            System.currentTimeMillis() - this.started
+            "#contextDestroyed(): app was alive for %[ms]s",
+            System.currentTimeMillis() - this.start
         );
-        org.apache.log4j.LogManager.shutdown();
     }
 
 }

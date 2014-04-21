@@ -27,6 +27,7 @@
 package com.netbout.base;
 
 import com.jcabi.urn.URN;
+import java.io.Closeable;
 
 /**
  * Base.
@@ -35,13 +36,13 @@ import com.jcabi.urn.URN;
  * @version $Id$
  * @since 2.0
  */
-public interface Base {
+public interface Base extends Closeable {
 
     /**
      * Get identity by URN.
      * @param urn URN of the user
-     * @return Identity
+     * @return User
      */
-    Identity identity(URN urn);
+    User user(URN urn);
 
 }

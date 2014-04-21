@@ -26,21 +26,6 @@
  */
 package com.netbout.rest;
 
-import com.jcabi.urn.URN;
-import com.jcabi.urn.URNMocker;
-import com.netbout.rest.period.Period;
-import com.netbout.rest.period.PeriodsBuilder;
-import com.netbout.spi.BoutMocker;
-import com.netbout.spi.IdentityMocker;
-import com.netbout.spi.MessageMocker;
-import com.rexsl.test.XhtmlMatchers;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.Random;
-import javax.ws.rs.core.Response;
-import org.hamcrest.MatcherAssert;
-import org.hamcrest.Matchers;
 import org.junit.Test;
 
 /**
@@ -55,61 +40,7 @@ public final class InboxRsTest {
      * @throws Exception If there is some problem inside
      */
     @Test
-    @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
     public void rendersInboxFrontPage() throws Exception {
-        final URN name = new URNMocker().mock();
-        final IdentityMocker imocker = new IdentityMocker().namedAs(name);
-        final Calendar cal = new GregorianCalendar();
-        final long total = Period.MAX * 2 + 1;
-        for (long num = total; num > 0; num -= 1) {
-            cal.add(Calendar.MILLISECOND, -Math.abs(new Random().nextInt()));
-            final Date date = cal.getTime();
-            imocker.withBout(
-                num,
-                new BoutMocker()
-                    .withNumber(num)
-                    .withDate(date)
-                    .withParticipant(name)
-                    .withMessage(new MessageMocker().withDate(date).mock())
-                    .mock()
-            );
-        }
-        final InboxRs rest = new NbResourceMocker()
-            .withIdentity(imocker.mock())
-            .mock(InboxRs.class);
-        final Response response = rest.inbox(null);
-        MatcherAssert.assertThat(
-            NbResourceMocker.the((NbPage) response.getEntity(), rest),
-            Matchers.allOf(
-                XhtmlMatchers.hasXPath("/page/bouts[count(bout)>1]"),
-                XhtmlMatchers.hasXPath(
-                    String.format("/page/bouts/bout[number=%d]", total)
-                ),
-                XhtmlMatchers.hasXPath(
-                    String.format(
-                        "/page/periods[count(link)=%d]",
-                        PeriodsBuilder.MAX_LINKS
-                    )
-                ),
-                XhtmlMatchers.hasXPath("/page/periods/link[@rel='more']"),
-                XhtmlMatchers.hasXPath("/page/periods/link[@rel='earliest']"),
-                XhtmlMatchers.hasXPath("//link[@rel='more']")
-            )
-        );
-    }
-
-    /**
-     * InboxRs can start new bout.
-     * @throws Exception If there is some problem inside
-     */
-    @Test
-    public void startsNewBout() throws Exception {
-        final InboxRs rest = new NbResourceMocker().mock(InboxRs.class);
-        final Response response = rest.start();
-        MatcherAssert.assertThat(
-            response.getStatus(),
-            Matchers.equalTo(Response.Status.SEE_OTHER.getStatusCode())
-        );
     }
 
 }

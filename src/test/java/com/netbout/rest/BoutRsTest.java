@@ -26,16 +26,7 @@
  */
 package com.netbout.rest;
 
-import com.netbout.hub.HubMocker;
-import com.netbout.spi.Bout;
-import com.netbout.spi.BoutMocker;
-import com.netbout.spi.Identity;
-import com.netbout.spi.IdentityMocker;
-import com.rexsl.test.XhtmlMatchers;
-import javax.ws.rs.core.Response;
-import org.hamcrest.MatcherAssert;
 import org.junit.Test;
-import org.mockito.Mockito;
 
 /**
  * Test case for {@link BoutRs}.
@@ -50,44 +41,6 @@ public final class BoutRsTest {
      */
     @Test
     public void rendersBoutFrontPage() throws Exception {
-        final String title = "\u0443\u0440\u0430!";
-        final Identity identity = new IdentityMocker().mock();
-        final Bout bout = new BoutMocker()
-            .withParticipant(identity.name())
-            .titledAs(title)
-            .mock();
-        Mockito.doReturn(bout).when(identity).start();
-        Mockito.doReturn(bout).when(identity).bout(Mockito.any(Long.class));
-        final BoutRs rest = new NbResourceMocker()
-            .withIdentity(identity)
-            .withHub(
-                new HubMocker()
-                    .withIdentity(identity.name(), identity)
-                    .mock()
-            )
-            .mock(BoutRs.class);
-        rest.setNumber(bout.number());
-        rest.setPeriod("10-20");
-        rest.setStage(null);
-        rest.setPlace(null);
-        rest.setQuery("hello");
-        rest.setMask(null);
-        rest.setStageCoords(null);
-        final Response response = rest.front();
-        MatcherAssert.assertThat(
-            NbResourceMocker.the((NbPage) response.getEntity(), rest),
-            XhtmlMatchers.hasXPaths(
-                "/page/bout/participants/participant/identity",
-                String.format("/page/bout[title='%s']", title),
-                "/page/links/link[@rel='top']",
-                "/page/links/link[@rel='leave']",
-                "/page/links/link[@rel='post']",
-                "/page/links/link[@rel='search']",
-                "/page/links/link[@rel='about']",
-                "/page[query='hello']",
-                "/page/bout[view='10-20']"
-            )
-        );
     }
 
 }
