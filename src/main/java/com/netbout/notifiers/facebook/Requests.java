@@ -37,9 +37,9 @@ import com.restfb.types.FacebookType;
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
- * @see <a href="http://developers.facebook.com/docs/reference/api/user/#apprequests">Graph API</a>
+ * @see <a href="http://developers.facebook.com/docs/reference/base/user/#apprequests">Graph API</a>
  * @see <a href="http://developers.facebook.com/docs/authentication/#applogin">Authentication of apps</a>
- * @see <a href="http://developers.facebook.com/docs/reference/api/permissions/">App permissions</a>
+ * @see <a href="http://developers.facebook.com/docs/reference/base/permissions/">App permissions</a>
  * @see <a href="http://stackoverflow.com/questions/6072839">related discussion in SO</a>
  * @see <a href="http://stackoverflow.com/questions/5758928">more about notifications</a>
  */

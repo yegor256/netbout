@@ -30,6 +30,6 @@
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
- * @see <a link="http://developers.facebook.com/docs/reference/api/user/#apprequests">Graph API</a>
+ * @see <a link="http://developers.facebook.com/docs/reference/base/user/#apprequests">Graph API</a>
  */
 package com.netbout.notifiers.facebook;

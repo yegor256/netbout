@@ -24,39 +24,38 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.notifiers.facebook;
+package com.netbout.base;
 
-import com.jcabi.urn.URN;
-import com.netbout.spi.cpa.Farm;
-import com.restfb.DefaultFacebookClient;
+import java.io.IOException;
+import java.io.InputStream;
 
 /**
- * Reminder farm.
+ * Binary.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
- * @see <a href="http://developers.facebook.com/docs/reference/base/user/#apprequests">Graph API</a>
- * @see <a href="http://stackoverflow.com/questions/6072839">related discussion in SO</a>
- * @see <a href="http://stackoverflow.com/questions/5758928">more about notifications</a>
+ * @since 2.0
  */
-@Farm
-public final class RemindFarm {
+public interface Binary {
 
     /**
-     * Remind identity which is silent for a long time.
-     * @param name Name of identity
-     * @param marker The marker to avoid duplicate reminders
-     * @todo #520 This method should be annotated with
-     *  Operation("remind-silent-identity"), but it is disabled now
+     * Its name.
+     * @return Name of it
      */
-    public void remindSilentIdentity(final URN name, final String marker) {
-        final Requests requests = new Requests(
-            new DefaultFacebookClient(new TokenBuilder().build()),
-            name.nss()
-        );
-        if (requests.clean(marker)) {
-            requests.publish(marker);
-        }
-    }
+    String name();
+
+    /**
+     * Read content.
+     * @return Content
+     * @throws IOException If fails
+     */
+    InputStream read() throws IOException;
+
+    /**
+     * Write content.
+     * @param stream Steam with content
+     * @throws IOException If fails
+     */
+    void write(InputStream stream) throws IOException;
 
 }

@@ -39,7 +39,7 @@ import org.hamcrest.Matchers;
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
  * @see <a href="http://developers.facebook.com/docs/authentication/#applogin">Authentication of apps</a>
- * @see <a href="http://developers.facebook.com/docs/reference/api/permissions/">App permissions</a>
+ * @see <a href="http://developers.facebook.com/docs/reference/base/permissions/">App permissions</a>
  */
 final class TokenBuilder {
 

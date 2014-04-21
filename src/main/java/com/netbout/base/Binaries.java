@@ -24,39 +24,21 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.notifiers.facebook;
-
-import com.jcabi.urn.URN;
-import com.netbout.spi.cpa.Farm;
-import com.restfb.DefaultFacebookClient;
+package com.netbout.base;
 
 /**
- * Reminder farm.
+ * Binaries.
  *
  * @author Yegor Bugayenko (yegor@netbout.com)
  * @version $Id$
- * @see <a href="http://developers.facebook.com/docs/reference/base/user/#apprequests">Graph API</a>
- * @see <a href="http://stackoverflow.com/questions/6072839">related discussion in SO</a>
- * @see <a href="http://stackoverflow.com/questions/5758928">more about notifications</a>
+ * @since 2.0
  */
-@Farm
-public final class RemindFarm {
+public interface Binaries extends Iterable<Binary> {
 
     /**
-     * Remind identity which is silent for a long time.
-     * @param name Name of identity
-     * @param marker The marker to avoid duplicate reminders
-     * @todo #520 This method should be annotated with
-     *  Operation("remind-silent-identity"), but it is disabled now
+     * Get binary by name.
+     * @param name Binary name
      */
-    public void remindSilentIdentity(final URN name, final String marker) {
-        final Requests requests = new Requests(
-            new DefaultFacebookClient(new TokenBuilder().build()),
-            name.nss()
-        );
-        if (requests.clean(marker)) {
-            requests.publish(marker);
-        }
-    }
+    Binary get(String name);
 
 }
