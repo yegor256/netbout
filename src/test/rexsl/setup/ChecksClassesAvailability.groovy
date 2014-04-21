@@ -32,8 +32,8 @@ package com.netbout.rest.rexsl.setup
 import com.jcabi.log.Logger
 
 [
-    '/com/netbout/inf/DefaultInfinity.class',
-    '/com/netbout/hub/DefaultHub.class',
+    '/com/netbout/base/Base.class',
+    '/com/netbout/dynamo/DyBase.class',
 ].each { name ->
     if (this.class.getResource(name) == null) {
         throw new IllegalStateException("class ${name} not found in classpath")

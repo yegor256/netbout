@@ -26,8 +26,6 @@
  */
 package com.netbout.base;
 
-import sun.jvm.hotspot.debugger.Page;
-
 /**
  * Pages.
  *
