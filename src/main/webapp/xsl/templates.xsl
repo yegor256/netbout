@@ -62,12 +62,6 @@
     </xsl:template>
 
     <xsl:template match="version">
-        <xsl:if test="contains(name, '-')">
-            <div style="position: fixed; left: 0px; bottom: 0px; color: gray;
-                font-size: 5em; text-align: left;">
-                <xsl:value-of select="name"/>
-            </div>
-        </xsl:if>
         <div id="version">
             <span>
                 <xsl:attribute name="style">
@@ -104,7 +98,7 @@
             <xsl:text>s</xsl:text>
         </xsl:if>
         <xsl:text>://</xsl:text>
-        <xsl:text>dxe6yfv2r7pzd.cloudfront.net/</xsl:text>
+        <xsl:text>img.netbout.com/</xsl:text>
         <xsl:value-of select="$name"/>
         <xsl:text>?</xsl:text>
         <xsl:value-of select="/page/version/revision"/>

@@ -42,31 +42,9 @@
             </xsl:attribute>
             <head>
                 <meta charset="UTF-8"/>
-                <meta name="description" content="Netbout.com is a conversation-centric UI on demand... do you get it?"/>
+                <meta name="description" content="Conversation-centric on-demand user interface"/>
                 <meta name="keywords" content="Netbout, User Interface, UI, On-Demand, Cloud User Interface"/>
                 <meta name="author" content="Netbout.com, Inc."/>
-                <!-- JavaScript exception/error logger to qbaka.com -->
-                <script type="text/javascript"><![CDATA[
-                    window.qbaka || (function(a,c){a.__qbaka_eh=a.onerror;a.__qbaka_reports=[];a.onerror=function(){a.__qbaka_reports.push(arguments);
-                    if(a.__qbaka_eh)try{a.__qbaka_eh.apply(a,arguments)}catch(b){}};
-                    a.onerror.qbaka=1;a.qbaka={report:function(){a.__qbaka_reports.push([arguments, new Error()]);},customParams:{},set:function(a,b){qbaka.customParams[a]=b},exec:function(a){try{a()}catch(b){qbaka.reportException(b)}},reportException:function(){}};
-                    var b=c.createElement("script"),e=c.getElementsByTagName("script")[0],d=function(){e.parentNode.insertBefore(b,e)};
-                    b.type="text/javascript";b.async=!0;b.src="//cdn.qbaka.net/reporting.js";"[object Opera]"==a.opera?c.addEventListener("DOMContentLoaded",d):d();
-                    qbaka.key="00dfa61ef8b0f3f6fe1e97790d64ef16"})(window,document);
-                    qbaka.options={autoStacktrace:1,trackEvents:1};
-                ]]></script>
-                <!-- Pingdom RUM -->
-                <script type="text/javascript"><![CDATA[
-                    var _prum = [['id', '5289f7aaabe53def32000000'],
-                    ['mark', 'firstbyte', (new Date()).getTime()]];
-                    (function() {
-                    var s = document.getElementsByTagName('script')[0]
-                    , p = document.createElement('script');
-                    p.async = 'async';
-                    p.src = '//rum-static.pingdom.net/prum.min.js';
-                    s.parentNode.insertBefore(p, s);
-                    })();
-                ]]></script>
                 <script type="text/javascript">
                     <xsl:attribute name="src">
                         <xsl:call-template name="cdn">
@@ -74,6 +52,14 @@
                                 <xsl:text>jquery.js</xsl:text>
                             </xsl:with-param>
                         </xsl:call-template>
+                    </xsl:attribute>
+                    <xsl:text> </xsl:text>
+                    <!-- this is for W3C compliance -->
+                </script>
+                <script type="text/javascript">
+                    <xsl:attribute name="src">
+                        <xsl:text>/js/supplementary.js?</xsl:text>
+                        <xsl:value-of select="/page/version/revision"/>
                     </xsl:attribute>
                     <xsl:text> </xsl:text>
                     <!-- this is for W3C compliance -->
@@ -94,33 +80,12 @@
                     <xsl:attribute name="href">
                         <xsl:call-template name="cdn">
                             <xsl:with-param name="name">
-                                <xsl:text>favicon</xsl:text>
-                                <xsl:choose>
-                                    <xsl:when test="contains(/page/version/name, '-SNAPSHOT')">
-                                        <xsl:text>-test</xsl:text>
-                                    </xsl:when>
-                                    <xsl:when test="contains(/page/version/name, '-RC')">
-                                        <xsl:text>-stage</xsl:text>
-                                    </xsl:when>
-                                </xsl:choose>
-                                <xsl:text>.ico</xsl:text>
+                                <xsl:text>favicon.ico</xsl:text>
                             </xsl:with-param>
                         </xsl:call-template>
                     </xsl:attribute>
                 </link>
                 <xsl:call-template name="head"/>
-                <script type="text/javascript">
-                    //<![CDATA[
-                    var _gaq = _gaq || [];
-                    _gaq.push(['_setAccount', 'UA-1963507-24']);
-                    _gaq.push(['_trackPageview']);
-                    (function() {
-                        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-                        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-                        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-                    })();
-                    //]]>
-                </script>
             </head>
             <body>
                 <xsl:apply-templates select="version"/>
@@ -133,48 +98,6 @@
                     <xsl:if test="message != ''">
                         <div class="error-message">
                             <xsl:value-of select="message"/>
-                        </div>
-                    </xsl:if>
-                    <xsl:if test="identity/eta &gt; 0">
-                        <div class="error-message">
-                            <xsl:value-of select="$TEXTS/the.server.is.busy"/>
-                            <xsl:choose>
-                                <xsl:when test="identity/eta &gt; 60 * 1000 * 1000 * 1000">
-                                    <xsl:text> </xsl:text>
-                                    <xsl:value-of select="$TEXTS/in.a.few.minutes"/>
-                                </xsl:when>
-                                <xsl:when test="identity/eta &gt; 5 * 1000 * 1000 * 1000">
-                                    <xsl:text> </xsl:text>
-                                    <xsl:value-of select="$TEXTS/in"/>
-                                    <xsl:text> </xsl:text>
-                                    <xsl:value-of select="round(identity/eta div (1000 * 1000 * 1000))"/>
-                                    <xsl:text> </xsl:text>
-                                    <xsl:value-of select="$TEXTS/sec"/>
-                                </xsl:when>
-                            </xsl:choose>
-                            <xsl:text>.</xsl:text>
-                        </div>
-                    </xsl:if>
-                    <xsl:if test="links/link[@rel='re-login']">
-                        <div class="error-message">
-                            <xsl:value-of select="$TEXTS/We.recommend.to.reauthenticate"/>
-                            <xsl:text>: </xsl:text>
-                            <a>
-                                <xsl:attribute name="href">
-                                    <xsl:value-of select="links/link[@rel='re-login']/@href"/>
-                                </xsl:attribute>
-                                <xsl:value-of select="$TEXTS/click.here"/>
-                            </a>
-                            <xsl:text>.</xsl:text>
-                        </div>
-                    </xsl:if>
-                    <xsl:if test="count(log/event) &gt; 0">
-                        <div id="log">
-                            <xsl:for-each select="log/event">
-                                <p>
-                                    <xsl:value-of select="."/>
-                                </p>
-                            </xsl:for-each>
                         </div>
                     </xsl:if>
                     <xsl:call-template name="content"/>
