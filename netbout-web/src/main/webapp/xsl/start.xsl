@@ -35,16 +35,43 @@
     <xsl:output method="xml" omit-xml-declaration="yes"/>
     <xsl:include href="/xsl/front-layout.xsl" />
     <xsl:template name="head">
+        <script>
+            <xsl:attribute name="src">
+                <xsl:text>/js/start.js?</xsl:text>
+                <xsl:value-of select="/page/version/revision"/>
+            </xsl:attribute>
+            <xsl:text> </xsl:text> <!-- this is for W3C compliance -->
+        </script>
         <title>Netbout - private talks made easy</title>
     </xsl:template>
     <xsl:template name="content">
+        <p>
+            <img style="width: 64px;">
+                <xsl:attribute name="src">
+                    <xsl:value-of select="identity/photo"/>
+                </xsl:attribute>
+                <xsl:attribute name="alt">
+                    <xsl:value-of select="identity/alias"/>
+                </xsl:attribute>
+            </img>
+        </p>
         <form method="post">
+            <xsl:attribute name="action">
+                <xsl:value-of select="/page/links/link[@rel='register']/@href"/>
+            </xsl:attribute>
             <fieldset>
-                <label>
+                <label for="identity">
                     <xsl:text>What will be your unique name visible to everybody?</xsl:text>
                 </label>
-                <input name="identity" size="35" maxlength="100" />
-                <input type="submit" value="register" />
+                <input id="identity" name="identity" size="35" maxlength="100">
+                    <xsl:attribute name="data-check">
+                        <xsl:value-of select="/page/links/link[@rel='check']/@href"/>
+                    </xsl:attribute>
+                </input>
+                <label for="submit">
+                    <xsl:text> </xsl:text> <!-- this is for W3C compliance -->
+                </label>
+                <input id="submit" type="submit" value="register" disabled="disabled" />
             </fieldset>
         </form>
     </xsl:template>

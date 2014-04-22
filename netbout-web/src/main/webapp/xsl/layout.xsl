@@ -42,17 +42,7 @@
             </xsl:attribute>
             <head>
                 <meta charset="UTF-8"/>
-                <meta name="description" content="Conversation-centric on-demand user interface"/>
-                <meta name="keywords" content="Netbout, User Interface, UI, On-Demand, Cloud User Interface"/>
-                <meta name="author" content="Netbout.com, Inc."/>
-                <script type="text/javascript">
-                    <xsl:attribute name="src">
-                        <xsl:call-template name="cdn">
-                            <xsl:with-param name="name">
-                                <xsl:text>jquery.js</xsl:text>
-                            </xsl:with-param>
-                        </xsl:call-template>
-                    </xsl:attribute>
+                <script type="text/javascript" src="https://code.jquery.com/jquery-2.1.1-rc1.min.js">
                     <xsl:text> </xsl:text>
                     <!-- this is for W3C compliance -->
                 </script>

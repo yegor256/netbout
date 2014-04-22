@@ -139,9 +139,9 @@ public class BaseRs extends BaseResource {
 
     /**
      * Get current user.
-     * @return Name of the user
+     * @return User
      */
-    protected final Identity identity() {
+    protected final User user() {
         final com.rexsl.page.auth.Identity identity = this.auth().identity();
         if (identity.equals(com.rexsl.page.auth.Identity.ANONYMOUS)) {
             throw FlashInset.forward(
@@ -152,13 +152,19 @@ public class BaseRs extends BaseResource {
                 Level.SEVERE
             );
         }
-        final User user = this.base().user(identity.urn());
-        final Identities identities = user.identities();
+        return this.base().user(identity.urn());
+    }
+
+    /**
+     * Get current identity.
+     * @return Identity
+     */
+    protected final Identity identity() {
+        final Identities identities = this.user().identities();
         if (Iterables.isEmpty(identities)) {
             throw FlashInset.forward(
                 this.uriInfo().getBaseUriBuilder().clone()
-                    .path(LoginRs.class)
-                    .path("start")
+                    .path(StartRs.class)
                     .build(),
                 "please create a unique identity",
                 Level.SEVERE

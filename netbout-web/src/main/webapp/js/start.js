@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2009-2014, Netbout.com
+ * Copyright (c) 2009-2011, netBout.com
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -24,34 +24,31 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.rest;
 
-import com.rexsl.page.PageBuilder;
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.core.Response;
+/*globals $:false, document:false */
 
-/**
- * RESTful front of login functions.
- *
- * @author Yegor Bugayenko (yegor@tpc2.com)
- * @version $Id$
- */
-@Path("/login")
-public final class LoginRs extends BaseRs {
-
-    /**
-     * Login page.
-     * @return The JAX-RS response
-     */
-    @GET
-    public Response login() {
-        return new PageBuilder()
-            .stylesheet("/xsl/login.xsl")
-            .build(NbPage.class)
-            .init(this)
-            .render()
-            .build();
-    }
-
-}
+$(document).ready(
+  function () {
+    $('#identity').keyup(
+      function () {
+        $input = $(this);
+        $button = $('#submit')
+        $.ajax(
+          {
+            url: $input.attr('data-check') + '?name=' + encodeURI($input.val()),
+            cache: false,
+            success: function (text) {
+              if (text === 'available') {
+                $input.css('color', 'green');
+                $button.prop('disabled', false);
+              } else {
+                $input.css('color', 'red');
+                $button.prop('disabled', true);
+              }
+            }
+          }
+        );
+      }
+    );
+  }
+);

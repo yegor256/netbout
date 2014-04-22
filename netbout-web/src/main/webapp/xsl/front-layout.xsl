@@ -28,7 +28,10 @@
  * @author Yegor Bugayenko (yegor@tpc2.com)
  * @version $Id$
  -->
-<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="http://www.w3.org/1999/xhtml" version="2.0" exclude-result-prefixes="xs">
+<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+    xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    xmlns="http://www.w3.org/1999/xhtml"
+    version="2.0" exclude-result-prefixes="xs">
     <xsl:include href="/xsl/templates.xsl"/>
     <xsl:template match="/">
         <!-- see http://stackoverflow.com/questions/3387127 -->
@@ -63,6 +66,10 @@
                         </xsl:call-template>
                     </xsl:attribute>
                 </link>
+                <script type="text/javascript" src="https://code.jquery.com/jquery-2.1.1-rc1.min.js">
+                    <xsl:text> </xsl:text>
+                    <!-- this is for W3C compliance -->
+                </script>
                 <xsl:call-template name="head"/>
             </head>
             <body>

@@ -224,7 +224,7 @@
             <plugin>
                 <artifactId>maven-war-plugin</artifactId>
                 <configuration>
-                    <warSourceExcludes>js/**, css/**, xsl/**</warSourceExcludes>
+                    <warSourceExcludes>css/**, xsl/**</warSourceExcludes>
                     <archive>
                         <manifestEntries>
                             <Netbout-Revision>${buildNumber}</Netbout-Revision>

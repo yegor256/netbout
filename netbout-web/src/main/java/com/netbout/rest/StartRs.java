@@ -26,32 +26,70 @@
  */
 package com.netbout.rest;
 
+import com.rexsl.page.Link;
 import com.rexsl.page.PageBuilder;
+import com.rexsl.page.inset.FlashInset;
+import java.util.logging.Level;
+import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
 
 /**
- * RESTful front of login functions.
+ * Start.
  *
  * @author Yegor Bugayenko (yegor@tpc2.com)
  * @version $Id$
  */
-@Path("/login")
-public final class LoginRs extends BaseRs {
+@Path("/start")
+public final class StartRs extends BaseRs {
 
     /**
-     * Login page.
+     * Start page.
      * @return The JAX-RS response
      */
     @GET
-    public Response login() {
+    public Response start() {
         return new PageBuilder()
-            .stylesheet("/xsl/login.xsl")
+            .stylesheet("/xsl/start.xsl")
             .build(NbPage.class)
             .init(this)
+            .link(new Link("register", "./register"))
+            .link(new Link("check", "./check"))
             .render()
             .build();
+    }
+
+    /**
+     * Register and continue.
+     */
+    @POST
+    @Path("/register")
+    public void register(@FormParam("name") final String name) {
+        this.user().identities().add(name);
+        throw FlashInset.forward(
+            this.uriInfo().getBaseUri(),
+            "your identity was registered",
+            Level.INFO
+        );
+    }
+
+    /**
+     * Check availability.
+     * @return Text "available" if this name is available
+     */
+    @GET
+    @Path("/check")
+    public String check(@QueryParam("name") final String name) {
+        final String text;
+        if (this.user().identities().available(name)) {
+            text = "available";
+        } else {
+            text = "occupied";
+        }
+        return text;
     }
 
 }
