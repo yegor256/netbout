@@ -68,10 +68,10 @@ public final class StartRs extends BaseRs {
     @POST
     @Path("/register")
     public void register(@FormParam("name") final String name) {
-        this.user().identities().add(name);
+        this.user().aliases().add(name);
         throw FlashInset.forward(
             this.uriInfo().getBaseUri(),
-            "your identity was registered",
+            "your alias was registered",
             Level.INFO
         );
     }
@@ -84,7 +84,7 @@ public final class StartRs extends BaseRs {
     @Path("/check")
     public String check(@QueryParam("name") final String name) {
         final String text;
-        if (this.user().identities().available(name)) {
+        if (this.user().aliases().available(name)) {
             text = "available";
         } else {
             text = "occupied";

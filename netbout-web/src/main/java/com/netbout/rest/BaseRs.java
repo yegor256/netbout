@@ -29,9 +29,9 @@ package com.netbout.rest;
 import com.google.common.collect.Iterables;
 import com.jcabi.manifests.Manifests;
 import com.jcabi.urn.URN;
+import com.netbout.spi.Alias;
+import com.netbout.spi.Aliases;
 import com.netbout.spi.Base;
-import com.netbout.spi.Identities;
-import com.netbout.spi.Identity;
 import com.netbout.spi.User;
 import com.rexsl.page.BasePage;
 import com.rexsl.page.BaseResource;
@@ -41,6 +41,7 @@ import com.rexsl.page.auth.AuthInset;
 import com.rexsl.page.auth.Facebook;
 import com.rexsl.page.auth.Github;
 import com.rexsl.page.auth.Google;
+import com.rexsl.page.auth.Identity;
 import com.rexsl.page.auth.Provider;
 import com.rexsl.page.inset.FlashInset;
 import com.rexsl.page.inset.LinksInset;
@@ -78,16 +79,16 @@ public class BaseRs extends BaseResource {
      */
     private static final Provider TESTER = new Provider() {
         @Override
-        public com.rexsl.page.auth.Identity identity() {
-            final com.rexsl.page.auth.Identity identity;
+        public Identity identity() {
+            final Identity identity;
             if ("1234567".equals(Manifests.read("Netbout-Revision"))) {
-                identity = new com.rexsl.page.auth.Identity.Simple(
+                identity = new Identity.Simple(
                     URN.create("urn:test:123456"),
                     "Locallost",
                     URI.create("http://img.netbout.com/unknown.png")
                 );
             } else {
-                identity = com.rexsl.page.auth.Identity.ANONYMOUS;
+                identity = Identity.ANONYMOUS;
             }
             return identity;
         }
@@ -142,8 +143,8 @@ public class BaseRs extends BaseResource {
      * @return User
      */
     protected final User user() {
-        final com.rexsl.page.auth.Identity identity = this.auth().identity();
-        if (identity.equals(com.rexsl.page.auth.Identity.ANONYMOUS)) {
+        final Identity identity = this.auth().identity();
+        if (identity.equals(Identity.ANONYMOUS)) {
             throw FlashInset.forward(
                 this.uriInfo().getBaseUriBuilder().clone()
                     .path(LoginRs.class)
@@ -156,21 +157,21 @@ public class BaseRs extends BaseResource {
     }
 
     /**
-     * Get current identity.
-     * @return Identity
+     * Get current alias.
+     * @return Alias
      */
-    protected final Identity identity() {
-        final Identities identities = this.user().identities();
-        if (Iterables.isEmpty(identities)) {
+    protected final Alias alias() {
+        final Aliases aliases = this.user().aliases();
+        if (Iterables.isEmpty(aliases)) {
             throw FlashInset.forward(
                 this.uriInfo().getBaseUriBuilder().clone()
                     .path(StartRs.class)
                     .build(),
-                "please create a unique identity",
+                "please create a unique alias",
                 Level.SEVERE
             );
         }
-        return Iterables.get(identities, 0);
+        return Iterables.get(aliases, 0);
     }
 
     /**

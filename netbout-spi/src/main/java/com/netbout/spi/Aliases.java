@@ -29,56 +29,26 @@ package com.netbout.spi;
 import com.jcabi.aspects.Immutable;
 
 /**
- * Identity.
+ * User of the system.
  *
  * @author Yegor Bugayenko (yegor@tpc2.com)
  * @version $Id$
  * @since 2.0
  */
 @Immutable
-public interface Identity extends Friend {
+public interface Aliases extends Iterable<Alias> {
 
     /**
-     * Set photo.
-     * @param uri URI of photo
+     * Is it possible to assign this identity?
+     * @param name Alias to assign
+     * @return TRUE if it's available
      */
-    void photo(String uri);
+    boolean available(String name);
 
     /**
-     * Start new bout.
-     * @return Bout number
+     * Try to assign this new identity to this user.
+     * @param name Alias to assign
      */
-    long start();
+    void add(String name);
 
-    /**
-     * Get inbox of bouts.
-     * @return Bouts
-     */
-    Pageable<Bout> inbox();
-
-    /**
-     * Get bout by its number.
-     * @param number Bout number
-     * @return Bout found
-     * @throws Identity.BoutNotFoundException If not found
-     */
-    Bout bout(long number) throws Identity.BoutNotFoundException;
-
-    /**
-     * Thowable when bout is not found.
-     * @see Identity#bout(long)
-     */
-    class BoutNotFoundException extends Exception {
-        /**
-         * Serialization marker.
-         */
-        private static final long serialVersionUID = 0x7526FA78EED21470L;
-        /**
-         * Public ctor.
-         * @param num The number of bout not found
-         */
-        public BoutNotFoundException(final long num) {
-            super(String.format("Bout #%d not found", num));
-        }
-    }
 }

@@ -24,36 +24,61 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.dynamo;
+package com.netbout.spi;
 
 import com.jcabi.aspects.Immutable;
-import com.netbout.spi.Identities;
-import com.netbout.spi.Identity;
-import java.util.Collections;
-import java.util.Iterator;
 
 /**
- * Dynamo Identities.
+ * Alias.
  *
  * @author Yegor Bugayenko (yegor@tpc2.com)
  * @version $Id$
  * @since 2.0
  */
 @Immutable
-public final class DyIdentities implements Identities {
+public interface Alias extends Friend {
 
-    @Override
-    public boolean available(final String name) {
-        return false;
-    }
+    /**
+     * Set photo.
+     * @param uri URI of photo
+     */
+    void photo(String uri);
 
-    @Override
-    public void add(final String name) {
-        throw new UnsupportedOperationException("#add()");
-    }
+    /**
+     * Start new bout.
+     * @return Bout number
+     */
+    long start();
 
-    @Override
-    public Iterator<Identity> iterator() {
-        return Collections.<Identity>emptyList().iterator();
+    /**
+     * Get inbox of bouts.
+     * @return Bouts
+     */
+    Pageable<Bout> inbox();
+
+    /**
+     * Get bout by its number.
+     * @param number Bout number
+     * @return Bout found
+     * @throws Alias.BoutNotFoundException If not found
+     */
+    Bout bout(long number) throws Alias.BoutNotFoundException;
+
+    /**
+     * Thowable when bout is not found.
+     * @see Alias#bout(long)
+     */
+    class BoutNotFoundException extends Exception {
+        /**
+         * Serialization marker.
+         */
+        private static final long serialVersionUID = 0x7526FA78EED21470L;
+        /**
+         * Public ctor.
+         * @param num The number of bout not found
+         */
+        public BoutNotFoundException(final long num) {
+            super(String.format("Bout #%d not found", num));
+        }
     }
 }

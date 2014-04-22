@@ -51,7 +51,7 @@ public final class InboxRs extends BaseRs {
     @GET
     @Path("/")
     public Response inbox() {
-        this.identity();
+        this.alias();
         return new PageBuilder()
             .stylesheet("/xsl/inbox.xsl")
             .build(NbPage.class)
@@ -67,7 +67,7 @@ public final class InboxRs extends BaseRs {
     @GET
     @Path("/start")
     public void start() {
-        final long number = this.identity().start();
+        final long number = this.alias().start();
         throw FlashInset.forward(
             this.uriInfo().getBaseUriBuilder().clone()
                 .path(BoutRs.class)

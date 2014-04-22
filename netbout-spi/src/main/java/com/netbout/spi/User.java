@@ -39,9 +39,9 @@ import com.jcabi.aspects.Immutable;
 public interface User {
 
     /**
-     * Get all identities.
-     * @return Identities
+     * Get all aliases.
+     * @return Aliases
      */
-    Identities identities();
+    Aliases aliases();
 
 }

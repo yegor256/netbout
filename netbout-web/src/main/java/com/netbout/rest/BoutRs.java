@@ -26,8 +26,8 @@
  */
 package com.netbout.rest;
 
+import com.netbout.spi.Alias;
 import com.netbout.spi.Bout;
-import com.netbout.spi.Identity;
 import com.rexsl.page.Link;
 import com.rexsl.page.PageBuilder;
 import com.rexsl.page.inset.FlashInset;
@@ -164,8 +164,8 @@ public final class BoutRs extends BaseRs {
      */
     private Bout bout() {
         try {
-            return this.identity().bout(this.number);
-        } catch (final Identity.BoutNotFoundException ex) {
+            return this.alias().bout(this.number);
+        } catch (final Alias.BoutNotFoundException ex) {
             throw FlashInset.forward(
                 this.uriInfo().getBaseUri(),
                 ex.getLocalizedMessage(),

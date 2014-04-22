@@ -47,6 +47,11 @@
         <photo>http://www.robert-deniro.com/deniro.jpg</photo>
         <token>TEGF65-HFYA087-JFS</token>
     </identity>
+    <alias>
+        <name>willy</name>
+        <photo>http://www.robert-deniro.com/deniro.jpg</photo>
+        <locale>en</locale>
+    </alias>
     <bouts>
         <bout>
             <links>

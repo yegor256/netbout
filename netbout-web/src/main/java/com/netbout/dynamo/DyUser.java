@@ -27,7 +27,7 @@
 package com.netbout.dynamo;
 
 import com.jcabi.aspects.Immutable;
-import com.netbout.spi.Identities;
+import com.netbout.spi.Aliases;
 import com.netbout.spi.User;
 
 /**
@@ -41,8 +41,8 @@ import com.netbout.spi.User;
 public final class DyUser implements User {
 
     @Override
-    public Identities identities() {
-        return new DyIdentities();
+    public Aliases aliases() {
+        return new DyAliases();
     }
 
 }

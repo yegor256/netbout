@@ -24,31 +24,36 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.spi;
+package com.netbout.dynamo;
 
 import com.jcabi.aspects.Immutable;
+import com.netbout.spi.Aliases;
+import com.netbout.spi.Alias;
+import java.util.Collections;
+import java.util.Iterator;
 
 /**
- * User of the system.
+ * Dynamo Aliases.
  *
  * @author Yegor Bugayenko (yegor@tpc2.com)
  * @version $Id$
  * @since 2.0
  */
 @Immutable
-public interface Identities extends Iterable<Identity> {
+public final class DyAliases implements Aliases {
 
-    /**
-     * Is it possible to assign this identity?
-     * @param name Identity to assign
-     * @return TRUE if it's available
-     */
-    boolean available(String name);
+    @Override
+    public boolean available(final String name) {
+        return false;
+    }
 
-    /**
-     * Try to assign this new identity to this user.
-     * @param name Identity to assign
-     */
-    void add(String name);
+    @Override
+    public void add(final String name) {
+        throw new UnsupportedOperationException("#add()");
+    }
 
+    @Override
+    public Iterator<Alias> iterator() {
+        return Collections.<Alias>emptyList().iterator();
+    }
 }
