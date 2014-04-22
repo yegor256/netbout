@@ -33,7 +33,6 @@ import com.jcabi.http.request.JdkRequest
 import com.jcabi.http.response.RestResponse
 import javax.ws.rs.core.HttpHeaders
 import javax.ws.rs.core.MediaType
-import javax.ws.rs.core.UriBuilder
 
 // In this script we are trying to download all static resources - they
 // should be available
@@ -43,7 +42,7 @@ import javax.ws.rs.core.UriBuilder
     '/css/global.css',
     '/js/bout.js',
     '/xsl/login.xsl',
-    '/xml/lang/en.xml',
+    '/lang/en.xml',
 ].each { path ->
     new JdkRequest(rexsl.home)
         .uri().path(path).back()

@@ -26,8 +26,11 @@
  */
 package com.netbout.rest;
 
+import com.jcabi.aspects.Immutable;
 import java.io.StringReader;
 import java.io.StringWriter;
+import javax.validation.constraints.NotNull;
+import org.tautua.markdownpapers.parser.ParseException;
 
 /**
  * Text with markdown formatting.
@@ -38,6 +41,7 @@ import java.io.StringWriter;
  * @version $Id$
  * @see <a href="Markdown Syntax">http://daringfireball.net/projects/markdown/syntax</a>
  */
+@Immutable
 public final class Markdown {
 
     /**
@@ -49,7 +53,7 @@ public final class Markdown {
      * Public ctor.
      * @param txt The raw source text, with meta commands
      */
-    public Markdown(final String txt) {
+    public Markdown(@NotNull final String txt) {
         this.text = txt;
     }
 
@@ -64,7 +68,7 @@ public final class Markdown {
                 new StringReader(this.text),
                 writer
             );
-        } catch (org.tautua.markdownpapers.parser.ParseException ex) {
+        } catch (final ParseException ex) {
             throw new IllegalArgumentException(ex);
         }
         return writer.toString();

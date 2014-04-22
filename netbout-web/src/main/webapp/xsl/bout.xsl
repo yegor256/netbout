@@ -195,23 +195,15 @@
     </xsl:template>
     <xsl:template name="invite">
         <div id="invite-aside">
-            <form method="get" id="invite">
+            <form method="post" id="invite">
                 <xsl:attribute name="action">
-                    <xsl:value-of select="/page/links/link[@rel='self']/@href"/>
+                    <xsl:value-of select="/page/links/link[@rel='invite']/@href"/>
                 </xsl:attribute>
                 <fieldset>
-                    <input name="mask" autocomplete="off">
+                    <input name="alias" autocomplete="off">
                         <xsl:attribute name="placeholder">
                             <xsl:value-of select="$TEXTS/Invite"/>
                         </xsl:attribute>
-                        <xsl:attribute name="value">
-                            <xsl:value-of select="/page/mask"/>
-                        </xsl:attribute>
-                        <xsl:if test="/page/mask != ''">
-                            <xsl:attribute name="autofocus">
-                                <xsl:text>true</xsl:text>
-                            </xsl:attribute>
-                        </xsl:if>
                     </input>
                 </fieldset>
             </form>

@@ -109,7 +109,7 @@
                     <xsl:attribute name="title">
                         <xsl:value-of select="$TEXTS/back.to.inbox"/>
                     </xsl:attribute>
-                    <img id="logo">
+                    <img id="logo" alt="netbout logo">
                         <xsl:attribute name="src">
                             <xsl:call-template name="cdn">
                                 <xsl:with-param name="name">

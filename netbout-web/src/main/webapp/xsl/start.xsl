@@ -60,10 +60,10 @@
                 <xsl:value-of select="/page/links/link[@rel='register']/@href"/>
             </xsl:attribute>
             <fieldset>
-                <label for="identity">
+                <label for="alias">
                     <xsl:text>What will be your unique name visible to everybody?</xsl:text>
                 </label>
-                <input id="identity" name="identity" size="35" maxlength="100">
+                <input id="alias" name="alias" size="35" maxlength="100">
                     <xsl:attribute name="data-check">
                         <xsl:value-of select="/page/links/link[@rel='check']/@href"/>
                     </xsl:attribute>

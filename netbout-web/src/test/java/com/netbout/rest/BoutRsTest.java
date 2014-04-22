@@ -41,6 +41,7 @@ public final class BoutRsTest {
      */
     @Test
     public void rendersBoutFrontPage() throws Exception {
+        // todo
     }
 
 }

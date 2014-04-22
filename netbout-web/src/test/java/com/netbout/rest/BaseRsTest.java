@@ -41,6 +41,7 @@ public final class BaseRsTest {
      */
     @Test
     public void buildsBaseUri() throws Exception {
+        // todo
     }
 
 }

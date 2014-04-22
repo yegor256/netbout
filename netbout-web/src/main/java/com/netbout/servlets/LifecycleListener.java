@@ -29,8 +29,8 @@ package com.netbout.servlets;
 import com.jcabi.aspects.Loggable;
 import com.jcabi.log.Logger;
 import com.jcabi.manifests.Manifests;
-import com.netbout.spi.Base;
 import com.netbout.dynamo.DyBase;
+import com.netbout.spi.Base;
 import java.io.IOException;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
@@ -46,14 +46,14 @@ import javax.servlet.ServletContextListener;
 public final class LifecycleListener implements ServletContextListener {
 
     /**
-     * When was it started.
-     */
-    private final transient long start = System.currentTimeMillis();
-
-    /**
      * The spi.
      */
     private transient Base base;
+
+    /**
+     * When was it started.
+     */
+    private final transient long start = System.currentTimeMillis();
 
     @Override
     public void contextInitialized(final ServletContextEvent event) {
@@ -65,7 +65,11 @@ public final class LifecycleListener implements ServletContextListener {
             );
             throw new IllegalStateException(ex);
         }
-        this.base = new DyBase();
+        this.base = new DyBase(
+            Manifests.read("Netbout-DynamoKey"),
+            Manifests.read("Netbout-DynamoSecret"),
+            Manifests.read("Netbout-DynamoPrefix")
+        );
         event.getServletContext().setAttribute(Base.class.getName(), this.base);
     }
 

@@ -64,11 +64,12 @@ public final class StartRs extends BaseRs {
 
     /**
      * Register and continue.
+     * @param alias Alias to try
      */
     @POST
     @Path("/register")
-    public void register(@FormParam("name") final String name) {
-        this.user().aliases().add(name);
+    public void register(@FormParam("alias") final String alias) {
+        this.user().aliases().add(alias);
         throw FlashInset.forward(
             this.uriInfo().getBaseUri(),
             "your alias was registered",
@@ -78,13 +79,14 @@ public final class StartRs extends BaseRs {
 
     /**
      * Check availability.
-     * @return Text "available" if this name is available
+     * @param alias Alias to check
+     * @return Text "available" if this alias is available
      */
     @GET
     @Path("/check")
-    public String check(@QueryParam("name") final String name) {
+    public String check(@QueryParam("alias") final String alias) {
         final String text;
-        if (this.user().aliases().available(name)) {
+        if (this.user().aliases().available(alias)) {
             text = "available";
         } else {
             text = "occupied";

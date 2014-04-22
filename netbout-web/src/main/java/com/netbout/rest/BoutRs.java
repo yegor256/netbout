@@ -153,7 +153,7 @@ public final class BoutRs extends BaseRs {
         this.bout().friends().kick(name);
         throw FlashInset.forward(
             this.uriInfo().getBaseUri(),
-            "you left this bout",
+            "you kicked him off this bout",
             Level.INFO
         );
     }
@@ -167,9 +167,7 @@ public final class BoutRs extends BaseRs {
             return this.alias().bout(this.number);
         } catch (final Alias.BoutNotFoundException ex) {
             throw FlashInset.forward(
-                this.uriInfo().getBaseUri(),
-                ex.getLocalizedMessage(),
-                Level.SEVERE
+                this.uriInfo().getBaseUri(), ex
             );
         }
     }

@@ -34,7 +34,6 @@ import com.jcabi.http.response.RestResponse
 import com.jcabi.http.response.XmlResponse
 import javax.ws.rs.core.HttpHeaders
 import javax.ws.rs.core.MediaType
-import javax.ws.rs.core.UriBuilder
 
 // In this script we are trying to make different hits to the
 // pages that definitely don't exist in the system. All of them
@@ -48,9 +47,9 @@ import javax.ws.rs.core.UriBuilder
         .uri().path(path).back()
         .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_XML)
         .fetch()
-        .as(RestResponse.class)
+        .as(RestResponse)
         .assertStatus(HttpURLConnection.HTTP_NOT_FOUND)
-        .as(XmlResponse.class)
+        .as(XmlResponse)
         .assertXPath("/page/links/link[@rel='self']")
         .assertXPath("/page/error[code='404']")
 }

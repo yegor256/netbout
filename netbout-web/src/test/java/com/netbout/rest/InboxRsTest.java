@@ -41,6 +41,7 @@ public final class InboxRsTest {
      */
     @Test
     public void rendersInboxFrontPage() throws Exception {
+        // todo
     }
 
 }

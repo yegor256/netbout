@@ -27,8 +27,8 @@
 package com.netbout.dynamo;
 
 import com.jcabi.aspects.Immutable;
-import com.netbout.spi.Aliases;
 import com.netbout.spi.Alias;
+import com.netbout.spi.Aliases;
 import java.util.Collections;
 import java.util.Iterator;
 

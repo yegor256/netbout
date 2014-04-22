@@ -37,7 +37,6 @@ MatcherAssert.assertThat(
     rexsl.document,
     Matchers.allOf(
         XhtmlMatchers.hasXPath('//xhtml:div[@class="message"]'),
-        XhtmlMatchers.hasXPath('//xhtml:div[@id="stage"]'),
         XhtmlMatchers.hasXPath('//xhtml:title'),
         XhtmlMatchers.hasXPath('//xhtml:h1/xhtml:span[@class="title"]'),
         XhtmlMatchers.hasXPath('//xhtml:form[@id="rename"]/xhtml:input[@name="title"]'),
@@ -45,6 +44,5 @@ MatcherAssert.assertThat(
         XhtmlMatchers.hasXPath('//xhtml:div[@id="version" and contains(.,"555")]'),
         XhtmlMatchers.hasXPath('//xhtml:div[@id="version" and contains(.,"56ms")]'),
         XhtmlMatchers.hasXPath('//xhtml:div[@id="msg3"]//xhtml:img[@class="photo" and @src!=""]'),
-/*        XhtmlMatchers.hasXPath('//xhtml:article[@id="msg3"]//p[@class="text"]/a[@href="http://example.com"]')*/
     )
 )

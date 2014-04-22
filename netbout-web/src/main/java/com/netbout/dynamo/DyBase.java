@@ -27,6 +27,8 @@
 package com.netbout.dynamo;
 
 import com.jcabi.aspects.Immutable;
+import com.jcabi.dynamo.Credentials;
+import com.jcabi.dynamo.Region;
 import com.jcabi.urn.URN;
 import com.netbout.spi.Base;
 import com.netbout.spi.User;
@@ -42,14 +44,35 @@ import java.io.IOException;
 @Immutable
 public final class DyBase implements Base {
 
+    /**
+     * Region we're in.
+     */
+    private final transient Region region;
+
+    /**
+     * Public ctor.
+     * @param key AWS key
+     * @param secret AWS secret
+     * @param prefix Table prefix
+     */
+    public DyBase(final String key, final String secret, final String prefix) {
+        this.region = new Region.Prefixed(
+            new Region.Simple(
+                new Credentials.Simple(key, secret)
+            ),
+            prefix
+        );
+    }
+
     @Override
     public User user(final URN urn) {
+        assert this.region != null;
         return new DyUser();
     }
 
     @Override
     public void close() throws IOException {
-        // nothing to do at the moment
+        // nothing to do here
     }
 
 }

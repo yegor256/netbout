@@ -73,7 +73,7 @@
                 <xsl:call-template name="head"/>
             </head>
             <body>
-                <xsl:apply-templates select="page/version" />
+                <xsl:apply-templates select="version" />
                 <div id="wrapper">
                     <div id="content">
                         <div>

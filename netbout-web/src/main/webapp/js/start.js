@@ -30,13 +30,13 @@
 $(document).ready(
     function () {
         "use strict";
-        $('#identity').keyup(
+        $('#alias').keyup(
             function () {
                 var $input = $(this), $button = $('#submit');
                 $.ajax(
                     {
                         url: $input.attr('data-check')
-                            + '?name=' + encodeURI($input.val()),
+                            + '?alias=' + encodeURI($input.val()),
                         cache: false,
                         success: function (text) {
                             if (text === 'available') {
