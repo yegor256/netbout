@@ -27,6 +27,9 @@
 package com.netbout.rest;
 
 import com.rexsl.page.PageBuilder;
+import com.rexsl.page.auth.Identity;
+import com.rexsl.page.inset.FlashInset;
+import java.util.logging.Level;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.core.Response;
@@ -46,6 +49,13 @@ public final class LoginRs extends BaseRs {
      */
     @GET
     public Response login() {
+        if (!this.auth().identity().equals(Identity.ANONYMOUS)) {
+            throw FlashInset.forward(
+                this.uriInfo().getBaseUri(),
+                "you are logged in already",
+                Level.INFO
+            );
+        }
         return new PageBuilder()
             .stylesheet("/xsl/login.xsl")
             .build(NbPage.class)
