@@ -180,11 +180,3 @@
         font-size: 20px;
         font-weight: 500;
     }
-
-    #content p,
-    #content pre,
-    #content ul,
-    #content ol {
-        position: relative;
-        font-size: 14px;
-    }

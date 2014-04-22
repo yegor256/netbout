@@ -97,34 +97,40 @@
                 </xsl:call-template>
             </span>
         </h1>
-        <div id="top2">
+        <div class="top2">
             <xsl:apply-templates select="/page/bout/friends" />
             <xsl:if test="not(/page/links/link[@rel='re-login'])">
                 <xsl:call-template name="invite" />
                 <xsl:call-template name="rename" />
             </xsl:if>
         </div>
-        <form id="post" method="post">
-            <xsl:attribute name="action">
-                <xsl:value-of select="/page/links/link[@rel='post']/@href"/>
-            </xsl:attribute>
-            <fieldset>
-                <label for="text">
-                    <xsl:text> </xsl:text>
-                </label>
-                <textarea name="text" cols="80" rows="5" id="text">
-                    <xsl:text>&#10;</xsl:text>
-                </textarea>
-                <label for="submit">
-                    <xsl:text> </xsl:text>
-                </label>
-                <input type="submit" id="submit">
-                    <xsl:attribute name="value">
-                        <xsl:value-of select="$TEXTS/Post.new.message"/>
-                    </xsl:attribute>
-                </input>
-            </fieldset>
-        </form>
+        <xsl:if test="attachments or pages">
+            <xsl:call-template name="data" />
+        </xsl:if>
+        <xsl:apply-templates select="/page/bout/pages/page[active='true']/html"/>
+        <div class="post">
+            <form method="post">
+                <xsl:attribute name="action">
+                    <xsl:value-of select="/page/links/link[@rel='post']/@href"/>
+                </xsl:attribute>
+                <fieldset>
+                    <label for="text">
+                        <xsl:text> </xsl:text>
+                    </label>
+                    <textarea name="text" cols="80" rows="5" id="text">
+                        <xsl:text>&#10;</xsl:text>
+                    </textarea>
+                    <label for="submit">
+                        <xsl:text> </xsl:text>
+                    </label>
+                    <input type="submit" id="submit">
+                        <xsl:attribute name="value">
+                            <xsl:value-of select="$TEXTS/Post.new.message"/>
+                        </xsl:attribute>
+                    </input>
+                </fieldset>
+            </form>
+        </div>
         <xsl:apply-templates select="messages/message" />
     </xsl:template>
     <xsl:template match="message">
@@ -194,7 +200,7 @@
         </div>
     </xsl:template>
     <xsl:template name="invite">
-        <div id="invite-aside">
+        <div class="invite">
             <form method="post" id="invite">
                 <xsl:attribute name="action">
                     <xsl:value-of select="/page/links/link[@rel='invite']/@href"/>
@@ -222,5 +228,61 @@
                 </input>
             </form>
         </xsl:if>
+    </xsl:template>
+    <xsl:template match="page/html">
+        <div class="page">
+            <xsl:value-of select="." disable-output-escaping="yes" />
+        </div>
+    </xsl:template>
+    <xsl:template name="data">
+        <div class="data">
+            <xsl:apply-templates select="/page/bout/pages" />
+            <xsl:apply-templates select="/page/bout/attachments" />
+        </div>
+    </xsl:template>
+    <xsl:template match="bout/pages">
+        <ul class="pages">
+            <xsl:apply-templates select="page" />
+        </ul>
+    </xsl:template>
+    <xsl:template match="pages/page">
+        <li>
+            <xsl:if test="active = 'true'">
+                <xsl:attribute name="class">
+                    <xsl:text>active</xsl:text>
+                </xsl:attribute>
+            </xsl:if>
+            <xsl:choose>
+                <xsl:when test="links/link[@rel='open']">
+                    <a>
+                        <xsl:attribute name="href">
+                            <xsl:value-of select="links/link[@rel='open']/@href"/>
+                        </xsl:attribute>
+                        <xsl:value-of select="name" />
+                    </a>
+                </xsl:when>
+                <xsl:otherwise>
+                    <xsl:value-of select="name" />
+                </xsl:otherwise>
+            </xsl:choose>
+        </li>
+    </xsl:template>
+    <xsl:template match="bout/attachments">
+        <ul class="attachments">
+            <xsl:apply-templates select="attachment" />
+        </ul>
+    </xsl:template>
+    <xsl:template match="attachment">
+        <li>
+            <xsl:if test="visible != 'true'">
+                <span class="icomoon"><xsl:text>o</xsl:text></span>
+            </xsl:if>
+            <a>
+                <xsl:attribute name="href">
+                    <xsl:value-of select="links/link[@rel='download']/@href"/>
+                </xsl:attribute>
+                <xsl:value-of select="name" />
+            </a>
+        </li>
     </xsl:template>
 </xsl:stylesheet>

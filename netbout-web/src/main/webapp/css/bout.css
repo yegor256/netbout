@@ -27,15 +27,14 @@
 
 /* JIGSAW IGNORE: there is some problem in w3c server now */
 
-/* header with participants and options */
-#top2 {
+/* header with friends */
+.top2 {
     position: relative;
     margin-top: 7px;
-    margin-bottom: 7px;
+    margin-bottom: 37px;
+    clear: both;
 }
-
-    /* invite sector */
-    #invite-aside {
+    .invite {
         position: absolute;
         top: 0;
         right: 0;
@@ -43,31 +42,29 @@
         background-color: white;
         z-index: 10;
     }
-
-        #invite-aside input {
+        .invite input {
             background-color: white;
         }
 
-/* titles of the pages */
-#titles {
-    margin-top: 20px;
-    margin-left: 0;
-    padding-left: 0;
+.data {
+    position: relative;
+    clear: both;
 }
 
-    /* one title of a stage */
-    #titles li {
+.pages {
+    margin-left: 0;
+    position: relative;
+}
+    .pages li {
         display: inline;
         margin-right: 10px;
     }
-
-        /* active title of a stage */
-        #titles li.active {
+        .pages li.active {
             font-weight: bold;
         }
 
 /* page itself */
-#page {
+.page {
     min-height: 30px;
     margin-top: 14px;
     margin-bottom: 14px;
@@ -80,19 +77,29 @@
     overflow-y: auto;
 }
 
+.attachments {
+    position: absolute;
+    top: 0;
+    right: 0;
+}
+    .attachments li {
+        display: inline;
+        margin-right: 10px;
+    }
+        .attachments li.active {
+            font-weight: bold;
+        }
+
 /* form to post a new message */
-#post {
+.post {
+    clear: both;
+    margin-top: 10px;
+    margin-bottom: 10px;
 }
 
-    #post p {
-        margin-top: 10px;
-        margin-bottom: 10px;
-        line-height: 0;
-    }
-
-    #post textarea {
+    .post textarea {
         display: inline;
-        width: 900px;
+        width: 100%;
     }
 
 /* one message */

@@ -203,14 +203,14 @@
                             </li>
                         </xsl:if>
                         <li>
-                            <a>
+                            <a class="icomoon">
                                 <xsl:attribute name="href">
                                     <xsl:value-of select="links/link[@rel='logout']/@href"/>
                                 </xsl:attribute>
                                 <xsl:attribute name="title">
                                     <xsl:value-of select="$TEXTS/leave.right.now"/>
                                 </xsl:attribute>
-                                <xsl:value-of select="$TEXTS/Logout"/>
+                                <xsl:text>e</xsl:text>
                             </a>
                         </li>
                     </ul>

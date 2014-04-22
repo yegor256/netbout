@@ -82,9 +82,9 @@ public interface Bout {
     Pages pages();
 
     /**
-     * Binaries.
-     * @return Binaries
+     * Attachments.
+     * @return Attachments
      */
-    Binaries binaries();
+    Attachments binaries();
 
 }

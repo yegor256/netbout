@@ -38,7 +38,7 @@
         <title>Netbout - private talks made easy</title>
     </xsl:template>
     <xsl:template name="content">
-        <div class="buttons">
+        <div class="buttons icomoon">
             <a>
                 <xsl:attribute name="href">
                     <xsl:value-of select="/page/links/link[@rel='auth-facebook']/@href" />

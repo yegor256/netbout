@@ -27,49 +27,22 @@
 package com.netbout.spi;
 
 import com.jcabi.aspects.Immutable;
-import java.io.IOException;
-import java.io.InputStream;
 
 /**
- * Binary.
+ * Attachments.
  *
  * @author Yegor Bugayenko (yegor@tpc2.com)
  * @version $Id$
  * @since 2.0
  */
 @Immutable
-public interface Binary {
+public interface Attachments extends Iterable<Attachment> {
 
     /**
-     * Its name.
-     * @return Name of it
+     * Get binary by name.
+     * @param name Attachment name
+     * @return Attachment
      */
-    String name();
-
-    /**
-     * Is it visible to everybody?
-     * @return TRUE if visible
-     */
-    boolean visible();
-
-    /**
-     * Make it public or private.
-     * @param vsbl TRUE if it should be public
-     */
-    void visible(boolean vsbl);
-
-    /**
-     * Read content.
-     * @return Content
-     * @throws IOException If fails
-     */
-    InputStream read() throws IOException;
-
-    /**
-     * Write content.
-     * @param stream Steam with content
-     * @throws IOException If fails
-     */
-    void write(InputStream stream) throws IOException;
+    Attachment get(String name);
 
 }
