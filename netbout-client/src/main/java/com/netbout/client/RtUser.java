@@ -28,25 +28,18 @@ package com.netbout.client;
 
 import com.jcabi.aspects.Immutable;
 import com.jcabi.http.Request;
-import com.jcabi.http.request.JdkRequest;
-import com.jcabi.http.wire.BasicAuthWire;
-import com.jcabi.urn.URN;
-import com.netbout.spi.Base;
+import com.netbout.spi.Aliases;
 import com.netbout.spi.User;
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
-import javax.validation.constraints.NotNull;
-import org.apache.commons.lang3.CharEncoding;
 
 /**
- * REST base.
+ * REST user.
  *
  * @author Yegor Bugayenko (yegor@tpc2.com)
  * @version $Id$
  * @since 2.0
  */
 @Immutable
-public final class RtBase implements Base {
+final class RtUser implements User {
 
     /**
      * Request to use.
@@ -54,40 +47,15 @@ public final class RtBase implements Base {
     private final transient Request request;
 
     /**
-     * Secret for Basic HTTP auth.
-     */
-    private final transient String secret;
-
-    /**
      * Public ctor.
-     * @param uri URI of netbout server
-     * @param scrt Secret key to use
+     * @param req Request to use
      */
-    public RtBase(final String uri, final String scrt) {
-        this.secret = scrt;
-        this.request = new JdkRequest(uri)
-            .through(BasicAuthWire.class);
+    RtUser(final Request req) {
+        this.request = req;
     }
 
     @Override
-    public User user(@NotNull(message = "URN can't be NULL") final URN urn) {
-        try {
-            return new RtUser(
-                this.request.uri().userInfo(
-                    String.format(
-                        "%s:%s",
-                        URLEncoder.encode(urn.toString(), CharEncoding.UTF_8),
-                        URLEncoder.encode(this.secret, CharEncoding.UTF_8)
-                    )
-                ).back()
-            );
-        } catch (final UnsupportedEncodingException ex) {
-            throw new IllegalStateException(ex);
-        }
-    }
-
-    @Override
-    public void close() {
-        // nothing to do here
+    public Aliases aliases() {
+        throw new UnsupportedOperationException("#aliases()");
     }
 }

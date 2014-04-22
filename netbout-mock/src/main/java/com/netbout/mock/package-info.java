@@ -26,20 +26,10 @@
  */
 
 /**
- * DynamoDB storage.
- *
- * <p>There are the following tables in DynamoDB:
- *
- * <pre>
- * aliases: (hash:alias, photo, URN, locale)
- * friends: (hash:bout, range:alias, title, date)
- * messages: (hash:bout, range:msg, text, alias, date)
- * pages: (hash:bout, range:name, markdown)
- * attachments: (hash:bout, range:name, owner, visible, s3-key)
- * </pre>
+ * Mock server of Netbout, based on H2 database.
  *
  * @author Yegor Bugayenko (yegor@tpc2.com)
  * @version $Id$
  * @since 2.0
  */
-package com.netbout.dynamo;
+package com.netbout.mock;

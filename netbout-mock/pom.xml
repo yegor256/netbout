@@ -37,8 +37,8 @@
         <artifactId>netbout</artifactId>
         <version>3.0-SNAPSHOT</version>
     </parent>
-    <artifactId>netbout-client</artifactId>
-    <name>netbout-client</name>
+    <artifactId>netbout-mock</artifactId>
+    <name>netbout-mock</name>
     <packaging>jar</packaging>
     <dependencies>
         <dependency>
