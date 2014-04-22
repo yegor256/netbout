@@ -28,7 +28,7 @@
 ul.bouts {
     margin: 0 !important;
     padding: 0 !important;
-    font-size: 1em !important;
+    font-size: 10px !important;
 }
 
 li.bout {
@@ -36,18 +36,3 @@ li.bout {
     clear: both;
     list-style: none;
 }
-
-.bundled {
-    margin-top: 0.429em;
-    color: #bebcc1;
-    font-size: 1.4em;
-}
-
-    .bundled a {
-        color: #bebcc1;
-    }
-
-        .bundled a:hover {
-            color: #211922;
-        }
-

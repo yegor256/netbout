@@ -27,29 +27,22 @@
 package com.netbout.dynamo;
 
 import com.jcabi.aspects.Immutable;
-import com.jcabi.urn.URN;
-import com.netbout.spi.Base;
+import com.netbout.spi.Identities;
 import com.netbout.spi.User;
-import java.io.IOException;
 
 /**
- * Dynamo Base.
+ * Dynamo User.
  *
  * @author Yegor Bugayenko (yegor@tpc2.com)
  * @version $Id$
  * @since 2.0
  */
 @Immutable
-public final class DyBase implements Base {
+public final class DyUser implements User {
 
     @Override
-    public User user(final URN urn) {
-        return new DyUser();
-    }
-
-    @Override
-    public void close() throws IOException {
-        // nothing to do at the moment
+    public Identities identities() {
+        return new DyIdentities();
     }
 
 }

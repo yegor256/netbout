@@ -38,6 +38,12 @@
 	font-style: normal;
 }
 
+* {
+    padding: 0;
+    margin: 0;
+    border: 0;
+}
+
 /* all elements */
 a,
 img,
@@ -48,15 +54,12 @@ h2,
 h3,
 textarea {
     font-family: "Helvetica Neue", "HelveticaNeue", "HelveticaNeueRoman",
-        "HelveticaNeue-Roman", "Helvetica Neue Roman", "TeXGyreHerosRegular",
-        "Helvetica", "Tahoma", "Geneva", "Arial", sans-serif;
-    font-size: 1em;
+        "HelveticaNeue-Roman", "Helvetica Neue Roman",
+        "Helvetica", "Arial", sans-serif;
+    font-size: 16px;
     font-stretch: normal;
     font-weight: normal;
     color: #211922;
-    padding: 0;
-    margin: 0;
-    border: 0;
     text-decoration: none;
 }
 
@@ -72,34 +75,37 @@ a {
 
 /* any paragraph */
 p {
-    margin-top: 0.5em;
-    margin-bottom: 0.5em;
+    margin-top: 5px;
+    margin-bottom: 5px;
 }
 
 /* any list */
 ul,
 ol {
-    margin-left: 2em;
+    margin-left: 20px;
 }
 
 /* fixed font */
+.tt, .fixed, pre, textarea {
+    font-family: 'Consolas', 'Menlo', 'Monaco', 'Courier New', monospace;
+}
+
 .tt,
 .fixed,
 pre {
-    font-family: 'Consolas', 'Menlo', 'Monaco', 'Courier New', monospace;
     background-color: #f3f3f1;
 }
 
 /* inline fixed text */
 .tt {
-    padding-left: 0.4em;
-    padding-right: 0.4em;
+    padding-left: 4px;
+    padding-right: 4px;
 }
 
 /* fixed block */
 .fixed {
     white-space: pre;
-    font-size: 1.3em;
+    font-size: 13px;
 }
 
 /* red text marker */
@@ -109,9 +115,9 @@ pre {
 
 /* any input field */
 input {
-    border: 0.071em solid #bfbcc1;
+    border: 1px solid #bfbcc1;
     background-color: white;
-    padding: 0.5em 0.71em; /* multiply by FONT-SIZE = 1em */
+    padding: 5px 7px;
 }
 
     /* any submit button */
@@ -122,33 +128,32 @@ input {
 
 /* any text aread */
 textarea {
-    padding: 1em;
-    border: 0.071em solid #bfbcc1;
+    padding: 10px;
+    border: 1px solid #bfbcc1;
     overflow: hidden;
-    font-family: 'Consolas', 'Menlo', 'Monaco', 'Courier New', monospace;
 }
 
 label {
-    margin-top: 0.2em;
-    margin-bottom: 0.2em;
+    margin-top: 2px;
+    margin-bottom: 2px;
     display: block;
 }
 
 /* error message to show */
 .error-message {
     position: relative;
-    font-size: 1.4em;
+    font-size: 14px;
     color: #f24a40;
-    margin-top: 0.3em;
+    margin-top: 3px;
 }
 
 /* bottom right label about deployed version */
 #version {
-    font-size: 1.2em;
+    font-size: 12px;
     position: fixed;
     right: 0;
     bottom: 0;
-    padding: 0.4em 0.8em;
+    padding: 4px 0.8em;
     background-color: #e4e5e3;
     color: gray;
 }

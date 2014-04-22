@@ -54,4 +54,19 @@ public final class LoginRs extends BaseRs {
             .build();
     }
 
+    /**
+     * Start page.
+     * @return The JAX-RS response
+     */
+    @GET
+    @Path("/start")
+    public Response start() {
+        return new PageBuilder()
+            .stylesheet("/xsl/start.xsl")
+            .build(NbPage.class)
+            .init(this)
+            .render()
+            .build();
+    }
+
 }

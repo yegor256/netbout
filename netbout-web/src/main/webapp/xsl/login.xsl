@@ -32,97 +32,41 @@
     xmlns:xs="http://www.w3.org/2001/XMLSchema"
     xmlns="http://www.w3.org/1999/xhtml"
     version="2.0" exclude-result-prefixes="xs">
-
     <xsl:output method="xml" omit-xml-declaration="yes"/>
-
-    <xsl:include href="/xsl/templates.xsl" />
-
-    <xsl:template match="/">
-        <xsl:text disable-output-escaping="yes">&lt;!DOCTYPE html&gt;</xsl:text>
-        <html lang="en-US">
-            <head>
-                <meta charset="UTF-8" />
-                <link rel="stylesheet" type="text/css" media="all">
-                    <xsl:attribute name="href">
-                        <xsl:text>/css/global.css?</xsl:text>
-                        <xsl:value-of select="/page/version/revision"/>
-                    </xsl:attribute>
-                </link>
-                <link rel="stylesheet" type="text/css" media="all">
-                    <xsl:attribute name="href">
-                        <xsl:text>/css/login.css?</xsl:text>
-                        <xsl:value-of select="/page/version/revision"/>
-                    </xsl:attribute>
-                </link>
-                <link rel="icon" type="image/gif">
-                    <xsl:attribute name="href">
-                        <xsl:call-template name="cdn">
-                            <xsl:with-param name="name">
-                                <xsl:text>favicon.ico</xsl:text>
-                            </xsl:with-param>
-                        </xsl:call-template>
-                    </xsl:attribute>
-                </link>
-                <title>Netbout.com, Conversation-Centric UI On-Demand</title>
-            </head>
-            <body>
-                <xsl:apply-templates select="page/version" />
-                <div id="wrapper">
-                    <div id="content">
-                        <div>
-                            <a>
-                                <xsl:attribute name="href">
-                                    <xsl:value-of select="/page/links/link[@rel='home']/@href"/>
-                                </xsl:attribute>
-                                <xsl:attribute name="title">
-                                    <xsl:text>back home</xsl:text>
-                                </xsl:attribute>
-                                <img class="logo" alt="back home">
-                                    <xsl:attribute name="src">
-                                        <xsl:text>http://img.netbout.com/logo/logo-en.png?</xsl:text>
-                                        <xsl:value-of select="/page/version/revision"/>
-                                    </xsl:attribute>
-                                </img>
-                            </a>
-                        </div>
-                        <xsl:if test="/page/message != ''">
-                            <div class="error-message">
-                                <xsl:value-of select="/page/message"/>
-                            </div>
-                        </xsl:if>
-                        <div class="buttons">
-                            <a>
-                                <xsl:attribute name="href">
-                                    <xsl:value-of select="/page/links/link[@rel='auth-facebook']/@href" />
-                                </xsl:attribute>
-                                <xsl:attribute name="title">
-                                    <xsl:text>click to authenticate yourself via Facebook</xsl:text>
-                                </xsl:attribute>
-                                <xsl:text>f</xsl:text>
-                            </a>
-                            <a>
-                                <xsl:attribute name="href">
-                                    <xsl:value-of select="/page/links/link[@rel='auth-google']/@href" />
-                                </xsl:attribute>
-                                <xsl:attribute name="title">
-                                    <xsl:text>click to authenticate yourself via Google+</xsl:text>
-                                </xsl:attribute>
-                                <xsl:text>p</xsl:text>
-                            </a>
-                            <a>
-                                <xsl:attribute name="href">
-                                    <xsl:value-of select="/page/links/link[@rel='auth-github']/@href" />
-                                </xsl:attribute>
-                                <xsl:attribute name="title">
-                                    <xsl:text>click to authenticate yourself via Github</xsl:text>
-                                </xsl:attribute>
-                                <xsl:text>g</xsl:text>
-                            </a>
-                        </div>
-                    </div>
-                </div>
-            </body>
-        </html>
+    <xsl:include href="/xsl/front-layout.xsl" />
+    <xsl:template name="head">
+        <title>Netbout - private talks made easy</title>
+    </xsl:template>
+    <xsl:template name="content">
+        <div class="buttons">
+            <a>
+                <xsl:attribute name="href">
+                    <xsl:value-of select="/page/links/link[@rel='auth-facebook']/@href" />
+                </xsl:attribute>
+                <xsl:attribute name="title">
+                    <xsl:text>click to authenticate yourself via Facebook</xsl:text>
+                </xsl:attribute>
+                <xsl:text>f</xsl:text>
+            </a>
+            <a>
+                <xsl:attribute name="href">
+                    <xsl:value-of select="/page/links/link[@rel='auth-google']/@href" />
+                </xsl:attribute>
+                <xsl:attribute name="title">
+                    <xsl:text>click to authenticate yourself via Google+</xsl:text>
+                </xsl:attribute>
+                <xsl:text>p</xsl:text>
+            </a>
+            <a>
+                <xsl:attribute name="href">
+                    <xsl:value-of select="/page/links/link[@rel='auth-github']/@href" />
+                </xsl:attribute>
+                <xsl:attribute name="title">
+                    <xsl:text>click to authenticate yourself via Github</xsl:text>
+                </xsl:attribute>
+                <xsl:text>g</xsl:text>
+            </a>
+        </div>
     </xsl:template>
 
 </xsl:stylesheet>

@@ -27,17 +27,13 @@
 
 /* JIGSAW IGNORE: there is some problem in w3c server now */
 
-body {
-    font-size: 10px; /* the same as 7.8pt or 2.646mm or 10px */
-}
-
 /* top header */
 #cap {
     width: 100%;
     position: relative;
     background-color: #f3f3f1;
-    height: 7.1em;
-    border-bottom: 0.2em solid #dadbd9;
+    height: 71px;
+    border-bottom: 2px solid #dadbd9;
     display: table;
     overflow: hidden;
 }
@@ -56,7 +52,7 @@ body {
     margin-left: auto;
     margin-right: auto;
     text-align: left;
-    width: 90em;
+    width: 900px;
     line-height: 0;
     color: #4b4250;
 }
@@ -69,9 +65,9 @@ body {
 
         #logo {
             background-repeat: no-repeat;
-            width: 11.3em;
-            height: 3.7em;
-            margin-right: 2em;
+            width: 113px;
+            height: 37px;
+            margin-right: 20px;
             display: inline-block;
             vertical-align: middle;
             text-decoration: none;
@@ -82,13 +78,13 @@ body {
             display: inline-block;
             vertical-align: middle;
             position: relative;
-            font-size: 1.4em;
+            font-size: 14px;
         }
 
             #search-input {
                 display: inline-block;
                 position: relative;
-                width: 16em;
+                width: 160px;
                 vertical-align: middle;
             }
 
@@ -96,7 +92,7 @@ body {
         display: table-cell;
         text-align: right;
         vertical-align: middle;
-        height: 3.2em;
+        height: 32px;
         position: relative;
     }
 
@@ -109,18 +105,18 @@ body {
             #right ul li {
                 list-style: none;
                 display: inline;
-                margin-left: 2.7em;
+                margin-left: 27px;
             }
 
                 #photo {
                     height: 100%;
-                    margin-right: 0.6em;
+                    margin-right: 6px;
                     display: inline;
                     vertical-align: middle;
                 }
 
                 #right ul li {
-                    font-size: 1.4em;
+                    font-size: 14px;
                     font-weight: 600;
                     vertical-align: middle;
                 }
@@ -128,7 +124,7 @@ body {
                     #right ul li span.start {
                         font-weight: bolder;
                         color: #f24a40; /* red */
-                        padding-left: 0.5em;
+                        padding-left: 5px;
                     }
 
                 #right ul li a {
@@ -141,61 +137,47 @@ body {
                         text-decoration: underline;
                     }
 
-/* log message to show */
-#log {
-    position: relative;
-    color: #c3c3c3;
-    margin-top: 0.3em;
-    font-family: 'Consolas', 'Menlo', 'Monaco', 'Courier New', monospace;
-    white-space: pre-line;
-}
-
-    #log p {
-        margin-top: 0.1em;
-        margin-bottom: 0.1em;
-    }
-
 /* everything between header and footer */
 #content {
     position: relative;
-    width: 90em;
+    width: 900px;
     margin-right: auto;
     margin-left: auto;
     clear: both;
-    padding-bottom: 2em;
+    padding-bottom: 20px;
 }
 
     #content h1 {
         position: relative;
-        padding-top: 1.8519em; /* 5em */
-        margin-bottom: 0.2593em; /* 0.7em */
-        font-size: 2.7em;
+        padding-top: 5px;
+        margin-bottom: 7px;
+        font-size: 27px;
         font-weight: 500;
-        width: 25.9259em; /* 70em */
+        width: 700px;
     }
 
         #content h1.bout .num {
-            font-size: 0.5926em; /* 1.6 */
-            margin-right: 0.3em;
+            font-size: 16px;
+            margin-right: 3px;
             font-weight: normal;
         }
 
         #content h1.bout .title {
-            font-size: 1em; /* 2.7 */
-            line-height: 1em;
+            font-size: 27px;
+            line-height: 27px;
         }
 
         #content h1.bout .new {
-            font-size: 0.6296em; /* 1.7 */
+            font-size: 17px;
             font-weight: normal;
-            color: #f24a40; /* red */
-            margin-left: 0.3em;
+            color: #f24a40;
+            margin-left: 3px;
         }
 
     #content h2 {
         position: relative;
-        padding-top: 1em; /* 2em */
-        font-size: 2em;
+        padding-top: 20px;
+        font-size: 20px;
         font-weight: 500;
     }
 
@@ -204,6 +186,5 @@ body {
     #content ul,
     #content ol {
         position: relative;
-        font-size: 1.4em;
+        font-size: 14px;
     }
-

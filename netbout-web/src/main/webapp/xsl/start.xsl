@@ -1,4 +1,5 @@
-/**
+<?xml version="1.0"?>
+<!--
  * Copyright (c) 2009-2014, Netbout.com
  * All rights reserved.
  *
@@ -23,33 +24,29 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
- */
-package com.netbout.dynamo;
-
-import com.jcabi.aspects.Immutable;
-import com.jcabi.urn.URN;
-import com.netbout.spi.Base;
-import com.netbout.spi.User;
-import java.io.IOException;
-
-/**
- * Dynamo Base.
  *
  * @author Yegor Bugayenko (yegor@tpc2.com)
  * @version $Id$
- * @since 2.0
- */
-@Immutable
-public final class DyBase implements Base {
+ -->
+<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+    xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    xmlns="http://www.w3.org/1999/xhtml"
+    version="2.0" exclude-result-prefixes="xs">
+    <xsl:output method="xml" omit-xml-declaration="yes"/>
+    <xsl:include href="/xsl/front-layout.xsl" />
+    <xsl:template name="head">
+        <title>Netbout - private talks made easy</title>
+    </xsl:template>
+    <xsl:template name="content">
+        <form method="post">
+            <fieldset>
+                <label>
+                    <xsl:text>What will be your unique name visible to everybody?</xsl:text>
+                </label>
+                <input name="identity" size="35" maxlength="100" />
+                <input type="submit" value="register" />
+            </fieldset>
+        </form>
+    </xsl:template>
 
-    @Override
-    public User user(final URN urn) {
-        return new DyUser();
-    }
-
-    @Override
-    public void close() throws IOException {
-        // nothing to do at the moment
-    }
-
-}
+</xsl:stylesheet>
