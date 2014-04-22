@@ -1,4 +1,4 @@
-<img src="http://img.netbout.com/logo-medium.png" width="132px" height="29px"/>
+<img src="http://img.netbout.com/logo/logo-en.png" width="132px"/>
 
 Netbout.com is a communication platform that enables smoothless integration
 of humans and software agents in a conversation-centered environment.
