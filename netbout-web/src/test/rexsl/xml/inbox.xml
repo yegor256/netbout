@@ -42,11 +42,10 @@
         <link href="/" rel="auth-logout" />
     </links>
     <identity>
-        <alias>Willy III</alias>
-        <aliases/>
+        <urn>urn:facebook:12345678</urn>
         <name>William.Shakespeare</name>
         <photo>http://www.robert-deniro.com/deniro.jpg</photo>
-        <locale>en</locale>
+        <token>TEGF65-HFYA087-JFS</token>
     </identity>
     <bouts>
         <bout>

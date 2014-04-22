@@ -32,18 +32,13 @@
     xmlns:xs="http://www.w3.org/2001/XMLSchema"
     xmlns="http://www.w3.org/1999/xhtml"
     version="2.0" exclude-result-prefixes="xs">
-
     <xsl:output method="xml" omit-xml-declaration="yes"/>
-
     <xsl:param name="TEXTS"
         select="document(concat('/lang/', /page/identity/locale, '.xml?', /page/version/revision))/texts"/>
-
     <xsl:include href="/xsl/layout.xsl" />
     <xsl:include href="/xsl/dudes.xsl" />
-
     <xsl:variable name="participant"
         select="/page/bout/participants/participant[identity=/page/identity/name]"/>
-
     <xsl:template name="head">
         <title>
             <xsl:text>#</xsl:text>
