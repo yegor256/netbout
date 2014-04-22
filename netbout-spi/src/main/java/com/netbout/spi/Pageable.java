@@ -26,6 +26,8 @@
  */
 package com.netbout.spi;
 
+import com.jcabi.aspects.Immutable;
+
 /**
  * Pageable.
  *
@@ -33,11 +35,13 @@ package com.netbout.spi;
  * @version $Id$
  * @since 2.0
  */
+@Immutable
 public interface Pageable<T> extends Iterable<T> {
 
     /**
      * Jump to the given position.
      * @param pos Position
+     * @return New collection of items
      */
     Pageable<T> jump(int pos);
 

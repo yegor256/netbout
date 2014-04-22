@@ -26,6 +26,8 @@
  */
 package com.netbout.spi;
 
+import com.jcabi.aspects.Immutable;
+
 /**
  * Pages.
  *
@@ -33,11 +35,13 @@ package com.netbout.spi;
  * @version $Id$
  * @since 2.0
  */
+@Immutable
 public interface Pages extends Iterable<Page> {
 
     /**
      * Get page by name.
      * @param name Page name
+     * @return Page
      */
     Page get(String name);
 

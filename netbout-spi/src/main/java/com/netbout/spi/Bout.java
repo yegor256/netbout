@@ -26,6 +26,7 @@
  */
 package com.netbout.spi;
 
+import com.jcabi.aspects.Immutable;
 import java.util.Date;
 
 /**
@@ -35,6 +36,7 @@ import java.util.Date;
  * @version $Id$
  * @since 2.0
  */
+@Immutable
 public interface Bout {
 
     /**

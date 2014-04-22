@@ -26,6 +26,8 @@
  */
 package com.netbout.spi;
 
+import com.jcabi.aspects.Immutable;
+
 /**
  * Binaries.
  *
@@ -33,11 +35,13 @@ package com.netbout.spi;
  * @version $Id$
  * @since 2.0
  */
+@Immutable
 public interface Binaries extends Iterable<Binary> {
 
     /**
      * Get binary by name.
      * @param name Binary name
+     * @return Binary
      */
     Binary get(String name);
 

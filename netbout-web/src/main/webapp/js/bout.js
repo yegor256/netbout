@@ -25,9 +25,10 @@
  * SUCH DAMAGE.
  */
 
-/*globals $:false */
+/*globals $:false, document:false */
 
-String.prototype.escaped = function() {
+String.prototype.escaped = function () {
+    "use strict";
     return this.replace(/&/g, "&amp;")
         .replace(/</g, "&lt;")
         .replace(/>/g, "&gt;")
@@ -38,12 +39,13 @@ String.prototype.escaped = function() {
 /**
  * Pre-configure this page.
  */
-var setup = function() {
+var setup = function () {
+    "use strict";
     var bout = parseInt($('a span.num').text(), 10);
     if ($('#rename')[0]) {
         $('h1 span.title')
             .blur(
-                function() {
+                function () {
                     var $input = $("#rename input[name='title']"),
                         previous = $input.val(),
                         entered = $(this).text();
@@ -54,35 +56,35 @@ var setup = function() {
                 }
             )
             .keydown(
-                function() {
-                    if (arguments[0].keyCode === 13) {
+                function (event) {
+                    if (event.keyCode === 13) {
                         $(this).blur();
                     }
                 }
             );
     }
     $('span.xml-toggle').click(
-        function() {
+        function () {
             $(this).parent().parent().find('p.fixed').toggle();
         }
     );
     $('input[name="mask"]').keyup(
-        function() {
+        function () {
             var $ul = $('#invite-list');
             $.ajax({
                 url: '/f?mask=' + encodeURI($(this).val()) + '&bout=' + bout,
                 headers: { 'Accept': 'application/xml' },
                 cache: false,
                 dataType: 'xml',
-                error: function() {
+                error: function () {
                     $ul.hide();
                     $ul.empty();
                 },
-                success: function(xml) {
+                success: function (xml) {
                     $ul.hide();
                     var html = '';
                     $(xml).find('invitee').each(
-                        function() {
+                        function () {
                             var alias = $(this).find('alias').text();
                             // see http://stackoverflow.com/questions/9834487
                             html += '<li><a href="' + $(this).attr('href').escaped()
@@ -103,4 +105,3 @@ var setup = function() {
 };
 
 $(document).ready(setup);
-

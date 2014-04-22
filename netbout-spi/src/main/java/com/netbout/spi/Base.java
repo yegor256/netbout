@@ -26,8 +26,10 @@
  */
 package com.netbout.spi;
 
+import com.jcabi.aspects.Immutable;
 import com.jcabi.urn.URN;
 import java.io.Closeable;
+import javax.validation.constraints.NotNull;
 
 /**
  * Base.
@@ -36,6 +38,7 @@ import java.io.Closeable;
  * @version $Id$
  * @since 2.0
  */
+@Immutable
 public interface Base extends Closeable {
 
     /**
@@ -43,6 +46,6 @@ public interface Base extends Closeable {
      * @param urn URN of the user
      * @return User
      */
-    User user(URN urn);
+    User user(@NotNull(message = "URN can't be NULL") URN urn);
 
 }

@@ -58,8 +58,12 @@
                 </script>
                 <script type="text/javascript">
                     <xsl:attribute name="src">
-                        <xsl:text>/js/supplementary.js?</xsl:text>
-                        <xsl:value-of select="/page/version/revision"/>
+                        <xsl:call-template name="cdn">
+                            <xsl:with-param name="name">
+                                <xsl:text>supplementary.js?</xsl:text>
+                                <xsl:value-of select="/page/version/revision"/>
+                            </xsl:with-param>
+                        </xsl:call-template>
                     </xsl:attribute>
                     <xsl:text> </xsl:text>
                     <!-- this is for W3C compliance -->

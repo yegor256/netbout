@@ -26,6 +26,7 @@
  */
 package com.netbout.spi;
 
+import com.jcabi.aspects.Immutable;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -36,6 +37,7 @@ import java.io.InputStream;
  * @version $Id$
  * @since 2.0
  */
+@Immutable
 public interface Binary {
 
     /**

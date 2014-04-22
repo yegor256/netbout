@@ -26,6 +26,8 @@
  */
 package com.netbout.spi;
 
+import com.jcabi.aspects.Immutable;
+
 /**
  * Page.
  *
@@ -33,6 +35,7 @@ package com.netbout.spi;
  * @version $Id$
  * @since 2.0
  */
+@Immutable
 public interface Page {
 
     /**

@@ -25,15 +25,16 @@
  * SUCH DAMAGE.
  */
 
-/*globals $:false */
+/*globals $:false, document:false */
 
 $(document).ready(
-    function() {
+    function () {
+        "use strict";
         $('div.bar')
-            .mouseover(function() { $(this).show(); })
-            .mouseout(function() { $(this).hide(); });
+            .mouseover(function () { $(this).show(); })
+            .mouseout(function () { $(this).hide(); });
         $('div.dude')
-            .mouseover(function() { $(this).parent().find('.bar').show(); })
-            .mouseout(function() { $(this).parent().find('.bar').hide(); });
+            .mouseover(function () { $(this).parent().find('.bar').show(); })
+            .mouseout(function () { $(this).parent().find('.bar').hide(); });
     }
 );

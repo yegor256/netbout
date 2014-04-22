@@ -26,6 +26,7 @@
  */
 package com.netbout.spi;
 
+import com.jcabi.aspects.Immutable;
 import java.net.URI;
 
 /**
@@ -35,6 +36,7 @@ import java.net.URI;
  * @version $Id$
  * @since 2.0
  */
+@Immutable
 public interface Friend {
 
     /**

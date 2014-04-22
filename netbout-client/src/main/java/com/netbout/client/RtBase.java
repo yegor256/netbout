@@ -26,10 +26,12 @@
  */
 package com.netbout.client;
 
+import com.jcabi.aspects.Immutable;
 import com.jcabi.urn.URN;
 import com.netbout.spi.Base;
 import com.netbout.spi.User;
 import java.io.IOException;
+import javax.validation.constraints.NotNull;
 
 /**
  * REST base.
@@ -38,10 +40,11 @@ import java.io.IOException;
  * @version $Id$
  * @since 2.0
  */
+@Immutable
 public final class RtBase implements Base {
 
     @Override
-    public User user(final URN urn) {
+    public User user(@NotNull(message = "URN can't be NULL") final URN urn) {
         throw new UnsupportedOperationException("#user()");
     }
 
