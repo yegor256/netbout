@@ -1,0 +1,97 @@
+<?xml version="1.0"?>
+<!--
+ * Copyright (c) 2009-2014, Netbout.com
+ * All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are PROHIBITED without prior written permission from
+ * the author. This product may NOT be used anywhere and on any computer
+ * except the server platform of netBout Inc. located at www.netbout.com.
+ * Federal copyright law prohibits unauthorized reproduction by any means
+ * and imposes fines up to $25,000 for violation. If you received
+ * this code accidentally and without intent to use it, please report this
+ * incident to the author by email.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+ * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+ * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+ * A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+ * OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+ * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+ * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
+ * ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+ * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
+ * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
+ * SUCH DAMAGE.
+ *
+ * Translated by Akane Moindron (anne4mjj@yahoo.co.jp, skype: moindron.akane)
+ *
+ * beta version:
+ *
+ * @author Yegor Bugayenko (yegor@tpc2.com)
+ * @version $Id$
+ -->
+<texts revision="${build.number}">
+    <beta.version>ベータ版</beta.version>
+    <!-- global messages -->
+    <We.recommend.to.reauthenticate>自分を再度認証させることをお勧めします</We.recommend.to.reauthenticate>
+    <sec>秒後に</sec>
+    <in></in>
+    <in.a.few.minutes>数秒後に</in.a.few.minutes>
+    <the.server.is.busy>
+        サーバーが現在あなたのアカウントをアップデート中です。更新に反映されないデータがある場合もあります。
+        ページを更新してみてください
+    </the.server.is.busy>
+    <click.here>ここをクリックする</click.here>
+    <Find>検索する…</Find>
+
+    <!-- top menu -->
+    <About>会社概要</About>
+    <Start>スタート</Start>
+    <Start.later>(後で）会話する</Start.later>
+    <start.new.bout>新しい会話を始める</start.new.bout>
+    <back.to.inbox>受信箱に戻る</back.to.inbox>
+    <Logout>ログアウト</Logout>
+    <leave.right.now>今すぐNetboutを終了する</leave.right.now>
+
+    <!-- inbox -->
+    <inbox>受信箱</inbox>
+    <back.to.recent.bouts>最近の会話に戻る</back.to.recent.bouts>
+    <no.title>題名が付いていません</no.title>
+    <new.message>未読</new.message>
+    <all.of.them>それら全て</all.of.them>
+    <What.to.talk.about>
+        何について話したいですか？
+    </What.to.talk.about>
+    <We.are.still.testing>
+        まだテスト中ですので悪しからず ＾－＾
+    </We.are.still.testing>
+    <Lets.start>
+        私たちのチームの一人と簡単な会話をすることからはじめ、Netboutの使い方を実演してもらいましょう。
+    </Lets.start>
+
+    <!-- bout page -->
+    <back.to.recent.messages>最近のメッセージに戻る</back.to.recent.messages>
+    <you>あなたは</you>
+    <someone>誰かが</someone>
+    <said>言いました</said>
+    <click.to.invite.X.to.this.bout>クリックして"%s"さんをこの会話に招待する</click.to.invite.X.to.this.bout>
+    <Do.you.agree.to.join>参加しますか</Do.you.agree.to.join>
+    <yes>はい</yes>
+    <or>もしくは</or>
+    <no>いいえ</no>
+    <invited>招待済み</invited>
+    <Invite>招待する…</Invite>
+    <kick.X.off.this.bout>ここをクリックして"%s"さんをこの会話から削除する</kick.X.off.this.bout>
+    <Post.new.message>新しいメッセージを投稿する</Post.new.message>
+
+    <!-- profile page -->
+    <AKA>別名</AKA>
+    <Identity>ID</Identity>
+    <Language>言語</Language>
+    <profile>プロフィール</profile>
+    <Profile.settings>プロフィールの設定</Profile.settings>
+    <settings.of.your.profile>プロフィールの設定</settings.of.your.profile>
+    <switch.to>言語の切り替え</switch.to>
+</texts>
