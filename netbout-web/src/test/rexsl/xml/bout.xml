@@ -73,6 +73,22 @@
                 <photo>http://img.netbout.com/faces/javier.jpg</photo>
             </friend>
         </friends>
+        <page>
+            <name>intro</name>
+            <html>
+                This is an interesting page...
+            </html>
+        </page>
+        <binaries>
+            <binary>
+                <name>cv.pdf</name>
+                <visible>true</visible>
+            </binary>
+            <binary>
+                <name>money-data.xls</name>
+                <visible>false</visible>
+            </binary>
+        </binaries>
         <messages>
             <message>
                 <number>1</number>

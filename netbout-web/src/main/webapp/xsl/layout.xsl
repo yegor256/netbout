@@ -155,10 +155,10 @@
                         <li>
                             <img id="photo">
                                 <xsl:attribute name="src">
-                                    <xsl:value-of select="identity/photo"/>
+                                    <xsl:value-of select="alias/photo"/>
                                 </xsl:attribute>
                                 <xsl:attribute name="alt">
-                                    <xsl:value-of select="identity/alias"/>
+                                    <xsl:value-of select="alias/name"/>
                                 </xsl:attribute>
                             </img>
                             <xsl:call-template name="identity"/>

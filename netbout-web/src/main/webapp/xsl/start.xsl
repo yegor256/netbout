@@ -74,6 +74,14 @@
                 <input id="submit" type="submit" value="register" disabled="disabled" />
             </fieldset>
         </form>
+        <p>
+            <a>
+                <xsl:attribute name="href">
+                    <xsl:value-of select="/page/links/link[@rel='auth-logout']/href"/>
+                </xsl:attribute>
+                <xsl:text>logout</xsl:text>
+            </a>
+        </p>
     </xsl:template>
 
 </xsl:stylesheet>
