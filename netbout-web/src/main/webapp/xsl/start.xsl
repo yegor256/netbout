@@ -46,7 +46,7 @@
     </xsl:template>
     <xsl:template name="content">
         <p>
-            <img style="width: 64px;">
+            <img style="width: 32px;">
                 <xsl:attribute name="src">
                     <xsl:value-of select="identity/photo"/>
                 </xsl:attribute>
