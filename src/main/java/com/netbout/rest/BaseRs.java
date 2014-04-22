@@ -28,6 +28,7 @@ package com.netbout.rest;
 
 import com.google.common.collect.Iterables;
 import com.jcabi.manifests.Manifests;
+import com.jcabi.urn.URN;
 import com.netbout.base.Base;
 import com.netbout.base.Identities;
 import com.netbout.base.Identity;
@@ -40,9 +41,11 @@ import com.rexsl.page.auth.AuthInset;
 import com.rexsl.page.auth.Facebook;
 import com.rexsl.page.auth.Github;
 import com.rexsl.page.auth.Google;
+import com.rexsl.page.auth.Provider;
 import com.rexsl.page.inset.FlashInset;
 import com.rexsl.page.inset.LinksInset;
 import com.rexsl.page.inset.VersionInset;
+import java.net.URI;
 import java.util.logging.Level;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
@@ -69,6 +72,26 @@ public class BaseRs extends BaseResource {
         Manifests.read("Netbout-Revision"),
         Manifests.read("Netbout-Date")
     );
+
+    /**
+     * Test authentication provider.
+     */
+    private static final Provider TESTER = new Provider() {
+        @Override
+        public com.rexsl.page.auth.Identity identity() {
+            final com.rexsl.page.auth.Identity identity;
+            if ("1234567".equals(Manifests.read("Netbout-Revision"))) {
+                identity = new com.rexsl.page.auth.Identity.Simple(
+                    URN.create("urn:test:123456"),
+                    "Locallost",
+                    URI.create("http://img.netbout.com/unknown.png")
+                );
+            } else {
+                identity = com.rexsl.page.auth.Identity.ANONYMOUS;
+            }
+            return identity;
+        }
+    };
 
     /**
      * Supplementary inset.
@@ -110,7 +133,8 @@ public class BaseRs extends BaseResource {
         return new AuthInset(this, Manifests.read("Netbout-SecurityKey"))
             .with(new Facebook(this, Manifests.read("Netbout-FbId"), Manifests.read("Netbout-FbSecret")))
             .with(new Google(this, Manifests.read("Netbout-GoogleId"), Manifests.read("Netbout-GoogleSecret")))
-            .with(new Github(this, Manifests.read("Netbout-GithubId"), Manifests.read("Netbout-GithubSecret")));
+            .with(new Github(this, Manifests.read("Netbout-GithubId"), Manifests.read("Netbout-GithubSecret")))
+            .with(BaseRs.TESTER);
     }
 
     /**
