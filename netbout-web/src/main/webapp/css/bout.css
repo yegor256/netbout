@@ -48,7 +48,7 @@
             background-color: white;
         }
 
-/* titles of the stages */
+/* titles of the pages */
 #titles {
     margin-top: 20px;
     margin-left: 0;
@@ -66,8 +66,8 @@
             font-weight: bold;
         }
 
-/* stage itself */
-#stage {
+/* page itself */
+#page {
     min-height: 30px;
     margin-top: 14px;
     margin-bottom: 14px;
