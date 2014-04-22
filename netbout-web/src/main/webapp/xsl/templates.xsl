@@ -32,7 +32,6 @@
     xmlns:xs="http://www.w3.org/2001/XMLSchema"
     xmlns="http://www.w3.org/1999/xhtml"
     version="2.0" exclude-result-prefixes="xs">
-
     <xsl:template name="millis">
         <xsl:param name="millis" as="xs:integer"/>
         <xsl:choose>
@@ -46,7 +45,6 @@
             </xsl:otherwise>
         </xsl:choose>
     </xsl:template>
-
     <xsl:template name="crop">
         <xsl:param name="text" as="xs:string"/>
         <xsl:param name="length" as="xs:integer"/>
@@ -60,7 +58,6 @@
             </xsl:otherwise>
         </xsl:choose>
     </xsl:template>
-
     <xsl:template match="version">
         <div id="version">
             <span>
@@ -90,12 +87,11 @@
             </xsl:call-template>
         </div>
     </xsl:template>
-
     <xsl:template name="cdn">
         <xsl:param name="name" as="xs:string"/>
         <xsl:text>http</xsl:text>
         <xsl:if test="/page/identity">
-            <xsl:text>s</xsl:text>
+            <!-- <xsl:text>s</xsl:text> -->
         </xsl:if>
         <xsl:text>://</xsl:text>
         <xsl:text>img.netbout.com/</xsl:text>
@@ -103,5 +99,4 @@
         <xsl:text>?</xsl:text>
         <xsl:value-of select="/page/version/revision"/>
     </xsl:template>
-
 </xsl:stylesheet>

@@ -27,6 +27,7 @@
 package com.netbout.spi;
 
 import com.jcabi.aspects.Immutable;
+import java.net.URI;
 
 /**
  * Alias.
@@ -36,7 +37,19 @@ import com.jcabi.aspects.Immutable;
  * @since 2.0
  */
 @Immutable
-public interface Alias extends Friend {
+public interface Alias {
+
+    /**
+     * Get its name.
+     * @return Name of the alias
+     */
+    String name();
+
+    /**
+     * URI of his photo.
+     * @return URI
+     */
+    URI photo();
 
     /**
      * Set photo.

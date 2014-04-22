@@ -36,6 +36,6 @@ import org.hamcrest.Matchers
 MatcherAssert.assertThat(
     rexsl.document,
     Matchers.allOf(
-        XhtmlMatchers.hasXPath('//xhtml:div[@id="version" and contains(.,"r789") and contains(.,"102.3s")]')
+        XhtmlMatchers.hasXPath('//xhtml:div[@id="version" and contains(.,"789") and contains(.,"102.3s")]')
     )
 )

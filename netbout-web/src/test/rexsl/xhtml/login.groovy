@@ -37,6 +37,6 @@ MatcherAssert.assertThat(
     rexsl.document,
     Matchers.allOf(
         XhtmlMatchers.hasXPath('//xhtml:html'),
-        XhtmlMatchers.hasXPath('//xhtml:div[@id="version" and contains(.,"r9988") and contains(.,"0ms")]')
+        XhtmlMatchers.hasXPath('//xhtml:div[@id="version" and contains(.,"9988") and contains(.,"0ms")]')
     )
 )

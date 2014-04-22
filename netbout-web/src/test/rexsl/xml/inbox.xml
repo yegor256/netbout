@@ -44,12 +44,12 @@
     <identity>
         <urn>urn:facebook:12345678</urn>
         <name>William.Shakespeare</name>
-        <photo>http://www.robert-deniro.com/deniro.jpg</photo>
+        <photo>http://img.netbout.com/faces/deniro.jpg</photo>
         <token>TEGF65-HFYA087-JFS</token>
     </identity>
     <alias>
         <name>willy</name>
-        <photo>http://www.robert-deniro.com/deniro.jpg</photo>
+        <photo>http://img.netbout.com/faces/deniro.jpg</photo>
         <locale>en</locale>
     </alias>
     <bouts>
@@ -61,12 +61,18 @@
             <title>PHP programming in NetBout project</title>
             <friends>
                 <friend>
-                    <name>johnny</name>
-                    <photo>http://www.ofcelebrity.net/photos/johnny-depp-6.jpg</photo>
+                    <links>
+                        <link href="/xml/inbox.xml" rel="kick" />
+                    </links>
+                    <alias>johnny</alias>
+                    <photo>http://img.netbout.com/faces/depp.jpg</photo>
                 </friend>
                 <friend>
-                    <identity>javier</identity>
-                    <photo>http://www.filmofilia.com/wp-content/uploads/2008/05/javier_bardem.jpg</photo>
+                    <links>
+                        <link href="/xml/inbox.xml" rel="kick" />
+                    </links>
+                    <alias>javier</alias>
+                    <photo>http://img.netbout.com/faces/javier.jpg</photo>
                 </friend>
             </friends>
         </bout>
@@ -78,16 +84,16 @@
             <title>some personal issues to discuss urgently</title>
             <friends>
                 <friend>
-                    <identity>Monica</identity>
-                    <photo>http://pixdaus.com/pics/1228335452nZgDtst.jpg</photo>
+                    <alias>Monica</alias>
+                    <photo>http://img.netbout.com/faces/monica.jpg</photo>
                 </friend>
                 <friend>
-                    <identity>john.turturro</identity>
-                    <photo>http://www.topnews.in/light/files/John-Turturro.jpg</photo>
+                    <alias>john.turturro</alias>
+                    <photo>http://img.netbout.com/faces/turturro.jpg</photo>
                 </friend>
                 <friend>
-                    <identity>2pac</identity>
-                    <photo>http://hiphop.popcrunch.com/wp-content/uploads/2011/06/Shooter-Confesses-In-Tupac-Quad-Incident.jpg</photo>
+                    <alias>2pac</alias>
+                    <photo>http://img.netbout.com/faces/2pac.jpg</photo>
                 </friend>
             </friends>
         </bout>

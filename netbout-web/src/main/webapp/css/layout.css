@@ -64,7 +64,6 @@
     }
 
         #logo {
-            background-repeat: no-repeat;
             width: 113px;
             height: 37px;
             margin-right: 20px;
@@ -149,7 +148,7 @@
 
     #content h1 {
         position: relative;
-        padding-top: 5px;
+        padding-top: 50px;
         margin-bottom: 7px;
         font-size: 27px;
         font-weight: 500;

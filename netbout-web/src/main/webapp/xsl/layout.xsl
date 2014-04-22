@@ -38,7 +38,7 @@
     <xsl:template match="page">
         <html>
             <xsl:attribute name="lang">
-                <xsl:value-of select="/page/identity/locale"/>
+                <xsl:value-of select="/page/alias/locale"/>
             </xsl:attribute>
             <head>
                 <meta charset="UTF-8"/>
@@ -102,33 +102,31 @@
     <xsl:template name="cap">
         <div id="header">
             <div id="left">
-                <a id="logo">
+                <a>
                     <xsl:attribute name="href">
                         <xsl:value-of select="links/link[@rel='home']/@href"/>
                     </xsl:attribute>
                     <xsl:attribute name="title">
                         <xsl:value-of select="$TEXTS/back.to.inbox"/>
                     </xsl:attribute>
-                    <xsl:attribute name="style">
-                        <xsl:text>background-image: url('</xsl:text>
-                        <xsl:call-template name="cdn">
-                            <xsl:with-param name="name">
-                                <xsl:text>logo/logo-</xsl:text>
-                                <xsl:choose>
-                                    <xsl:when test="/page/identity/locale">
-                                        <xsl:value-of select="/page/identity/locale"/>
-                                    </xsl:when>
-                                    <xsl:otherwise>
-                                        <xsl:text>en</xsl:text>
-                                    </xsl:otherwise>
-                                </xsl:choose>
-                                <xsl:text>.png</xsl:text>
-                            </xsl:with-param>
-                        </xsl:call-template>
-                        <xsl:text>');</xsl:text>
-                    </xsl:attribute>
-                    <xsl:text> </xsl:text>
-                    <!-- for W3C compliance -->
+                    <img id="logo">
+                        <xsl:attribute name="src">
+                            <xsl:call-template name="cdn">
+                                <xsl:with-param name="name">
+                                    <xsl:text>logo/logo-</xsl:text>
+                                    <xsl:choose>
+                                        <xsl:when test="/page/alias/locale">
+                                            <xsl:value-of select="/page/alias/locale"/>
+                                        </xsl:when>
+                                        <xsl:otherwise>
+                                            <xsl:text>en</xsl:text>
+                                        </xsl:otherwise>
+                                    </xsl:choose>
+                                    <xsl:text>.png</xsl:text>
+                                </xsl:with-param>
+                            </xsl:call-template>
+                        </xsl:attribute>
+                    </img>
                 </a>
                 <xsl:if test="/page/links/link[@rel='search']">
                     <form id="search" method="get" role="search">
@@ -231,14 +229,14 @@
                         <xsl:value-of select="$TEXTS/settings.of.your.profile"/>
                     </xsl:attribute>
                     <xsl:call-template name="crop">
-                        <xsl:with-param name="text" select="/page/identity/alias"/>
+                        <xsl:with-param name="text" select="/page/alias/alias"/>
                         <xsl:with-param name="length" select="25"/>
                     </xsl:call-template>
                 </a>
             </xsl:when>
             <xsl:otherwise>
                 <xsl:call-template name="crop">
-                    <xsl:with-param name="text" select="/page/identity/alias"/>
+                    <xsl:with-param name="text" select="/page/alias/name"/>
                     <xsl:with-param name="length" select="25"/>
                 </xsl:call-template>
             </xsl:otherwise>

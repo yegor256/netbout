@@ -30,8 +30,8 @@
 /* header with participants and options */
 #top2 {
     position: relative;
-    margin-top: 0.7em;
-    margin-bottom: 0.7em;
+    margin-top: 7px;
+    margin-bottom: 7px;
 }
 
     /* invite sector */
@@ -48,48 +48,9 @@
             background-color: white;
         }
 
-        #invite-list {
-            padding: 1em;
-            border: 0.071em solid #bfbcc1;
-            margin-left: 0em;
-            margin-bottom: 0em;
-        }
-
-            #invite-list li {
-                list-style: none;
-                margin-bottom: 0.3em;
-            }
-
-                #invite-list li a {
-                    vertical-align: middle;
-                }
-
-                #invite-list li img {
-                    vertical-align: middle;
-                    margin-left: 0.5em;
-                    height: 2.6em;
-                    width: 2.6em;
-                    border-bottom: 0.1em solid #9c9c9c;
-                    border-right: 0.1em solid #9c9c9c;
-                }
-
-    /* options below invite sector */
-    #options {
-        position: absolute;
-        top: 4em;
-        right: 0;
-        text-align: right;
-        background-color: white;
-        z-index: 5;
-    }
-
-        #options span {
-            font-size: 1.4em;
-        }
-
 /* titles of the stages */
 #titles {
-    margin-top: 2em;
+    margin-top: 20px;
     margin-left: 0;
     padding-left: 0;
 }
@@ -97,7 +58,7 @@
     /* one title of a stage */
     #titles li {
         display: inline;
-        margin-right: 1em;
+        margin-right: 10px;
     }
 
         /* active title of a stage */
@@ -107,18 +68,16 @@
 
 /* stage itself */
 #stage {
-    min-height: 3em;
-    margin-top: 1.4em;
-    margin-bottom: 1.4em;
-    padding: 1em;
+    min-height: 30px;
+    margin-top: 14px;
+    margin-bottom: 14px;
+    padding: 10px;
     background-color: #f3f3f1;
-    border-top: 0.1em solid #e4e5e3;
-    border-left: 0.1em solid #e4e5e3;
-    border-bottom: 0.1em solid #dadbd9;
-    border-right: 0.1em solid #dadbd9;
+    border-top: 1px solid #e4e5e3;
+    border-left: 1px solid #e4e5e3;
+    border-bottom: 1px solid #dadbd9;
+    border-right: 1px solid #dadbd9;
     overflow-y: auto;
-    background-image: url('http://img.netbout.com/corner-active.png?${buildNumber}');
-    background-repeat: no-repeat;
 }
 
 /* form to post a new message */
@@ -126,21 +85,21 @@
 }
 
     #post p {
-        margin-top: 1em;
-        margin-bottom: 1em;
+        margin-top: 10px;
+        margin-bottom: 10px;
         line-height: 0;
     }
 
     #post textarea {
         display: inline;
-        width: 62.143em; /* multiply by 1.4px + 28px (padding) + 2px (border) = 900px (90em) */
+        width: 900px;
     }
 
 /* one message */
 .message {
-    margin-top: 2.5em;
+    margin-top: 25px;
     position: relative;
-    min-height: 6em;
+    min-height: 60px;
 }
 
     .message .left {
@@ -150,20 +109,20 @@
     }
 
     .message .left img {
-        height: 5em;
-        width: 5em;
-        border-bottom: 0.1em solid #dadbd9;
-        border-right: 0.1em solid #dadbd9;
+        height: 50px;
+        width: 50px;
+        border-bottom: 1px solid #dadbd9;
+        border-right: 1px solid #dadbd9;
     }
 
     .message .right {
-        margin-left: 7em;
+        margin-left: 70px;
         position: relative;
         overflow-x: auto;
     }
 
         .message .right .meta {
-            font-size: 1.4em;
+            font-size: 14px;
             color: gray;
         }
 
@@ -171,8 +130,7 @@
         }
 
             .message .right .text pre {
-                padding: 1em;
+                padding: 10px;
                 overflow-x: auto;
-                max-height: 25em;
+                max-height: 250px;
             }
-

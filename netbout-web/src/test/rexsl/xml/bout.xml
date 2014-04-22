@@ -46,12 +46,12 @@
     <identity>
         <urn>urn:facebook:12345678</urn>
         <name>William.Shakespeare</name>
-        <photo>http://www.robert-deniro.com/deniro.jpg</photo>
+        <photo>http://img.netbout.com/faces/javier.jpg</photo>
         <token>TEGF65-HFYA087-JFS</token>
     </identity>
     <alias>
-        <name>willy</name>
-        <photo>http://www.robert-deniro.com/deniro.jpg</photo>
+        <name>javier</name>
+        <photo>http://img.netbout.com/faces/javier.jpg</photo>
         <locale>en</locale>
     </alias>
     <bout>
@@ -59,23 +59,45 @@
         <title>PHP programming in Netbout project</title>
         <friends>
             <friend>
-                <name>johnny</name>
-                <photo>http://www.ofcelebrity.net/photos/johnny-depp-6.jpg</photo>
+                <links>
+                    <link href="/xml/inbox.xml" rel="kick" />
+                </links>
+                <alias>johnny</alias>
+                <photo>http://img.netbout.com/faces/depp.jpg</photo>
             </friend>
             <friend>
-                <identity>javier</identity>
-                <photo>http://www.filmofilia.com/wp-content/uploads/2008/05/javier_bardem.jpg</photo>
+                <links>
+                    <link href="/xml/inbox.xml" rel="kick" />
+                </links>
+                <alias>javier</alias>
+                <photo>http://img.netbout.com/faces/javier.jpg</photo>
             </friend>
         </friends>
         <messages>
             <message>
                 <number>1</number>
-                <author>depp</author>
+                <author>javier</author>
                 <html>
                     I think that this &lt;b&gt;subject&lt;/b&gt; should be discussed in
                     this bout. What do you think, &lt;i&gt;guys&lt;/i&gt;?...
                 </html>
-                <date></date>
+                <date>2014-04-22T16:09:33Z</date>
+            </message>
+            <message>
+                <number>2</number>
+                <author>johnny</author>
+                <html>
+                    How about some text here...
+                </html>
+                <date>2014-04-21T16:09:33Z</date>
+            </message>
+            <message>
+                <number>3</number>
+                <author>al-pacino</author>
+                <html>
+                    ANothe comment
+                </html>
+                <date>2014-04-20T16:09:33Z</date>
             </message>
         </messages>
     </bout>

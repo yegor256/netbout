@@ -25,16 +25,53 @@
  * SUCH DAMAGE.
  */
 
-/*globals $:false, document:false */
+/* JIGSAW IGNORE: there is some problem in w3c server now */
 
-$(document).ready(
-    function () {
-        "use strict";
-        $('div.bar')
-            .mouseover(function () { $(this).show(); })
-            .mouseout(function () { $(this).hide(); });
-        $('div.dude')
-            .mouseover(function () { $(this).parent().find('.bar').show(); })
-            .mouseout(function () { $(this).parent().find('.bar').hide(); });
+/* row of photos and names */
+.friends {
+    position: relative;
+    height: 50px;
+}
+
+    .friend {
+        position: absolute;
+        height: 50px;
+        width: 50px;
+        border-bottom: 1px solid #9c9c9c;
+        border-right: 1px solid #9c9c9c;
     }
-);
+
+        .friend img {
+            height: 100%;
+            width: 100%;
+            display: block;
+            z-index: 5;
+        }
+
+            .friend img.pending {
+                opacity: 0.4;
+            }
+
+    .bar {
+        position: absolute;
+        top: 51px;
+        left: 0;
+        font-weight: 500;
+        background-color: #f3f3f1;
+        border-bottom: 1px solid #dadbd9;
+        border-right: 1px solid #dadbd9;
+        padding: 3px 1px 3px 5px;
+        display: none;
+        z-index: 100;
+    }
+
+        .bar .name {
+            font-size: 14px;
+        }
+
+        .bar .kick {
+            font-size: 14px;
+            color: #f24a40;
+            text-decoration: none;
+            font-weight: bold;
+        }

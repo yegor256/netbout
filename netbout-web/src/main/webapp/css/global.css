@@ -42,6 +42,8 @@
     padding: 0;
     margin: 0;
     border: 0;
+    box-sizing: border-box;
+    -moz-box-sizing: border-box;
 }
 
 /* all elements */
@@ -56,11 +58,16 @@ textarea {
     font-family: "Helvetica Neue", "HelveticaNeue", "HelveticaNeueRoman",
         "HelveticaNeue-Roman", "Helvetica Neue Roman",
         "Helvetica", "Arial", sans-serif;
+    color: #211922;
+    text-decoration: none;
+}
+
+body,
+input,
+textarea {
     font-size: 16px;
     font-stretch: normal;
     font-weight: normal;
-    color: #211922;
-    text-decoration: none;
 }
 
 /* any link */

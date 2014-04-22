@@ -41,7 +41,7 @@
     <xsl:template match="page">
         <html>
             <xsl:attribute name="lang">
-                <xsl:value-of select="/page/identity/locale"/>
+                <xsl:value-of select="/page/alias/locale"/>
             </xsl:attribute>
             <head>
                 <meta charset="UTF-8" />

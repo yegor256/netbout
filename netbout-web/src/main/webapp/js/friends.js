@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2009-2014, Netbout.com
+ * Copyright (c) 2009-2011, netBout.com
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -24,31 +24,17 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.spi;
 
-import com.jcabi.aspects.Immutable;
-import java.net.URI;
+/*globals $:false, document:false */
 
-/**
- * Friend.
- *
- * @author Yegor Bugayenko (yegor@tpc2.com)
- * @version $Id$
- * @since 2.0
- */
-@Immutable
-public interface Friend {
-
-    /**
-     * Get its alias.
-     * @return Alias of this identity
-     */
-    String alias();
-
-    /**
-     * URI of his photo.
-     * @return URI
-     */
-    URI photo();
-
-}
+$(document).ready(
+    function () {
+        "use strict";
+        $('.bar')
+            .mouseover(function () { $(this).show(); })
+            .mouseout(function () { $(this).hide(); });
+        $('.friend')
+            .mouseover(function () { $(this).parent().find('.bar').show(); })
+            .mouseout(function () { $(this).parent().find('.bar').hide(); });
+    }
+);

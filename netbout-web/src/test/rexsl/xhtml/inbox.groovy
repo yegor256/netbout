@@ -37,6 +37,6 @@ MatcherAssert.assertThat(
     rexsl.document,
     Matchers.allOf(
         XhtmlMatchers.hasXPath('//xhtml:ul[@class="bouts"]/xhtml:li'),
-        XhtmlMatchers.hasXPath('//xhtml:div[@id="version" and contains(.,"r789") and contains(.,"5.5s")]')
+        XhtmlMatchers.hasXPath('//xhtml:div[@id="version" and contains(.,"789") and contains(.,"5.5s")]')
     )
 )
