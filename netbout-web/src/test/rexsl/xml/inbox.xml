@@ -38,8 +38,8 @@
     <links>
         <link href="/xml/inbox.xml" rel="self" />
         <link href="/xml/inbox.xml" rel="home" />
-        <link href="/" rel="logout" />
         <link href="/xml/bout.xml" rel="start" />
+        <link href="/" rel="auth-logout" />
     </links>
     <identity>
         <alias>Willy III</alias>
@@ -48,79 +48,44 @@
         <photo>http://www.robert-deniro.com/deniro.jpg</photo>
         <locale>en</locale>
     </identity>
-    <query>some text</query>
-    <periods>
-        <link rel="more" href="/xml/bout.xml">
-            <title>5 days ago</title>
-        </link>
-    </periods>
     <bouts>
-        <bout href="/xml/bout.xml" seen="3" messages="6">
+        <bout>
+            <links>
+                <link href="/xml/bout.xml" rel="open" />
+            </links>
             <number>65</number>
             <title>PHP programming in NetBout project</title>
-            <participants>
-                <participant leader="true">
-                    <alias>Johnny Depp</alias>
-                    <identity>johnny</identity>
+            <friends>
+                <friend>
+                    <name>johnny</name>
                     <photo>http://www.ofcelebrity.net/photos/johnny-depp-6.jpg</photo>
-                </participant>
-                <participant leader="false">
-                    <alias>Javier Bardem</alias>
+                </friend>
+                <friend>
                     <identity>javier</identity>
                     <photo>http://www.filmofilia.com/wp-content/uploads/2008/05/javier_bardem.jpg</photo>
-                </participant>
-            </participants>
-            <bundled>
-                <link rel="bout" href="/xml/bout.xml">
-                    <number>123</number>
-                    <title>some title</title>
-                </link>
-                <link rel="all" href="/xml/inbox.xml"/>
-            </bundled>
+                </friend>
+            </friends>
         </bout>
-        <bout seen="4" messages="5">
-            <link rel="page" href="/xml/bout.xml"/>
+        <bout>
+            <links>
+                <link href="/xml/bout.xml" rel="open" />
+            </links>
             <number>876</number>
             <title>some personal issues to discuss urgently</title>
-            <participants>
-                <participant leader="true">
-                    <alias>Monica Belucci</alias>
+            <friends>
+                <friend>
                     <identity>Monica</identity>
                     <photo>http://pixdaus.com/pics/1228335452nZgDtst.jpg</photo>
-                </participant>
-                <participant leader="false">
-                    <alias>John Turturro</alias>
+                </friend>
+                <friend>
                     <identity>john.turturro</identity>
                     <photo>http://www.topnews.in/light/files/John-Turturro.jpg</photo>
-                </participant>
-                <participant leader="false">
-                    <alias>2Pac Shakur</alias>
+                </friend>
+                <friend>
                     <identity>2pac</identity>
                     <photo>http://hiphop.popcrunch.com/wp-content/uploads/2011/06/Shooter-Confesses-In-Tupac-Quad-Incident.jpg</photo>
-                </participant>
-            </participants>
-        </bout>
-        <bout seen="6" messages="6">
-            <link rel="page" href="/xml/bout.xml"/>
-            <number>6365</number>
-            <title>how about joining my team next week?</title>
-            <participants>
-                <participant>
-                    <alias>Jeff Bridges</alias>
-                    <identity>jeff.bridges</identity>
-                    <photo>http://www.hellomagazine.com/imagenes/profiles/jeff-bridges/5406-jeff-bridges-profile.jpg</photo>
-                </participant>
-                <participant>
-                    <alias>Sarah Palin</alias>
-                    <identity>Sarah.Palin</identity>
-                    <photo>http://www.dailypolitical.com/wp-content/uploads/2010/12/Sarah-Palin.jpg</photo>
-                </participant>
-                <participant>
-                    <alias>Al Pacino</alias>
-                    <identity>al.pacino@gmail.com</identity>
-                    <photo>http://collider.com/wp-content/image-base/People/A/Al_Pacino/Al_Pacino%20(1).jpg</photo>
-                </participant>
-            </participants>
+                </friend>
+            </friends>
         </bout>
     </bouts>
     <millis>5500</millis>

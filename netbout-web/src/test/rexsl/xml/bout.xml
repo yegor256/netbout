@@ -37,15 +37,14 @@
     </version>
     <links>
         <link href="/xml/inbox.xml" rel="home" />
-        <link href="/" rel="logout" />
         <link href="/xml/bout.xml" rel="start" />
         <link href="/xml/bout.xml" rel="self" />
         <link href="/xml/bout.xml" rel="post" />
         <link href="/xml/bout.xml" rel="rename" />
+        <link href="/" rel="auth-logout" />
     </links>
     <identity>
         <alias>Willy</alias>
-        <aliases/>
         <name>urn:facebook:123456789</name>
         <photo>http://www.robert-deniro.com/deniro.jpg</photo>
         <locale>en</locale>
@@ -54,86 +53,25 @@
     <bout>
         <number>6252</number>
         <title>PHP programming in Netbout project</title>
-        <stage name="urn:test:payments" place="abc" alias="Recent Payments">
-            <!-- <payments>
-                <payment>
-                    <date>23-08-2011</date>
-                    <amount>123</amount>
-                    <currency>USD</currency>
-                    <details>paid to Johnny for Fear and Loathing</details>
-                </payment>
-                <payment>
-                    <date>23-08-2011</date>
-                    <amount>500</amount>
-                    <currency>USD</currency>
-                    <details>paid to Javier for something else</details>
-                </payment>
-            </payments> -->
-        </stage>
-        <stages>
-            <stage name="urn:test:123" href="/xml/PageBout.xml" alias="123" />
-            <stage name="urn:test:Files" href="/xml/PageBout.xml" alias="123" />
-            <stage name="urn:test:Meetings" href="/xml/PageBout.xml" alias="123" />
-        </stages>
-        <participants>
-            <participant href="/xml/PageBout.xml" confirmed="true">
-                <alias>Johnny Depp</alias>
-                <identity>urn:test:depp</identity>
+        <friends>
+            <friend>
+                <name>johnny</name>
                 <photo>http://www.ofcelebrity.net/photos/johnny-depp-6.jpg</photo>
-            </participant>
-            <participant href="/xml/PageBout.xml" confirmed="false" leader="true">
-                <alias>Javier</alias>
-                <identity>urn:test:javier%40gmail.com</identity>
+            </friend>
+            <friend>
+                <identity>javier</identity>
                 <photo>http://www.filmofilia.com/wp-content/uploads/2008/05/javier_bardem.jpg</photo>
-            </participant>
-            <participant href="/xml/PageBout.xml" confirmed="true">
-                <alias>John Turturro</alias>
-                <identity>urn:facebook:123456789</identity>
-                <photo>http://www.topnews.in/light/files/John-Turturro.jpg</photo>
-            </participant>
-            <participant href="/xml/PageBout.xml" confirmed="true">
-                <alias>2Pac</alias>
-                <identity>urn:test:2pac</identity>
-                <photo>http://hiphop.popcrunch.com/wp-content/uploads/2011/06/Shooter-Confesses-In-Tupac-Quad-Incident.jpg</photo>
-            </participant>
-        </participants>
+            </friend>
+        </friends>
         <messages>
-            <message seen="true">
+            <message>
                 <number>1</number>
-                <author>urn:test:depp</author>
-                <text>
-                    I think that this subject should be discussed in
-                    this bout. What do you think, guys?...
-                </text>
-                <render>
+                <author>depp</author>
+                <html>
                     I think that this &lt;b&gt;subject&lt;/b&gt; should be discussed in
                     this bout. What do you think, &lt;i&gt;guys&lt;/i&gt;?...
-                </render>
+                </html>
                 <date></date>
-            </message>
-            <message seen="true">
-                <number>2</number>
-                <author>urn:test:javier%40gmail.com</author>
-                <text>
-                    Yeah, I agree, let's talk about it today!
-                </text>
-                <render>some text</render>
-            </message>
-            <message seen="true">
-                <number>3</number>
-                <author>urn:test:unknown-author</author>
-                <text>
-                    It's [a link](http://example.com)
-                </text>
-                <render>It's &lt;a href="http://example.com"&gt;a link&lt;/a&gt;</render>
-            </message>
-            <message>
-                <number>4</number>
-                <author>urn:test:2pac</author>
-                <text>
-                    Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
-                </text>
-                <render>some text</render>
             </message>
         </messages>
     </bout>

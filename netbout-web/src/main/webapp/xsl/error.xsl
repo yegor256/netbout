@@ -36,7 +36,7 @@
     <xsl:output method="xml" omit-xml-declaration="yes"/>
 
     <xsl:param name="TEXTS"
-        select="document(concat('/xml/lang/en.xml?', /page/version/revision))/texts"/>
+        select="document(concat('/lang/en.xml?', /page/version/revision))/texts"/>
 
     <xsl:include href="/xsl/layout.xsl" />
 

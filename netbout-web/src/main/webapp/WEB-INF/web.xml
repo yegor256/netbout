@@ -60,7 +60,7 @@
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>default</servlet-name>
-        <url-pattern>/xml/*</url-pattern>
+        <url-pattern>/lang/*</url-pattern>
     </servlet-mapping>
 
     <listener>

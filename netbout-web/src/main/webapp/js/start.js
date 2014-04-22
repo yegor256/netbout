@@ -28,27 +28,28 @@
 /*globals $:false, document:false */
 
 $(document).ready(
-  function () {
-    $('#identity').keyup(
-      function () {
-        $input = $(this);
-        $button = $('#submit')
-        $.ajax(
-          {
-            url: $input.attr('data-check') + '?name=' + encodeURI($input.val()),
-            cache: false,
-            success: function (text) {
-              if (text === 'available') {
-                $input.css('color', 'green');
-                $button.prop('disabled', false);
-              } else {
-                $input.css('color', 'red');
-                $button.prop('disabled', true);
-              }
+    function () {
+        "use strict";
+        $('#identity').keyup(
+            function () {
+                var $input = $(this), $button = $('#submit');
+                $.ajax(
+                    {
+                        url: $input.attr('data-check')
+                            + '?name=' + encodeURI($input.val()),
+                        cache: false,
+                        success: function (text) {
+                            if (text === 'available') {
+                                $input.css('color', 'green');
+                                $button.prop('disabled', false);
+                            } else {
+                                $input.css('color', 'red');
+                                $button.prop('disabled', true);
+                            }
+                        }
+                    }
+                );
             }
-          }
         );
-      }
-    );
-  }
+    }
 );
