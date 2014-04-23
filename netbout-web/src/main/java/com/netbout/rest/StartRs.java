@@ -29,6 +29,7 @@ package com.netbout.rest;
 import com.rexsl.page.Link;
 import com.rexsl.page.PageBuilder;
 import com.rexsl.page.inset.FlashInset;
+import java.io.IOException;
 import java.util.logging.Level;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
@@ -81,10 +82,12 @@ public final class StartRs extends BaseRs {
      * Check availability.
      * @param alias Alias to check
      * @return Text "available" if this alias is available
+     * @throws IOException If fails
      */
     @GET
     @Path("/check")
-    public String check(@QueryParam("alias") final String alias) {
+    public String check(@QueryParam("alias") final String alias)
+        throws IOException {
         final String text;
         if (this.user().aliases().available(alias)) {
             text = "available";

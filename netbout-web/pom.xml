@@ -40,6 +40,12 @@
     <artifactId>netbout-web</artifactId>
     <name>netbout-web</name>
     <packaging>war</packaging>
+    <pluginRepositories>
+        <pluginRepository>
+            <id>cloudbees-public-release</id>
+            <url>http://repository-cloudbees.forge.cloudbees.com/public-release</url>
+        </pluginRepository>
+    </pluginRepositories>
     <dependencies>
         <dependency>
             <groupId>com.netbout</groupId>

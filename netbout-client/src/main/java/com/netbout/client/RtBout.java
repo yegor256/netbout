@@ -28,27 +28,26 @@ package com.netbout.client;
 
 import com.jcabi.aspects.Immutable;
 import com.jcabi.http.Request;
-import com.jcabi.http.request.JdkRequest;
-import com.jcabi.http.wire.BasicAuthWire;
-import com.jcabi.urn.URN;
-import com.netbout.spi.Base;
-import com.netbout.spi.User;
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
-import javax.validation.constraints.NotNull;
-import javax.ws.rs.core.HttpHeaders;
-import javax.ws.rs.core.MediaType;
-import org.apache.commons.lang3.CharEncoding;
+import com.jcabi.http.response.XmlResponse;
+import com.netbout.spi.Attachments;
+import com.netbout.spi.Bout;
+import com.netbout.spi.Friends;
+import com.netbout.spi.Messages;
+import com.netbout.spi.Pages;
+import java.io.IOException;
+import java.text.ParseException;
+import java.util.Date;
+import org.apache.commons.lang3.time.DateFormatUtils;
 
 /**
- * REST base.
+ * REST bout.
  *
  * @author Yegor Bugayenko (yegor@tpc2.com)
  * @version $Id$
  * @since 2.0
  */
 @Immutable
-public final class RtBase implements Base {
+final class RtBout implements Bout {
 
     /**
      * Request to use.
@@ -56,41 +55,70 @@ public final class RtBase implements Base {
     private final transient Request request;
 
     /**
-     * Secret for Basic HTTP auth.
-     */
-    private final transient String secret;
-
-    /**
      * Public ctor.
-     * @param uri URI of netbout server
-     * @param scrt Secret key to use
+     * @param req Request to use
      */
-    public RtBase(final String uri, final String scrt) {
-        this.secret = scrt;
-        this.request = new JdkRequest(uri)
-            .through(BasicAuthWire.class)
-            .header(HttpHeaders.ACCEPT, MediaType.TEXT_XML);
+    RtBout(final Request req) {
+        this.request = req;
     }
 
     @Override
-    public User user(@NotNull(message = "URN can't be NULL") final URN urn) {
+    public long number() throws IOException {
+        return Long.parseLong(
+            this.request.fetch()
+                .as(XmlResponse.class)
+                .xml()
+                .xpath("/page/bout/number/text()")
+                .get(0)
+        );
+    }
+
+    @Override
+    public Date date() throws IOException {
         try {
-            return new RtUser(
-                this.request.uri().userInfo(
-                    String.format(
-                        "%s:%s",
-                        URLEncoder.encode(urn.toString(), CharEncoding.UTF_8),
-                        URLEncoder.encode(this.secret, CharEncoding.UTF_8)
-                    )
-                ).back()
+            return DateFormatUtils.ISO_DATETIME_FORMAT.parse(
+                this.request.fetch()
+                    .as(XmlResponse.class)
+                    .xml()
+                    .xpath("/page/bout/date/text()")
+                    .get(0)
             );
-        } catch (final UnsupportedEncodingException ex) {
+        } catch (final ParseException ex) {
             throw new IllegalStateException(ex);
         }
     }
 
     @Override
-    public void close() {
-        // nothing to do here
+    public String title() throws IOException {
+        return this.request.fetch()
+            .as(XmlResponse.class)
+            .xml()
+            .xpath("/page/bout/title/text()")
+            .get(0);
+    }
+
+    @Override
+    public void rename(final String text) {
+        throw new UnsupportedOperationException("#rename()");
+    }
+
+    @Override
+    public Messages messages() {
+        return new RtMessages(this.request);
+    }
+
+    @Override
+    public Friends friends() {
+        throw new UnsupportedOperationException("#friends()");
+    }
+
+    @Override
+    public Pages pages() {
+        return new RtPages(this.request);
+    }
+
+    @Override
+    public Attachments binaries() {
+        return new RtAttachments(this.request);
     }
 }

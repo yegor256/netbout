@@ -29,6 +29,7 @@ package com.netbout.rest;
 import com.rexsl.page.Link;
 import com.rexsl.page.PageBuilder;
 import com.rexsl.page.inset.FlashInset;
+import java.io.IOException;
 import java.util.logging.Level;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -63,10 +64,11 @@ public final class InboxRs extends BaseRs {
 
     /**
      * Start new bout.
+     * @throws IOException If fails
      */
     @GET
     @Path("/start")
-    public void start() {
+    public void start() throws IOException {
         final long number = this.alias().start();
         throw FlashInset.forward(
             this.uriInfo().getBaseUriBuilder().clone()

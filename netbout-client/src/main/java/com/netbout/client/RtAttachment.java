@@ -28,27 +28,20 @@ package com.netbout.client;
 
 import com.jcabi.aspects.Immutable;
 import com.jcabi.http.Request;
-import com.jcabi.http.request.JdkRequest;
-import com.jcabi.http.wire.BasicAuthWire;
-import com.jcabi.urn.URN;
-import com.netbout.spi.Base;
-import com.netbout.spi.User;
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
-import javax.validation.constraints.NotNull;
-import javax.ws.rs.core.HttpHeaders;
-import javax.ws.rs.core.MediaType;
-import org.apache.commons.lang3.CharEncoding;
+import com.jcabi.http.response.XmlResponse;
+import com.netbout.spi.Attachment;
+import java.io.IOException;
+import java.io.InputStream;
 
 /**
- * REST base.
+ * REST attachment.
  *
  * @author Yegor Bugayenko (yegor@tpc2.com)
  * @version $Id$
  * @since 2.0
  */
 @Immutable
-public final class RtBase implements Base {
+final class RtAttachment implements Attachment {
 
     /**
      * Request to use.
@@ -56,41 +49,60 @@ public final class RtBase implements Base {
     private final transient Request request;
 
     /**
-     * Secret for Basic HTTP auth.
+     * Its name.
      */
-    private final transient String secret;
+    private final transient String attachment;
 
     /**
      * Public ctor.
-     * @param uri URI of netbout server
-     * @param scrt Secret key to use
+     * @param req Request to use
+     * @param name Its name
      */
-    public RtBase(final String uri, final String scrt) {
-        this.secret = scrt;
-        this.request = new JdkRequest(uri)
-            .through(BasicAuthWire.class)
-            .header(HttpHeaders.ACCEPT, MediaType.TEXT_XML);
+    RtAttachment(final Request req, final String name) {
+        this.request = req;
+        this.attachment = name;
     }
 
     @Override
-    public User user(@NotNull(message = "URN can't be NULL") final URN urn) {
-        try {
-            return new RtUser(
-                this.request.uri().userInfo(
-                    String.format(
-                        "%s:%s",
-                        URLEncoder.encode(urn.toString(), CharEncoding.UTF_8),
-                        URLEncoder.encode(this.secret, CharEncoding.UTF_8)
-                    )
-                ).back()
-            );
-        } catch (final UnsupportedEncodingException ex) {
-            throw new IllegalStateException(ex);
-        }
+    public String name() {
+        return this.attachment;
     }
 
     @Override
-    public void close() {
-        // nothing to do here
+    public boolean visible() throws IOException {
+        return "true".equals(
+            this.request.fetch()
+                .as(XmlResponse.class)
+                .xml()
+                .xpath(this.xpath("visible/text()"))
+                .get(0)
+        );
+    }
+
+    @Override
+    public void visible(final boolean vsbl) {
+        throw new UnsupportedOperationException("#visible()");
+    }
+
+    @Override
+    public InputStream read() throws IOException {
+        throw new UnsupportedOperationException("#read()");
+    }
+
+    @Override
+    public void write(final InputStream stream) throws IOException {
+        throw new UnsupportedOperationException("#write()");
+    }
+
+    /**
+     * Xpath of the attachment in the page.
+     * @param path Path to append
+     * @return XPath
+     */
+    private String xpath(final String path) {
+        return String.format(
+            "/page/bout/attachments/attachment[name='%s']/%s",
+            this.attachment, path
+        );
     }
 }

@@ -24,26 +24,57 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.spi;
+package com.netbout.client;
 
 import com.jcabi.aspects.Immutable;
+import com.jcabi.http.Request;
+import com.jcabi.http.response.XmlResponse;
+import com.netbout.spi.Message;
+import com.netbout.spi.Messages;
+import com.netbout.spi.Pageable;
 import java.io.IOException;
+import java.util.Iterator;
 
 /**
- * Bout messages.
+ * REST messages.
  *
  * @author Yegor Bugayenko (yegor@tpc2.com)
  * @version $Id$
  * @since 2.0
  */
 @Immutable
-public interface Messages extends Pageable<Message> {
+final class RtMessages implements Messages {
 
     /**
-     * Post a new message.
-     * @param text The text of the new message
-     * @throws IOException If fails
+     * Request to use.
      */
-    void post(String text) throws IOException;
+    private final transient Request request;
 
+    /**
+     * Public ctor.
+     * @param req Request to use
+     */
+    RtMessages(final Request req) {
+        this.request = req;
+    }
+
+    @Override
+    public void post(final String text) throws IOException {
+        this.request.fetch()
+            .as(XmlResponse.class)
+            .rel("/page/links/link[@rel='post']/href")
+            .method(Request.POST)
+            .body().formParam("text", text).back()
+            .fetch();
+    }
+
+    @Override
+    public Pageable<Message> jump(final int pos) {
+        throw new UnsupportedOperationException("#jump()");
+    }
+
+    @Override
+    public Iterator<Message> iterator() {
+        throw new UnsupportedOperationException("#iterator()");
+    }
 }

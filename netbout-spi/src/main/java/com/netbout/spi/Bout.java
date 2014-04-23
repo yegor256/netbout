@@ -27,6 +27,7 @@
 package com.netbout.spi;
 
 import com.jcabi.aspects.Immutable;
+import java.io.IOException;
 import java.util.Date;
 
 /**
@@ -42,20 +43,23 @@ public interface Bout {
     /**
      * Get its unique number.
      * @return The number of the bout
+     * @throws IOException If fails
      */
-    long number();
+    long number() throws IOException;
 
     /**
      * When it was created.
      * @return The date of creation
+     * @throws IOException If fails
      */
-    Date date();
+    Date date() throws IOException;
 
     /**
      * Get its title.
      * @return The title of the bout
+     * @throws IOException If fails
      */
-    String title();
+    String title() throws IOException;
 
     /**
      * Set its title.

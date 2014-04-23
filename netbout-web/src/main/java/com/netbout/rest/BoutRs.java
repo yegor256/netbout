@@ -31,6 +31,7 @@ import com.netbout.spi.Bout;
 import com.rexsl.page.Link;
 import com.rexsl.page.PageBuilder;
 import com.rexsl.page.inset.FlashInset;
+import java.io.IOException;
 import java.util.logging.Level;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
@@ -87,10 +88,11 @@ public final class BoutRs extends BaseRs {
     /**
      * Post new message to the bout.
      * @param text Text of message just posted
+     * @throws IOException If fails
      */
     @POST
     @Path("/post")
-    public void post(@FormParam("text") final String text) {
+    public void post(@FormParam("text") final String text) throws IOException {
         this.bout().messages().post(text);
         throw FlashInset.forward(
             this.uriInfo().getBaseUri(),

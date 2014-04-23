@@ -24,26 +24,71 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.spi;
+package com.netbout.client;
 
 import com.jcabi.aspects.Immutable;
+import com.jcabi.http.Request;
+import com.jcabi.http.response.XmlResponse;
+import com.netbout.spi.Page;
 import java.io.IOException;
 
 /**
- * Bout messages.
+ * REST page.
  *
  * @author Yegor Bugayenko (yegor@tpc2.com)
  * @version $Id$
  * @since 2.0
  */
 @Immutable
-public interface Messages extends Pageable<Message> {
+final class RtPage implements Page {
 
     /**
-     * Post a new message.
-     * @param text The text of the new message
-     * @throws IOException If fails
+     * Request to use.
      */
-    void post(String text) throws IOException;
+    private final transient Request request;
 
+    /**
+     * Name of page.
+     */
+    private final transient String page;
+
+    /**
+     * Public ctor.
+     * @param req Request to use
+     * @param name Name of it
+     */
+    RtPage(final Request req, final String name) {
+        this.request = req;
+        this.page = name;
+    }
+
+    @Override
+    public String name() {
+        return this.page;
+    }
+
+    @Override
+    public String read() throws IOException {
+        return this.request.fetch()
+            .as(XmlResponse.class)
+            .rel(this.xpath("links/link[@rel='read']/href"))
+            .fetch().body();
+    }
+
+    @Override
+    public void write(final String text) {
+        throw new UnsupportedOperationException("#write()");
+    }
+
+    /**
+     * Xpath of the page in the document.
+     * @param path Path to append
+     * @return XPath
+     */
+    private String xpath(final String path) {
+        return String.format(
+            "/page/bout/pages/page[name='%s']/%s",
+            this.page, path
+        );
+    }
 }

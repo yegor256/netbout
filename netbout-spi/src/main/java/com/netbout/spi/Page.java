@@ -27,6 +27,7 @@
 package com.netbout.spi;
 
 import com.jcabi.aspects.Immutable;
+import java.io.IOException;
 
 /**
  * Page.
@@ -47,8 +48,9 @@ public interface Page {
     /**
      * Read content.
      * @return Content
+     * @throws IOException If fails
      */
-    String read();
+    String read() throws IOException;
 
     /**
      * Write content.

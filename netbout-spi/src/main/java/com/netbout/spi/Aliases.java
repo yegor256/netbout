@@ -27,6 +27,7 @@
 package com.netbout.spi;
 
 import com.jcabi.aspects.Immutable;
+import java.io.IOException;
 
 /**
  * User of the system.
@@ -42,8 +43,9 @@ public interface Aliases extends Iterable<Alias> {
      * Is it possible to assign this identity?
      * @param name Alias to assign
      * @return TRUE if it's available
+     * @throws IOException If fails
      */
-    boolean available(String name);
+    boolean available(String name) throws IOException;
 
     /**
      * Try to assign this new identity to this user.

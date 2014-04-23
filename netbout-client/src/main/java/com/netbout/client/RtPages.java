@@ -24,26 +24,44 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.spi;
+package com.netbout.client;
 
 import com.jcabi.aspects.Immutable;
-import java.io.IOException;
+import com.jcabi.http.Request;
+import com.netbout.spi.Page;
+import com.netbout.spi.Pages;
+import java.util.Iterator;
 
 /**
- * Bout messages.
+ * REST messages.
  *
  * @author Yegor Bugayenko (yegor@tpc2.com)
  * @version $Id$
  * @since 2.0
  */
 @Immutable
-public interface Messages extends Pageable<Message> {
+final class RtPages implements Pages {
 
     /**
-     * Post a new message.
-     * @param text The text of the new message
-     * @throws IOException If fails
+     * Request to use.
      */
-    void post(String text) throws IOException;
+    private final transient Request request;
 
+    /**
+     * Public ctor.
+     * @param req Request to use
+     */
+    RtPages(final Request req) {
+        this.request = req;
+    }
+
+    @Override
+    public Page get(final String name) {
+        return new RtPage(this.request, name);
+    }
+
+    @Override
+    public Iterator<Page> iterator() {
+        throw new UnsupportedOperationException("#iterator()");
+    }
 }

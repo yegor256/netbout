@@ -49,8 +49,9 @@ public interface Attachment {
     /**
      * Is it visible to everybody?
      * @return TRUE if visible
+     * @throws IOException If fails
      */
-    boolean visible();
+    boolean visible() throws IOException;
 
     /**
      * Make it public or private.

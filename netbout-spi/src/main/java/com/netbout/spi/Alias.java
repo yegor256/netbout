@@ -27,6 +27,7 @@
 package com.netbout.spi;
 
 import com.jcabi.aspects.Immutable;
+import java.io.IOException;
 import java.net.URI;
 
 /**
@@ -42,14 +43,16 @@ public interface Alias {
     /**
      * Get its name.
      * @return Name of the alias
+     * @throws IOException If fails
      */
-    String name();
+    String name() throws IOException;
 
     /**
      * URI of his photo.
      * @return URI
+     * @throws IOException If fails
      */
-    URI photo();
+    URI photo() throws IOException;
 
     /**
      * Set photo.
@@ -60,8 +63,9 @@ public interface Alias {
     /**
      * Start new bout.
      * @return Bout number
+     * @throws IOException If fails
      */
-    long start();
+    long start() throws IOException;
 
     /**
      * Get inbox of bouts.

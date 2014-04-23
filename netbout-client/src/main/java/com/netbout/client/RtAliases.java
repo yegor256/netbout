@@ -24,26 +24,59 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.spi;
+package com.netbout.client;
 
 import com.jcabi.aspects.Immutable;
+import com.jcabi.http.Request;
+import com.jcabi.http.response.XmlResponse;
+import com.netbout.spi.Alias;
+import com.netbout.spi.Aliases;
 import java.io.IOException;
+import java.util.Iterator;
 
 /**
- * Bout messages.
+ * REST aliases.
  *
  * @author Yegor Bugayenko (yegor@tpc2.com)
  * @version $Id$
  * @since 2.0
  */
 @Immutable
-public interface Messages extends Pageable<Message> {
+final class RtAliases implements Aliases {
 
     /**
-     * Post a new message.
-     * @param text The text of the new message
-     * @throws IOException If fails
+     * Request to use.
      */
-    void post(String text) throws IOException;
+    private final transient Request request;
+
+    /**
+     * Public ctor.
+     * @param req Request to use
+     */
+    RtAliases(final Request req) {
+        this.request = req;
+    }
+
+    @Override
+    public boolean available(final String name) throws IOException {
+        return "available".equals(
+            this.request.fetch()
+                .as(XmlResponse.class)
+                .rel("/page/links/link[@rel='check']/href")
+                .uri().queryParam("alias", name).back()
+                .fetch()
+                .body()
+        );
+    }
+
+    @Override
+    public void add(final String name) {
+        throw new UnsupportedOperationException("#add()");
+    }
+
+    @Override
+    public Iterator<Alias> iterator() {
+        throw new UnsupportedOperationException("#iterator()");
+    }
 
 }
