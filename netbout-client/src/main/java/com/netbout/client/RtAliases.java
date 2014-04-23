@@ -62,7 +62,7 @@ final class RtAliases implements Aliases {
         return "available".equals(
             this.request.fetch()
                 .as(XmlResponse.class)
-                .rel("/page/links/link[@rel='check']/href")
+                .rel("/page/links/link[@rel='check']/@href")
                 .uri().queryParam("alias", name).back()
                 .fetch()
                 .body()

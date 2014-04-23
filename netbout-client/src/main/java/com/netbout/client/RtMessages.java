@@ -62,7 +62,7 @@ final class RtMessages implements Messages {
     public void post(final String text) throws IOException {
         this.request.fetch()
             .as(XmlResponse.class)
-            .rel("/page/links/link[@rel='post']/href")
+            .rel("/page/links/link[@rel='post']/@href")
             .method(Request.POST)
             .body().formParam("text", text).back()
             .fetch();

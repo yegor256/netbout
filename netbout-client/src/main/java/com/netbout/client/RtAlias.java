@@ -89,7 +89,7 @@ final class RtAlias implements Alias {
         return Long.parseLong(
             this.request.fetch()
                 .as(XmlResponse.class)
-                .rel("/page/links/link[@rel='start']/href")
+                .rel("/page/links/link[@rel='start']/@href")
                 .fetch()
                 .as(RestResponse.class)
                 .follow()

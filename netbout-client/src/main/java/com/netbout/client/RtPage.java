@@ -71,7 +71,7 @@ final class RtPage implements Page {
     public String read() throws IOException {
         return this.request.fetch()
             .as(XmlResponse.class)
-            .rel(this.xpath("links/link[@rel='read']/href"))
+            .rel(this.xpath("links/link[@rel='read']/@href"))
             .fetch().body();
     }
 
