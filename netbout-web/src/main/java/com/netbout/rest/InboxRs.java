@@ -69,7 +69,7 @@ public final class InboxRs extends BaseRs {
     @GET
     @Path("/start")
     public void start() throws IOException {
-        final long number = this.alias().start();
+        final long number = this.alias().inbox().start();
         throw FlashInset.forward(
             this.uriInfo().getBaseUriBuilder().clone()
                 .path(BoutRs.class)
