@@ -61,41 +61,9 @@ public interface Alias {
     void photo(String uri);
 
     /**
-     * Start new bout.
-     * @return Bout number
-     * @throws IOException If fails
+     * Get inbox.
+     * @return Inbox
      */
-    long start() throws IOException;
+    Inbox inbox();
 
-    /**
-     * Get inbox of bouts.
-     * @return Bouts
-     */
-    Pageable<Bout> inbox();
-
-    /**
-     * Get bout by its number.
-     * @param number Bout number
-     * @return Bout found
-     * @throws Alias.BoutNotFoundException If not found
-     */
-    Bout bout(long number) throws Alias.BoutNotFoundException;
-
-    /**
-     * Thowable when bout is not found.
-     * @see Alias#bout(long)
-     */
-    class BoutNotFoundException extends Exception {
-        /**
-         * Serialization marker.
-         */
-        private static final long serialVersionUID = 0x7526FA78EED21470L;
-        /**
-         * Public ctor.
-         * @param num The number of bout not found
-         */
-        public BoutNotFoundException(final long num) {
-            super(String.format("Bout #%d not found", num));
-        }
-    }
 }

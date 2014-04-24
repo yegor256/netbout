@@ -24,69 +24,57 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.client;
+package com.netbout.spi;
 
 import com.jcabi.aspects.Immutable;
-import com.jcabi.http.Request;
-import com.jcabi.http.response.XmlResponse;
-import com.netbout.spi.Alias;
-import com.netbout.spi.Inbox;
 import java.io.IOException;
-import java.net.URI;
 
 /**
- * REST aliases.
+ * Alias.
  *
  * @author Yegor Bugayenko (yegor@tpc2.com)
  * @version $Id$
  * @since 2.0
  */
 @Immutable
-final class RtAlias implements Alias {
+public interface Inbox extends Pageable<Bout> {
 
     /**
-     * Request to use.
+     * Start new bout.
+     * @return Bout number
+     * @throws IOException If fails
      */
-    private final transient Request request;
+    long start() throws IOException;
 
     /**
-     * Public ctor.
-     * @param req Request to use
+     * Get inbox of bouts.
+     * @return Bouts
      */
-    RtAlias(final Request req) {
-        this.request = req;
-    }
+    Inbox inbox();
 
-    @Override
-    public String name() throws IOException {
-        return this.request.fetch()
-            .as(XmlResponse.class)
-            .xml()
-            .xpath("/page/alias/name/text()")
-            .get(0);
-    }
+    /**
+     * Get bout by its number.
+     * @param number Bout number
+     * @return Bout found
+     * @throws Inbox.BoutNotFoundException If not found
+     */
+    Bout bout(long number) throws Inbox.BoutNotFoundException;
 
-    @Override
-    public URI photo() throws IOException {
-        return URI.create(
-            this.request.fetch()
-                .as(XmlResponse.class)
-                .xml()
-                .xpath("/page/alias/photo/text()")
-                .get(0)
-        );
+    /**
+     * Thowable when bout is not found.
+     * @see Inbox#bout(long)
+     */
+    class BoutNotFoundException extends Exception {
+        /**
+         * Serialization marker.
+         */
+        private static final long serialVersionUID = 0x7526FA78EED21470L;
+        /**
+         * Public ctor.
+         * @param num The number of bout not found
+         */
+        public BoutNotFoundException(final long num) {
+            super(String.format("Bout #%d not found", num));
+        }
     }
-
-    @Override
-    public void photo(final String uri) {
-        throw new UnsupportedOperationException(
-            "#photo(): it is not possible to change photo through API"
-        );
-    }
-
-    @Override
-    public Inbox inbox() {
-        return new RtInbox(this.request);
-    }
-
 }

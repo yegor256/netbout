@@ -28,21 +28,23 @@ package com.netbout.client;
 
 import com.jcabi.aspects.Immutable;
 import com.jcabi.http.Request;
+import com.jcabi.http.response.RestResponse;
 import com.jcabi.http.response.XmlResponse;
-import com.netbout.spi.Alias;
+import com.netbout.spi.Bout;
 import com.netbout.spi.Inbox;
+import com.netbout.spi.Pageable;
 import java.io.IOException;
-import java.net.URI;
+import java.util.Iterator;
 
 /**
- * REST aliases.
+ * REST inbox.
  *
  * @author Yegor Bugayenko (yegor@tpc2.com)
  * @version $Id$
  * @since 2.0
  */
 @Immutable
-final class RtAlias implements Alias {
+final class RtInbox implements Inbox {
 
     /**
      * Request to use.
@@ -53,40 +55,49 @@ final class RtAlias implements Alias {
      * Public ctor.
      * @param req Request to use
      */
-    RtAlias(final Request req) {
+    RtInbox(final Request req) {
         this.request = req;
     }
 
     @Override
-    public String name() throws IOException {
-        return this.request.fetch()
-            .as(XmlResponse.class)
-            .xml()
-            .xpath("/page/alias/name/text()")
-            .get(0);
-    }
-
-    @Override
-    public URI photo() throws IOException {
-        return URI.create(
+    public long start() throws IOException {
+        return Long.parseLong(
             this.request.fetch()
                 .as(XmlResponse.class)
+                .rel("/page/links/link[@rel='start']/@href")
+                .fetch()
+                .as(RestResponse.class)
+                .follow()
+                .fetch()
+                .as(XmlResponse.class)
                 .xml()
-                .xpath("/page/alias/photo/text()")
+                .xpath("/page/bout/number/text()")
                 .get(0)
         );
     }
 
     @Override
-    public void photo(final String uri) {
-        throw new UnsupportedOperationException(
-            "#photo(): it is not possible to change photo through API"
+    public Inbox inbox() {
+        throw new UnsupportedOperationException("#inbox()");
+    }
+
+    @Override
+    public Bout bout(final long number) {
+        return new RtBout(
+            this.request
+                .uri()
+                .set(this.request.uri().path(Long.toString(number)).get())
+                .back()
         );
     }
 
     @Override
-    public Inbox inbox() {
-        return new RtInbox(this.request);
+    public Pageable<Bout> jump(final int pos) {
+        throw new UnsupportedOperationException("#jump()");
     }
 
+    @Override
+    public Iterator<Bout> iterator() {
+        throw new UnsupportedOperationException("#iterator()");
+    }
 }
