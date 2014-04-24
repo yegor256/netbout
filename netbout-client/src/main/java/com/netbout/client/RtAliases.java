@@ -71,12 +71,16 @@ final class RtAliases implements Aliases {
 
     @Override
     public void add(final String name) {
-        throw new UnsupportedOperationException("#add()");
+        throw new UnsupportedOperationException(
+            "#add(): not possible to add an alias through API"
+        );
     }
 
     @Override
     public Iterator<Alias> iterator() {
-        throw new UnsupportedOperationException("#iterator()");
+        throw new UnsupportedOperationException(
+            "#iterator(): not possible to iterate aliases through API"
+        );
     }
 
 }

@@ -81,7 +81,9 @@ final class RtAlias implements Alias {
 
     @Override
     public void photo(final String uri) {
-        throw new UnsupportedOperationException("#photo()");
+        throw new UnsupportedOperationException(
+            "#photo(): it is not possible to change photo through API"
+        );
     }
 
     @Override
@@ -103,12 +105,13 @@ final class RtAlias implements Alias {
 
     @Override
     public Pageable<Bout> inbox() {
-        throw new UnsupportedOperationException("#inbox()");
+        throw new UnsupportedOperationException(
+            "#inbox(): not possible to list bouts at the moment"
+        );
     }
 
-    // @checkstyle RedundantThrowsCheck (5 lines)
     @Override
-    public Bout bout(final long number) throws BoutNotFoundException {
+    public Bout bout(final long number) {
         return new RtBout(
             this.request
                 .uri()
