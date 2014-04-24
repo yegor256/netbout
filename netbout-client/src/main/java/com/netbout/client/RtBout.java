@@ -118,7 +118,7 @@ final class RtBout implements Bout {
     }
 
     @Override
-    public Attachments binaries() {
+    public Attachments attachments() {
         return new RtAttachments(this.request);
     }
 }

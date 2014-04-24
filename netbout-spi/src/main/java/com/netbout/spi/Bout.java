@@ -89,6 +89,6 @@ public interface Bout {
      * Attachments.
      * @return Attachments
      */
-    Attachments binaries();
+    Attachments attachments();
 
 }
