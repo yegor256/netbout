@@ -69,19 +69,12 @@ final class RtAttachment implements Attachment {
     }
 
     @Override
-    public boolean visible() throws IOException {
-        return "true".equals(
-            this.request.fetch()
-                .as(XmlResponse.class)
-                .xml()
-                .xpath(this.xpath("visible/text()"))
-                .get(0)
-        );
-    }
-
-    @Override
-    public void visible(final boolean vsbl) {
-        throw new UnsupportedOperationException("#visible()");
+    public String ctype() throws IOException {
+        return this.request.fetch()
+            .as(XmlResponse.class)
+            .xml()
+            .xpath(this.xpath("ctype/text()"))
+            .get(0);
     }
 
     @Override
@@ -90,7 +83,8 @@ final class RtAttachment implements Attachment {
     }
 
     @Override
-    public void write(final InputStream stream) throws IOException {
+    public void write(final InputStream stream, final String ctype)
+        throws IOException {
         throw new UnsupportedOperationException("#write()");
     }
 

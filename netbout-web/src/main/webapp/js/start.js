@@ -32,19 +32,20 @@ $(document).ready(
         "use strict";
         $('#alias').keyup(
             function () {
-                var $input = $(this), $button = $('#submit');
+                var $input = $(this), $button = $('#submit'), $error = $('#error');
                 $.ajax(
                     {
                         url: $input.attr('data-check')
                             + '?alias=' + encodeURI($input.val()),
                         cache: false,
                         success: function (text) {
-                            if (text === 'available') {
-                                $input.css('color', 'green');
-                                $button.prop('disabled', false);
+                            if (text === '') {
+                                $button.show();
+                                $error.hide();
                             } else {
-                                $input.css('color', 'red');
-                                $button.prop('disabled', true);
+                                $button.hide();
+                                $error.html(text);
+                                $error.show();
                             }
                         }
                     }

@@ -80,12 +80,6 @@ public interface Bout {
     Friends friends();
 
     /**
-     * Get bout pages.
-     * @return Pages
-     */
-    Pages pages();
-
-    /**
      * Attachments.
      * @return Attachments
      */

@@ -27,6 +27,7 @@
 package com.netbout.dynamo;
 
 import com.jcabi.aspects.Immutable;
+import com.jcabi.aspects.Tv;
 import com.netbout.spi.Alias;
 import com.netbout.spi.Aliases;
 import java.util.Collections;
@@ -43,8 +44,16 @@ import java.util.Iterator;
 public final class DyAliases implements Aliases {
 
     @Override
-    public boolean available(final String name) {
-        return false;
+    public String check(final String name) {
+        final String answer;
+        if (name.length() < Tv.FOUR) {
+            answer = "too short, must be at least 4 letters";
+        } else if (name.matches("[a-z0-9]+")) {
+            answer = "registration is not available yet";
+        } else {
+            answer = "only English letters and numbers are accepted";
+        }
+        return answer;
     }
 
     @Override

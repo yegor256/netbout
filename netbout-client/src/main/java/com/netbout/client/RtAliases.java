@@ -58,15 +58,13 @@ final class RtAliases implements Aliases {
     }
 
     @Override
-    public boolean available(final String name) throws IOException {
-        return "available".equals(
-            this.request.fetch()
-                .as(XmlResponse.class)
-                .rel("/page/links/link[@rel='check']/@href")
-                .uri().queryParam("alias", name).back()
-                .fetch()
-                .body()
-        );
+    public String check(final String name) throws IOException {
+        return this.request.fetch()
+            .as(XmlResponse.class)
+            .rel("/page/links/link[@rel='check']/@href")
+            .uri().queryParam("alias", name).back()
+            .fetch()
+            .body();
     }
 
     @Override

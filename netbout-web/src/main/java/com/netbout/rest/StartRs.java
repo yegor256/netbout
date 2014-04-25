@@ -88,13 +88,7 @@ public final class StartRs extends BaseRs {
     @Path("/check")
     public String check(@QueryParam("alias") final String alias)
         throws IOException {
-        final String text;
-        if (this.user().aliases().available(alias)) {
-            text = "available";
-        } else {
-            text = "occupied";
-        }
-        return text;
+        return this.user().aliases().check(alias);
     }
 
 }

@@ -33,7 +33,6 @@ import com.netbout.spi.Attachments;
 import com.netbout.spi.Bout;
 import com.netbout.spi.Friends;
 import com.netbout.spi.Messages;
-import com.netbout.spi.Pages;
 import java.io.IOException;
 import java.text.ParseException;
 import java.util.Date;
@@ -110,11 +109,6 @@ final class RtBout implements Bout {
     @Override
     public Friends friends() {
         throw new UnsupportedOperationException("#friends()");
-    }
-
-    @Override
-    public Pages pages() {
-        return new RtPages(this.request);
     }
 
     @Override

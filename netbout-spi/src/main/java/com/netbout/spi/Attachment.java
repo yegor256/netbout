@@ -47,17 +47,11 @@ public interface Attachment {
     String name();
 
     /**
-     * Is it visible to everybody?
-     * @return TRUE if visible
+     * Get its MIME content type.
+     * @return Content type
      * @throws IOException If fails
      */
-    boolean visible() throws IOException;
-
-    /**
-     * Make it public or private.
-     * @param vsbl TRUE if it should be public
-     */
-    void visible(boolean vsbl);
+    String ctype() throws IOException;
 
     /**
      * Read content.
@@ -69,8 +63,9 @@ public interface Attachment {
     /**
      * Write content.
      * @param stream Steam with content
+     * @param ctype MIME content type
      * @throws IOException If fails
      */
-    void write(InputStream stream) throws IOException;
+    void write(InputStream stream, String ctype) throws IOException;
 
 }

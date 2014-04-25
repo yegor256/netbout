@@ -42,10 +42,10 @@ public interface Aliases extends Iterable<Alias> {
     /**
      * Is it possible to assign this identity?
      * @param name Alias to assign
-     * @return TRUE if it's available
+     * @return Empty string if it's available, message otherwise
      * @throws IOException If fails
      */
-    boolean available(String name) throws IOException;
+    String check(String name) throws IOException;
 
     /**
      * Try to assign this new identity to this user.

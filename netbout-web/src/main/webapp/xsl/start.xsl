@@ -74,6 +74,7 @@
                 <input id="submit" type="submit" value="register" disabled="disabled" />
             </fieldset>
         </form>
+        <p id="error" style="display: none;"/>
         <p>
             <a>
                 <xsl:attribute name="href">
