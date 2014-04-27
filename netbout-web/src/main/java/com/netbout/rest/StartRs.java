@@ -53,6 +53,7 @@ public final class StartRs extends BaseRs {
      */
     @GET
     public Response start() {
+        this.user();
         return new PageBuilder()
             .stylesheet("/xsl/start.xsl")
             .build(NbPage.class)
