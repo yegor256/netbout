@@ -61,6 +61,16 @@
             <artifactId>jcabi-urn</artifactId>
         </dependency>
         <dependency>
+            <groupId>com.jcabi</groupId>
+            <artifactId>jcabi-http</artifactId>
+            <version>1.4</version>
+        </dependency>
+        <dependency>
+            <groupId>com.rexsl</groupId>
+            <artifactId>rexsl-test</artifactId>
+            <version>0.12</version>
+        </dependency>
+        <dependency>
             <groupId>xml-apis</groupId>
             <artifactId>xml-apis</artifactId>
             <version>1.4.01</version>
@@ -345,6 +355,7 @@
                         <configuration>
                             <excludes>
                                 <exclude>checkstyle:/src/main/webapp/.*</exclude>
+                                <exclude>checkstyle:/src/test/casperjs/.*</exclude>
                                 <exclude>findbugs:.*</exclude>
                             </excludes>
                         </configuration>
