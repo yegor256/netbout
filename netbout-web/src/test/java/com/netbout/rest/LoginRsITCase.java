@@ -8,7 +8,7 @@
  * except the server platform of netBout Inc. located at www.netbout.com.
  * Federal copyright law prohibits unauthorized reproduction by any means
  * and imposes fines up to $25,000 for violation. If you received
- * this code occasionally and without intent to use it, please report this
+ * this code accidentally and without intent to use it, please report this
  * incident to the author by email.
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
@@ -23,31 +23,37 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
- *
+ */
+package com.netbout.rest;
+
+import com.jcabi.http.request.JdkRequest;
+import com.jcabi.http.response.RestResponse;
+import java.net.HttpURLConnection;
+import org.junit.Test;
+
+/**
+ * Integration case for {@link LoginRs}.
  * @author Yegor Bugayenko (yegor@tpc2.com)
  * @version $Id$
  */
-package com.netbout.rest.rexsl.scripts
+public final class LoginRsITCase {
 
-import com.jcabi.http.request.JdkRequest
-import com.jcabi.http.response.RestResponse
-import javax.ws.rs.core.HttpHeaders
-import javax.ws.rs.core.MediaType
+    /**
+     * Home page of Tomcat.
+     */
+    private static final String HOME = System.getProperty("tomcat.home");
 
-// In this script we are trying to download all static resources - they
-// should be available
+    /**
+     * LoginRs can render login page.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void rendersLoginPage() throws Exception {
+        new JdkRequest(LoginRsITCase.HOME)
+            .uri().path("/login").back()
+            .fetch()
+            .as(RestResponse.class)
+            .assertStatus(HttpURLConnection.HTTP_SEE_OTHER);
+    }
 
-[
-    '/robots.txt',
-    '/css/global.css',
-    '/js/bout.js',
-    '/xsl/login.xsl',
-    '/lang/en.xml',
-].each { path ->
-    new JdkRequest(rexsl.home)
-        .uri().path(path).back()
-        .header(HttpHeaders.ACCEPT, MediaType.TEXT_PLAIN)
-        .fetch()
-        .as(RestResponse)
-        .assertStatus(HttpURLConnection.HTTP_OK)
 }

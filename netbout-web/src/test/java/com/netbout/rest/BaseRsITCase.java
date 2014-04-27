@@ -8,7 +8,7 @@
  * except the server platform of netBout Inc. located at www.netbout.com.
  * Federal copyright law prohibits unauthorized reproduction by any means
  * and imposes fines up to $25,000 for violation. If you received
- * this code occasionally and without intent to use it, please report this
+ * this code accidentally and without intent to use it, please report this
  * incident to the author by email.
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
@@ -23,20 +23,49 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
- *
+ */
+package com.netbout.rest;
+
+import com.jcabi.http.request.JdkRequest;
+import com.jcabi.http.response.RestResponse;
+import java.net.HttpURLConnection;
+import javax.ws.rs.core.HttpHeaders;
+import javax.ws.rs.core.MediaType;
+import org.junit.Test;
+
+/**
+ * Integration case for {@link BaseRs}.
  * @author Yegor Bugayenko (yegor@tpc2.com)
  * @version $Id$
  */
-package com.netbout.rest.rexsl.setup
+public final class BaseRsITCase {
 
-import com.jcabi.log.Logger
+    /**
+     * Home page of Tomcat.
+     */
+    private static final String HOME = System.getProperty("tomcat.home");
 
-[
-    '/com/netbout/spi/Base.class',
-    '/com/netbout/dynamo/DyBase.class',
-].each { name ->
-    if (this.class.getResource(name) == null) {
-        throw new IllegalStateException("class ${name} not found in classpath")
+    /**
+     * BaseRs can render static resources.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void downloadsStaticResources() throws Exception {
+        final String[] pages = {
+            "/robots.txt",
+            "/css/global.css",
+            "/js/bout.js",
+            "/xsl/login.xsl",
+            "/lang/en.xml",
+        };
+        for (final String page : pages) {
+            new JdkRequest(BaseRsITCase.HOME)
+                .uri().path(page).back()
+                .header(HttpHeaders.ACCEPT, MediaType.TEXT_PLAIN)
+                .fetch()
+                .as(RestResponse.class)
+                .assertStatus(HttpURLConnection.HTTP_OK);
+        }
     }
-    Logger.info(this, 'class %s is available in classpath', name)
+
 }

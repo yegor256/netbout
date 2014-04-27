@@ -67,16 +67,6 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>org.hamcrest</groupId>
-            <artifactId>hamcrest-library</artifactId>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.hamcrest</groupId>
-            <artifactId>hamcrest-core</artifactId>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
             <groupId>com.jcabi</groupId>
             <artifactId>jcabi-aspects</artifactId>
         </dependency>
@@ -105,45 +95,14 @@
         </dependency>
         <dependency>
             <groupId>com.rexsl</groupId>
-            <artifactId>rexsl-core</artifactId>
-            <version>${rexsl.version}</version>
-            <scope>runtime</scope>
-            <exclusions>
-                <exclusion>
-                    <groupId>com.sun.jersey</groupId>
-                    <artifactId>jersey-core</artifactId>
-                </exclusion>
-            </exclusions>
+            <artifactId>rexsl</artifactId>
+            <version>1.0</version>
         </dependency>
         <dependency>
             <groupId>com.sun.jersey</groupId>
             <artifactId>jersey-core</artifactId>
             <version>${jersey.version}</version>
             <scope>runtime</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.sun.jersey</groupId>
-            <artifactId>jersey-server</artifactId>
-            <version>${jersey.version}</version>
-            <scope>runtime</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.rexsl</groupId>
-            <artifactId>rexsl-page</artifactId>
-            <version>${rexsl.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.rexsl</groupId>
-            <artifactId>rexsl-test</artifactId>
-            <version>${rexsl.version}</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.rexsl</groupId>
-            <artifactId>rexsl-page</artifactId>
-            <version>${rexsl.version}</version>
-            <classifier>mock</classifier>
-            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>com.sun.grizzly</groupId>
@@ -170,12 +129,6 @@
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.amazonaws</groupId>
-            <artifactId>aws-java-sdk</artifactId>
-            <version>1.5.8</version>
-            <scope>runtime</scope>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
@@ -213,7 +166,7 @@
             <plugin>
                 <artifactId>maven-war-plugin</artifactId>
                 <configuration>
-                    <warSourceExcludes>css/**, xsl/**</warSourceExcludes>
+                    <warSourceExcludes>js/**, css/**</warSourceExcludes>
                     <archive>
                         <manifestEntries>
                             <Netbout-Revision>${buildNumber}</Netbout-Revision>
@@ -232,39 +185,22 @@
                         </manifestEntries>
                     </archive>
                 </configuration>
-            </plugin>
-            <plugin>
-                <groupId>com.rexsl</groupId>
-                <artifactId>rexsl-maven-plugin</artifactId>
-                <version>${rexsl.version}</version>
-                <configuration>
-                    <systemPropertyVariables>
-                        <log4j.configuration>file:${basedir}/src/test/resources/log4j.properties</log4j.configuration>
-                    </systemPropertyVariables>
-                </configuration>
-                <dependencies>
-                    <dependency>
-                        <groupId>com.jcabi</groupId>
-                        <artifactId>jcabi-aspects</artifactId>
-                        <version>0.14</version>
-                    </dependency>
-                    <dependency>
-                        <groupId>com.jcabi</groupId>
-                        <artifactId>jcabi-immutable</artifactId>
-                        <version>1.1</version>
-                    </dependency>
-                    <dependency>
-                        <groupId>xml-apis</groupId>
-                        <artifactId>xml-apis</artifactId>
-                        <version>1.4.01</version>
-                    </dependency>
-                </dependencies>
                 <executions>
                     <execution>
+                        <id>package-test-war</id>
+                        <phase>package</phase>
                         <goals>
-                            <goal>check</goal>
-                            <goal>package</goal>
+                            <goal>war</goal>
                         </goals>
+                        <configuration>
+                            <webappDirectory>${project.build.directory}/test-war</webappDirectory>
+                            <warSourceExcludes>nothing</warSourceExcludes>
+                            <webResources>
+                                <resource>
+                                    <directory>src/test/webapp</directory>
+                                </resource>
+                            </webResources>
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>
@@ -284,6 +220,93 @@
                         <phase>deploy</phase>
                         <goals>
                             <goal>deploy</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>com.samaxes.maven</groupId>
+                <artifactId>minify-maven-plugin</artifactId>
+                <version>1.7.2</version>
+                <executions>
+                    <execution>
+                        <configuration>
+                            <charset>UTF-8</charset>
+                            <cssSourceIncludes>
+                                <include>*.css</include>
+                            </cssSourceIncludes>
+                            <jsSourceIncludes>
+                                <include>*.js</include>
+                            </jsSourceIncludes>
+                            <jsEngine>CLOSURE</jsEngine>
+                            <nosuffix>true</nosuffix>
+                            <skipMerge>true</skipMerge>
+                        </configuration>
+                        <goals>
+                            <goal>minify</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>build-helper-maven-plugin</artifactId>
+                <version>1.8</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>reserve-network-port</goal>
+                        </goals>
+                        <configuration>
+                            <portNames>
+                                <portName>tomcat.port</portName>
+                            </portNames>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <artifactId>maven-failsafe-plugin</artifactId>
+                <configuration>
+                    <systemPropertyVariables>
+                        <tomcat.home>http://localhost:${tomcat.port}</tomcat.home>
+                    </systemPropertyVariables>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>integration-test</goal>
+                            <goal>verify</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.tomcat.maven</groupId>
+                <artifactId>tomcat7-maven-plugin</artifactId>
+                <version>2.2</version>
+                <configuration>
+                    <path>/</path>
+                    <warDirectory>${project.build.directory}/test-war</warDirectory>
+                    <port>${tomcat.port}</port>
+                    <fork>true</fork>
+                    <systemProperties>
+                        <log4j.configuration>file:${basedir}/src/test/resources/log4j.properties</log4j.configuration>
+                    </systemProperties>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>start-tomcat</id>
+                        <phase>pre-integration-test</phase>
+                        <goals>
+                            <goal>run-war-only</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>stop-tomcat</id>
+                        <phase>post-integration-test</phase>
+                        <goals>
+                            <goal>shutdown</goal>
                         </goals>
                     </execution>
                 </executions>
