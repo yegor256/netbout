@@ -74,39 +74,24 @@
                 <photo>http://img.netbout.com/faces/javier.jpg</photo>
             </friend>
         </friends>
-        <pages>
-            <page>
-                <links>
-                    <link href="/xml/inbox.xml" rel="open" />
-                </links>
-                <name>files</name>
-                <active>false</active>
-            </page>
-            <page>
-                <links>
-                    <link href="/xml/inbox.xml" rel="open" />
-                </links>
-                <name>report</name>
-                <active>true</active>
-                <html>
-                    This is an interesting page...
-                </html>
-            </page>
-        </pages>
         <attachments>
-            <attachment>
+            <attachment active="true">
                 <links>
+                    <link href="/xml/inbox.xml" rel="open" />
                     <link href="/xml/inbox.xml" rel="download" />
                 </links>
                 <name>cv.pdf</name>
-                <visible>true</visible>
+                <ctype>text/x-markdown</ctype>
+                <markdown>
+                    Hello, world!
+                </markdown>
             </attachment>
             <attachment>
                 <links>
                     <link href="/xml/inbox.xml" rel="download" />
                 </links>
+                <ctype>application/excel</ctype>
                 <name>money-data.xls</name>
-                <visible>false</visible>
             </attachment>
         </attachments>
         <messages>

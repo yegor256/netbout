@@ -46,22 +46,33 @@
             background-color: white;
         }
 
-.data {
+.attachments {
     position: relative;
     clear: both;
 }
-
-.pages {
-    margin-left: 0;
-    position: relative;
-}
-    .pages li {
-        display: inline;
-        margin-right: 10px;
+    .attachments-left {
+        margin-left: 0;
+        position: relative;
     }
-        .pages li.active {
-            font-weight: bold;
+        .attachments-left li {
+            display: inline;
+            margin-right: 10px;
         }
+            .attachments-left li.active {
+                font-weight: bold;
+            }
+    .attachments-right {
+        position: absolute;
+        top: 0;
+        right: 0;
+    }
+        .attachments-right li {
+            display: inline;
+            margin-right: 10px;
+        }
+            .attachments-right li.active {
+                font-weight: bold;
+            }
 
 /* page itself */
 .page {
@@ -76,19 +87,6 @@
     border-right: 1px solid #dadbd9;
     overflow-y: auto;
 }
-
-.attachments {
-    position: absolute;
-    top: 0;
-    right: 0;
-}
-    .attachments li {
-        display: inline;
-        margin-right: 10px;
-    }
-        .attachments li.active {
-            font-weight: bold;
-        }
 
 /* form to post a new message */
 .post {

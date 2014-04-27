@@ -104,10 +104,8 @@
                 <xsl:call-template name="rename" />
             </xsl:if>
         </div>
-        <xsl:if test="attachments or pages">
-            <xsl:call-template name="data" />
-        </xsl:if>
-        <xsl:apply-templates select="/page/bout/pages/page[active='true']/html"/>
+        <xsl:apply-templates select="/page/bout/attachments"/>
+        <xsl:apply-templates select="/page/bout/attachments/attachment[@active='true']/markdown"/>
         <div class="post">
             <form method="post">
                 <xsl:attribute name="action">
@@ -229,25 +227,24 @@
             </form>
         </xsl:if>
     </xsl:template>
-    <xsl:template match="page/html">
+    <xsl:template match="attachment/markdown">
         <div class="page">
             <xsl:value-of select="." disable-output-escaping="yes" />
         </div>
     </xsl:template>
     <xsl:template name="data">
-        <div class="data">
-            <xsl:apply-templates select="/page/bout/pages" />
-            <xsl:apply-templates select="/page/bout/attachments" />
+        <div class="attachments">
+            <ul class="left-attachments">
+                <xsl:apply-templates select="/page/bout/attachments/attachment[ctype='text/x-markdown']" />
+            </ul>
+            <ul class="right-attachments">
+                <xsl:apply-templates select="/page/bout/attachments/attachment[ctype!='text/x-markdown']" />
+            </ul>
         </div>
     </xsl:template>
-    <xsl:template match="bout/pages">
-        <ul class="pages">
-            <xsl:apply-templates select="page" />
-        </ul>
-    </xsl:template>
-    <xsl:template match="pages/page">
+    <xsl:template match="attachment">
         <li>
-            <xsl:if test="active = 'true'">
+            <xsl:if test="@active = 'true'">
                 <xsl:attribute name="class">
                     <xsl:text>active</xsl:text>
                 </xsl:attribute>
@@ -265,24 +262,6 @@
                     <xsl:value-of select="name" />
                 </xsl:otherwise>
             </xsl:choose>
-        </li>
-    </xsl:template>
-    <xsl:template match="bout/attachments">
-        <ul class="attachments">
-            <xsl:apply-templates select="attachment" />
-        </ul>
-    </xsl:template>
-    <xsl:template match="attachment">
-        <li>
-            <xsl:if test="visible != 'true'">
-                <span class="icomoon"><xsl:text>o</xsl:text></span>
-            </xsl:if>
-            <a>
-                <xsl:attribute name="href">
-                    <xsl:value-of select="links/link[@rel='download']/@href"/>
-                </xsl:attribute>
-                <xsl:value-of select="name" />
-            </a>
         </li>
     </xsl:template>
 </xsl:stylesheet>
