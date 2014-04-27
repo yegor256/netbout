@@ -234,11 +234,14 @@
                     </xsl:call-template>
                 </a>
             </xsl:when>
-            <xsl:otherwise>
+            <xsl:when test="/page/alias/name">
                 <xsl:call-template name="crop">
                     <xsl:with-param name="text" select="/page/alias/name"/>
                     <xsl:with-param name="length" select="25"/>
                 </xsl:call-template>
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:text>unknown</xsl:text>
             </xsl:otherwise>
         </xsl:choose>
     </xsl:template>

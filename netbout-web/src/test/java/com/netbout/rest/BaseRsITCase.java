@@ -68,4 +68,24 @@ public final class BaseRsITCase {
         }
     }
 
+    /**
+     * BaseRs can render non-found pages.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void downloadsNonFoundResources() throws Exception {
+        final String[] pages = {
+            "/the-page-doesnt-exist",
+            "/-this-one-also",
+        };
+        for (final String page : pages) {
+            new JdkRequest(BaseRsITCase.HOME)
+                .uri().path(page).back()
+                .header(HttpHeaders.ACCEPT, MediaType.TEXT_PLAIN)
+                .fetch()
+                .as(RestResponse.class)
+                .assertStatus(HttpURLConnection.HTTP_NOT_FOUND);
+        }
+    }
+
 }

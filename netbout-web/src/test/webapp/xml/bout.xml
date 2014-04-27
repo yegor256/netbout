@@ -1,0 +1,141 @@
+<?xml version="1.0"?>
+<?xml-stylesheet href="/xsl/bout.xsl" type="text/xsl"?>
+<!--
+ * Copyright (c) 2009-2014, Netbout.com
+ * All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are PROHIBITED without prior written permission from
+ * the author. This product may NOT be used anywhere and on any computer
+ * except the server platform of netBout Inc. located at www.netbout.com.
+ * Federal copyright law prohibits unauthorized reproduction by any means
+ * and imposes fines up to $25,000 for violation. If you received
+ * this code accidentally and without intent to use it, please report this
+ * incident to the author by email.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+ * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+ * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+ * A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+ * OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+ * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+ * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
+ * ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+ * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
+ * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
+ * SUCH DAMAGE.
+ *
+ * @author Yegor Bugayenko (yegor@tpc2.com)
+ * @version $Id$
+ -->
+<page>
+    <version>
+        <name>1.0</name>
+        <revision>555</revision>
+        <date>2011-09-23</date>
+    </version>
+    <links>
+        <link href="/xml/inbox.xml" rel="home" />
+        <link href="/xml/bout.xml" rel="start" />
+        <link href="/xml/bout.xml" rel="self" />
+        <link href="/xml/bout.xml" rel="post" />
+        <link href="/xml/bout.xml" rel="rename" />
+        <link href="/xml/bout.xml" rel="attach" />
+        <link href="/" rel="auth-logout" />
+    </links>
+    <identity>
+        <urn>urn:facebook:12345678</urn>
+        <name>William.Shakespeare</name>
+        <photo>http://img.netbout.com/faces/javier.jpg</photo>
+        <token>TEGF65-HFYA087-JFS</token>
+    </identity>
+    <alias>
+        <name>javier</name>
+        <photo>http://img.netbout.com/faces/javier.jpg</photo>
+        <locale>en</locale>
+    </alias>
+    <bout>
+        <number>6252</number>
+        <title>PHP programming in Netbout project</title>
+        <friends>
+            <friend>
+                <links>
+                    <link href="/xml/inbox.xml" rel="kick" />
+                </links>
+                <alias>johnny</alias>
+                <photo>http://img.netbout.com/faces/depp.jpg</photo>
+            </friend>
+            <friend>
+                <links>
+                    <link href="/xml/inbox.xml" rel="kick" />
+                </links>
+                <alias>javier</alias>
+                <photo>http://img.netbout.com/faces/javier.jpg</photo>
+            </friend>
+        </friends>
+        <pages>
+            <page>
+                <links>
+                    <link href="/xml/inbox.xml" rel="open" />
+                </links>
+                <name>files</name>
+                <active>false</active>
+            </page>
+            <page>
+                <links>
+                    <link href="/xml/inbox.xml" rel="open" />
+                </links>
+                <name>report</name>
+                <active>true</active>
+                <html>
+                    This is an interesting page...
+                </html>
+            </page>
+        </pages>
+        <attachments>
+            <attachment>
+                <links>
+                    <link href="/xml/inbox.xml" rel="download" />
+                </links>
+                <name>cv.pdf</name>
+                <visible>true</visible>
+            </attachment>
+            <attachment>
+                <links>
+                    <link href="/xml/inbox.xml" rel="download" />
+                </links>
+                <name>money-data.xls</name>
+                <visible>false</visible>
+            </attachment>
+        </attachments>
+        <messages>
+            <message>
+                <number>1</number>
+                <author>javier</author>
+                <html>
+                    I think that this &lt;b&gt;subject&lt;/b&gt; should be discussed in
+                    this bout. What do you think, &lt;i&gt;guys&lt;/i&gt;?...
+                </html>
+                <date>2014-04-22T16:09:33Z</date>
+            </message>
+            <message>
+                <number>2</number>
+                <author>johnny</author>
+                <html>
+                    How about some text here...
+                </html>
+                <date>2014-04-21T16:09:33Z</date>
+            </message>
+            <message>
+                <number>3</number>
+                <author>al-pacino</author>
+                <html>
+                    ANothe comment
+                </html>
+                <date>2014-04-20T16:09:33Z</date>
+            </message>
+        </messages>
+    </bout>
+    <millis>56</millis>
+</page>

@@ -311,6 +311,27 @@
                     </execution>
                 </executions>
             </plugin>
+            <!--
+            <plugin>
+                <groupId>fr.linsolas</groupId>
+                <artifactId>casperjs-runner-maven-plugin</artifactId>
+                <version>1.0-RC1</version>
+                <configuration>
+                    <casperjs.executable>casperjs</casperjs.executable>
+                    <tests.directory>${basedir}/src/test/casperjs</tests.directory>
+                    <failFast>true</failFast>
+                    <home>http://locahost:${tomcat.port}</home>
+                </configuration>
+                <executions>
+                    <execution>
+                        <phase>integration-test</phase>
+                        <goals>
+                            <goal>test</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            -->
         </plugins>
     </build>
     <profiles>
