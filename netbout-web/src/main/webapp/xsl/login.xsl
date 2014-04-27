@@ -41,7 +41,7 @@
         <div class="buttons icomoon">
             <a>
                 <xsl:attribute name="href">
-                    <xsl:value-of select="/page/links/link[@rel='auth-facebook']/@href" />
+                    <xsl:value-of select="/page/links/link[@rel='rexsl:facebook']/@href" />
                 </xsl:attribute>
                 <xsl:attribute name="title">
                     <xsl:text>click to authenticate yourself via Facebook</xsl:text>
@@ -50,7 +50,7 @@
             </a>
             <a>
                 <xsl:attribute name="href">
-                    <xsl:value-of select="/page/links/link[@rel='auth-google']/@href" />
+                    <xsl:value-of select="/page/links/link[@rel='rexsl:google']/@href" />
                 </xsl:attribute>
                 <xsl:attribute name="title">
                     <xsl:text>click to authenticate yourself via Google+</xsl:text>
@@ -59,7 +59,7 @@
             </a>
             <a>
                 <xsl:attribute name="href">
-                    <xsl:value-of select="/page/links/link[@rel='auth-github']/@href" />
+                    <xsl:value-of select="/page/links/link[@rel='rexsl:github']/@href" />
                 </xsl:attribute>
                 <xsl:attribute name="title">
                     <xsl:text>click to authenticate yourself via Github</xsl:text>

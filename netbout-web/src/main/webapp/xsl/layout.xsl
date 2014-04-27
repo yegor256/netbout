@@ -205,7 +205,7 @@
                         <li>
                             <a class="icomoon">
                                 <xsl:attribute name="href">
-                                    <xsl:value-of select="links/link[@rel='logout']/@href"/>
+                                    <xsl:value-of select="links/link[@rel='rexsl:logout']/@href"/>
                                 </xsl:attribute>
                                 <xsl:attribute name="title">
                                     <xsl:value-of select="$TEXTS/leave.right.now"/>
