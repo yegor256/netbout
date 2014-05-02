@@ -26,16 +26,7 @@
  */
 
 /**
- * DynamoDB storage.
- *
- * <p>There are the following tables in DynamoDB:
- *
- * <pre>
- * aliases: (hash:URN, range:alias, photo, locale)
- * bouts: (hash:id, title, date, friends)
- * messages: (hash:bout, range:msg, text, alias, date)
- * attachments: (hash:bout, range:name, owner, ctype, data)
- * </pre>
+ * DynamoDB storage, tests.
  *
  * @author Yegor Bugayenko (yegor@tpc2.com)
  * @version $Id$

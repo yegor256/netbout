@@ -56,18 +56,27 @@ public final class DyBase implements Base {
      * @param prefix Table prefix
      */
     public DyBase(final String key, final String secret, final String prefix) {
-        this.region = new Region.Prefixed(
-            new Region.Simple(
-                new Credentials.Simple(key, secret)
-            ),
-            prefix
+        this(
+            new Region.Prefixed(
+                new Region.Simple(
+                    new Credentials.Simple(key, secret)
+                ),
+                prefix
+            )
         );
+    }
+
+    /**
+     * Ctor for tests.
+     * @param reg Region
+     */
+    DyBase(final Region reg) {
+        this.region = reg;
     }
 
     @Override
     public User user(final URN urn) {
-        assert this.region != null;
-        return new DyUser();
+        return new DyUser(this.region.table("aliases"), urn);
     }
 
     @Override

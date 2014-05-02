@@ -24,21 +24,45 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
+package com.netbout.dynamo;
+
+import com.jcabi.dynamo.Credentials;
+import com.jcabi.dynamo.Region;
+import org.junit.rules.TestRule;
+import org.junit.runner.Description;
+import org.junit.runners.model.Statement;
 
 /**
- * DynamoDB storage.
- *
- * <p>There are the following tables in DynamoDB:
- *
- * <pre>
- * aliases: (hash:URN, range:alias, photo, locale)
- * bouts: (hash:id, title, date, friends)
- * messages: (hash:bout, range:msg, text, alias, date)
- * attachments: (hash:bout, range:name, owner, ctype, data)
- * </pre>
- *
+ * Rule for region.
  * @author Yegor Bugayenko (yegor@tpc2.com)
  * @version $Id$
- * @since 2.0
  */
-package com.netbout.dynamo;
+public final class RegionRule implements TestRule {
+
+    /**
+     * TCP port of DynamoDB Local.
+     */
+    private static final int PORT = Integer.parseInt(
+        System.getProperty("dynamo.port")
+    );
+
+    @Override
+    public Statement apply(final Statement base,
+        final Description description) {
+        return base;
+    }
+
+    /**
+     * Get a region.
+     * @return Region
+     */
+    public Region get() {
+        return new Region.Simple(
+            new Credentials.Direct(
+                new Credentials.Simple("AAAAABBBBBAAAAABBBBB", ""),
+                RegionRule.PORT
+            )
+        );
+    }
+
+}

@@ -26,12 +26,20 @@
  */
 package com.netbout.dynamo;
 
+import com.google.common.base.Function;
+import com.google.common.base.Predicate;
+import com.google.common.collect.Iterators;
 import com.jcabi.aspects.Immutable;
 import com.jcabi.aspects.Tv;
+import com.jcabi.dynamo.Attributes;
+import com.jcabi.dynamo.Frame;
+import com.jcabi.dynamo.Item;
+import com.jcabi.urn.URN;
 import com.netbout.spi.Alias;
 import com.netbout.spi.Aliases;
-import java.util.Collections;
+import java.io.IOException;
 import java.util.Iterator;
+import java.util.Locale;
 
 /**
  * Dynamo Aliases.
@@ -41,15 +49,61 @@ import java.util.Iterator;
  * @since 2.0
  */
 @Immutable
-public final class DyAliases implements Aliases {
+final class DyAliases implements Aliases {
+
+    /**
+     * URN attribute.
+     */
+    public static final String ATTR_URN = "urn";
+
+    /**
+     * Alias attribute.
+     */
+    public static final String ATTR_ALIAS = "alias";
+
+    /**
+     * Locale attribute.
+     */
+    public static final String ATTR_LOCALE = "locale";
+
+    /**
+     * Photo attribute.
+     */
+    public static final String ATTR_PHOTO = "photo";
+
+    /**
+     * Frame with aliases.
+     */
+    private final transient Frame frame;
+
+    /**
+     * URN of the user.
+     */
+    private final transient URN urn;
+
+    /**
+     * Ctor.
+     * @param frm Frame
+     * @param user URN of the user
+     */
+    DyAliases(final Frame frm, final URN user) {
+        this.frame = frm;
+        this.urn = user;
+    }
 
     @Override
     public String check(final String name) {
         final String answer;
         if (name.length() < Tv.FOUR) {
-            answer = "too short, must be at least 4 letters";
+            answer = "too short, must be 4 letters at least";
+        } else if (name.length() > Tv.TWENTY) {
+            answer = "too long, must be 20 letters at most";
         } else if (name.matches("[a-z0-9]+")) {
-            answer = "registration is not available yet";
+            if (this.occupied(name)) {
+                answer = "this alias is occupied";
+            } else {
+                answer = "";
+            }
         } else {
             answer = "only English letters and numbers are accepted";
         }
@@ -58,11 +112,47 @@ public final class DyAliases implements Aliases {
 
     @Override
     public void add(final String name) {
-        throw new UnsupportedOperationException("#add()");
+        this.frame.table().put(
+            new Attributes()
+                .with(DyAliases.ATTR_URN, this.urn.toString())
+                .with(DyAliases.ATTR_ALIAS, name)
+                .with(DyAliases.ATTR_LOCALE, Locale.ENGLISH.toString())
+                .with(DyAliases.ATTR_PHOTO, "//img.netbout.com/unknown.png")
+        );
     }
 
     @Override
     public Iterator<Alias> iterator() {
-        return Collections.<Alias>emptyList().iterator();
+        return Iterators.transform(
+            this.frame.iterator(),
+            new Function<Item, Alias>() {
+                @Override
+                public Alias apply(final Item item) {
+                    return new DyAlias(item);
+                }
+            }
+        );
     }
+
+    /**
+     * This name is occupied.
+     * @param name The name
+     * @return TRUE if occupied
+     */
+    private boolean occupied(final String name) {
+        return Iterators.any(
+            this.iterator(),
+            new Predicate<Alias>() {
+                @Override
+                public boolean apply(final Alias input) {
+                    try {
+                        return input.name().equals(name);
+                    } catch (final IOException ex) {
+                        throw new IllegalStateException(ex);
+                    }
+                }
+            }
+        );
+    }
+
 }

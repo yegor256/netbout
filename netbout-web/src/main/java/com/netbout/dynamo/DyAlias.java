@@ -24,21 +24,57 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
+package com.netbout.dynamo;
+
+import com.amazonaws.services.dynamodbv2.model.AttributeValue;
+import com.jcabi.aspects.Immutable;
+import com.jcabi.dynamo.Item;
+import com.netbout.spi.Alias;
+import com.netbout.spi.Inbox;
+import java.net.URI;
 
 /**
- * DynamoDB storage.
- *
- * <p>There are the following tables in DynamoDB:
- *
- * <pre>
- * aliases: (hash:URN, range:alias, photo, locale)
- * bouts: (hash:id, title, date, friends)
- * messages: (hash:bout, range:msg, text, alias, date)
- * attachments: (hash:bout, range:name, owner, ctype, data)
- * </pre>
+ * Dynamo Alias.
  *
  * @author Yegor Bugayenko (yegor@tpc2.com)
  * @version $Id$
  * @since 2.0
  */
-package com.netbout.dynamo;
+@Immutable
+final class DyAlias implements Alias {
+
+    /**
+     * Item we're working with.
+     */
+    private final transient Item item;
+
+    /**
+     * Ctor.
+     * @param itm Item
+     */
+    DyAlias(final Item itm) {
+        this.item = itm;
+    }
+
+    @Override
+    public String name() {
+        return this.item.get(DyAliases.ATTR_ALIAS).getS();
+    }
+
+    @Override
+    public URI photo() {
+        return URI.create(
+            this.item.get(DyAliases.ATTR_PHOTO).getS()
+        );
+    }
+
+    @Override
+    public void photo(final String uri) {
+        this.item.put(DyAliases.ATTR_PHOTO, new AttributeValue(uri));
+    }
+
+    @Override
+    public Inbox inbox() {
+        throw new UnsupportedOperationException("#inbox()");
+    }
+}

@@ -27,6 +27,9 @@
 package com.netbout.dynamo;
 
 import com.jcabi.aspects.Immutable;
+import com.jcabi.dynamo.QueryValve;
+import com.jcabi.dynamo.Table;
+import com.jcabi.urn.URN;
 import com.netbout.spi.Aliases;
 import com.netbout.spi.User;
 
@@ -38,11 +41,36 @@ import com.netbout.spi.User;
  * @since 2.0
  */
 @Immutable
-public final class DyUser implements User {
+final class DyUser implements User {
+
+    /**
+     * Table with aliases.
+     */
+    private final transient Table table;
+
+    /**
+     * URN of the user.
+     */
+    private final transient URN urn;
+
+    /**
+     * Ctor.
+     * @param tbl Table
+     * @param name Name of the user (URN)
+     */
+    DyUser(final Table tbl, final URN name) {
+        this.table = tbl;
+        this.urn = name;
+    }
 
     @Override
     public Aliases aliases() {
-        return new DyAliases();
+        return new DyAliases(
+            this.table.frame()
+                .through(new QueryValve())
+                .where(DyAliases.ATTR_URN, this.urn.toString()),
+            this.urn
+        );
     }
 
 }

@@ -24,21 +24,40 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
+package com.netbout.dynamo;
+
+import com.jcabi.urn.URN;
+import com.netbout.spi.Base;
+import com.netbout.spi.User;
+import org.hamcrest.MatcherAssert;
+import org.hamcrest.Matchers;
+import org.junit.Test;
 
 /**
- * DynamoDB storage.
- *
- * <p>There are the following tables in DynamoDB:
- *
- * <pre>
- * aliases: (hash:URN, range:alias, photo, locale)
- * bouts: (hash:id, title, date, friends)
- * messages: (hash:bout, range:msg, text, alias, date)
- * attachments: (hash:bout, range:name, owner, ctype, data)
- * </pre>
- *
+ * Integration case for {@link DyBase}.
  * @author Yegor Bugayenko (yegor@tpc2.com)
  * @version $Id$
- * @since 2.0
  */
-package com.netbout.dynamo;
+public final class DyBaseITCase {
+
+    /**
+     * Region rule.
+     * @checkstyle VisibilityModifierCheck (3 lines)
+     */
+    public final transient RegionRule reg = new RegionRule();
+
+    /**
+     * DyBase can make a user.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void makesUserObject() throws Exception {
+        final Base base = new DyBase(this.reg.get());
+        final User user = base.user(new URN("urn:test:654321"));
+        MatcherAssert.assertThat(
+            user.aliases(),
+            Matchers.emptyIterable()
+        );
+    }
+
+}

@@ -1,0 +1,27 @@
+{
+    "AttributeDefinitions": [
+        {
+            "AttributeName": "urn",
+            "AttributeType": "S"
+        },
+        {
+            "AttributeName": "alias",
+            "AttributeType": "S"
+        }
+    ],
+    "KeySchema": [
+        {
+            "AttributeName": "urn",
+            "KeyType": "HASH"
+        },
+        {
+            "AttributeName": "alias",
+            "KeyType": "RANGE"
+        }
+    ],
+    "ProvisionedThroughput": {
+        "ReadCapacityUnits": "1",
+        "WriteCapacityUnits": "1"
+    },
+    "TableName": "aliases"
+}

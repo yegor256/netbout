@@ -24,21 +24,47 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
+package com.netbout.dynamo;
+
+import com.jcabi.urn.URN;
+import com.netbout.spi.Aliases;
+import org.hamcrest.MatcherAssert;
+import org.hamcrest.Matchers;
+import org.junit.Test;
 
 /**
- * DynamoDB storage.
- *
- * <p>There are the following tables in DynamoDB:
- *
- * <pre>
- * aliases: (hash:URN, range:alias, photo, locale)
- * bouts: (hash:id, title, date, friends)
- * messages: (hash:bout, range:msg, text, alias, date)
- * attachments: (hash:bout, range:name, owner, ctype, data)
- * </pre>
- *
+ * Integration case for {@link DyAliases}.
  * @author Yegor Bugayenko (yegor@tpc2.com)
  * @version $Id$
- * @since 2.0
  */
-package com.netbout.dynamo;
+public final class DyAliasesITCase {
+
+    /**
+     * Region rule.
+     * @checkstyle VisibilityModifierCheck (3 lines)
+     */
+    public final transient RegionRule reg = new RegionRule();
+
+    /**
+     * DyAliases can make an alias.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void makesAlias() throws Exception {
+        final Aliases aliases = new DyAliases(
+            this.reg.get().table("aliases").frame(),
+            new URN("urn:test:1")
+        );
+        final String name = "jeffrey";
+        aliases.add(name);
+        MatcherAssert.assertThat(
+            aliases.check(name),
+            Matchers.not(Matchers.isEmptyOrNullString())
+        );
+        MatcherAssert.assertThat(
+            aliases.iterator().next().photo(),
+            Matchers.notNullValue()
+        );
+    }
+
+}
