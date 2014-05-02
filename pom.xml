@@ -112,4 +112,14 @@
         <rexsl.version>0.13.3</rexsl.version>
         <jersey.version>1.17.1</jersey.version>
     </properties>
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>javax.el</groupId>
+                <artifactId>javax.el-api</artifactId>
+                <version>3.0.0</version>
+                <scope>runtime</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 </project>
