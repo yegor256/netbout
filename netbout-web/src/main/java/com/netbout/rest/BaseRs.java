@@ -46,6 +46,7 @@ import com.rexsl.page.auth.Provider;
 import com.rexsl.page.inset.FlashInset;
 import com.rexsl.page.inset.LinksInset;
 import com.rexsl.page.inset.VersionInset;
+import java.io.IOException;
 import java.net.URI;
 import java.util.logging.Level;
 import javax.ws.rs.core.HttpHeaders;
@@ -160,8 +161,9 @@ public class BaseRs extends BaseResource {
     /**
      * Get current alias.
      * @return Alias
+     * @throws IOException If fails
      */
-    protected final Alias alias() {
+    protected final Alias alias() throws IOException {
         final Aliases aliases = this.user().aliases();
         if (Iterables.isEmpty(aliases)) {
             throw FlashInset.forward(
@@ -172,7 +174,11 @@ public class BaseRs extends BaseResource {
                 Level.SEVERE
             );
         }
-        return Iterables.get(aliases, 0);
+        final Alias alias = Iterables.get(aliases, 0);
+        if (alias.photo().equals(Alias.BLANK)) {
+            alias.photo(this.auth().identity().photo());
+        }
+        return alias;
     }
 
     /**

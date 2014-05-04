@@ -77,11 +77,6 @@ final class RtInbox implements Inbox {
     }
 
     @Override
-    public Inbox inbox() {
-        throw new UnsupportedOperationException("#inbox()");
-    }
-
-    @Override
     public Bout bout(final long number) {
         return new RtBout(
             this.request

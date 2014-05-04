@@ -104,10 +104,12 @@ public final class BoutRs extends BaseRs {
     /**
      * Rename this bout.
      * @param title New title to set
+     * @throws IOException If fails
      */
     @POST
     @Path("/rename")
-    public void rename(@FormParam("title") final String title) {
+    public void rename(@FormParam("title") final String title)
+        throws IOException {
         this.bout().rename(title);
         throw FlashInset.forward(
             this.uriInfo().getBaseUri(),
@@ -119,10 +121,12 @@ public final class BoutRs extends BaseRs {
     /**
      * Invite new person.
      * @param name Name of the invitee
+     * @throws IOException If fails
      */
     @GET
     @Path("/invite")
-    public void invite(@QueryParam("name") final String name) {
+    public void invite(@QueryParam("name") final String name)
+        throws IOException {
         this.bout().friends().invite(name);
         throw FlashInset.forward(
             this.uriInfo().getBaseUri(),
@@ -133,11 +137,12 @@ public final class BoutRs extends BaseRs {
 
     /**
      * Leave this bout.
+     * @throws IOException If fails
      */
     @GET
     @Path("/leave")
-    public void leave() {
-        this.bout().friends().leave();
+    public void leave() throws IOException {
+        this.bout().friends().kick(this.alias().name());
         throw FlashInset.forward(
             this.uriInfo().getBaseUri(),
             "you left this bout",
@@ -148,10 +153,11 @@ public final class BoutRs extends BaseRs {
     /**
      * Kick-off somebody from the bout.
      * @param name Who to kick off
+     * @throws IOException If fails
      */
     @GET
     @Path("/kick")
-    public void kick(@QueryParam("name") final String name) {
+    public void kick(@QueryParam("name") final String name) throws IOException {
         this.bout().friends().kick(name);
         throw FlashInset.forward(
             this.uriInfo().getBaseUri(),
@@ -163,8 +169,9 @@ public final class BoutRs extends BaseRs {
     /**
      * Get bout.
      * @return The bout
+     * @throws IOException If fails
      */
-    private Bout bout() {
+    private Bout bout() throws IOException {
         try {
             return this.alias().inbox().bout(this.number);
         } catch (final Inbox.BoutNotFoundException ex) {

@@ -24,59 +24,53 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.spi;
+package com.netbout.dynamo;
 
-import com.jcabi.aspects.Immutable;
-import java.io.IOException;
-import java.net.URI;
-import java.util.Locale;
+import com.jcabi.dynamo.Attributes;
+import com.jcabi.dynamo.Region;
+import com.netbout.spi.Bout;
+import org.hamcrest.MatcherAssert;
+import org.hamcrest.Matchers;
+import org.junit.Test;
 
 /**
- * Alias.
- *
+ * Integration case for {@link DyBout}.
  * @author Yegor Bugayenko (yegor@tpc2.com)
  * @version $Id$
- * @since 2.0
  */
-@Immutable
-public interface Alias {
+public final class DyBoutITCase {
 
     /**
-     * Anonymous photo.
+     * Region rule.
+     * @checkstyle VisibilityModifierCheck (3 lines)
      */
-    URI BLANK = URI.create("http://img.netbout.com/unknown.png");
+    public final transient RegionRule reg = new RegionRule();
 
     /**
-     * Get its name.
-     * @return Name of the alias
-     * @throws IOException If fails
+     * DyBout can rename a bout.
+     * @throws Exception If there is some problem inside
      */
-    String name() throws IOException;
-
-    /**
-     * URI of his photo.
-     * @return URI
-     * @throws IOException If fails
-     */
-    URI photo() throws IOException;
-
-    /**
-     * Get its locale.
-     * @return Locale of the alias
-     * @throws IOException If fails
-     */
-    Locale locale() throws IOException;
-
-    /**
-     * Set photo.
-     * @param uri URI of photo
-     */
-    void photo(URI uri);
-
-    /**
-     * Get inbox.
-     * @return Inbox
-     */
-    Inbox inbox();
+    @Test
+    public void renamesBout() throws Exception {
+        final Region region = this.reg.get();
+        final Bout bout = new DyBout(
+            region,
+            region.table(DyFriends.TBL).put(
+                new Attributes()
+                    .with("id", "2")
+            ),
+            "jeff"
+        );
+        final String title = "some title \u20ac";
+        bout.rename(title);
+        MatcherAssert.assertThat(
+            bout.title(),
+            Matchers.equalTo(title)
+        );
+        MatcherAssert.assertThat(
+            bout.number(),
+            Matchers.equalTo(2L)
+        );
+    }
 
 }

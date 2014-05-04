@@ -39,11 +39,6 @@ import com.jcabi.aspects.Immutable;
 public interface Friends extends Iterable<Friend> {
 
     /**
-     * Leave this bout.
-     */
-    void leave();
-
-    /**
      * Invite new friend.
      * @param friend Alias of the friend
      */

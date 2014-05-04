@@ -24,59 +24,54 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.spi;
+package com.netbout.dynamo;
 
-import com.jcabi.aspects.Immutable;
-import java.io.IOException;
-import java.net.URI;
-import java.util.Locale;
+import com.netbout.spi.Bout;
+import com.netbout.spi.Friend;
+import com.netbout.spi.Friends;
+import com.netbout.spi.Inbox;
+import org.hamcrest.MatcherAssert;
+import org.hamcrest.Matchers;
+import org.junit.Test;
 
 /**
- * Alias.
- *
+ * Integration case for {@link DyInbox}.
  * @author Yegor Bugayenko (yegor@tpc2.com)
  * @version $Id$
- * @since 2.0
  */
-@Immutable
-public interface Alias {
+public final class DyInboxITCase {
 
     /**
-     * Anonymous photo.
+     * Region rule.
+     * @checkstyle VisibilityModifierCheck (3 lines)
      */
-    URI BLANK = URI.create("http://img.netbout.com/unknown.png");
+    public final transient RegionRule reg = new RegionRule();
 
     /**
-     * Get its name.
-     * @return Name of the alias
-     * @throws IOException If fails
+     * DyInbox can list bouts and create.
+     * @throws Exception If there is some problem inside
      */
-    String name() throws IOException;
-
-    /**
-     * URI of his photo.
-     * @return URI
-     * @throws IOException If fails
-     */
-    URI photo() throws IOException;
-
-    /**
-     * Get its locale.
-     * @return Locale of the alias
-     * @throws IOException If fails
-     */
-    Locale locale() throws IOException;
-
-    /**
-     * Set photo.
-     * @param uri URI of photo
-     */
-    void photo(URI uri);
-
-    /**
-     * Get inbox.
-     * @return Inbox
-     */
-    Inbox inbox();
+    @Test
+    public void makesAndListsBouts() throws Exception {
+        final String alias = "jeffrey";
+        final Inbox inbox = new DyInbox(
+            this.reg.get(), alias
+        );
+        final long number = inbox.start();
+        MatcherAssert.assertThat(
+            inbox,
+            Matchers.<Bout>iterableWithSize(1)
+        );
+        final Bout bout = inbox.bout(number);
+        final Friends friends = bout.friends();
+        MatcherAssert.assertThat(
+            friends,
+            Matchers.<Friend>iterableWithSize(1)
+        );
+        MatcherAssert.assertThat(
+            friends.iterator().next().alias(),
+            Matchers.equalTo(alias)
+        );
+    }
 
 }

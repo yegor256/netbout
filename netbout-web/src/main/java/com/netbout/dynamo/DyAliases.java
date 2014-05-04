@@ -27,17 +27,18 @@
 package com.netbout.dynamo;
 
 import com.google.common.base.Function;
-import com.google.common.base.Predicate;
 import com.google.common.collect.Iterators;
 import com.jcabi.aspects.Immutable;
 import com.jcabi.aspects.Tv;
 import com.jcabi.dynamo.Attributes;
-import com.jcabi.dynamo.Frame;
+import com.jcabi.dynamo.Conditions;
 import com.jcabi.dynamo.Item;
+import com.jcabi.dynamo.QueryValve;
+import com.jcabi.dynamo.Region;
+import com.jcabi.dynamo.Table;
 import com.jcabi.urn.URN;
 import com.netbout.spi.Alias;
 import com.netbout.spi.Aliases;
-import java.io.IOException;
 import java.util.Iterator;
 import java.util.Locale;
 
@@ -52,14 +53,24 @@ import java.util.Locale;
 final class DyAliases implements Aliases {
 
     /**
+     * Table name.
+     */
+    public static final String TBL = "aliases";
+
+    /**
+     * Index name.
+     */
+    private static final String INDEX = "users";
+
+    /**
+     * HASH attribute.
+     */
+    public static final String HASH = "alias";
+
+    /**
      * URN attribute.
      */
     public static final String ATTR_URN = "urn";
-
-    /**
-     * Alias attribute.
-     */
-    public static final String ATTR_ALIAS = "alias";
 
     /**
      * Locale attribute.
@@ -72,9 +83,9 @@ final class DyAliases implements Aliases {
     public static final String ATTR_PHOTO = "photo";
 
     /**
-     * Frame with aliases.
+     * Table to work with.
      */
-    private final transient Frame frame;
+    private final transient Table table;
 
     /**
      * URN of the user.
@@ -83,11 +94,11 @@ final class DyAliases implements Aliases {
 
     /**
      * Ctor.
-     * @param frm Frame
+     * @param region Region we're in
      * @param user URN of the user
      */
-    DyAliases(final Frame frm, final URN user) {
-        this.frame = frm;
+    DyAliases(final Region region, final URN user) {
+        this.table = region.table(DyAliases.TBL);
         this.urn = user;
     }
 
@@ -112,10 +123,10 @@ final class DyAliases implements Aliases {
 
     @Override
     public void add(final String name) {
-        this.frame.table().put(
+        this.table.put(
             new Attributes()
                 .with(DyAliases.ATTR_URN, this.urn.toString())
-                .with(DyAliases.ATTR_ALIAS, name)
+                .with(DyAliases.HASH, name)
                 .with(DyAliases.ATTR_LOCALE, Locale.ENGLISH.toString())
                 .with(DyAliases.ATTR_PHOTO, "//img.netbout.com/unknown.png")
         );
@@ -124,7 +135,10 @@ final class DyAliases implements Aliases {
     @Override
     public Iterator<Alias> iterator() {
         return Iterators.transform(
-            this.frame.iterator(),
+            this.table.frame()
+                .where(DyAliases.ATTR_URN, Conditions.equalTo(this.urn))
+                .through(new QueryValve().withIndexName(DyAliases.INDEX))
+                .iterator(),
             new Function<Item, Alias>() {
                 @Override
                 public Alias apply(final Item item) {
@@ -140,19 +154,11 @@ final class DyAliases implements Aliases {
      * @return TRUE if occupied
      */
     private boolean occupied(final String name) {
-        return Iterators.any(
-            this.iterator(),
-            new Predicate<Alias>() {
-                @Override
-                public boolean apply(final Alias input) {
-                    try {
-                        return input.name().equals(name);
-                    } catch (final IOException ex) {
-                        throw new IllegalStateException(ex);
-                    }
-                }
-            }
-        );
+        return this.table.frame()
+            .through(new QueryValve().withLimit(1))
+            .where(DyAliases.HASH, Conditions.equalTo(name))
+            .iterator()
+            .hasNext();
     }
 
 }

@@ -1,36 +1,44 @@
 {
     "AttributeDefinitions": [
         {
+            "AttributeName": "bout",
+            "AttributeType": "N"
+        },
+        {
             "AttributeName": "alias",
             "AttributeType": "S"
         }
     ],
     "KeySchema": [
         {
-            "AttributeName": "alias",
+            "AttributeName": "bout",
             "KeyType": "HASH"
+        },
+        {
+            "AttributeName": "alias",
+            "KeyType": "RANGE"
         }
     ],
     "ProvisionedThroughput": {
         "ReadCapacityUnits": "1",
         "WriteCapacityUnits": "1"
     },
-    "TableName": "aliases",
+    "TableName": "friends",
     "GlobalSecondaryIndexes": [
         {
-            "IndexName": "users",
+            "IndexName": "inbox",
             "KeySchema": [
                 {
-                    "AttributeName": "urn",
+                    "AttributeName": "alias",
                     "KeyType": "HASH"
                 },
                 {
-                    "AttributeName": "alias",
+                    "AttributeName": "bout",
                     "KeyType": "RANGE"
                 }
             ],
             "Projection": {
-                "ProjectionType": "KEYS_ONLY"
+                "ProjectionType": "ALL"
             },
             "ProvisionedThroughput": {
                 "ReadCapacityUnits": "1",

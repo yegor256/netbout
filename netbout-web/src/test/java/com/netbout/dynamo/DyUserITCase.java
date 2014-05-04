@@ -24,59 +24,43 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.spi;
+package com.netbout.dynamo;
 
-import com.jcabi.aspects.Immutable;
-import java.io.IOException;
-import java.net.URI;
-import java.util.Locale;
+import com.jcabi.urn.URN;
+import com.netbout.spi.Alias;
+import com.netbout.spi.User;
+import org.hamcrest.MatcherAssert;
+import org.hamcrest.Matchers;
+import org.junit.Test;
 
 /**
- * Alias.
- *
+ * Integration case for {@link DyUser}.
  * @author Yegor Bugayenko (yegor@tpc2.com)
  * @version $Id$
- * @since 2.0
  */
-@Immutable
-public interface Alias {
+public final class DyUserITCase {
 
     /**
-     * Anonymous photo.
+     * Region rule.
+     * @checkstyle VisibilityModifierCheck (3 lines)
      */
-    URI BLANK = URI.create("http://img.netbout.com/unknown.png");
+    public final transient RegionRule reg = new RegionRule();
 
     /**
-     * Get its name.
-     * @return Name of the alias
-     * @throws IOException If fails
+     * DyUser can list aliases.
+     * @throws Exception If there is some problem inside
      */
-    String name() throws IOException;
-
-    /**
-     * URI of his photo.
-     * @return URI
-     * @throws IOException If fails
-     */
-    URI photo() throws IOException;
-
-    /**
-     * Get its locale.
-     * @return Locale of the alias
-     * @throws IOException If fails
-     */
-    Locale locale() throws IOException;
-
-    /**
-     * Set photo.
-     * @param uri URI of photo
-     */
-    void photo(URI uri);
-
-    /**
-     * Get inbox.
-     * @return Inbox
-     */
-    Inbox inbox();
+    @Test
+    public void listsAliases() throws Exception {
+        final User user = new DyUser(
+            this.reg.get().table("aliases"), new URN("urn:test:654321")
+        );
+        final String alias = "bobby";
+        user.aliases().add(alias);
+        MatcherAssert.assertThat(
+            user.aliases(),
+            Matchers.<Alias>iterableWithSize(1)
+        );
+    }
 
 }

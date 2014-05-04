@@ -55,11 +55,12 @@
         <dependency>
             <groupId>com.amazonaws</groupId>
             <artifactId>aws-java-sdk</artifactId>
-            <version>1.6.8</version>
+            <version>1.7.7</version>
         </dependency>
         <dependency>
             <groupId>com.jcabi</groupId>
             <artifactId>jcabi-dynamo</artifactId>
+            <version>0.10.2</version>
         </dependency>
         <dependency>
             <groupId>com.jcabi</groupId>
@@ -429,7 +430,7 @@
                                     <secret>none</secret>
                                     <tables>
                                         <table>${basedir}/src/test/dynamodb/aliases.json</table>
-                                        <table>${basedir}/src/test/dynamodb/bouts.json</table>
+                                        <table>${basedir}/src/test/dynamodb/friends.json</table>
                                         <table>${basedir}/src/test/dynamodb/messages.json</table>
                                         <table>${basedir}/src/test/dynamodb/attachments.json</table>
                                     </tables>

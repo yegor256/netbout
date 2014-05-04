@@ -31,8 +31,8 @@
  * <p>There are the following tables in DynamoDB:
  *
  * <pre>
- * aliases: (hash:URN, range:alias, photo, locale)
- * bouts: (hash:id, title, date, friends)
+ * aliases: (hash:alias, urn, photo, locale) -> GSI(urn,alias)
+ * friends: (hash:bout, range:alias, title, updated, new) -> GSI(alias,updated)
  * messages: (hash:bout, range:msg, text, alias, date)
  * attachments: (hash:bout, range:name, owner, ctype, data)
  * </pre>

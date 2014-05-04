@@ -26,12 +26,13 @@
  */
 package com.netbout.dynamo;
 
-import com.amazonaws.services.dynamodbv2.model.AttributeValue;
 import com.jcabi.aspects.Immutable;
+import com.jcabi.dynamo.Attributes;
 import com.jcabi.dynamo.Item;
 import com.netbout.spi.Alias;
 import com.netbout.spi.Inbox;
 import java.net.URI;
+import java.util.Locale;
 
 /**
  * Dynamo Alias.
@@ -58,7 +59,7 @@ final class DyAlias implements Alias {
 
     @Override
     public String name() {
-        return this.item.get(DyAliases.ATTR_ALIAS).getS();
+        return this.item.get(DyAliases.HASH).getS();
     }
 
     @Override
@@ -69,12 +70,26 @@ final class DyAlias implements Alias {
     }
 
     @Override
-    public void photo(final String uri) {
-        this.item.put(DyAliases.ATTR_PHOTO, new AttributeValue(uri));
+    public Locale locale() {
+        return new Locale(
+            this.item.get(DyAliases.ATTR_LOCALE).getS()
+        );
+    }
+
+    @Override
+    public void photo(final URI uri) {
+        this.item.put(
+            new Attributes()
+                .with(DyAliases.ATTR_PHOTO, uri)
+                .with(DyAliases.ATTR_LOCALE, this.locale())
+        );
     }
 
     @Override
     public Inbox inbox() {
-        throw new UnsupportedOperationException("#inbox()");
+        return new DyInbox(
+            this.item.frame().table().region(),
+            this.name()
+        );
     }
 }

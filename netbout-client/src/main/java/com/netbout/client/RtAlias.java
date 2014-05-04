@@ -33,6 +33,7 @@ import com.netbout.spi.Alias;
 import com.netbout.spi.Inbox;
 import java.io.IOException;
 import java.net.URI;
+import java.util.Locale;
 
 /**
  * REST aliases.
@@ -78,7 +79,18 @@ final class RtAlias implements Alias {
     }
 
     @Override
-    public void photo(final String uri) {
+    public Locale locale() throws IOException {
+        return new Locale(
+            this.request.fetch()
+                .as(XmlResponse.class)
+                .xml()
+                .xpath("/page/alias/locale/text()")
+                .get(0)
+        );
+    }
+
+    @Override
+    public void photo(final URI uri) {
         throw new UnsupportedOperationException(
             "#photo(): it is not possible to change photo through API"
         );

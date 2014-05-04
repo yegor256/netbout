@@ -26,48 +26,85 @@
  */
 package com.netbout.dynamo;
 
+import com.amazonaws.services.dynamodbv2.model.AttributeValue;
 import com.jcabi.aspects.Immutable;
-import com.jcabi.dynamo.Table;
-import com.jcabi.urn.URN;
-import com.netbout.spi.Aliases;
-import com.netbout.spi.User;
+import com.jcabi.dynamo.Item;
+import com.jcabi.dynamo.Region;
+import com.netbout.spi.Attachments;
+import com.netbout.spi.Bout;
+import com.netbout.spi.Friends;
+import com.netbout.spi.Messages;
+import java.util.Date;
 
 /**
- * Dynamo User.
+ * Dynamo bout.
  *
  * @author Yegor Bugayenko (yegor@tpc2.com)
  * @version $Id$
  * @since 2.0
  */
 @Immutable
-final class DyUser implements User {
+final class DyBout implements Bout {
 
     /**
-     * Table with aliases.
+     * Item with bout.
      */
-    private final transient Table table;
+    private final transient Item item;
 
     /**
-     * URN of the user.
+     * Alias of myself.
      */
-    private final transient URN urn;
+    private final transient String self;
 
     /**
      * Ctor.
-     * @param tbl Table
-     * @param name Name of the user (URN)
+     * @param region Region we're in
+     * @param itm Item in "friends" table
      */
-    DyUser(final Table tbl, final URN name) {
-        this.table = tbl;
-        this.urn = name;
+    DyBout(final Region region, final Item itm, final String slf) {
+        this.item = itm;
+        this.self = slf;
     }
 
     @Override
-    public Aliases aliases() {
-        return new DyAliases(
-            this.table.region(),
-            this.urn
+    public long number() {
+        return Long.parseLong(this.item.get(DyFriends.HASH).getN());
+    }
+
+    @Override
+    public Date date() {
+        return new Date(
+            Long.parseLong(
+                this.item.get(DyFriends.ATTR_UPDATED).getN()
+            )
         );
     }
 
+    @Override
+    public String title() {
+        return this.item.get(DyFriends.ATTR_TITLE).getS();
+    }
+
+    @Override
+    public void rename(final String text) {
+        this.item.put(DyFriends.ATTR_TITLE, new AttributeValue(text));
+    }
+
+    @Override
+    public Messages messages() {
+        throw new UnsupportedOperationException("#messages()");
+    }
+
+    @Override
+    public Friends friends() {
+        return new DyFriends(
+            this.item.frame().table().region(),
+            this.item
+        );
+    }
+
+    @Override
+    public Attachments attachments() {
+        throw new UnsupportedOperationException("#attachments()");
+    }
 }

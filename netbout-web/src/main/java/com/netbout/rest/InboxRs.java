@@ -48,10 +48,11 @@ public final class InboxRs extends BaseRs {
     /**
      * Get inbox.
      * @return The JAX-RS response
+     * @throws IOException If fails
      */
     @GET
     @Path("/")
-    public Response inbox() {
+    public Response inbox() throws IOException {
         this.alias();
         return new PageBuilder()
             .stylesheet("/xsl/inbox.xsl")

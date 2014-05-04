@@ -52,7 +52,7 @@ public final class DyAliasesITCase {
     @Test
     public void makesAlias() throws Exception {
         final Aliases aliases = new DyAliases(
-            this.reg.get().table("aliases").frame(),
+            this.reg.get(),
             new URN("urn:test:1")
         );
         final String name = "jeffrey";

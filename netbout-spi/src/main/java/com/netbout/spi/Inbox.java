@@ -47,12 +47,6 @@ public interface Inbox extends Pageable<Bout> {
     long start() throws IOException;
 
     /**
-     * Get inbox of bouts.
-     * @return Bouts
-     */
-    Inbox inbox();
-
-    /**
      * Get bout by its number.
      * @param number Bout number
      * @return Bout found
@@ -75,6 +69,14 @@ public interface Inbox extends Pageable<Bout> {
          */
         public BoutNotFoundException(final long num) {
             super(String.format("Bout #%d not found", num));
+        }
+        /**
+         * Public ctor.
+         * @param num The number of bout not found
+         * @param cause Cause of it
+         */
+        public BoutNotFoundException(final long num, final Throwable cause) {
+            super(String.format("bout #%d not found", num), cause);
         }
     }
 }

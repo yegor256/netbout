@@ -24,59 +24,58 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.spi;
+package com.netbout.dynamo;
 
 import com.jcabi.aspects.Immutable;
-import java.io.IOException;
+import com.jcabi.dynamo.QueryValve;
+import com.jcabi.dynamo.Region;
+import com.jcabi.dynamo.Table;
+import com.netbout.spi.Friend;
 import java.net.URI;
-import java.util.Locale;
 
 /**
- * Alias.
+ * Dynamo friend.
  *
  * @author Yegor Bugayenko (yegor@tpc2.com)
  * @version $Id$
  * @since 2.0
  */
 @Immutable
-public interface Alias {
+final class DyFriend implements Friend {
 
     /**
-     * Anonymous photo.
+     * Table with aliases.
      */
-    URI BLANK = URI.create("http://img.netbout.com/unknown.png");
+    private final transient Table table;
 
     /**
-     * Get its name.
-     * @return Name of the alias
-     * @throws IOException If fails
+     * This alias.
      */
-    String name() throws IOException;
+    private final transient String name;
 
     /**
-     * URI of his photo.
-     * @return URI
-     * @throws IOException If fails
+     * Ctor.
+     * @param region Region we're in
+     * @param alias Alias
      */
-    URI photo() throws IOException;
+    DyFriend(final Region region, final String alias) {
+        this.table = region.table(DyAliases.TBL);
+        this.name = alias;
+    }
 
-    /**
-     * Get its locale.
-     * @return Locale of the alias
-     * @throws IOException If fails
-     */
-    Locale locale() throws IOException;
+    @Override
+    public String alias() {
+        return this.name;
+    }
 
-    /**
-     * Set photo.
-     * @param uri URI of photo
-     */
-    void photo(URI uri);
-
-    /**
-     * Get inbox.
-     * @return Inbox
-     */
-    Inbox inbox();
-
+    @Override
+    public URI photo() {
+        return URI.create(
+            this.table.frame()
+                .where(DyAliases.HASH, this.name)
+                .through(new QueryValve().withLimit(1))
+                .iterator().next()
+                .get(DyAliases.ATTR_PHOTO).getS()
+        );
+    }
 }
