@@ -68,8 +68,8 @@
             </head>
             <body>
                 <xsl:apply-templates select="version" />
-                <div id="wrapper">
-                    <div id="content">
+                <div class="wrapper">
+                    <div class="content">
                         <div>
                             <a>
                                 <xsl:attribute name="href">

@@ -25,47 +25,21 @@
  * SUCH DAMAGE.
  */
 
-@import 'fonts';
-@import 'colors';
+$font-main: "Helvetica Neue", "HelveticaNeue", "HelveticaNeueRoman", "HelveticaNeue-Roman", "Helvetica Neue Roman", "Helvetica", "Arial", sans-serif;
+$font-fixed: 'Consolas', 'Menlo', 'Monaco', 'Courier New', monospace;
 
-.friends {
-    position: relative;
-    height: 50px;
-    .friend {
-        position: absolute;
-        height: 50px;
-        width: 50px;
-        border-bottom: 1px solid #9c9c9c;
-        border-right: 1px solid #9c9c9c;
-        img {
-            height: 100%;
-            width: 100%;
-            display: block;
-            z-index: 5;
-            &.pending {
-                opacity: 0.4;
-            }
-        }
-    }
-    .bar {
-        position: absolute;
-        top: 51px;
-        left: 0;
-        font-weight: 500;
-        background-color: $color-gray-light;
-        border-bottom: 1px solid $color-gray2;
-        border-right: 1px solid $color-gray2;
-        padding: 3px 1px 3px 5px;
-        display: none;
-        z-index: 100;
-        .name {
-            font-size: 14px;
-        }
-        .kick {
-            font-size: 14px;
-            color: $color-red;
-            text-decoration: none;
-            font-weight: bold;
-        }
-    }
+@font-face {
+    font-family: 'icomoon';
+    src:url('http://img.netbout.com/fonts/ico-1.eot?-cfp6bb');
+    src:url('http://img.netbout.com/fonts/ico-1.eot?#iefix-cfp6bb') format('embedded-opentype'),
+        url('http://img.netbout.com/fonts/ico-1.woff?-cfp6bb') format('woff'),
+        url('http://img.netbout.com/fonts/ico-1.ttf?-cfp6bb') format('truetype'),
+        url('http://img.netbout.com/fonts/ico-1.svg?-cfp6bb#icomoon') format('svg');
+    font-weight: normal;
+    font-style: normal;
 }
+
+.icomoon {
+    font-family: 'icomoon';
+}
+

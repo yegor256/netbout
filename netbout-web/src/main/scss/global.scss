@@ -25,22 +25,8 @@
  * SUCH DAMAGE.
  */
 
-/* JIGSAW IGNORE: there is some problem in w3c server now */
-
-@font-face {
-	font-family: 'icomoon';
-	src:url('http://img.netbout.com/fonts/ico-1.eot?-cfp6bb');
-	src:url('http://img.netbout.com/fonts/ico-1.eot?#iefix-cfp6bb') format('embedded-opentype'),
-		url('http://img.netbout.com/fonts/ico-1.woff?-cfp6bb') format('woff'),
-		url('http://img.netbout.com/fonts/ico-1.ttf?-cfp6bb') format('truetype'),
-		url('http://img.netbout.com/fonts/ico-1.svg?-cfp6bb#icomoon') format('svg');
-	font-weight: normal;
-	font-style: normal;
-}
-
-.icomoon {
-    font-family: 'icomoon';
-}
+@import 'fonts';
+@import 'colors';
 
 * {
     padding: 0;
@@ -50,14 +36,11 @@
     -moz-box-sizing: border-box;
 }
 
-/* all elements */
 body,
 input,
 textarea {
-    font-family: "Helvetica Neue", "HelveticaNeue", "HelveticaNeueRoman",
-        "HelveticaNeue-Roman", "Helvetica Neue Roman",
-        "Helvetica", "Arial", sans-serif;
-    color: #211922;
+    font-family: $font-main;
+    color: $color-text;
     text-decoration: none;
 }
 
@@ -69,73 +52,55 @@ textarea {
     font-weight: normal;
 }
 
-/* any link */
 a {
     text-decoration: underline;
-}
-
-    /* any link with a mouse over it */
-    a:hover {
+    &:hover {
         text-decoration: underline;
     }
+}
 
-/* any paragraph */
 p {
     margin-top: 5px;
     margin-bottom: 5px;
 }
 
-/* any list */
 ul,
 ol {
     margin-left: 20px;
 }
 
-/* fixed font */
 .tt, .fixed, pre, textarea {
-    font-family: 'Consolas', 'Menlo', 'Monaco', 'Courier New', monospace;
+    font-family: $font-fixed;
 }
 
 .tt,
 .fixed,
 pre {
-    background-color: #f3f3f1;
+    background-color: $color-gray-light;
 }
 
-/* inline fixed text */
 .tt {
     padding-left: 4px;
     padding-right: 4px;
 }
 
-/* fixed block */
-.fixed {
-    white-space: pre;
-    font-size: 13px;
-}
-
-/* red text marker */
 .red {
     color: #f24a40;
 }
 
-/* any input field */
 input {
-    border: 1px solid #bfbcc1;
+    border: 1px solid $color-gray-dark;
     background-color: white;
     padding: 8px 10px;
-}
-
-    /* any submit button */
-    input[type="submit"] {
-        background-color: #f3f3f1;
+    &[type="submit"] {
+        background-color: $color-gray-light;
         cursor: pointer;
     }
+}
 
-/* any text aread */
 textarea {
     padding: 10px;
-    border: 1px solid #bfbcc1;
+    border: 1px solid $color-gray;
     overflow: hidden;
 }
 
@@ -145,21 +110,9 @@ label {
     display: block;
 }
 
-/* error message to show */
 .error-message {
     position: relative;
     font-size: 14px;
-    color: #f24a40;
+    color: $color-red;
     margin-top: 3px;
-}
-
-/* bottom right label about deployed version */
-#version {
-    font-size: 12px;
-    position: fixed;
-    right: 0;
-    bottom: 0;
-    padding: 4px 0.8em;
-    background-color: #e4e5e3;
-    color: gray;
 }

@@ -77,12 +77,12 @@
             </head>
             <body>
                 <xsl:apply-templates select="version"/>
-                <div id="cap">
-                    <div id="incap">
+                <div class="cap">
+                    <div class="incap">
                         <xsl:call-template name="cap"/>
                     </div>
                 </div>
-                <div id="content" role="main">
+                <div class="content" role="main">
                     <xsl:if test="message != ''">
                         <div class="error-message">
                             <xsl:value-of select="message"/>
@@ -94,8 +94,8 @@
         </html>
     </xsl:template>
     <xsl:template name="cap">
-        <div id="header">
-            <div id="left">
+        <div class="header">
+            <div class="left">
                 <a>
                     <xsl:attribute name="href">
                         <xsl:value-of select="links/link[@rel='home']/@href"/>
@@ -103,7 +103,7 @@
                     <xsl:attribute name="title">
                         <xsl:value-of select="$TEXTS/back.to.inbox"/>
                     </xsl:attribute>
-                    <img id="logo" alt="netbout logo">
+                    <img class="logo" alt="netbout logo">
                         <xsl:attribute name="src">
                             <xsl:call-template name="cdn">
                                 <xsl:with-param name="name">
@@ -123,11 +123,11 @@
                     </img>
                 </a>
                 <xsl:if test="/page/links/link[@rel='search']">
-                    <form id="search" method="get" role="search">
+                    <form class="search" method="get" role="search">
                         <xsl:attribute name="action">
                             <xsl:value-of select="/page/links/link[@rel='search']/@href"/>
                         </xsl:attribute>
-                        <input name="q" id="search-input" autocomplete="off" size="10" maxlength="120">
+                        <input name="q" class="search-input" autocomplete="off" size="10" maxlength="120">
                             <xsl:attribute name="placeholder">
                                 <xsl:value-of select="$TEXTS/Find"/>
                             </xsl:attribute>
@@ -144,10 +144,10 @@
                 </xsl:if>
             </div>
             <xsl:if test="identity">
-                <div id="right">
+                <div class="right">
                     <ul>
                         <li>
-                            <img id="photo">
+                            <img class="photo">
                                 <xsl:attribute name="src">
                                     <xsl:value-of select="alias/photo"/>
                                 </xsl:attribute>

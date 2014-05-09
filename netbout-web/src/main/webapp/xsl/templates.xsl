@@ -59,7 +59,7 @@
         </xsl:choose>
     </xsl:template>
     <xsl:template match="version">
-        <div id="version">
+        <div class="version">
             <span>
                 <xsl:attribute name="style">
                     <xsl:choose>

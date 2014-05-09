@@ -25,158 +25,144 @@
  * SUCH DAMAGE.
  */
 
-/* JIGSAW IGNORE: there is some problem in w3c server now */
+@import 'fonts';
+@import 'colors';
 
-/* top header */
-#cap {
+.cap {
     width: 100%;
     position: relative;
-    background-color: #f3f3f1;
+    background-color: $color-gray-light;
     height: 71px;
-    border-bottom: 2px solid #dadbd9;
+    border-bottom: 2px solid $color-gray2;
     display: table;
     overflow: hidden;
-}
-
-/* wrapping element in DIV.CAP */
-#incap {
-    display: table-cell;
-    position: static;
-    vertical-align: middle;
-    text-align: center;
-}
-
-/* wrappind element inside the CAP, that contains two DIV's: #left and #right */
-#header {
-    display: table;
-    margin-left: auto;
-    margin-right: auto;
-    text-align: left;
-    width: 900px;
-    line-height: 0;
-    color: #4b4250;
-}
-
-    #left {
+    .incap {
         display: table-cell;
+        position: static;
+        vertical-align: middle;
+        text-align: center;
+    }
+    .header {
+        display: table;
+        margin-left: auto;
+        margin-right: auto;
         text-align: left;
-        vertical-align: middle;
-    }
-
-        #logo {
-            width: 113px;
-            height: 37px;
-            margin-right: 20px;
-            display: inline-block;
+        width: $width;
+        line-height: 0;
+        color: $color-text2;
+        .left {
+            display: table-cell;
+            text-align: left;
             vertical-align: middle;
-            text-decoration: none;
-        }
-
-        /* it is inside the #left sector */
-        #search {
-            display: inline-block;
-            vertical-align: middle;
-            position: relative;
-            font-size: 14px;
-        }
-
-            #search-input {
+            .logo {
+                width: 113px;
+                height: 37px;
+                margin-right: 20px;
                 display: inline-block;
-                position: relative;
-                width: 160px;
                 vertical-align: middle;
+                text-decoration: none;
             }
-
-    #right {
-        display: table-cell;
-        text-align: right;
-        vertical-align: middle;
-        height: 32px;
-        position: relative;
-    }
-
-        #right ul {
-            margin: 0 !important;
-            padding: 0 !important;
-            display: inline;
-        }
-
-            #right ul li {
-                list-style: none;
-                display: inline;
-                margin-left: 27px;
-            }
-
-                #photo {
-                    height: 32px;
-                    width: 32px;
-                    margin-right: 6px;
-                    display: inline;
+            .search {
+                display: inline-block;
+                vertical-align: middle;
+                position: relative;
+                font-size: 14px;
+                .search-input {
+                    display: inline-block;
+                    position: relative;
+                    width: 160px;
                     vertical-align: middle;
                 }
-
-                #right ul li {
+            }
+        }
+        .right {
+            display: table-cell;
+            text-align: right;
+            vertical-align: middle;
+            height: 32px;
+            position: relative;
+            ul {
+                margin: 0 !important;
+                padding: 0 !important;
+                display: inline;
+                li {
+                    list-style: none;
+                    display: inline;
+                    margin-left: 27px;
                     font-size: 14px;
                     font-weight: 600;
                     vertical-align: middle;
-                }
-
-                    #right ul li span.start {
+                    .photo {
+                        height: 32px;
+                        width: 32px;
+                        margin-right: 6px;
+                        display: inline;
+                        vertical-align: middle;
+                    }
+                    .start {
                         font-weight: bolder;
-                        color: #f24a40; /* red */
+                        color: $color-red;
                         padding-left: 5px;
                     }
-
-                #right ul li a {
-                    font-weight: 600;
-                    color: #4b4250;
-                    text-decoration: none;
-                }
-
-                    #right ul li a:hover {
-                        text-decoration: underline;
+                    a {
+                        font-weight: 600;
+                        color: $color-text2;
+                        text-decoration: none;
+                        &:hover {
+                            text-decoration: underline;
+                        }
                     }
+                }
+            }
+        }
+    }
+}
 
-/* everything between header and footer */
-#content {
+.content {
     position: relative;
-    width: 900px;
+    width: $width;
+    color: $color-background;
     margin-right: auto;
     margin-left: auto;
     clear: both;
     padding-bottom: 20px;
-}
-
-    #content h1 {
+    h1 {
         position: relative;
         padding-top: 50px;
         margin-bottom: 7px;
         font-size: 27px;
         font-weight: 500;
         width: 700px;
-    }
-
-        #content h1.bout .num {
+        .bout .num {
             font-size: 16px;
             margin-right: 3px;
             font-weight: normal;
         }
-
-        #content h1.bout .title {
+        .bout .title {
             font-size: 27px;
             line-height: 27px;
         }
-
-        #content h1.bout .new {
+        .bout .new {
             font-size: 17px;
             font-weight: normal;
-            color: #f24a40;
+            color: $color-red;
             margin-left: 3px;
         }
-
-    #content h2 {
+    }
+    h2 {
         position: relative;
         padding-top: 20px;
         font-size: 20px;
         font-weight: 500;
     }
+}
+
+.version {
+    font-size: 12px;
+    position: fixed;
+    right: 0;
+    bottom: 0;
+    padding: 4px 0.8em;
+    background-color: $color-gray;
+    color: gray;
+}

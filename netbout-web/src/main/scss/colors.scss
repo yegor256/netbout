@@ -25,47 +25,16 @@
  * SUCH DAMAGE.
  */
 
-@import 'fonts';
-@import 'colors';
+$width: 900px;
 
-.friends {
-    position: relative;
-    height: 50px;
-    .friend {
-        position: absolute;
-        height: 50px;
-        width: 50px;
-        border-bottom: 1px solid #9c9c9c;
-        border-right: 1px solid #9c9c9c;
-        img {
-            height: 100%;
-            width: 100%;
-            display: block;
-            z-index: 5;
-            &.pending {
-                opacity: 0.4;
-            }
-        }
-    }
-    .bar {
-        position: absolute;
-        top: 51px;
-        left: 0;
-        font-weight: 500;
-        background-color: $color-gray-light;
-        border-bottom: 1px solid $color-gray2;
-        border-right: 1px solid $color-gray2;
-        padding: 3px 1px 3px 5px;
-        display: none;
-        z-index: 100;
-        .name {
-            font-size: 14px;
-        }
-        .kick {
-            font-size: 14px;
-            color: $color-red;
-            text-decoration: none;
-            font-weight: bold;
-        }
-    }
-}
+$color-background: #fff;
+$color-text: #211922;
+$color-text2: #4b4250;
+$color-red: #f24a40;
+
+$color-gray-dark: #bfbcc1;
+$color-gray: #e4e5e3;
+$color-gray2: #dadbd9;
+$color-gray-light: #f3f3f1;
+
+$color-red: #f24a40;

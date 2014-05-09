@@ -25,15 +25,14 @@
  * SUCH DAMAGE.
  */
 
-/* JIGSAW IGNORE: there is some problem in w3c server now */
+@import 'fonts';
+@import 'colors';
 
-/* header with friends */
 .top2 {
     position: relative;
     margin-top: 7px;
     margin-bottom: 37px;
     clear: both;
-}
     .invite {
         position: absolute;
         top: 0;
@@ -41,101 +40,93 @@
         text-align: right;
         background-color: white;
         z-index: 10;
-    }
         .invite input {
             background-color: white;
         }
+    }
+}
 
 .attachments {
     position: relative;
     clear: both;
-}
     .attachments-left {
         margin-left: 0;
         position: relative;
-    }
-        .attachments-left li {
+        li {
             display: inline;
             margin-right: 10px;
         }
-            .attachments-left li.active {
-                font-weight: bold;
-            }
+        li.active {
+            font-weight: bold;
+        }
+    }
     .attachments-right {
         position: absolute;
         top: 0;
         right: 0;
-    }
-        .attachments-right li {
+        li {
             display: inline;
             margin-right: 10px;
         }
-            .attachments-right li.active {
-                font-weight: bold;
-            }
+        .attachments-right li.active {
+            font-weight: bold;
+        }
+    }
+}
 
-/* page itself */
 .page {
     min-height: 30px;
     margin-top: 14px;
     margin-bottom: 14px;
     padding: 10px;
-    background-color: #f3f3f1;
-    border-top: 1px solid #e4e5e3;
-    border-left: 1px solid #e4e5e3;
-    border-bottom: 1px solid #dadbd9;
-    border-right: 1px solid #dadbd9;
+    background-color: $color-gray-light;
+    border-top: 1px solid $color-gray;
+    border-left: 1px solid $color-gray;
+    border-bottom: 1px solid $color-gray2;
+    border-right: 1px solid $color-gray2;
     overflow-y: auto;
 }
 
-/* form to post a new message */
 .post {
     clear: both;
     margin-top: 10px;
     margin-bottom: 10px;
-}
-
-    .post textarea {
+    textarea {
         display: inline;
         width: 100%;
     }
+}
 
-/* one message */
 .message {
     margin-top: 25px;
     position: relative;
     min-height: 60px;
-}
-
-    .message .left {
+    .left {
         position: absolute;
         left: 0;
         top: 0;
+        img {
+            height: 50px;
+            width: 50px;
+            border-bottom: 1px solid $color-gray2;
+            border-right: 1px solid $color-gray2;
+        }
     }
-
-    .message .left img {
-        height: 50px;
-        width: 50px;
-        border-bottom: 1px solid #dadbd9;
-        border-right: 1px solid #dadbd9;
-    }
-
-    .message .right {
+    .right {
         margin-left: 70px;
         position: relative;
         overflow-x: auto;
-    }
-
-        .message .right .meta {
+        .meta {
             font-size: 14px;
             color: gray;
         }
-
-        .message .right .text {
-        }
-
-            .message .right .text pre {
+        .text {
+            pre {
                 padding: 10px;
                 overflow-x: auto;
                 max-height: 250px;
             }
+        }
+    }
+}
+
