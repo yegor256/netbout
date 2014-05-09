@@ -42,12 +42,6 @@
             </xsl:attribute>
             <xsl:text> </xsl:text> <!-- this is for W3C compliance -->
         </script>
-        <link rel="stylesheet" type="text/css" media="all">
-            <xsl:attribute name="href">
-                <xsl:text>/css/start.css?</xsl:text>
-                <xsl:value-of select="/page/version/revision"/>
-            </xsl:attribute>
-        </link>
         <title>Netbout - private talks made easy</title>
     </xsl:template>
     <xsl:template name="content">

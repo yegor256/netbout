@@ -60,13 +60,7 @@
                 </script>
                 <link rel="stylesheet" type="text/css" media="all">
                     <xsl:attribute name="href">
-                        <xsl:text>/css/global.css?</xsl:text>
-                        <xsl:value-of select="/page/version/revision"/>
-                    </xsl:attribute>
-                </link>
-                <link rel="stylesheet" type="text/css" media="all">
-                    <xsl:attribute name="href">
-                        <xsl:text>/css/layout.css?</xsl:text>
+                        <xsl:text>/css/style.css?</xsl:text>
                         <xsl:value-of select="/page/version/revision"/>
                     </xsl:attribute>
                 </link>

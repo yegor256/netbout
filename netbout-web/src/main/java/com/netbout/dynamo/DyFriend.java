@@ -27,11 +27,14 @@
 package com.netbout.dynamo;
 
 import com.jcabi.aspects.Immutable;
+import com.jcabi.aspects.Loggable;
 import com.jcabi.dynamo.QueryValve;
 import com.jcabi.dynamo.Region;
 import com.jcabi.dynamo.Table;
 import com.netbout.spi.Friend;
 import java.net.URI;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
 /**
  * Dynamo friend.
@@ -41,6 +44,9 @@ import java.net.URI;
  * @since 2.0
  */
 @Immutable
+@Loggable(Loggable.DEBUG)
+@ToString(of = "name")
+@EqualsAndHashCode(of = { "table", "name" })
 final class DyFriend implements Friend {
 
     /**

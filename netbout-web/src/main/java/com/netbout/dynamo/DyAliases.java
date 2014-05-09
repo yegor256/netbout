@@ -29,6 +29,7 @@ package com.netbout.dynamo;
 import com.google.common.base.Function;
 import com.google.common.collect.Iterators;
 import com.jcabi.aspects.Immutable;
+import com.jcabi.aspects.Loggable;
 import com.jcabi.aspects.Tv;
 import com.jcabi.dynamo.Attributes;
 import com.jcabi.dynamo.Conditions;
@@ -41,6 +42,8 @@ import com.netbout.spi.Alias;
 import com.netbout.spi.Aliases;
 import java.util.Iterator;
 import java.util.Locale;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
 /**
  * Dynamo Aliases.
@@ -50,6 +53,9 @@ import java.util.Locale;
  * @since 2.0
  */
 @Immutable
+@Loggable(Loggable.DEBUG)
+@ToString(of = "urn")
+@EqualsAndHashCode(of = { "table", "urn" })
 final class DyAliases implements Aliases {
 
     /**
@@ -137,7 +143,11 @@ final class DyAliases implements Aliases {
         return Iterators.transform(
             this.table.frame()
                 .where(DyAliases.ATTR_URN, Conditions.equalTo(this.urn))
-                .through(new QueryValve().withIndexName(DyAliases.INDEX))
+                .through(
+                    new QueryValve()
+                        .withIndexName(DyAliases.INDEX)
+                        .withConsistentRead(false)
+                )
                 .iterator(),
             new Function<Item, Alias>() {
                 @Override

@@ -41,20 +41,12 @@ import org.junit.Test;
 public final class DyUserITCase {
 
     /**
-     * Region rule.
-     * @checkstyle VisibilityModifierCheck (3 lines)
-     */
-    public final transient RegionRule reg = new RegionRule();
-
-    /**
      * DyUser can list aliases.
      * @throws Exception If there is some problem inside
      */
     @Test
     public void listsAliases() throws Exception {
-        final User user = new DyUser(
-            this.reg.get().table("aliases"), new URN("urn:test:654321")
-        );
+        final User user = new DyBase().user(new URN("urn:test:654321"));
         final String alias = "bobby";
         user.aliases().add(alias);
         MatcherAssert.assertThat(

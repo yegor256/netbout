@@ -26,13 +26,20 @@
  */
 package com.netbout.dynamo;
 
+import co.stateful.Sttc;
+import com.amazonaws.services.dynamodbv2.model.AttributeAction;
+import com.amazonaws.services.dynamodbv2.model.AttributeValue;
+import com.amazonaws.services.dynamodbv2.model.AttributeValueUpdate;
 import com.jcabi.aspects.Immutable;
-import com.jcabi.dynamo.Attributes;
+import com.jcabi.aspects.Loggable;
+import com.jcabi.dynamo.AttributeUpdates;
 import com.jcabi.dynamo.Item;
 import com.netbout.spi.Alias;
 import com.netbout.spi.Inbox;
 import java.net.URI;
 import java.util.Locale;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
 /**
  * Dynamo Alias.
@@ -42,6 +49,9 @@ import java.util.Locale;
  * @since 2.0
  */
 @Immutable
+@Loggable(Loggable.DEBUG)
+@ToString(of = "item")
+@EqualsAndHashCode(of = "item")
 final class DyAlias implements Alias {
 
     /**
@@ -79,9 +89,13 @@ final class DyAlias implements Alias {
     @Override
     public void photo(final URI uri) {
         this.item.put(
-            new Attributes()
-                .with(DyAliases.ATTR_PHOTO, uri)
-                .with(DyAliases.ATTR_LOCALE, this.locale())
+            new AttributeUpdates().with(
+                DyAliases.ATTR_PHOTO,
+                new AttributeValueUpdate(
+                    new AttributeValue(uri.toString()),
+                    AttributeAction.PUT
+                )
+            )
         );
     }
 

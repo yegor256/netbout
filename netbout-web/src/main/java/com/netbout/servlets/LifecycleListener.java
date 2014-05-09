@@ -65,11 +65,7 @@ public final class LifecycleListener implements ServletContextListener {
             );
             throw new IllegalStateException(ex);
         }
-        this.base = new DyBase(
-            Manifests.read("Netbout-DynamoKey"),
-            Manifests.read("Netbout-DynamoSecret"),
-            Manifests.read("Netbout-DynamoPrefix")
-        );
+        this.base = new DyBase();
         event.getServletContext().setAttribute(Base.class.getName(), this.base);
     }
 

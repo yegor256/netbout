@@ -3,6 +3,10 @@
         {
             "AttributeName": "alias",
             "AttributeType": "S"
+        },
+        {
+            "AttributeName": "urn",
+            "AttributeType": "S"
         }
     ],
     "KeySchema": [

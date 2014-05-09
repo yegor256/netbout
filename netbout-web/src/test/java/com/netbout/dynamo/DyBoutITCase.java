@@ -26,9 +26,10 @@
  */
 package com.netbout.dynamo;
 
-import com.jcabi.dynamo.Attributes;
-import com.jcabi.dynamo.Region;
+import com.jcabi.urn.URN;
+import com.netbout.spi.Aliases;
 import com.netbout.spi.Bout;
+import com.netbout.spi.Inbox;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;
@@ -41,26 +42,17 @@ import org.junit.Test;
 public final class DyBoutITCase {
 
     /**
-     * Region rule.
-     * @checkstyle VisibilityModifierCheck (3 lines)
-     */
-    public final transient RegionRule reg = new RegionRule();
-
-    /**
      * DyBout can rename a bout.
      * @throws Exception If there is some problem inside
      */
     @Test
     public void renamesBout() throws Exception {
-        final Region region = this.reg.get();
-        final Bout bout = new DyBout(
-            region,
-            region.table(DyFriends.TBL).put(
-                new Attributes()
-                    .with("id", "2")
-            ),
-            "jeff"
-        );
+        final String alias = "jeffrey";
+        final Aliases aliases =
+            new DyBase().user(new URN("urn:test:88")).aliases();
+        aliases.add(alias);
+        final Inbox inbox = aliases.iterator().next().inbox();
+        final Bout bout = inbox.bout(inbox.start());
         final String title = "some title \u20ac";
         bout.rename(title);
         MatcherAssert.assertThat(

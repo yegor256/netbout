@@ -44,7 +44,7 @@ import javax.ws.rs.core.Response;
  * @author Yegor Bugayenko (yegor@tpc2.com)
  * @version $Id$
  */
-@Path("/start")
+@Path("/st")
 public final class StartRs extends BaseRs {
 
     /**

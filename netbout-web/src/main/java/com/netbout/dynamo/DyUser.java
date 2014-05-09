@@ -27,10 +27,13 @@
 package com.netbout.dynamo;
 
 import com.jcabi.aspects.Immutable;
+import com.jcabi.aspects.Loggable;
 import com.jcabi.dynamo.Table;
 import com.jcabi.urn.URN;
 import com.netbout.spi.Aliases;
 import com.netbout.spi.User;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
 /**
  * Dynamo User.
@@ -40,6 +43,9 @@ import com.netbout.spi.User;
  * @since 2.0
  */
 @Immutable
+@Loggable(Loggable.DEBUG)
+@ToString(of = "urn")
+@EqualsAndHashCode(of = { "table", "urn" })
 final class DyUser implements User {
 
     /**

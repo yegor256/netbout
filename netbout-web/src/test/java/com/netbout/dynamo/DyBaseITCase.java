@@ -41,18 +41,12 @@ import org.junit.Test;
 public final class DyBaseITCase {
 
     /**
-     * Region rule.
-     * @checkstyle VisibilityModifierCheck (3 lines)
-     */
-    public final transient RegionRule reg = new RegionRule();
-
-    /**
      * DyBase can make a user.
      * @throws Exception If there is some problem inside
      */
     @Test
     public void makesUserObject() throws Exception {
-        final Base base = new DyBase(this.reg.get());
+        final Base base = new DyBase();
         final User user = base.user(new URN("urn:test:654321"));
         MatcherAssert.assertThat(
             user.aliases(),

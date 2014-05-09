@@ -26,8 +26,12 @@
  */
 package com.netbout.dynamo;
 
+import com.amazonaws.services.dynamodbv2.model.AttributeAction;
 import com.amazonaws.services.dynamodbv2.model.AttributeValue;
+import com.amazonaws.services.dynamodbv2.model.AttributeValueUpdate;
 import com.jcabi.aspects.Immutable;
+import com.jcabi.aspects.Loggable;
+import com.jcabi.dynamo.AttributeUpdates;
 import com.jcabi.dynamo.Item;
 import com.jcabi.dynamo.Region;
 import com.netbout.spi.Attachments;
@@ -35,6 +39,8 @@ import com.netbout.spi.Bout;
 import com.netbout.spi.Friends;
 import com.netbout.spi.Messages;
 import java.util.Date;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
 /**
  * Dynamo bout.
@@ -44,6 +50,9 @@ import java.util.Date;
  * @since 2.0
  */
 @Immutable
+@Loggable(Loggable.DEBUG)
+@ToString(of = "self")
+@EqualsAndHashCode(of = { "item", "self" })
 final class DyBout implements Bout {
 
     /**
@@ -87,7 +96,15 @@ final class DyBout implements Bout {
 
     @Override
     public void rename(final String text) {
-        this.item.put(DyFriends.ATTR_TITLE, new AttributeValue(text));
+        this.item.put(
+            new AttributeUpdates().with(
+                DyFriends.ATTR_TITLE,
+                new AttributeValueUpdate(
+                    new AttributeValue(text),
+                    AttributeAction.PUT
+                )
+            )
+        );
     }
 
     @Override

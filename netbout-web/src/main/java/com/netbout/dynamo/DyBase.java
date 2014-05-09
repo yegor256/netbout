@@ -27,12 +27,16 @@
 package com.netbout.dynamo;
 
 import com.jcabi.aspects.Immutable;
+import com.jcabi.aspects.Loggable;
 import com.jcabi.dynamo.Credentials;
 import com.jcabi.dynamo.Region;
+import com.jcabi.manifests.Manifests;
 import com.jcabi.urn.URN;
 import com.netbout.spi.Base;
 import com.netbout.spi.User;
 import java.io.IOException;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
 /**
  * Dynamo Base.
@@ -42,6 +46,9 @@ import java.io.IOException;
  * @since 2.0
  */
 @Immutable
+@Loggable(Loggable.DEBUG)
+@ToString(of = "region")
+@EqualsAndHashCode(of = "region")
 public final class DyBase implements Base {
 
     /**
@@ -51,27 +58,22 @@ public final class DyBase implements Base {
 
     /**
      * Public ctor.
-     * @param key AWS key
-     * @param secret AWS secret
-     * @param prefix Table prefix
      */
-    public DyBase(final String key, final String secret, final String prefix) {
-        this(
-            new Region.Prefixed(
-                new Region.Simple(
-                    new Credentials.Simple(key, secret)
-                ),
-                prefix
-            )
+    public DyBase() {
+        final String key = Manifests.read("Netbout-DynamoKey");
+        Credentials creds = new Credentials.Simple(
+            key,
+            Manifests.read("Netbout-DynamoSecret")
         );
-    }
-
-    /**
-     * Ctor for tests.
-     * @param reg Region
-     */
-    DyBase(final Region reg) {
-        this.region = reg;
+        if ("AAAAABBBBBAAAAABBBBB".equals(key)) {
+            creds = new Credentials.Direct(
+                creds, Integer.parseInt(System.getProperty("dynamo.port"))
+            );
+        }
+        this.region = new Region.Prefixed(
+            new Region.Simple(creds),
+            Manifests.read("Netbout-DynamoPrefix")
+        );
     }
 
     @Override

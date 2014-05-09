@@ -26,21 +26,30 @@
  */
 package com.netbout.dynamo;
 
+import co.stateful.Counter;
+import co.stateful.RtSttc;
+import com.amazonaws.services.dynamodbv2.model.AttributeValue;
 import com.amazonaws.services.dynamodbv2.model.Select;
 import com.google.common.base.Function;
 import com.google.common.collect.Iterators;
 import com.jcabi.aspects.Immutable;
+import com.jcabi.aspects.Loggable;
 import com.jcabi.dynamo.Attributes;
 import com.jcabi.dynamo.Conditions;
 import com.jcabi.dynamo.Item;
 import com.jcabi.dynamo.QueryValve;
 import com.jcabi.dynamo.Region;
 import com.jcabi.dynamo.Table;
+import com.jcabi.manifests.Manifests;
+import com.jcabi.urn.URN;
 import com.netbout.spi.Bout;
 import com.netbout.spi.Inbox;
 import com.netbout.spi.Pageable;
+import java.io.IOException;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
 /**
  * Dynamo inbox.
@@ -50,7 +59,15 @@ import java.util.NoSuchElementException;
  * @since 2.0
  */
 @Immutable
+@Loggable(Loggable.DEBUG)
+@ToString(of = "self")
+@EqualsAndHashCode(of = { "counter", "table", "self" })
 final class DyInbox implements Inbox {
+
+    /**
+     * Counter with bout number.
+     */
+    private final transient Counter counter;
 
     /**
      * Table we're in.
@@ -68,17 +85,33 @@ final class DyInbox implements Inbox {
      * @param slf My alias
      */
     DyInbox(final Region reg, final String slf) {
+        try {
+            this.counter = RtSttc.make(
+                URN.create(Manifests.read("Netbout-SttcUrn")),
+                Manifests.read("Netbout-SttcToken")
+            ).counters().get("nb-bout");
+        } catch (final IOException ex) {
+            throw new IllegalStateException(ex);
+        }
         this.table = reg.table(DyFriends.TBL);
         this.self = slf;
     }
 
     @Override
     public long start() {
-        final long number = System.nanoTime();
+        final long number;
+        try {
+            number = this.counter.incrementAndGet(1L);
+        } catch (final IOException ex) {
+            throw new IllegalStateException(ex);
+        }
         this.table.put(
             new Attributes()
-                .with(DyFriends.HASH, number)
                 .with(DyFriends.RANGE, this.self)
+                .with(
+                    DyFriends.HASH,
+                    new AttributeValue().withN(Long.toString(number))
+                )
                 .with(DyFriends.ATTR_UPDATED, System.currentTimeMillis())
                 .with(DyFriends.ATTR_TITLE, "untitled")
         );
@@ -92,7 +125,12 @@ final class DyInbox implements Inbox {
                 this.table.region(),
                 this.table.frame()
                     .through(new QueryValve().withLimit(1))
-                    .where(DyFriends.HASH, Conditions.equalTo(number))
+                    .where(
+                        DyFriends.HASH,
+                        Conditions.equalTo(
+                            new AttributeValue().withN(Long.toString(number))
+                        )
+                    )
                     .where(DyFriends.RANGE, this.self)
                     .iterator().next(),
                 this.self
@@ -115,6 +153,7 @@ final class DyInbox implements Inbox {
                 .through(
                     new QueryValve()
                         .withIndexName(DyFriends.INDEX)
+                        .withConsistentRead(false)
                         .withSelect(Select.ALL_PROJECTED_ATTRIBUTES)
                         .withScanIndexForward(false)
                 )

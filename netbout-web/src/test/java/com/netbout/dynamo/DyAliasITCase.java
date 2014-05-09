@@ -40,21 +40,13 @@ import org.junit.Test;
 public final class DyAliasITCase {
 
     /**
-     * Region rule.
-     * @checkstyle VisibilityModifierCheck (3 lines)
-     */
-    public final transient RegionRule reg = new RegionRule();
-
-    /**
      * DyAlias can make an alias.
      * @throws Exception If there is some problem inside
      */
     @Test
     public void makesAlias() throws Exception {
-        final Aliases aliases = new DyAliases(
-            this.reg.get(),
-            new URN("urn:test:1")
-        );
+        final Aliases aliases =
+            new DyBase().user(new URN("urn:test:12")).aliases();
         final String name = "jeffrey";
         aliases.add(name);
         MatcherAssert.assertThat(

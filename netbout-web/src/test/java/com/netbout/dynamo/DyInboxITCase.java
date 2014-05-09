@@ -26,6 +26,8 @@
  */
 package com.netbout.dynamo;
 
+import com.jcabi.urn.URN;
+import com.netbout.spi.Aliases;
 import com.netbout.spi.Bout;
 import com.netbout.spi.Friend;
 import com.netbout.spi.Friends;
@@ -42,21 +44,16 @@ import org.junit.Test;
 public final class DyInboxITCase {
 
     /**
-     * Region rule.
-     * @checkstyle VisibilityModifierCheck (3 lines)
-     */
-    public final transient RegionRule reg = new RegionRule();
-
-    /**
      * DyInbox can list bouts and create.
      * @throws Exception If there is some problem inside
      */
     @Test
     public void makesAndListsBouts() throws Exception {
         final String alias = "jeffrey";
-        final Inbox inbox = new DyInbox(
-            this.reg.get(), alias
-        );
+        final Aliases aliases =
+            new DyBase().user(new URN("urn:test:88")).aliases();
+        aliases.add(alias);
+        final Inbox inbox = aliases.iterator().next().inbox();
         final long number = inbox.start();
         MatcherAssert.assertThat(
             inbox,

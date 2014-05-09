@@ -54,7 +54,7 @@ public final class BaseRsITCase {
     public void downloadsStaticResources() throws Exception {
         final String[] pages = {
             "/robots.txt",
-            "/css/global.css",
+            "/css/style.css",
             "/js/bout.js",
             "/xsl/login.xsl",
             "/lang/en.xml",

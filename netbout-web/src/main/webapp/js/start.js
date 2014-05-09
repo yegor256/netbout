@@ -40,10 +40,10 @@ $(document).ready(
                         cache: false,
                         success: function (text) {
                             if (text === '') {
-                                $button.show();
+                                $button.prop('disabled', false);
                                 $error.hide();
                             } else {
-                                $button.hide();
+                                $button.prop('disabled', true);
                                 $error.html(text);
                                 $error.show();
                             }

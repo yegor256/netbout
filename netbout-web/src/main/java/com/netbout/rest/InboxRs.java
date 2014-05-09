@@ -74,7 +74,6 @@ public final class InboxRs extends BaseRs {
         throw FlashInset.forward(
             this.uriInfo().getBaseUriBuilder().clone()
                 .path(BoutRs.class)
-                .path("/{number}")
                 .build(number),
             "new bout started",
             Level.INFO

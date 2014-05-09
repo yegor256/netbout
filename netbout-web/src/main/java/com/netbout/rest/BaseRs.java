@@ -36,6 +36,7 @@ import com.netbout.spi.User;
 import com.rexsl.page.BasePage;
 import com.rexsl.page.BaseResource;
 import com.rexsl.page.Inset;
+import com.rexsl.page.JaxbBundle;
 import com.rexsl.page.Resource;
 import com.rexsl.page.auth.AuthInset;
 import com.rexsl.page.auth.Facebook;
@@ -124,6 +125,33 @@ public class BaseRs extends BaseResource {
             Manifests.read("Netbout-Revision"),
             Manifests.read("Netbout-Date")
         );
+    }
+
+    /**
+     * Alias inset.
+     * @return The inset
+     */
+    @Inset.Runtime
+    public final Inset aliasInset() {
+        return new Inset() {
+            @Override
+            public void render(final BasePage<?, ?> page,
+                final Response.ResponseBuilder builder) {
+                if (!BaseRs.this.auth().identity().equals(Identity.ANONYMOUS)) {
+                    try {
+                        final Alias alias = BaseRs.this.alias();
+                        page.append(
+                            new JaxbBundle("alias")
+                                .add("name", alias.name()).up()
+                                .add("locale", alias.locale().toString()).up()
+                                .add("photo", alias.photo().toString()).up()
+                        );
+                    } catch (final IOException ex) {
+                        throw new IllegalStateException(ex);
+                    }
+                }
+            }
+        };
     }
 
     /**

@@ -9,5 +9,7 @@ Netbout-GithubId: 555
 Netbout-GithubSecret: secret
 Netbout-SecurityKey: -test-security-key
 Netbout-DynamoKey: AAAAABBBBBAAAAABBBBB
-Netbout-DynamoSecret: xxxxxfffffxxxxxfffffxxxxxfffffxxxxxfffff
+Netbout-DynamoSecret: ABCDABCDABCDABCDABCDABCDABCDABCDABCDABCD
 Netbout-DynamoPrefix: nb-
+Netbout-SttcUrn: urn:test:1
+Netbout-SttcToken: test

@@ -30,6 +30,7 @@ import com.google.common.base.Function;
 import com.google.common.base.Predicates;
 import com.google.common.collect.Iterators;
 import com.jcabi.aspects.Immutable;
+import com.jcabi.aspects.Loggable;
 import com.jcabi.dynamo.Attributes;
 import com.jcabi.dynamo.Conditions;
 import com.jcabi.dynamo.Item;
@@ -38,6 +39,8 @@ import com.jcabi.dynamo.Table;
 import com.netbout.spi.Friend;
 import com.netbout.spi.Friends;
 import java.util.Iterator;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
 /**
  * Dynamo friends.
@@ -47,6 +50,9 @@ import java.util.Iterator;
  * @since 2.0
  */
 @Immutable
+@Loggable(Loggable.DEBUG)
+@ToString(of = "item")
+@EqualsAndHashCode(of = { "table", "item" })
 final class DyFriends implements Friends {
 
     /**

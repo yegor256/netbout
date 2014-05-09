@@ -48,6 +48,10 @@
     </pluginRepositories>
     <dependencies>
         <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+        </dependency>
+        <dependency>
             <groupId>com.netbout</groupId>
             <artifactId>netbout-spi</artifactId>
             <version>${project.version}</version>
@@ -60,7 +64,12 @@
         <dependency>
             <groupId>com.jcabi</groupId>
             <artifactId>jcabi-dynamo</artifactId>
-            <version>0.10.2</version>
+            <version>0.12</version>
+        </dependency>
+        <dependency>
+            <groupId>co.stateful</groupId>
+            <artifactId>java-sdk</artifactId>
+            <version>0.1</version>
         </dependency>
         <dependency>
             <groupId>com.jcabi</groupId>
@@ -186,6 +195,20 @@
         </dependency>
     </dependencies>
     <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>build-helper-maven-plugin</artifactId>
+                    <version>1.8</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.tomcat.maven</groupId>
+                    <artifactId>tomcat7-maven-plugin</artifactId>
+                    <version>2.2</version>
+                </plugin>
+            </plugins>
+        </pluginManagement>
         <plugins>
             <plugin>
                 <artifactId>maven-deploy-plugin</artifactId>
@@ -212,6 +235,8 @@
                             <Netbout-GithubId>${github.id}</Netbout-GithubId>
                             <Netbout-GithubSecret>${github.secret}</Netbout-GithubSecret>
                             <Netbout-SecurityKey>${security.key}</Netbout-SecurityKey>
+                            <Netbout-SttcUrn>${sttc.urn}</Netbout-SttcUrn>
+                            <Netbout-SttcToken>${sttc.token}</Netbout-SttcToken>
                         </manifestEntries>
                     </archive>
                 </configuration>
@@ -255,89 +280,58 @@
                 </executions>
             </plugin>
             <plugin>
+                <groupId>org.jasig.maven</groupId>
+                <artifactId>sass-maven-plugin</artifactId>
+                <version>1.1.1</version>
+                <executions>
+                    <execution>
+                        <id>generate-css</id>
+                        <phase>generate-resources</phase>
+                        <goals>
+                            <goal>update-stylesheets</goal>
+                        </goals>
+                        <configuration>
+                            <sassSourceDirectory>${basedir}/src/main/scss</sassSourceDirectory>
+                            <destination>${project.build.directory}/css</destination>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
                 <groupId>com.samaxes.maven</groupId>
                 <artifactId>minify-maven-plugin</artifactId>
                 <version>1.7.2</version>
+                <configuration>
+                    <charset>UTF-8</charset>
+                    <nosuffix>true</nosuffix>
+                </configuration>
                 <executions>
                     <execution>
+                        <id>minify-js</id>
+                        <goals>
+                            <goal>minify</goal>
+                        </goals>
                         <configuration>
-                            <charset>UTF-8</charset>
-                            <cssSourceIncludes>
-                                <include>*.css</include>
-                            </cssSourceIncludes>
                             <jsSourceIncludes>
                                 <include>*.js</include>
                             </jsSourceIncludes>
                             <jsEngine>CLOSURE</jsEngine>
-                            <nosuffix>true</nosuffix>
                             <skipMerge>true</skipMerge>
                         </configuration>
+                    </execution>
+                    <execution>
+                        <id>minify-css</id>
                         <goals>
                             <goal>minify</goal>
                         </goals>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>build-helper-maven-plugin</artifactId>
-                <version>1.8</version>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>reserve-network-port</goal>
-                        </goals>
                         <configuration>
-                            <portNames>
-                                <portName>tomcat.port</portName>
-                            </portNames>
+                            <webappSourceDir>${project.build.directory}</webappSourceDir>
+                            <cssSourceDir>css</cssSourceDir>
+                            <cssSourceIncludes>
+                                <include>*.css</include>
+                            </cssSourceIncludes>
+                            <skipMerge>false</skipMerge>
                         </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <artifactId>maven-failsafe-plugin</artifactId>
-                <configuration>
-                    <systemPropertyVariables>
-                        <tomcat.home>http://localhost:${tomcat.port}</tomcat.home>
-                    </systemPropertyVariables>
-                </configuration>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>integration-test</goal>
-                            <goal>verify</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.tomcat.maven</groupId>
-                <artifactId>tomcat7-maven-plugin</artifactId>
-                <version>2.2</version>
-                <configuration>
-                    <path>/</path>
-                    <warDirectory>${project.build.directory}/test-war</warDirectory>
-                    <port>${tomcat.port}</port>
-                    <fork>true</fork>
-                    <systemProperties>
-                        <log4j.configuration>file:${basedir}/src/test/resources/log4j.properties</log4j.configuration>
-                    </systemProperties>
-                </configuration>
-                <executions>
-                    <execution>
-                        <id>start-tomcat</id>
-                        <phase>pre-integration-test</phase>
-                        <goals>
-                            <goal>run-war-only</goal>
-                        </goals>
-                    </execution>
-                    <execution>
-                        <id>stop-tomcat</id>
-                        <phase>post-integration-test</phase>
-                        <goals>
-                            <goal>shutdown</goal>
-                        </goals>
                     </execution>
                 </executions>
             </plugin>
@@ -365,6 +359,147 @@
         </plugins>
     </build>
     <profiles>
+        <profile>
+            <id>tomcat-test</id>
+            <activation>
+                <file><exists>pom.xml</exists></file>
+            </activation>
+            <properties>
+                <tomcat.home>${project.build.directory}/webapp-test</tomcat.home>
+            </properties>
+            <build>
+                <plugins>
+                    <plugin>
+                        <artifactId>maven-war-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>prepare-webapp-for-tests</id>
+                                <goals>
+                                    <goal>exploded</goal>
+                                </goals>
+                                <configuration>
+                                    <warSourceExcludes>nothing/**</warSourceExcludes>
+                                    <webappDirectory>${tomcat.home}</webappDirectory>
+                                </configuration>
+                            </execution>
+                            <execution>
+                                <id>prepare-manifest-for-tests</id>
+                                <goals>
+                                    <goal>manifest</goal>
+                                </goals>
+                                <configuration>
+                                    <warSourceDirectory>${tomcat.home}</warSourceDirectory>
+                                    <archive>
+                                        <manifestEntries>
+                                            <Netbout-Revision>1234567</Netbout-Revision>
+                                            <Netbout-Version>1.0</Netbout-Version>
+                                            <Netbout-Date>${maven.build.timestamp}</Netbout-Date>
+                                            <Netbout-DynamoKey>AAAAABBBBBAAAAABBBBB</Netbout-DynamoKey>
+                                            <Netbout-DynamoSecret>ABCDABCDABCDABCDABCDABCDABCDABCDABCDABCD</Netbout-DynamoSecret>
+                                            <Netbout-DynamoPrefix>nb-</Netbout-DynamoPrefix>
+                                            <Netbout-FbId>test</Netbout-FbId>
+                                            <Netbout-FbSecret>test</Netbout-FbSecret>
+                                            <Netbout-GoogleId>test</Netbout-GoogleId>
+                                            <Netbout-GoogleSecret>test</Netbout-GoogleSecret>
+                                            <Netbout-GithubId>test</Netbout-GithubId>
+                                            <Netbout-GithubSecret>test</Netbout-GithubSecret>
+                                            <Netbout-SecurityKey>test</Netbout-SecurityKey>
+                                            <Netbout-SttcUrn>urn:test:1</Netbout-SttcUrn>
+                                            <Netbout-SttcToken>test</Netbout-SttcToken>
+                                        </manifestEntries>
+                                    </archive>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>build-helper-maven-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <goals>
+                                    <goal>reserve-network-port</goal>
+                                </goals>
+                                <configuration>
+                                    <portNames>
+                                        <portName>tomcat.port</portName>
+                                    </portNames>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <artifactId>maven-resources-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>copy-compiled-css</id>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>copy-resources</goal>
+                                </goals>
+                                <configuration>
+                                    <outputDirectory>${tomcat.home}/css</outputDirectory>
+                                    <resources>
+                                        <resource>
+                                            <directory>${project.build.directory}/${project.build.finalName}/css</directory>
+                                            <filtering>false</filtering>
+                                        </resource>
+                                    </resources>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <artifactId>maven-failsafe-plugin</artifactId>
+                        <configuration>
+                            <systemPropertyVariables combine.children="append">
+                                <tomcat.home>http://localhost:${tomcat.port}</tomcat.home>
+                            </systemPropertyVariables>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <goals>
+                                    <goal>integration-test</goal>
+                                    <goal>verify</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.tomcat.maven</groupId>
+                        <artifactId>tomcat7-maven-plugin</artifactId>
+                        <configuration>
+                            <port>9099</port>
+                            <path>/</path>
+                            <warDirectory>${tomcat.home}</warDirectory>
+                            <systemProperties>
+                                <log4j.configuration>file:${basedir}/src/test/resources/log4j.properties</log4j.configuration>
+                            </systemProperties>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <id>start-tomcat</id>
+                                <phase>pre-integration-test</phase>
+                                <goals>
+                                    <goal>run-war-only</goal>
+                                </goals>
+                                <configuration>
+                                    <port>${tomcat.port}</port>
+                                    <fork>true</fork>
+                                </configuration>
+                            </execution>
+                            <execution>
+                                <id>stop-tomcat</id>
+                                <phase>post-integration-test</phase>
+                                <goals>
+                                    <goal>shutdown</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
         <profile>
             <id>dynamodb</id>
             <activation><file><exists>pom.xml</exists></file></activation>
@@ -396,7 +531,6 @@
                     <plugin>
                         <groupId>org.codehaus.mojo</groupId>
                         <artifactId>build-helper-maven-plugin</artifactId>
-                        <version>1.8</version>
                         <executions>
                             <execution>
                                 <id>reserver-dynamodb-port</id>
@@ -414,7 +548,7 @@
                     <plugin>
                         <groupId>com.jcabi</groupId>
                         <artifactId>jcabi-dynamodb-maven-plugin</artifactId>
-                        <version>0.6</version>
+                        <version>0.7</version>
                         <executions>
                             <execution>
                                 <id>dynamodb-integration-test</id>
@@ -427,7 +561,7 @@
                                     <port>${dynamodblocal.port}</port>
                                     <dist>${project.build.directory}/dynamodb-dist</dist>
                                     <key>AAAAABBBBBAAAAABBBBB</key>
-                                    <secret>none</secret>
+                                    <secret>ABCDABCDABCDABCDABCDABCDABCDABCDABCDABCD</secret>
                                     <tables>
                                         <table>${basedir}/src/test/dynamodb/aliases.json</table>
                                         <table>${basedir}/src/test/dynamodb/friends.json</table>
@@ -439,9 +573,18 @@
                         </executions>
                     </plugin>
                     <plugin>
+                        <groupId>org.apache.tomcat.maven</groupId>
+                        <artifactId>tomcat7-maven-plugin</artifactId>
+                        <configuration>
+                            <systemProperties combine.children="append">
+                                <dynamo.port>${dynamodblocal.port}</dynamo.port>
+                            </systemProperties>
+                        </configuration>
+                    </plugin>
+                    <plugin>
                         <artifactId>maven-failsafe-plugin</artifactId>
                         <configuration>
-                            <systemPropertyVariables>
+                            <systemPropertyVariables combine.children="append">
                                 <dynamo.port>${dynamodblocal.port}</dynamo.port>
                             </systemPropertyVariables>
                         </configuration>
