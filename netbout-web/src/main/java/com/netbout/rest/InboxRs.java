@@ -26,7 +26,6 @@
  */
 package com.netbout.rest;
 
-import com.rexsl.page.Link;
 import com.rexsl.page.PageBuilder;
 import com.rexsl.page.inset.FlashInset;
 import java.io.IOException;
@@ -58,7 +57,6 @@ public final class InboxRs extends BaseRs {
             .stylesheet("/xsl/inbox.xsl")
             .build(NbPage.class)
             .init(this)
-            .link(new Link("start", "./start"))
             .render()
             .build();
     }

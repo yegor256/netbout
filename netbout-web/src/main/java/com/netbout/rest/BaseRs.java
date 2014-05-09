@@ -30,13 +30,13 @@ import com.google.common.collect.Iterables;
 import com.jcabi.manifests.Manifests;
 import com.jcabi.urn.URN;
 import com.netbout.spi.Alias;
-import com.netbout.spi.Aliases;
 import com.netbout.spi.Base;
 import com.netbout.spi.User;
 import com.rexsl.page.BasePage;
 import com.rexsl.page.BaseResource;
 import com.rexsl.page.Inset;
 import com.rexsl.page.JaxbBundle;
+import com.rexsl.page.Link;
 import com.rexsl.page.Resource;
 import com.rexsl.page.auth.AuthInset;
 import com.rexsl.page.auth.Facebook;
@@ -137,24 +137,38 @@ public class BaseRs extends BaseResource {
             @Override
             public void render(final BasePage<?, ?> page,
                 final Response.ResponseBuilder builder) {
-                if (!BaseRs.this.auth().identity().equals(Identity.ANONYMOUS)) {
+                if (BaseRs.this.identified()) {
                     try {
-                        final Aliases aliases = BaseRs.this.user().aliases();
-                        if (!Iterables.isEmpty(aliases)) {
-                            final Alias alias = aliases.iterator().next();
-                            page.append(
-                                new JaxbBundle("alias")
-                                    .add("name", alias.name())
-                                    .up()
-                                    .add("locale", alias.locale().toString())
-                                    .up()
-                                    .add("photo", alias.photo().toString())
-                                    .up()
-                            );
-                        }
+                        final Alias alias = BaseRs.this.alias();
+                        page.append(
+                            new JaxbBundle("alias")
+                                .add("name", alias.name())
+                                .up()
+                                .add("locale", alias.locale().toString())
+                                .up()
+                                .add("photo", alias.photo().toString())
+                                .up()
+                        );
                     } catch (final IOException ex) {
                         throw new IllegalStateException(ex);
                     }
+                }
+            }
+        };
+    }
+
+    /**
+     * Alias links.
+     * @return The inset
+     */
+    @Inset.Runtime
+    public final Inset aliasLinks() {
+        return new Inset() {
+            @Override
+            public void render(final BasePage<?, ?> page,
+                final Response.ResponseBuilder builder) {
+                if (BaseRs.this.identified()) {
+                    page.link(new Link("start", "/start"));
                 }
             }
         };
@@ -198,8 +212,7 @@ public class BaseRs extends BaseResource {
      * @throws IOException If fails
      */
     protected final Alias alias() throws IOException {
-        final Aliases aliases = this.user().aliases();
-        if (Iterables.isEmpty(aliases)) {
+        if (!this.identified()) {
             throw FlashInset.forward(
                 this.uriInfo().getBaseUriBuilder().clone()
                     .path(StartRs.class)
@@ -208,11 +221,20 @@ public class BaseRs extends BaseResource {
                 Level.SEVERE
             );
         }
-        final Alias alias = Iterables.get(aliases, 0);
+        final Alias alias = Iterables.get(this.user().aliases(), 0);
         if (alias.photo().equals(Alias.BLANK)) {
             alias.photo(this.auth().identity().photo());
         }
         return alias;
+    }
+
+    /**
+     * User identified and has an alias.
+     * @return TRUE if it has an alias
+     */
+    protected final boolean identified() {
+        return !this.auth().identity().equals(Identity.ANONYMOUS)
+            && Iterables.isEmpty(this.user().aliases());
     }
 
     /**

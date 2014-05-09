@@ -69,10 +69,12 @@ public final class BoutRs extends BaseRs {
     /**
      * Get bout front page.
      * @return The JAX-RS response
+     * @throws IOException If fails
      */
     @GET
     @Path("/")
-    public Response front() {
+    public Response front() throws IOException {
+        final Bout bout = this.bout();
         return new PageBuilder()
             .stylesheet("/xsl/bout.xsl")
             .build(NbPage.class)

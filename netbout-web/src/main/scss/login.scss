@@ -28,16 +28,8 @@
 @import 'fonts';
 @import 'colors';
 
-html {
-    height: 100%;
-}
-
-body {
-    background-color: $color-gray-light;
-    height: 100%;
-}
-
 .wrapper {
+    background-color: $color-gray-light;
     width: 100%;
     height: 70%;
     display: table;
