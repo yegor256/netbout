@@ -1,12 +1,12 @@
 <?xml version="1.0"?>
 <!--
- * Copyright (c) 2009-2014, Netbout.com
+ * Copyright (c) 2009-2014, netbout.com
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are PROHIBITED without prior written permission from
  * the author. This product may NOT be used anywhere and on any computer
- * except the server platform of netBout Inc. located at www.netbout.com.
+ * except the server platform of netbout Inc. located at www.netbout.com.
  * Federal copyright law prohibits unauthorized reproduction by any means
  * and imposes fines up to $25,000 for violation. If you received
  * this code accidentally and without intent to use it, please report this
@@ -47,7 +47,7 @@
     <start.new.bout>click here to start a new bout</start.new.bout>
     <back.to.inbox>click to go back to inbox</back.to.inbox>
     <Logout>Logout</Logout>
-    <leave.right.now>leave Netbout right now</leave.right.now>
+    <leave.right.now>leave netbout right now</leave.right.now>
 
     <!-- inbox -->
     <inbox>inbox</inbox>
@@ -63,7 +63,7 @@
     </We.are.still.testing>
     <Lets.start>
         Let's start with a simple conversation with someone from
-        our team, who will demonstrate and explain how Netbout works.
+        our team, who will demonstrate and explain how netbout works.
     </Lets.start>
 
     <!-- bout page -->

@@ -1,12 +1,12 @@
 <?xml version="1.0"?>
 <!--
- * Copyright (c) 2009-2014, Netbout.com
+ * Copyright (c) 2009-2014, netbout.com
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are PROHIBITED without prior written permission from
  * the author. This product may NOT be used anywhere and on any computer
- * except the server platform of Netbout Inc. located at www.netbout.com.
+ * except the server platform of netbout Inc. located at www.netbout.com.
  * Federal copyright law prohibits unauthorized reproduction by any means
  * and imposes fines up to $25,000 for violation. If you received
  * this code accidentally and without intent to use it, please report this
@@ -222,21 +222,21 @@
                     <warSourceExcludes>js/**, css/**</warSourceExcludes>
                     <archive>
                         <manifestEntries>
-                            <Netbout-Revision>${buildNumber}</Netbout-Revision>
-                            <Netbout-Version>${project.version}</Netbout-Version>
-                            <Netbout-Date>${maven.build.timestamp}</Netbout-Date>
-                            <Netbout-DynamoKey>${dynamo.key}</Netbout-DynamoKey>
-                            <Netbout-DynamoSecret>${dynamo.secret}</Netbout-DynamoSecret>
-                            <Netbout-DynamoPrefix>${dynamo.prefix}</Netbout-DynamoPrefix>
-                            <Netbout-FbId>${fb.id}</Netbout-FbId>
-                            <Netbout-FbSecret>${fb.secret}</Netbout-FbSecret>
-                            <Netbout-GoogleId>${google.id}</Netbout-GoogleId>
-                            <Netbout-GoogleSecret>${google.secret}</Netbout-GoogleSecret>
-                            <Netbout-GithubId>${github.id}</Netbout-GithubId>
-                            <Netbout-GithubSecret>${github.secret}</Netbout-GithubSecret>
-                            <Netbout-SecurityKey>${security.key}</Netbout-SecurityKey>
-                            <Netbout-SttcUrn>${sttc.urn}</Netbout-SttcUrn>
-                            <Netbout-SttcToken>${sttc.token}</Netbout-SttcToken>
+                            <netbout-Revision>${buildNumber}</netbout-Revision>
+                            <netbout-Version>${project.version}</netbout-Version>
+                            <netbout-Date>${maven.build.timestamp}</netbout-Date>
+                            <netbout-DynamoKey>${dynamo.key}</netbout-DynamoKey>
+                            <netbout-DynamoSecret>${dynamo.secret}</netbout-DynamoSecret>
+                            <netbout-DynamoPrefix>${dynamo.prefix}</netbout-DynamoPrefix>
+                            <netbout-FbId>${fb.id}</netbout-FbId>
+                            <netbout-FbSecret>${fb.secret}</netbout-FbSecret>
+                            <netbout-GoogleId>${google.id}</netbout-GoogleId>
+                            <netbout-GoogleSecret>${google.secret}</netbout-GoogleSecret>
+                            <netbout-GithubId>${github.id}</netbout-GithubId>
+                            <netbout-GithubSecret>${github.secret}</netbout-GithubSecret>
+                            <netbout-SecurityKey>${security.key}</netbout-SecurityKey>
+                            <netbout-SttcUrn>${sttc.urn}</netbout-SttcUrn>
+                            <netbout-SttcToken>${sttc.token}</netbout-SttcToken>
                         </manifestEntries>
                     </archive>
                 </configuration>
@@ -391,21 +391,21 @@
                                     <warSourceDirectory>${tomcat.home}</warSourceDirectory>
                                     <archive>
                                         <manifestEntries>
-                                            <Netbout-Revision>1234567</Netbout-Revision>
-                                            <Netbout-Version>1.0</Netbout-Version>
-                                            <Netbout-Date>${maven.build.timestamp}</Netbout-Date>
-                                            <Netbout-DynamoKey>AAAAABBBBBAAAAABBBBB</Netbout-DynamoKey>
-                                            <Netbout-DynamoSecret>ABCDABCDABCDABCDABCDABCDABCDABCDABCDABCD</Netbout-DynamoSecret>
-                                            <Netbout-DynamoPrefix>nb-</Netbout-DynamoPrefix>
-                                            <Netbout-FbId>test</Netbout-FbId>
-                                            <Netbout-FbSecret>test</Netbout-FbSecret>
-                                            <Netbout-GoogleId>test</Netbout-GoogleId>
-                                            <Netbout-GoogleSecret>test</Netbout-GoogleSecret>
-                                            <Netbout-GithubId>test</Netbout-GithubId>
-                                            <Netbout-GithubSecret>test</Netbout-GithubSecret>
-                                            <Netbout-SecurityKey>test</Netbout-SecurityKey>
-                                            <Netbout-SttcUrn>urn:test:1</Netbout-SttcUrn>
-                                            <Netbout-SttcToken>test</Netbout-SttcToken>
+                                            <netbout-Revision>1234567</netbout-Revision>
+                                            <netbout-Version>1.0</netbout-Version>
+                                            <netbout-Date>${maven.build.timestamp}</netbout-Date>
+                                            <netbout-DynamoKey>AAAAABBBBBAAAAABBBBB</netbout-DynamoKey>
+                                            <netbout-DynamoSecret>ABCDABCDABCDABCDABCDABCDABCDABCDABCDABCD</netbout-DynamoSecret>
+                                            <netbout-DynamoPrefix>nb-</netbout-DynamoPrefix>
+                                            <netbout-FbId>test</netbout-FbId>
+                                            <netbout-FbSecret>test</netbout-FbSecret>
+                                            <netbout-GoogleId>test</netbout-GoogleId>
+                                            <netbout-GoogleSecret>test</netbout-GoogleSecret>
+                                            <netbout-GithubId>test</netbout-GithubId>
+                                            <netbout-GithubSecret>test</netbout-GithubSecret>
+                                            <netbout-SecurityKey>test</netbout-SecurityKey>
+                                            <netbout-SttcUrn>urn:test:1</netbout-SttcUrn>
+                                            <netbout-SttcToken>test</netbout-SttcToken>
                                         </manifestEntries>
                                     </archive>
                                 </configuration>

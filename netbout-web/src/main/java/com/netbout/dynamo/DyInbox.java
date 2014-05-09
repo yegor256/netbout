@@ -1,11 +1,11 @@
 /**
- * Copyright (c) 2009-2014, Netbout.com
+ * Copyright (c) 2009-2014, netbout.com
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are PROHIBITED without prior written permission from
  * the author. This product may NOT be used anywhere and on any computer
- * except the server platform of netBout Inc. located at www.netbout.com.
+ * except the server platform of netbout Inc. located at www.netbout.com.
  * Federal copyright law prohibits unauthorized reproduction by any means
  * and imposes fines up to $25,000 for violation. If you received
  * this code accidentally and without intent to use it, please report this
@@ -87,8 +87,8 @@ final class DyInbox implements Inbox {
     DyInbox(final Region reg, final String slf) {
         try {
             this.counter = RtSttc.make(
-                URN.create(Manifests.read("Netbout-SttcUrn")),
-                Manifests.read("Netbout-SttcToken")
+                URN.create(Manifests.read("netbout-SttcUrn")),
+                Manifests.read("netbout-SttcToken")
             ).counters().get("nb-bout");
         } catch (final IOException ex) {
             throw new IllegalStateException(ex);

@@ -1,11 +1,11 @@
 /**
- * Copyright (c) 2009-2014, Netbout.com
+ * Copyright (c) 2009-2014, netbout.com
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are PROHIBITED without prior written permission from
  * the author. This product may NOT be used anywhere and on any computer
- * except the server platform of netBout Inc. located at www.netbout.com.
+ * except the server platform of netbout Inc. located at www.netbout.com.
  * Federal copyright law prohibits unauthorized reproduction by any means
  * and imposes fines up to $25,000 for violation. If you received
  * this code accidentally and without intent to use it, please report this
@@ -49,7 +49,7 @@ import javax.ws.rs.core.Response;
  * @checkstyle ClassDataAbstractionCoupling (400 lines)
  */
 @SuppressWarnings("PMD.TooManyMethods")
-@Path("/{num : [0-9]+}")
+@Path("/b/{num}")
 public final class BoutRs extends BaseRs {
 
     /**
@@ -71,6 +71,7 @@ public final class BoutRs extends BaseRs {
      * @return The JAX-RS response
      */
     @GET
+    @Path("/")
     public Response front() {
         return new PageBuilder()
             .stylesheet("/xsl/bout.xsl")

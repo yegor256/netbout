@@ -1,11 +1,11 @@
 /**
- * Copyright (c) 2009-2014, Netbout.com
+ * Copyright (c) 2009-2014, netbout.com
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are PROHIBITED without prior written permission from
  * the author. This product may NOT be used anywhere and on any computer
- * except the server platform of netBout Inc. located at www.netbout.com.
+ * except the server platform of netbout Inc. located at www.netbout.com.
  * Federal copyright law prohibits unauthorized reproduction by any means
  * and imposes fines up to $25,000 for violation. If you received
  * this code accidentally and without intent to use it, please report this
@@ -72,9 +72,9 @@ public class BaseRs extends BaseResource {
     private static final String VERSION_LABEL = String.format(
         "%s/%s built on %s",
         // @checkstyle MultipleStringLiterals (3 lines)
-        Manifests.read("Netbout-Version"),
-        Manifests.read("Netbout-Revision"),
-        Manifests.read("Netbout-Date")
+        Manifests.read("netbout-Version"),
+        Manifests.read("netbout-Revision"),
+        Manifests.read("netbout-Date")
     );
 
     /**
@@ -84,7 +84,7 @@ public class BaseRs extends BaseResource {
         @Override
         public Identity identity() {
             final Identity identity;
-            if ("1234567".equals(Manifests.read("Netbout-Revision"))) {
+            if ("1234567".equals(Manifests.read("netbout-Revision"))) {
                 identity = new Identity.Simple(
                     URN.create("urn:test:123456"),
                     "Locallost",
@@ -107,7 +107,7 @@ public class BaseRs extends BaseResource {
             @Override
             public void render(final BasePage<?, ?> page,
                 final Response.ResponseBuilder builder) {
-                builder.header("X-Netbout-Version", BaseRs.VERSION_LABEL);
+                builder.header("X-netbout-Version", BaseRs.VERSION_LABEL);
                 builder.type(MediaType.TEXT_XML);
                 builder.header(HttpHeaders.VARY, "Cookie");
             }
@@ -121,9 +121,9 @@ public class BaseRs extends BaseResource {
     @Inset.Runtime
     public final Inset version() {
         return new VersionInset(
-            Manifests.read("Netbout-Version"),
-            Manifests.read("Netbout-Revision"),
-            Manifests.read("Netbout-Date")
+            Manifests.read("netbout-Version"),
+            Manifests.read("netbout-Revision"),
+            Manifests.read("netbout-Date")
         );
     }
 
@@ -139,13 +139,19 @@ public class BaseRs extends BaseResource {
                 final Response.ResponseBuilder builder) {
                 if (!BaseRs.this.auth().identity().equals(Identity.ANONYMOUS)) {
                     try {
-                        final Alias alias = BaseRs.this.alias();
-                        page.append(
-                            new JaxbBundle("alias")
-                                .add("name", alias.name()).up()
-                                .add("locale", alias.locale().toString()).up()
-                                .add("photo", alias.photo().toString()).up()
-                        );
+                        final Aliases aliases = BaseRs.this.user().aliases();
+                        if (!Iterables.isEmpty(aliases)) {
+                            final Alias alias = aliases.iterator().next();
+                            page.append(
+                                new JaxbBundle("alias")
+                                    .add("name", alias.name())
+                                    .up()
+                                    .add("locale", alias.locale().toString())
+                                    .up()
+                                    .add("photo", alias.photo().toString())
+                                    .up()
+                            );
+                        }
                     } catch (final IOException ex) {
                         throw new IllegalStateException(ex);
                     }
@@ -161,10 +167,10 @@ public class BaseRs extends BaseResource {
     @Inset.Runtime
     public final AuthInset auth() {
         // @checkstyle LineLength (4 lines)
-        return new AuthInset(this, Manifests.read("Netbout-SecurityKey"))
-            .with(new Facebook(this, Manifests.read("Netbout-FbId"), Manifests.read("Netbout-FbSecret")))
-            .with(new Google(this, Manifests.read("Netbout-GoogleId"), Manifests.read("Netbout-GoogleSecret")))
-            .with(new Github(this, Manifests.read("Netbout-GithubId"), Manifests.read("Netbout-GithubSecret")))
+        return new AuthInset(this, Manifests.read("netbout-SecurityKey"))
+            .with(new Facebook(this, Manifests.read("netbout-FbId"), Manifests.read("netbout-FbSecret")))
+            .with(new Google(this, Manifests.read("netbout-GoogleId"), Manifests.read("netbout-GoogleSecret")))
+            .with(new Github(this, Manifests.read("netbout-GithubId"), Manifests.read("netbout-GithubSecret")))
             .with(BaseRs.TESTER);
     }
 

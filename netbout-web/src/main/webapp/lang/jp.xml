@@ -1,12 +1,12 @@
 <?xml version="1.0"?>
 <!--
- * Copyright (c) 2009-2014, Netbout.com
+ * Copyright (c) 2009-2014, netbout.com
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are PROHIBITED without prior written permission from
  * the author. This product may NOT be used anywhere and on any computer
- * except the server platform of netBout Inc. located at www.netbout.com.
+ * except the server platform of netbout Inc. located at www.netbout.com.
  * Federal copyright law prohibits unauthorized reproduction by any means
  * and imposes fines up to $25,000 for violation. If you received
  * this code accidentally and without intent to use it, please report this
@@ -53,7 +53,7 @@
     <start.new.bout>新しい会話を始める</start.new.bout>
     <back.to.inbox>受信箱に戻る</back.to.inbox>
     <Logout>ログアウト</Logout>
-    <leave.right.now>今すぐNetboutを終了する</leave.right.now>
+    <leave.right.now>今すぐnetboutを終了する</leave.right.now>
 
     <!-- inbox -->
     <inbox>受信箱</inbox>
@@ -68,7 +68,7 @@
         まだテスト中ですので悪しからず ＾－＾
     </We.are.still.testing>
     <Lets.start>
-        私たちのチームの一人と簡単な会話をすることからはじめ、Netboutの使い方を実演してもらいましょう。
+        私たちのチームの一人と簡単な会話をすることからはじめ、netboutの使い方を実演してもらいましょう。
     </Lets.start>
 
     <!-- bout page -->

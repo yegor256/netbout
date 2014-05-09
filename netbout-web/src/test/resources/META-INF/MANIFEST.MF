@@ -1,0 +1,15 @@
+netbout-Version: 1.0-LOCAL
+netbout-Date: 2011-09-23
+netbout-Revision: 1234567
+netbout-FbId: 555
+netbout-FbSecret: secret
+netbout-GoogleId: 555
+netbout-GoogleSecret: secret
+netbout-GithubId: 555
+netbout-GithubSecret: secret
+netbout-SecurityKey: -test-security-key
+netbout-DynamoKey: AAAAABBBBBAAAAABBBBB
+netbout-DynamoSecret: ABCDABCDABCDABCDABCDABCDABCDABCDABCDABCD
+netbout-DynamoPrefix: nb-
+netbout-SttcUrn: urn:test:1
+netbout-SttcToken: test

@@ -1,11 +1,11 @@
 /**
- * Copyright (c) 2009-2014, Netbout.com
+ * Copyright (c) 2009-2014, netbout.com
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are PROHIBITED without prior written permission from
  * the author. This product may NOT be used anywhere and on any computer
- * except the server platform of netBout Inc. located at www.netbout.com.
+ * except the server platform of netbout Inc. located at www.netbout.com.
  * Federal copyright law prohibits unauthorized reproduction by any means
  * and imposes fines up to $25,000 for violation. If you received
  * this code accidentally and without intent to use it, please report this
@@ -60,10 +60,10 @@ public final class DyBase implements Base {
      * Public ctor.
      */
     public DyBase() {
-        final String key = Manifests.read("Netbout-DynamoKey");
+        final String key = Manifests.read("netbout-DynamoKey");
         Credentials creds = new Credentials.Simple(
             key,
-            Manifests.read("Netbout-DynamoSecret")
+            Manifests.read("netbout-DynamoSecret")
         );
         if ("AAAAABBBBBAAAAABBBBB".equals(key)) {
             creds = new Credentials.Direct(
@@ -72,7 +72,7 @@ public final class DyBase implements Base {
         }
         this.region = new Region.Prefixed(
             new Region.Simple(creds),
-            Manifests.read("Netbout-DynamoPrefix")
+            Manifests.read("netbout-DynamoPrefix")
         );
     }
 

@@ -1,12 +1,12 @@
 <?xml version="1.0"?>
 <!--
- * Copyright (c) 2009-2014, Netbout.com
+ * Copyright (c) 2009-2014, netbout.com
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are PROHIBITED without prior written permission from
  * the author. This product may NOT be used anywhere and on any computer
- * except the server platform of netBout Inc. located at www.netbout.com.
+ * except the server platform of netbout Inc. located at www.netbout.com.
  * Federal copyright law prohibits unauthorized reproduction by any means
  * and imposes fines up to $25,000 for violation. If you received
  * this code accidentally and without intent to use it, please report this
@@ -42,7 +42,7 @@
             </xsl:attribute>
             <xsl:text> </xsl:text> <!-- this is for W3C compliance -->
         </script>
-        <title>Netbout - private talks made easy</title>
+        <title>netbout - private talks made easy</title>
     </xsl:template>
     <xsl:template name="content">
         <p>
