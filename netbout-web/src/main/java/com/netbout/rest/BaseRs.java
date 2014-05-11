@@ -215,7 +215,8 @@ public class BaseRs extends BaseResource {
         if (!this.identified()) {
             throw FlashInset.forward(
                 this.uriInfo().getBaseUriBuilder().clone()
-                    .path(StartRs.class)
+                    .path(LoginRs.class)
+                    .path(LoginRs.class, "register")
                     .build(),
                 "please create a unique alias",
                 Level.SEVERE
@@ -234,7 +235,7 @@ public class BaseRs extends BaseResource {
      */
     protected final boolean identified() {
         return !this.auth().identity().equals(Identity.ANONYMOUS)
-            && Iterables.isEmpty(this.user().aliases());
+            && !Iterables.isEmpty(this.user().aliases());
     }
 
     /**

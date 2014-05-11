@@ -28,6 +28,9 @@ package com.netbout.spi;
 
 import com.jcabi.aspects.Immutable;
 import java.net.URI;
+import org.hamcrest.BaseMatcher;
+import org.hamcrest.Description;
+import org.hamcrest.Matcher;
 
 /**
  * Friend.
@@ -50,5 +53,63 @@ public interface Friend {
      * @return URI
      */
     URI photo();
+
+    /**
+     * Matcher of its alias.
+     */
+    final class HasAlias extends BaseMatcher<Friend> {
+        /**
+         * Matcher of the alias.
+         */
+        private final transient Matcher<String> matcher;
+        /**
+         * Ctor.
+         * @param mtchr Matcher of the alias
+         */
+        public HasAlias(final Matcher<String> mtchr) {
+            super();
+            this.matcher = mtchr;
+        }
+        @Override
+        public boolean matches(final Object obj) {
+            return this.matcher.matches(
+                Friend.class.cast(obj).alias()
+            );
+        }
+        @Override
+        public void describeTo(final Description description) {
+            description.appendText("friend with alias ");
+            this.matcher.describeTo(description);
+        }
+    }
+
+    /**
+     * Matcher of its photo.
+     */
+    final class HasPhoto extends BaseMatcher<Friend> {
+        /**
+         * Matcher of the alias.
+         */
+        private final transient Matcher<URI> matcher;
+        /**
+         * Ctor.
+         * @param mtchr Matcher of the alias
+         */
+        public HasPhoto(final Matcher<URI> mtchr) {
+            super();
+            this.matcher = mtchr;
+        }
+        @Override
+        public boolean matches(final Object obj) {
+            return this.matcher.matches(
+                Friend.class.cast(obj).photo()
+            );
+        }
+        @Override
+        public void describeTo(final Description description) {
+            description.appendText("friend with photo ");
+            this.matcher.describeTo(description);
+        }
+    }
 
 }

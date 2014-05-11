@@ -49,7 +49,7 @@ public final class DyBoutITCase {
     public void renamesBout() throws Exception {
         final String alias = "jeffrey";
         final Aliases aliases =
-            new DyBase().user(new URN("urn:test:88")).aliases();
+            new DyBase().user(new URN("urn:test:890")).aliases();
         aliases.add(alias);
         final Inbox inbox = aliases.iterator().next().inbox();
         final Bout bout = inbox.bout(inbox.start());

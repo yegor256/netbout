@@ -33,16 +33,16 @@
     xmlns="http://www.w3.org/1999/xhtml"
     version="2.0" exclude-result-prefixes="xs">
     <xsl:output method="xml" omit-xml-declaration="yes"/>
-    <xsl:include href="/xsl/front-layout.xsl" />
+    <xsl:include href="/xsl/login-layout.xsl" />
     <xsl:template name="head">
         <script>
             <xsl:attribute name="src">
-                <xsl:text>/js/start.js?</xsl:text>
+                <xsl:text>/js/register.js?</xsl:text>
                 <xsl:value-of select="/page/version/revision"/>
             </xsl:attribute>
             <xsl:text> </xsl:text> <!-- this is for W3C compliance -->
         </script>
-        <title>netbout - private talks made easy</title>
+        <title>register</title>
     </xsl:template>
     <xsl:template name="content">
         <p>

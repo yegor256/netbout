@@ -47,7 +47,7 @@ public final class DyBaseITCase {
     @Test
     public void makesUserObject() throws Exception {
         final Base base = new DyBase();
-        final User user = base.user(new URN("urn:test:654321"));
+        final User user = base.user(new URN("urn:test:6521"));
         MatcherAssert.assertThat(
             user.aliases(),
             Matchers.emptyIterable()

@@ -26,12 +26,17 @@
  */
 package com.netbout.rest;
 
+import com.rexsl.page.Link;
 import com.rexsl.page.PageBuilder;
 import com.rexsl.page.auth.Identity;
 import com.rexsl.page.inset.FlashInset;
+import java.io.IOException;
 import java.util.logging.Level;
+import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
 
 /**
@@ -48,6 +53,7 @@ public final class LoginRs extends BaseRs {
      * @return The JAX-RS response
      */
     @GET
+    @Path("/")
     public Response login() {
         if (!this.auth().identity().equals(Identity.ANONYMOUS)) {
             throw FlashInset.forward(
@@ -62,6 +68,52 @@ public final class LoginRs extends BaseRs {
             .init(this)
             .render()
             .build();
+    }
+
+    /**
+     * Register page.
+     * @return The JAX-RS response
+     */
+    @GET
+    @Path("/r")
+    public Response start() {
+        this.user();
+        return new PageBuilder()
+            .stylesheet("/xsl/register.xsl")
+            .build(NbPage.class)
+            .init(this)
+            .link(new Link("register", "."))
+            .link(new Link("check", "./check"))
+            .render()
+            .build();
+    }
+
+    /**
+     * Register and continue.
+     * @param alias Alias to try
+     */
+    @POST
+    @Path("/r")
+    public void register(@FormParam("alias") final String alias) {
+        this.user().aliases().add(alias);
+        throw FlashInset.forward(
+            this.uriInfo().getBaseUri(),
+            "your alias was registered",
+            Level.INFO
+        );
+    }
+
+    /**
+     * Check availability.
+     * @param alias Alias to check
+     * @return Text "available" if this alias is available
+     * @throws IOException If fails
+     */
+    @GET
+    @Path("/r/check")
+    public String check(@QueryParam("alias") final String alias)
+        throws IOException {
+        return this.user().aliases().check(alias);
     }
 
 }

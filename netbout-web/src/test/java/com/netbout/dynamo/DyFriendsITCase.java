@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2009-2011, netbout.com
+ * Copyright (c) 2009-2014, netbout.com
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -24,38 +24,45 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
+package com.netbout.dynamo;
 
-@import 'fonts';
-@import 'colors';
+import com.jcabi.urn.URN;
+import com.netbout.spi.Aliases;
+import com.netbout.spi.Bout;
+import com.netbout.spi.Friend;
+import com.netbout.spi.Friends;
+import com.netbout.spi.Inbox;
+import org.hamcrest.MatcherAssert;
+import org.hamcrest.Matchers;
+import org.junit.Test;
 
-.wrapper {
-    background-color: $color-gray-light;
-    width: 100%;
-    height: 100%;
-    display: table;
-    .login-main {
-        text-align: center;
-        vertical-align: middle;
-        display: table-cell;
-        p {
-            position: relative;
-        }
+/**
+ * Integration case for {@link DyFriends}.
+ * @author Yegor Bugayenko (yegor@tpc2.com)
+ * @version $Id$
+ */
+public final class DyFriendsITCase {
+
+    /**
+     * DyFriends can manage friends.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void managesFriends() throws Exception {
+        final Aliases aliases =
+            new DyBase().user(new URN("urn:test:8530")).aliases();
+        aliases.add("bobby");
+        final Inbox inbox = aliases.iterator().next().inbox();
+        final Bout bout = inbox.bout(inbox.start());
+        final Friends friends = bout.friends();
+        final String alias = "jeffrey";
+        friends.invite(alias);
+        MatcherAssert.assertThat(
+            friends,
+            Matchers.hasItem(
+                new Friend.HasAlias(Matchers.equalTo(alias))
+            )
+        );
     }
-    .login-logo {
-        width: 150px;
-        margin-bottom: 15px;
-    }
-    .buttons {
-        margin-top: 30px;
-        .buttons a {
-            text-decoration: none;
-            margin-left: 2px;
-            margin-right: 2px;
-            color: gray;
-            font-size: 40px;
-            &:hover {
-                color: $color-text;
-            }
-        }
-    }
+
 }

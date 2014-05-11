@@ -107,11 +107,11 @@ final class DyInbox implements Inbox {
         }
         this.table.put(
             new Attributes()
-                .with(DyFriends.RANGE, this.self)
                 .with(
                     DyFriends.HASH,
                     new AttributeValue().withN(Long.toString(number))
                 )
+                .with(DyFriends.RANGE, this.self)
                 .with(DyFriends.ATTR_UPDATED, System.currentTimeMillis())
                 .with(DyFriends.ATTR_TITLE, "untitled")
         );

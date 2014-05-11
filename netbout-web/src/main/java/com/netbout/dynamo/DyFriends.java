@@ -26,6 +26,7 @@
  */
 package com.netbout.dynamo;
 
+import com.amazonaws.services.dynamodbv2.model.AttributeValue;
 import com.google.common.base.Function;
 import com.google.common.base.Predicates;
 import com.google.common.collect.Iterators;
@@ -110,8 +111,8 @@ final class DyFriends implements Friends {
         this.table.put(
             new Attributes()
                 .with(DyFriends.HASH, this.bout())
-                .with(DyFriends.RANGE, this.self())
-                .with(DyFriends.ATTR_TITLE, this.title())
+                .with(DyFriends.RANGE, friend)
+                .with(DyFriends.ATTR_TITLE, this.item.get(DyFriends.ATTR_TITLE))
                 .with(DyFriends.ATTR_UPDATED, System.currentTimeMillis())
         );
     }
@@ -149,24 +150,8 @@ final class DyFriends implements Friends {
      * The bout we're in.
      * @return Bout number
      */
-    private long bout() {
-        return Long.parseLong(this.item.get(DyFriends.HASH).getN());
-    }
-
-    /**
-     * My alias.
-     * @return Alias
-     */
-    private String self() {
-        return this.item.get(DyFriends.RANGE).getS();
-    }
-
-    /**
-     * My title.
-     * @return Title
-     */
-    private String title() {
-        return this.item.get(DyFriends.ATTR_TITLE).getS();
+    private AttributeValue bout() {
+        return this.item.get(DyFriends.HASH);
     }
 
 }

@@ -69,7 +69,7 @@
             <body>
                 <xsl:apply-templates select="version" />
                 <div class="wrapper">
-                    <div class="content">
+                    <div class="login-main">
                         <div>
                             <a>
                                 <xsl:attribute name="href">
@@ -78,7 +78,7 @@
                                 <xsl:attribute name="title">
                                     <xsl:text>back home</xsl:text>
                                 </xsl:attribute>
-                                <img class="logo" alt="back home">
+                                <img class="login-logo" alt="back home">
                                     <xsl:attribute name="src">
                                         <xsl:text>http://img.netbout.com/logo/logo-en.png?</xsl:text>
                                         <xsl:value-of select="/page/version/revision"/>

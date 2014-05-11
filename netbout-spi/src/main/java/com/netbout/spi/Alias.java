@@ -30,6 +30,9 @@ import com.jcabi.aspects.Immutable;
 import java.io.IOException;
 import java.net.URI;
 import java.util.Locale;
+import org.hamcrest.BaseMatcher;
+import org.hamcrest.Description;
+import org.hamcrest.Matcher;
 
 /**
  * Alias.
@@ -78,5 +81,38 @@ public interface Alias {
      * @return Inbox
      */
     Inbox inbox();
+
+    /**
+     * Matcher of its photo.
+     */
+    final class HasPhoto extends BaseMatcher<Alias> {
+        /**
+         * Matcher of the alias.
+         */
+        private final transient Matcher<URI> matcher;
+        /**
+         * Ctor.
+         * @param mtchr Matcher of the alias
+         */
+        public HasPhoto(final Matcher<URI> mtchr) {
+            super();
+            this.matcher = mtchr;
+        }
+        @Override
+        public boolean matches(final Object obj) {
+            try {
+                return this.matcher.matches(
+                    Alias.class.cast(obj).photo()
+                );
+            } catch (final IOException ex) {
+                throw new IllegalStateException(ex);
+            }
+        }
+        @Override
+        public void describeTo(final Description description) {
+            description.appendText("alias with photo ");
+            this.matcher.describeTo(description);
+        }
+    }
 
 }

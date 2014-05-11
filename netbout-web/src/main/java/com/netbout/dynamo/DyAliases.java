@@ -129,6 +129,11 @@ final class DyAliases implements Aliases {
 
     @Override
     public void add(final String name) {
+        if (this.occupied(name)) {
+            throw new IllegalArgumentException(
+                String.format("alias '%s' is occupied", name)
+            );
+        }
         this.table.put(
             new Attributes()
                 .with(DyAliases.ATTR_URN, this.urn.toString())
