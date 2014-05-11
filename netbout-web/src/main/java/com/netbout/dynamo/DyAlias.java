@@ -26,7 +26,6 @@
  */
 package com.netbout.dynamo;
 
-import co.stateful.Sttc;
 import com.amazonaws.services.dynamodbv2.model.AttributeAction;
 import com.amazonaws.services.dynamodbv2.model.AttributeValue;
 import com.amazonaws.services.dynamodbv2.model.AttributeValueUpdate;
@@ -34,6 +33,7 @@ import com.jcabi.aspects.Immutable;
 import com.jcabi.aspects.Loggable;
 import com.jcabi.dynamo.AttributeUpdates;
 import com.jcabi.dynamo.Item;
+import com.jcabi.dynamo.Region;
 import com.netbout.spi.Alias;
 import com.netbout.spi.Inbox;
 import java.net.URI;
@@ -55,15 +55,22 @@ import lombok.ToString;
 final class DyAlias implements Alias {
 
     /**
+     * Region we're in.
+     */
+    private final transient Region region;
+
+    /**
      * Item we're working with.
      */
     private final transient Item item;
 
     /**
      * Ctor.
+     * @param reg Region
      * @param itm Item
      */
-    DyAlias(final Item itm) {
+    DyAlias(final Region reg, final Item itm) {
+        this.region = reg;
         this.item = itm;
     }
 
@@ -101,9 +108,6 @@ final class DyAlias implements Alias {
 
     @Override
     public Inbox inbox() {
-        return new DyInbox(
-            this.item.frame().table().region(),
-            this.name()
-        );
+        return new DyInbox(this.region, this.name());
     }
 }

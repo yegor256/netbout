@@ -72,9 +72,9 @@ public class BaseRs extends BaseResource {
     private static final String VERSION_LABEL = String.format(
         "%s/%s built on %s",
         // @checkstyle MultipleStringLiterals (3 lines)
-        Manifests.read("netbout-Version"),
-        Manifests.read("netbout-Revision"),
-        Manifests.read("netbout-Date")
+        Manifests.read("Netbout-Version"),
+        Manifests.read("Netbout-Revision"),
+        Manifests.read("Netbout-Date")
     );
 
     /**
@@ -84,10 +84,10 @@ public class BaseRs extends BaseResource {
         @Override
         public Identity identity() {
             final Identity identity;
-            if ("1234567".equals(Manifests.read("netbout-Revision"))) {
+            if ("1234567".equals(Manifests.read("Netbout-Revision"))) {
                 identity = new Identity.Simple(
                     URN.create("urn:test:123456"),
-                    "Locallost",
+                    "localhost",
                     URI.create("http://img.netbout.com/unknown.png")
                 );
             } else {
@@ -107,7 +107,7 @@ public class BaseRs extends BaseResource {
             @Override
             public void render(final BasePage<?, ?> page,
                 final Response.ResponseBuilder builder) {
-                builder.header("X-netbout-Version", BaseRs.VERSION_LABEL);
+                builder.header("X-Netbout-Version", BaseRs.VERSION_LABEL);
                 builder.type(MediaType.TEXT_XML);
                 builder.header(HttpHeaders.VARY, "Cookie");
             }
@@ -121,9 +121,9 @@ public class BaseRs extends BaseResource {
     @Inset.Runtime
     public final Inset version() {
         return new VersionInset(
-            Manifests.read("netbout-Version"),
-            Manifests.read("netbout-Revision"),
-            Manifests.read("netbout-Date")
+            Manifests.read("Netbout-Version"),
+            Manifests.read("Netbout-Revision"),
+            Manifests.read("Netbout-Date")
         );
     }
 
@@ -133,6 +133,7 @@ public class BaseRs extends BaseResource {
      */
     @Inset.Runtime
     public final Inset aliasInset() {
+        // @checkstyle AnonInnerLengthCheck (50 lines)
         return new Inset() {
             @Override
             public void render(final BasePage<?, ?> page,
@@ -181,10 +182,10 @@ public class BaseRs extends BaseResource {
     @Inset.Runtime
     public final AuthInset auth() {
         // @checkstyle LineLength (4 lines)
-        return new AuthInset(this, Manifests.read("netbout-SecurityKey"))
-            .with(new Facebook(this, Manifests.read("netbout-FbId"), Manifests.read("netbout-FbSecret")))
-            .with(new Google(this, Manifests.read("netbout-GoogleId"), Manifests.read("netbout-GoogleSecret")))
-            .with(new Github(this, Manifests.read("netbout-GithubId"), Manifests.read("netbout-GithubSecret")))
+        return new AuthInset(this, Manifests.read("Netbout-SecurityKey"))
+            .with(new Facebook(this, Manifests.read("Netbout-FbId"), Manifests.read("Netbout-FbSecret")))
+            .with(new Google(this, Manifests.read("Netbout-GoogleId"), Manifests.read("Netbout-GoogleSecret")))
+            .with(new Github(this, Manifests.read("Netbout-GithubId"), Manifests.read("Netbout-GithubSecret")))
             .with(BaseRs.TESTER);
     }
 

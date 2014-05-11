@@ -47,7 +47,7 @@ public final class DyBoutITCase {
      */
     @Test
     public void renamesBout() throws Exception {
-        final String alias = "jeffrey";
+        final String alias = "sarah";
         final Aliases aliases =
             new DyBase().user(new URN("urn:test:890")).aliases();
         aliases.add(alias);
@@ -58,10 +58,6 @@ public final class DyBoutITCase {
         MatcherAssert.assertThat(
             bout.title(),
             Matchers.equalTo(title)
-        );
-        MatcherAssert.assertThat(
-            bout.number(),
-            Matchers.equalTo(2L)
         );
     }
 

@@ -52,8 +52,13 @@ import lombok.ToString;
 @Immutable
 @Loggable(Loggable.DEBUG)
 @ToString(of = "self")
-@EqualsAndHashCode(of = { "item", "self" })
+@EqualsAndHashCode(of = { "region", "item", "self" })
 final class DyBout implements Bout {
+
+    /**
+     * Region we're in.
+     */
+    private final transient Region region;
 
     /**
      * Item with bout.
@@ -67,10 +72,12 @@ final class DyBout implements Bout {
 
     /**
      * Ctor.
-     * @param region Region we're in
+     * @param reg Region we're in
      * @param itm Item in "friends" table
+     * @param slf Self alias
      */
-    DyBout(final Region region, final Item itm, final String slf) {
+    DyBout(final Region reg, final Item itm, final String slf) {
+        this.region = reg;
         this.item = itm;
         this.self = slf;
     }
@@ -114,10 +121,7 @@ final class DyBout implements Bout {
 
     @Override
     public Friends friends() {
-        return new DyFriends(
-            this.item.frame().table().region(),
-            this.item
-        );
+        return new DyFriends(this.region, this.item);
     }
 
     @Override

@@ -26,6 +26,10 @@
  */
 package com.netbout.rest;
 
+import com.netbout.spi.Bout;
+import com.netbout.spi.Friend;
+import com.rexsl.page.JaxbBundle;
+import com.rexsl.page.Link;
 import com.rexsl.page.PageBuilder;
 import com.rexsl.page.inset.FlashInset;
 import java.io.IOException;
@@ -52,11 +56,11 @@ public final class InboxRs extends BaseRs {
     @GET
     @Path("/")
     public Response inbox() throws IOException {
-        this.alias();
         return new PageBuilder()
             .stylesheet("/xsl/inbox.xsl")
             .build(NbPage.class)
             .init(this)
+            .append(this.bouts())
             .render()
             .build();
     }
@@ -77,6 +81,79 @@ public final class InboxRs extends BaseRs {
             "new bout started",
             Level.INFO
         );
+    }
+
+    /**
+     * All bouts in the inbox.
+     * @return Bouts
+     */
+    private JaxbBundle bouts() throws IOException {
+        return new JaxbBundle("bouts").add(
+            new JaxbBundle.Group<Bout>(this.alias().inbox()) {
+                @Override
+                public JaxbBundle bundle(final Bout bout) {
+                    try {
+                        return InboxRs.this.bundle(bout);
+                    } catch (final IOException ex) {
+                        throw new IllegalStateException(ex);
+                    }
+                }
+            }
+        );
+    }
+
+    /**
+     * Convert bout to bundle.
+     * @param bout Bout to convert
+     * @return Bundle
+     */
+    private JaxbBundle bundle(final Bout bout) throws IOException {
+        return new JaxbBundle("bout")
+            .add("number", Long.toString(bout.number())).up()
+            .add("title", bout.title()).up()
+            .add(
+                new JaxbBundle.Group<Friend>(bout.friends()) {
+                    @Override
+                    public JaxbBundle bundle(final Friend friend) {
+                        try {
+                            return InboxRs.this.bundle(bout, friend);
+                        } catch (final IOException ex) {
+                            throw new IllegalStateException(ex);
+                        }
+                    }
+                }
+            )
+            .link(
+                new Link(
+                    "open",
+                    this.uriInfo().getBaseUriBuilder().clone()
+                        .path(BoutRs.class)
+                        .build(bout.number())
+                )
+            );
+    }
+
+    /**
+     * Convert friend to bundle.
+     * @param bout Bout we're in
+     * @param friend Friend to convert
+     * @return Bundle
+     */
+    private JaxbBundle bundle(final Bout bout,
+        final Friend friend) throws IOException {
+        return new JaxbBundle("friend")
+            .add("alias", friend.alias()).up()
+            .add("photo", friend.photo().toString()).up()
+            .link(
+                new Link(
+                    "kick",
+                    this.uriInfo().getBaseUriBuilder().clone()
+                        .path(BoutRs.class)
+                        .path(BoutRs.class, "kick")
+                        .queryParam("name", "{x}")
+                        .build(bout.number(), friend.alias())
+                )
+            );
     }
 
 }

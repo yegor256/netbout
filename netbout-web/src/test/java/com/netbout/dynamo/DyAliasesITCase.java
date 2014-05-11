@@ -47,7 +47,7 @@ public final class DyAliasesITCase {
     public void makesAlias() throws Exception {
         final Aliases aliases =
             new DyBase().user(new URN("urn:test:1")).aliases();
-        final String name = "jeffrey";
+        final String name = "johnny";
         aliases.add(name);
         MatcherAssert.assertThat(
             aliases.check(name),

@@ -36,7 +36,6 @@ import com.jcabi.dynamo.Attributes;
 import com.jcabi.dynamo.Conditions;
 import com.jcabi.dynamo.Item;
 import com.jcabi.dynamo.Region;
-import com.jcabi.dynamo.Table;
 import com.netbout.spi.Friend;
 import com.netbout.spi.Friends;
 import java.util.Iterator;
@@ -53,7 +52,7 @@ import lombok.ToString;
 @Immutable
 @Loggable(Loggable.DEBUG)
 @ToString(of = "item")
-@EqualsAndHashCode(of = { "table", "item" })
+@EqualsAndHashCode(of = { "region", "item" })
 final class DyFriends implements Friends {
 
     /**
@@ -87,9 +86,9 @@ final class DyFriends implements Friends {
     public static final String ATTR_UPDATED = "updated";
 
     /**
-     * Table to work with.
+     * Region to work with.
      */
-    private final transient Table table;
+    private final transient Region region;
 
     /**
      * Item in "friends" table.
@@ -98,17 +97,17 @@ final class DyFriends implements Friends {
 
     /**
      * Ctor.
-     * @param region Region
+     * @param reg Region
      * @param itm Item in "friends" table
      */
-    DyFriends(final Region region, final Item itm) {
-        this.table = region.table(DyFriends.TBL);
+    DyFriends(final Region reg, final Item itm) {
+        this.region = reg;
         this.item = itm;
     }
 
     @Override
     public void invite(final String friend) {
-        this.table.put(
+        this.region.table(DyFriends.TBL).put(
             new Attributes()
                 .with(DyFriends.HASH, this.bout())
                 .with(DyFriends.RANGE, friend)
@@ -120,7 +119,7 @@ final class DyFriends implements Friends {
     @Override
     public void kick(final String friend) {
         Iterators.removeIf(
-            this.table.frame()
+            this.region.table(DyFriends.TBL).frame()
                 .where(DyFriends.HASH, Conditions.equalTo(this.bout()))
                 .where(DyFriends.RANGE, friend)
                 .iterator(),
@@ -131,14 +130,14 @@ final class DyFriends implements Friends {
     @Override
     public Iterator<Friend> iterator() {
         return Iterators.transform(
-            this.table.frame()
+            this.region.table(DyFriends.TBL).frame()
                 .where(DyFriends.HASH, Conditions.equalTo(this.bout()))
                 .iterator(),
             new Function<Item, Friend>() {
                 @Override
                 public Friend apply(final Item input) {
                     return new DyFriend(
-                        DyFriends.this.table.region(),
+                        DyFriends.this.region,
                         input.get(DyFriends.RANGE).getS()
                     );
                 }

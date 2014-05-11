@@ -48,7 +48,7 @@ public final class DyInboxITCase {
      */
     @Test
     public void makesAndListsBouts() throws Exception {
-        final String alias = "jeffrey";
+        final String alias = "antony";
         final Aliases aliases =
             new DyBase().user(new URN("urn:test:88")).aliases();
         aliases.add(alias);

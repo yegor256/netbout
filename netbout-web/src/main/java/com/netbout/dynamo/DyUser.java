@@ -28,7 +28,7 @@ package com.netbout.dynamo;
 
 import com.jcabi.aspects.Immutable;
 import com.jcabi.aspects.Loggable;
-import com.jcabi.dynamo.Table;
+import com.jcabi.dynamo.Region;
 import com.jcabi.urn.URN;
 import com.netbout.spi.Aliases;
 import com.netbout.spi.User;
@@ -45,13 +45,13 @@ import lombok.ToString;
 @Immutable
 @Loggable(Loggable.DEBUG)
 @ToString(of = "urn")
-@EqualsAndHashCode(of = { "table", "urn" })
+@EqualsAndHashCode(of = { "region", "urn" })
 final class DyUser implements User {
 
     /**
-     * Table with aliases.
+     * Region to work with.
      */
-    private final transient Table table;
+    private final transient Region region;
 
     /**
      * URN of the user.
@@ -60,20 +60,17 @@ final class DyUser implements User {
 
     /**
      * Ctor.
-     * @param tbl Table
+     * @param reg Region
      * @param name Name of the user (URN)
      */
-    DyUser(final Table tbl, final URN name) {
-        this.table = tbl;
+    DyUser(final Region reg, final URN name) {
+        this.region = reg;
         this.urn = name;
     }
 
     @Override
     public Aliases aliases() {
-        return new DyAliases(
-            this.table.region(),
-            this.urn
-        );
+        return new DyAliases(this.region, this.urn);
     }
 
 }

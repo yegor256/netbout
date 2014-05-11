@@ -36,7 +36,6 @@ import com.jcabi.dynamo.Conditions;
 import com.jcabi.dynamo.Item;
 import com.jcabi.dynamo.QueryValve;
 import com.jcabi.dynamo.Region;
-import com.jcabi.dynamo.Table;
 import com.jcabi.urn.URN;
 import com.netbout.spi.Alias;
 import com.netbout.spi.Aliases;
@@ -55,18 +54,13 @@ import lombok.ToString;
 @Immutable
 @Loggable(Loggable.DEBUG)
 @ToString(of = "urn")
-@EqualsAndHashCode(of = { "table", "urn" })
+@EqualsAndHashCode(of = { "region", "urn" })
 final class DyAliases implements Aliases {
 
     /**
      * Table name.
      */
     public static final String TBL = "aliases";
-
-    /**
-     * Index name.
-     */
-    private static final String INDEX = "users";
 
     /**
      * HASH attribute.
@@ -89,9 +83,14 @@ final class DyAliases implements Aliases {
     public static final String ATTR_PHOTO = "photo";
 
     /**
-     * Table to work with.
+     * Index name.
      */
-    private final transient Table table;
+    private static final String INDEX = "users";
+
+    /**
+     * Region to work with.
+     */
+    private final transient Region region;
 
     /**
      * URN of the user.
@@ -100,11 +99,11 @@ final class DyAliases implements Aliases {
 
     /**
      * Ctor.
-     * @param region Region we're in
+     * @param reg Region we're in
      * @param user URN of the user
      */
-    DyAliases(final Region region, final URN user) {
-        this.table = region.table(DyAliases.TBL);
+    DyAliases(final Region reg, final URN user) {
+        this.region = reg;
         this.urn = user;
     }
 
@@ -134,7 +133,7 @@ final class DyAliases implements Aliases {
                 String.format("alias '%s' is occupied", name)
             );
         }
-        this.table.put(
+        this.region.table(DyAliases.TBL).put(
             new Attributes()
                 .with(DyAliases.ATTR_URN, this.urn.toString())
                 .with(DyAliases.HASH, name)
@@ -146,7 +145,9 @@ final class DyAliases implements Aliases {
     @Override
     public Iterator<Alias> iterator() {
         return Iterators.transform(
-            this.table.frame()
+            this.region
+                .table(DyAliases.TBL)
+                .frame()
                 .where(DyAliases.ATTR_URN, Conditions.equalTo(this.urn))
                 .through(
                     new QueryValve()
@@ -157,7 +158,7 @@ final class DyAliases implements Aliases {
             new Function<Item, Alias>() {
                 @Override
                 public Alias apply(final Item item) {
-                    return new DyAlias(item);
+                    return new DyAlias(DyAliases.this.region, item);
                 }
             }
         );
@@ -169,7 +170,7 @@ final class DyAliases implements Aliases {
      * @return TRUE if occupied
      */
     private boolean occupied(final String name) {
-        return this.table.frame()
+        return this.region.table(DyAliases.TBL).frame()
             .through(new QueryValve().withLimit(1))
             .where(DyAliases.HASH, Conditions.equalTo(name))
             .iterator()

@@ -60,10 +60,10 @@ public final class DyBase implements Base {
      * Public ctor.
      */
     public DyBase() {
-        final String key = Manifests.read("netbout-DynamoKey");
+        final String key = Manifests.read("Netbout-DynamoKey");
         Credentials creds = new Credentials.Simple(
             key,
-            Manifests.read("netbout-DynamoSecret")
+            Manifests.read("Netbout-DynamoSecret")
         );
         if ("AAAAABBBBBAAAAABBBBB".equals(key)) {
             creds = new Credentials.Direct(
@@ -72,13 +72,13 @@ public final class DyBase implements Base {
         }
         this.region = new Region.Prefixed(
             new Region.Simple(creds),
-            Manifests.read("netbout-DynamoPrefix")
+            Manifests.read("Netbout-DynamoPrefix")
         );
     }
 
     @Override
     public User user(final URN urn) {
-        return new DyUser(this.region.table("aliases"), urn);
+        return new DyUser(this.region, urn);
     }
 
     @Override

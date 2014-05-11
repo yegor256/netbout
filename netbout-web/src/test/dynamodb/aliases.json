@@ -19,7 +19,7 @@
         "ReadCapacityUnits": "1",
         "WriteCapacityUnits": "1"
     },
-    "TableName": "aliases",
+    "TableName": "nb-aliases",
     "GlobalSecondaryIndexes": [
         {
             "IndexName": "users",

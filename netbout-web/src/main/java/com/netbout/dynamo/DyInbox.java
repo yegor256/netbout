@@ -39,7 +39,6 @@ import com.jcabi.dynamo.Conditions;
 import com.jcabi.dynamo.Item;
 import com.jcabi.dynamo.QueryValve;
 import com.jcabi.dynamo.Region;
-import com.jcabi.dynamo.Table;
 import com.jcabi.manifests.Manifests;
 import com.jcabi.urn.URN;
 import com.netbout.spi.Bout;
@@ -61,7 +60,7 @@ import lombok.ToString;
 @Immutable
 @Loggable(Loggable.DEBUG)
 @ToString(of = "self")
-@EqualsAndHashCode(of = { "counter", "table", "self" })
+@EqualsAndHashCode(of = { "counter", "region", "self" })
 final class DyInbox implements Inbox {
 
     /**
@@ -70,9 +69,9 @@ final class DyInbox implements Inbox {
     private final transient Counter counter;
 
     /**
-     * Table we're in.
+     * Region we're in.
      */
-    private final transient Table table;
+    private final transient Region region;
 
     /**
      * Alias of myself.
@@ -87,13 +86,13 @@ final class DyInbox implements Inbox {
     DyInbox(final Region reg, final String slf) {
         try {
             this.counter = RtSttc.make(
-                URN.create(Manifests.read("netbout-SttcUrn")),
-                Manifests.read("netbout-SttcToken")
+                URN.create(Manifests.read("Netbout-SttcUrn")),
+                Manifests.read("Netbout-SttcToken")
             ).counters().get("nb-bout");
         } catch (final IOException ex) {
             throw new IllegalStateException(ex);
         }
-        this.table = reg.table(DyFriends.TBL);
+        this.region = reg;
         this.self = slf;
     }
 
@@ -105,13 +104,13 @@ final class DyInbox implements Inbox {
         } catch (final IOException ex) {
             throw new IllegalStateException(ex);
         }
-        this.table.put(
+        this.region.table(DyFriends.TBL).put(
             new Attributes()
+                .with(DyFriends.RANGE, this.self)
                 .with(
                     DyFriends.HASH,
                     new AttributeValue().withN(Long.toString(number))
                 )
-                .with(DyFriends.RANGE, this.self)
                 .with(DyFriends.ATTR_UPDATED, System.currentTimeMillis())
                 .with(DyFriends.ATTR_TITLE, "untitled")
         );
@@ -122,8 +121,8 @@ final class DyInbox implements Inbox {
     public Bout bout(final long number) throws Inbox.BoutNotFoundException {
         try {
             return new DyBout(
-                this.table.region(),
-                this.table.frame()
+                this.region,
+                this.region.table(DyFriends.TBL).frame()
                     .through(new QueryValve().withLimit(1))
                     .where(
                         DyFriends.HASH,
@@ -148,7 +147,7 @@ final class DyInbox implements Inbox {
     @Override
     public Iterator<Bout> iterator() {
         return Iterators.transform(
-            this.table.frame()
+            this.region.table(DyFriends.TBL).frame()
                 .where(DyFriends.RANGE, this.self)
                 .through(
                     new QueryValve()
@@ -162,7 +161,7 @@ final class DyInbox implements Inbox {
                 @Override
                 public Bout apply(final Item item) {
                     return new DyBout(
-                        DyInbox.this.table.region(),
+                        DyInbox.this.region,
                         item, DyInbox.this.self
                     );
                 }

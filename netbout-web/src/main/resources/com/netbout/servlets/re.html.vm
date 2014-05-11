@@ -8,7 +8,7 @@
     <body style="padding: 1em;">
         <p>
             <a href="http://www.netbout.com/">
-                <img src="http://img.netbout.com/logo/logo-en.png?${buildNumber}"
+                <img src="http://img.netbout.com/logo/logo-en.svg?${buildNumber}"
                     style="width:113px;height:37px;"/>
             </a>
         </p>

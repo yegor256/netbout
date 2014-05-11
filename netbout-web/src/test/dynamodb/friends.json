@@ -23,7 +23,7 @@
         "ReadCapacityUnits": "1",
         "WriteCapacityUnits": "1"
     },
-    "TableName": "friends",
+    "TableName": "nb-friends",
     "GlobalSecondaryIndexes": [
         {
             "IndexName": "inbox",

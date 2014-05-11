@@ -116,7 +116,7 @@
                                             <xsl:text>en</xsl:text>
                                         </xsl:otherwise>
                                     </xsl:choose>
-                                    <xsl:text>.png</xsl:text>
+                                    <xsl:text>.svg</xsl:text>
                                 </xsl:with-param>
                             </xsl:call-template>
                         </xsl:attribute>

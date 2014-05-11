@@ -23,5 +23,5 @@
         "ReadCapacityUnits": "1",
         "WriteCapacityUnits": "1"
     },
-    "TableName": "attachments"
+    "TableName": "nb-attachments"
 }
