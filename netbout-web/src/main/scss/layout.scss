@@ -28,6 +28,8 @@
 @import 'fonts';
 @import 'colors';
 
+$width: 750px;
+
 .cap {
     width: 100%;
     position: relative;
@@ -121,7 +123,7 @@
 .content {
     position: relative;
     width: $width;
-    color: $color-background;
+    color: $color-text;
     margin-right: auto;
     margin-left: auto;
     clear: both;
