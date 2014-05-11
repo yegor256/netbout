@@ -53,7 +53,7 @@
         </dependency>
         <dependency>
             <groupId>com.netbout</groupId>
-            <artifactId>Netbout-spi</artifactId>
+            <artifactId>netbout-spi</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
