@@ -112,16 +112,18 @@ public final class InboxRs extends BaseRs {
             .add("number", Long.toString(bout.number())).up()
             .add("title", bout.title()).up()
             .add(
-                new JaxbBundle.Group<Friend>(bout.friends()) {
-                    @Override
-                    public JaxbBundle bundle(final Friend friend) {
-                        try {
-                            return InboxRs.this.bundle(bout, friend);
-                        } catch (final IOException ex) {
-                            throw new IllegalStateException(ex);
+                new JaxbBundle("friends").add(
+                    new JaxbBundle.Group<Friend>(bout.friends()) {
+                        @Override
+                        public JaxbBundle bundle(final Friend friend) {
+                            try {
+                                return InboxRs.this.bundle(bout, friend);
+                            } catch (final IOException ex) {
+                                throw new IllegalStateException(ex);
+                            }
                         }
                     }
-                }
+                )
             )
             .link(
                 new Link(

@@ -126,29 +126,6 @@
     margin-left: auto;
     clear: both;
     padding-bottom: 20px;
-    h1 {
-        position: relative;
-        padding-top: 50px;
-        margin-bottom: 7px;
-        font-size: 27px;
-        font-weight: 500;
-        width: 700px;
-        .bout .num {
-            font-size: 16px;
-            margin-right: 3px;
-            font-weight: normal;
-        }
-        .bout .title {
-            font-size: 27px;
-            line-height: 27px;
-        }
-        .bout .new {
-            font-size: 17px;
-            font-weight: normal;
-            color: $color-red;
-            margin-left: 3px;
-        }
-    }
     h2 {
         position: relative;
         padding-top: 20px;
