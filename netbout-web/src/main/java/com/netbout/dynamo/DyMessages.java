@@ -28,7 +28,6 @@ package com.netbout.dynamo;
 
 import co.stateful.Counter;
 import co.stateful.RtSttc;
-import com.amazonaws.services.dynamodbv2.model.Select;
 import com.google.common.base.Function;
 import com.google.common.collect.Iterators;
 import com.jcabi.aspects.Immutable;
@@ -40,17 +39,16 @@ import com.jcabi.dynamo.QueryValve;
 import com.jcabi.dynamo.Region;
 import com.jcabi.manifests.Manifests;
 import com.jcabi.urn.URN;
-import com.netbout.spi.Bout;
-import com.netbout.spi.Inbox;
+import com.netbout.spi.Message;
+import com.netbout.spi.Messages;
 import com.netbout.spi.Pageable;
 import java.io.IOException;
 import java.util.Iterator;
-import java.util.NoSuchElementException;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
 /**
- * Dynamo inbox.
+ * Dynamo messages.
  *
  * @author Yegor Bugayenko (yegor@tpc2.com)
  * @version $Id$
@@ -58,100 +56,110 @@ import lombok.ToString;
  */
 @Immutable
 @Loggable(Loggable.DEBUG)
-@ToString(of = "self")
-@EqualsAndHashCode(of = { "counter", "region", "self" })
-final class DyInbox implements Inbox {
+@ToString(of = "bout")
+@EqualsAndHashCode(of = { "region", "bout" })
+final class DyMessages implements Messages {
 
     /**
-     * Counter with bout number.
+     * Table name.
+     */
+    public static final String TBL = "messages";
+
+    /**
+     * Bout attribute.
+     */
+    public static final String HASH = "bout";
+
+    /**
+     * Message attribute.
+     */
+    public static final String RANGE = "message";
+
+    /**
+     * Text of the message.
+     */
+    public static final String ATTR_TEXT = "text";
+
+    /**
+     * Author of the message.
+     */
+    public static final String ATTR_ALIAS = "alias";
+
+    /**
+     * Date of the message.
+     */
+    public static final String ATTR_DATE = "date";
+
+    /**
+     * Counter with message number.
      */
     private final transient Counter counter;
 
     /**
-     * Region we're in.
+     * Region to work with.
      */
     private final transient Region region;
 
     /**
-     * Alias of myself.
+     * Bout number.
+     */
+    private final transient long bout;
+
+    /**
+     * My own alias.
      */
     private final transient String self;
 
     /**
      * Ctor.
-     * @param reg Region we're in
-     * @param slf My alias
+     * @param reg Region
+     * @param num Bout number
+     * @param slf Self alias
      */
-    DyInbox(final Region reg, final String slf) {
+    DyMessages(final Region reg, final long num, final String slf) {
         try {
             this.counter = RtSttc.make(
                 URN.create(Manifests.read("Netbout-SttcUrn")),
                 Manifests.read("Netbout-SttcToken")
-            ).counters().get("nb-bout");
+            ).counters().get("nb-message");
         } catch (final IOException ex) {
             throw new IllegalStateException(ex);
         }
         this.region = reg;
+        this.bout = num;
         this.self = slf;
     }
 
     @Override
-    public long start() throws IOException {
+    public void post(final String text) throws IOException {
         final long number = this.counter.incrementAndGet(1L);
-        this.region.table(DyFriends.TBL).put(
+        this.region.table(DyMessages.TBL).put(
             new Attributes()
-                .with(DyFriends.RANGE, this.self)
-                .with(DyFriends.HASH, number)
-                .with(DyFriends.ATTR_UPDATED, System.currentTimeMillis())
-                .with(DyFriends.ATTR_TITLE, "untitled")
+                .with(DyMessages.HASH, this.bout)
+                .with(DyMessages.RANGE, number)
+                .with(DyMessages.ATTR_TEXT, text)
+                .with(DyMessages.ATTR_ALIAS, this.self)
+                .with(DyMessages.ATTR_DATE, System.currentTimeMillis())
         );
-        return number;
-    }
-
-    // @checkstyle RedundantThrowsCheck (4 lines)
-    @Override
-    public Bout bout(final long number) throws Inbox.BoutNotFoundException {
-        try {
-            return new DyBout(
-                this.region,
-                this.region.table(DyFriends.TBL).frame()
-                    .through(new QueryValve().withLimit(1))
-                    .where(DyFriends.HASH, Conditions.equalTo(number))
-                    .where(DyFriends.RANGE, this.self)
-                    .iterator().next(),
-                this.self
-            );
-        } catch (final NoSuchElementException ex) {
-            throw new Inbox.BoutNotFoundException(number, ex);
-        }
     }
 
     @Override
-    public Pageable<Bout> jump(final int pos) {
+    public Pageable<Message> jump(final int idx) {
         throw new UnsupportedOperationException("#jump()");
     }
 
     @Override
-    public Iterator<Bout> iterator() {
+    public Iterator<Message> iterator() {
         return Iterators.transform(
-            this.region.table(DyFriends.TBL)
+            this.region.table(DyMessages.TBL)
                 .frame()
-                .where(DyFriends.RANGE, this.self)
-                .through(
-                    new QueryValve()
-                        .withIndexName(DyFriends.INDEX)
-                        .withConsistentRead(false)
-                        .withSelect(Select.ALL_PROJECTED_ATTRIBUTES)
-                        .withScanIndexForward(false)
-                )
+                .through(new QueryValve().withScanIndexForward(false))
+                .where(DyMessages.HASH, Conditions.equalTo(this.bout))
                 .iterator(),
-            new Function<Item, Bout>() {
+            new Function<Item, Message>() {
                 @Override
-                public Bout apply(final Item item) {
-                    return new DyBout(
-                        DyInbox.this.region,
-                        item, DyInbox.this.self
-                    );
+                public Message apply(final Item item) {
+                    return new DyMessage(item);
                 }
             }
         );

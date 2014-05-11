@@ -26,12 +26,17 @@
  */
 package com.netbout.rest;
 
+import com.netbout.spi.Attachment;
 import com.netbout.spi.Bout;
+import com.netbout.spi.Friend;
 import com.netbout.spi.Inbox;
+import com.netbout.spi.Message;
+import com.rexsl.page.JaxbBundle;
 import com.rexsl.page.Link;
 import com.rexsl.page.PageBuilder;
 import com.rexsl.page.inset.FlashInset;
 import java.io.IOException;
+import java.net.URI;
 import java.util.logging.Level;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
@@ -40,16 +45,18 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
+import org.apache.commons.lang3.time.DateFormatUtils;
 
 /**
  * RESTful front of one Bout.
  *
  * @author Yegor Bugayenko (yegor@tpc2.com)
  * @version $Id$
- * @checkstyle ClassDataAbstractionCoupling (400 lines)
+ * @checkstyle ClassDataAbstractionCoupling (500 lines)
+ * @checkstyle MultipleStringLiteralsCheck (500 lines)
  */
-@SuppressWarnings("PMD.TooManyMethods")
 @Path("/b/{num}")
+@SuppressWarnings({ "PMD.TooManyMethods", "PMD.AvoidDuplicateLiterals" })
 public final class BoutRs extends BaseRs {
 
     /**
@@ -74,7 +81,6 @@ public final class BoutRs extends BaseRs {
     @GET
     @Path("/")
     public Response front() throws IOException {
-        final Bout bout = this.bout();
         return new PageBuilder()
             .stylesheet("/xsl/bout.xsl")
             .build(NbPage.class)
@@ -84,8 +90,25 @@ public final class BoutRs extends BaseRs {
             .link(new Link("invite", "./invite"))
             .link(new Link("leave", "./leave"))
             .link(new Link("kick", "./kick"))
+            .append(this.bundle(this.bout()))
             .render()
             .build();
+    }
+
+    /**
+     * Download attachment.
+     * @param name Name of attachment
+     * @throws IOException If fails
+     */
+    @GET
+    @Path("/download")
+    public void download(@QueryParam("name") final String name)
+        throws IOException {
+        throw FlashInset.forward(
+            this.uriInfo().getBaseUri(),
+            "not implemented yet",
+            Level.WARNING
+        );
     }
 
     /**
@@ -98,7 +121,7 @@ public final class BoutRs extends BaseRs {
     public void post(@FormParam("text") final String text) throws IOException {
         this.bout().messages().post(text);
         throw FlashInset.forward(
-            this.uriInfo().getBaseUri(),
+            this.self(),
             "message posted to the bout",
             Level.INFO
         );
@@ -115,7 +138,7 @@ public final class BoutRs extends BaseRs {
         throws IOException {
         this.bout().rename(title);
         throw FlashInset.forward(
-            this.uriInfo().getBaseUri(),
+            this.self(),
             "bout renamed",
             Level.INFO
         );
@@ -126,13 +149,13 @@ public final class BoutRs extends BaseRs {
      * @param name Name of the invitee
      * @throws IOException If fails
      */
-    @GET
+    @POST
     @Path("/invite")
-    public void invite(@QueryParam("name") final String name)
+    public void invite(@FormParam("name") final String name)
         throws IOException {
         this.bout().friends().invite(name);
         throw FlashInset.forward(
-            this.uriInfo().getBaseUri(),
+            this.self(),
             "new person invited to the bout",
             Level.INFO
         );
@@ -147,7 +170,7 @@ public final class BoutRs extends BaseRs {
     public void leave() throws IOException {
         this.bout().friends().kick(this.alias().name());
         throw FlashInset.forward(
-            this.uriInfo().getBaseUri(),
+            this.self(),
             "you left this bout",
             Level.INFO
         );
@@ -163,10 +186,21 @@ public final class BoutRs extends BaseRs {
     public void kick(@QueryParam("name") final String name) throws IOException {
         this.bout().friends().kick(name);
         throw FlashInset.forward(
-            this.uriInfo().getBaseUri(),
+            this.self(),
             "you kicked him off this bout",
             Level.INFO
         );
+    }
+
+    /**
+     * Get self URI.
+     * @return URI
+     * @throws IOException If fails
+     */
+    private URI self() throws IOException {
+        return this.uriInfo().getBaseUriBuilder().clone()
+            .path(BoutRs.class)
+            .build(this.bout().number());
     }
 
     /**
@@ -182,6 +216,134 @@ public final class BoutRs extends BaseRs {
                 this.uriInfo().getBaseUri(), ex
             );
         }
+    }
+
+    /**
+     * Bundle of the bout.
+     * @param bout Bout
+     * @return Bundle
+     * @throws IOException If fails
+     */
+    private JaxbBundle bundle(final Bout bout) throws IOException {
+        return new JaxbBundle("bout")
+            .add("number", Long.toString(bout.number()))
+            .up()
+            .add("title", bout.title()).up()
+            .add(
+                new JaxbBundle("friends").add(
+                    new JaxbBundle.Group<Friend>(bout.friends()) {
+                        @Override
+                        public JaxbBundle bundle(final Friend friend) {
+                            try {
+                                return BoutRs.this.bundle(bout, friend);
+                            } catch (final IOException ex) {
+                                throw new IllegalStateException(ex);
+                            }
+                        }
+                    }
+                )
+            )
+            .add(
+                new JaxbBundle("attachments").add(
+                    new JaxbBundle.Group<Attachment>(bout.attachments()) {
+                        @Override
+                        public JaxbBundle bundle(final Attachment attachment) {
+                            try {
+                                return BoutRs.this.bundle(bout, attachment);
+                            } catch (final IOException ex) {
+                                throw new IllegalStateException(ex);
+                            }
+                        }
+                    }
+                )
+            )
+            .add(
+                new JaxbBundle("messages").add(
+                    new JaxbBundle.Group<Message>(bout.messages()) {
+                        @Override
+                        public JaxbBundle bundle(final Message message) {
+                            return BoutRs.this.bundle(message);
+                        }
+                    }
+                )
+            );
+    }
+
+    /**
+     * Convert friend to bundle.
+     * @param bout Bout we're in
+     * @param friend Friend to convert
+     * @return Bundle
+     * @throws IOException If fails
+     */
+    private JaxbBundle bundle(final Bout bout,
+        final Friend friend) throws IOException {
+        return new JaxbBundle("friend")
+            .add("alias", friend.alias())
+            .up()
+            .add("photo", friend.photo().toString()).up()
+            .link(
+                new Link(
+                    "kick",
+                    this.uriInfo().getBaseUriBuilder().clone()
+                        .path(BoutRs.class)
+                        .path(BoutRs.class, "kick")
+                        .queryParam("name", "{x}")
+                        .build(bout.number(), friend.alias())
+                )
+            );
+    }
+
+    /**
+     * Convert attachment to bundle.
+     * @param bout Bout we're in
+     * @param attachment Attachment
+     * @return Bundle
+     * @throws IOException If fails
+     */
+    private JaxbBundle bundle(final Bout bout,
+        final Attachment attachment) throws IOException {
+        return new JaxbBundle("attachment")
+            .add("name", attachment.name())
+            .up()
+            .add("ctype", attachment.ctype()).up()
+            .link(
+                new Link(
+                    "open",
+                    this.uriInfo().getBaseUriBuilder().clone()
+                        .path(BoutRs.class)
+                        .queryParam("attachment", "{a1}")
+                        .build(bout.number(), attachment.name())
+                )
+            )
+            .link(
+                new Link(
+                    "download",
+                    this.uriInfo().getBaseUriBuilder().clone()
+                        .path(BoutRs.class)
+                        .path(BoutRs.class, "download")
+                        .queryParam("attachment", "{a2}")
+                        .build(bout.number(), attachment.name())
+                )
+            );
+    }
+
+    /**
+     * Convert message to bundle.
+     * @param message Message
+     * @return Bundle
+     */
+    private JaxbBundle bundle(final Message message) {
+        return new JaxbBundle("message")
+            .add("number", Long.toString(message.number()))
+            .up()
+            .add("author", message.author()).up()
+            .add("html", message.text()).up()
+            .add(
+                "date",
+                DateFormatUtils.ISO_DATETIME_FORMAT.format(message.date())
+            )
+            .up();
     }
 
 }

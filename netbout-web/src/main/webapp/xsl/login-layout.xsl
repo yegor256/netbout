@@ -80,7 +80,7 @@
                                 </xsl:attribute>
                                 <img class="login-logo" alt="back home">
                                     <xsl:attribute name="src">
-                                        <xsl:text>http://img.netbout.com/logo/logo-en.svg?</xsl:text>
+                                        <xsl:text>http://img.netbout.com/logo.svg?</xsl:text>
                                         <xsl:value-of select="/page/version/revision"/>
                                     </xsl:attribute>
                                 </img>

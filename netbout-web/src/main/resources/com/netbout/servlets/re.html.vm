@@ -8,7 +8,7 @@
     <body style="padding: 1em;">
         <p>
             <a href="http://www.netbout.com/">
-                <img src="http://img.netbout.com/logo/logo-en.svg?${buildNumber}"
+                <img src="http://img.netbout.com/logo.svg?${buildNumber}"
                     style="width:113px;height:37px;"/>
             </a>
         </p>
@@ -18,7 +18,7 @@
             </b>
         </p>
         <p>
-            netbout team already received a notification about this
+            Netbout team already received a notification about this
             problem and will work with it as soon as possible. In the
             mean time click "Back" button in your browser and try
             to do something else.

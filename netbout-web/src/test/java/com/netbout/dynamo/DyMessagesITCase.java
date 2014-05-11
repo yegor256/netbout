@@ -26,69 +26,40 @@
  */
 package com.netbout.dynamo;
 
-import com.jcabi.aspects.Immutable;
-import com.jcabi.aspects.Loggable;
-import com.jcabi.dynamo.Item;
-import com.jcabi.dynamo.QueryValve;
-import com.jcabi.dynamo.Region;
-import com.jcabi.dynamo.Table;
-import com.netbout.spi.Alias;
-import com.netbout.spi.Friend;
-import java.net.URI;
-import java.util.Iterator;
-import lombok.EqualsAndHashCode;
-import lombok.ToString;
+import com.jcabi.urn.URN;
+import com.netbout.spi.Aliases;
+import com.netbout.spi.Bout;
+import com.netbout.spi.Inbox;
+import com.netbout.spi.Messages;
+import org.hamcrest.MatcherAssert;
+import org.hamcrest.Matchers;
+import org.junit.Test;
 
 /**
- * Dynamo friend.
- *
+ * Integration case for {@link DyMessages}.
  * @author Yegor Bugayenko (yegor@tpc2.com)
  * @version $Id$
- * @since 2.0
  */
-@Immutable
-@Loggable(Loggable.DEBUG)
-@ToString(of = "name")
-@EqualsAndHashCode(of = { "table", "name" })
-final class DyFriend implements Friend {
+public final class DyMessagesITCase {
 
     /**
-     * Table with aliases.
+     * DyMessages can list and create messages.
+     * @throws Exception If there is some problem inside
      */
-    private final transient Table table;
-
-    /**
-     * This alias.
-     */
-    private final transient String name;
-
-    /**
-     * Ctor.
-     * @param region Region we're in
-     * @param alias Alias
-     */
-    DyFriend(final Region region, final String alias) {
-        this.table = region.table(DyAliases.TBL);
-        this.name = alias;
+    @Test
+    public void makesAndListsMessages() throws Exception {
+        final String alias = "robert";
+        final Aliases aliases =
+            new DyBase().user(new URN("urn:test:84218")).aliases();
+        aliases.add(alias);
+        final Inbox inbox = aliases.iterator().next().inbox();
+        final Bout bout = inbox.bout(inbox.start());
+        final Messages messages = bout.messages();
+        messages.post("hello!");
+        MatcherAssert.assertThat(
+            messages,
+            Matchers.not(Matchers.emptyIterable())
+        );
     }
 
-    @Override
-    public String alias() {
-        return this.name;
-    }
-
-    @Override
-    public URI photo() {
-        final Iterator<Item> items = this.table.frame()
-            .where(DyAliases.HASH, this.name)
-            .through(new QueryValve().withLimit(1))
-            .iterator();
-        final URI uri;
-        if (items.hasNext()) {
-            uri = URI.create(items.next().get(DyAliases.ATTR_PHOTO).getS());
-        } else {
-            uri = Alias.BLANK;
-        }
-        return uri;
-    }
 }

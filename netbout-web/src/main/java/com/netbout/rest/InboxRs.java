@@ -44,6 +44,7 @@ import javax.ws.rs.core.Response;
  * @author Yegor Bugayenko (yegor@tpc2.com)
  * @version $Id$
  * @checkstyle ClassDataAbstractionCoupling (500 lines)
+ * @checkstyle MultipleStringLiteralsCheck (500 lines)
  */
 @Path("/")
 public final class InboxRs extends BaseRs {
@@ -86,6 +87,7 @@ public final class InboxRs extends BaseRs {
     /**
      * All bouts in the inbox.
      * @return Bouts
+     * @throws IOException If fails
      */
     private JaxbBundle bouts() throws IOException {
         return new JaxbBundle("bouts").add(
@@ -106,10 +108,12 @@ public final class InboxRs extends BaseRs {
      * Convert bout to bundle.
      * @param bout Bout to convert
      * @return Bundle
+     * @throws IOException If fails
      */
     private JaxbBundle bundle(final Bout bout) throws IOException {
         return new JaxbBundle("bout")
-            .add("number", Long.toString(bout.number())).up()
+            .add("number", Long.toString(bout.number()))
+            .up()
             .add("title", bout.title()).up()
             .add(
                 new JaxbBundle("friends").add(
@@ -140,11 +144,13 @@ public final class InboxRs extends BaseRs {
      * @param bout Bout we're in
      * @param friend Friend to convert
      * @return Bundle
+     * @throws IOException If fails
      */
     private JaxbBundle bundle(final Bout bout,
         final Friend friend) throws IOException {
         return new JaxbBundle("friend")
-            .add("alias", friend.alias()).up()
+            .add("alias", friend.alias())
+            .up()
             .add("photo", friend.photo().toString()).up()
             .link(
                 new Link(

@@ -70,7 +70,7 @@
                 </xsl:attribute>
                 <span class="num">
                     <xsl:text>#</xsl:text>
-                    <xsl:value-of select="/page/bout/number"/>
+                    <xsl:value-of select="number"/>
                 </span>
             </a>
             <span class="title">
@@ -80,20 +80,20 @@
                     </xsl:attribute>
                 </xsl:if>
                 <xsl:call-template name="crop">
-                    <xsl:with-param name="text" select="/page/bout/title" />
+                    <xsl:with-param name="text" select="title" />
                     <xsl:with-param name="length" select="50" />
                 </xsl:call-template>
             </span>
         </h1>
         <div class="top2">
-            <xsl:apply-templates select="/page/bout/friends" />
+            <xsl:apply-templates select="friends" />
             <xsl:if test="not(/page/links/link[@rel='re-login'])">
                 <xsl:call-template name="invite" />
                 <xsl:call-template name="rename" />
             </xsl:if>
         </div>
-        <xsl:apply-templates select="/page/bout/attachments"/>
-        <xsl:apply-templates select="/page/bout/attachments/attachment[@active='true']/markdown"/>
+        <xsl:apply-templates select="attachments"/>
+        <xsl:apply-templates select="attachments/attachment[@active='true']/markdown"/>
         <div class="post">
             <form method="post">
                 <xsl:attribute name="action">
@@ -192,7 +192,7 @@
                     <xsl:value-of select="/page/links/link[@rel='invite']/@href"/>
                 </xsl:attribute>
                 <fieldset>
-                    <input name="alias" autocomplete="off">
+                    <input name="name" autocomplete="off">
                         <xsl:attribute name="placeholder">
                             <xsl:value-of select="$TEXTS/Invite"/>
                         </xsl:attribute>

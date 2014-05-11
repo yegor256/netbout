@@ -64,6 +64,7 @@ import org.apache.commons.lang3.Validate;
  */
 @Resource.Forwarded
 @Inset.Default({ LinksInset.class, FlashInset.class })
+@SuppressWarnings("PMD.TooManyMethods")
 public class BaseRs extends BaseResource {
 
     /**

@@ -29,18 +29,14 @@ package com.netbout.dynamo;
 import com.jcabi.aspects.Immutable;
 import com.jcabi.aspects.Loggable;
 import com.jcabi.dynamo.Item;
-import com.jcabi.dynamo.QueryValve;
-import com.jcabi.dynamo.Region;
-import com.jcabi.dynamo.Table;
-import com.netbout.spi.Alias;
-import com.netbout.spi.Friend;
-import java.net.URI;
-import java.util.Iterator;
+import com.netbout.spi.Attachment;
+import java.io.IOException;
+import java.io.InputStream;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
 /**
- * Dynamo friend.
+ * Dynamo attachment.
  *
  * @author Yegor Bugayenko (yegor@tpc2.com)
  * @version $Id$
@@ -48,47 +44,41 @@ import lombok.ToString;
  */
 @Immutable
 @Loggable(Loggable.DEBUG)
-@ToString(of = "name")
-@EqualsAndHashCode(of = { "table", "name" })
-final class DyFriend implements Friend {
+@ToString(of = "item")
+@EqualsAndHashCode(of = "item")
+final class DyAttachment implements Attachment {
 
     /**
-     * Table with aliases.
+     * Item with data.
      */
-    private final transient Table table;
-
-    /**
-     * This alias.
-     */
-    private final transient String name;
+    private final transient Item item;
 
     /**
      * Ctor.
-     * @param region Region we're in
-     * @param alias Alias
+     * @param itm Item
      */
-    DyFriend(final Region region, final String alias) {
-        this.table = region.table(DyAliases.TBL);
-        this.name = alias;
+    DyAttachment(final Item itm) {
+        this.item = itm;
     }
 
     @Override
-    public String alias() {
-        return this.name;
+    public String name() {
+        return this.item.get(DyAttachments.RANGE).getS();
     }
 
     @Override
-    public URI photo() {
-        final Iterator<Item> items = this.table.frame()
-            .where(DyAliases.HASH, this.name)
-            .through(new QueryValve().withLimit(1))
-            .iterator();
-        final URI uri;
-        if (items.hasNext()) {
-            uri = URI.create(items.next().get(DyAliases.ATTR_PHOTO).getS());
-        } else {
-            uri = Alias.BLANK;
-        }
-        return uri;
+    public String ctype() {
+        return this.item.get(DyAttachments.ATTR_CTYPE).getS();
+    }
+
+    @Override
+    public InputStream read() throws IOException {
+        throw new UnsupportedOperationException("#read()");
+    }
+
+    @Override
+    public void write(final InputStream stream,
+        final String ctype) throws IOException {
+        throw new UnsupportedOperationException("#write()");
     }
 }

@@ -26,24 +26,16 @@
  */
 package com.netbout.dynamo;
 
-import com.amazonaws.services.dynamodbv2.model.AttributeAction;
-import com.amazonaws.services.dynamodbv2.model.AttributeValue;
-import com.amazonaws.services.dynamodbv2.model.AttributeValueUpdate;
 import com.jcabi.aspects.Immutable;
 import com.jcabi.aspects.Loggable;
-import com.jcabi.dynamo.AttributeUpdates;
 import com.jcabi.dynamo.Item;
-import com.jcabi.dynamo.Region;
-import com.netbout.spi.Attachments;
-import com.netbout.spi.Bout;
-import com.netbout.spi.Friends;
-import com.netbout.spi.Messages;
+import com.netbout.spi.Message;
 import java.util.Date;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
 /**
- * Dynamo bout.
+ * Dynamo message.
  *
  * @author Yegor Bugayenko (yegor@tpc2.com)
  * @version $Id$
@@ -51,81 +43,42 @@ import lombok.ToString;
  */
 @Immutable
 @Loggable(Loggable.DEBUG)
-@ToString(of = "self")
-@EqualsAndHashCode(of = { "region", "item", "self" })
-final class DyBout implements Bout {
+@ToString(of = "item")
+@EqualsAndHashCode(of = "item")
+final class DyMessage implements Message {
 
     /**
-     * Region we're in.
-     */
-    private final transient Region region;
-
-    /**
-     * Item with bout.
+     * Item with data.
      */
     private final transient Item item;
 
     /**
-     * Alias of myself.
-     */
-    private final transient String self;
-
-    /**
      * Ctor.
-     * @param reg Region we're in
-     * @param itm Item in "friends" table
-     * @param slf Self alias
+     * @param itm Item with data
      */
-    DyBout(final Region reg, final Item itm, final String slf) {
-        this.region = reg;
+    DyMessage(final Item itm) {
         this.item = itm;
-        this.self = slf;
     }
 
     @Override
     public long number() {
-        return Long.parseLong(this.item.get(DyFriends.HASH).getN());
+        return Long.parseLong(this.item.get(DyMessages.RANGE).getN());
     }
 
     @Override
     public Date date() {
         return new Date(
-            Long.parseLong(
-                this.item.get(DyFriends.ATTR_UPDATED).getN()
-            )
+            Long.parseLong(this.item.get(DyMessages.ATTR_DATE).getN())
         );
     }
 
     @Override
-    public String title() {
-        return this.item.get(DyFriends.ATTR_TITLE).getS();
+    public String text() {
+        return this.item.get(DyMessages.ATTR_TEXT).getS();
     }
 
     @Override
-    public void rename(final String text) {
-        this.item.put(
-            new AttributeUpdates().with(
-                DyFriends.ATTR_TITLE,
-                new AttributeValueUpdate(
-                    new AttributeValue(text),
-                    AttributeAction.PUT
-                )
-            )
-        );
-    }
-
-    @Override
-    public Messages messages() {
-        return new DyMessages(this.region, this.number(), this.self);
-    }
-
-    @Override
-    public Friends friends() {
-        return new DyFriends(this.region, this.item);
-    }
-
-    @Override
-    public Attachments attachments() {
-        return new DyAttachments(this.region, this.number());
+    public String author() {
+        return this.item.get(DyMessages.ATTR_ALIAS).getS();
     }
 }
