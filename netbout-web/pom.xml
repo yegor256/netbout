@@ -243,6 +243,11 @@
                             <Netbout-SttcToken>${sttc.token}</Netbout-SttcToken>
                         </manifestEntries>
                     </archive>
+                    <webResources combine.children="append">
+                        <resource>
+                            <directory>${project.build.directory}/minify</directory>
+                        </resource>
+                    </webResources>
                 </configuration>
                 <executions>
                     <execution>
@@ -254,7 +259,7 @@
                         <configuration>
                             <webappDirectory>${project.build.directory}/test-war</webappDirectory>
                             <warSourceExcludes>nothing</warSourceExcludes>
-                            <webResources>
+                            <webResources combine.children="append">
                                 <resource>
                                     <directory>src/test/webapp</directory>
                                 </resource>
@@ -308,6 +313,7 @@
                 <configuration>
                     <charset>UTF-8</charset>
                     <nosuffix>true</nosuffix>
+                    <webappTargetDir>${project.build.directory}/minify</webappTargetDir>
                 </configuration>
                 <executions>
                     <execution>
@@ -428,27 +434,6 @@
                                     <portNames>
                                         <portName>tomcat.port</portName>
                                     </portNames>
-                                </configuration>
-                            </execution>
-                        </executions>
-                    </plugin>
-                    <plugin>
-                        <artifactId>maven-resources-plugin</artifactId>
-                        <executions>
-                            <execution>
-                                <id>copy-compiled-css</id>
-                                <phase>package</phase>
-                                <goals>
-                                    <goal>copy-resources</goal>
-                                </goals>
-                                <configuration>
-                                    <outputDirectory>${tomcat.home}/css</outputDirectory>
-                                    <resources>
-                                        <resource>
-                                            <directory>${project.build.directory}/${project.build.finalName}/css</directory>
-                                            <filtering>false</filtering>
-                                        </resource>
-                                    </resources>
                                 </configuration>
                             </execution>
                         </executions>

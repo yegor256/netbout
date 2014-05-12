@@ -33,15 +33,12 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://java.sun.com/xml/ns/javaee
         http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd">
-
     <display-name>netbout</display-name>
     <description>netbout.com r${buildNumber}</description>
-
     <context-param>
         <param-name>Webmaster</param-name>
-        <param-value>yegor@tpc2.com</param-value>
+        <param-value>yegor@netbout.com</param-value>
     </context-param>
-
     <servlet-mapping>
         <servlet-name>default</servlet-name>
         <url-pattern>/robots.txt</url-pattern>
@@ -62,11 +59,13 @@
         <servlet-name>default</servlet-name>
         <url-pattern>/lang/*</url-pattern>
     </servlet-mapping>
-
+    <servlet-mapping>
+        <servlet-name>default</servlet-name>
+        <url-pattern>/xml/*</url-pattern>
+    </servlet-mapping>
     <listener>
         <listener-class>com.netbout.servlets.LifecycleListener</listener-class>
     </listener>
-
     <servlet>
         <servlet-name>ExceptionTrap</servlet-name>
         <servlet-class>com.rexsl.core.ExceptionTrap</servlet-class>
@@ -83,7 +82,6 @@
         <exception-type>java.lang.Throwable</exception-type>
         <location>/trap</location>
     </error-page>
-
     <filter>
         <filter-name>XsltFilter</filter-name>
         <filter-class>com.rexsl.core.XsltFilter</filter-class>
@@ -94,7 +92,6 @@
         <dispatcher>REQUEST</dispatcher>
         <dispatcher>ERROR</dispatcher>
     </filter-mapping>
-
     <servlet>
         <servlet-name>RestfulServlet</servlet-name>
         <servlet-class>com.rexsl.core.RestfulServlet</servlet-class>
@@ -110,20 +107,16 @@
         <servlet-name>RestfulServlet</servlet-name>
         <url-pattern>/*</url-pattern>
     </servlet-mapping>
-
     <error-page>
         <error-code>404</error-code>
         <location>/m/404</location>
     </error-page>
-
     <error-page>
         <error-code>405</error-code>
         <location>/m/405</location>
     </error-page>
-
     <mime-mapping>
         <extension>xsl</extension>
         <mime-type>text/xsl</mime-type>
     </mime-mapping>
-
 </web-app>
