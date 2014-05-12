@@ -29,16 +29,13 @@ package com.netbout.client;
 import com.jcabi.aspects.Immutable;
 import com.jcabi.http.Request;
 import com.jcabi.http.request.JdkRequest;
-import com.jcabi.http.wire.BasicAuthWire;
+import com.jcabi.http.wire.CookieOptimizingWire;
 import com.jcabi.urn.URN;
 import com.netbout.spi.Base;
 import com.netbout.spi.User;
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
 import javax.validation.constraints.NotNull;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
-import org.apache.commons.lang3.CharEncoding;
 
 /**
  * REST base.
@@ -56,37 +53,20 @@ public final class RtBase implements Base {
     private final transient Request request;
 
     /**
-     * Secret for Basic HTTP auth.
-     */
-    private final transient String secret;
-
-    /**
      * Public ctor.
      * @param uri URI of netbout server
-     * @param scrt Secret key to use
+     * @param token Authentication token
      */
-    public RtBase(final String uri, final String scrt) {
-        this.secret = scrt;
+    public RtBase(final String uri, final String token) {
         this.request = new JdkRequest(uri)
-            .through(BasicAuthWire.class)
+            .through(CookieOptimizingWire.class)
+            .header(HttpHeaders.COOKIE, String.format("Rexsl-Auth=%s", token))
             .header(HttpHeaders.ACCEPT, MediaType.TEXT_XML);
     }
 
     @Override
     public User user(@NotNull(message = "URN can't be NULL") final URN urn) {
-        try {
-            return new RtUser(
-                this.request.uri().userInfo(
-                    String.format(
-                        "%s:%s",
-                        URLEncoder.encode(urn.toString(), CharEncoding.UTF_8),
-                        URLEncoder.encode(this.secret, CharEncoding.UTF_8)
-                    )
-                ).back()
-            );
-        } catch (final UnsupportedEncodingException ex) {
-            throw new IllegalStateException(ex);
-        }
+        return new RtUser(this.request);
     }
 
     @Override

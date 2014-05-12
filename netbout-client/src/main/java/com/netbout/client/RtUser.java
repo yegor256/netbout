@@ -56,7 +56,6 @@ final class RtUser implements User {
 
     @Override
     public Aliases aliases() {
-        assert this.request != null;
-        throw new UnsupportedOperationException("#aliases()");
+        return new RtAliases(this.request);
     }
 }
