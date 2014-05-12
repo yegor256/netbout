@@ -51,7 +51,7 @@ public final class DyBoutITCase {
         final Aliases aliases =
             new DyBase().user(new URN("urn:test:890")).aliases();
         aliases.add(alias);
-        final Inbox inbox = aliases.iterator().next().inbox();
+        final Inbox inbox = aliases.iterate().iterator().next().inbox();
         final Bout bout = inbox.bout(inbox.start());
         final String title = "some title \u20ac";
         bout.rename(title);

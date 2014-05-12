@@ -49,7 +49,7 @@ public final class DyBaseITCase {
         final Base base = new DyBase();
         final User user = base.user(new URN("urn:test:6521"));
         MatcherAssert.assertThat(
-            user.aliases(),
+            user.aliases().iterate(),
             Matchers.emptyIterable()
         );
     }

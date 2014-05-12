@@ -222,7 +222,7 @@ public class BaseRs extends BaseResource {
                 Level.SEVERE
             );
         }
-        final Alias alias = Iterables.get(this.user().aliases(), 0);
+        final Alias alias = Iterables.get(this.user().aliases().iterate(), 0);
         if (alias.photo().equals(Alias.BLANK)) {
             alias.photo(this.auth().identity().photo());
         }
@@ -235,7 +235,7 @@ public class BaseRs extends BaseResource {
      */
     protected final boolean identified() {
         return !this.auth().identity().equals(Identity.ANONYMOUS)
-            && !Iterables.isEmpty(this.user().aliases());
+            && !Iterables.isEmpty(this.user().aliases().iterate());
     }
 
     /**

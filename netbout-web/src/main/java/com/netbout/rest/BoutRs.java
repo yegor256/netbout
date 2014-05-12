@@ -231,7 +231,7 @@ public final class BoutRs extends BaseRs {
             .add("title", bout.title()).up()
             .add(
                 new JaxbBundle("friends").add(
-                    new JaxbBundle.Group<Friend>(bout.friends()) {
+                    new JaxbBundle.Group<Friend>(bout.friends().iterate()) {
                         @Override
                         public JaxbBundle bundle(final Friend friend) {
                             try {
@@ -245,7 +245,8 @@ public final class BoutRs extends BaseRs {
             )
             .add(
                 new JaxbBundle("attachments").add(
-                    new JaxbBundle.Group<Attachment>(bout.attachments()) {
+                    // @checkstyle LineLength (1 line)
+                    new JaxbBundle.Group<Attachment>(bout.attachments().iterate()) {
                         @Override
                         public JaxbBundle bundle(final Attachment attachment) {
                             try {
@@ -259,7 +260,7 @@ public final class BoutRs extends BaseRs {
             )
             .add(
                 new JaxbBundle("messages").add(
-                    new JaxbBundle.Group<Message>(bout.messages()) {
+                    new JaxbBundle.Group<Message>(bout.messages().iterate()) {
                         @Override
                         public JaxbBundle bundle(final Message message) {
                             return BoutRs.this.bundle(message);

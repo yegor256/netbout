@@ -29,9 +29,11 @@ package com.netbout.dynamo;
 import co.stateful.Counter;
 import co.stateful.RtSttc;
 import com.google.common.base.Function;
-import com.google.common.collect.Iterators;
+import com.google.common.collect.Iterables;
+import com.jcabi.aspects.Cacheable;
 import com.jcabi.aspects.Immutable;
 import com.jcabi.aspects.Loggable;
+import com.jcabi.aspects.Tv;
 import com.jcabi.dynamo.Attributes;
 import com.jcabi.dynamo.Conditions;
 import com.jcabi.dynamo.Item;
@@ -43,7 +45,7 @@ import com.netbout.spi.Message;
 import com.netbout.spi.Messages;
 import com.netbout.spi.Pageable;
 import java.io.IOException;
-import java.util.Iterator;
+import java.util.concurrent.TimeUnit;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
@@ -131,6 +133,7 @@ final class DyMessages implements Messages {
     }
 
     @Override
+    @Cacheable.FlushAfter
     public void post(final String text) throws IOException {
         final long number = this.counter.incrementAndGet(1L);
         this.region.table(DyMessages.TBL).put(
@@ -149,13 +152,13 @@ final class DyMessages implements Messages {
     }
 
     @Override
-    public Iterator<Message> iterator() {
-        return Iterators.transform(
+    @Cacheable(lifetime = Tv.FIVE, unit = TimeUnit.MINUTES)
+    public Iterable<Message> iterate() {
+        return Iterables.transform(
             this.region.table(DyMessages.TBL)
                 .frame()
                 .through(new QueryValve().withScanIndexForward(false))
-                .where(DyMessages.HASH, Conditions.equalTo(this.bout))
-                .iterator(),
+                .where(DyMessages.HASH, Conditions.equalTo(this.bout)),
             new Function<Item, Message>() {
                 @Override
                 public Message apply(final Item item) {

@@ -30,7 +30,6 @@ import com.jcabi.aspects.Immutable;
 import com.jcabi.http.Request;
 import com.netbout.spi.Attachment;
 import com.netbout.spi.Attachments;
-import java.util.Iterator;
 
 /**
  * REST attachments.
@@ -61,7 +60,7 @@ final class RtAttachments implements Attachments {
     }
 
     @Override
-    public Iterator<Attachment> iterator() {
+    public Iterable<Attachment> iterate() {
         throw new UnsupportedOperationException("#iterator()");
     }
 }

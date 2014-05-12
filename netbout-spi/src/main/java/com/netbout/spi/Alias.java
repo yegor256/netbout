@@ -83,6 +83,39 @@ public interface Alias {
     Inbox inbox();
 
     /**
+     * Matcher of its name.
+     */
+    final class HasName extends BaseMatcher<Alias> {
+        /**
+         * Matcher of the alias.
+         */
+        private final transient Matcher<String> matcher;
+        /**
+         * Ctor.
+         * @param mtchr Matcher of the alias
+         */
+        public HasName(final Matcher<String> mtchr) {
+            super();
+            this.matcher = mtchr;
+        }
+        @Override
+        public boolean matches(final Object obj) {
+            try {
+                return this.matcher.matches(
+                    Alias.class.cast(obj).name()
+                );
+            } catch (final IOException ex) {
+                throw new IllegalStateException(ex);
+            }
+        }
+        @Override
+        public void describeTo(final Description description) {
+            description.appendText("alias with name ");
+            this.matcher.describeTo(description);
+        }
+    }
+
+    /**
      * Matcher of its photo.
      */
     final class HasPhoto extends BaseMatcher<Alias> {

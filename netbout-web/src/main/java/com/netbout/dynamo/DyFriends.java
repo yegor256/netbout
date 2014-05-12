@@ -29,16 +29,19 @@ package com.netbout.dynamo;
 import com.amazonaws.services.dynamodbv2.model.AttributeValue;
 import com.google.common.base.Function;
 import com.google.common.base.Predicates;
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Iterators;
+import com.jcabi.aspects.Cacheable;
 import com.jcabi.aspects.Immutable;
 import com.jcabi.aspects.Loggable;
+import com.jcabi.aspects.Tv;
 import com.jcabi.dynamo.Attributes;
 import com.jcabi.dynamo.Conditions;
 import com.jcabi.dynamo.Item;
 import com.jcabi.dynamo.Region;
 import com.netbout.spi.Friend;
 import com.netbout.spi.Friends;
-import java.util.Iterator;
+import java.util.concurrent.TimeUnit;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
@@ -106,6 +109,7 @@ final class DyFriends implements Friends {
     }
 
     @Override
+    @Cacheable.FlushAfter
     public void invite(final String friend) {
         if (!new Everybody(this.region).occupied(friend)) {
             throw new IllegalArgumentException(
@@ -122,6 +126,7 @@ final class DyFriends implements Friends {
     }
 
     @Override
+    @Cacheable.FlushAfter
     public void kick(final String friend) {
         Iterators.removeIf(
             this.region.table(DyFriends.TBL).frame()
@@ -133,11 +138,11 @@ final class DyFriends implements Friends {
     }
 
     @Override
-    public Iterator<Friend> iterator() {
-        return Iterators.transform(
+    @Cacheable(lifetime = Tv.FIVE, unit = TimeUnit.MINUTES)
+    public Iterable<Friend> iterate() {
+        return Iterables.transform(
             this.region.table(DyFriends.TBL).frame()
-                .where(DyFriends.HASH, Conditions.equalTo(this.bout()))
-                .iterator(),
+                .where(DyFriends.HASH, Conditions.equalTo(this.bout())),
             new Function<Item, Friend>() {
                 @Override
                 public Friend apply(final Item input) {

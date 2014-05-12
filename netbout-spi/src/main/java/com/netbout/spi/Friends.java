@@ -36,7 +36,7 @@ import com.jcabi.aspects.Immutable;
  * @since 2.0
  */
 @Immutable
-public interface Friends extends Iterable<Friend> {
+public interface Friends {
 
     /**
      * Invite new friend.
@@ -49,5 +49,11 @@ public interface Friends extends Iterable<Friend> {
      * @param friend Alias of the friend
      */
     void kick(String friend);
+
+    /**
+     * Iterate them all.
+     * @return List of friends
+     */
+    Iterable<Friend> iterate();
 
 }

@@ -26,12 +26,15 @@
  */
 package com.netbout.dynamo;
 
+import com.jcabi.aspects.Cacheable;
 import com.jcabi.aspects.Immutable;
 import com.jcabi.aspects.Loggable;
+import com.jcabi.aspects.Tv;
 import com.jcabi.dynamo.Region;
 import com.jcabi.urn.URN;
 import com.netbout.spi.Aliases;
 import com.netbout.spi.User;
+import java.util.concurrent.TimeUnit;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
@@ -69,6 +72,7 @@ final class DyUser implements User {
     }
 
     @Override
+    @Cacheable(lifetime = Tv.FIVE, unit = TimeUnit.MINUTES)
     public Aliases aliases() {
         return new DyAliases(this.region, this.urn);
     }

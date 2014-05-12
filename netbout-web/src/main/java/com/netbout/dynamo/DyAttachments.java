@@ -27,9 +27,11 @@
 package com.netbout.dynamo;
 
 import com.google.common.base.Function;
-import com.google.common.collect.Iterators;
+import com.google.common.collect.Iterables;
+import com.jcabi.aspects.Cacheable;
 import com.jcabi.aspects.Immutable;
 import com.jcabi.aspects.Loggable;
+import com.jcabi.aspects.Tv;
 import com.jcabi.dynamo.Attributes;
 import com.jcabi.dynamo.Conditions;
 import com.jcabi.dynamo.Item;
@@ -37,6 +39,7 @@ import com.jcabi.dynamo.Region;
 import com.netbout.spi.Attachment;
 import com.netbout.spi.Attachments;
 import java.util.Iterator;
+import java.util.concurrent.TimeUnit;
 import javax.ws.rs.core.MediaType;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
@@ -122,25 +125,18 @@ final class DyAttachments implements Attachments {
         if (items.hasNext()) {
             item = items.next();
         } else {
-            item = this.region.table(DyAttachments.TBL).put(
-                new Attributes()
-                    .with(DyAttachments.HASH, this.bout)
-                    .with(DyAttachments.RANGE, name)
-                    .with(DyAttachments.ATTR_ALIAS, this.self)
-                    .with(DyAttachments.ATTR_CTYPE, MediaType.TEXT_PLAIN)
-                    .with(DyAttachments.ATTR_DATA, " ")
-            );
+            item = this.create(name);
         }
         return new DyAttachment(item);
     }
 
     @Override
-    public Iterator<Attachment> iterator() {
-        return Iterators.transform(
+    @Cacheable(lifetime = Tv.FIVE, unit = TimeUnit.MINUTES)
+    public Iterable<Attachment> iterate() {
+        return Iterables.transform(
             this.region.table(DyAttachments.TBL)
                 .frame()
-                .where(DyAttachments.HASH, Conditions.equalTo(this.bout))
-                .iterator(),
+                .where(DyAttachments.HASH, Conditions.equalTo(this.bout)),
             new Function<Item, Attachment>() {
                 @Override
                 public Attachment apply(final Item item) {
@@ -149,4 +145,22 @@ final class DyAttachments implements Attachments {
             }
         );
     }
+
+    /**
+     * Create a new one with this name.
+     * @param name Name of it
+     * @return Item just created
+     */
+    @Cacheable.FlushAfter
+    private Item create(final String name) {
+        return this.region.table(DyAttachments.TBL).put(
+            new Attributes()
+                .with(DyAttachments.HASH, this.bout)
+                .with(DyAttachments.RANGE, name)
+                .with(DyAttachments.ATTR_ALIAS, this.self)
+                .with(DyAttachments.ATTR_CTYPE, MediaType.TEXT_PLAIN)
+                .with(DyAttachments.ATTR_DATA, " ")
+        );
+    }
+
 }

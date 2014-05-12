@@ -36,7 +36,7 @@ import com.jcabi.aspects.Immutable;
  * @since 2.0
  */
 @Immutable
-public interface Attachments extends Iterable<Attachment> {
+public interface Attachments {
 
     /**
      * Get binary by name.
@@ -44,5 +44,11 @@ public interface Attachments extends Iterable<Attachment> {
      * @return Attachment
      */
     Attachment get(String name);
+
+    /**
+     * Iterate them all.
+     * @return All of them
+     */
+    Iterable<Attachment> iterate();
 
 }

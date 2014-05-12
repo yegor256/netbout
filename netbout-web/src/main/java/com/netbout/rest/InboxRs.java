@@ -91,7 +91,7 @@ public final class InboxRs extends BaseRs {
      */
     private JaxbBundle bouts() throws IOException {
         return new JaxbBundle("bouts").add(
-            new JaxbBundle.Group<Bout>(this.alias().inbox()) {
+            new JaxbBundle.Group<Bout>(this.alias().inbox().iterate()) {
                 @Override
                 public JaxbBundle bundle(final Bout bout) {
                     try {
@@ -117,7 +117,7 @@ public final class InboxRs extends BaseRs {
             .add("title", bout.title()).up()
             .add(
                 new JaxbBundle("friends").add(
-                    new JaxbBundle.Group<Friend>(bout.friends()) {
+                    new JaxbBundle.Group<Friend>(bout.friends().iterate()) {
                         @Override
                         public JaxbBundle bundle(final Friend friend) {
                             try {

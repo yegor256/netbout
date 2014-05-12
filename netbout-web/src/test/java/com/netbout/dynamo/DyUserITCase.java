@@ -50,7 +50,7 @@ public final class DyUserITCase {
         final String alias = "william";
         user.aliases().add(alias);
         MatcherAssert.assertThat(
-            user.aliases(),
+            user.aliases().iterate(),
             Matchers.<Alias>iterableWithSize(1)
         );
     }

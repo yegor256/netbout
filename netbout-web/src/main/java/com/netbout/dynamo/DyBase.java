@@ -26,8 +26,10 @@
  */
 package com.netbout.dynamo;
 
+import com.jcabi.aspects.Cacheable;
 import com.jcabi.aspects.Immutable;
 import com.jcabi.aspects.Loggable;
+import com.jcabi.aspects.Tv;
 import com.jcabi.dynamo.Credentials;
 import com.jcabi.dynamo.Region;
 import com.jcabi.manifests.Manifests;
@@ -35,6 +37,7 @@ import com.jcabi.urn.URN;
 import com.netbout.spi.Base;
 import com.netbout.spi.User;
 import java.io.IOException;
+import java.util.concurrent.TimeUnit;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
@@ -77,6 +80,7 @@ public final class DyBase implements Base {
     }
 
     @Override
+    @Cacheable(lifetime = Tv.FIVE, unit = TimeUnit.MINUTES)
     public User user(final URN urn) {
         return new DyUser(this.region, urn);
     }

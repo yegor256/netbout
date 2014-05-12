@@ -36,7 +36,7 @@ import com.jcabi.aspects.Immutable;
  * @since 2.0
  */
 @Immutable
-public interface Pageable<T> extends Iterable<T> {
+public interface Pageable<T> {
 
     /**
      * Jump to the given position.
@@ -44,5 +44,11 @@ public interface Pageable<T> extends Iterable<T> {
      * @return New collection of items
      */
     Pageable<T> jump(int pos);
+
+    /**
+     * Iterate them all.
+     * @return Items
+     */
+    Iterable<T> iterate();
 
 }

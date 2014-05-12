@@ -29,8 +29,10 @@ package com.netbout.dynamo;
 import com.amazonaws.services.dynamodbv2.model.AttributeAction;
 import com.amazonaws.services.dynamodbv2.model.AttributeValue;
 import com.amazonaws.services.dynamodbv2.model.AttributeValueUpdate;
+import com.jcabi.aspects.Cacheable;
 import com.jcabi.aspects.Immutable;
 import com.jcabi.aspects.Loggable;
+import com.jcabi.aspects.Tv;
 import com.jcabi.dynamo.AttributeUpdates;
 import com.jcabi.dynamo.Item;
 import com.jcabi.dynamo.Region;
@@ -39,6 +41,7 @@ import com.netbout.spi.Bout;
 import com.netbout.spi.Friends;
 import com.netbout.spi.Messages;
 import java.util.Date;
+import java.util.concurrent.TimeUnit;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
@@ -115,16 +118,19 @@ final class DyBout implements Bout {
     }
 
     @Override
+    @Cacheable(lifetime = Tv.FIVE, unit = TimeUnit.MINUTES)
     public Messages messages() {
         return new DyMessages(this.region, this.number(), this.self);
     }
 
     @Override
+    @Cacheable(lifetime = Tv.FIVE, unit = TimeUnit.MINUTES)
     public Friends friends() {
         return new DyFriends(this.region, this.item);
     }
 
     @Override
+    @Cacheable(lifetime = Tv.FIVE, unit = TimeUnit.MINUTES)
     public Attachments attachments() {
         return new DyAttachments(this.region, this.number(), this.self);
     }

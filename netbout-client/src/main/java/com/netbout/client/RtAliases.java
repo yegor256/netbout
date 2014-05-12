@@ -32,7 +32,6 @@ import com.jcabi.http.response.XmlResponse;
 import com.netbout.spi.Alias;
 import com.netbout.spi.Aliases;
 import java.io.IOException;
-import java.util.Iterator;
 
 /**
  * REST aliases.
@@ -75,7 +74,7 @@ final class RtAliases implements Aliases {
     }
 
     @Override
-    public Iterator<Alias> iterator() {
+    public Iterable<Alias> iterate() {
         throw new UnsupportedOperationException(
             "#iterator(): not possible to iterate aliases through API"
         );

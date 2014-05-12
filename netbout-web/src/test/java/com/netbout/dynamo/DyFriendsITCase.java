@@ -52,14 +52,14 @@ public final class DyFriendsITCase {
         final Aliases aliases =
             new DyBase().user(new URN("urn:test:8530")).aliases();
         aliases.add("bobby");
-        final Inbox inbox = aliases.iterator().next().inbox();
+        final Inbox inbox = aliases.iterate().iterator().next().inbox();
         final Bout bout = inbox.bout(inbox.start());
         final Friends friends = bout.friends();
         final String alias = "jeffrey";
         aliases.add(alias);
         friends.invite(alias);
         MatcherAssert.assertThat(
-            friends,
+            friends.iterate(),
             Matchers.hasItem(
                 new Friend.HasAlias(Matchers.equalTo(alias))
             )

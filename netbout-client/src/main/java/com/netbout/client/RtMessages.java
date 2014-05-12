@@ -33,7 +33,6 @@ import com.netbout.spi.Message;
 import com.netbout.spi.Messages;
 import com.netbout.spi.Pageable;
 import java.io.IOException;
-import java.util.Iterator;
 
 /**
  * REST messages.
@@ -74,7 +73,7 @@ final class RtMessages implements Messages {
     }
 
     @Override
-    public Iterator<Message> iterator() {
+    public Iterable<Message> iterate() {
         throw new UnsupportedOperationException("#iterator()");
     }
 }

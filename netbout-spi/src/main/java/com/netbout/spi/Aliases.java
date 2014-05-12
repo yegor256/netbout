@@ -37,7 +37,7 @@ import java.io.IOException;
  * @since 2.0
  */
 @Immutable
-public interface Aliases extends Iterable<Alias> {
+public interface Aliases {
 
     /**
      * Is it possible to assign this identity?
@@ -52,5 +52,11 @@ public interface Aliases extends Iterable<Alias> {
      * @param name Alias to assign
      */
     void add(String name);
+
+    /**
+     * Iterate them all.
+     * @return List of all aliases
+     */
+    Iterable<Alias> iterate();
 
 }

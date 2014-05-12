@@ -29,6 +29,7 @@ package com.netbout.dynamo;
 import com.jcabi.urn.URN;
 import com.netbout.spi.Aliases;
 import com.netbout.spi.Bout;
+import com.netbout.spi.Friend;
 import com.netbout.spi.Friends;
 import com.netbout.spi.Inbox;
 import org.hamcrest.MatcherAssert;
@@ -52,21 +53,23 @@ public final class DyInboxITCase {
         final Aliases aliases =
             new DyBase().user(new URN("urn:test:88")).aliases();
         aliases.add(alias);
-        final Inbox inbox = aliases.iterator().next().inbox();
+        final Inbox inbox = aliases.iterate().iterator().next().inbox();
         final long number = inbox.start();
         MatcherAssert.assertThat(
-            inbox,
+            inbox.iterate(),
             Matchers.not(Matchers.emptyIterable())
         );
         final Bout bout = inbox.bout(number);
         final Friends friends = bout.friends();
         MatcherAssert.assertThat(
-            friends,
+            friends.iterate(),
             Matchers.not(Matchers.emptyIterable())
         );
         MatcherAssert.assertThat(
-            friends.iterator().next().alias(),
-            Matchers.equalTo(alias)
+            friends.iterate(),
+            Matchers.hasItem(
+                new Friend.HasAlias(Matchers.equalTo(alias))
+            )
         );
     }
 

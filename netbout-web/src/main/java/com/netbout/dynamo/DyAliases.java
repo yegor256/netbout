@@ -27,7 +27,8 @@
 package com.netbout.dynamo;
 
 import com.google.common.base.Function;
-import com.google.common.collect.Iterators;
+import com.google.common.collect.Iterables;
+import com.jcabi.aspects.Cacheable;
 import com.jcabi.aspects.Immutable;
 import com.jcabi.aspects.Loggable;
 import com.jcabi.aspects.Tv;
@@ -39,8 +40,8 @@ import com.jcabi.dynamo.Region;
 import com.jcabi.urn.URN;
 import com.netbout.spi.Alias;
 import com.netbout.spi.Aliases;
-import java.util.Iterator;
 import java.util.Locale;
+import java.util.concurrent.TimeUnit;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
@@ -127,6 +128,7 @@ final class DyAliases implements Aliases {
     }
 
     @Override
+    @Cacheable.FlushAfter
     public void add(final String name) {
         if (new Everybody(this.region).occupied(name)) {
             throw new IllegalArgumentException(
@@ -143,8 +145,9 @@ final class DyAliases implements Aliases {
     }
 
     @Override
-    public Iterator<Alias> iterator() {
-        return Iterators.transform(
+    @Cacheable(lifetime = Tv.FIVE, unit = TimeUnit.MINUTES)
+    public Iterable<Alias> iterate() {
+        return Iterables.transform(
             this.region
                 .table(DyAliases.TBL)
                 .frame()
@@ -153,8 +156,7 @@ final class DyAliases implements Aliases {
                     new QueryValve()
                         .withIndexName(DyAliases.INDEX)
                         .withConsistentRead(false)
-                )
-                .iterator(),
+                ),
             new Function<Item, Alias>() {
                 @Override
                 public Alias apply(final Item item) {

@@ -52,12 +52,12 @@ public final class DyMessagesITCase {
         final Aliases aliases =
             new DyBase().user(new URN("urn:test:84218")).aliases();
         aliases.add(alias);
-        final Inbox inbox = aliases.iterator().next().inbox();
+        final Inbox inbox = aliases.iterate().iterator().next().inbox();
         final Bout bout = inbox.bout(inbox.start());
         final Messages messages = bout.messages();
         messages.post("hello!");
         MatcherAssert.assertThat(
-            messages,
+            messages.iterate(),
             Matchers.not(Matchers.emptyIterable())
         );
     }

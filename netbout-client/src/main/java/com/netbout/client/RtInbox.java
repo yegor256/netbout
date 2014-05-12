@@ -34,7 +34,6 @@ import com.netbout.spi.Bout;
 import com.netbout.spi.Inbox;
 import com.netbout.spi.Pageable;
 import java.io.IOException;
-import java.util.Iterator;
 
 /**
  * REST inbox.
@@ -92,7 +91,7 @@ final class RtInbox implements Inbox {
     }
 
     @Override
-    public Iterator<Bout> iterator() {
+    public Iterable<Bout> iterate() {
         throw new UnsupportedOperationException("#iterator()");
     }
 }

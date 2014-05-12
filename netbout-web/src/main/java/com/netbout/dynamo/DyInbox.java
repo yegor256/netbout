@@ -30,9 +30,11 @@ import co.stateful.Counter;
 import co.stateful.RtSttc;
 import com.amazonaws.services.dynamodbv2.model.Select;
 import com.google.common.base.Function;
-import com.google.common.collect.Iterators;
+import com.google.common.collect.Iterables;
+import com.jcabi.aspects.Cacheable;
 import com.jcabi.aspects.Immutable;
 import com.jcabi.aspects.Loggable;
+import com.jcabi.aspects.Tv;
 import com.jcabi.dynamo.Attributes;
 import com.jcabi.dynamo.Conditions;
 import com.jcabi.dynamo.Item;
@@ -44,8 +46,8 @@ import com.netbout.spi.Bout;
 import com.netbout.spi.Inbox;
 import com.netbout.spi.Pageable;
 import java.io.IOException;
-import java.util.Iterator;
 import java.util.NoSuchElementException;
+import java.util.concurrent.TimeUnit;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
@@ -96,6 +98,7 @@ final class DyInbox implements Inbox {
     }
 
     @Override
+    @Cacheable.FlushAfter
     public long start() throws IOException {
         final long number = this.counter.incrementAndGet(1L);
         this.region.table(DyFriends.TBL).put(
@@ -110,6 +113,7 @@ final class DyInbox implements Inbox {
 
     // @checkstyle RedundantThrowsCheck (4 lines)
     @Override
+    @Cacheable(lifetime = Tv.FIVE, unit = TimeUnit.MINUTES)
     public Bout bout(final long number) throws Inbox.BoutNotFoundException {
         try {
             return new DyBout(
@@ -132,8 +136,9 @@ final class DyInbox implements Inbox {
     }
 
     @Override
-    public Iterator<Bout> iterator() {
-        return Iterators.transform(
+    @Cacheable(lifetime = Tv.FIVE, unit = TimeUnit.MINUTES)
+    public Iterable<Bout> iterate() {
+        return Iterables.transform(
             this.region.table(DyFriends.TBL)
                 .frame()
                 .where(DyFriends.RANGE, this.self)
@@ -143,8 +148,7 @@ final class DyInbox implements Inbox {
                         .withConsistentRead(false)
                         .withSelect(Select.ALL_PROJECTED_ATTRIBUTES)
                         .withScanIndexForward(false)
-                )
-                .iterator(),
+                ),
             new Function<Item, Bout>() {
                 @Override
                 public Bout apply(final Item item) {
