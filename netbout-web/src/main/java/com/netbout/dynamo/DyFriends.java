@@ -36,6 +36,7 @@ import com.jcabi.aspects.Loggable;
 import com.jcabi.dynamo.Attributes;
 import com.jcabi.dynamo.Conditions;
 import com.jcabi.dynamo.Item;
+import com.jcabi.dynamo.QueryValve;
 import com.jcabi.dynamo.Region;
 import com.netbout.spi.Friend;
 import com.netbout.spi.Friends;
@@ -137,6 +138,7 @@ final class DyFriends implements Friends {
         return Iterables.transform(
             this.region.table(DyFriends.TBL)
                 .frame()
+                .through(new QueryValve())
                 .where(DyFriends.HASH, Conditions.equalTo(this.bout())),
             new Function<Item, Friend>() {
                 @Override

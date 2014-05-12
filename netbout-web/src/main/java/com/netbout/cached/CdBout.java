@@ -26,20 +26,19 @@
  */
 package com.netbout.cached;
 
-import com.jcabi.aspects.Cacheable;
 import com.jcabi.aspects.Immutable;
 import com.jcabi.aspects.Loggable;
-import com.netbout.spi.Alias;
-import com.netbout.spi.Inbox;
+import com.netbout.spi.Attachments;
+import com.netbout.spi.Bout;
+import com.netbout.spi.Friends;
+import com.netbout.spi.Messages;
 import java.io.IOException;
-import java.net.URI;
-import java.util.Locale;
-import java.util.concurrent.TimeUnit;
+import java.util.Date;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
 /**
- * Cached Alias.
+ * Cached Bout.
  *
  * @author Yegor Bugayenko (yegor@tpc2.com)
  * @version $Id$
@@ -49,47 +48,53 @@ import lombok.ToString;
 @Loggable(Loggable.DEBUG)
 @ToString(of = "origin")
 @EqualsAndHashCode(of = "origin")
-final class CdAlias implements Alias {
+final class CdBout implements Bout {
 
     /**
      * Original.
      */
-    private final transient Alias origin;
+    private final transient Bout origin;
 
     /**
      * Public ctor.
      * @param org Origin
      */
-    CdAlias(final Alias org) {
+    CdBout(final Bout org) {
         this.origin = org;
     }
 
     @Override
-    @Cacheable(lifetime = 1, unit = TimeUnit.HOURS)
-    public String name() throws IOException {
-        return this.origin.name();
+    public long number() throws IOException {
+        return this.origin.number();
     }
 
     @Override
-    @Cacheable(lifetime = 1, unit = TimeUnit.HOURS)
-    public URI photo() throws IOException {
-        return this.origin.photo();
+    public Date date() throws IOException {
+        return this.origin.date();
     }
 
     @Override
-    @Cacheable(lifetime = 1, unit = TimeUnit.HOURS)
-    public Locale locale() throws IOException {
-        return this.origin.locale();
+    public String title() throws IOException {
+        return this.origin.title();
     }
 
     @Override
-    @Cacheable.FlushAfter
-    public void photo(final URI uri) {
-        this.origin.photo(uri);
+    public void rename(final String text) {
+        this.origin.rename(text);
     }
 
     @Override
-    public Inbox inbox() {
-        return new CdInbox(this.origin.inbox());
+    public Messages messages() {
+        return this.origin.messages();
+    }
+
+    @Override
+    public Friends friends() {
+        return new CdFriends(this.origin.friends());
+    }
+
+    @Override
+    public Attachments attachments() {
+        return this.origin.attachments();
     }
 }

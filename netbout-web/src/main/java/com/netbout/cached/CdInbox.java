@@ -26,20 +26,19 @@
  */
 package com.netbout.cached;
 
-import com.jcabi.aspects.Cacheable;
+import com.google.common.base.Function;
+import com.google.common.collect.Iterables;
 import com.jcabi.aspects.Immutable;
 import com.jcabi.aspects.Loggable;
-import com.netbout.spi.Alias;
+import com.netbout.spi.Bout;
 import com.netbout.spi.Inbox;
+import com.netbout.spi.Pageable;
 import java.io.IOException;
-import java.net.URI;
-import java.util.Locale;
-import java.util.concurrent.TimeUnit;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
 /**
- * Cached Alias.
+ * Cached Inbox.
  *
  * @author Yegor Bugayenko (yegor@tpc2.com)
  * @version $Id$
@@ -49,47 +48,47 @@ import lombok.ToString;
 @Loggable(Loggable.DEBUG)
 @ToString(of = "origin")
 @EqualsAndHashCode(of = "origin")
-final class CdAlias implements Alias {
+final class CdInbox implements Inbox {
 
     /**
      * Original.
      */
-    private final transient Alias origin;
+    private final transient Inbox origin;
 
     /**
      * Public ctor.
      * @param org Origin
      */
-    CdAlias(final Alias org) {
+    CdInbox(final Inbox org) {
         this.origin = org;
     }
 
     @Override
-    @Cacheable(lifetime = 1, unit = TimeUnit.HOURS)
-    public String name() throws IOException {
-        return this.origin.name();
+    public long start() throws IOException {
+        return this.origin.start();
+    }
+
+    // @checkstyle RedundantThrowsCheck (4 lines)
+    @Override
+    public Bout bout(final long number) throws Inbox.BoutNotFoundException {
+        return new CdBout(this.origin.bout(number));
     }
 
     @Override
-    @Cacheable(lifetime = 1, unit = TimeUnit.HOURS)
-    public URI photo() throws IOException {
-        return this.origin.photo();
+    public Pageable<Bout> jump(final int pos) {
+        return this.origin.jump(pos);
     }
 
     @Override
-    @Cacheable(lifetime = 1, unit = TimeUnit.HOURS)
-    public Locale locale() throws IOException {
-        return this.origin.locale();
-    }
-
-    @Override
-    @Cacheable.FlushAfter
-    public void photo(final URI uri) {
-        this.origin.photo(uri);
-    }
-
-    @Override
-    public Inbox inbox() {
-        return new CdInbox(this.origin.inbox());
+    public Iterable<Bout> iterate() {
+        return Iterables.transform(
+            this.origin.iterate(),
+            new Function<Bout, Bout>() {
+                @Override
+                public Bout apply(final Bout input) {
+                    return new CdBout(input);
+                }
+            }
+        );
     }
 }

@@ -29,17 +29,14 @@ package com.netbout.cached;
 import com.jcabi.aspects.Cacheable;
 import com.jcabi.aspects.Immutable;
 import com.jcabi.aspects.Loggable;
-import com.netbout.spi.Alias;
-import com.netbout.spi.Inbox;
-import java.io.IOException;
+import com.netbout.spi.Friend;
 import java.net.URI;
-import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
 /**
- * Cached Alias.
+ * Cached Friend.
  *
  * @author Yegor Bugayenko (yegor@tpc2.com)
  * @version $Id$
@@ -49,47 +46,30 @@ import lombok.ToString;
 @Loggable(Loggable.DEBUG)
 @ToString(of = "origin")
 @EqualsAndHashCode(of = "origin")
-final class CdAlias implements Alias {
+final class CdFriend implements Friend {
 
     /**
      * Original.
      */
-    private final transient Alias origin;
+    private final transient Friend origin;
 
     /**
      * Public ctor.
      * @param org Origin
      */
-    CdAlias(final Alias org) {
+    CdFriend(final Friend org) {
         this.origin = org;
     }
 
     @Override
     @Cacheable(lifetime = 1, unit = TimeUnit.HOURS)
-    public String name() throws IOException {
-        return this.origin.name();
+    public String alias() {
+        return this.origin.alias();
     }
 
     @Override
     @Cacheable(lifetime = 1, unit = TimeUnit.HOURS)
-    public URI photo() throws IOException {
+    public URI photo() {
         return this.origin.photo();
-    }
-
-    @Override
-    @Cacheable(lifetime = 1, unit = TimeUnit.HOURS)
-    public Locale locale() throws IOException {
-        return this.origin.locale();
-    }
-
-    @Override
-    @Cacheable.FlushAfter
-    public void photo(final URI uri) {
-        this.origin.photo(uri);
-    }
-
-    @Override
-    public Inbox inbox() {
-        return new CdInbox(this.origin.inbox());
     }
 }
