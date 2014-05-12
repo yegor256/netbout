@@ -38,6 +38,7 @@ import java.util.Date;
  * @since 2.0
  */
 @Immutable
+@SuppressWarnings("PMD.TooManyMethods")
 public interface Bout {
 
     /**
@@ -84,5 +85,50 @@ public interface Bout {
      * @return Attachments
      */
     Attachments attachments();
+
+    /**
+     * Read only.
+     */
+    final class ReadOnly implements Bout {
+        /**
+         * Original bout.
+         */
+        private final transient Bout origin;
+        /**
+         * Ctor.
+         * @param bout Bout
+         */
+        public ReadOnly(final Bout bout) {
+            this.origin = bout;
+        }
+        @Override
+        public long number() throws IOException {
+            return this.origin.number();
+        }
+        @Override
+        public Date date() throws IOException {
+            return this.origin.date();
+        }
+        @Override
+        public String title() throws IOException {
+            return this.origin.title();
+        }
+        @Override
+        public void rename(final String text) {
+            throw new UnsupportedOperationException("#rename()");
+        }
+        @Override
+        public Messages messages() {
+            return this.origin.messages();
+        }
+        @Override
+        public Friends friends() {
+            return this.origin.friends();
+        }
+        @Override
+        public Attachments attachments() {
+            return this.origin.attachments();
+        }
+    }
 
 }

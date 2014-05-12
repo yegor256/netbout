@@ -159,9 +159,11 @@ final class DyInbox implements Inbox {
             new Function<Item, Bout>() {
                 @Override
                 public Bout apply(final Item item) {
-                    return new DyBout(
-                        DyInbox.this.region,
-                        item, DyInbox.this.self
+                    return new Bout.ReadOnly(
+                        new DyBout(
+                            DyInbox.this.region,
+                            item, DyInbox.this.self
+                        )
                     );
                 }
             }
