@@ -118,8 +118,15 @@ final class DyInbox implements Inbox {
         try {
             return new DyBout(
                 this.region,
-                this.region.table(DyFriends.TBL).frame()
-                    .through(new QueryValve().withLimit(1))
+                this.region.table(DyFriends.TBL)
+                    .frame()
+                    .through(
+                        new QueryValve().withLimit(1)
+                            .withSelect(Select.SPECIFIC_ATTRIBUTES)
+                            .withAttributesToGet(
+                                DyFriends.HASH, DyFriends.RANGE
+                            )
+                    )
                     .where(DyFriends.HASH, Conditions.equalTo(number))
                     .where(DyFriends.RANGE, this.self)
                     .iterator().next(),

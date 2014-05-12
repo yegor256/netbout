@@ -26,6 +26,7 @@
  */
 package com.netbout.dynamo;
 
+import com.amazonaws.services.dynamodbv2.model.Select;
 import com.google.common.base.Function;
 import com.google.common.collect.Iterables;
 import com.jcabi.aspects.Cacheable;
@@ -139,8 +140,8 @@ final class DyAliases implements Aliases {
             new Attributes()
                 .with(DyAliases.ATTR_URN, this.urn)
                 .with(DyAliases.HASH, name)
-                .with(DyAliases.ATTR_LOCALE, Locale.ENGLISH)
                 .with(DyAliases.ATTR_PHOTO, Alias.BLANK)
+                .with(DyAliases.ATTR_LOCALE, Locale.ENGLISH)
         );
     }
 
@@ -156,6 +157,8 @@ final class DyAliases implements Aliases {
                     new QueryValve()
                         .withIndexName(DyAliases.INDEX)
                         .withConsistentRead(false)
+                        .withSelect(Select.SPECIFIC_ATTRIBUTES)
+                        .withAttributesToGet(DyAliases.HASH)
                 ),
             new Function<Item, Alias>() {
                 @Override

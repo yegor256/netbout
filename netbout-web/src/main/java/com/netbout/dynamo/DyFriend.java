@@ -26,8 +26,10 @@
  */
 package com.netbout.dynamo;
 
+import com.jcabi.aspects.Cacheable;
 import com.jcabi.aspects.Immutable;
 import com.jcabi.aspects.Loggable;
+import com.jcabi.aspects.Tv;
 import com.jcabi.dynamo.Item;
 import com.jcabi.dynamo.QueryValve;
 import com.jcabi.dynamo.Region;
@@ -36,6 +38,7 @@ import com.netbout.spi.Alias;
 import com.netbout.spi.Friend;
 import java.net.URI;
 import java.util.Iterator;
+import java.util.concurrent.TimeUnit;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
@@ -78,6 +81,7 @@ final class DyFriend implements Friend {
     }
 
     @Override
+    @Cacheable(lifetime = Tv.FIVE, unit = TimeUnit.MINUTES)
     public URI photo() {
         final Iterator<Item> items = this.table.frame()
             .where(DyAliases.HASH, this.name)

@@ -29,6 +29,7 @@ package com.netbout.dynamo;
 import com.jcabi.urn.URN;
 import com.netbout.spi.Alias;
 import com.netbout.spi.Aliases;
+import java.net.URI;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;
@@ -54,17 +55,15 @@ public final class DyAliasITCase {
             aliases.check(name),
             Matchers.not(Matchers.isEmptyOrNullString())
         );
+        final Alias alias = aliases.iterate().iterator().next();
         MatcherAssert.assertThat(
-            aliases.iterate(),
-            Matchers.hasItem(
-                new Alias.HasName(Matchers.equalTo(name))
-            )
+            alias,
+            new Alias.HasName(Matchers.equalTo(name))
         );
+        alias.photo(new URI("http://localhost#test"));
         MatcherAssert.assertThat(
-            aliases.iterate(),
-            Matchers.hasItem(
-                new Alias.HasPhoto(Matchers.equalTo(Alias.BLANK))
-            )
+            alias.photo().toString(),
+            Matchers.containsString("#test")
         );
     }
 

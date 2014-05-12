@@ -157,7 +157,15 @@ final class DyMessages implements Messages {
         return Iterables.transform(
             this.region.table(DyMessages.TBL)
                 .frame()
-                .through(new QueryValve().withScanIndexForward(false))
+                .through(
+                    new QueryValve()
+                        .withScanIndexForward(false)
+                        .withAttributesToGet(
+                            DyMessages.ATTR_TEXT,
+                            DyMessages.ATTR_ALIAS,
+                            DyMessages.ATTR_DATE
+                        )
+                )
                 .where(DyMessages.HASH, Conditions.equalTo(this.bout)),
             new Function<Item, Message>() {
                 @Override

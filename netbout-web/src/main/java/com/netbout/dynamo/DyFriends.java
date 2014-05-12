@@ -141,7 +141,8 @@ final class DyFriends implements Friends {
     @Cacheable(lifetime = Tv.FIVE, unit = TimeUnit.MINUTES)
     public Iterable<Friend> iterate() {
         return Iterables.transform(
-            this.region.table(DyFriends.TBL).frame()
+            this.region.table(DyFriends.TBL)
+                .frame()
                 .where(DyFriends.HASH, Conditions.equalTo(this.bout())),
             new Function<Item, Friend>() {
                 @Override

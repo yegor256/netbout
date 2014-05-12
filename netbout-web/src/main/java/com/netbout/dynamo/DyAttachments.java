@@ -35,6 +35,7 @@ import com.jcabi.aspects.Tv;
 import com.jcabi.dynamo.Attributes;
 import com.jcabi.dynamo.Conditions;
 import com.jcabi.dynamo.Item;
+import com.jcabi.dynamo.QueryValve;
 import com.jcabi.dynamo.Region;
 import com.netbout.spi.Attachment;
 import com.netbout.spi.Attachments;
@@ -136,6 +137,11 @@ final class DyAttachments implements Attachments {
         return Iterables.transform(
             this.region.table(DyAttachments.TBL)
                 .frame()
+                .through(
+                    new QueryValve().withAttributesToGet(
+                        DyAttachments.ATTR_ALIAS, DyAttachments.ATTR_CTYPE
+                    )
+                )
                 .where(DyAttachments.HASH, Conditions.equalTo(this.bout)),
             new Function<Item, Attachment>() {
                 @Override
