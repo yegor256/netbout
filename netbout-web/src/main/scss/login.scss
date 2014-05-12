@@ -45,17 +45,18 @@
         width: 150px;
         margin-bottom: 15px;
     }
-    .buttons {
-        margin-top: 30px;
-        .buttons a {
-            text-decoration: none;
-            margin-left: 2px;
-            margin-right: 2px;
-            color: gray;
-            font-size: 40px;
-            &:hover {
-                color: $color-text;
-            }
+}
+
+.buttons {
+    margin-top: 30px;
+    a {
+        text-decoration: none;
+        margin-left: 2px;
+        margin-right: 2px;
+        color: gray;
+        font-size: 40px;
+        &:hover {
+            color: $color-text;
         }
     }
 }

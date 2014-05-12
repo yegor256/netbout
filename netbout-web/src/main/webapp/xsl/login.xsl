@@ -38,7 +38,7 @@
         <title>netbout - private talks made easy</title>
     </xsl:template>
     <xsl:template match="page" mode="body">
-        <div class="buttons icomoon">
+        <nav class="buttons icomoon">
             <a>
                 <xsl:attribute name="href">
                     <xsl:value-of select="/page/links/link[@rel='rexsl:facebook']/@href" />
@@ -66,6 +66,6 @@
                 </xsl:attribute>
                 <xsl:text>g</xsl:text>
             </a>
-        </div>
+        </nav>
     </xsl:template>
 </xsl:stylesheet>
