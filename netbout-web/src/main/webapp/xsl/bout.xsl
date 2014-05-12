@@ -37,7 +37,7 @@
         select="document(concat('/lang/', /page/alias/locale, '.xml?', /page/version/revision))/texts"/>
     <xsl:include href="/xsl/layout.xsl" />
     <xsl:include href="/xsl/friends.xsl" />
-    <xsl:template name="head">
+    <xsl:template match="page" mode="head">
         <title>
             <xsl:text>#</xsl:text>
             <xsl:value-of select="/page/bout/number"/>
@@ -59,7 +59,7 @@
             <xsl:text> </xsl:text> <!-- this is for W3C compliance -->
         </script>
     </xsl:template>
-    <xsl:template name="content">
+    <xsl:template match="page" mode="body">
         <xsl:apply-templates select="bout" />
     </xsl:template>
     <xsl:template match="bout">

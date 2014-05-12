@@ -107,6 +107,11 @@ final class DyFriends implements Friends {
 
     @Override
     public void invite(final String friend) {
+        if (!new Everybody(this.region).occupied(friend)) {
+            throw new IllegalArgumentException(
+                String.format("alias '%s' doesn't exist", friend)
+            );
+        }
         this.region.table(DyFriends.TBL).put(
             new Attributes()
                 .with(DyFriends.HASH, this.bout())

@@ -115,7 +115,7 @@ final class DyAliases implements Aliases {
         } else if (name.length() > Tv.TWENTY) {
             answer = "too long, must be 20 letters at most";
         } else if (name.matches("[a-z0-9]+")) {
-            if (this.occupied(name)) {
+            if (new Everybody(this.region).occupied(name)) {
                 answer = "this alias is occupied";
             } else {
                 answer = "";
@@ -128,7 +128,7 @@ final class DyAliases implements Aliases {
 
     @Override
     public void add(final String name) {
-        if (this.occupied(name)) {
+        if (new Everybody(this.region).occupied(name)) {
             throw new IllegalArgumentException(
                 String.format("alias '%s' is occupied", name)
             );
@@ -162,19 +162,6 @@ final class DyAliases implements Aliases {
                 }
             }
         );
-    }
-
-    /**
-     * This name is occupied.
-     * @param name The name
-     * @return TRUE if occupied
-     */
-    private boolean occupied(final String name) {
-        return this.region.table(DyAliases.TBL).frame()
-            .through(new QueryValve().withLimit(1))
-            .where(DyAliases.HASH, Conditions.equalTo(name))
-            .iterator()
-            .hasNext();
     }
 
 }

@@ -26,44 +26,51 @@
  */
 package com.netbout.dynamo;
 
-import com.jcabi.urn.URN;
-import com.netbout.spi.Aliases;
-import com.netbout.spi.Bout;
-import com.netbout.spi.Friend;
-import com.netbout.spi.Friends;
-import com.netbout.spi.Inbox;
-import org.hamcrest.MatcherAssert;
-import org.hamcrest.Matchers;
-import org.junit.Test;
+import com.jcabi.aspects.Immutable;
+import com.jcabi.aspects.Loggable;
+import com.jcabi.dynamo.Conditions;
+import com.jcabi.dynamo.QueryValve;
+import com.jcabi.dynamo.Region;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
 /**
- * Integration case for {@link DyFriends}.
+ * Everybody.
+ *
  * @author Yegor Bugayenko (yegor@tpc2.com)
  * @version $Id$
+ * @since 2.0
  */
-public final class DyFriendsITCase {
+@Immutable
+@Loggable(Loggable.DEBUG)
+@ToString
+@EqualsAndHashCode(of = "region")
+final class Everybody {
 
     /**
-     * DyFriends can manage friends.
-     * @throws Exception If there is some problem inside
+     * Region to work with.
      */
-    @Test
-    public void managesFriends() throws Exception {
-        final Aliases aliases =
-            new DyBase().user(new URN("urn:test:8530")).aliases();
-        aliases.add("bobby");
-        final Inbox inbox = aliases.iterator().next().inbox();
-        final Bout bout = inbox.bout(inbox.start());
-        final Friends friends = bout.friends();
-        final String alias = "jeffrey";
-        aliases.add(alias);
-        friends.invite(alias);
-        MatcherAssert.assertThat(
-            friends,
-            Matchers.hasItem(
-                new Friend.HasAlias(Matchers.equalTo(alias))
-            )
-        );
+    private final transient Region region;
+
+    /**
+     * Ctor.
+     * @param reg Region we're in
+     */
+    Everybody(final Region reg) {
+        this.region = reg;
+    }
+
+    /**
+     * This name is occupied.
+     * @param name The name
+     * @return TRUE if occupied
+     */
+    public boolean occupied(final String name) {
+        return this.region.table(DyAliases.TBL).frame()
+            .through(new QueryValve().withLimit(1))
+            .where(DyAliases.HASH, Conditions.equalTo(name))
+            .iterator()
+            .hasNext();
     }
 
 }

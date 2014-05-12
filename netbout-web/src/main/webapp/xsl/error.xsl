@@ -32,27 +32,22 @@
     xmlns:xs="http://www.w3.org/2001/XMLSchema"
     xmlns="http://www.w3.org/1999/xhtml"
     version="2.0" exclude-result-prefixes="xs">
-
     <xsl:output method="xml" omit-xml-declaration="yes"/>
-
     <xsl:param name="TEXTS"
         select="document(concat('/lang/en.xml?', /page/version/revision))/texts"/>
-
     <xsl:include href="/xsl/layout.xsl" />
-
-    <xsl:template name="head">
+    <xsl:template match="page" mode="head">
         <title>
-            <xsl:value-of select="/page/error/code"/>
+            <xsl:value-of select="error/code"/>
             <xsl:text>: error</xsl:text>
         </title>
     </xsl:template>
-
-    <xsl:template name="content">
+    <xsl:template match="page" mode="body">
         <p>
             <span class="red">
-                <xsl:value-of select="/page/error/code"/>
+                <xsl:value-of select="error/code"/>
                 <xsl:text>: </xsl:text>
-                <xsl:value-of select="/page/error/message"/>
+                <xsl:value-of select="error/message"/>
             </span>
             <xsl:text>.
                 Maybe the page you're requesting in is no longer available,
@@ -60,5 +55,4 @@
             </xsl:text>
         </p>
     </xsl:template>
-
 </xsl:stylesheet>

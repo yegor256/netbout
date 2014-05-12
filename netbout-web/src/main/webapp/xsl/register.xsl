@@ -34,17 +34,17 @@
     version="2.0" exclude-result-prefixes="xs">
     <xsl:output method="xml" omit-xml-declaration="yes"/>
     <xsl:include href="/xsl/login-layout.xsl" />
-    <xsl:template name="head">
+    <xsl:template match="page" mode="head">
         <script>
             <xsl:attribute name="src">
                 <xsl:text>/js/register.js?</xsl:text>
-                <xsl:value-of select="/page/version/revision"/>
+                <xsl:value-of select="version/revision"/>
             </xsl:attribute>
             <xsl:text> </xsl:text> <!-- this is for W3C compliance -->
         </script>
         <title>register</title>
     </xsl:template>
-    <xsl:template name="content">
+    <xsl:template match="page" mode="body">
         <p>
             <img style="width: 32px;">
                 <xsl:attribute name="src">
@@ -57,7 +57,7 @@
         </p>
         <form method="post">
             <xsl:attribute name="action">
-                <xsl:value-of select="/page/links/link[@rel='register']/@href"/>
+                <xsl:value-of select="links/link[@rel='register']/@href"/>
             </xsl:attribute>
             <fieldset>
                 <label for="alias">
@@ -65,7 +65,7 @@
                 </label>
                 <input id="alias" name="alias" size="35" maxlength="100" autocomplete="off">
                     <xsl:attribute name="data-check">
-                        <xsl:value-of select="/page/links/link[@rel='check']/@href"/>
+                        <xsl:value-of select="links/link[@rel='check']/@href"/>
                     </xsl:attribute>
                 </input>
                 <label for="submit">
@@ -78,11 +78,10 @@
         <p>
             <a>
                 <xsl:attribute name="href">
-                    <xsl:value-of select="/page/links/link[@rel='rexsl:logout']/@href"/>
+                    <xsl:value-of select="links/link[@rel='rexsl:logout']/@href"/>
                 </xsl:attribute>
                 <xsl:text>logout</xsl:text>
             </a>
         </p>
     </xsl:template>
-
 </xsl:stylesheet>

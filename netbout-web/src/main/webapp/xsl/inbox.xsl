@@ -37,11 +37,11 @@
         select="document(concat('/lang/', /page/alias/locale, '.xml?', /page/version/revision))/texts"/>
     <xsl:include href="/xsl/layout.xsl" />
     <xsl:include href="/xsl/friends.xsl" />
-    <xsl:template name="head">
+    <xsl:template match="page" mode="head">
         <title>
             <xsl:value-of select="$TEXTS/inbox"/>
             <xsl:variable name="unread">
-                <xsl:value-of select="count(/page/bouts/bout[@unseen = 'true'])"/>
+                <xsl:value-of select="count(bouts/bout[@unseen = 'true'])"/>
             </xsl:variable>
             <xsl:if test="$unread &gt; 0">
                 <xsl:text> (</xsl:text>
@@ -52,14 +52,14 @@
         <script>
             <xsl:attribute name="src">
                 <xsl:text>/js/friends.js?</xsl:text>
-                <xsl:value-of select="/page/version/revision"/>
+                <xsl:value-of select="version/revision"/>
             </xsl:attribute>
             <xsl:text> </xsl:text> <!-- this is for W3C compliance -->
         </script>
     </xsl:template>
-    <xsl:template name="content">
+    <xsl:template match="page" mode="body">
         <xsl:choose>
-            <xsl:when test="count(/page/bouts/bout) = 0">
+            <xsl:when test="count(bouts/bout) = 0">
                 <h1>
                     <span class="title"><xsl:text>Welcome to netbout!</xsl:text></span>
                 </h1>
@@ -72,7 +72,7 @@
             </xsl:when>
             <xsl:otherwise>
                 <ul class="bouts">
-                    <xsl:for-each select="/page/bouts/bout">
+                    <xsl:for-each select="bouts/bout">
                         <xsl:apply-templates select="." />
                     </xsl:for-each>
                 </ul>

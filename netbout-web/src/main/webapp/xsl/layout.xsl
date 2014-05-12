@@ -73,7 +73,7 @@
                         </xsl:call-template>
                     </xsl:attribute>
                 </link>
-                <xsl:call-template name="head"/>
+                <xsl:apply-templates select="." mode="head"/>
             </head>
             <body>
                 <xsl:apply-templates select="version"/>
@@ -88,7 +88,7 @@
                             <xsl:value-of select="message"/>
                         </div>
                     </xsl:if>
-                    <xsl:call-template name="content"/>
+                    <xsl:apply-templates select="." mode="body"/>
                 </div>
             </body>
         </html>

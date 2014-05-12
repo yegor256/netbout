@@ -34,10 +34,10 @@
     version="2.0" exclude-result-prefixes="xs">
     <xsl:output method="xml" omit-xml-declaration="yes"/>
     <xsl:include href="/xsl/login-layout.xsl" />
-    <xsl:template name="head">
+    <xsl:template match="page" mode="head">
         <title>netbout - private talks made easy</title>
     </xsl:template>
-    <xsl:template name="content">
+    <xsl:template match="page" mode="body">
         <div class="buttons icomoon">
             <a>
                 <xsl:attribute name="href">
@@ -68,5 +68,4 @@
             </a>
         </div>
     </xsl:template>
-
 </xsl:stylesheet>
