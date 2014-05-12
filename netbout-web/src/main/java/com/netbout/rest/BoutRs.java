@@ -153,6 +153,14 @@ public final class BoutRs extends BaseRs {
     @Path("/invite")
     public void invite(@FormParam("name") final String name)
         throws IOException {
+        final String check = this.user().aliases().check(name);
+        if (check.isEmpty()) {
+            throw FlashInset.forward(
+                this.self(),
+                String.format("incorrect alias '%s', try again", name),
+                Level.WARNING
+            );
+        }
         this.bout().friends().invite(name);
         throw FlashInset.forward(
             this.self(),
