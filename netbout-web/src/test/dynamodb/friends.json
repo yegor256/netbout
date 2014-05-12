@@ -7,6 +7,10 @@
         {
             "AttributeName": "alias",
             "AttributeType": "S"
+        },
+        {
+            "AttributeName": "updated",
+            "AttributeType": "N"
         }
     ],
     "KeySchema": [
@@ -33,7 +37,7 @@
                     "KeyType": "HASH"
                 },
                 {
-                    "AttributeName": "bout",
+                    "AttributeName": "updated",
                     "KeyType": "RANGE"
                 }
             ],
