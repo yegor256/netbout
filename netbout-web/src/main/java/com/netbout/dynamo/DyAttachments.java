@@ -30,12 +30,14 @@ import com.google.common.base.Function;
 import com.google.common.collect.Iterators;
 import com.jcabi.aspects.Immutable;
 import com.jcabi.aspects.Loggable;
+import com.jcabi.dynamo.Attributes;
 import com.jcabi.dynamo.Conditions;
 import com.jcabi.dynamo.Item;
 import com.jcabi.dynamo.Region;
 import com.netbout.spi.Attachment;
 import com.netbout.spi.Attachments;
 import java.util.Iterator;
+import javax.ws.rs.core.MediaType;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
@@ -93,25 +95,43 @@ final class DyAttachments implements Attachments {
     private final transient long bout;
 
     /**
+     * Self alias.
+     */
+    private final transient String self;
+
+    /**
      * Ctor.
      * @param reg Region
      * @param num Bout number
+     * @param slf Self
      */
-    DyAttachments(final Region reg, final long num) {
+    DyAttachments(final Region reg, final long num, final String slf) {
         this.region = reg;
         this.bout = num;
+        this.self = slf;
     }
 
     @Override
     public Attachment get(final String name) {
-        return new DyAttachment(
-            this.region.table(DyAttachments.TBL)
-                .frame()
-                .where(DyAttachments.HASH, Conditions.equalTo(this.bout))
-                .where(DyAttachments.RANGE, name)
-                .iterator()
-                .next()
-        );
+        final Iterator<Item> items = this.region.table(DyAttachments.TBL)
+            .frame()
+            .where(DyAttachments.HASH, Conditions.equalTo(this.bout))
+            .where(DyAttachments.RANGE, name)
+            .iterator();
+        final Item item;
+        if (items.hasNext()) {
+            item = items.next();
+        } else {
+            item = this.region.table(DyAttachments.TBL).put(
+                new Attributes()
+                    .with(DyAttachments.HASH, this.bout)
+                    .with(DyAttachments.RANGE, name)
+                    .with(DyAttachments.ATTR_ALIAS, this.self)
+                    .with(DyAttachments.ATTR_CTYPE, MediaType.TEXT_PLAIN)
+                    .with(DyAttachments.ATTR_DATA, " ")
+            );
+        }
+        return new DyAttachment(item);
     }
 
     @Override

@@ -166,6 +166,10 @@
             <artifactId>commons-lang3</artifactId>
         </dependency>
         <dependency>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
+        </dependency>
+        <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-log4j12</artifactId>
             <scope>runtime</scope>
@@ -219,7 +223,7 @@
             <plugin>
                 <artifactId>maven-war-plugin</artifactId>
                 <configuration>
-                    <warSourceExcludes>js/**, css/**</warSourceExcludes>
+                    <warSourceExcludes>js/**</warSourceExcludes>
                     <archive>
                         <manifestEntries>
                             <Netbout-Revision>${buildNumber}</Netbout-Revision>

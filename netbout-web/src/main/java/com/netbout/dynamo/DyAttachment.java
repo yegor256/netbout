@@ -26,14 +26,20 @@
  */
 package com.netbout.dynamo;
 
+import com.amazonaws.services.dynamodbv2.model.AttributeAction;
+import com.amazonaws.services.dynamodbv2.model.AttributeValue;
+import com.amazonaws.services.dynamodbv2.model.AttributeValueUpdate;
 import com.jcabi.aspects.Immutable;
 import com.jcabi.aspects.Loggable;
+import com.jcabi.dynamo.AttributeUpdates;
 import com.jcabi.dynamo.Item;
 import com.netbout.spi.Attachment;
 import java.io.IOException;
 import java.io.InputStream;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.CharEncoding;
 
 /**
  * Dynamo attachment.
@@ -73,12 +79,33 @@ final class DyAttachment implements Attachment {
 
     @Override
     public InputStream read() throws IOException {
-        throw new UnsupportedOperationException("#read()");
+        return IOUtils.toInputStream(
+            this.item.get(DyAttachments.ATTR_DATA).getS(),
+            CharEncoding.UTF_8
+        );
     }
 
     @Override
     public void write(final InputStream stream,
         final String ctype) throws IOException {
-        throw new UnsupportedOperationException("#write()");
+        this.item.put(
+            new AttributeUpdates()
+                .with(
+                    DyAttachments.ATTR_CTYPE,
+                    new AttributeValueUpdate(
+                        new AttributeValue(ctype),
+                        AttributeAction.PUT
+                    )
+            )
+                .with(
+                    DyAttachments.ATTR_DATA,
+                    new AttributeValueUpdate(
+                        new AttributeValue(
+                            IOUtils.toString(stream, CharEncoding.UTF_8)
+                        ),
+                        AttributeAction.PUT
+                    )
+                )
+        );
     }
 }

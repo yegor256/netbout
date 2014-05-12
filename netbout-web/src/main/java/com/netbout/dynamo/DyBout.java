@@ -126,6 +126,6 @@ final class DyBout implements Bout {
 
     @Override
     public Attachments attachments() {
-        return new DyAttachments(this.region, this.number());
+        return new DyAttachments(this.region, this.number(), this.self);
     }
 }
