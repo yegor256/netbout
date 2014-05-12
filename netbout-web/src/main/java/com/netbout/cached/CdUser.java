@@ -24,19 +24,17 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.dynamo;
+package com.netbout.cached;
 
 import com.jcabi.aspects.Immutable;
 import com.jcabi.aspects.Loggable;
-import com.jcabi.dynamo.Region;
-import com.jcabi.urn.URN;
 import com.netbout.spi.Aliases;
 import com.netbout.spi.User;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
 /**
- * Dynamo User.
+ * Cached Base.
  *
  * @author Yegor Bugayenko (yegor@tpc2.com)
  * @version $Id$
@@ -44,33 +42,25 @@ import lombok.ToString;
  */
 @Immutable
 @Loggable(Loggable.DEBUG)
-@ToString(of = "urn")
-@EqualsAndHashCode(of = { "region", "urn" })
-final class DyUser implements User {
+@ToString(of = "origin")
+@EqualsAndHashCode(of = "origin")
+final class CdUser implements User {
 
     /**
-     * Region to work with.
+     * Original.
      */
-    private final transient Region region;
+    private final transient User origin;
 
     /**
-     * URN of the user.
+     * Public ctor.
+     * @param org Origin
      */
-    private final transient URN urn;
-
-    /**
-     * Ctor.
-     * @param reg Region
-     * @param name Name of the user (URN)
-     */
-    DyUser(final Region reg, final URN name) {
-        this.region = reg;
-        this.urn = name;
+    CdUser(final User org) {
+        this.origin = org;
     }
 
     @Override
     public Aliases aliases() {
-        return new DyAliases(this.region, this.urn);
+        return new CdAliases(this.origin.aliases());
     }
-
 }

@@ -29,6 +29,7 @@ package com.netbout.servlets;
 import com.jcabi.aspects.Loggable;
 import com.jcabi.log.Logger;
 import com.jcabi.manifests.Manifests;
+import com.netbout.cached.CdBase;
 import com.netbout.dynamo.DyBase;
 import com.netbout.spi.Base;
 import java.io.IOException;
@@ -65,7 +66,7 @@ public final class LifecycleListener implements ServletContextListener {
             );
             throw new IllegalStateException(ex);
         }
-        this.base = new DyBase();
+        this.base = new CdBase(new DyBase());
         event.getServletContext().setAttribute(Base.class.getName(), this.base);
     }
 

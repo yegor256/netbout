@@ -28,10 +28,8 @@ package com.netbout.dynamo;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Iterables;
-import com.jcabi.aspects.Cacheable;
 import com.jcabi.aspects.Immutable;
 import com.jcabi.aspects.Loggable;
-import com.jcabi.aspects.Tv;
 import com.jcabi.dynamo.Attributes;
 import com.jcabi.dynamo.Conditions;
 import com.jcabi.dynamo.Item;
@@ -40,7 +38,6 @@ import com.jcabi.dynamo.Region;
 import com.netbout.spi.Attachment;
 import com.netbout.spi.Attachments;
 import java.util.Iterator;
-import java.util.concurrent.TimeUnit;
 import javax.ws.rs.core.MediaType;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
@@ -132,7 +129,6 @@ final class DyAttachments implements Attachments {
     }
 
     @Override
-    @Cacheable(lifetime = Tv.FIVE, unit = TimeUnit.MINUTES)
     public Iterable<Attachment> iterate() {
         return Iterables.transform(
             this.region.table(DyAttachments.TBL)
@@ -157,7 +153,6 @@ final class DyAttachments implements Attachments {
      * @param name Name of it
      * @return Item just created
      */
-    @Cacheable.FlushAfter
     private Item create(final String name) {
         return this.region.table(DyAttachments.TBL).put(
             new Attributes()

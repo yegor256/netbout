@@ -24,53 +24,12 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.dynamo;
-
-import com.jcabi.aspects.Immutable;
-import com.jcabi.aspects.Loggable;
-import com.jcabi.dynamo.Region;
-import com.jcabi.urn.URN;
-import com.netbout.spi.Aliases;
-import com.netbout.spi.User;
-import lombok.EqualsAndHashCode;
-import lombok.ToString;
 
 /**
- * Dynamo User.
+ * Cached base.
  *
  * @author Yegor Bugayenko (yegor@tpc2.com)
  * @version $Id$
  * @since 2.0
  */
-@Immutable
-@Loggable(Loggable.DEBUG)
-@ToString(of = "urn")
-@EqualsAndHashCode(of = { "region", "urn" })
-final class DyUser implements User {
-
-    /**
-     * Region to work with.
-     */
-    private final transient Region region;
-
-    /**
-     * URN of the user.
-     */
-    private final transient URN urn;
-
-    /**
-     * Ctor.
-     * @param reg Region
-     * @param name Name of the user (URN)
-     */
-    DyUser(final Region reg, final URN name) {
-        this.region = reg;
-        this.urn = name;
-    }
-
-    @Override
-    public Aliases aliases() {
-        return new DyAliases(this.region, this.urn);
-    }
-
-}
+package com.netbout.cached;

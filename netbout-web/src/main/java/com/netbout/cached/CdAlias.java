@@ -24,19 +24,22 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.dynamo;
+package com.netbout.cached;
 
+import com.jcabi.aspects.Cacheable;
 import com.jcabi.aspects.Immutable;
 import com.jcabi.aspects.Loggable;
-import com.jcabi.dynamo.Region;
-import com.jcabi.urn.URN;
-import com.netbout.spi.Aliases;
-import com.netbout.spi.User;
+import com.netbout.spi.Alias;
+import com.netbout.spi.Inbox;
+import java.io.IOException;
+import java.net.URI;
+import java.util.Locale;
+import java.util.concurrent.TimeUnit;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
 /**
- * Dynamo User.
+ * Cached Alias.
  *
  * @author Yegor Bugayenko (yegor@tpc2.com)
  * @version $Id$
@@ -44,33 +47,49 @@ import lombok.ToString;
  */
 @Immutable
 @Loggable(Loggable.DEBUG)
-@ToString(of = "urn")
-@EqualsAndHashCode(of = { "region", "urn" })
-final class DyUser implements User {
+@ToString(of = "origin")
+@EqualsAndHashCode(of = "origin")
+final class CdAlias implements Alias {
 
     /**
-     * Region to work with.
+     * Original.
      */
-    private final transient Region region;
+    private final transient Alias origin;
 
     /**
-     * URN of the user.
+     * Public ctor.
+     * @param org Origin
      */
-    private final transient URN urn;
-
-    /**
-     * Ctor.
-     * @param reg Region
-     * @param name Name of the user (URN)
-     */
-    DyUser(final Region reg, final URN name) {
-        this.region = reg;
-        this.urn = name;
+    CdAlias(final Alias org) {
+        this.origin = org;
     }
 
     @Override
-    public Aliases aliases() {
-        return new DyAliases(this.region, this.urn);
+    @Cacheable(lifetime = 1, unit = TimeUnit.HOURS)
+    public String name() throws IOException {
+        return this.origin.name();
     }
 
+    @Override
+    @Cacheable(lifetime = 1, unit = TimeUnit.HOURS)
+    public URI photo() throws IOException {
+        return this.origin.photo();
+    }
+
+    @Override
+    @Cacheable(lifetime = 1, unit = TimeUnit.HOURS)
+    public Locale locale() throws IOException {
+        return this.origin.locale();
+    }
+
+    @Override
+    @Cacheable.FlushAfter
+    public void photo(final URI uri) {
+        this.origin.photo(uri);
+    }
+
+    @Override
+    public Inbox inbox() {
+        return this.origin.inbox();
+    }
 }

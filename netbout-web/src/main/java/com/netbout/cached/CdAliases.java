@@ -24,19 +24,23 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.dynamo;
+package com.netbout.cached;
 
+import com.google.common.base.Function;
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Lists;
+import com.jcabi.aspects.Cacheable;
 import com.jcabi.aspects.Immutable;
 import com.jcabi.aspects.Loggable;
-import com.jcabi.dynamo.Region;
-import com.jcabi.urn.URN;
+import com.netbout.spi.Alias;
 import com.netbout.spi.Aliases;
-import com.netbout.spi.User;
+import java.io.IOException;
+import java.util.concurrent.TimeUnit;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
 /**
- * Dynamo User.
+ * Cached Aliases.
  *
  * @author Yegor Bugayenko (yegor@tpc2.com)
  * @version $Id$
@@ -44,33 +48,48 @@ import lombok.ToString;
  */
 @Immutable
 @Loggable(Loggable.DEBUG)
-@ToString(of = "urn")
-@EqualsAndHashCode(of = { "region", "urn" })
-final class DyUser implements User {
+@ToString(of = "origin")
+@EqualsAndHashCode(of = "origin")
+final class CdAliases implements Aliases {
 
     /**
-     * Region to work with.
+     * Original.
      */
-    private final transient Region region;
+    private final transient Aliases origin;
 
     /**
-     * URN of the user.
+     * Public ctor.
+     * @param org Origin
      */
-    private final transient URN urn;
-
-    /**
-     * Ctor.
-     * @param reg Region
-     * @param name Name of the user (URN)
-     */
-    DyUser(final Region reg, final URN name) {
-        this.region = reg;
-        this.urn = name;
+    CdAliases(final Aliases org) {
+        this.origin = org;
     }
 
     @Override
-    public Aliases aliases() {
-        return new DyAliases(this.region, this.urn);
+    public String check(final String name) throws IOException {
+        return this.origin.check(name);
+    }
+
+    @Override
+    @Cacheable.FlushAfter
+    public void add(final String name) {
+        this.origin.add(name);
+    }
+
+    @Override
+    @Cacheable(lifetime = 1, unit = TimeUnit.HOURS)
+    public Iterable<Alias> iterate() {
+        return Lists.newArrayList(
+            Iterables.transform(
+                this.origin.iterate(),
+                new Function<Alias, Alias>() {
+                    @Override
+                    public Alias apply(final Alias input) {
+                        return new CdAlias(input);
+                    }
+                }
+            )
+        );
     }
 
 }

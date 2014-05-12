@@ -29,10 +29,8 @@ package com.netbout.dynamo;
 import com.amazonaws.services.dynamodbv2.model.AttributeAction;
 import com.amazonaws.services.dynamodbv2.model.AttributeValue;
 import com.amazonaws.services.dynamodbv2.model.AttributeValueUpdate;
-import com.jcabi.aspects.Cacheable;
 import com.jcabi.aspects.Immutable;
 import com.jcabi.aspects.Loggable;
-import com.jcabi.aspects.Tv;
 import com.jcabi.dynamo.AttributeUpdates;
 import com.jcabi.dynamo.Item;
 import com.jcabi.dynamo.Region;
@@ -40,7 +38,6 @@ import com.netbout.spi.Alias;
 import com.netbout.spi.Inbox;
 import java.net.URI;
 import java.util.Locale;
-import java.util.concurrent.TimeUnit;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
@@ -83,7 +80,6 @@ final class DyAlias implements Alias {
     }
 
     @Override
-    @Cacheable(lifetime = Tv.FIVE, unit = TimeUnit.MINUTES)
     public URI photo() {
         return URI.create(
             this.item.get(DyAliases.ATTR_PHOTO).getS()
@@ -91,7 +87,6 @@ final class DyAlias implements Alias {
     }
 
     @Override
-    @Cacheable(lifetime = Tv.FIVE, unit = TimeUnit.MINUTES)
     public Locale locale() {
         return new Locale(
             this.item.get(DyAliases.ATTR_LOCALE).getS()
@@ -99,7 +94,6 @@ final class DyAlias implements Alias {
     }
 
     @Override
-    @Cacheable.FlushAfter
     public void photo(final URI uri) {
         this.item.put(
             new AttributeUpdates().with(
@@ -113,7 +107,6 @@ final class DyAlias implements Alias {
     }
 
     @Override
-    @Cacheable(lifetime = Tv.FIVE, unit = TimeUnit.MINUTES)
     public Inbox inbox() {
         return new DyInbox(this.region, this.name());
     }
