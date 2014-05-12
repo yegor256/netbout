@@ -48,7 +48,6 @@ import com.rexsl.page.inset.FlashInset;
 import com.rexsl.page.inset.LinksInset;
 import com.rexsl.page.inset.VersionInset;
 import java.io.IOException;
-import java.net.URI;
 import java.util.logging.Level;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
@@ -88,8 +87,7 @@ public class BaseRs extends BaseResource {
             if ("1234567".equals(Manifests.read("Netbout-Revision"))) {
                 identity = new Identity.Simple(
                     URN.create("urn:test:123456"),
-                    "localhost",
-                    URI.create("http://img.netbout.com/unknown.png")
+                    "localhost", Alias.BLANK
                 );
             } else {
                 identity = Identity.ANONYMOUS;

@@ -135,10 +135,10 @@ final class DyAliases implements Aliases {
         }
         this.region.table(DyAliases.TBL).put(
             new Attributes()
-                .with(DyAliases.ATTR_URN, this.urn.toString())
+                .with(DyAliases.ATTR_URN, this.urn)
                 .with(DyAliases.HASH, name)
-                .with(DyAliases.ATTR_LOCALE, Locale.ENGLISH.toString())
-                .with(DyAliases.ATTR_PHOTO, "//img.netbout.com/unknown.png")
+                .with(DyAliases.ATTR_LOCALE, Locale.ENGLISH)
+                .with(DyAliases.ATTR_PHOTO, Alias.BLANK)
         );
     }
 
