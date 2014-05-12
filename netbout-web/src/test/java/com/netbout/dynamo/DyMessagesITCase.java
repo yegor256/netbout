@@ -56,6 +56,7 @@ public final class DyMessagesITCase {
         final Bout bout = inbox.bout(inbox.start());
         final Messages messages = bout.messages();
         messages.post("hello!");
+        messages.post("hello, again!");
         MatcherAssert.assertThat(
             messages.iterate(),
             Matchers.not(Matchers.emptyIterable())

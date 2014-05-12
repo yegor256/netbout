@@ -28,10 +28,15 @@ package com.netbout.dynamo;
 
 import co.stateful.Counter;
 import co.stateful.RtSttc;
+import com.amazonaws.services.dynamodbv2.model.AttributeAction;
+import com.amazonaws.services.dynamodbv2.model.AttributeValue;
+import com.amazonaws.services.dynamodbv2.model.AttributeValueUpdate;
 import com.google.common.base.Function;
+import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
 import com.jcabi.aspects.Immutable;
 import com.jcabi.aspects.Loggable;
+import com.jcabi.dynamo.AttributeUpdates;
 import com.jcabi.dynamo.Attributes;
 import com.jcabi.dynamo.Conditions;
 import com.jcabi.dynamo.Item;
@@ -52,6 +57,7 @@ import lombok.ToString;
  * @author Yegor Bugayenko (yegor@tpc2.com)
  * @version $Id$
  * @since 2.0
+ * @checkstyle ClassDataAbstractionCouplingCheck (500 lines)
  */
 @Immutable
 @Loggable(Loggable.DEBUG)
@@ -139,6 +145,28 @@ final class DyMessages implements Messages {
                 .with(DyMessages.ATTR_TEXT, text)
                 .with(DyMessages.ATTR_ALIAS, this.self)
                 .with(DyMessages.ATTR_DATE, System.currentTimeMillis())
+        );
+        Iterables.all(
+            this.region.table(DyFriends.TBL).frame()
+                .through(new QueryValve())
+                .where(DyFriends.HASH, Conditions.equalTo(this.bout)),
+            new Predicate<Item>() {
+                @Override
+                public boolean apply(final Item input) {
+                    input.put(
+                        new AttributeUpdates().with(
+                            DyFriends.ATTR_UPDATED,
+                            new AttributeValueUpdate(
+                                new AttributeValue().withN(
+                                    Long.toString(System.currentTimeMillis())
+                                ),
+                                AttributeAction.PUT
+                            )
+                        )
+                    );
+                    return true;
+                }
+            }
         );
     }
 
