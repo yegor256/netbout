@@ -26,44 +26,48 @@
  */
 package com.netbout.client;
 
-import com.jcabi.aspects.Immutable;
-import com.jcabi.http.Request;
-import com.jcabi.http.request.JdkRequest;
-import com.jcabi.http.wire.CookieOptimizingWire;
-import com.netbout.spi.Aliases;
+import com.netbout.spi.Alias;
+import com.netbout.spi.Bout;
+import com.netbout.spi.Inbox;
 import com.netbout.spi.User;
-import javax.validation.constraints.NotNull;
-import javax.ws.rs.core.HttpHeaders;
-import javax.ws.rs.core.MediaType;
+import org.hamcrest.MatcherAssert;
+import org.hamcrest.Matchers;
+import org.junit.Rule;
+import org.junit.Test;
 
 /**
- * RESTful Netbout user.
- *
+ * Integration case for {@link RtBout}.
  * @author Yegor Bugayenko (yegor@tpc2.com)
  * @version $Id$
- * @since 2.0
  */
-@Immutable
-public final class RtUser implements User {
+public final class RtBoutITCase {
 
     /**
-     * Request to use.
+     * Netbout rule.
+     * @checkstyle VisibilityModifierCheck (3 lines)
      */
-    private final transient Request request;
+    @Rule
+    public final transient NbRule rule = new NbRule();
 
     /**
-     * Public ctor.
-     * @param token Authentication token
+     * RtBout can talk in bout.
+     * @throws Exception If there is some problem inside
      */
-    public RtUser(@NotNull final String token) {
-        this.request = new JdkRequest("http://www.netbout.com")
-            .through(CookieOptimizingWire.class)
-            .header(HttpHeaders.COOKIE, String.format("Rexsl-Auth=%s", token))
-            .header(HttpHeaders.ACCEPT, MediaType.TEXT_XML);
+    @Test
+    public void startsBoutAndTalks() throws Exception {
+        final User user = this.rule.get();
+        final Alias alias = user.aliases().iterate().iterator().next();
+        final Inbox inbox = alias.inbox();
+        final Bout bout = inbox.bout(inbox.start());
+        MatcherAssert.assertThat(
+            bout.number(),
+            Matchers.greaterThan(0L)
+        );
+        bout.rename("This is a test bout, hey \u20ac");
+        MatcherAssert.assertThat(
+            bout.title(),
+            Matchers.containsString("\u20ac")
+        );
     }
 
-    @Override
-    public Aliases aliases() {
-        return new RtAliases(this.request);
-    }
 }

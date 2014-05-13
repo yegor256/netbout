@@ -26,51 +26,32 @@
  */
 package com.netbout.client;
 
-import com.jcabi.aspects.Immutable;
-import com.jcabi.http.Request;
-import com.jcabi.http.request.JdkRequest;
-import com.jcabi.http.wire.CookieOptimizingWire;
-import com.jcabi.urn.URN;
-import com.netbout.spi.Base;
 import com.netbout.spi.User;
-import javax.validation.constraints.NotNull;
-import javax.ws.rs.core.HttpHeaders;
-import javax.ws.rs.core.MediaType;
+import org.junit.rules.TestRule;
+import org.junit.runner.Description;
+import org.junit.runners.model.Statement;
 
 /**
- * REST base.
- *
+ * User rule.
  * @author Yegor Bugayenko (yegor@tpc2.com)
  * @version $Id$
- * @since 2.0
+ * @since 2.1
  */
-@Immutable
-public final class RtBase implements Base {
+public final class NbRule implements TestRule {
 
     /**
-     * Request to use.
+     * Get user.
+     * @return User
      */
-    private final transient Request request;
-
-    /**
-     * Public ctor.
-     * @param uri URI of netbout server
-     * @param token Authentication token
-     */
-    public RtBase(final String uri, final String token) {
-        this.request = new JdkRequest(uri)
-            .through(CookieOptimizingWire.class)
-            .header(HttpHeaders.COOKIE, String.format("Rexsl-Auth=%s", token))
-            .header(HttpHeaders.ACCEPT, MediaType.TEXT_XML);
+    public User get() {
+//        final String token = System.getProperty("netbout.token");
+//        Assume.assumeNotNull(token);
+        return new RtUser("token");
     }
 
     @Override
-    public User user(@NotNull(message = "URN can't be NULL") final URN urn) {
-        return new RtUser(this.request);
+    public Statement apply(final Statement stmt, final Description desc) {
+        return stmt;
     }
 
-    @Override
-    public void close() {
-        // nothing to do here
-    }
 }

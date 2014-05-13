@@ -24,46 +24,12 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.client;
-
-import com.jcabi.aspects.Immutable;
-import com.jcabi.http.Request;
-import com.jcabi.http.request.JdkRequest;
-import com.jcabi.http.wire.CookieOptimizingWire;
-import com.netbout.spi.Aliases;
-import com.netbout.spi.User;
-import javax.validation.constraints.NotNull;
-import javax.ws.rs.core.HttpHeaders;
-import javax.ws.rs.core.MediaType;
 
 /**
- * RESTful Netbout user.
+ * RESTful client, tests.
  *
  * @author Yegor Bugayenko (yegor@tpc2.com)
  * @version $Id$
  * @since 2.0
  */
-@Immutable
-public final class RtUser implements User {
-
-    /**
-     * Request to use.
-     */
-    private final transient Request request;
-
-    /**
-     * Public ctor.
-     * @param token Authentication token
-     */
-    public RtUser(@NotNull final String token) {
-        this.request = new JdkRequest("http://www.netbout.com")
-            .through(CookieOptimizingWire.class)
-            .header(HttpHeaders.COOKIE, String.format("Rexsl-Auth=%s", token))
-            .header(HttpHeaders.ACCEPT, MediaType.TEXT_XML);
-    }
-
-    @Override
-    public Aliases aliases() {
-        return new RtAliases(this.request);
-    }
-}
+package com.netbout.client;
