@@ -28,10 +28,14 @@ package com.netbout.client;
 
 import com.jcabi.aspects.Immutable;
 import com.jcabi.http.Request;
+import com.jcabi.http.response.RestResponse;
 import com.jcabi.http.response.XmlResponse;
 import com.netbout.spi.Attachment;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.HttpURLConnection;
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.CharEncoding;
 
 /**
  * REST attachment.
@@ -71,6 +75,8 @@ final class RtAttachment implements Attachment {
     @Override
     public String ctype() throws IOException {
         return this.request.fetch()
+            .as(RestResponse.class)
+            .assertStatus(HttpURLConnection.HTTP_OK)
             .as(XmlResponse.class)
             .xml()
             .xpath(this.xpath("ctype/text()"))
@@ -79,13 +85,33 @@ final class RtAttachment implements Attachment {
 
     @Override
     public InputStream read() throws IOException {
-        throw new UnsupportedOperationException("#read()");
+        return IOUtils.toInputStream(
+            this.request.fetch()
+                .as(RestResponse.class)
+                .assertStatus(HttpURLConnection.HTTP_OK)
+                .as(XmlResponse.class)
+                .rel(this.xpath("links/link[@rel='download']/@href"))
+                .fetch().body()
+        );
     }
 
     @Override
     public void write(final InputStream stream, final String ctype)
         throws IOException {
-        throw new UnsupportedOperationException("#write()");
+        this.request.fetch()
+            .as(RestResponse.class)
+            .assertStatus(HttpURLConnection.HTTP_OK)
+            .as(XmlResponse.class)
+            .rel("/page/links/link[@rel='upload']/@href")
+            .uri()
+            .queryParam("name", this.name())
+            .queryParam("ctype", ctype)
+            .back()
+            .body().set(IOUtils.toString(stream, CharEncoding.UTF_8)).back()
+            .method(Request.POST)
+            .fetch()
+            .as(RestResponse.class)
+            .assertStatus(HttpURLConnection.HTTP_SEE_OTHER);
     }
 
     /**

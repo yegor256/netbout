@@ -28,12 +28,14 @@ package com.netbout.client;
 
 import com.jcabi.aspects.Immutable;
 import com.jcabi.http.Request;
+import com.jcabi.http.response.RestResponse;
 import com.jcabi.http.response.XmlResponse;
 import com.netbout.spi.Attachments;
 import com.netbout.spi.Bout;
 import com.netbout.spi.Friends;
 import com.netbout.spi.Messages;
 import java.io.IOException;
+import java.net.HttpURLConnection;
 import java.text.ParseException;
 import java.util.Date;
 import org.apache.commons.lang3.time.DateFormatUtils;
@@ -65,6 +67,8 @@ final class RtBout implements Bout {
     public long number() throws IOException {
         return Long.parseLong(
             this.request.fetch()
+                .as(RestResponse.class)
+                .assertStatus(HttpURLConnection.HTTP_OK)
                 .as(XmlResponse.class)
                 .xml()
                 .xpath("/page/bout/number/text()")
@@ -77,6 +81,8 @@ final class RtBout implements Bout {
         try {
             return DateFormatUtils.ISO_DATETIME_FORMAT.parse(
                 this.request.fetch()
+                    .as(RestResponse.class)
+                    .assertStatus(HttpURLConnection.HTTP_OK)
                     .as(XmlResponse.class)
                     .xml()
                     .xpath("/page/bout/date/text()")
@@ -90,6 +96,8 @@ final class RtBout implements Bout {
     @Override
     public String title() throws IOException {
         return this.request.fetch()
+            .as(RestResponse.class)
+            .assertStatus(HttpURLConnection.HTTP_OK)
             .as(XmlResponse.class)
             .xml()
             .xpath("/page/bout/title/text()")
@@ -97,8 +105,17 @@ final class RtBout implements Bout {
     }
 
     @Override
-    public void rename(final String text) {
-        throw new UnsupportedOperationException("#rename()");
+    public void rename(final String text) throws IOException {
+        this.request.fetch()
+            .as(RestResponse.class)
+            .assertStatus(HttpURLConnection.HTTP_OK)
+            .as(XmlResponse.class)
+            .rel("/page/links/link[@rel='rename']/@href")
+            .method(Request.POST)
+            .body().formParam("title", text).back()
+            .fetch()
+            .as(RestResponse.class)
+            .assertStatus(HttpURLConnection.HTTP_SEE_OTHER);
     }
 
     @Override
@@ -108,7 +125,7 @@ final class RtBout implements Bout {
 
     @Override
     public Friends friends() {
-        throw new UnsupportedOperationException("#friends()");
+        return new RtFriends(this.request);
     }
 
     @Override

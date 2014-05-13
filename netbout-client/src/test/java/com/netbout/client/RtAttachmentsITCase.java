@@ -24,54 +24,55 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.spi;
+package com.netbout.client;
 
-import com.jcabi.aspects.Immutable;
-import java.io.IOException;
-import java.io.InputStream;
+import com.netbout.spi.Alias;
+import com.netbout.spi.Attachment;
+import com.netbout.spi.Attachments;
+import com.netbout.spi.Bout;
+import com.netbout.spi.Inbox;
+import com.netbout.spi.User;
+import org.apache.commons.io.IOUtils;
+import org.hamcrest.MatcherAssert;
+import org.hamcrest.Matchers;
+import org.junit.Rule;
+import org.junit.Test;
 
 /**
- * Attachment.
- *
+ * Integration case for {@link RtAttachments}.
  * @author Yegor Bugayenko (yegor@tpc2.com)
  * @version $Id$
- * @since 2.0
  */
-@Immutable
-public interface Attachment {
+public final class RtAttachmentsITCase {
 
     /**
-     * Special content type.
+     * Netbout rule.
+     * @checkstyle VisibilityModifierCheck (3 lines)
      */
-    String MARKDOWN = "text/x-markdown";
+    @Rule
+    public final transient NbRule rule = new NbRule();
 
     /**
-     * Its name.
-     * @return Name of it
-     * @throws IOException If fails
+     * RtAttachments can post and read.
+     * @throws Exception If there is some problem inside
      */
-    String name() throws IOException;
-
-    /**
-     * Get its MIME content type.
-     * @return Content type
-     * @throws IOException If fails
-     */
-    String ctype() throws IOException;
-
-    /**
-     * Read content.
-     * @return Content
-     * @throws IOException If fails
-     */
-    InputStream read() throws IOException;
-
-    /**
-     * Write content.
-     * @param stream Steam with content
-     * @param ctype MIME content type
-     * @throws IOException If fails
-     */
-    void write(InputStream stream, String ctype) throws IOException;
+    @Test
+    public void postsAndReads() throws Exception {
+        final User user = this.rule.get();
+        final Alias alias = user.aliases().iterate().iterator().next();
+        final Inbox inbox = alias.inbox();
+        final Bout bout = inbox.bout(inbox.start());
+        bout.rename(this.getClass().getName());
+        final Attachments attachments = bout.attachments();
+        final Attachment attachment = attachments.get("first");
+        attachment.write(
+            IOUtils.toInputStream("how are you, \u20ac?"),
+            Attachment.MARKDOWN
+        );
+        MatcherAssert.assertThat(
+            IOUtils.toString(attachment.read()),
+            Matchers.containsString("\u20ac")
+        );
+    }
 
 }

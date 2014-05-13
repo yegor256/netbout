@@ -24,54 +24,50 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.spi;
+package com.netbout.client;
 
 import com.jcabi.aspects.Immutable;
+import com.jcabi.http.Request;
+import com.netbout.spi.Friend;
+import com.netbout.spi.Friends;
 import java.io.IOException;
-import java.io.InputStream;
 
 /**
- * Attachment.
+ * REST friends.
  *
  * @author Yegor Bugayenko (yegor@tpc2.com)
  * @version $Id$
  * @since 2.0
  */
 @Immutable
-public interface Attachment {
+final class RtFriends implements Friends {
 
     /**
-     * Special content type.
+     * Request to use.
      */
-    String MARKDOWN = "text/x-markdown";
+    private final transient Request request;
 
     /**
-     * Its name.
-     * @return Name of it
-     * @throws IOException If fails
+     * Public ctor.
+     * @param req Request to use
      */
-    String name() throws IOException;
+    RtFriends(final Request req) {
+        this.request = req;
+    }
 
-    /**
-     * Get its MIME content type.
-     * @return Content type
-     * @throws IOException If fails
-     */
-    String ctype() throws IOException;
+    @Override
+    public void invite(final String friend) throws IOException {
+        assert this.request != null;
+        throw new UnsupportedOperationException("#invite()");
+    }
 
-    /**
-     * Read content.
-     * @return Content
-     * @throws IOException If fails
-     */
-    InputStream read() throws IOException;
+    @Override
+    public void kick(final String friend) throws IOException {
+        throw new UnsupportedOperationException("#kick()");
+    }
 
-    /**
-     * Write content.
-     * @param stream Steam with content
-     * @param ctype MIME content type
-     * @throws IOException If fails
-     */
-    void write(InputStream stream, String ctype) throws IOException;
-
+    @Override
+    public Iterable<Friend> iterate() throws IOException {
+        throw new UnsupportedOperationException("#iterate()");
+    }
 }

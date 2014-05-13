@@ -28,11 +28,13 @@ package com.netbout.client;
 
 import com.jcabi.aspects.Immutable;
 import com.jcabi.http.Request;
+import com.jcabi.http.response.RestResponse;
 import com.jcabi.http.response.XmlResponse;
 import com.netbout.spi.Message;
 import com.netbout.spi.Messages;
 import com.netbout.spi.Pageable;
 import java.io.IOException;
+import java.net.HttpURLConnection;
 
 /**
  * REST messages.
@@ -60,6 +62,8 @@ final class RtMessages implements Messages {
     @Override
     public void post(final String text) throws IOException {
         this.request.fetch()
+            .as(RestResponse.class)
+            .assertStatus(HttpURLConnection.HTTP_OK)
             .as(XmlResponse.class)
             .rel("/page/links/link[@rel='post']/@href")
             .method(Request.POST)

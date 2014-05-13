@@ -24,54 +24,32 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.spi;
+package com.netbout.rest;
 
-import com.jcabi.aspects.Immutable;
-import java.io.IOException;
-import java.io.InputStream;
+import com.jcabi.http.request.JdkRequest;
+import com.jcabi.http.response.RestResponse;
+import java.net.HttpURLConnection;
+import org.junit.Test;
 
 /**
- * Attachment.
- *
+ * Integration case for {@link BoutRs}.
  * @author Yegor Bugayenko (yegor@tpc2.com)
  * @version $Id$
- * @since 2.0
  */
-@Immutable
-public interface Attachment {
+public final class BoutRsITCase {
 
     /**
-     * Special content type.
+     * Home page of Tomcat.
      */
-    String MARKDOWN = "text/x-markdown";
+    private static final String HOME = System.getProperty("tomcat.home");
 
     /**
-     * Its name.
-     * @return Name of it
-     * @throws IOException If fails
+     * BoutRs can upload and download attachments.
+     * @throws Exception If there is some problem inside
      */
-    String name() throws IOException;
-
-    /**
-     * Get its MIME content type.
-     * @return Content type
-     * @throws IOException If fails
-     */
-    String ctype() throws IOException;
-
-    /**
-     * Read content.
-     * @return Content
-     * @throws IOException If fails
-     */
-    InputStream read() throws IOException;
-
-    /**
-     * Write content.
-     * @param stream Steam with content
-     * @param ctype MIME content type
-     * @throws IOException If fails
-     */
-    void write(InputStream stream, String ctype) throws IOException;
+    @Test
+    public void uploadsAndDownloadsAttachments() throws Exception {
+        final User user = new RtUser(BoutRsITCase.HOME);
+    }
 
 }

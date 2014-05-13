@@ -36,6 +36,7 @@ import com.rexsl.page.Link;
 import com.rexsl.page.PageBuilder;
 import com.rexsl.page.inset.FlashInset;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URI;
 import java.util.logging.Level;
 import javax.ws.rs.FormParam;
@@ -45,6 +46,8 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.CharEncoding;
 import org.apache.commons.lang3.time.DateFormatUtils;
 
 /**
@@ -88,8 +91,7 @@ public final class BoutRs extends BaseRs {
             .link(new Link("post", "./post"))
             .link(new Link("rename", "./rename"))
             .link(new Link("invite", "./invite"))
-            .link(new Link("leave", "./leave"))
-            .link(new Link("kick", "./kick"))
+            .link(new Link("upload", "./upload"))
             .append(this.bundle(this.bout()))
             .render()
             .build();
@@ -98,16 +100,36 @@ public final class BoutRs extends BaseRs {
     /**
      * Download attachment.
      * @param name Name of attachment
+     * @return Content
      * @throws IOException If fails
      */
     @GET
     @Path("/download")
-    public void download(@QueryParam("name") final String name)
+    public String download(@QueryParam("name") final String name)
         throws IOException {
+        return IOUtils.toString(
+            this.bout().attachments().get(name).read(),
+            CharEncoding.UTF_8
+        );
+    }
+
+    /**
+     * Upload attachment.
+     * @param name Name of attachment
+     * @param ctype Ctype of it
+     * @param content Content to upload
+     * @throws IOException If fails
+     */
+    @POST
+    @Path("/upload")
+    public void upload(@QueryParam("name") final String name,
+        @QueryParam("ctype") final String ctype, final InputStream content)
+        throws IOException {
+        this.bout().attachments().get(name).write(content, ctype);
         throw FlashInset.forward(
-            this.uriInfo().getBaseUri(),
-            "not implemented yet",
-            Level.WARNING
+            this.self(),
+            "attachment uploaded",
+            Level.INFO
         );
     }
 
@@ -165,21 +187,6 @@ public final class BoutRs extends BaseRs {
         throw FlashInset.forward(
             this.self(),
             "new person invited to the bout",
-            Level.INFO
-        );
-    }
-
-    /**
-     * Leave this bout.
-     * @throws IOException If fails
-     */
-    @GET
-    @Path("/leave")
-    public void leave() throws IOException {
-        this.bout().friends().kick(this.alias().name());
-        throw FlashInset.forward(
-            this.self(),
-            "you left this bout",
             Level.INFO
         );
     }

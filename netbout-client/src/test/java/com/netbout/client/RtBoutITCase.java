@@ -68,6 +68,7 @@ public final class RtBoutITCase {
             bout.title(),
             Matchers.containsString("\u20ac")
         );
+        bout.rename(this.getClass().getName());
     }
 
 }

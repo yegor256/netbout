@@ -29,11 +29,8 @@ package com.netbout.client;
 import com.netbout.spi.Alias;
 import com.netbout.spi.Bout;
 import com.netbout.spi.Inbox;
-import com.netbout.spi.Message;
 import com.netbout.spi.Messages;
 import com.netbout.spi.User;
-import org.hamcrest.MatcherAssert;
-import org.hamcrest.Matchers;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -61,12 +58,9 @@ public final class RtUserITCase {
         final Alias alias = user.aliases().iterate().iterator().next();
         final Inbox inbox = alias.inbox();
         final Bout bout = inbox.bout(inbox.start());
+        bout.rename(this.getClass().getName());
         final Messages messages = bout.messages();
         messages.post("How are you doing?");
-        MatcherAssert.assertThat(
-            messages.iterate(),
-            Matchers.<Message>iterableWithSize(1)
-        );
     }
 
 }

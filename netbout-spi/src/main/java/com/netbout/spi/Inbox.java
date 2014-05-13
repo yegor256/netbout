@@ -51,6 +51,7 @@ public interface Inbox extends Pageable<Bout> {
      * @param number Bout number
      * @return Bout found
      * @throws Inbox.BoutNotFoundException If not found
+     * @checkstyle RedundantThrowsCheck (4 lines)
      */
     Bout bout(long number) throws Inbox.BoutNotFoundException;
 

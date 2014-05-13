@@ -34,6 +34,7 @@ import com.netbout.spi.Bout;
 import com.netbout.spi.Inbox;
 import com.netbout.spi.Pageable;
 import java.io.IOException;
+import java.net.HttpURLConnection;
 
 /**
  * REST inbox.
@@ -62,12 +63,17 @@ final class RtInbox implements Inbox {
     public long start() throws IOException {
         return Long.parseLong(
             this.request.fetch()
+                .as(RestResponse.class)
+                .assertStatus(HttpURLConnection.HTTP_OK)
                 .as(XmlResponse.class)
                 .rel("/page/links/link[@rel='start']/@href")
                 .fetch()
                 .as(RestResponse.class)
+                .assertStatus(HttpURLConnection.HTTP_SEE_OTHER)
                 .follow()
                 .fetch()
+                .as(RestResponse.class)
+                .assertStatus(HttpURLConnection.HTTP_OK)
                 .as(XmlResponse.class)
                 .xml()
                 .xpath("/page/bout/number/text()")
@@ -79,9 +85,7 @@ final class RtInbox implements Inbox {
     public Bout bout(final long number) {
         return new RtBout(
             this.request
-                .uri()
-                .set(this.request.uri().path(Long.toString(number)).get())
-                .back()
+                .uri().path("/b").path(Long.toString(number)).back()
         );
     }
 
