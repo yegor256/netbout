@@ -29,9 +29,7 @@
  * @version $Id$
  -->
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
-    xmlns:xs="http://www.w3.org/2001/XMLSchema"
-    xmlns="http://www.w3.org/1999/xhtml"
-    version="2.0" exclude-result-prefixes="xs">
+    xmlns="http://www.w3.org/1999/xhtml" version="2.0">
     <xsl:output method="xml" omit-xml-declaration="yes"/>
     <xsl:param name="TEXTS"
         select="document(concat('/lang/', /page/alias/locale, '.xml?', /page/version/revision))/texts"/>
@@ -93,7 +91,7 @@
             </xsl:if>
         </div>
         <xsl:apply-templates select="attachments"/>
-        <xsl:apply-templates select="attachments/attachment[@active='true']/markdown"/>
+        <xsl:apply-templates select="attachments/attachment[html]" mode="page"/>
         <div class="post">
             <form method="post">
                 <xsl:attribute name="action">
@@ -215,24 +213,16 @@
             </form>
         </xsl:if>
     </xsl:template>
-    <xsl:template match="attachment/markdown">
-        <div class="page">
-            <xsl:value-of select="." disable-output-escaping="yes" />
-        </div>
-    </xsl:template>
-    <xsl:template name="data">
-        <div class="attachments">
-            <ul class="left-attachments">
-                <xsl:apply-templates select="/page/bout/attachments/attachment[ctype='text/x-markdown']" />
+    <xsl:template match="attachments">
+        <nav class="attachments">
+            <ul>
+                <xsl:apply-templates select="attachment" />
             </ul>
-            <ul class="right-attachments">
-                <xsl:apply-templates select="/page/bout/attachments/attachment[ctype!='text/x-markdown']" />
-            </ul>
-        </div>
+        </nav>
     </xsl:template>
     <xsl:template match="attachment">
         <li>
-            <xsl:if test="@active = 'true'">
+            <xsl:if test="html">
                 <xsl:attribute name="class">
                     <xsl:text>active</xsl:text>
                 </xsl:attribute>
@@ -251,5 +241,10 @@
                 </xsl:otherwise>
             </xsl:choose>
         </li>
+    </xsl:template>
+    <xsl:template match="attachment" mode="page">
+        <div class="page">
+            <xsl:value-of select="html" disable-output-escaping="yes" />
+        </div>
     </xsl:template>
 </xsl:stylesheet>

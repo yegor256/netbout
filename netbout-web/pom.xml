@@ -255,24 +255,6 @@
                         </resource>
                     </webResources>
                 </configuration>
-                <executions>
-                    <execution>
-                        <id>package-test-war</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>war</goal>
-                        </goals>
-                        <configuration>
-                            <webappDirectory>${project.build.directory}/test-war</webappDirectory>
-                            <warSourceExcludes>nothing</warSourceExcludes>
-                            <webResources combine.children="append">
-                                <resource>
-                                    <directory>src/test/webapp</directory>
-                                </resource>
-                            </webResources>
-                        </configuration>
-                    </execution>
-                </executions>
             </plugin>
             <plugin>
                 <groupId>com.cloudbees</groupId>
@@ -396,6 +378,11 @@
                                 <configuration>
                                     <warSourceExcludes>nothing/**</warSourceExcludes>
                                     <webappDirectory>${tomcat.home}</webappDirectory>
+                                    <webResources combine.children="append">
+                                        <resource>
+                                            <directory>src/test/webapp</directory>
+                                        </resource>
+                                    </webResources>
                                 </configuration>
                             </execution>
                             <execution>

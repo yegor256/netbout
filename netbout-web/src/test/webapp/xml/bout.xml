@@ -75,16 +75,16 @@
             </friend>
         </friends>
         <attachments>
-            <attachment active="true">
+            <attachment>
                 <links>
                     <link href="/xml/inbox.xml" rel="open" />
                     <link href="/xml/inbox.xml" rel="download" />
                 </links>
                 <name>cv.pdf</name>
                 <ctype>text/x-markdown</ctype>
-                <markdown>
-                    Hello, world!
-                </markdown>
+                <html>
+                    Hello, &lt;strong&gt;world&lt;/strong&gt;!
+                </html>
             </attachment>
             <attachment>
                 <links>
