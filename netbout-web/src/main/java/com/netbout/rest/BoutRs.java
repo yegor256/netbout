@@ -68,12 +68,26 @@ public final class BoutRs extends BaseRs {
     private transient Long number;
 
     /**
+     * Name of attachment to show.
+     */
+    private transient String open;
+
+    /**
      * Set number of bout.
      * @param num The number
      */
     @PathParam("num")
     public void setNumber(final Long num) {
         this.number = num;
+    }
+
+    /**
+     * Set the name of an open attachment.
+     * @param name The name
+     */
+    @QueryParam("open")
+    public void setOpen(final String name) {
+        this.open = name;
     }
 
     /**
@@ -323,7 +337,7 @@ public final class BoutRs extends BaseRs {
      */
     private JaxbBundle bundle(final Bout bout,
         final Attachment attachment) throws IOException {
-        return new JaxbBundle("attachment")
+        JaxbBundle bundle = new JaxbBundle("attachment")
             .add("name", attachment.name())
             .up()
             .add("ctype", attachment.ctype()).up()
@@ -332,7 +346,7 @@ public final class BoutRs extends BaseRs {
                     "open",
                     this.uriInfo().getBaseUriBuilder().clone()
                         .path(BoutRs.class)
-                        .queryParam("name", "{a1}")
+                        .queryParam("open", "{a1}")
                         .build(bout.number(), attachment.name())
                 )
             )
@@ -346,6 +360,16 @@ public final class BoutRs extends BaseRs {
                         .build(bout.number(), attachment.name())
                 )
             );
+        if (attachment.name().equals(this.open)
+            && attachment.ctype().equals(Attachment.MARKDOWN)) {
+            bundle = bundle.add(
+                "html",
+                new Markdown(
+                    IOUtils.toString(attachment.read(), CharEncoding.UTF_8)
+                ).html()
+            ).up();
+        }
+        return bundle;
     }
 
     /**
