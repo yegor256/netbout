@@ -332,7 +332,7 @@ public final class BoutRs extends BaseRs {
                     "open",
                     this.uriInfo().getBaseUriBuilder().clone()
                         .path(BoutRs.class)
-                        .queryParam("attachment", "{a1}")
+                        .queryParam("name", "{a1}")
                         .build(bout.number(), attachment.name())
                 )
             )
@@ -342,7 +342,7 @@ public final class BoutRs extends BaseRs {
                     this.uriInfo().getBaseUriBuilder().clone()
                         .path(BoutRs.class)
                         .path(BoutRs.class, "download")
-                        .queryParam("attachment", "{a2}")
+                        .queryParam("name", "{a2}")
                         .build(bout.number(), attachment.name())
                 )
             );

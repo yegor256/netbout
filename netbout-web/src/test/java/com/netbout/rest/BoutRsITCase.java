@@ -26,9 +26,16 @@
  */
 package com.netbout.rest;
 
-import com.jcabi.http.request.JdkRequest;
-import com.jcabi.http.response.RestResponse;
-import java.net.HttpURLConnection;
+import com.netbout.client.RtUser;
+import com.netbout.spi.Alias;
+import com.netbout.spi.Attachment;
+import com.netbout.spi.Attachments;
+import com.netbout.spi.Bout;
+import com.netbout.spi.User;
+import java.net.URI;
+import org.apache.commons.io.IOUtils;
+import org.hamcrest.MatcherAssert;
+import org.hamcrest.Matchers;
 import org.junit.Test;
 
 /**
@@ -49,7 +56,23 @@ public final class BoutRsITCase {
      */
     @Test
     public void uploadsAndDownloadsAttachments() throws Exception {
-        final User user = new RtUser(BoutRsITCase.HOME);
+        final User user = new RtUser(URI.create(BoutRsITCase.HOME), "");
+        final Alias alias = user.aliases().iterate().iterator().next();
+        final Bout bout = alias.inbox().bout(alias.inbox().start());
+        final Attachments attachments = bout.attachments();
+        final Attachment attachment = attachments.get("test");
+        attachment.write(
+            IOUtils.toInputStream("how are you, \u20ac?"),
+            Attachment.MARKDOWN
+        );
+        MatcherAssert.assertThat(
+            IOUtils.toString(attachment.read()),
+            Matchers.containsString("\u20ac")
+        );
+        MatcherAssert.assertThat(
+            attachments.iterate().iterator().next().name(),
+            Matchers.equalTo(attachment.name())
+        );
     }
 
 }

@@ -27,6 +27,7 @@
 package com.netbout.rest;
 
 import com.google.common.collect.Iterables;
+import com.jcabi.aspects.Tv;
 import com.jcabi.manifests.Manifests;
 import com.jcabi.urn.URN;
 import com.netbout.spi.Alias;
@@ -53,6 +54,7 @@ import java.util.logging.Level;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.Validate;
 
 /**
@@ -64,7 +66,7 @@ import org.apache.commons.lang3.Validate;
  */
 @Resource.Forwarded
 @Inset.Default({ LinksInset.class, FlashInset.class })
-@SuppressWarnings("PMD.TooManyMethods")
+@SuppressWarnings({ "PMD.TooManyMethods", "PMD.ExcessiveImports" })
 public class BaseRs extends BaseResource {
 
     /**
@@ -216,13 +218,18 @@ public class BaseRs extends BaseResource {
      */
     protected final Alias alias() throws IOException {
         if (!this.identified()) {
-            throw FlashInset.forward(
-                this.uriInfo().getBaseUriBuilder().clone()
-                    .path(LoginRs.class)
-                    .path(LoginRs.class, "register")
-                    .build(),
-                "please create a unique alias",
-                Level.SEVERE
+            if (!"test".equals(this.auth().identity().urn().nid())) {
+                throw FlashInset.forward(
+                    this.uriInfo().getBaseUriBuilder().clone()
+                        .path(LoginRs.class)
+                        .path(LoginRs.class, "register")
+                        .build(),
+                    "please create a unique alias",
+                    Level.SEVERE
+                );
+            }
+            this.user().aliases().add(
+                RandomStringUtils.randomAlphabetic(Tv.FIVE)
             );
         }
         final Alias alias = Iterables.get(this.user().aliases().iterate(), 0);

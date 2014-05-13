@@ -32,6 +32,7 @@ import com.jcabi.http.request.JdkRequest;
 import com.jcabi.http.wire.CookieOptimizingWire;
 import com.netbout.spi.Aliases;
 import com.netbout.spi.User;
+import java.net.URI;
 import javax.validation.constraints.NotNull;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
@@ -56,7 +57,16 @@ public final class RtUser implements User {
      * @param token Authentication token
      */
     public RtUser(@NotNull final String token) {
-        this.request = new JdkRequest("http://www.netbout.com")
+        this(URI.create("http://www.netbout.com"), token);
+    }
+
+    /**
+     * Public ctor.
+     * @param uri Home page URI
+     * @param token Authentication token
+     */
+    public RtUser(@NotNull final URI uri, @NotNull final String token) {
+        this.request = new JdkRequest(uri)
             .through(CookieOptimizingWire.class)
             .header(HttpHeaders.COOKIE, String.format("Rexsl-Auth=%s", token))
             .header(HttpHeaders.ACCEPT, MediaType.TEXT_XML);

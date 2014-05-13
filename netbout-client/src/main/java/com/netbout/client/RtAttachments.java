@@ -26,10 +26,16 @@
  */
 package com.netbout.client;
 
+import com.google.common.base.Function;
+import com.google.common.collect.Iterables;
 import com.jcabi.aspects.Immutable;
 import com.jcabi.http.Request;
+import com.jcabi.http.response.RestResponse;
+import com.jcabi.http.response.XmlResponse;
 import com.netbout.spi.Attachment;
 import com.netbout.spi.Attachments;
+import java.io.IOException;
+import java.net.HttpURLConnection;
 
 /**
  * REST attachments.
@@ -60,7 +66,20 @@ final class RtAttachments implements Attachments {
     }
 
     @Override
-    public Iterable<Attachment> iterate() {
-        throw new UnsupportedOperationException("#iterator()");
+    public Iterable<Attachment> iterate() throws IOException {
+        return Iterables.transform(
+            this.request.fetch()
+                .as(RestResponse.class)
+                .assertStatus(HttpURLConnection.HTTP_OK)
+                .as(XmlResponse.class)
+                .xml()
+                .xpath("/page/bout/attachments/attachment/name/text()"),
+            new Function<String, Attachment>() {
+                @Override
+                public Attachment apply(final String name) {
+                    return RtAttachments.this.get(name);
+                }
+            }
+        );
     }
 }
