@@ -26,9 +26,6 @@
  */
 package com.netbout.dynamo;
 
-import com.amazonaws.services.dynamodbv2.model.AttributeAction;
-import com.amazonaws.services.dynamodbv2.model.AttributeValue;
-import com.amazonaws.services.dynamodbv2.model.AttributeValueUpdate;
 import com.jcabi.aspects.Immutable;
 import com.jcabi.aspects.Loggable;
 import com.jcabi.dynamo.AttributeUpdates;
@@ -36,6 +33,7 @@ import com.jcabi.dynamo.Item;
 import com.jcabi.dynamo.Region;
 import com.netbout.spi.Alias;
 import com.netbout.spi.Inbox;
+import java.io.IOException;
 import java.net.URI;
 import java.util.Locale;
 import lombok.EqualsAndHashCode;
@@ -75,39 +73,33 @@ final class DyAlias implements Alias {
     }
 
     @Override
-    public String name() {
+    public String name() throws IOException {
         return this.item.get(DyAliases.HASH).getS();
     }
 
     @Override
-    public URI photo() {
+    public URI photo() throws IOException {
         return URI.create(
             this.item.get(DyAliases.ATTR_PHOTO).getS()
         );
     }
 
     @Override
-    public Locale locale() {
+    public Locale locale() throws IOException {
         return new Locale(
             this.item.get(DyAliases.ATTR_LOCALE).getS()
         );
     }
 
     @Override
-    public void photo(final URI uri) {
+    public void photo(final URI uri) throws IOException {
         this.item.put(
-            new AttributeUpdates().with(
-                DyAliases.ATTR_PHOTO,
-                new AttributeValueUpdate(
-                    new AttributeValue(uri.toString()),
-                    AttributeAction.PUT
-                )
-            )
+            new AttributeUpdates().with(DyAliases.ATTR_PHOTO, uri)
         );
     }
 
     @Override
-    public Inbox inbox() {
+    public Inbox inbox() throws IOException {
         return new DyInbox(this.region, this.name());
     }
 }

@@ -26,9 +26,6 @@
  */
 package com.netbout.dynamo;
 
-import com.amazonaws.services.dynamodbv2.model.AttributeAction;
-import com.amazonaws.services.dynamodbv2.model.AttributeValue;
-import com.amazonaws.services.dynamodbv2.model.AttributeValueUpdate;
 import com.jcabi.aspects.Immutable;
 import com.jcabi.aspects.Loggable;
 import com.jcabi.dynamo.AttributeUpdates;
@@ -38,6 +35,7 @@ import com.netbout.spi.Attachments;
 import com.netbout.spi.Bout;
 import com.netbout.spi.Friends;
 import com.netbout.spi.Messages;
+import java.io.IOException;
 import java.util.Date;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
@@ -83,12 +81,12 @@ final class DyBout implements Bout {
     }
 
     @Override
-    public long number() {
+    public long number() throws IOException {
         return Long.parseLong(this.item.get(DyFriends.HASH).getN());
     }
 
     @Override
-    public Date date() {
+    public Date date() throws IOException {
         return new Date(
             Long.parseLong(
                 this.item.get(DyFriends.ATTR_UPDATED).getN()
@@ -97,25 +95,19 @@ final class DyBout implements Bout {
     }
 
     @Override
-    public String title() {
+    public String title() throws IOException {
         return this.item.get(DyFriends.ATTR_TITLE).getS();
     }
 
     @Override
-    public void rename(final String text) {
+    public void rename(final String text) throws IOException {
         this.item.put(
-            new AttributeUpdates().with(
-                DyFriends.ATTR_TITLE,
-                new AttributeValueUpdate(
-                    new AttributeValue(text),
-                    AttributeAction.PUT
-                )
-            )
+            new AttributeUpdates().with(DyFriends.ATTR_TITLE, text)
         );
     }
 
     @Override
-    public Messages messages() {
+    public Messages messages() throws IOException {
         return new DyMessages(this.region, this.number(), this.self);
     }
 
@@ -125,7 +117,7 @@ final class DyBout implements Bout {
     }
 
     @Override
-    public Attachments attachments() {
+    public Attachments attachments() throws IOException {
         return new DyAttachments(this.region, this.number(), this.self);
     }
 }

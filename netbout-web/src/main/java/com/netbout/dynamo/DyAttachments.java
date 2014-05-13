@@ -37,6 +37,7 @@ import com.jcabi.dynamo.QueryValve;
 import com.jcabi.dynamo.Region;
 import com.netbout.spi.Attachment;
 import com.netbout.spi.Attachments;
+import java.io.IOException;
 import java.util.Iterator;
 import javax.ws.rs.core.MediaType;
 import lombok.EqualsAndHashCode;
@@ -113,7 +114,7 @@ final class DyAttachments implements Attachments {
     }
 
     @Override
-    public Attachment get(final String name) {
+    public Attachment get(final String name) throws IOException {
         final Iterator<Item> items = this.region.table(DyAttachments.TBL)
             .frame()
             .where(DyAttachments.HASH, Conditions.equalTo(this.bout))
@@ -152,8 +153,9 @@ final class DyAttachments implements Attachments {
      * Create a new one with this name.
      * @param name Name of it
      * @return Item just created
+     * @throws IOException If fails
      */
-    private Item create(final String name) {
+    private Item create(final String name) throws IOException {
         return this.region.table(DyAttachments.TBL).put(
             new Attributes()
                 .with(DyAttachments.HASH, this.bout)

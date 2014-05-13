@@ -34,6 +34,7 @@ import com.jcabi.dynamo.Region;
 import com.jcabi.dynamo.Table;
 import com.netbout.spi.Alias;
 import com.netbout.spi.Friend;
+import java.io.IOException;
 import java.net.URI;
 import java.util.Iterator;
 import lombok.EqualsAndHashCode;
@@ -78,7 +79,7 @@ final class DyFriend implements Friend {
     }
 
     @Override
-    public URI photo() {
+    public URI photo() throws IOException {
         final Iterator<Item> items = this.table.frame()
             .where(DyAliases.HASH, this.name)
             .through(new QueryValve().withLimit(1))

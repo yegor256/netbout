@@ -79,7 +79,7 @@ final class CdBout implements Bout {
     }
 
     @Override
-    public void rename(final String text) {
+    public void rename(final String text) throws IOException {
         this.origin.rename(text);
     }
 

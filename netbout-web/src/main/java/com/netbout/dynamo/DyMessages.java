@@ -28,9 +28,6 @@ package com.netbout.dynamo;
 
 import co.stateful.Counter;
 import co.stateful.RtSttc;
-import com.amazonaws.services.dynamodbv2.model.AttributeAction;
-import com.amazonaws.services.dynamodbv2.model.AttributeValue;
-import com.amazonaws.services.dynamodbv2.model.AttributeValueUpdate;
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
@@ -153,17 +150,16 @@ final class DyMessages implements Messages {
             new Predicate<Item>() {
                 @Override
                 public boolean apply(final Item input) {
-                    input.put(
-                        new AttributeUpdates().with(
-                            DyFriends.ATTR_UPDATED,
-                            new AttributeValueUpdate(
-                                new AttributeValue().withN(
-                                    Long.toString(System.currentTimeMillis())
-                                ),
-                                AttributeAction.PUT
+                    try {
+                        input.put(
+                            new AttributeUpdates().with(
+                                DyFriends.ATTR_UPDATED,
+                                System.currentTimeMillis()
                             )
-                        )
-                    );
+                        );
+                    } catch (final IOException ex) {
+                        throw new IllegalStateException(ex);
+                    }
                     return true;
                 }
             }

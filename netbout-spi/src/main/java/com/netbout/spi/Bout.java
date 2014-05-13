@@ -65,8 +65,9 @@ public interface Bout {
     /**
      * Set its title.
      * @param text The title of the bout
+     * @throws IOException If fails
      */
-    void rename(String text);
+    void rename(String text) throws IOException;
 
     /**
      * Get bout messages.

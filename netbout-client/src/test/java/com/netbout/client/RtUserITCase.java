@@ -62,7 +62,6 @@ public final class RtUserITCase {
         final Inbox inbox = alias.inbox();
         final Bout bout = inbox.bout(inbox.start());
         final Messages messages = bout.messages();
-        System.out.println("boom");
         messages.post("How are you doing?");
         MatcherAssert.assertThat(
             messages.iterate(),

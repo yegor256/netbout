@@ -26,9 +26,6 @@
  */
 package com.netbout.dynamo;
 
-import com.amazonaws.services.dynamodbv2.model.AttributeAction;
-import com.amazonaws.services.dynamodbv2.model.AttributeValue;
-import com.amazonaws.services.dynamodbv2.model.AttributeValueUpdate;
 import com.jcabi.aspects.Immutable;
 import com.jcabi.aspects.Loggable;
 import com.jcabi.dynamo.AttributeUpdates;
@@ -68,12 +65,12 @@ final class DyAttachment implements Attachment {
     }
 
     @Override
-    public String name() {
+    public String name() throws IOException {
         return this.item.get(DyAttachments.RANGE).getS();
     }
 
     @Override
-    public String ctype() {
+    public String ctype() throws IOException {
         return this.item.get(DyAttachments.ATTR_CTYPE).getS();
     }
 
@@ -90,21 +87,10 @@ final class DyAttachment implements Attachment {
         final String ctype) throws IOException {
         this.item.put(
             new AttributeUpdates()
-                .with(
-                    DyAttachments.ATTR_CTYPE,
-                    new AttributeValueUpdate(
-                        new AttributeValue(ctype),
-                        AttributeAction.PUT
-                    )
-            )
+                .with(DyAttachments.ATTR_CTYPE, ctype)
                 .with(
                     DyAttachments.ATTR_DATA,
-                    new AttributeValueUpdate(
-                        new AttributeValue(
-                            IOUtils.toString(stream, CharEncoding.UTF_8)
-                        ),
-                        AttributeAction.PUT
-                    )
+                    IOUtils.toString(stream, CharEncoding.UTF_8)
                 )
         );
     }

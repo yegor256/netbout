@@ -40,6 +40,7 @@ import com.jcabi.dynamo.QueryValve;
 import com.jcabi.dynamo.Region;
 import com.netbout.spi.Friend;
 import com.netbout.spi.Friends;
+import java.io.IOException;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
@@ -107,7 +108,7 @@ final class DyFriends implements Friends {
     }
 
     @Override
-    public void invite(final String friend) {
+    public void invite(final String friend) throws IOException {
         if (!new Everybody(this.region).occupied(friend)) {
             throw new IllegalArgumentException(
                 String.format("alias '%s' doesn't exist", friend)
@@ -123,7 +124,7 @@ final class DyFriends implements Friends {
     }
 
     @Override
-    public void kick(final String friend) {
+    public void kick(final String friend) throws IOException {
         Iterators.removeIf(
             this.region.table(DyFriends.TBL).frame()
                 .where(DyFriends.HASH, Conditions.equalTo(this.bout()))
@@ -134,7 +135,7 @@ final class DyFriends implements Friends {
     }
 
     @Override
-    public Iterable<Friend> iterate() {
+    public Iterable<Friend> iterate() throws IOException {
         return Iterables.transform(
             this.region.table(DyFriends.TBL)
                 .frame()
@@ -143,10 +144,14 @@ final class DyFriends implements Friends {
             new Function<Item, Friend>() {
                 @Override
                 public Friend apply(final Item input) {
-                    return new DyFriend(
-                        DyFriends.this.region,
-                        input.get(DyFriends.RANGE).getS()
-                    );
+                    try {
+                        return new DyFriend(
+                            DyFriends.this.region,
+                            input.get(DyFriends.RANGE).getS()
+                        );
+                    } catch (final IOException ex) {
+                        throw new IllegalStateException(ex);
+                    }
                 }
             }
         );
@@ -155,8 +160,9 @@ final class DyFriends implements Friends {
     /**
      * The bout we're in.
      * @return Bout number
+     * @throws IOException If fails
      */
-    private AttributeValue bout() {
+    private AttributeValue bout() throws IOException {
         return this.item.get(DyFriends.HASH);
     }
 

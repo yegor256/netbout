@@ -40,6 +40,7 @@ import com.jcabi.dynamo.Region;
 import com.jcabi.urn.URN;
 import com.netbout.spi.Alias;
 import com.netbout.spi.Aliases;
+import java.io.IOException;
 import java.util.Locale;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
@@ -127,7 +128,7 @@ final class DyAliases implements Aliases {
     }
 
     @Override
-    public void add(final String name) {
+    public void add(final String name) throws IOException {
         if (new Everybody(this.region).occupied(name)) {
             throw new IllegalArgumentException(
                 String.format("alias '%s' is occupied", name)

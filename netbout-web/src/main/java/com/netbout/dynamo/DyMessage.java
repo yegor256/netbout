@@ -30,6 +30,7 @@ import com.jcabi.aspects.Immutable;
 import com.jcabi.aspects.Loggable;
 import com.jcabi.dynamo.Item;
 import com.netbout.spi.Message;
+import java.io.IOException;
 import java.util.Date;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
@@ -61,24 +62,24 @@ final class DyMessage implements Message {
     }
 
     @Override
-    public long number() {
+    public long number() throws IOException {
         return Long.parseLong(this.item.get(DyMessages.RANGE).getN());
     }
 
     @Override
-    public Date date() {
+    public Date date() throws IOException {
         return new Date(
             Long.parseLong(this.item.get(DyMessages.ATTR_DATE).getN())
         );
     }
 
     @Override
-    public String text() {
+    public String text() throws IOException {
         return this.item.get(DyMessages.ATTR_TEXT).getS();
     }
 
     @Override
-    public String author() {
+    public String author() throws IOException {
         return this.item.get(DyMessages.ATTR_ALIAS).getS();
     }
 }
