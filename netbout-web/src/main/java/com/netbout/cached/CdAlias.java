@@ -84,12 +84,12 @@ final class CdAlias implements Alias {
 
     @Override
     @Cacheable.FlushAfter
-    public void photo(final URI uri) {
+    public void photo(final URI uri) throws IOException {
         this.origin.photo(uri);
     }
 
     @Override
-    public Inbox inbox() {
+    public Inbox inbox() throws IOException {
         return new CdInbox(this.origin.inbox());
     }
 }

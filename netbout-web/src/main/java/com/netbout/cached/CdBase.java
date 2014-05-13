@@ -62,7 +62,7 @@ public final class CdBase implements Base {
     }
 
     @Override
-    public User user(final URN urn) {
+    public User user(final URN urn) throws IOException {
         return new CdUser(this.origin.user(urn));
     }
 

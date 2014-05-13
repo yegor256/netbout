@@ -27,6 +27,7 @@
 package com.netbout.client;
 
 import com.netbout.spi.User;
+import org.junit.Assume;
 import org.junit.rules.TestRule;
 import org.junit.runner.Description;
 import org.junit.runners.model.Statement;
@@ -44,9 +45,9 @@ public final class NbRule implements TestRule {
      * @return User
      */
     public User get() {
-//        final String token = System.getProperty("netbout.token");
-//        Assume.assumeNotNull(token);
-        return new RtUser("token");
+        final String token = System.getProperty("netbout.token");
+        Assume.assumeNotNull(token);
+        return new RtUser(token);
     }
 
     @Override

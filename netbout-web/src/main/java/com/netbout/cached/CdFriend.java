@@ -30,6 +30,7 @@ import com.jcabi.aspects.Cacheable;
 import com.jcabi.aspects.Immutable;
 import com.jcabi.aspects.Loggable;
 import com.netbout.spi.Friend;
+import java.io.IOException;
 import java.net.URI;
 import java.util.concurrent.TimeUnit;
 import lombok.EqualsAndHashCode;
@@ -63,13 +64,13 @@ final class CdFriend implements Friend {
 
     @Override
     @Cacheable(lifetime = 1, unit = TimeUnit.HOURS)
-    public String alias() {
+    public String alias() throws IOException {
         return this.origin.alias();
     }
 
     @Override
     @Cacheable(lifetime = 1, unit = TimeUnit.HOURS)
-    public URI photo() {
+    public URI photo() throws IOException {
         return this.origin.photo();
     }
 }

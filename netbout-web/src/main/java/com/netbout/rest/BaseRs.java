@@ -193,8 +193,9 @@ public class BaseRs extends BaseResource {
     /**
      * Get current user.
      * @return User
+     * @throws IOException If fails
      */
-    protected final User user() {
+    protected final User user() throws IOException {
         final Identity identity = this.auth().identity();
         if (identity.equals(Identity.ANONYMOUS)) {
             throw FlashInset.forward(
@@ -236,8 +237,12 @@ public class BaseRs extends BaseResource {
      * @return TRUE if it has an alias
      */
     protected final boolean identified() {
-        return !this.auth().identity().equals(Identity.ANONYMOUS)
-            && !Iterables.isEmpty(this.user().aliases().iterate());
+        try {
+            return !this.auth().identity().equals(Identity.ANONYMOUS)
+                && !Iterables.isEmpty(this.user().aliases().iterate());
+        } catch (final IOException ex) {
+            throw new IllegalStateException(ex);
+        }
     }
 
     /**

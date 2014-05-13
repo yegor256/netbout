@@ -75,12 +75,12 @@ final class CdInbox implements Inbox {
     }
 
     @Override
-    public Pageable<Bout> jump(final int pos) {
+    public Pageable<Bout> jump(final int pos) throws IOException {
         return this.origin.jump(pos);
     }
 
     @Override
-    public Iterable<Bout> iterate() {
+    public Iterable<Bout> iterate() throws IOException {
         return Iterables.transform(
             this.origin.iterate(),
             new Function<Bout, Bout>() {

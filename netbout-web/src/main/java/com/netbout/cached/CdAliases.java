@@ -72,13 +72,13 @@ final class CdAliases implements Aliases {
 
     @Override
     @Cacheable.FlushAfter
-    public void add(final String name) {
+    public void add(final String name) throws IOException {
         this.origin.add(name);
     }
 
     @Override
     @Cacheable(lifetime = 1, unit = TimeUnit.HOURS)
-    public Iterable<Alias> iterate() {
+    public Iterable<Alias> iterate() throws IOException {
         return Lists.newArrayList(
             Iterables.transform(
                 this.origin.iterate(),

@@ -27,6 +27,7 @@
 package com.netbout.spi;
 
 import com.jcabi.aspects.Immutable;
+import java.io.IOException;
 import java.net.URI;
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
@@ -45,14 +46,16 @@ public interface Friend {
     /**
      * Get its alias.
      * @return Alias of this identity
+     * @throws IOException If fails
      */
-    String alias();
+    String alias() throws IOException;
 
     /**
      * URI of his photo.
      * @return URI
+     * @throws IOException If fails
      */
-    URI photo();
+    URI photo() throws IOException;
 
     /**
      * Matcher of its alias.
@@ -72,9 +75,13 @@ public interface Friend {
         }
         @Override
         public boolean matches(final Object obj) {
-            return this.matcher.matches(
-                Friend.class.cast(obj).alias()
-            );
+            try {
+                return this.matcher.matches(
+                    Friend.class.cast(obj).alias()
+                );
+            } catch (final IOException ex) {
+                throw new IllegalStateException(ex);
+            }
         }
         @Override
         public void describeTo(final Description description) {
@@ -101,9 +108,13 @@ public interface Friend {
         }
         @Override
         public boolean matches(final Object obj) {
-            return this.matcher.matches(
-                Friend.class.cast(obj).photo()
-            );
+            try {
+                return this.matcher.matches(
+                    Friend.class.cast(obj).photo()
+                );
+            } catch (final IOException ex) {
+                throw new IllegalStateException(ex);
+            }
         }
         @Override
         public void describeTo(final Description description) {

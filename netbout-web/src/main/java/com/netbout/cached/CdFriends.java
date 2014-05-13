@@ -34,6 +34,7 @@ import com.jcabi.aspects.Immutable;
 import com.jcabi.aspects.Loggable;
 import com.netbout.spi.Friend;
 import com.netbout.spi.Friends;
+import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
@@ -66,19 +67,19 @@ final class CdFriends implements Friends {
 
     @Override
     @Cacheable.FlushAfter
-    public void invite(final String friend) {
+    public void invite(final String friend) throws IOException {
         this.origin.invite(friend);
     }
 
     @Override
     @Cacheable.FlushAfter
-    public void kick(final String friend) {
+    public void kick(final String friend) throws IOException {
         this.origin.kick(friend);
     }
 
     @Override
     @Cacheable(lifetime = 1, unit = TimeUnit.MINUTES)
-    public Iterable<Friend> iterate() {
+    public Iterable<Friend> iterate() throws IOException {
         return Lists.newArrayList(
             Iterables.transform(
                 this.origin.iterate(),

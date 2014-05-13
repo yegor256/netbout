@@ -73,14 +73,16 @@ public interface Alias {
     /**
      * Set photo.
      * @param uri URI of photo
+     * @throws IOException If fails
      */
-    void photo(URI uri);
+    void photo(URI uri) throws IOException;
 
     /**
      * Get inbox.
      * @return Inbox
+     * @throws IOException If fails
      */
-    Inbox inbox();
+    Inbox inbox() throws IOException;
 
     /**
      * Matcher of its name.

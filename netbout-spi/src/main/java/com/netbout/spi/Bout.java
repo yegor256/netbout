@@ -71,20 +71,23 @@ public interface Bout {
     /**
      * Get bout messages.
      * @return Messages
+     * @throws IOException If fails
      */
-    Messages messages();
+    Messages messages() throws IOException;
 
     /**
      * Get friends.
      * @return Friends talking in this bout
+     * @throws IOException If fails
      */
-    Friends friends();
+    Friends friends() throws IOException;
 
     /**
      * Attachments.
      * @return Attachments
+     * @throws IOException If fails
      */
-    Attachments attachments();
+    Attachments attachments() throws IOException;
 
     /**
      * Read only.
@@ -118,15 +121,15 @@ public interface Bout {
             throw new UnsupportedOperationException("#rename()");
         }
         @Override
-        public Messages messages() {
+        public Messages messages() throws IOException {
             return this.origin.messages();
         }
         @Override
-        public Friends friends() {
+        public Friends friends() throws IOException {
             return this.origin.friends();
         }
         @Override
-        public Attachments attachments() {
+        public Attachments attachments() throws IOException {
             return this.origin.attachments();
         }
     }

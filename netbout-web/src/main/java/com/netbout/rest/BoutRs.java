@@ -271,7 +271,11 @@ public final class BoutRs extends BaseRs {
                     new JaxbBundle.Group<Message>(bout.messages().iterate()) {
                         @Override
                         public JaxbBundle bundle(final Message message) {
-                            return BoutRs.this.bundle(message);
+                            try {
+                                return BoutRs.this.bundle(message);
+                            } catch (final IOException ex) {
+                                throw new IllegalStateException(ex);
+                            }
                         }
                     }
                 )
@@ -341,8 +345,9 @@ public final class BoutRs extends BaseRs {
      * Convert message to bundle.
      * @param message Message
      * @return Bundle
+     * @throws IOException In case of failure
      */
-    private JaxbBundle bundle(final Message message) {
+    private JaxbBundle bundle(final Message message) throws IOException {
         return new JaxbBundle("message")
             .add("number", Long.toString(message.number()))
             .up()

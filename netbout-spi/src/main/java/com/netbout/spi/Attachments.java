@@ -27,6 +27,7 @@
 package com.netbout.spi;
 
 import com.jcabi.aspects.Immutable;
+import java.io.IOException;
 
 /**
  * Attachments.
@@ -42,13 +43,15 @@ public interface Attachments {
      * Get binary by name.
      * @param name Attachment name
      * @return Attachment
+     * @throws IOException If fails
      */
-    Attachment get(String name);
+    Attachment get(String name) throws IOException;
 
     /**
      * Iterate them all.
      * @return All of them
+     * @throws IOException If fails
      */
-    Iterable<Attachment> iterate();
+    Iterable<Attachment> iterate() throws IOException;
 
 }

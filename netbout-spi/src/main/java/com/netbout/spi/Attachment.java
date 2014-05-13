@@ -43,8 +43,9 @@ public interface Attachment {
     /**
      * Its name.
      * @return Name of it
+     * @throws IOException If fails
      */
-    String name();
+    String name() throws IOException;
 
     /**
      * Get its MIME content type.

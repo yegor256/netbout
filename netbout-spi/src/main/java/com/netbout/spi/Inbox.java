@@ -58,7 +58,7 @@ public interface Inbox extends Pageable<Bout> {
      * Thowable when bout is not found.
      * @see Inbox#bout(long)
      */
-    class BoutNotFoundException extends Exception {
+    class BoutNotFoundException extends IOException {
         /**
          * Serialization marker.
          */

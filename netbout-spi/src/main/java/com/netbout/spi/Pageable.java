@@ -27,6 +27,7 @@
 package com.netbout.spi;
 
 import com.jcabi.aspects.Immutable;
+import java.io.IOException;
 
 /**
  * Pageable.
@@ -42,13 +43,15 @@ public interface Pageable<T> {
      * Jump to the given position.
      * @param pos Position
      * @return New collection of items
+     * @throws IOException If fails
      */
-    Pageable<T> jump(int pos);
+    Pageable<T> jump(int pos) throws IOException;
 
     /**
      * Iterate them all.
      * @return Items
+     * @throws IOException If fails
      */
-    Iterable<T> iterate();
+    Iterable<T> iterate() throws IOException;
 
 }

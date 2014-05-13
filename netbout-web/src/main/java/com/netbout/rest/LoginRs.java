@@ -73,10 +73,11 @@ public final class LoginRs extends BaseRs {
     /**
      * Register page.
      * @return The JAX-RS response
+     * @throws IOException If fails
      */
     @GET
     @Path("/r")
-    public Response start() {
+    public Response start() throws IOException {
         this.user();
         return new PageBuilder()
             .stylesheet("/xsl/register.xsl")
@@ -91,10 +92,12 @@ public final class LoginRs extends BaseRs {
     /**
      * Register and continue.
      * @param alias Alias to try
+     * @throws IOException If fails
      */
     @POST
     @Path("/r")
-    public void register(@FormParam("alias") final String alias) {
+    public void register(@FormParam("alias") final String alias)
+        throws IOException {
         this.user().aliases().add(alias);
         throw FlashInset.forward(
             this.uriInfo().getBaseUri(),

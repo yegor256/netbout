@@ -26,6 +26,7 @@
  */
 package com.netbout.spi;
 
+import java.io.IOException;
 import java.util.Date;
 
 /**
@@ -40,25 +41,29 @@ public interface Message {
     /**
      * Get its unique number.
      * @return The number of the message
+     * @throws IOException If fails
      */
-    long number();
+    long number() throws IOException;
 
     /**
      * When it was created.
      * @return The date of creation
+     * @throws IOException If fails
      */
-    Date date();
+    Date date() throws IOException;
 
     /**
      * Get its text.
      * @return The text of the message
+     * @throws IOException If fails
      */
-    String text();
+    String text() throws IOException;
 
     /**
      * Author of it.
      * @return The author
+     * @throws IOException If fails
      */
-    String author();
+    String author() throws IOException;
 
 }

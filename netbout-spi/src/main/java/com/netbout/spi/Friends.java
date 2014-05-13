@@ -27,6 +27,7 @@
 package com.netbout.spi;
 
 import com.jcabi.aspects.Immutable;
+import java.io.IOException;
 
 /**
  * Bout friends talking.
@@ -41,19 +42,22 @@ public interface Friends {
     /**
      * Invite new friend.
      * @param friend Alias of the friend
+     * @throws IOException If fails
      */
-    void invite(String friend);
+    void invite(String friend) throws IOException;
 
     /**
      * Kick him off.
      * @param friend Alias of the friend
+     * @throws IOException If fails
      */
-    void kick(String friend);
+    void kick(String friend) throws IOException;
 
     /**
      * Iterate them all.
      * @return List of friends
+     * @throws IOException If fails
      */
-    Iterable<Friend> iterate();
+    Iterable<Friend> iterate() throws IOException;
 
 }

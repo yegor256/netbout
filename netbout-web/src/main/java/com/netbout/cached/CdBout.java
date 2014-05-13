@@ -84,17 +84,17 @@ final class CdBout implements Bout {
     }
 
     @Override
-    public Messages messages() {
+    public Messages messages() throws IOException {
         return this.origin.messages();
     }
 
     @Override
-    public Friends friends() {
+    public Friends friends() throws IOException {
         return new CdFriends(this.origin.friends());
     }
 
     @Override
-    public Attachments attachments() {
+    public Attachments attachments() throws IOException {
         return this.origin.attachments();
     }
 }
