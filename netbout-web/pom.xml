@@ -589,6 +589,7 @@
                                 <exclude>xml:/src/main/webapp/WEB-INF/web.xml</exclude>
                                 <exclude>xml:/src/main/webapp/lang/.*</exclude>
                                 <exclude>xml:/src/test/webapp/xml/.*</exclude>
+                                <exclude>duplicatefinder:.*</exclude>
                             </excludes>
                         </configuration>
                     </plugin>
