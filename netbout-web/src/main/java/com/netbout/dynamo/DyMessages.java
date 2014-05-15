@@ -29,11 +29,9 @@ package com.netbout.dynamo;
 import co.stateful.Counter;
 import co.stateful.RtSttc;
 import com.google.common.base.Function;
-import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
 import com.jcabi.aspects.Immutable;
 import com.jcabi.aspects.Loggable;
-import com.jcabi.dynamo.AttributeUpdates;
 import com.jcabi.dynamo.Attributes;
 import com.jcabi.dynamo.Conditions;
 import com.jcabi.dynamo.Item;
@@ -143,27 +141,7 @@ final class DyMessages implements Messages {
                 .with(DyMessages.ATTR_ALIAS, this.self)
                 .with(DyMessages.ATTR_DATE, System.currentTimeMillis())
         );
-        Iterables.all(
-            this.region.table(DyFriends.TBL).frame()
-                .through(new QueryValve())
-                .where(DyFriends.HASH, Conditions.equalTo(this.bout)),
-            new Predicate<Item>() {
-                @Override
-                public boolean apply(final Item input) {
-                    try {
-                        input.put(
-                            new AttributeUpdates().with(
-                                DyFriends.ATTR_UPDATED,
-                                System.currentTimeMillis()
-                            )
-                        );
-                    } catch (final IOException ex) {
-                        throw new IllegalStateException(ex);
-                    }
-                    return true;
-                }
-            }
-        );
+        new SmartBout(this.region, this.bout).updated(this.self);
     }
 
     @Override

@@ -126,7 +126,7 @@ final class DyAttachments implements Attachments {
         } else {
             item = this.create(name);
         }
-        return new DyAttachment(item);
+        return new DyAttachment(this.region, item, this.self);
     }
 
     @Override
@@ -143,7 +143,10 @@ final class DyAttachments implements Attachments {
             new Function<Item, Attachment>() {
                 @Override
                 public Attachment apply(final Item item) {
-                    return new DyAttachment(item);
+                    return new DyAttachment(
+                        DyAttachments.this.region,
+                        item, DyAttachments.this.self
+                    );
                 }
             }
         );

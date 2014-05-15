@@ -26,91 +26,80 @@
  */
 package com.netbout.dynamo;
 
+import com.google.common.base.Predicate;
+import com.google.common.collect.Iterables;
 import com.jcabi.aspects.Immutable;
 import com.jcabi.aspects.Loggable;
 import com.jcabi.dynamo.AttributeUpdates;
+import com.jcabi.dynamo.Conditions;
 import com.jcabi.dynamo.Item;
+import com.jcabi.dynamo.QueryValve;
 import com.jcabi.dynamo.Region;
-import com.netbout.spi.Attachment;
 import java.io.IOException;
-import java.io.InputStream;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
-import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang3.CharEncoding;
 
 /**
- * Dynamo attachment.
+ * Dynamo messages.
  *
  * @author Yegor Bugayenko (yegor@tpc2.com)
  * @version $Id$
- * @since 2.0
+ * @since 2.2
+ * @checkstyle ClassDataAbstractionCouplingCheck (500 lines)
  */
 @Immutable
 @Loggable(Loggable.DEBUG)
-@ToString(of = "item")
-@EqualsAndHashCode(of = { "region", "item" })
-final class DyAttachment implements Attachment {
+@ToString(of = "number")
+@EqualsAndHashCode(of = { "region", "number" })
+final class SmartBout {
 
     /**
-     * Region we're in.
+     * Region.
      */
     private final transient Region region;
 
     /**
-     * Item with data.
+     * Number of the bout.
      */
-    private final transient Item item;
-
-    /**
-     * Self alias.
-     */
-    private final transient String self;
+    private final transient long number;
 
     /**
      * Ctor.
      * @param reg Region
-     * @param itm Item
-     * @param slf Self alias
+     * @param num Bout number
      */
-    DyAttachment(final Region reg, final Item itm, final String slf) {
+    SmartBout(final Region reg, final long num) {
         this.region = reg;
-        this.item = itm;
-        this.self = slf;
+        this.number = num;
     }
 
-    @Override
-    public String name() throws IOException {
-        return this.item.get(DyAttachments.RANGE).getS();
-    }
-
-    @Override
-    public String ctype() throws IOException {
-        return this.item.get(DyAttachments.ATTR_CTYPE).getS();
-    }
-
-    @Override
-    public InputStream read() throws IOException {
-        return IOUtils.toInputStream(
-            this.item.get(DyAttachments.ATTR_DATA).getS(),
-            CharEncoding.UTF_8
+    /**
+     * It was updated just now.
+     * @param alias Who updated it
+     */
+    public void updated(final String alias) {
+        assert alias != null;
+        Iterables.all(
+            this.region.table(DyFriends.TBL).frame()
+                .through(new QueryValve())
+                .where(DyFriends.HASH, Conditions.equalTo(this.number)),
+            new Predicate<Item>() {
+                @Override
+                public boolean apply(final Item input) {
+                    try {
+                        input.put(
+                            new AttributeUpdates().with(
+                                DyFriends.ATTR_UPDATED,
+                                System.currentTimeMillis()
+                            )
+                        );
+                    } catch (final IOException ex) {
+                        throw new IllegalStateException(ex);
+                    }
+                    return true;
+                }
+            }
         );
     }
 
-    @Override
-    public void write(final InputStream stream,
-        final String ctype) throws IOException {
-        this.item.put(
-            new AttributeUpdates()
-                .with(DyAttachments.ATTR_CTYPE, ctype)
-                .with(
-                    DyAttachments.ATTR_DATA,
-                    IOUtils.toString(stream, CharEncoding.UTF_8)
-                )
-        );
-        new SmartBout(
-            this.region,
-            Long.parseLong(this.item.get(DyAttachments.HASH).getN())
-        ).updated(this.self);
-    }
 }
