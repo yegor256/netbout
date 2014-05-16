@@ -24,82 +24,70 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.dynamo;
+package com.netbout.cached;
 
+import com.jcabi.aspects.Cacheable;
 import com.jcabi.aspects.Immutable;
 import com.jcabi.aspects.Loggable;
-import com.jcabi.dynamo.AttributeUpdates;
-import com.jcabi.dynamo.Item;
-import com.jcabi.dynamo.Region;
-import com.netbout.spi.Alias;
-import com.netbout.spi.Inbox;
+import com.jcabi.aspects.Tv;
+import com.netbout.spi.Attachment;
 import java.io.IOException;
-import java.net.URI;
-import java.util.Locale;
+import java.io.InputStream;
+import java.util.concurrent.TimeUnit;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.CharEncoding;
 
 /**
- * Dynamo Alias.
+ * Cached Attachments.
  *
  * @author Yegor Bugayenko (yegor@tpc2.com)
  * @version $Id$
- * @since 2.0
+ * @since 2.2
  */
 @Immutable
 @Loggable(Loggable.DEBUG)
-@ToString(of = "item")
-@EqualsAndHashCode(of = { "region", "item" })
-final class DyAlias implements Alias {
+@ToString(of = "origin")
+@EqualsAndHashCode(of = "origin")
+final class CdAttachment implements Attachment {
 
     /**
-     * Region we're in.
+     * Original.
      */
-    private final transient Region region;
+    private final transient Attachment origin;
 
     /**
-     * Item we're working with.
+     * Public ctor.
+     * @param org Origin
      */
-    private final transient Item item;
-
-    /**
-     * Ctor.
-     * @param reg Region
-     * @param itm Item
-     */
-    DyAlias(final Region reg, final Item itm) {
-        this.region = reg;
-        this.item = itm;
+    CdAttachment(final Attachment org) {
+        this.origin = org;
     }
 
     @Override
     public String name() throws IOException {
-        return this.item.get(DyAliases.HASH).getS();
+        return this.origin.name();
     }
 
     @Override
-    public URI photo() throws IOException {
-        return URI.create(
-            this.item.get(DyAliases.ATTR_PHOTO).getS()
+    public String ctype() throws IOException {
+        return this.origin.ctype();
+    }
+
+    @Override
+    @Cacheable(lifetime = Tv.FIVE, unit = TimeUnit.MINUTES)
+    public InputStream read() throws IOException {
+        return IOUtils.toInputStream(
+            IOUtils.toString(this.origin.read(), CharEncoding.UTF_8),
+            CharEncoding.UTF_8
         );
     }
 
     @Override
-    public Locale locale() throws IOException {
-        return new Locale(
-            this.item.get(DyAliases.ATTR_LOCALE).getS()
-        );
-    }
-
-    @Override
-    public void photo(final URI uri) throws IOException {
-        this.item.put(
-            new AttributeUpdates().with(DyAliases.ATTR_PHOTO, uri)
-        );
-    }
-
-    @Override
-    public Inbox inbox() throws IOException {
-        return new DyInbox(this.region, this.name());
+    @Cacheable.FlushAfter
+    public void write(final InputStream stream, final String ctype)
+        throws IOException {
+        this.origin.write(stream, ctype);
     }
 }

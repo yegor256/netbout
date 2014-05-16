@@ -49,7 +49,7 @@ import org.apache.commons.lang3.CharEncoding;
 @Immutable
 @Loggable(Loggable.DEBUG)
 @ToString(of = "item")
-@EqualsAndHashCode(of = { "region", "item" })
+@EqualsAndHashCode(of = { "region", "item", "self" })
 final class DyAttachment implements Attachment {
 
     /**

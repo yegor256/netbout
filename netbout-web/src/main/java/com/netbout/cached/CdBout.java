@@ -26,14 +26,17 @@
  */
 package com.netbout.cached;
 
+import com.jcabi.aspects.Cacheable;
 import com.jcabi.aspects.Immutable;
 import com.jcabi.aspects.Loggable;
+import com.jcabi.aspects.Tv;
 import com.netbout.spi.Attachments;
 import com.netbout.spi.Bout;
 import com.netbout.spi.Friends;
 import com.netbout.spi.Messages;
 import java.io.IOException;
 import java.util.Date;
+import java.util.concurrent.TimeUnit;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
@@ -69,23 +72,26 @@ final class CdBout implements Bout {
     }
 
     @Override
+    @Cacheable(lifetime = Tv.FIVE, unit = TimeUnit.MINUTES)
     public Date date() throws IOException {
         return this.origin.date();
     }
 
     @Override
+    @Cacheable(lifetime = Tv.FIVE, unit = TimeUnit.MINUTES)
     public String title() throws IOException {
         return this.origin.title();
     }
 
     @Override
+    @Cacheable.FlushAfter
     public void rename(final String text) throws IOException {
         this.origin.rename(text);
     }
 
     @Override
     public Messages messages() throws IOException {
-        return this.origin.messages();
+        return new CdMessages(this.origin.messages());
     }
 
     @Override
@@ -95,6 +101,6 @@ final class CdBout implements Bout {
 
     @Override
     public Attachments attachments() throws IOException {
-        return this.origin.attachments();
+        return new CdAttachments(this.origin.attachments());
     }
 }

@@ -29,6 +29,7 @@ package com.netbout.cached;
 import com.jcabi.aspects.Cacheable;
 import com.jcabi.aspects.Immutable;
 import com.jcabi.aspects.Loggable;
+import com.jcabi.aspects.Tv;
 import com.netbout.spi.Friend;
 import java.io.IOException;
 import java.net.URI;
@@ -63,13 +64,13 @@ final class CdFriend implements Friend {
     }
 
     @Override
-    @Cacheable(lifetime = 1, unit = TimeUnit.HOURS)
+    @Cacheable(lifetime = Tv.FIVE, unit = TimeUnit.MINUTES)
     public String alias() throws IOException {
         return this.origin.alias();
     }
 
     @Override
-    @Cacheable(lifetime = 1, unit = TimeUnit.HOURS)
+    @Cacheable(lifetime = Tv.FIVE, unit = TimeUnit.MINUTES)
     public URI photo() throws IOException {
         return this.origin.photo();
     }

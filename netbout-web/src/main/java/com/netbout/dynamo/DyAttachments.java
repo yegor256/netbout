@@ -53,7 +53,7 @@ import lombok.ToString;
 @Immutable
 @Loggable(Loggable.DEBUG)
 @ToString(of = "bout")
-@EqualsAndHashCode(of = { "region", "bout" })
+@EqualsAndHashCode(of = { "region", "bout", "self" })
 final class DyAttachments implements Attachments {
 
     /**

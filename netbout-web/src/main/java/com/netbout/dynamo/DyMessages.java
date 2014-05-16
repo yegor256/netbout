@@ -57,7 +57,7 @@ import lombok.ToString;
 @Immutable
 @Loggable(Loggable.DEBUG)
 @ToString(of = "bout")
-@EqualsAndHashCode(of = { "region", "bout" })
+@EqualsAndHashCode(of = { "counter", "region", "bout", "self" })
 final class DyMessages implements Messages {
 
     /**

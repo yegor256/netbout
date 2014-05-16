@@ -32,6 +32,7 @@ import com.google.common.collect.Lists;
 import com.jcabi.aspects.Cacheable;
 import com.jcabi.aspects.Immutable;
 import com.jcabi.aspects.Loggable;
+import com.jcabi.aspects.Tv;
 import com.netbout.spi.Friend;
 import com.netbout.spi.Friends;
 import java.io.IOException;
@@ -78,7 +79,7 @@ final class CdFriends implements Friends {
     }
 
     @Override
-    @Cacheable(lifetime = 1, unit = TimeUnit.MINUTES)
+    @Cacheable(lifetime = Tv.FIVE, unit = TimeUnit.MINUTES)
     public Iterable<Friend> iterate() throws IOException {
         return Lists.newArrayList(
             Iterables.transform(
