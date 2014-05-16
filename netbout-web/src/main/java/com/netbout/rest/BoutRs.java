@@ -106,6 +106,7 @@ public final class BoutRs extends BaseRs {
             .link(new Link("rename", "./rename"))
             .link(new Link("invite", "./invite"))
             .link(new Link("upload", "./upload"))
+            .link(new Link("create", "./create"))
             .append(this.bundle(this.bout()))
             .render()
             .build();
@@ -143,6 +144,40 @@ public final class BoutRs extends BaseRs {
         throw FlashInset.forward(
             this.self(),
             "attachment uploaded",
+            Level.INFO
+        );
+    }
+
+    /**
+     * Create an attachment.
+     * @param name Name of attachment
+     * @throws IOException If fails
+     */
+    @POST
+    @Path("/create")
+    public void create(@FormParam("name") final String name)
+        throws IOException {
+        this.bout().attachments().create(name);
+        throw FlashInset.forward(
+            this.self(),
+            String.format("attachment '%s' created", name),
+            Level.INFO
+        );
+    }
+
+    /**
+     * Delete an attachment.
+     * @param name Name of attachment
+     * @throws IOException If fails
+     */
+    @GET
+    @Path("/delete")
+    public void delete(@QueryParam("name") final String name)
+        throws IOException {
+        this.bout().attachments().delete(name);
+        throw FlashInset.forward(
+            this.self(),
+            String.format("attachment '%s' deleted", name),
             Level.INFO
         );
     }
@@ -347,6 +382,16 @@ public final class BoutRs extends BaseRs {
                     this.uriInfo().getBaseUriBuilder().clone()
                         .path(BoutRs.class)
                         .queryParam("open", "{a1}")
+                        .build(bout.number(), attachment.name())
+                )
+            )
+            .link(
+                new Link(
+                    "delete",
+                    this.uriInfo().getBaseUriBuilder().clone()
+                        .path(BoutRs.class)
+                        .path(BoutRs.class, "delete")
+                        .queryParam("name", "{a4}")
                         .build(bout.number(), attachment.name())
                 )
             )

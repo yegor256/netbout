@@ -59,7 +59,9 @@ public final class DyAttachmentsITCase {
         final Inbox inbox = aliases.iterate().iterator().next().inbox();
         final Bout bout = inbox.bout(inbox.start());
         final Attachments attachments = bout.attachments();
-        final Attachment attachment = attachments.get("test");
+        final String name = "test";
+        attachments.create(name);
+        final Attachment attachment = attachments.get(name);
         attachment.write(
             IOUtils.toInputStream("5\u20ac", CharEncoding.UTF_8),
             MediaType.TEXT_PLAIN
@@ -68,6 +70,7 @@ public final class DyAttachmentsITCase {
             IOUtils.toString(attachment.read(), CharEncoding.UTF_8),
             Matchers.containsString("\u20ac")
         );
+        attachments.delete(name);
     }
 
 }

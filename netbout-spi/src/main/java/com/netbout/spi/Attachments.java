@@ -40,6 +40,20 @@ import java.io.IOException;
 public interface Attachments {
 
     /**
+     * Create attachment.
+     * @param name Attachment name
+     * @throws IOException If fails
+     */
+    void create(String name) throws IOException;
+
+    /**
+     * Delete attachment.
+     * @param name Attachment name
+     * @throws IOException If fails
+     */
+    void delete(String name) throws IOException;
+
+    /**
      * Get binary by name.
      * @param name Attachment name
      * @return Attachment

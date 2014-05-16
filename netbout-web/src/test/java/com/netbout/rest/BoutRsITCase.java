@@ -60,7 +60,9 @@ public final class BoutRsITCase {
         final Alias alias = user.aliases().iterate().iterator().next();
         final Bout bout = alias.inbox().bout(alias.inbox().start());
         final Attachments attachments = bout.attachments();
-        final Attachment attachment = attachments.get("test");
+        final String name = "test";
+        attachments.create(name);
+        final Attachment attachment = attachments.get(name);
         attachment.write(
             IOUtils.toInputStream("how are you, \u20ac?"),
             Attachment.MARKDOWN
@@ -73,6 +75,7 @@ public final class BoutRsITCase {
             attachments.iterate().iterator().next().name(),
             Matchers.equalTo(attachment.name())
         );
+        attachments.delete(name);
     }
 
 }

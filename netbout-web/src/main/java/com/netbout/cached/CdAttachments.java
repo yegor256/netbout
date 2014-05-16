@@ -67,9 +67,21 @@ final class CdAttachments implements Attachments {
     }
 
     @Override
+    @Cacheable.FlushAfter
+    public void create(final String name) throws IOException {
+        this.origin.create(name);
+    }
+
+    @Override
+    @Cacheable.FlushAfter
+    public void delete(final String name) throws IOException {
+        this.origin.delete(name);
+    }
+
+    @Override
     @Cacheable(lifetime = Tv.FIVE, unit = TimeUnit.MINUTES)
     public Attachment get(final String name) throws IOException {
-        return this.origin.get(name);
+        return new CdAttachment(this.origin.get(name));
     }
 
     @Override

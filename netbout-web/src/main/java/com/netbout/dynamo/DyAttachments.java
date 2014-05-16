@@ -27,6 +27,7 @@
 package com.netbout.dynamo;
 
 import com.google.common.base.Function;
+import com.google.common.base.Predicates;
 import com.google.common.collect.Iterables;
 import com.jcabi.aspects.Immutable;
 import com.jcabi.aspects.Loggable;
@@ -38,7 +39,6 @@ import com.jcabi.dynamo.Region;
 import com.netbout.spi.Attachment;
 import com.netbout.spi.Attachments;
 import java.io.IOException;
-import java.util.Iterator;
 import javax.ws.rs.core.MediaType;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
@@ -114,19 +114,16 @@ final class DyAttachments implements Attachments {
     }
 
     @Override
-    public Attachment get(final String name) throws IOException {
-        final Iterator<Item> items = this.region.table(DyAttachments.TBL)
-            .frame()
-            .where(DyAttachments.HASH, Conditions.equalTo(this.bout))
-            .where(DyAttachments.RANGE, name)
-            .iterator();
-        final Item item;
-        if (items.hasNext()) {
-            item = items.next();
-        } else {
-            item = this.create(name);
-        }
-        return new DyAttachment(this.region, item, this.self);
+    public Attachment get(final String name) {
+        return new DyAttachment(
+            this.region,
+            this.region.table(DyAttachments.TBL)
+                .frame()
+                .where(DyAttachments.HASH, Conditions.equalTo(this.bout))
+                .where(DyAttachments.RANGE, name)
+                .iterator().next(),
+            this.self
+        );
     }
 
     @Override
@@ -152,20 +149,26 @@ final class DyAttachments implements Attachments {
         );
     }
 
-    /**
-     * Create a new one with this name.
-     * @param name Name of it
-     * @return Item just created
-     * @throws IOException If fails
-     */
-    private Item create(final String name) throws IOException {
-        return this.region.table(DyAttachments.TBL).put(
+    @Override
+    public void create(final String name) throws IOException {
+        this.region.table(DyAttachments.TBL).put(
             new Attributes()
                 .with(DyAttachments.HASH, this.bout)
                 .with(DyAttachments.RANGE, name)
                 .with(DyAttachments.ATTR_ALIAS, this.self)
                 .with(DyAttachments.ATTR_CTYPE, MediaType.TEXT_PLAIN)
                 .with(DyAttachments.ATTR_DATA, " ")
+        );
+    }
+
+    @Override
+    public void delete(final String name) {
+        Iterables.removeIf(
+            this.region.table(DyAttachments.TBL)
+                .frame()
+                .where(DyAttachments.HASH, Conditions.equalTo(this.bout))
+                .where(DyAttachments.RANGE, name),
+            Predicates.alwaysTrue()
         );
     }
 

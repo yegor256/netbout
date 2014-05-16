@@ -61,6 +61,38 @@ final class RtAttachments implements Attachments {
     }
 
     @Override
+    public void create(final String name) throws IOException {
+        this.request.fetch()
+            .as(RestResponse.class)
+            .assertStatus(HttpURLConnection.HTTP_OK)
+            .as(XmlResponse.class)
+            .rel("/page/links/link[@rel='create']/@href")
+            .method(Request.POST)
+            .body().formParam("name", name).back()
+            .fetch()
+            .as(RestResponse.class)
+            .assertStatus(HttpURLConnection.HTTP_SEE_OTHER);
+    }
+
+    @Override
+    public void delete(final String name) throws IOException {
+        this.request.fetch()
+            .as(RestResponse.class)
+            .assertStatus(HttpURLConnection.HTTP_OK)
+            .as(XmlResponse.class)
+            .rel(
+                String.format(
+                    // @checkstyle LineLength (1 line)
+                    "/page/bout/attachments/attachment[name='%s']/links/link[@rel='delete']/@href",
+                    name
+                )
+            )
+            .fetch()
+            .as(RestResponse.class)
+            .assertStatus(HttpURLConnection.HTTP_SEE_OTHER);
+    }
+
+    @Override
     public Attachment get(final String name) {
         return new RtAttachment(this.request, name);
     }
