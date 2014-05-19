@@ -26,6 +26,7 @@
  */
 package com.netbout.client.cached;
 
+import com.jcabi.aspects.Cacheable;
 import com.jcabi.aspects.Immutable;
 import com.jcabi.aspects.Loggable;
 import com.netbout.spi.Attachments;
@@ -64,36 +65,43 @@ public final class CdBout implements Bout {
     }
 
     @Override
+    @Cacheable
     public long number() throws IOException {
         return this.origin.number();
     }
 
     @Override
+    @Cacheable
     public Date date() throws IOException {
         return this.origin.date();
     }
 
     @Override
+    @Cacheable
     public String title() throws IOException {
         return this.origin.title();
     }
 
     @Override
+    @Cacheable.FlushAfter
     public void rename(final String text) throws IOException {
         this.origin.rename(text);
     }
 
     @Override
+    @Cacheable
     public Messages messages() throws IOException {
         return new CdMessages(this.origin.messages());
     }
 
     @Override
+    @Cacheable
     public Friends friends() throws IOException {
         return new CdFriends(this.origin.friends());
     }
 
     @Override
+    @Cacheable
     public Attachments attachments() throws IOException {
         return new CdAttachments(this.origin.attachments());
     }

@@ -28,6 +28,7 @@ package com.netbout.client.cached;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Iterables;
+import com.jcabi.aspects.Cacheable;
 import com.jcabi.aspects.Immutable;
 import com.jcabi.aspects.Loggable;
 import com.netbout.spi.Friend;
@@ -63,16 +64,19 @@ public final class CdFriends implements Friends {
     }
 
     @Override
+    @Cacheable.FlushAfter
     public void invite(final String friend) throws IOException {
         this.origin.invite(friend);
     }
 
     @Override
+    @Cacheable.FlushAfter
     public void kick(final String friend) throws IOException {
         this.origin.kick(friend);
     }
 
     @Override
+    @Cacheable
     public Iterable<Friend> iterate() throws IOException {
         return Iterables.transform(
             this.origin.iterate(),

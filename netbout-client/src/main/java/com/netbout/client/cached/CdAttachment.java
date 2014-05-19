@@ -26,6 +26,7 @@
  */
 package com.netbout.client.cached;
 
+import com.jcabi.aspects.Cacheable;
 import com.jcabi.aspects.Immutable;
 import com.jcabi.aspects.Loggable;
 import com.netbout.spi.Attachment;
@@ -61,11 +62,13 @@ public final class CdAttachment implements Attachment {
     }
 
     @Override
+    @Cacheable
     public String name() throws IOException {
         return this.origin.name();
     }
 
     @Override
+    @Cacheable
     public String ctype() throws IOException {
         return this.origin.ctype();
     }

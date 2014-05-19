@@ -28,6 +28,7 @@ package com.netbout.client.cached;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Iterables;
+import com.jcabi.aspects.Cacheable;
 import com.jcabi.aspects.Immutable;
 import com.jcabi.aspects.Loggable;
 import com.netbout.spi.Attachment;
@@ -63,21 +64,25 @@ public final class CdAttachments implements Attachments {
     }
 
     @Override
+    @Cacheable.FlushAfter
     public void create(final String name) throws IOException {
         this.origin.create(name);
     }
 
     @Override
+    @Cacheable.FlushAfter
     public void delete(final String name) throws IOException {
         this.origin.delete(name);
     }
 
     @Override
+    @Cacheable
     public Attachment get(final String name) throws IOException {
         return new CdAttachment(this.origin.get(name));
     }
 
     @Override
+    @Cacheable
     public Iterable<Attachment> iterate() throws IOException {
         return Iterables.transform(
             this.origin.iterate(),

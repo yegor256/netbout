@@ -26,6 +26,7 @@
  */
 package com.netbout.client.cached;
 
+import com.jcabi.aspects.Cacheable;
 import com.jcabi.aspects.Immutable;
 import com.jcabi.aspects.Loggable;
 import com.netbout.spi.Aliases;
@@ -60,6 +61,7 @@ public final class CdUser implements User {
     }
 
     @Override
+    @Cacheable
     public Aliases aliases() {
         return new CdAliases(this.origin.aliases());
     }

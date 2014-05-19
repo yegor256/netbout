@@ -39,6 +39,7 @@ import com.jcabi.dynamo.Region;
 import com.netbout.spi.Attachment;
 import com.netbout.spi.Attachments;
 import java.io.IOException;
+import java.util.Iterator;
 import javax.ws.rs.core.MediaType;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
@@ -115,15 +116,17 @@ final class DyAttachments implements Attachments {
 
     @Override
     public Attachment get(final String name) {
-        return new DyAttachment(
-            this.region,
-            this.region.table(DyAttachments.TBL)
-                .frame()
-                .where(DyAttachments.HASH, Conditions.equalTo(this.bout))
-                .where(DyAttachments.RANGE, name)
-                .iterator().next(),
-            this.self
-        );
+        final Iterator<Item> items = this.region.table(DyAttachments.TBL)
+            .frame()
+            .where(DyAttachments.HASH, Conditions.equalTo(this.bout))
+            .where(DyAttachments.RANGE, name)
+            .iterator();
+        if (!items.hasNext()) {
+            throw new IllegalArgumentException(
+                String.format("attachment '%s' not found", name)
+            );
+        }
+        return new DyAttachment(this.region, items.next(), this.self);
     }
 
     @Override

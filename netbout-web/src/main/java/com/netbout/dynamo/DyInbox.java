@@ -28,6 +28,7 @@ package com.netbout.dynamo;
 
 import co.stateful.Counter;
 import co.stateful.RtSttc;
+import co.stateful.retry.ReSttc;
 import com.amazonaws.services.dynamodbv2.model.Select;
 import com.google.common.base.Function;
 import com.google.common.collect.Iterables;
@@ -83,9 +84,11 @@ final class DyInbox implements Inbox {
      */
     DyInbox(final Region reg, final String slf) {
         try {
-            this.counter = RtSttc.make(
-                URN.create(Manifests.read("Netbout-SttcUrn")),
-                Manifests.read("Netbout-SttcToken")
+            this.counter = new ReSttc(
+                RtSttc.make(
+                    URN.create(Manifests.read("Netbout-SttcUrn")),
+                    Manifests.read("Netbout-SttcToken")
+                )
             ).counters().get("nb-bout");
         } catch (final IOException ex) {
             throw new IllegalStateException(ex);

@@ -24,21 +24,22 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.client.cached;
+package com.netbout.client.retry;
 
-import com.google.common.base.Function;
-import com.google.common.collect.Iterables;
-import com.jcabi.aspects.Cacheable;
 import com.jcabi.aspects.Immutable;
 import com.jcabi.aspects.Loggable;
-import com.netbout.spi.Alias;
-import com.netbout.spi.Aliases;
+import com.jcabi.aspects.RetryOnFailure;
+import com.netbout.spi.Attachments;
+import com.netbout.spi.Bout;
+import com.netbout.spi.Friends;
+import com.netbout.spi.Messages;
 import java.io.IOException;
+import java.util.Date;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
 /**
- * Cached aliases.
+ * Cached bout.
  *
  * @author Yegor Bugayenko (yegor@tpc2.com)
  * @version $Id$
@@ -48,43 +49,60 @@ import lombok.ToString;
 @ToString
 @Loggable(Loggable.DEBUG)
 @EqualsAndHashCode(of = "origin")
-public final class CdAliases implements Aliases {
+public final class ReBout implements Bout {
 
     /**
      * Original object.
      */
-    private final transient Aliases origin;
+    private final transient Bout origin;
 
     /**
      * Public ctor.
      * @param orgn Original object
      */
-    public CdAliases(final Aliases orgn) {
+    public ReBout(final Bout orgn) {
         this.origin = orgn;
     }
 
     @Override
-    public String check(final String name) throws IOException {
-        return this.origin.check(name);
+    @RetryOnFailure(verbose = false)
+    public long number() throws IOException {
+        return this.origin.number();
     }
 
     @Override
-    @Cacheable.FlushAfter
-    public void add(final String name) throws IOException {
-        this.origin.add(name);
+    @RetryOnFailure(verbose = false)
+    public Date date() throws IOException {
+        return this.origin.date();
     }
 
     @Override
-    @Cacheable
-    public Iterable<Alias> iterate() throws IOException {
-        return Iterables.transform(
-            this.origin.iterate(),
-            new Function<Alias, Alias>() {
-                @Override
-                public Alias apply(final Alias alias) {
-                    return new CdAlias(alias);
-                }
-            }
-        );
+    @RetryOnFailure(verbose = false)
+    public String title() throws IOException {
+        return this.origin.title();
+    }
+
+    @Override
+    @RetryOnFailure(verbose = false)
+    public void rename(final String text) throws IOException {
+        this.origin.rename(text);
+    }
+
+    @Override
+    @RetryOnFailure(verbose = false)
+    public Messages messages() throws IOException {
+        return new ReMessages(this.origin.messages());
+    }
+
+    @Override
+    @RetryOnFailure(verbose = false)
+    public Friends friends() throws IOException {
+        return new ReFriends(this.origin.friends());
+    }
+
+    @Override
+    @RetryOnFailure(verbose = false)
+    public Attachments attachments() throws IOException {
+        return new ReAttachments(this.origin.attachments());
     }
 }

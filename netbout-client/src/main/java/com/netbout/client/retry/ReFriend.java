@@ -24,21 +24,19 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.client.cached;
+package com.netbout.client.retry;
 
-import com.google.common.base.Function;
-import com.google.common.collect.Iterables;
-import com.jcabi.aspects.Cacheable;
 import com.jcabi.aspects.Immutable;
 import com.jcabi.aspects.Loggable;
-import com.netbout.spi.Alias;
-import com.netbout.spi.Aliases;
+import com.jcabi.aspects.RetryOnFailure;
+import com.netbout.spi.Friend;
 import java.io.IOException;
+import java.net.URI;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
 /**
- * Cached aliases.
+ * Cached friend.
  *
  * @author Yegor Bugayenko (yegor@tpc2.com)
  * @version $Id$
@@ -48,43 +46,30 @@ import lombok.ToString;
 @ToString
 @Loggable(Loggable.DEBUG)
 @EqualsAndHashCode(of = "origin")
-public final class CdAliases implements Aliases {
+public final class ReFriend implements Friend {
 
     /**
      * Original object.
      */
-    private final transient Aliases origin;
+    private final transient Friend origin;
 
     /**
      * Public ctor.
      * @param orgn Original object
      */
-    public CdAliases(final Aliases orgn) {
+    public ReFriend(final Friend orgn) {
         this.origin = orgn;
     }
 
     @Override
-    public String check(final String name) throws IOException {
-        return this.origin.check(name);
+    @RetryOnFailure(verbose = false)
+    public String alias() throws IOException {
+        return this.origin.alias();
     }
 
     @Override
-    @Cacheable.FlushAfter
-    public void add(final String name) throws IOException {
-        this.origin.add(name);
-    }
-
-    @Override
-    @Cacheable
-    public Iterable<Alias> iterate() throws IOException {
-        return Iterables.transform(
-            this.origin.iterate(),
-            new Function<Alias, Alias>() {
-                @Override
-                public Alias apply(final Alias alias) {
-                    return new CdAlias(alias);
-                }
-            }
-        );
+    @RetryOnFailure(verbose = false)
+    public URI photo() throws IOException {
+        return this.origin.photo();
     }
 }

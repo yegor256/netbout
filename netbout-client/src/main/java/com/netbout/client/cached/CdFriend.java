@@ -26,6 +26,7 @@
  */
 package com.netbout.client.cached;
 
+import com.jcabi.aspects.Cacheable;
 import com.jcabi.aspects.Immutable;
 import com.jcabi.aspects.Loggable;
 import com.netbout.spi.Friend;
@@ -61,11 +62,13 @@ public final class CdFriend implements Friend {
     }
 
     @Override
+    @Cacheable
     public String alias() throws IOException {
         return this.origin.alias();
     }
 
     @Override
+    @Cacheable
     public URI photo() throws IOException {
         return this.origin.photo();
     }

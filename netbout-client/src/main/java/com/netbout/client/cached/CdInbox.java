@@ -28,6 +28,7 @@ package com.netbout.client.cached;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Iterables;
+import com.jcabi.aspects.Cacheable;
 import com.jcabi.aspects.Immutable;
 import com.jcabi.aspects.Loggable;
 import com.netbout.spi.Bout;
@@ -64,11 +65,13 @@ public final class CdInbox implements Inbox {
     }
 
     @Override
+    @Cacheable.FlushAfter
     public long start() throws IOException {
         return this.origin.start();
     }
 
     @Override
+    @Cacheable
     public Bout bout(final long number) throws Inbox.BoutNotFoundException {
         return new CdBout(this.origin.bout(number));
     }
@@ -79,6 +82,7 @@ public final class CdInbox implements Inbox {
     }
 
     @Override
+    @Cacheable
     public Iterable<Bout> iterate() throws IOException {
         return Iterables.transform(
             this.origin.iterate(),

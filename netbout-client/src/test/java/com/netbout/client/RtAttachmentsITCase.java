@@ -64,7 +64,9 @@ public final class RtAttachmentsITCase {
         final Bout bout = inbox.bout(inbox.start());
         bout.rename(this.getClass().getName());
         final Attachments attachments = bout.attachments();
-        final Attachment attachment = attachments.get("first");
+        final String name = "test";
+        attachments.create(name);
+        final Attachment attachment = attachments.get(name);
         attachment.write(
             IOUtils.toInputStream("how are you, \u20ac?"),
             Attachment.MARKDOWN
@@ -73,6 +75,7 @@ public final class RtAttachmentsITCase {
             IOUtils.toString(attachment.read()),
             Matchers.containsString("\u20ac")
         );
+        attachments.delete(name);
     }
 
 }

@@ -24,21 +24,21 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.client.cached;
+package com.netbout.client.retry;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Iterables;
-import com.jcabi.aspects.Cacheable;
 import com.jcabi.aspects.Immutable;
 import com.jcabi.aspects.Loggable;
-import com.netbout.spi.Alias;
-import com.netbout.spi.Aliases;
+import com.jcabi.aspects.RetryOnFailure;
+import com.netbout.spi.Attachment;
+import com.netbout.spi.Attachments;
 import java.io.IOException;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
 /**
- * Cached aliases.
+ * Cached attachments.
  *
  * @author Yegor Bugayenko (yegor@tpc2.com)
  * @version $Id$
@@ -48,41 +48,48 @@ import lombok.ToString;
 @ToString
 @Loggable(Loggable.DEBUG)
 @EqualsAndHashCode(of = "origin")
-public final class CdAliases implements Aliases {
+public final class ReAttachments implements Attachments {
 
     /**
      * Original object.
      */
-    private final transient Aliases origin;
+    private final transient Attachments origin;
 
     /**
      * Public ctor.
      * @param orgn Original object
      */
-    public CdAliases(final Aliases orgn) {
+    public ReAttachments(final Attachments orgn) {
         this.origin = orgn;
     }
 
     @Override
-    public String check(final String name) throws IOException {
-        return this.origin.check(name);
+    @RetryOnFailure(verbose = false)
+    public void create(final String name) throws IOException {
+        this.origin.create(name);
     }
 
     @Override
-    @Cacheable.FlushAfter
-    public void add(final String name) throws IOException {
-        this.origin.add(name);
+    @RetryOnFailure(verbose = false)
+    public void delete(final String name) throws IOException {
+        this.origin.delete(name);
     }
 
     @Override
-    @Cacheable
-    public Iterable<Alias> iterate() throws IOException {
+    @RetryOnFailure(verbose = false)
+    public Attachment get(final String name) throws IOException {
+        return new ReAttachment(this.origin.get(name));
+    }
+
+    @Override
+    @RetryOnFailure(verbose = false)
+    public Iterable<Attachment> iterate() throws IOException {
         return Iterables.transform(
             this.origin.iterate(),
-            new Function<Alias, Alias>() {
+            new Function<Attachment, Attachment>() {
                 @Override
-                public Alias apply(final Alias alias) {
-                    return new CdAlias(alias);
+                public Attachment apply(final Attachment attachment) {
+                    return new ReAttachment(attachment);
                 }
             }
         );

@@ -26,6 +26,7 @@
  */
 package com.netbout.client.cached;
 
+import com.jcabi.aspects.Cacheable;
 import com.jcabi.aspects.Immutable;
 import com.jcabi.aspects.Loggable;
 import com.netbout.spi.Message;
@@ -61,21 +62,25 @@ public final class CdMessage implements Message {
     }
 
     @Override
+    @Cacheable
     public long number() throws IOException {
         return this.origin.number();
     }
 
     @Override
+    @Cacheable
     public Date date() throws IOException {
         return this.origin.date();
     }
 
     @Override
+    @Cacheable
     public String text() throws IOException {
         return this.origin.text();
     }
 
     @Override
+    @Cacheable
     public String author() throws IOException {
         return this.origin.author();
     }

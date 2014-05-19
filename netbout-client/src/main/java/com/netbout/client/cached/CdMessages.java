@@ -28,6 +28,7 @@ package com.netbout.client.cached;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Iterables;
+import com.jcabi.aspects.Cacheable;
 import com.jcabi.aspects.Immutable;
 import com.jcabi.aspects.Loggable;
 import com.netbout.spi.Message;
@@ -64,6 +65,7 @@ public final class CdMessages implements Messages {
     }
 
     @Override
+    @Cacheable
     public void post(final String text) throws IOException {
         this.origin.post(text);
     }
@@ -74,6 +76,7 @@ public final class CdMessages implements Messages {
     }
 
     @Override
+    @Cacheable.FlushAfter
     public Iterable<Message> iterate() throws IOException {
         return Iterables.transform(
             this.origin.iterate(),

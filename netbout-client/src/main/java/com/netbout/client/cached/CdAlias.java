@@ -26,6 +26,7 @@
  */
 package com.netbout.client.cached;
 
+import com.jcabi.aspects.Cacheable;
 import com.jcabi.aspects.Immutable;
 import com.jcabi.aspects.Loggable;
 import com.netbout.spi.Alias;
@@ -63,26 +64,31 @@ public final class CdAlias implements Alias {
     }
 
     @Override
+    @Cacheable
     public String name() throws IOException {
         return this.origin.name();
     }
 
     @Override
+    @Cacheable
     public URI photo() throws IOException {
         return this.origin.photo();
     }
 
     @Override
+    @Cacheable
     public Locale locale() throws IOException {
         return this.origin.locale();
     }
 
     @Override
+    @Cacheable.FlushAfter
     public void photo(final URI uri) throws IOException {
         this.origin.photo(uri);
     }
 
     @Override
+    @Cacheable
     public Inbox inbox() throws IOException {
         return new CdInbox(this.origin.inbox());
     }
