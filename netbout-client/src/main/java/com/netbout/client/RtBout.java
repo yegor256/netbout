@@ -27,6 +27,7 @@
 package com.netbout.client;
 
 import com.jcabi.aspects.Immutable;
+import com.jcabi.aspects.Loggable;
 import com.jcabi.http.Request;
 import com.jcabi.http.response.RestResponse;
 import com.jcabi.http.response.XmlResponse;
@@ -38,6 +39,8 @@ import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.text.ParseException;
 import java.util.Date;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 import org.apache.commons.lang3.time.DateFormatUtils;
 
 /**
@@ -48,6 +51,9 @@ import org.apache.commons.lang3.time.DateFormatUtils;
  * @since 2.0
  */
 @Immutable
+@ToString
+@Loggable(Loggable.DEBUG)
+@EqualsAndHashCode(of = "request")
 final class RtBout implements Bout {
 
     /**

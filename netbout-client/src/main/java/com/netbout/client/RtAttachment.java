@@ -27,6 +27,7 @@
 package com.netbout.client;
 
 import com.jcabi.aspects.Immutable;
+import com.jcabi.aspects.Loggable;
 import com.jcabi.http.Request;
 import com.jcabi.http.response.RestResponse;
 import com.jcabi.http.response.XmlResponse;
@@ -34,6 +35,8 @@ import com.netbout.spi.Attachment;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.CharEncoding;
 
@@ -45,6 +48,9 @@ import org.apache.commons.lang3.CharEncoding;
  * @since 2.0
  */
 @Immutable
+@ToString
+@Loggable(Loggable.DEBUG)
+@EqualsAndHashCode(of = { "request", "attachment" })
 final class RtAttachment implements Attachment {
 
     /**

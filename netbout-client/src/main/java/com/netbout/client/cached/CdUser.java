@@ -24,62 +24,43 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.client;
+package com.netbout.client.cached;
 
 import com.jcabi.aspects.Immutable;
 import com.jcabi.aspects.Loggable;
-import com.jcabi.http.Request;
-import com.jcabi.http.request.JdkRequest;
-import com.jcabi.http.wire.CookieOptimizingWire;
 import com.netbout.spi.Aliases;
 import com.netbout.spi.User;
-import java.net.URI;
-import javax.validation.constraints.NotNull;
-import javax.ws.rs.core.HttpHeaders;
-import javax.ws.rs.core.MediaType;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
 /**
- * RESTful Netbout user.
+ * Cached Netbout user.
  *
  * @author Yegor Bugayenko (yegor@tpc2.com)
  * @version $Id$
- * @since 2.0
+ * @since 2.3
  */
 @Immutable
 @ToString
 @Loggable(Loggable.DEBUG)
-@EqualsAndHashCode(of = "request")
-public final class RtUser implements User {
+@EqualsAndHashCode(of = "origin")
+public final class CdUser implements User {
 
     /**
-     * Request to use.
+     * Original object.
      */
-    private final transient Request request;
-
-    /**
-     * Public ctor.
-     * @param token Authentication token
-     */
-    public RtUser(@NotNull final String token) {
-        this(URI.create("http://www.netbout.com"), token);
-    }
+    private final transient User origin;
 
     /**
      * Public ctor.
-     * @param uri Home page URI
-     * @param token Authentication token
+     * @param orgn Original object
      */
-    public RtUser(@NotNull final URI uri, @NotNull final String token) {
-        this.request = new JdkRequest(uri)
-            .through(CookieOptimizingWire.class)
-            .header(HttpHeaders.COOKIE, String.format("Rexsl-Auth=%s", token))
-            .header(HttpHeaders.ACCEPT, MediaType.TEXT_XML);
+    public CdUser(final User orgn) {
+        this.origin = orgn;
     }
 
     @Override
     public Aliases aliases() {
-        return new RtAliases(this.request);
+        return new CdAliases(this.origin.aliases());
     }
 }

@@ -24,84 +24,77 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.client;
+package com.netbout.client.cached;
 
 import com.jcabi.aspects.Immutable;
 import com.jcabi.aspects.Loggable;
-import com.jcabi.http.Request;
-import com.jcabi.http.response.RestResponse;
-import com.jcabi.http.response.XmlResponse;
+import com.netbout.spi.Attachments;
 import com.netbout.spi.Bout;
-import com.netbout.spi.Inbox;
-import com.netbout.spi.Pageable;
+import com.netbout.spi.Friends;
+import com.netbout.spi.Messages;
 import java.io.IOException;
-import java.net.HttpURLConnection;
+import java.util.Date;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
 /**
- * REST inbox.
+ * Cached bout.
  *
  * @author Yegor Bugayenko (yegor@tpc2.com)
  * @version $Id$
- * @since 2.0
+ * @since 2.3
  */
 @Immutable
 @ToString
 @Loggable(Loggable.DEBUG)
-@EqualsAndHashCode(of = "request")
-final class RtInbox implements Inbox {
+@EqualsAndHashCode(of = "origin")
+public final class CdBout implements Bout {
 
     /**
-     * Request to use.
+     * Original object.
      */
-    private final transient Request request;
+    private final transient Bout origin;
 
     /**
      * Public ctor.
-     * @param req Request to use
+     * @param orgn Original object
      */
-    RtInbox(final Request req) {
-        this.request = req;
+    public CdBout(final Bout orgn) {
+        this.origin = orgn;
     }
 
     @Override
-    public long start() throws IOException {
-        return Long.parseLong(
-            this.request.fetch()
-                .as(RestResponse.class)
-                .assertStatus(HttpURLConnection.HTTP_OK)
-                .as(XmlResponse.class)
-                .rel("/page/links/link[@rel='start']/@href")
-                .fetch()
-                .as(RestResponse.class)
-                .assertStatus(HttpURLConnection.HTTP_SEE_OTHER)
-                .follow()
-                .fetch()
-                .as(RestResponse.class)
-                .assertStatus(HttpURLConnection.HTTP_OK)
-                .as(XmlResponse.class)
-                .xml()
-                .xpath("/page/bout/number/text()")
-                .get(0)
-        );
+    public long number() throws IOException {
+        return this.origin.number();
     }
 
     @Override
-    public Bout bout(final long number) {
-        return new RtBout(
-            this.request
-                .uri().path("/b").path(Long.toString(number)).back()
-        );
+    public Date date() throws IOException {
+        return this.origin.date();
     }
 
     @Override
-    public Pageable<Bout> jump(final int pos) {
-        throw new UnsupportedOperationException("#jump()");
+    public String title() throws IOException {
+        return this.origin.title();
     }
 
     @Override
-    public Iterable<Bout> iterate() {
-        throw new UnsupportedOperationException("#iterator()");
+    public void rename(final String text) throws IOException {
+        this.origin.rename(text);
+    }
+
+    @Override
+    public Messages messages() throws IOException {
+        return new CdMessages(this.origin.messages());
+    }
+
+    @Override
+    public Friends friends() throws IOException {
+        return new CdFriends(this.origin.friends());
+    }
+
+    @Override
+    public Attachments attachments() throws IOException {
+        return new CdAttachments(this.origin.attachments());
     }
 }

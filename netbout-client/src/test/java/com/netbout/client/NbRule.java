@@ -26,6 +26,7 @@
  */
 package com.netbout.client;
 
+import com.netbout.client.cached.CdUser;
 import com.netbout.spi.User;
 import org.junit.Assume;
 import org.junit.rules.TestRule;
@@ -47,7 +48,7 @@ public final class NbRule implements TestRule {
     public User get() {
         final String token = System.getProperty("netbout.token");
         Assume.assumeNotNull(token);
-        return new RtUser(token);
+        return new CdUser(new RtUser(token));
     }
 
     @Override

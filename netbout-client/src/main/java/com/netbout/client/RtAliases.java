@@ -27,12 +27,15 @@
 package com.netbout.client;
 
 import com.jcabi.aspects.Immutable;
+import com.jcabi.aspects.Loggable;
 import com.jcabi.http.Request;
 import com.jcabi.http.response.XmlResponse;
 import com.netbout.spi.Alias;
 import com.netbout.spi.Aliases;
 import java.io.IOException;
 import java.util.Collections;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
 /**
  * REST aliases.
@@ -42,6 +45,9 @@ import java.util.Collections;
  * @since 2.0
  */
 @Immutable
+@ToString
+@Loggable(Loggable.DEBUG)
+@EqualsAndHashCode(of = "request")
 final class RtAliases implements Aliases {
 
     /**

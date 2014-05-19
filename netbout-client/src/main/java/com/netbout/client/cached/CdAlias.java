@@ -24,84 +24,66 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.client;
+package com.netbout.client.cached;
 
 import com.jcabi.aspects.Immutable;
 import com.jcabi.aspects.Loggable;
-import com.jcabi.http.Request;
-import com.jcabi.http.response.RestResponse;
-import com.jcabi.http.response.XmlResponse;
-import com.netbout.spi.Bout;
+import com.netbout.spi.Alias;
 import com.netbout.spi.Inbox;
-import com.netbout.spi.Pageable;
 import java.io.IOException;
-import java.net.HttpURLConnection;
+import java.net.URI;
+import java.util.Locale;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
 /**
- * REST inbox.
+ * Cached alias.
  *
  * @author Yegor Bugayenko (yegor@tpc2.com)
  * @version $Id$
- * @since 2.0
+ * @since 2.3
  */
 @Immutable
 @ToString
 @Loggable(Loggable.DEBUG)
-@EqualsAndHashCode(of = "request")
-final class RtInbox implements Inbox {
+@EqualsAndHashCode(of = "origin")
+public final class CdAlias implements Alias {
 
     /**
-     * Request to use.
+     * Original object.
      */
-    private final transient Request request;
+    private final transient Alias origin;
 
     /**
      * Public ctor.
-     * @param req Request to use
+     * @param orgn Original object
      */
-    RtInbox(final Request req) {
-        this.request = req;
+    public CdAlias(final Alias orgn) {
+        this.origin = orgn;
     }
 
     @Override
-    public long start() throws IOException {
-        return Long.parseLong(
-            this.request.fetch()
-                .as(RestResponse.class)
-                .assertStatus(HttpURLConnection.HTTP_OK)
-                .as(XmlResponse.class)
-                .rel("/page/links/link[@rel='start']/@href")
-                .fetch()
-                .as(RestResponse.class)
-                .assertStatus(HttpURLConnection.HTTP_SEE_OTHER)
-                .follow()
-                .fetch()
-                .as(RestResponse.class)
-                .assertStatus(HttpURLConnection.HTTP_OK)
-                .as(XmlResponse.class)
-                .xml()
-                .xpath("/page/bout/number/text()")
-                .get(0)
-        );
+    public String name() throws IOException {
+        return this.origin.name();
     }
 
     @Override
-    public Bout bout(final long number) {
-        return new RtBout(
-            this.request
-                .uri().path("/b").path(Long.toString(number)).back()
-        );
+    public URI photo() throws IOException {
+        return this.origin.photo();
     }
 
     @Override
-    public Pageable<Bout> jump(final int pos) {
-        throw new UnsupportedOperationException("#jump()");
+    public Locale locale() throws IOException {
+        return this.origin.locale();
     }
 
     @Override
-    public Iterable<Bout> iterate() {
-        throw new UnsupportedOperationException("#iterator()");
+    public void photo(final URI uri) throws IOException {
+        this.origin.photo(uri);
+    }
+
+    @Override
+    public Inbox inbox() throws IOException {
+        return new CdInbox(this.origin.inbox());
     }
 }

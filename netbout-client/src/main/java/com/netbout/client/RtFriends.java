@@ -27,10 +27,13 @@
 package com.netbout.client;
 
 import com.jcabi.aspects.Immutable;
+import com.jcabi.aspects.Loggable;
 import com.jcabi.http.Request;
 import com.netbout.spi.Friend;
 import com.netbout.spi.Friends;
 import java.io.IOException;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
 /**
  * REST friends.
@@ -40,6 +43,9 @@ import java.io.IOException;
  * @since 2.0
  */
 @Immutable
+@ToString
+@Loggable(Loggable.DEBUG)
+@EqualsAndHashCode(of = "request")
 final class RtFriends implements Friends {
 
     /**
