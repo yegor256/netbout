@@ -63,45 +63,6 @@ var setup = function () {
                 }
             );
     }
-    $('span.xml-toggle').click(
-        function () {
-            $(this).parent().parent().find('p.fixed').toggle();
-        }
-    );
-    $('input[name="mask"]').keyup(
-        function () {
-            var $ul = $('#invite-list');
-            $.ajax({
-                url: '/f?mask=' + encodeURI($(this).val()) + '&bout=' + bout,
-                headers: { 'Accept': 'application/xml' },
-                cache: false,
-                dataType: 'xml',
-                error: function () {
-                    $ul.hide();
-                    $ul.empty();
-                },
-                success: function (xml) {
-                    $ul.hide();
-                    var html = '';
-                    $(xml).find('invitee').each(
-                        function () {
-                            var alias = $(this).find('alias').text();
-                            // see http://stackoverflow.com/questions/9834487
-                            html += '<li><a href="' + $(this).attr('href').escaped()
-                                + '" title="' + alias.escaped() + '">'
-                                + (alias.length > 25 ? alias.substr(0, 25) + '...' : alias).escaped()
-                                + '</a><img src="' + $(this).find('photo').text().escaped()
-                                + '" alt="' + alias.escaped() + '"></img></li>';
-                        }
-                    );
-                    $ul.html(html);
-                    if (html.length > 0) {
-                        $ul.show();
-                    }
-                }
-            });
-        }
-    );
 };
 
 $(document).ready(setup);

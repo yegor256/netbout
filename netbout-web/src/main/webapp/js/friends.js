@@ -32,9 +32,9 @@ $(document).ready(
         "use strict";
         $('.bar')
             .mouseover(function () { $(this).show(); })
-            .mouseout(function () { $(this).hide(); });
+            .mouseout(function () { $(this).delay(1000).hide(); });
         $('.friend')
             .mouseover(function () { $(this).parent().find('.bar').show(); })
-            .mouseout(function () { $(this).parent().find('.bar').hide(); });
+            .mouseout(function () { $(this).parent().find('.bar').delay(1000).hide(); });
     }
 );

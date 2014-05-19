@@ -83,7 +83,19 @@
                 <name>cv.pdf</name>
                 <ctype>text/x-markdown</ctype>
                 <html>
-                    Hello, &lt;strong&gt;world&lt;/strong&gt;!
+                    &lt;h1&gt;This Is a Title&lt;/h1&gt;
+                    &lt;p&gt;Hello, &lt;strong&gt;world&lt;/strong&gt;!&lt;/p&gt;
+                    &lt;table&gt;
+                    &lt;tr&gt;
+                        &lt;th&gt;Header&lt;/th&gt;
+                        &lt;th&gt;Second one&lt;/th&gt;
+                    &lt;/tr&gt;
+                    &lt;tr&gt;
+                        &lt;td&gt;This is TD&lt;/td&gt;
+                        &lt;td&gt;Another TD&lt;/td&gt;
+                    &lt;/tr&gt;
+                    &lt;/table&gt;
+                    &lt;p&gt;Another paragraph with text!&lt;/p&gt;
                 </html>
             </attachment>
             <attachment>

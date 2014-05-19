@@ -55,14 +55,11 @@
         background-color: $color-gray-light;
         border-bottom: 1px solid $color-gray2;
         border-right: 1px solid $color-gray2;
-        padding: 3px 1px 3px 5px;
+        padding: 1px 7px;
         display: none;
         z-index: 100;
-        .name {
-            font-size: 14px;
-        }
+        font-size: 14px;
         .kick {
-            font-size: 14px;
             color: $color-red;
             text-decoration: none;
             font-weight: bold;

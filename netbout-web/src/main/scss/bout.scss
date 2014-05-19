@@ -74,6 +74,26 @@
     border-bottom: 1px solid $color-gray2;
     border-right: 1px solid $color-gray2;
     overflow-y: auto;
+    p, table, h1 {
+        margin-top: .5em;
+        margin-bottom: .5em;
+    }
+    h1 {
+        font-size: 1.4em;
+        font-weight: normal;
+    }
+    table {
+        border-spacing: 0;
+        padding: 0;
+        th {
+            font-weight: normal;
+            border-bottom: 1px solid $color-gray-dark;
+            text-align: left;
+        }
+        td, th {
+            padding-right: 1em;
+        }
+    }
 }
 
 .post {
