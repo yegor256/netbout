@@ -103,6 +103,7 @@
                     this bout. What do you think, &lt;i&gt;guys&lt;/i&gt;?...
                 </html>
                 <date>2014-04-22T16:09:33Z</date>
+                <timeago>5 minutes</timeago>
             </message>
             <message>
                 <number>2</number>
@@ -111,6 +112,7 @@
                     How about some text here...
                 </html>
                 <date>2014-04-21T16:09:33Z</date>
+                <timeago>5 minutes</timeago>
             </message>
             <message>
                 <number>3</number>
@@ -119,6 +121,7 @@
                     ANothe comment
                 </html>
                 <date>2014-04-20T16:09:33Z</date>
+                <timeago>5 hours</timeago>
             </message>
         </messages>
     </bout>

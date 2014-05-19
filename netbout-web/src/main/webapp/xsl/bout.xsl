@@ -168,7 +168,7 @@
                     <xsl:text> </xsl:text>
                     <xsl:value-of select="$TEXTS/said"/>
                     <xsl:text> </xsl:text>
-                    <xsl:value-of select="date"/>
+                    <xsl:value-of select="timeago"/>
                     <xsl:if test="@seen = 'false'">
                         <span class="red">
                             <xsl:text> </xsl:text>

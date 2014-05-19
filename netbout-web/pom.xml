@@ -78,6 +78,11 @@
             <version>0.7</version>
         </dependency>
         <dependency>
+            <groupId>org.ocpsoft.prettytime</groupId>
+            <artifactId>prettytime</artifactId>
+            <version>3.2.5.Final</version>
+        </dependency>
+        <dependency>
             <groupId>com.jcabi</groupId>
             <artifactId>jcabi-urn</artifactId>
         </dependency>
@@ -201,6 +206,7 @@
         <dependency>
             <groupId>javax.el</groupId>
             <artifactId>javax.el-api</artifactId>
+            <scope>runtime</scope>
         </dependency>
     </dependencies>
     <build>

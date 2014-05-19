@@ -49,6 +49,7 @@ import javax.ws.rs.core.Response;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.CharEncoding;
 import org.apache.commons.lang3.time.DateFormatUtils;
+import org.ocpsoft.prettytime.PrettyTime;
 
 /**
  * RESTful front of one Bout.
@@ -429,6 +430,7 @@ public final class BoutRs extends BaseRs {
             .up()
             .add("author", message.author()).up()
             .add("html", message.text()).up()
+            .add("timeago", new PrettyTime().format(message.date())).up()
             .add(
                 "date",
                 DateFormatUtils.ISO_DATETIME_FORMAT.format(message.date())
