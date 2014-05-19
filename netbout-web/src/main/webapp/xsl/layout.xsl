@@ -85,11 +85,7 @@
                     </div>
                 </div>
                 <div class="content" role="main">
-                    <xsl:if test="message != ''">
-                        <div class="error-message">
-                            <xsl:value-of select="message"/>
-                        </div>
-                    </xsl:if>
+                    <xsl:apply-templates select="flash"/>
                     <xsl:apply-templates select="." mode="body"/>
                 </div>
             </body>
@@ -240,6 +236,13 @@
                 <xsl:text>unknown</xsl:text>
             </xsl:otherwise>
         </xsl:choose>
+    </xsl:template>
+    <xsl:template name="flash">
+        <div class="flash">
+            <xsl:value-of select="level"/>
+            <xsl:text>: </xsl:text>
+            <xsl:value-of select="message"/>
+        </div>
     </xsl:template>
     <xsl:template name="format">
         <xsl:param name="text" as="xs:string"/>
