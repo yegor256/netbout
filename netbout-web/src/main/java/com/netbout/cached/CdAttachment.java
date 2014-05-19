@@ -26,14 +26,11 @@
  */
 package com.netbout.cached;
 
-import com.jcabi.aspects.Cacheable;
 import com.jcabi.aspects.Immutable;
 import com.jcabi.aspects.Loggable;
-import com.jcabi.aspects.Tv;
 import com.netbout.spi.Attachment;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.concurrent.TimeUnit;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 import org.apache.commons.io.IOUtils;
@@ -76,7 +73,6 @@ final class CdAttachment implements Attachment {
     }
 
     @Override
-    @Cacheable(lifetime = Tv.FIVE, unit = TimeUnit.MINUTES)
     public InputStream read() throws IOException {
         return IOUtils.toInputStream(
             IOUtils.toString(this.origin.read(), CharEncoding.UTF_8),
@@ -85,7 +81,6 @@ final class CdAttachment implements Attachment {
     }
 
     @Override
-    @Cacheable.FlushAfter
     public void write(final InputStream stream, final String ctype)
         throws IOException {
         this.origin.write(stream, ctype);
