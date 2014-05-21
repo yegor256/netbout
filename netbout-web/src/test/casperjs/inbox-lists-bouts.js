@@ -1,4 +1,4 @@
-/*globals require:false, test:false */
+/*globals casper:false */
 casper.test.begin(
     'inbox can list bouts',
     function (test) {
@@ -6,7 +6,7 @@ casper.test.begin(
             'http://localhost:${tomcat.port}/',
             function () {
                 test.assertHttpStatus(200);
-                test.assertExists('li.bout')
+                test.assertExists('li.bout');
             }
         );
         casper.run(

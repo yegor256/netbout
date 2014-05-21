@@ -1,4 +1,4 @@
-/*globals require:false, test:false */
+/*globals casper:false */
 [
     '/xml/bout.xml',
     '/xml/error.xml',
@@ -9,7 +9,7 @@
     '/robots.txt',
     '/js/bout.js',
     '/m/200',
-    '/',
+    '/'
 ].forEach(
     function (page) {
         casper.test.begin(
