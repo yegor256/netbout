@@ -59,7 +59,7 @@
         <module>netbout-web</module>
     </modules>
     <name>netbout</name>
-    <description>Persistent Communications Online</description>
+    <description>Private Talks Made Easy</description>
     <url>http://www.netbout.com</url>
     <inceptionYear>2010</inceptionYear>
     <organization>
@@ -79,7 +79,7 @@
             <id>1</id>
             <name>Yegor Bugayenko</name>
             <email>yegor@tpc2.com</email>
-            <organization>netbout Inc.</organization>
+            <organization>Netbout Inc.</organization>
             <organizationUrl>http://www.netbout.com</organizationUrl>
             <roles>
                 <role>Architect</role>
