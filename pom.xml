@@ -56,7 +56,6 @@
     <modules>
         <module>netbout-spi</module>
         <module>netbout-client</module>
-        <module>netbout-mock</module>
         <module>netbout-web</module>
     </modules>
     <name>netbout</name>

@@ -26,7 +26,7 @@
  */
 
 /**
- * Mock server of netbout, based on H2 database.
+ * Mock server.
  *
  * @author Yegor Bugayenko (yegor@tpc2.com)
  * @version $Id$
