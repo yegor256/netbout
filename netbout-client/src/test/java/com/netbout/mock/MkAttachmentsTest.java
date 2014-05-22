@@ -26,48 +26,54 @@
  */
 package com.netbout.mock;
 
-import com.jcabi.aspects.Immutable;
-import com.jcabi.aspects.Loggable;
 import com.jcabi.urn.URN;
+import com.netbout.spi.Alias;
+import com.netbout.spi.Aliases;
+import com.netbout.spi.Attachment;
+import com.netbout.spi.Attachments;
 import com.netbout.spi.Base;
+import com.netbout.spi.Bout;
+import com.netbout.spi.Inbox;
 import com.netbout.spi.User;
-import java.io.IOException;
-import lombok.EqualsAndHashCode;
-import lombok.ToString;
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.CharEncoding;
+import org.hamcrest.MatcherAssert;
+import org.hamcrest.Matchers;
+import org.junit.Test;
 
 /**
- * Mock base.
- *
+ * Test case for {@link MkAttachments}.
  * @author Yegor Bugayenko (yegor@tpc2.com)
  * @version $Id$
- * @since 2.0
+ * @since 2.4
  */
-@Immutable
-@ToString
-@Loggable(Loggable.DEBUG)
-@EqualsAndHashCode(of = "sql")
-public final class MkBase implements Base {
+public final class MkAttachmentsTest {
 
     /**
-     * SQL data source provider.
+     * MkAttachments can upload and download attachments.
+     * @throws Exception If there is some problem inside
      */
-    private final transient Sql sql;
-
-    /**
-     * Public ctor.
-     * @throws IOException If fails
-     */
-    public MkBase() throws IOException {
-        this.sql = new H2Sql();
+    @Test
+    public void uploadsAndDownloads() throws Exception {
+        final Base base = new MkBase();
+        final User user = base.user(new URN("urn:test:1"));
+        final Aliases aliases = user.aliases();
+        aliases.add("test");
+        final Alias alias = aliases.iterate().iterator().next();
+        final Inbox inbox = alias.inbox();
+        final Bout bout = inbox.bout(inbox.start());
+        final Attachments attachments = bout.attachments();
+        final String name = "test-name";
+        attachments.create(name);
+        final Attachment attachment = attachments.get(name);
+        attachment.write(
+            IOUtils.toInputStream("hey \u20ac", CharEncoding.UTF_8),
+            "text/plain"
+        );
+        MatcherAssert.assertThat(
+            IOUtils.toString(attachment.read(), CharEncoding.UTF_8),
+            Matchers.containsString("\u20ac")
+        );
     }
 
-    @Override
-    public User user(final URN urn) {
-        return new MkUser(this.sql, urn);
-    }
-
-    @Override
-    public void close() {
-        // nothing to do
-    }
 }

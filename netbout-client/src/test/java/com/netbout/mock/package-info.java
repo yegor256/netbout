@@ -24,50 +24,12 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.mock;
-
-import com.jcabi.aspects.Immutable;
-import com.jcabi.aspects.Loggable;
-import com.jcabi.urn.URN;
-import com.netbout.spi.Base;
-import com.netbout.spi.User;
-import java.io.IOException;
-import lombok.EqualsAndHashCode;
-import lombok.ToString;
 
 /**
- * Mock base.
+ * Mock server, tests.
  *
  * @author Yegor Bugayenko (yegor@tpc2.com)
  * @version $Id$
- * @since 2.0
+ * @since 2.4
  */
-@Immutable
-@ToString
-@Loggable(Loggable.DEBUG)
-@EqualsAndHashCode(of = "sql")
-public final class MkBase implements Base {
-
-    /**
-     * SQL data source provider.
-     */
-    private final transient Sql sql;
-
-    /**
-     * Public ctor.
-     * @throws IOException If fails
-     */
-    public MkBase() throws IOException {
-        this.sql = new H2Sql();
-    }
-
-    @Override
-    public User user(final URN urn) {
-        return new MkUser(this.sql, urn);
-    }
-
-    @Override
-    public void close() {
-        // nothing to do
-    }
-}
+package com.netbout.mock;

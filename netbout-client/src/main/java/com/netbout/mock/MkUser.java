@@ -26,27 +26,27 @@
  */
 package com.netbout.mock;
 
+import com.jcabi.aspects.Cacheable;
 import com.jcabi.aspects.Immutable;
 import com.jcabi.aspects.Loggable;
 import com.jcabi.urn.URN;
-import com.netbout.spi.Base;
+import com.netbout.spi.Aliases;
 import com.netbout.spi.User;
-import java.io.IOException;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
 /**
- * Mock base.
+ * Cached Netbout user.
  *
  * @author Yegor Bugayenko (yegor@tpc2.com)
  * @version $Id$
- * @since 2.0
+ * @since 2.4
  */
 @Immutable
 @ToString
 @Loggable(Loggable.DEBUG)
-@EqualsAndHashCode(of = "sql")
-public final class MkBase implements Base {
+@EqualsAndHashCode(of = { "sql", "urn" })
+final class MkUser implements User {
 
     /**
      * SQL data source provider.
@@ -54,20 +54,23 @@ public final class MkBase implements Base {
     private final transient Sql sql;
 
     /**
-     * Public ctor.
-     * @throws IOException If fails
+     * His URN.
      */
-    public MkBase() throws IOException {
-        this.sql = new H2Sql();
+    private final transient URN urn;
+
+    /**
+     * Public ctor.
+     * @param src Source
+     * @param name URN of user
+     */
+    MkUser(final Sql src, final URN name) {
+        this.sql = src;
+        this.urn = name;
     }
 
     @Override
-    public User user(final URN urn) {
-        return new MkUser(this.sql, urn);
-    }
-
-    @Override
-    public void close() {
-        // nothing to do
+    @Cacheable
+    public Aliases aliases() {
+        return new MkAliases(this.sql, this.urn);
     }
 }

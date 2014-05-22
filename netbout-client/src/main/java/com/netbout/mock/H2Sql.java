@@ -28,12 +28,14 @@ package com.netbout.mock;
 
 import com.jcabi.aspects.Immutable;
 import com.jcabi.aspects.Loggable;
-import com.jcabi.urn.URN;
-import com.netbout.spi.Base;
-import com.netbout.spi.User;
+import com.jcabi.jdbc.JdbcSession;
+import java.io.File;
 import java.io.IOException;
+import java.sql.SQLException;
+import javax.sql.DataSource;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
+import org.h2.jdbcx.JdbcDataSource;
 
 /**
  * Mock base.
@@ -45,29 +47,46 @@ import lombok.ToString;
 @Immutable
 @ToString
 @Loggable(Loggable.DEBUG)
-@EqualsAndHashCode(of = "sql")
-public final class MkBase implements Base {
+@EqualsAndHashCode(of = "file")
+final class H2Sql implements Sql {
 
     /**
-     * SQL data source provider.
+     * File with H2 database.
      */
-    private final transient Sql sql;
+    private final transient String file;
 
     /**
      * Public ctor.
      * @throws IOException If fails
      */
-    public MkBase() throws IOException {
-        this.sql = new H2Sql();
+    H2Sql() throws IOException {
+        final File tmp = File.createTempFile("netbout-", ".h2");
+        tmp.deleteOnExit();
+        this.file = tmp.getAbsolutePath();
+        final String[] stmts = {
+            // @checkstyle LineLength (5 lines)
+            "CREATE TABLE alias (name VARCHAR, urn VARCHAR)",
+            "CREATE TABLE bout (number BIGINT AUTO_INCREMENT, title VARCHAR, date TIMESTAMP DEFAULT CURRENT_TIMESTAMP)",
+            "CREATE TABLE message (number BIGINT AUTO_INCREMENT, bout BIGINT, text VARCHAR, author VARCHAR, date TIMESTAMP DEFAULT CURRENT_TIMESTAMP)",
+            "CREATE TABLE attachment (name VARCHAR, bout BIGINT, data VARCHAR, author VARCHAR)",
+            "CREATE TABLE friend (alias VARCHAR, bout BIGINT)",
+        };
+        final JdbcSession session = new JdbcSession(this.source());
+        for (final String stmt : stmts) {
+            try {
+                session.sql(stmt).execute();
+            } catch (final SQLException ex) {
+                throw new IOException(ex);
+            }
+        }
     }
 
     @Override
-    public User user(final URN urn) {
-        return new MkUser(this.sql, urn);
-    }
-
-    @Override
-    public void close() {
-        // nothing to do
+    public DataSource source() {
+        final JdbcDataSource src = new JdbcDataSource();
+        src.setURL(String.format("jdbc:h2:%s", this.file));
+        src.setUser("");
+        src.setPassword("");
+        return src;
     }
 }

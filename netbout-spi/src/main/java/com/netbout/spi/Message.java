@@ -28,6 +28,9 @@ package com.netbout.spi;
 
 import java.io.IOException;
 import java.util.Date;
+import org.hamcrest.BaseMatcher;
+import org.hamcrest.Description;
+import org.hamcrest.Matcher;
 
 /**
  * Message.
@@ -65,5 +68,71 @@ public interface Message {
      * @throws IOException If fails
      */
     String author() throws IOException;
+
+    /**
+     * Matcher of its text.
+     */
+    final class HasText extends BaseMatcher<Message> {
+        /**
+         * Matcher of the alias.
+         */
+        private final transient Matcher<String> matcher;
+        /**
+         * Ctor.
+         * @param mtchr Matcher of the alias
+         */
+        public HasText(final Matcher<String> mtchr) {
+            super();
+            this.matcher = mtchr;
+        }
+        @Override
+        public boolean matches(final Object obj) {
+            try {
+                return this.matcher.matches(
+                    Message.class.cast(obj).text()
+                );
+            } catch (final IOException ex) {
+                throw new IllegalStateException(ex);
+            }
+        }
+        @Override
+        public void describeTo(final Description description) {
+            description.appendText("message with text ");
+            this.matcher.describeTo(description);
+        }
+    }
+
+    /**
+     * Matcher of its author.
+     */
+    final class HasAuthor extends BaseMatcher<Message> {
+        /**
+         * Matcher of the alias.
+         */
+        private final transient Matcher<String> matcher;
+        /**
+         * Ctor.
+         * @param mtchr Matcher of the alias
+         */
+        public HasAuthor(final Matcher<String> mtchr) {
+            super();
+            this.matcher = mtchr;
+        }
+        @Override
+        public boolean matches(final Object obj) {
+            try {
+                return this.matcher.matches(
+                    Message.class.cast(obj).text()
+                );
+            } catch (final IOException ex) {
+                throw new IllegalStateException(ex);
+            }
+        }
+        @Override
+        public void describeTo(final Description description) {
+            description.appendText("message with author ");
+            this.matcher.describeTo(description);
+        }
+    }
 
 }

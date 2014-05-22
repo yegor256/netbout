@@ -28,25 +28,27 @@ package com.netbout.mock;
 
 import com.jcabi.aspects.Immutable;
 import com.jcabi.aspects.Loggable;
-import com.jcabi.urn.URN;
-import com.netbout.spi.Base;
-import com.netbout.spi.User;
+import com.jcabi.jdbc.JdbcSession;
+import com.jcabi.jdbc.SingleOutcome;
+import com.netbout.spi.Friend;
 import java.io.IOException;
+import java.net.URI;
+import java.sql.SQLException;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
 /**
- * Mock base.
+ * Cached friend.
  *
  * @author Yegor Bugayenko (yegor@tpc2.com)
  * @version $Id$
- * @since 2.0
+ * @since 2.4
  */
 @Immutable
 @ToString
 @Loggable(Loggable.DEBUG)
-@EqualsAndHashCode(of = "sql")
-public final class MkBase implements Base {
+@EqualsAndHashCode(of = { "sql", "name" })
+final class MkFriend implements Friend {
 
     /**
      * SQL data source provider.
@@ -54,20 +56,36 @@ public final class MkBase implements Base {
     private final transient Sql sql;
 
     /**
-     * Public ctor.
-     * @throws IOException If fails
+     * Name of it (alias).
      */
-    public MkBase() throws IOException {
-        this.sql = new H2Sql();
+    private final transient String name;
+
+    /**
+     * Public ctor.
+     * @param src Source
+     * @param alias Alias
+     */
+    MkFriend(final Sql src, final String alias) {
+        this.sql = src;
+        this.name = alias;
     }
 
     @Override
-    public User user(final URN urn) {
-        return new MkUser(this.sql, urn);
+    public String alias() {
+        return this.name;
     }
 
     @Override
-    public void close() {
-        // nothing to do
+    public URI photo() throws IOException {
+        try {
+            return URI.create(
+                new JdbcSession(this.sql.source())
+                    .sql("SELECT photo FROM alias WHERE name = ?")
+                    .set(this.name)
+                    .select(new SingleOutcome<String>(String.class))
+            );
+        } catch (final SQLException ex) {
+            throw new IOException(ex);
+        }
     }
 }

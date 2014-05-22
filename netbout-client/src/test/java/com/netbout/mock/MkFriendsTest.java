@@ -26,48 +26,51 @@
  */
 package com.netbout.mock;
 
-import com.jcabi.aspects.Immutable;
-import com.jcabi.aspects.Loggable;
 import com.jcabi.urn.URN;
+import com.netbout.spi.Alias;
+import com.netbout.spi.Aliases;
 import com.netbout.spi.Base;
+import com.netbout.spi.Bout;
+import com.netbout.spi.Friend;
+import com.netbout.spi.Friends;
+import com.netbout.spi.Inbox;
 import com.netbout.spi.User;
-import java.io.IOException;
-import lombok.EqualsAndHashCode;
-import lombok.ToString;
+import org.hamcrest.MatcherAssert;
+import org.hamcrest.Matchers;
+import org.junit.Test;
 
 /**
- * Mock base.
- *
+ * Test case for {@link MkFriends}.
  * @author Yegor Bugayenko (yegor@tpc2.com)
  * @version $Id$
- * @since 2.0
+ * @since 2.4
  */
-@Immutable
-@ToString
-@Loggable(Loggable.DEBUG)
-@EqualsAndHashCode(of = "sql")
-public final class MkBase implements Base {
+public final class MkFriendsTest {
 
     /**
-     * SQL data source provider.
+     * MkFriends can invide and kick.
+     * @throws Exception If there is some problem inside
      */
-    private final transient Sql sql;
-
-    /**
-     * Public ctor.
-     * @throws IOException If fails
-     */
-    public MkBase() throws IOException {
-        this.sql = new H2Sql();
+    @Test
+    public void invitesAndKicks() throws Exception {
+        final Base base = new MkBase();
+        final User user = base.user(new URN("urn:test:1"));
+        final Aliases aliases = user.aliases();
+        aliases.add("test");
+        final Alias alias = aliases.iterate().iterator().next();
+        final Inbox inbox = alias.inbox();
+        final Bout bout = inbox.bout(inbox.start());
+        final Friends friends = bout.friends();
+        final String friend = "test-name";
+        friends.invite(friend);
+        friends.invite("someone-else");
+        friends.kick(friend);
+        MatcherAssert.assertThat(
+            friends.iterate(),
+            Matchers.not(
+                Matchers.hasItem(new Friend.HasAlias(Matchers.is(friend)))
+            )
+        );
     }
 
-    @Override
-    public User user(final URN urn) {
-        return new MkUser(this.sql, urn);
-    }
-
-    @Override
-    public void close() {
-        // nothing to do
-    }
 }
