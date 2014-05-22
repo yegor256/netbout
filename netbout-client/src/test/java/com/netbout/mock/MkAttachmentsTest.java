@@ -26,15 +26,9 @@
  */
 package com.netbout.mock;
 
-import com.jcabi.urn.URN;
-import com.netbout.spi.Alias;
-import com.netbout.spi.Aliases;
 import com.netbout.spi.Attachment;
 import com.netbout.spi.Attachments;
-import com.netbout.spi.Base;
 import com.netbout.spi.Bout;
-import com.netbout.spi.Inbox;
-import com.netbout.spi.User;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.CharEncoding;
 import org.hamcrest.MatcherAssert;
@@ -55,13 +49,7 @@ public final class MkAttachmentsTest {
      */
     @Test
     public void uploadsAndDownloads() throws Exception {
-        final Base base = new MkBase();
-        final User user = base.user(new URN("urn:test:1"));
-        final Aliases aliases = user.aliases();
-        aliases.add("test");
-        final Alias alias = aliases.iterate().iterator().next();
-        final Inbox inbox = alias.inbox();
-        final Bout bout = inbox.bout(inbox.start());
+        final Bout bout = new MkBase().randomBout();
         final Attachments attachments = bout.attachments();
         final String name = "test-name";
         attachments.create(name);

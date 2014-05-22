@@ -29,9 +29,15 @@ package com.netbout.mock;
 import com.jcabi.aspects.Immutable;
 import com.jcabi.aspects.Loggable;
 import com.jcabi.urn.URN;
+import com.netbout.spi.Alias;
+import com.netbout.spi.Aliases;
 import com.netbout.spi.Base;
+import com.netbout.spi.Bout;
+import com.netbout.spi.Inbox;
 import com.netbout.spi.User;
 import java.io.IOException;
+import java.security.SecureRandom;
+import java.util.Random;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
@@ -47,6 +53,11 @@ import lombok.ToString;
 @Loggable(Loggable.DEBUG)
 @EqualsAndHashCode(of = "sql")
 public final class MkBase implements Base {
+
+    /**
+     * Randomizer.
+     */
+    private static final Random RANDOM = new SecureRandom();
 
     /**
      * SQL data source provider.
@@ -70,4 +81,36 @@ public final class MkBase implements Base {
     public void close() {
         // nothing to do
     }
+
+    /**
+     * Random bout.
+     * @return Bout
+     * @throws IOException If fails
+     */
+    public Bout randomBout() throws IOException {
+        final User user = this.user(
+            URN.create(
+                String.format(
+                    "urn:test:%d",
+                    MkBase.RANDOM.nextInt(Integer.MAX_VALUE)
+                )
+            )
+        );
+        final Aliases aliases = user.aliases();
+        aliases.add(
+            String.format(
+                "alias%d", MkBase.RANDOM.nextInt(Integer.MAX_VALUE)
+            )
+        );
+        final Alias alias = aliases.iterate().iterator().next();
+        final Inbox inbox = alias.inbox();
+        final Bout bout = inbox.bout(inbox.start());
+        bout.rename(
+            String.format(
+                "random title %d", MkBase.RANDOM.nextInt(Integer.MAX_VALUE)
+            )
+        );
+        return bout;
+    }
+
 }

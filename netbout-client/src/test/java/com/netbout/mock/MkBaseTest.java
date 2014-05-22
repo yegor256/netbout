@@ -26,15 +26,8 @@
  */
 package com.netbout.mock;
 
-import com.jcabi.urn.URN;
-import com.netbout.spi.Alias;
-import com.netbout.spi.Aliases;
-import com.netbout.spi.Base;
-import com.netbout.spi.Bout;
-import com.netbout.spi.Inbox;
 import com.netbout.spi.Message;
 import com.netbout.spi.Messages;
-import com.netbout.spi.User;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;
@@ -53,18 +46,10 @@ public final class MkBaseTest {
      */
     @Test
     public void startsBoutAndTalks() throws Exception {
-        final Base base = new MkBase();
-        final User user = base.user(new URN("urn:test:1"));
-        final Aliases aliases = user.aliases();
-        aliases.add("test");
-        final Alias alias = aliases.iterate().iterator().next();
-        final Inbox inbox = alias.inbox();
-        final Bout bout = inbox.bout(inbox.start());
-        bout.rename(this.getClass().getName());
-        final Messages messages = bout.messages();
+        final Messages messages = new MkBase().randomBout().messages();
         messages.post("How are you doing?");
         MatcherAssert.assertThat(
-            bout.messages().iterate(),
+            messages.iterate(),
             Matchers.hasItem(
                 new Message.HasText(Matchers.containsString("are you"))
             )

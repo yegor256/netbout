@@ -26,15 +26,9 @@
  */
 package com.netbout.mock;
 
-import com.jcabi.urn.URN;
-import com.netbout.spi.Alias;
-import com.netbout.spi.Aliases;
-import com.netbout.spi.Base;
 import com.netbout.spi.Bout;
 import com.netbout.spi.Friend;
 import com.netbout.spi.Friends;
-import com.netbout.spi.Inbox;
-import com.netbout.spi.User;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;
@@ -53,13 +47,7 @@ public final class MkFriendsTest {
      */
     @Test
     public void invitesAndKicks() throws Exception {
-        final Base base = new MkBase();
-        final User user = base.user(new URN("urn:test:1"));
-        final Aliases aliases = user.aliases();
-        aliases.add("test");
-        final Alias alias = aliases.iterate().iterator().next();
-        final Inbox inbox = alias.inbox();
-        final Bout bout = inbox.bout(inbox.start());
+        final Bout bout = new MkBase().randomBout();
         final Friends friends = bout.friends();
         final String friend = "test-name";
         friends.invite(friend);
