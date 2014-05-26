@@ -149,6 +149,14 @@ $width: 750px;
 .flash {
     position: relative;
     font-size: 14px;
-    color: $color-red;
     margin-top: 3px;
+    .severe {
+        color: $color-red;
+    }
+    .info {
+        color: $color-green;
+    }
+    .warning {
+        color: $color-orange;
+    }
 }
