@@ -114,6 +114,8 @@ public final class InboxRs extends BaseRs {
         return new JaxbBundle("bout")
             .add("number", Long.toString(bout.number()))
             .up()
+            .add("unread", Long.toString(bout.messages().unread()))
+            .up()
             .add("title", bout.title()).up()
             .add(
                 new JaxbBundle("friends").add(

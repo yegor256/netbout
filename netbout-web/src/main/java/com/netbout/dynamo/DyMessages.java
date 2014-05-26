@@ -145,6 +145,17 @@ final class DyMessages implements Messages {
     }
 
     @Override
+    public long unread() throws IOException {
+        return Long.parseLong(
+            this.region.table(DyFriends.TBL)
+                .frame().through(new QueryValve())
+                .where(DyFriends.HASH, Conditions.equalTo(this.bout))
+                .where(DyFriends.RANGE, Conditions.equalTo(this.self))
+                .iterator().next().get(DyFriends.ATTR_UNREAD).getN()
+        );
+    }
+
+    @Override
     public Pageable<Message> jump(final int idx) {
         throw new UnsupportedOperationException("#jump()");
     }

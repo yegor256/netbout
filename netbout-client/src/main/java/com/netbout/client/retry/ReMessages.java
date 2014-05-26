@@ -71,6 +71,11 @@ public final class ReMessages implements Messages {
     }
 
     @Override
+    public long unread() throws IOException {
+        return this.origin.unread();
+    }
+
+    @Override
     @RetryOnFailure(verbose = false)
     public Pageable<Message> jump(final int pos) throws IOException {
         return this.origin.jump(pos);

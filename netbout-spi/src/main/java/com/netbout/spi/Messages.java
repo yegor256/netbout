@@ -46,4 +46,11 @@ public interface Messages extends Pageable<Message> {
      */
     void post(String text) throws IOException;
 
+    /**
+     * How many unread messages are there?
+     * @return Number of them
+     * @throws IOException If fails
+     */
+    long unread() throws IOException;
+
 }

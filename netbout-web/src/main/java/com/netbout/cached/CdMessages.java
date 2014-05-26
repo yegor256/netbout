@@ -72,6 +72,12 @@ final class CdMessages implements Messages {
     }
 
     @Override
+    @Cacheable(lifetime = Tv.FIVE, unit = TimeUnit.MINUTES)
+    public long unread() throws IOException {
+        return this.origin.unread();
+    }
+
+    @Override
     public Pageable<Message> jump(final int pos) throws IOException {
         return this.origin.jump(pos);
     }

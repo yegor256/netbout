@@ -78,6 +78,11 @@ final class RtMessages implements Messages {
     }
 
     @Override
+    public long unread() throws IOException {
+        return 0L;
+    }
+
+    @Override
     public Pageable<Message> jump(final int pos) {
         throw new UnsupportedOperationException("#jump()");
     }
