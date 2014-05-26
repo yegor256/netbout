@@ -29,6 +29,7 @@ package com.netbout.rest;
 import com.netbout.spi.Attachment;
 import com.netbout.spi.Bout;
 import com.netbout.spi.Friend;
+import com.netbout.spi.Friends;
 import com.netbout.spi.Inbox;
 import com.netbout.spi.Message;
 import com.rexsl.page.JaxbBundle;
@@ -274,13 +275,22 @@ public final class BoutRs extends BaseRs {
      * @throws IOException If fails
      */
     private Bout bout() throws IOException {
+        final Bout bout;
         try {
-            return this.alias().inbox().bout(this.number);
+            bout = this.alias().inbox().bout(this.number);
         } catch (final Inbox.BoutNotFoundException ex) {
             throw FlashInset.forward(
                 this.uriInfo().getBaseUri(), ex
             );
         }
+        if (!new Friends.Search(bout.friends()).exists(this.alias().name())) {
+            throw FlashInset.forward(
+                this.uriInfo().getBaseUri(),
+                String.format("you're not in bout #%d", bout.number()),
+                Level.WARNING
+            );
+        }
+        return bout;
     }
 
     /**

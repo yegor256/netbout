@@ -26,8 +26,13 @@
  */
 package com.netbout.spi;
 
+import com.google.common.base.Predicate;
+import com.google.common.collect.Iterables;
 import com.jcabi.aspects.Immutable;
+import com.jcabi.aspects.Loggable;
 import java.io.IOException;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
 /**
  * Bout friends talking.
@@ -59,5 +64,68 @@ public interface Friends {
      * @throws IOException If fails
      */
     Iterable<Friend> iterate() throws IOException;
+
+    /**
+     * Search of friends.
+     */
+    @Immutable
+    @Loggable(Loggable.DEBUG)
+    @ToString
+    @EqualsAndHashCode(of = "origin")
+    final class Search {
+        /**
+         * Origin friends.
+         */
+        private final transient Friends origin;
+        /**
+         * Ctor.
+         * @param friends Origin friends
+         */
+        public Search(final Friends friends) {
+            this.origin = friends;
+        }
+        /**
+         * Friend with this alias exists?
+         * @param alias Alias
+         * @return TRUE if exists
+         * @throws IOException If fails
+         */
+        public boolean exists(final String alias) throws IOException {
+            return Iterables.any(
+                this.origin.iterate(),
+                new Predicate<Friend>() {
+                    @Override
+                    public boolean apply(final Friend friend) {
+                        try {
+                            return friend.alias().equals(alias);
+                        } catch (final IOException ex) {
+                            throw new IllegalStateException(ex);
+                        }
+                    }
+                }
+            );
+        }
+        /**
+         * Get a friend with this alias (runtime exception if absent).
+         * @param alias Alias
+         * @return Friend found
+         * @throws IOException If fails
+         */
+        public Friend find(final String alias) throws IOException {
+            return Iterables.find(
+                this.origin.iterate(),
+                new Predicate<Friend>() {
+                    @Override
+                    public boolean apply(final Friend friend) {
+                        try {
+                            return friend.alias().equals(alias);
+                        } catch (final IOException ex) {
+                            throw new IllegalStateException(ex);
+                        }
+                    }
+                }
+            );
+        }
+    }
 
 }
