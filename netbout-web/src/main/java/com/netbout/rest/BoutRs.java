@@ -234,7 +234,11 @@ public final class BoutRs extends BaseRs {
                 Level.WARNING
             );
         }
-        this.bout().friends().invite(name);
+        try {
+            this.bout().friends().invite(name);
+        } catch (final Friends.UnknownAliasException ex) {
+            throw FlashInset.forward(this.self(), ex);
+        }
         throw FlashInset.forward(
             this.self(),
             "new person invited to the bout",

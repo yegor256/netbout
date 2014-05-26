@@ -115,7 +115,7 @@ final class DyFriends implements Friends {
     @Override
     public void invite(final String friend) throws IOException {
         if (!new Everybody(this.region).occupied(friend)) {
-            throw new IllegalArgumentException(
+            throw new Friends.UnknownAliasException(
                 String.format("alias '%s' doesn't exist", friend)
             );
         }

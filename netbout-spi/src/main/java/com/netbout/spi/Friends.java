@@ -66,6 +66,23 @@ public interface Friends {
     Iterable<Friend> iterate() throws IOException;
 
     /**
+     * Thowable when alias is unknown.
+     */
+    class UnknownAliasException extends IOException {
+        /**
+         * Serialization marker.
+         */
+        private static final long serialVersionUID = 0x7526FA78EED21470L;
+        /**
+         * Public ctor.
+         * @param cause Cause of the problem
+         */
+        public UnknownAliasException(final String cause) {
+            super(cause);
+        }
+    }
+
+    /**
      * Search of friends.
      */
     @Immutable
