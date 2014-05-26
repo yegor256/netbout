@@ -146,13 +146,18 @@ final class DyMessages implements Messages {
 
     @Override
     public long unread() throws IOException {
-        return Long.parseLong(
-            this.region.table(DyFriends.TBL)
-                .frame().through(new QueryValve())
-                .where(DyFriends.HASH, Conditions.equalTo(this.bout))
-                .where(DyFriends.RANGE, Conditions.equalTo(this.self))
-                .iterator().next().get(DyFriends.ATTR_UNREAD).getN()
-        );
+        final Item item = this.region.table(DyFriends.TBL)
+            .frame().through(new QueryValve())
+            .where(DyFriends.HASH, Conditions.equalTo(this.bout))
+            .where(DyFriends.RANGE, Conditions.equalTo(this.self))
+            .iterator().next();
+        final long unread;
+        if (item.has(DyFriends.ATTR_UNREAD)) {
+            unread = Long.parseLong(item.get(DyFriends.ATTR_UNREAD).getN());
+        } else {
+            unread = 0L;
+        }
+        return unread;
     }
 
     @Override
