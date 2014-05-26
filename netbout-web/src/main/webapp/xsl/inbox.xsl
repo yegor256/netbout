@@ -87,8 +87,8 @@
                 <span>
                     <xsl:attribute name="class">
                         <xsl:text>num</xsl:text>
-                        <xsl:if test="@unseen = 'true'">
-                            <xsl:text> red</xsl:text>
+                        <xsl:if test="unread &gt; 0">
+                            <xsl:text> unread</xsl:text>
                         </xsl:if>
                     </xsl:attribute>
                     <xsl:text>#</xsl:text>
@@ -112,6 +112,11 @@
                         </xsl:otherwise>
                     </xsl:choose>
                 </a>
+                <xsl:if test="unread &gt; 0">
+                    <span class="unread">
+                        <xsl:value-of select="unread" />
+                    </span>
+                </xsl:if>
             </h1>
             <xsl:apply-templates select="friends" />
         </li>
