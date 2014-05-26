@@ -145,3 +145,10 @@ $width: 750px;
     background-color: $color-gray;
     color: gray;
 }
+
+.flash {
+    position: relative;
+    font-size: 14px;
+    color: $color-red;
+    margin-top: 3px;
+}

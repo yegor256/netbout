@@ -115,7 +115,7 @@
         </div>
         <xsl:apply-templates select="messages/message" />
     </xsl:template>
-    <xsl:template match="message">
+    <xsl:template match="messages/message">
         <xsl:variable name="msg" select="."/>
         <div class="message">
             <xsl:attribute name="id">
