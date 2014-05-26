@@ -27,10 +27,8 @@
 package com.netbout.rest;
 
 import com.jcabi.aspects.Immutable;
-import java.io.StringReader;
-import java.io.StringWriter;
+import com.petebevin.markdown.MarkdownProcessor;
 import javax.validation.constraints.NotNull;
-import org.tautua.markdownpapers.parser.ParseException;
 
 /**
  * Text with markdown formatting.
@@ -62,16 +60,7 @@ public final class Markdown {
      * @return The HTML
      */
     public String html() {
-        final StringWriter writer = new StringWriter();
-        try {
-            new org.tautua.markdownpapers.Markdown().transform(
-                new StringReader(this.text),
-                writer
-            );
-        } catch (final ParseException ex) {
-            throw new IllegalArgumentException(ex);
-        }
-        return writer.toString();
+        return new MarkdownProcessor().markdown(this.text);
     }
 
     /**

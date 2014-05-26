@@ -132,9 +132,9 @@
             <artifactId>jcabi-log</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.tautua.markdownpapers</groupId>
-            <artifactId>markdownpapers-core</artifactId>
-            <version>1.4.2</version>
+            <groupId>org.markdownj</groupId>
+            <artifactId>markdownj</artifactId>
+            <version>0.3.0-1.0.2b4</version>
         </dependency>
         <dependency>
             <groupId>com.rexsl</groupId>

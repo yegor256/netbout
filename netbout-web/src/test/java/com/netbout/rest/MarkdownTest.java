@@ -54,7 +54,7 @@ public final class MarkdownTest {
                 XhtmlMatchers.hasXPaths(
                     "/x/p/strong[.='hi']",
                     "/x/p/em[.='dude']",
-                    "/x/pre/code[.=' b**o\n\n\no**m']"
+                    "/x/pre/code[.=' b**o\n\n\no**m\n']"
                 )
             )
         );
