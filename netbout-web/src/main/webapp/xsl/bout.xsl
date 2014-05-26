@@ -101,7 +101,9 @@
                     <label for="text">
                         <xsl:text> </xsl:text>
                     </label>
-                    <textarea name="text" cols="80" rows="5" id="text"></textarea>
+                    <textarea name="text" cols="80" rows="5" id="text">
+                        <xsl:text> </xsl:text>
+                    </textarea>
                     <label for="submit">
                         <xsl:text> </xsl:text>
                     </label>
