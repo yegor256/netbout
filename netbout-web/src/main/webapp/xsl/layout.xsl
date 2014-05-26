@@ -237,7 +237,7 @@
             </xsl:otherwise>
         </xsl:choose>
     </xsl:template>
-    <xsl:template name="flash">
+    <xsl:template match="flash">
         <div class="flash">
             <xsl:value-of select="level"/>
             <xsl:text>: </xsl:text>
