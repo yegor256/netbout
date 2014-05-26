@@ -151,6 +151,7 @@ final class DyMessages implements Messages {
 
     @Override
     public Iterable<Message> iterate() {
+        new SmartBout(this.region, this.bout).seen(this.self);
         return Iterables.transform(
             this.region.table(DyMessages.TBL)
                 .frame()

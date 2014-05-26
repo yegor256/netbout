@@ -80,23 +80,34 @@
                     <link href="/xml/inbox.xml" rel="open" />
                     <link href="/xml/inbox.xml" rel="download" />
                 </links>
-                <name>cv.pdf</name>
+                <name>cv.md</name>
                 <ctype>text/x-markdown</ctype>
-                <html>
-                    &lt;h1&gt;This Is a Title&lt;/h1&gt;
-                    &lt;p&gt;Hello, &lt;strong&gt;world&lt;/strong&gt;!&lt;/p&gt;
-                    &lt;table&gt;
-                    &lt;tr&gt;
-                        &lt;th&gt;Header&lt;/th&gt;
-                        &lt;th&gt;Second one&lt;/th&gt;
-                    &lt;/tr&gt;
-                    &lt;tr&gt;
-                        &lt;td&gt;This is TD&lt;/td&gt;
-                        &lt;td&gt;Another TD&lt;/td&gt;
-                    &lt;/tr&gt;
-                    &lt;/table&gt;
-                    &lt;p&gt;Another paragraph with text!&lt;/p&gt;
-                </html>
+                <html><![CDATA[
+                    <h1>This Is a Title</h1>
+                    <p>Hello, <strong>world</strong>!</p>
+                    <div>
+                      <div style="width:100%;height:100px;border:1px solid gray;">
+                         <svg xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none"
+                              version="1.1"
+                              viewBox="-100 -100 110 210">
+                            <line stroke="gray" stroke-width="1" x1="-90" x2="0" y1="0" y2="0"/>
+                            <rect fill="green" height="90" width="1" x="0" y="-90"/>
+                            <rect fill="red" height="-100" width="1" x="0" y="0"/>
+                         </svg>
+                      </div>
+                   </div>
+                    <table>
+                    <tr>
+                        <th>Header</th>
+                        <th>Second one</th>
+                    </tr>
+                    <tr>
+                        <td>This is TD</td>
+                        <td>Another TD</td>
+                    </tr>
+                    </table>
+                    <p>Another paragraph with text!</p>
+                ]]></html>
             </attachment>
             <attachment>
                 <links>
@@ -110,10 +121,10 @@
             <message>
                 <number>1</number>
                 <author>javier</author>
-                <html>
-                    I think that this &lt;b&gt;subject&lt;/b&gt; should be discussed in
-                    this bout. What do you think, &lt;i&gt;guys&lt;/i&gt;?...
-                </html>
+                <html><![CDATA[
+                    I think that this <b>subject</b> should be discussed in
+                    this bout. What do you think, <i>guys</i>?...
+                ]]></html>
                 <date>2014-04-22T16:09:33Z</date>
                 <timeago>5 minutes</timeago>
             </message>

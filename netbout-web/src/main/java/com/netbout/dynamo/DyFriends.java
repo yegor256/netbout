@@ -88,6 +88,11 @@ final class DyFriends implements Friends {
     public static final String ATTR_UPDATED = "updated";
 
     /**
+     * How many messages unread here.
+     */
+    public static final String ATTR_UNREAD = "unread";
+
+    /**
      * Region to work with.
      */
     private final transient Region region;

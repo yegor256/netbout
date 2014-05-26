@@ -26,6 +26,9 @@
  */
 package com.netbout.dynamo;
 
+import com.amazonaws.services.dynamodbv2.model.AttributeAction;
+import com.amazonaws.services.dynamodbv2.model.AttributeValue;
+import com.amazonaws.services.dynamodbv2.model.AttributeValueUpdate;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
 import com.jcabi.aspects.Immutable;
@@ -78,19 +81,54 @@ final class SmartBout {
      * @param alias Who updated it
      */
     public void updated(final String alias) {
-        assert alias != null;
         Iterables.all(
             this.region.table(DyFriends.TBL).frame()
                 .through(new QueryValve())
                 .where(DyFriends.HASH, Conditions.equalTo(this.number)),
+            // @checkstyle AnonInnerLengthCheck (50 lines)
+            new Predicate<Item>() {
+                @Override
+                public boolean apply(final Item input) {
+                    AttributeUpdates updates = new AttributeUpdates().with(
+                        DyFriends.ATTR_UPDATED,
+                        System.currentTimeMillis()
+                    );
+                    try {
+                        if (!input.get(DyFriends.RANGE).getS().equals(alias)) {
+                            updates = updates.with(
+                                DyFriends.ATTR_UNREAD,
+                                new AttributeValueUpdate()
+                                    .withAction(AttributeAction.ADD)
+                                    .withValue(new AttributeValue().withN("1"))
+                            );
+                        }
+                        input.put(updates);
+                    } catch (final IOException ex) {
+                        throw new IllegalStateException(ex);
+                    }
+                    return true;
+                }
+            }
+        );
+    }
+
+    /**
+     * It was seen just now.
+     * @param alias Who has seen it
+     */
+    public void seen(final String alias) {
+        Iterables.all(
+            this.region.table(DyFriends.TBL).frame()
+                .through(new QueryValve())
+                .where(DyFriends.HASH, Conditions.equalTo(this.number))
+                .where(DyFriends.RANGE, alias),
             new Predicate<Item>() {
                 @Override
                 public boolean apply(final Item input) {
                     try {
                         input.put(
                             new AttributeUpdates().with(
-                                DyFriends.ATTR_UPDATED,
-                                System.currentTimeMillis()
+                                DyFriends.ATTR_UNREAD, 0L
                             )
                         );
                     } catch (final IOException ex) {
