@@ -66,7 +66,7 @@ final class CdMessages implements Messages {
     }
 
     @Override
-    @Cacheable.FlushAfter
+    @Cacheable.FlushBefore
     public void post(final String text) throws IOException {
         this.origin.post(text);
     }

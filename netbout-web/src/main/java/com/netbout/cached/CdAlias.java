@@ -83,7 +83,7 @@ final class CdAlias implements Alias {
     }
 
     @Override
-    @Cacheable.FlushAfter
+    @Cacheable.FlushBefore
     public void photo(final URI uri) throws IOException {
         this.origin.photo(uri);
     }

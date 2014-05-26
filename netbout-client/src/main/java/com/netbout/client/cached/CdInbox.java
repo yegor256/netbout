@@ -65,7 +65,7 @@ public final class CdInbox implements Inbox {
     }
 
     @Override
-    @Cacheable.FlushAfter
+    @Cacheable.FlushBefore
     public long start() throws IOException {
         return this.origin.start();
     }

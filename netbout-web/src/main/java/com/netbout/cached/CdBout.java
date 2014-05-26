@@ -84,7 +84,7 @@ final class CdBout implements Bout {
     }
 
     @Override
-    @Cacheable.FlushAfter
+    @Cacheable.FlushBefore
     public void rename(final String text) throws IOException {
         this.origin.rename(text);
     }

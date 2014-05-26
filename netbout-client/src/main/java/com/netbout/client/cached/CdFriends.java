@@ -64,13 +64,13 @@ public final class CdFriends implements Friends {
     }
 
     @Override
-    @Cacheable.FlushAfter
+    @Cacheable.FlushBefore
     public void invite(final String friend) throws IOException {
         this.origin.invite(friend);
     }
 
     @Override
-    @Cacheable.FlushAfter
+    @Cacheable.FlushBefore
     public void kick(final String friend) throws IOException {
         this.origin.kick(friend);
     }

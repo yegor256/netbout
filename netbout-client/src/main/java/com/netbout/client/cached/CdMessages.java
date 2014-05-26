@@ -81,7 +81,7 @@ public final class CdMessages implements Messages {
     }
 
     @Override
-    @Cacheable.FlushAfter
+    @Cacheable.FlushBefore
     public Iterable<Message> iterate() throws IOException {
         return Iterables.transform(
             this.origin.iterate(),

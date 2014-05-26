@@ -67,13 +67,13 @@ final class CdAttachments implements Attachments {
     }
 
     @Override
-    @Cacheable.FlushAfter
+    @Cacheable.FlushBefore
     public void create(final String name) throws IOException {
         this.origin.create(name);
     }
 
     @Override
-    @Cacheable.FlushAfter
+    @Cacheable.FlushBefore
     public void delete(final String name) throws IOException {
         this.origin.delete(name);
     }
