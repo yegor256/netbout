@@ -29,6 +29,7 @@ package com.netbout.rest;
 import com.jcabi.aspects.Immutable;
 import com.petebevin.markdown.MarkdownProcessor;
 import javax.validation.constraints.NotNull;
+import org.jsoup.Jsoup;
 
 /**
  * Text with markdown formatting.
@@ -60,15 +61,9 @@ public final class Markdown {
      * @return The HTML
      */
     public String html() {
-        return new MarkdownProcessor().markdown(this.text);
-    }
-
-    /**
-     * Convert it to plain text.
-     * @return The plain text
-     */
-    public String plain() {
-        return this.html();
+        return Jsoup.parse(
+            new MarkdownProcessor().markdown(this.text)
+        ).body().html();
     }
 
 }

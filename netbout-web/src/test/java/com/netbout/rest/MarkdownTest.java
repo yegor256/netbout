@@ -61,23 +61,6 @@ public final class MarkdownTest {
     }
 
     /**
-     * Markdown can format a meta-text to plain text.
-     * @throws Exception If there is some problem inside
-     * @todo #481 Waiting for https://github.com/lruiz/MarkdownPapers/issues/27
-     */
-    @Test
-    @org.junit.Ignore
-    public void formatsMarkdownToPlain() throws Exception {
-        final Markdown meta = new Markdown(
-            "**hi**, _buddy_!\r\n\n     b**o\n    \n    \n    o**m\n"
-        );
-        MatcherAssert.assertThat(
-            meta.plain(),
-            Matchers.equalTo("hi, buddy!\n\n b**o\n\n\no**m")
-        );
-    }
-
-    /**
      * Markdown can handle broken formatting correctly.
      * @throws Exception If there is some problem inside
      */
