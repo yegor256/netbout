@@ -27,8 +27,11 @@
 package com.netbout.spi;
 
 import com.jcabi.aspects.Immutable;
+import com.jcabi.aspects.Loggable;
 import java.io.IOException;
 import java.util.Date;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
 /**
  * Bout.
@@ -93,6 +96,10 @@ public interface Bout {
     /**
      * Read only.
      */
+    @Immutable
+    @Loggable(Loggable.DEBUG)
+    @ToString
+    @EqualsAndHashCode(of = "origin")
     final class ReadOnly implements Bout {
         /**
          * Original bout.
