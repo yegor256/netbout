@@ -24,59 +24,37 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.spi;
+package com.netbout.cached;
 
-import com.jcabi.aspects.Immutable;
-import java.io.IOException;
+import com.netbout.spi.Messages;
+import java.util.Collections;
+import org.hamcrest.MatcherAssert;
+import org.hamcrest.Matchers;
+import org.junit.Test;
+import org.mockito.Mockito;
 
 /**
- * Alias.
- *
+ * Test case for {@link CdMessages}.
  * @author Yegor Bugayenko (yegor@tpc2.com)
  * @version $Id$
- * @since 2.0
+ * @since 2.6
  */
-@Immutable
-public interface Inbox extends Pageable<Bout> {
+public final class CdMessagesTest {
 
     /**
-     * Start new bout.
-     * @return Bout number
-     * @throws IOException If fails
+     * CdMessages can flush unread number.
+     * @throws Exception If there is some problem inside
      */
-    long start() throws IOException;
-
-    /**
-     * Get bout by its number.
-     * @param number Bout number
-     * @return Bout found
-     * @throws Inbox.BoutNotFoundException If not found
-     */
-    Bout bout(long number) throws Inbox.BoutNotFoundException;
-
-    /**
-     * Thowable when bout is not found.
-     * @see Inbox#bout(long)
-     */
-    class BoutNotFoundException extends IOException {
-        /**
-         * Serialization marker.
-         */
-        private static final long serialVersionUID = 0x7526FA78EED21470L;
-        /**
-         * Public ctor.
-         * @param num The number of bout not found
-         */
-        public BoutNotFoundException(final long num) {
-            super(String.format("Bout #%d not found", num));
-        }
-        /**
-         * Public ctor.
-         * @param num The number of bout not found
-         * @param cause Cause of it
-         */
-        public BoutNotFoundException(final long num, final Throwable cause) {
-            super(String.format("bout #%d not found", num), cause);
-        }
+    @Test
+    public void flushesUnreadNumber() throws Exception {
+        final Messages origin = Mockito.mock(Messages.class);
+        Mockito.doReturn(1L).doReturn(2L).when(origin).unread();
+        final Messages messages = new CdMessages(origin);
+        MatcherAssert.assertThat(messages.unread(), Matchers.equalTo(1L));
+        MatcherAssert.assertThat(messages.unread(), Matchers.equalTo(1L));
+        Mockito.doReturn(Collections.emptyList()).when(origin).iterate();
+        messages.iterate();
+        MatcherAssert.assertThat(messages.unread(), Matchers.equalTo(2L));
     }
+
 }

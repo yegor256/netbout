@@ -26,7 +26,6 @@
  */
 package com.netbout.rest;
 
-import com.jcabi.aspects.Cacheable;
 import com.jcabi.aspects.Immutable;
 import com.jcabi.log.Logger;
 import com.petebevin.markdown.MarkdownProcessor;
@@ -94,8 +93,8 @@ public final class Markdown {
     /**
      * Make and return a configured Tidy.
      * @return The Tidy
+     * @checkstyle ExecutableStatementCountCheck (50 lines)
      */
-    @Cacheable(forever = true)
     private static Tidy tidy() {
         final Tidy tidy = new Tidy();
         tidy.setShowErrors(0);

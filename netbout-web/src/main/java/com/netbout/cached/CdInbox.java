@@ -72,7 +72,6 @@ final class CdInbox implements Inbox {
         return this.origin.start();
     }
 
-    // @checkstyle RedundantThrowsCheck (4 lines)
     @Override
     @Cacheable(lifetime = Tv.SIX, unit = TimeUnit.HOURS)
     public Bout bout(final long number) throws Inbox.BoutNotFoundException {

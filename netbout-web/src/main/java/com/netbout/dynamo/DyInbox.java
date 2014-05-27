@@ -110,7 +110,6 @@ final class DyInbox implements Inbox {
         return number;
     }
 
-    // @checkstyle RedundantThrowsCheck (4 lines)
     @Override
     public Bout bout(final long number) throws Inbox.BoutNotFoundException {
         try {

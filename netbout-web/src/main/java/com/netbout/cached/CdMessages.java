@@ -58,11 +58,17 @@ final class CdMessages implements Messages {
     private final transient Messages origin;
 
     /**
+     * Flag to use for caching.
+     */
+    private final transient CdMessages.Flag flag;
+
+    /**
      * Public ctor.
      * @param org Origin
      */
     CdMessages(final Messages org) {
         this.origin = org;
+        this.flag = new CdMessages.Flag(org);
     }
 
     @Override
@@ -72,9 +78,8 @@ final class CdMessages implements Messages {
     }
 
     @Override
-    @Cacheable(lifetime = Tv.FIVE, unit = TimeUnit.MINUTES)
     public long unread() throws IOException {
-        return this.origin.unread();
+        return this.flag.unread();
     }
 
     @Override
@@ -85,6 +90,46 @@ final class CdMessages implements Messages {
     @Override
     @Cacheable(lifetime = Tv.FIVE, unit = TimeUnit.MINUTES)
     public Iterable<Message> iterate() throws IOException {
+        this.flag.touch();
         return Lists.newArrayList(this.origin.iterate());
     }
+
+    /**
+     * Flag of read/unread.
+     * @since 2.6
+     */
+    @Immutable
+    @Loggable(Loggable.DEBUG)
+    @ToString(of = "messages")
+    @EqualsAndHashCode(of = "messages")
+    private static final class Flag {
+        /**
+         * Original.
+         */
+        private final transient Messages messages;
+        /**
+         * Public ctor.
+         * @param org Origin
+         */
+        Flag(final Messages org) {
+            this.messages = org;
+        }
+        /**
+         * How many unread.
+         * @return Number
+         * @throws IOException If fails
+         */
+        @Cacheable(lifetime = Tv.FIVE, unit = TimeUnit.MINUTES)
+        public long unread() throws IOException {
+            return this.messages.unread();
+        }
+        /**
+         * I've seen them all.
+         */
+        @Cacheable.FlushBefore
+        public void touch() {
+            // nothing special
+        }
+    }
+
 }
