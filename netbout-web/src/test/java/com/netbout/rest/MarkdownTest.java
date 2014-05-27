@@ -90,20 +90,20 @@ public final class MarkdownTest {
     @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
     public void formatsTextFragmentsToHtml() throws Exception {
         final String[][] texts = {
-            new String[] {"hi, *dude*!", "<p>hi, <em>dude</em>!</p>"},
+            new String[] {"hi, *dude*!", "<p>hi, \n<em>dude</em>!</p>"},
             new String[] {
                 "hello, **dude**!",
-                "<p>hello, <strong>dude</strong>!</p>",
+                "<p>hello, \n<strong>dude</strong>!</p>",
             },
             new String[] {
                 "wazzup, ***dude***!",
-                "<p>wazzup, <strong><em>dude</em></strong>!</p>",
+                "<p>wazzup, \n<strong>\n  <em>dude</em>\n</strong>!</p>",
             },
-            new String[] {"hey, _man_!", "<p>hey, <em>man</em>!</p>"},
-            new String[] {"x: `oops`", "<p>x: <code>oops</code></p>"},
+            new String[] {"hey, _man_!", "<p>hey, \n<em>man</em>!</p>"},
+            new String[] {"x: `oops`", "<p>x: \n<code>oops</code></p>"},
             new String[] {
                 "[a](http://foo)",
-                "<p><a href=\"http://foo\">a</a></p>",
+                "<p>\n  <a href=\"http://foo\">a</a>\n</p>",
             },
             new String[] {"}}}\n", "<p>}}}</p>"},
         };
@@ -135,6 +135,20 @@ public final class MarkdownTest {
                     "/r/ul/li[.='line two']",
                     "/r/p[.='normal text now']"
                 )
+            )
+        );
+    }
+
+    /**
+     * Markdown can leave DIV untouched.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void leavesDivUntouched() throws Exception {
+        MatcherAssert.assertThat(
+            new Markdown("<div>hey<svg viewBox='444'/></div>").html(),
+            XhtmlMatchers.hasXPaths(
+                "/div/svg[@viewBox]"
             )
         );
     }

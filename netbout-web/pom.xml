@@ -137,9 +137,9 @@
             <version>0.3.0-1.0.2b4</version>
         </dependency>
         <dependency>
-            <groupId>org.jsoup</groupId>
-            <artifactId>jsoup</artifactId>
-            <version>1.7.3</version>
+            <groupId>net.sf.jtidy</groupId>
+            <artifactId>jtidy</artifactId>
+            <version>r938</version>
         </dependency>
         <dependency>
             <groupId>com.rexsl</groupId>

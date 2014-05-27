@@ -26,10 +26,18 @@
  */
 package com.netbout.rest;
 
+import com.jcabi.aspects.Cacheable;
 import com.jcabi.aspects.Immutable;
+import com.jcabi.log.Logger;
 import com.petebevin.markdown.MarkdownProcessor;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.logging.Level;
 import javax.validation.constraints.NotNull;
-import org.jsoup.Jsoup;
+import org.apache.commons.codec.CharEncoding;
+import org.apache.commons.io.IOUtils;
+import org.w3c.tidy.Tidy;
 
 /**
  * Text with markdown formatting.
@@ -61,9 +69,59 @@ public final class Markdown {
      * @return The HTML
      */
     public String html() {
-        return Jsoup.parse(
+        return Markdown.clean(
             new MarkdownProcessor().markdown(this.text)
-        ).body().html();
+        );
+    }
+
+    /**
+     * Clean the XML.
+     * @param xml The XML to clean
+     * @return Clean XML
+     */
+    private static String clean(final String xml) {
+        try {
+            final ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            Markdown.tidy().parse(
+                IOUtils.toInputStream(xml, CharEncoding.UTF_8),
+                baos
+            );
+            return baos.toString(CharEncoding.UTF_8);
+        } catch (final IOException ex) {
+            throw new IllegalArgumentException(ex);
+        }
+    }
+    /**
+     * Make and return a configured Tidy.
+     * @return The Tidy
+     */
+    @Cacheable(forever = true)
+    private static Tidy tidy() {
+        final Tidy tidy = new Tidy();
+        tidy.setShowErrors(0);
+        tidy.setErrout(
+            new PrintWriter(Logger.stream(Level.FINE, Markdown.class))
+        );
+        tidy.setUpperCaseTags(false);
+        tidy.setUpperCaseAttrs(false);
+        tidy.setLowerLiterals(false);
+        tidy.setIndentContent(false);
+        tidy.setDropProprietaryAttributes(false);
+        tidy.setBreakBeforeBR(false);
+        tidy.setShowWarnings(true);
+        tidy.setXmlTags(true);
+        tidy.setXmlSpace(false);
+        tidy.setEncloseBlockText(true);
+        tidy.setNumEntities(true);
+        tidy.setDropEmptyParas(true);
+        tidy.setFixBackslash(true);
+        tidy.setFixComments(true);
+        tidy.setInputEncoding(CharEncoding.UTF_8);
+        tidy.setOutputEncoding(CharEncoding.UTF_8);
+        tidy.setSmartIndent(false);
+        tidy.setFixUri(true);
+        tidy.setForceOutput(true);
+        return tidy;
     }
 
 }
