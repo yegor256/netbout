@@ -51,6 +51,11 @@ import org.w3c.tidy.Tidy;
 public final class Markdown {
 
     /**
+     * Tidy.
+     */
+    private static final Tidy TIDY = Markdown.makeTidy();
+
+    /**
      * The source text.
      */
     private final transient String text;
@@ -68,9 +73,11 @@ public final class Markdown {
      * @return The HTML
      */
     public String html() {
-        return Markdown.clean(
-            new MarkdownProcessor().markdown(this.text)
-        );
+        synchronized (Markdown.TIDY) {
+            return Markdown.clean(
+                new MarkdownProcessor().markdown(this.text)
+            );
+        }
     }
 
     /**
@@ -81,7 +88,7 @@ public final class Markdown {
     private static String clean(final String xml) {
         try {
             final ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            Markdown.tidy().parse(
+            Markdown.TIDY.parse(
                 IOUtils.toInputStream(xml, CharEncoding.UTF_8),
                 baos
             );
@@ -95,7 +102,7 @@ public final class Markdown {
      * @return The Tidy
      * @checkstyle ExecutableStatementCountCheck (50 lines)
      */
-    private static Tidy tidy() {
+    private static Tidy makeTidy() {
         final Tidy tidy = new Tidy();
         tidy.setShowErrors(0);
         tidy.setErrout(

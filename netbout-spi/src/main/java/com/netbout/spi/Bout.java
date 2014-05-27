@@ -30,7 +30,6 @@ import com.jcabi.aspects.Immutable;
 import com.jcabi.aspects.Loggable;
 import java.io.IOException;
 import java.util.Date;
-import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
 /**
@@ -99,7 +98,6 @@ public interface Bout {
     @Immutable
     @Loggable(Loggable.DEBUG)
     @ToString
-    @EqualsAndHashCode(of = "origin")
     final class ReadOnly implements Bout {
         /**
          * Original bout.
@@ -111,6 +109,14 @@ public interface Bout {
          */
         public ReadOnly(final Bout bout) {
             this.origin = bout;
+        }
+        @Override
+        public boolean equals(final Object obj) {
+            return this.origin.equals(obj);
+        }
+        @Override
+        public int hashCode() {
+            return this.origin.hashCode();
         }
         @Override
         public long number() throws IOException {
