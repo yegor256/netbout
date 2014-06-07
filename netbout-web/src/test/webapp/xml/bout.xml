@@ -58,6 +58,7 @@
     <bout>
         <number>6252</number>
         <title>PHP programming</title>
+        <unread>3</unread>
         <friends>
             <friend>
                 <links>
@@ -80,6 +81,7 @@
                     <link href="/xml/inbox.xml" rel="open" />
                     <link href="/xml/inbox.xml" rel="download" />
                 </links>
+                <unseen>TRUE</unseen>
                 <name>cv.md</name>
                 <ctype>text/x-markdown</ctype>
                 <html><![CDATA[

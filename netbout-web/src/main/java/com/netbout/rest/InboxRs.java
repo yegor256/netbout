@@ -116,6 +116,8 @@ public final class InboxRs extends BaseRs {
             .up()
             .add("unread", Long.toString(bout.messages().unread()))
             .up()
+            .add("unseen", Long.toString(bout.attachments().unseen()))
+            .up()
             .add("title", bout.title()).up()
             .add(
                 new JaxbBundle("friends").add(

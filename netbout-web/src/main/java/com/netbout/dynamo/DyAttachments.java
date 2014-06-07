@@ -153,6 +153,22 @@ final class DyAttachments implements Attachments {
     }
 
     @Override
+    public long unseen() throws IOException {
+        final Item itm = this.region.table(DyFriends.TBL)
+            .frame().through(new QueryValve())
+            .where(DyFriends.HASH, Conditions.equalTo(this.bout))
+            .where(DyFriends.RANGE, Conditions.equalTo(this.self))
+            .iterator().next();
+        final long unseen;
+        if (itm.has(DyFriends.ATTR_UNSEEN)) {
+            unseen = (long) itm.get(DyFriends.ATTR_UNSEEN).getSS().size();
+        } else {
+            unseen = 0L;
+        }
+        return unseen;
+    }
+
+    @Override
     public void create(final String name) throws IOException {
         this.region.table(DyAttachments.TBL).put(
             new Attributes()

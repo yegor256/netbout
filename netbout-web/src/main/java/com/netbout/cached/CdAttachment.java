@@ -73,6 +73,11 @@ final class CdAttachment implements Attachment {
     }
 
     @Override
+    public boolean unseen() throws IOException {
+        return this.origin.unseen();
+    }
+
+    @Override
     public InputStream read() throws IOException {
         return IOUtils.toInputStream(
             IOUtils.toString(this.origin.read(), CharEncoding.UTF_8),

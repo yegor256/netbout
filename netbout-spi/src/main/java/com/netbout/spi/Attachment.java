@@ -60,6 +60,13 @@ public interface Attachment {
     String ctype() throws IOException;
 
     /**
+     * Is it unseen?
+     * @return TRUE if it's unseen
+     * @throws IOException If fails
+     */
+    boolean unseen() throws IOException;
+
+    /**
      * Read content.
      * @return Content
      * @throws IOException If fails

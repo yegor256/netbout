@@ -99,6 +99,11 @@ final class MkAttachment implements Attachment {
     }
 
     @Override
+    public boolean unseen() throws IOException {
+        throw new UnsupportedOperationException("#unseen()");
+    }
+
+    @Override
     public InputStream read() throws IOException {
         try {
             return IOUtils.toInputStream(

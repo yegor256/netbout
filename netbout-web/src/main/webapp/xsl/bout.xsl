@@ -38,21 +38,21 @@
     <xsl:template match="page" mode="head">
         <title>
             <xsl:text>#</xsl:text>
-            <xsl:value-of select="/page/bout/number"/>
+            <xsl:value-of select="bout/number"/>
             <xsl:text>: </xsl:text>
-            <xsl:value-of select="/page/bout/title"/>
+            <xsl:value-of select="bout/title"/>
         </title>
         <script>
             <xsl:attribute name="src">
                 <xsl:text>/js/friends.js?</xsl:text>
-                <xsl:value-of select="/page/version/revision"/>
+                <xsl:value-of select="version/revision"/>
             </xsl:attribute>
             <xsl:text> </xsl:text> <!-- this is for W3C compliance -->
         </script>
         <script>
             <xsl:attribute name="src">
                 <xsl:text>/js/bout.js?</xsl:text>
-                <xsl:value-of select="/page/version/revision"/>
+                <xsl:value-of select="version/revision"/>
             </xsl:attribute>
             <xsl:text> </xsl:text> <!-- this is for W3C compliance -->
         </script>
@@ -152,7 +152,12 @@
             </div>
             <div class="right">
                 <div class="meta">
-                    <b>
+                    <xsl:if test="position() &lt;= /page/bout/unread">
+                        <xsl:attribute name="class">
+                            <xsl:text>red</xsl:text>
+                        </xsl:attribute>
+                    </xsl:if>
+                    <strong>
                         <xsl:choose>
                             <xsl:when test="$msg/author = /page/alias/name">
                                 <xsl:value-of select="$TEXTS/you"/>
@@ -164,21 +169,14 @@
                                 <xsl:value-of select="$TEXTS/someone"/>
                             </xsl:otherwise>
                         </xsl:choose>
-                    </b>
+                    </strong>
                     <xsl:text> </xsl:text>
                     <xsl:value-of select="$TEXTS/said"/>
                     <xsl:text> </xsl:text>
                     <xsl:value-of select="timeago"/>
-                    <xsl:if test="@seen = 'false'">
-                        <span class="red">
-                            <xsl:text> </xsl:text>
-                            <xsl:value-of select="$TEXTS/new.message"/>
-                        </span>
-                    </xsl:if>
                 </div>
                 <div class="text">
-                    <xsl:value-of select="html"
-                        disable-output-escaping="yes" />
+                    <xsl:value-of select="html" disable-output-escaping="yes" />
                 </div>
             </div>
         </div>
@@ -222,11 +220,14 @@
     </xsl:template>
     <xsl:template match="attachment">
         <li>
-            <xsl:if test="html">
-                <xsl:attribute name="class">
+            <xsl:attribute name="class">
+                <xsl:if test="html">
                     <xsl:text>active</xsl:text>
-                </xsl:attribute>
-            </xsl:if>
+                </xsl:if>
+                <xsl:if test="unseen = 'TRUE'">
+                    <xsl:text> unseen</xsl:text>
+                </xsl:if>
+            </xsl:attribute>
             <xsl:choose>
                 <xsl:when test="links/link[@rel='open']">
                     <a>

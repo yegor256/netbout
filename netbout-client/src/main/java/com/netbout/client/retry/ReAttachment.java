@@ -75,6 +75,12 @@ public final class ReAttachment implements Attachment {
 
     @Override
     @RetryOnFailure(verbose = false)
+    public boolean unseen() throws IOException {
+        return this.origin.unseen();
+    }
+
+    @Override
+    @RetryOnFailure(verbose = false)
     public InputStream read() throws IOException {
         return this.origin.read();
     }

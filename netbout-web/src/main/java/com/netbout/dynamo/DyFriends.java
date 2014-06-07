@@ -93,6 +93,11 @@ final class DyFriends implements Friends {
     public static final String ATTR_UNREAD = "unread";
 
     /**
+     * Names of attachments that are not seen yet.
+     */
+    public static final String ATTR_UNSEEN = "unseen";
+
+    /**
      * Region to work with.
      */
     private final transient Region region;

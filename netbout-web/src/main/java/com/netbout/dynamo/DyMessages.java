@@ -28,10 +28,16 @@ package com.netbout.dynamo;
 
 import co.stateful.Counter;
 import co.stateful.RtSttc;
+import com.amazonaws.services.dynamodbv2.model.AttributeAction;
+import com.amazonaws.services.dynamodbv2.model.AttributeValue;
+import com.amazonaws.services.dynamodbv2.model.AttributeValueUpdate;
 import com.google.common.base.Function;
+import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
+import com.jcabi.aspects.Async;
 import com.jcabi.aspects.Immutable;
 import com.jcabi.aspects.Loggable;
+import com.jcabi.dynamo.AttributeUpdates;
 import com.jcabi.dynamo.Attributes;
 import com.jcabi.dynamo.Conditions;
 import com.jcabi.dynamo.Item;
@@ -141,7 +147,7 @@ final class DyMessages implements Messages {
                 .with(DyMessages.ATTR_ALIAS, this.self)
                 .with(DyMessages.ATTR_DATE, System.currentTimeMillis())
         );
-        new SmartBout(this.region, this.bout).updated(this.self);
+        this.updated();
     }
 
     @Override
@@ -167,7 +173,7 @@ final class DyMessages implements Messages {
 
     @Override
     public Iterable<Message> iterate() {
-        new SmartBout(this.region, this.bout).seen(this.self);
+        this.seen();
         return Iterables.transform(
             this.region.table(DyMessages.TBL)
                 .frame()
@@ -189,4 +195,70 @@ final class DyMessages implements Messages {
             }
         );
     }
+
+    /**
+     * It was updated just now.
+     */
+    @Async
+    private void updated() {
+        final String alias = this.self;
+        Iterables.all(
+            this.region.table(DyFriends.TBL).frame()
+                .through(new QueryValve())
+                .where(DyFriends.HASH, Conditions.equalTo(this.bout)),
+            // @checkstyle AnonInnerLengthCheck (50 lines)
+            new Predicate<Item>() {
+                @Override
+                public boolean apply(final Item input) {
+                    AttributeUpdates updates = new AttributeUpdates().with(
+                        DyFriends.ATTR_UPDATED,
+                        System.currentTimeMillis()
+                    );
+                    try {
+                        if (!input.get(DyFriends.RANGE).getS().equals(alias)) {
+                            updates = updates.with(
+                                DyFriends.ATTR_UNREAD,
+                                new AttributeValueUpdate()
+                                    .withAction(AttributeAction.ADD)
+                                    .withValue(new AttributeValue().withN("1"))
+                            );
+                        }
+                        input.put(updates);
+                    } catch (final IOException ex) {
+                        throw new IllegalStateException(ex);
+                    }
+                    return true;
+                }
+            }
+        );
+    }
+
+    /**
+     * It was seen just now.
+     */
+    @Async
+    private void seen() {
+        Iterables.all(
+            this.region.table(DyFriends.TBL).frame()
+                .through(new QueryValve())
+                .where(DyFriends.HASH, Conditions.equalTo(this.bout))
+                .where(DyFriends.RANGE, this.self),
+            new Predicate<Item>() {
+                @Override
+                public boolean apply(final Item input) {
+                    try {
+                        input.put(
+                            new AttributeUpdates().with(
+                                DyFriends.ATTR_UNREAD, 0L
+                            )
+                        );
+                    } catch (final IOException ex) {
+                        throw new IllegalStateException(ex);
+                    }
+                    return true;
+                }
+            }
+        );
+    }
+
 }

@@ -26,14 +26,24 @@
  */
 package com.netbout.dynamo;
 
+import com.amazonaws.services.dynamodbv2.model.AttributeAction;
+import com.amazonaws.services.dynamodbv2.model.AttributeValue;
+import com.amazonaws.services.dynamodbv2.model.AttributeValueUpdate;
+import com.google.common.base.Predicate;
+import com.google.common.collect.Iterables;
+import com.jcabi.aspects.Async;
 import com.jcabi.aspects.Immutable;
 import com.jcabi.aspects.Loggable;
 import com.jcabi.dynamo.AttributeUpdates;
+import com.jcabi.dynamo.Conditions;
 import com.jcabi.dynamo.Item;
+import com.jcabi.dynamo.QueryValve;
 import com.jcabi.dynamo.Region;
 import com.netbout.spi.Attachment;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.HashSet;
+import java.util.Set;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 import org.apache.commons.io.IOUtils;
@@ -50,6 +60,7 @@ import org.apache.commons.lang3.CharEncoding;
 @Loggable(Loggable.DEBUG)
 @ToString(of = "item")
 @EqualsAndHashCode(of = { "region", "item", "self" })
+@SuppressWarnings("PMD.TooManyMethods")
 final class DyAttachment implements Attachment {
 
     /**
@@ -90,7 +101,19 @@ final class DyAttachment implements Attachment {
     }
 
     @Override
+    public boolean unseen() throws IOException {
+        final Item itm = this.region.table(DyFriends.TBL)
+            .frame().through(new QueryValve())
+            .where(DyFriends.HASH, Conditions.equalTo(this.bout()))
+            .where(DyFriends.RANGE, Conditions.equalTo(this.self))
+            .iterator().next();
+        return itm.has(DyFriends.ATTR_UNSEEN)
+            && itm.get(DyFriends.ATTR_UNSEEN).getSS().contains(this.name());
+    }
+
+    @Override
     public InputStream read() throws IOException {
+        this.seen();
         return IOUtils.toInputStream(
             this.item.get(DyAttachments.ATTR_DATA).getS(),
             CharEncoding.UTF_8
@@ -108,9 +131,115 @@ final class DyAttachment implements Attachment {
                     IOUtils.toString(stream, CharEncoding.UTF_8)
                 )
         );
-        new SmartBout(
-            this.region,
-            Long.parseLong(this.item.get(DyAttachments.HASH).getN())
-        ).updated(this.self);
+        this.updated();
     }
+
+    /**
+     * Bout we're in.
+     * @return Bout number
+     * @throws IOException If fails
+     */
+    private long bout() throws IOException {
+        return Long.parseLong(this.item.get(DyAttachments.HASH).getN());
+    }
+
+    /**
+     * It was updated just now.
+     * @throws IOException If fails
+     */
+    @Async
+    private void updated() throws IOException {
+        Iterables.all(
+            this.region.table(DyFriends.TBL).frame()
+                .through(new QueryValve())
+                .where(DyFriends.HASH, Conditions.equalTo(this.bout())),
+            // @checkstyle AnonInnerLengthCheck (50 lines)
+            new Predicate<Item>() {
+                @Override
+                public boolean apply(final Item input) {
+                    AttributeUpdates updates = new AttributeUpdates().with(
+                        DyFriends.ATTR_UPDATED,
+                        System.currentTimeMillis()
+                    );
+                    try {
+                        final String alias = input.get(DyFriends.RANGE).getS();
+                        if (!alias.equals(DyAttachment.this.self)) {
+                            final Set<String> list =
+                                DyAttachment.this.list(alias);
+                            list.add(DyAttachment.this.name());
+                            updates = updates.with(
+                                DyFriends.ATTR_UNSEEN,
+                                new AttributeValueUpdate()
+                                    .withAction(AttributeAction.PUT)
+                                    .withValue(
+                                        new AttributeValue().withSS(list)
+                                    )
+                            );
+                        }
+                        input.put(updates);
+                    } catch (final IOException ex) {
+                        throw new IllegalStateException(ex);
+                    }
+                    return true;
+                }
+            }
+        );
+    }
+
+    /**
+     * It was seen just now.
+     * @throws IOException If fails
+     */
+    @Async
+    private void seen() throws IOException {
+        Iterables.all(
+            this.region.table(DyFriends.TBL).frame()
+                .through(new QueryValve())
+                .where(DyFriends.HASH, Conditions.equalTo(this.bout()))
+                .where(DyFriends.RANGE, this.self),
+            new Predicate<Item>() {
+                @Override
+                public boolean apply(final Item input) {
+                    try {
+                        final Set<String> list =
+                            DyAttachment.this.list(DyAttachment.this.self);
+                        list.remove(DyAttachment.this.name());
+                        input.put(
+                            new AttributeUpdates().with(
+                                DyFriends.ATTR_UNSEEN,
+                                new AttributeValueUpdate()
+                                    .withAction(AttributeAction.PUT)
+                                    .withValue(
+                                        new AttributeValue().withSS(list)
+                                    )
+                            )
+                        );
+                    } catch (final IOException ex) {
+                        throw new IllegalStateException(ex);
+                    }
+                    return true;
+                }
+            }
+        );
+    }
+
+    /**
+     * Existing list of unseen attachments.
+     * @param alias Alias
+     * @return List of attachments that are unseen
+     * @throws IOException If fails
+     */
+    private Set<String> list(final String alias) throws IOException {
+        final Item itm = this.region.table(DyFriends.TBL)
+            .frame().through(new QueryValve())
+            .where(DyFriends.HASH, Conditions.equalTo(this.bout()))
+            .where(DyFriends.RANGE, Conditions.equalTo(alias))
+            .iterator().next();
+        final Set<String> list = new HashSet<String>(0);
+        if (itm.has(DyFriends.ATTR_UNSEEN)) {
+            list.addAll(itm.get(DyFriends.ATTR_UNSEEN).getSS());
+        }
+        return list;
+    }
+
 }

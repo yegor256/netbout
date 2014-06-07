@@ -39,7 +39,7 @@
         <title>
             <xsl:value-of select="$TEXTS/inbox"/>
             <xsl:variable name="unread">
-                <xsl:value-of select="count(bouts/bout[@unseen = 'true'])"/>
+                <xsl:value-of select="count(bouts/bout[unread &gt; 0])"/>
             </xsl:variable>
             <xsl:if test="$unread &gt; 0">
                 <xsl:text> (</xsl:text>
@@ -87,7 +87,7 @@
                 <span>
                     <xsl:attribute name="class">
                         <xsl:text>num</xsl:text>
-                        <xsl:if test="unread &gt; 0">
+                        <xsl:if test="unread &gt; 0 or unseen &gt; 0">
                             <xsl:text> unread</xsl:text>
                         </xsl:if>
                     </xsl:attribute>

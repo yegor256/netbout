@@ -67,6 +67,12 @@ final class CdAttachments implements Attachments {
     }
 
     @Override
+    @Cacheable(lifetime = Tv.FIVE, unit = TimeUnit.MINUTES)
+    public long unseen() throws IOException {
+        return this.origin.unseen();
+    }
+
+    @Override
     @Cacheable.FlushBefore
     public void create(final String name) throws IOException {
         this.origin.create(name);

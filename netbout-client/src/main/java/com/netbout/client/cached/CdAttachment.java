@@ -74,6 +74,12 @@ public final class CdAttachment implements Attachment {
     }
 
     @Override
+    @Cacheable
+    public boolean unseen() throws IOException {
+        return this.origin.unseen();
+    }
+
+    @Override
     public InputStream read() throws IOException {
         return this.origin.read();
     }

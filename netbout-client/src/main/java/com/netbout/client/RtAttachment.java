@@ -90,6 +90,19 @@ final class RtAttachment implements Attachment {
     }
 
     @Override
+    public boolean unseen() throws IOException {
+        return Boolean.parseBoolean(
+            this.request.fetch()
+                .as(RestResponse.class)
+                .assertStatus(HttpURLConnection.HTTP_OK)
+                .as(XmlResponse.class)
+                .xml()
+                .xpath(this.xpath("unseen/text()"))
+                .get(0)
+        );
+    }
+
+    @Override
     public InputStream read() throws IOException {
         return IOUtils.toInputStream(
             this.request.fetch()

@@ -308,6 +308,7 @@ public final class BoutRs extends BaseRs {
             .add("number", Long.toString(bout.number()))
             .up()
             .add("title", bout.title()).up()
+            .add("unread", Long.toString(bout.messages().unread())).up()
             .add(
                 new JaxbBundle("friends").add(
                     new JaxbBundle.Group<Friend>(bout.friends().iterate()) {
@@ -391,6 +392,7 @@ public final class BoutRs extends BaseRs {
             .add("name", attachment.name())
             .up()
             .add("ctype", attachment.ctype()).up()
+            .add("unseen", Boolean.toString(attachment.unseen())).up()
             .link(
                 new Link(
                     "open",

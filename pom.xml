@@ -121,7 +121,7 @@
             <dependency>
                 <groupId>com.jcabi</groupId>
                 <artifactId>jcabi-aspects</artifactId>
-                <version>0.15.2</version>
+                <version>0.16</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

@@ -40,6 +40,13 @@ import java.io.IOException;
 public interface Attachments {
 
     /**
+     * How many attachments unseen?
+     * @return Number of yet unseen attachments
+     * @throws IOException If fails
+     */
+    long unseen() throws IOException;
+
+    /**
      * Create attachment.
      * @param name Attachment name
      * @throws IOException If fails
