@@ -82,11 +82,6 @@ final class MkAttachments implements Attachments {
     }
 
     @Override
-    public long unseen() throws IOException {
-        throw new UnsupportedOperationException("#unseen()");
-    }
-
-    @Override
     public void create(final String name) throws IOException {
         try {
             new JdbcSession(this.sql.source())

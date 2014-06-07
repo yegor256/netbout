@@ -30,6 +30,7 @@ import com.jcabi.aspects.Immutable;
 import com.jcabi.aspects.Loggable;
 import com.jcabi.dynamo.Credentials;
 import com.jcabi.dynamo.Region;
+import com.jcabi.dynamo.retry.ReRegion;
 import com.jcabi.manifests.Manifests;
 import com.jcabi.urn.URN;
 import com.netbout.spi.Base;
@@ -71,7 +72,7 @@ public final class DyBase implements Base {
             );
         }
         this.region = new Region.Prefixed(
-            new Region.Simple(creds),
+            new ReRegion(new Region.Simple(creds)),
             Manifests.read("Netbout-DynamoPrefix")
         );
     }

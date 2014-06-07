@@ -65,12 +65,6 @@ public final class ReAttachments implements Attachments {
 
     @Override
     @RetryOnFailure(verbose = false)
-    public long unseen() throws IOException {
-        return this.origin.unseen();
-    }
-
-    @Override
-    @RetryOnFailure(verbose = false)
     public void create(final String name) throws IOException {
         this.origin.create(name);
     }

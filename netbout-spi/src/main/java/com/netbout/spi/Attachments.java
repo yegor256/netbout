@@ -26,8 +26,13 @@
  */
 package com.netbout.spi;
 
+import com.google.common.base.Predicate;
+import com.google.common.collect.Iterables;
 import com.jcabi.aspects.Immutable;
+import com.jcabi.aspects.Loggable;
 import java.io.IOException;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
 /**
  * Attachments.
@@ -38,13 +43,6 @@ import java.io.IOException;
  */
 @Immutable
 public interface Attachments {
-
-    /**
-     * How many attachments unseen?
-     * @return Number of yet unseen attachments
-     * @throws IOException If fails
-     */
-    long unseen() throws IOException;
 
     /**
      * Create attachment.
@@ -74,5 +72,48 @@ public interface Attachments {
      * @throws IOException If fails
      */
     Iterable<Attachment> iterate() throws IOException;
+
+    /**
+     * Unseen.
+     */
+    @Immutable
+    @Loggable(Loggable.DEBUG)
+    @ToString(of = "origin")
+    @EqualsAndHashCode(of = "origin")
+    final class Unseen {
+        /**
+         * Origin.
+         */
+        private final transient Attachments origin;
+        /**
+         * Ctor.
+         * @param att Attachments
+         */
+        public Unseen(final Attachments att) {
+            this.origin = att;
+        }
+        /**
+         * Get total unseen attachments.
+         * @return Total unseen
+         * @throws IOException If fails
+         */
+        public int get() throws IOException {
+            return Iterables.size(
+                Iterables.filter(
+                    this.origin.iterate(),
+                    new Predicate<Attachment>() {
+                        @Override
+                        public boolean apply(final Attachment input) {
+                            try {
+                                return input.unseen();
+                            } catch (final IOException ex) {
+                                throw new IllegalStateException(ex);
+                            }
+                        }
+                    }
+                )
+            );
+        }
+    }
 
 }

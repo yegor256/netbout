@@ -67,19 +67,6 @@ final class RtAttachments implements Attachments {
     }
 
     @Override
-    public long unseen() throws IOException {
-        return Long.parseLong(
-            this.request.fetch()
-                .as(RestResponse.class)
-                .assertStatus(HttpURLConnection.HTTP_OK)
-                .as(XmlResponse.class)
-                .xml()
-                .xpath("/page/bout/attachments/unseen/text()")
-                .get(0)
-        );
-    }
-
-    @Override
     public void create(final String name) throws IOException {
         this.request.fetch()
             .as(RestResponse.class)

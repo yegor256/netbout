@@ -64,12 +64,6 @@ public final class CdAttachments implements Attachments {
     }
 
     @Override
-    @Cacheable
-    public long unseen() throws IOException {
-        return this.origin.unseen();
-    }
-
-    @Override
     @Cacheable.FlushBefore
     public void create(final String name) throws IOException {
         this.origin.create(name);

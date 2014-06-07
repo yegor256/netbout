@@ -26,6 +26,7 @@
  */
 package com.netbout.rest;
 
+import com.netbout.spi.Attachments;
 import com.netbout.spi.Bout;
 import com.netbout.spi.Friend;
 import com.rexsl.page.JaxbBundle;
@@ -116,7 +117,12 @@ public final class InboxRs extends BaseRs {
             .up()
             .add("unread", Long.toString(bout.messages().unread()))
             .up()
-            .add("unseen", Long.toString(bout.attachments().unseen()))
+            .add(
+                "unseen",
+                Integer.toString(
+                    new Attachments.Unseen(bout.attachments()).get()
+                )
+            )
             .up()
             .add("title", bout.title()).up()
             .add(
