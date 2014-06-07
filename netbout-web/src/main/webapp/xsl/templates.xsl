@@ -79,18 +79,20 @@
                 </xsl:attribute>
                 <xsl:value-of select="name"/>
             </span>
-            <xsl:text> </xsl:text>
-            <a>
-                <xsl:attribute name="href">
-                    <xsl:text>https://github.com/netbout/netbout/commit/</xsl:text>
-                    <xsl:value-of select="revision"/>
-                </xsl:attribute>
-                <i class="ico ico-github"><xsl:comment>github</xsl:comment></i>
-            </a>
-            <xsl:text> </xsl:text>
-            <xsl:call-template name="millis">
-                <xsl:with-param name="millis" select="/page/millis" />
-            </xsl:call-template>
+            <span>
+                <a>
+                    <xsl:attribute name="href">
+                        <xsl:text>https://github.com/netbout/netbout/commit/</xsl:text>
+                        <xsl:value-of select="revision"/>
+                    </xsl:attribute>
+                    <i class="ico ico-github"><xsl:comment>github</xsl:comment></i>
+                </a>
+            </span>
+            <span>
+                <xsl:call-template name="millis">
+                    <xsl:with-param name="millis" select="/page/millis" />
+                </xsl:call-template>
+            </span>
         </div>
     </xsl:template>
     <xsl:template name="cdn">
