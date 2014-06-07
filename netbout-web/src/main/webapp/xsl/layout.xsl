@@ -195,14 +195,14 @@
                             </li>
                         </xsl:if>
                         <li>
-                            <a class="icomoon">
+                            <a>
                                 <xsl:attribute name="href">
                                     <xsl:value-of select="links/link[@rel='rexsl:logout']/@href"/>
                                 </xsl:attribute>
                                 <xsl:attribute name="title">
                                     <xsl:value-of select="$TEXTS/leave.right.now"/>
                                 </xsl:attribute>
-                                <xsl:text>e</xsl:text>
+                                <i class="ico ico-exit"><xsl:comment>exit</xsl:comment></i>
                             </a>
                         </li>
                     </ul>

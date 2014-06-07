@@ -80,7 +80,13 @@
                 <xsl:value-of select="name"/>
             </span>
             <xsl:text> </xsl:text>
-            <xsl:value-of select="revision"/>
+            <a>
+                <xsl:attribute name="href">
+                    <xsl:text>https://github.com/netbout/netbout/commit/</xsl:text>
+                    <xsl:value-of select="revision"/>
+                </xsl:attribute>
+                <i class="ico ico-github"><xsl:comment>github</xsl:comment></i>
+            </a>
             <xsl:text> </xsl:text>
             <xsl:call-template name="millis">
                 <xsl:with-param name="millis" select="/page/millis" />

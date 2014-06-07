@@ -36,7 +36,7 @@
         <title>netbout - private talks made easy</title>
     </xsl:template>
     <xsl:template match="page" mode="body">
-        <nav class="buttons icomoon">
+        <nav class="buttons">
             <a>
                 <xsl:attribute name="href">
                     <xsl:value-of select="/page/links/link[@rel='rexsl:facebook']/@href" />
@@ -44,7 +44,7 @@
                 <xsl:attribute name="title">
                     <xsl:text>click to authenticate yourself via Facebook</xsl:text>
                 </xsl:attribute>
-                <xsl:text>f</xsl:text>
+                <i class="ico ico-facebook"><xsl:comment>facebook</xsl:comment></i>
             </a>
             <a>
                 <xsl:attribute name="href">
@@ -53,7 +53,7 @@
                 <xsl:attribute name="title">
                     <xsl:text>click to authenticate yourself via Google+</xsl:text>
                 </xsl:attribute>
-                <xsl:text>p</xsl:text>
+                <i class="ico ico-google"><xsl:comment>google</xsl:comment></i>
             </a>
             <a>
                 <xsl:attribute name="href">
@@ -62,7 +62,7 @@
                 <xsl:attribute name="title">
                     <xsl:text>click to authenticate yourself via Github</xsl:text>
                 </xsl:attribute>
-                <xsl:text>g</xsl:text>
+                <i class="ico ico-github"><xsl:comment>github</xsl:comment></i>
             </a>
         </nav>
     </xsl:template>

@@ -29,17 +29,32 @@ $font-main: "Helvetica Neue", "HelveticaNeue", "HelveticaNeueRoman", "HelveticaN
 $font-fixed: 'Consolas', 'Menlo', 'Monaco', 'Courier New', monospace;
 
 @font-face {
-    font-family: 'icomoon';
-    src:url('http://img.netbout.com/fonts/ico-1.eot?-cfp6bb');
-    src:url('http://img.netbout.com/fonts/ico-1.eot?#iefix-cfp6bb') format('embedded-opentype'),
-        url('http://img.netbout.com/fonts/ico-1.woff?-cfp6bb') format('woff'),
-        url('http://img.netbout.com/fonts/ico-1.ttf?-cfp6bb') format('truetype'),
-        url('http://img.netbout.com/fonts/ico-1.svg?-cfp6bb#icomoon') format('svg');
+    font-family: 'icomoon-netbout';
+    src:url('http://img.netbout.com/fonts/icomoon-2.eot?-cfp6bb');
+    src:url('http://img.netbout.com/fonts/icomoon-2.eot?#iefix-cfp6bb') format('embedded-opentype'),
+        url('http://img.netbout.com/fonts/icomoon-2.woff?-cfp6bb') format('woff'),
+        url('http://img.netbout.com/fonts/icomoon-2.ttf?-cfp6bb') format('truetype'),
+        url('http://img.netbout.com/fonts/icomoon-2.svg?-cfp6bb#icomoon') format('svg');
     font-weight: normal;
     font-style: normal;
 }
 
-.icomoon {
-    font-family: 'icomoon';
+.ico {
+  display: inline-block;
+  font-family: 'icomoon-netbout';
+  font-style: normal;
+  font-weight: normal;
+  line-height: 1;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
+
+.ico-copy:before { content: "\f0a1"; }
+.ico-lock:before { content: "\f0a2"; }
+.ico-close:before { content: "\f0a3"; }
+.ico-check:before { content: "\f0a4"; }
+.ico-exit:before { content: "\f0a5"; }
+.ico-google:before { content: "\f0a6"; }
+.ico-facebook:before { content: "\f0a7"; }
+.ico-github:before { content: "\f0a8"; }
 
