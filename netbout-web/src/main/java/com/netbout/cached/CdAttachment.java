@@ -26,11 +26,13 @@
  */
 package com.netbout.cached;
 
+import com.jcabi.aspects.Cacheable;
 import com.jcabi.aspects.Immutable;
 import com.jcabi.aspects.Loggable;
 import com.netbout.spi.Attachment;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.concurrent.TimeUnit;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 import org.apache.commons.io.IOUtils;
@@ -63,21 +65,25 @@ final class CdAttachment implements Attachment {
     }
 
     @Override
+    @Cacheable(lifetime = 1, unit = TimeUnit.HOURS)
     public String name() throws IOException {
         return this.origin.name();
     }
 
     @Override
+    @Cacheable(lifetime = 1, unit = TimeUnit.HOURS)
     public String ctype() throws IOException {
         return this.origin.ctype();
     }
 
     @Override
+    @Cacheable(lifetime = 1, unit = TimeUnit.HOURS)
     public boolean unseen() throws IOException {
         return this.origin.unseen();
     }
 
     @Override
+    @Cacheable.FlushBefore
     public InputStream read() throws IOException {
         return IOUtils.toInputStream(
             IOUtils.toString(this.origin.read(), CharEncoding.UTF_8),
@@ -86,6 +92,7 @@ final class CdAttachment implements Attachment {
     }
 
     @Override
+    @Cacheable.FlushBefore
     public void write(final InputStream stream, final String ctype)
         throws IOException {
         this.origin.write(stream, ctype);
