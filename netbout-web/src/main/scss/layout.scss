@@ -30,6 +30,15 @@
 
 $width: 750px;
 
+.wrapper {
+    width: $width;
+    position: relative;
+    clear: both;
+    @media all and (max-width: $width) {
+        width: 100%;
+    }
+}
+
 .cap {
     width: 100%;
     position: relative;
@@ -45,11 +54,11 @@ $width: 750px;
         text-align: center;
     }
     .header {
+        @extend .wrapper;
         display: table;
         margin-left: auto;
         margin-right: auto;
         text-align: left;
-        width: $width;
         line-height: 0;
         color: $color-text2;
         .left {
@@ -121,13 +130,14 @@ $width: 750px;
 }
 
 .content {
-    position: relative;
-    width: $width;
+    @extend .wrapper;
     color: $color-text;
     margin-right: auto;
     margin-left: auto;
-    clear: both;
     padding-bottom: 20px;
+    @media all and (max-width: $width) {
+        width: 100%;
+    }
     h2 {
         position: relative;
         padding-top: 20px;
@@ -144,6 +154,9 @@ $width: 750px;
     padding: 4px 0.8em;
     background-color: $color-gray;
     color: gray;
+    @media all and (max-width: $width) {
+        display: none !important;
+    }
 }
 
 .flash {
