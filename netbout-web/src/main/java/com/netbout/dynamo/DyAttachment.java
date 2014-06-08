@@ -204,16 +204,27 @@ final class DyAttachment implements Attachment {
                         final Set<String> list =
                             DyAttachment.this.list(DyAttachment.this.self);
                         list.remove(DyAttachment.this.name());
-                        input.put(
-                            new AttributeUpdates().with(
-                                DyFriends.ATTR_UNSEEN,
-                                new AttributeValueUpdate()
-                                    .withAction(AttributeAction.PUT)
-                                    .withValue(
-                                        new AttributeValue().withSS(list)
+                        if (list.isEmpty()) {
+                            input.put(
+                                new AttributeUpdates().with(
+                                    DyFriends.ATTR_UNSEEN,
+                                    new AttributeValueUpdate().withAction(
+                                        AttributeAction.DELETE
                                     )
-                            )
-                        );
+                                )
+                            );
+                        } else {
+                            input.put(
+                                new AttributeUpdates().with(
+                                    DyFriends.ATTR_UNSEEN,
+                                    new AttributeValueUpdate()
+                                        .withAction(AttributeAction.PUT)
+                                        .withValue(
+                                            new AttributeValue().withSS(list)
+                                        )
+                                )
+                            );
+                        }
                     } catch (final IOException ex) {
                         throw new IllegalStateException(ex);
                     }
