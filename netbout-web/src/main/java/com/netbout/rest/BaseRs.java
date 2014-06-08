@@ -205,7 +205,7 @@ public class BaseRs extends BaseResource {
                     .path(LoginRs.class)
                     .build(),
                 "please login first",
-                Level.SEVERE
+                Level.INFO
             );
         }
         return this.base().user(identity.urn());
@@ -225,7 +225,7 @@ public class BaseRs extends BaseResource {
                         .path(LoginRs.class, "register")
                         .build(),
                     "please create a unique alias",
-                    Level.SEVERE
+                    Level.INFO
                 );
             }
             this.user().aliases().add(
