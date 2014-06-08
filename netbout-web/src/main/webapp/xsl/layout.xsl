@@ -44,6 +44,7 @@
             </xsl:attribute>
             <head>
                 <meta charset="UTF-8"/>
+                <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
                 <script type="text/javascript" src="https://code.jquery.com/jquery-2.1.1-rc1.min.js">
                     <xsl:text> </xsl:text>
                     <!-- this is for W3C compliance -->

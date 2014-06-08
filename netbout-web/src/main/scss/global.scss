@@ -98,7 +98,7 @@ ul, ol {
 
 input {
     border: 1px solid $color-gray-dark;
-    background-color: white;
+    background-color: $color-background;
     padding: 8px 10px;
     &[type="submit"] {
         background-color: $color-gray-light;

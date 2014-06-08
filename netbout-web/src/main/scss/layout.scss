@@ -34,6 +34,10 @@ $width: 750px;
     width: $width;
     position: relative;
     clear: both;
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: 10px;
+    padding-right: 10px;
     @media all and (max-width: $width) {
         width: 100%;
     }
@@ -56,8 +60,6 @@ $width: 750px;
     .header {
         @extend .wrapper;
         display: table;
-        margin-left: auto;
-        margin-right: auto;
         text-align: left;
         line-height: 0;
         color: $color-text2;
@@ -132,12 +134,7 @@ $width: 750px;
 .content {
     @extend .wrapper;
     color: $color-text;
-    margin-right: auto;
-    margin-left: auto;
     padding-bottom: 20px;
-    @media all and (max-width: $width) {
-        width: 100%;
-    }
     h2 {
         position: relative;
         padding-top: 20px;

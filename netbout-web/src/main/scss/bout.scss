@@ -27,6 +27,7 @@
 
 @import 'fonts';
 @import 'colors';
+@import 'layout';
 
 .top2 {
     position: relative;
@@ -34,14 +35,20 @@
     margin-bottom: 37px;
     clear: both;
     .invite {
-        position: absolute;
-        top: 0;
-        right: 0;
-        text-align: right;
-        background-color: white;
-        z-index: 10;
+        background-color: $color-background;
         .invite input {
-            background-color: white;
+            background-color: $color-background;
+        }
+        @media all and (min-width: $width + 1) {
+            position: absolute;
+            z-index: 10;
+            top: 0;
+            right: 0;
+            text-align: right;
+        }
+        @media all and (max-width: $width) {
+            position: relative;
+            margin-top: 25px;
         }
     }
 }
