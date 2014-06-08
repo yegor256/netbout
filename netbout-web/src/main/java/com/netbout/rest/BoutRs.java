@@ -195,7 +195,10 @@ public final class BoutRs extends BaseRs {
         this.bout().messages().post(text);
         throw FlashInset.forward(
             this.self(),
-            "message posted to the bout",
+            String.format(
+                "message posted to the bout #%d",
+                this.bout().number()
+            ),
             Level.INFO
         );
     }
@@ -212,7 +215,7 @@ public final class BoutRs extends BaseRs {
         this.bout().rename(title);
         throw FlashInset.forward(
             this.self(),
-            "bout renamed",
+            String.format("bout #%d renamed", this.bout().number()),
             Level.INFO
         );
     }
@@ -241,7 +244,10 @@ public final class BoutRs extends BaseRs {
         }
         throw FlashInset.forward(
             this.self(),
-            "new person invited to the bout",
+            String.format(
+                "new person invited to the bout #%d",
+                this.bout().number()
+            ),
             Level.INFO
         );
     }
@@ -257,7 +263,10 @@ public final class BoutRs extends BaseRs {
         this.bout().friends().kick(name);
         throw FlashInset.forward(
             this.self(),
-            "you kicked him off this bout",
+            String.format(
+                "you kicked '%s' off this bout #%d",
+                name, this.bout().number()
+            ),
             Level.INFO
         );
     }
