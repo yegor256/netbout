@@ -26,8 +26,9 @@
  */
 
 $font-main: "Helvetica Neue", "HelveticaNeue", "HelveticaNeueRoman", "HelveticaNeue-Roman", "Helvetica Neue Roman", "Helvetica", "Arial", sans-serif;
-$font-fixed: 'Consolas', 'Menlo', 'Monaco', 'Courier New', monospace;
+$font-fixed: 'Source Code Pro', 'Consolas', 'Menlo', 'Monaco', 'Courier New', monospace;
 
+@import url(//fonts.googleapis.com/css?family=Source+Code+Pro:400,500);
 @font-face {
     font-family: 'icomoon-netbout';
     src:url('http://img.netbout.com/fonts/icomoon-2.eot?-cfp6bb');

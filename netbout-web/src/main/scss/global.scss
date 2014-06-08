@@ -76,24 +76,20 @@ span {
     margin-right: 2px;
 }
 
-ul,
-ol {
+ul, ol {
     margin-left: 20px;
 }
 
-.tt, .fixed, pre, textarea {
+.tt, .fixed, pre, textarea, code {
     font-family: $font-fixed;
 }
 
-.tt,
-.fixed,
-pre {
+.tt, .fixed, pre, code {
     background-color: $color-gray-light;
 }
 
-.tt {
-    padding-left: 4px;
-    padding-right: 4px;
+.tt, code {
+    padding: 0 3px;
 }
 
 .red {

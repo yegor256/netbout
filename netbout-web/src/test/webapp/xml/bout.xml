@@ -113,7 +113,7 @@
                         <td>Another TD</td>
                     </tr>
                     </table>
-                    <p>Another paragraph with text!</p>
+                    <p>Another paragraph with <code>text</code>!</p>
                 ]]></html>
             </attachment>
             <attachment>

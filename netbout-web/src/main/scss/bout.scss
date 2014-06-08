@@ -94,6 +94,10 @@
             padding-right: 1em;
         }
     }
+    code {
+        background-color: $color-gray;
+        border: 1px solid $color-gray-dark;
+    }
 }
 
 .post {
