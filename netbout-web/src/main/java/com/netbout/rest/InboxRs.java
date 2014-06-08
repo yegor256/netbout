@@ -80,7 +80,7 @@ public final class InboxRs extends BaseRs {
                 .path(BoutRs.class)
                 .path(BoutRs.class, "front")
                 .build(number),
-            "new bout started",
+            String.format("new bout #%d started", number),
             Level.INFO
         );
     }

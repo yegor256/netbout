@@ -51,14 +51,18 @@ public final class LoginRs extends BaseRs {
     /**
      * Login page.
      * @return The JAX-RS response
+     * @throws IOException If fails
      */
     @GET
     @Path("/")
-    public Response login() {
+    public Response login() throws IOException {
         if (!this.auth().identity().equals(Identity.ANONYMOUS)) {
             throw FlashInset.forward(
                 this.uriInfo().getBaseUri(),
-                "you are logged in already",
+                String.format(
+                    "you are logged in already as '%s'",
+                    this.alias().name()
+                ),
                 Level.INFO
             );
         }
@@ -101,7 +105,7 @@ public final class LoginRs extends BaseRs {
         this.user().aliases().add(alias);
         throw FlashInset.forward(
             this.uriInfo().getBaseUri(),
-            "your alias was registered",
+            String.format("your alias '%s' was registered", alias),
             Level.INFO
         );
     }
