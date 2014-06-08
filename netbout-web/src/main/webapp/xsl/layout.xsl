@@ -238,9 +238,7 @@
         </xsl:choose>
     </xsl:template>
     <xsl:template match="flash">
-        <div class="flash">
-            <span class="{level}"><xsl:value-of select="level"/></span>
-            <xsl:text>: </xsl:text>
+        <div class="flash {level}">
             <xsl:value-of select="message"/>
         </div>
     </xsl:template>

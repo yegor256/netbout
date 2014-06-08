@@ -35,6 +35,11 @@
         <revision>555</revision>
         <date>2011-09-23</date>
     </version>
+    <flash>
+        <message>message posted to the bout</message>
+        <level>INFO</level>
+        <msec>-1</msec>
+    </flash>
     <links>
         <link href="/xml/inbox.xml" rel="home" />
         <link href="/xml/bout.xml" rel="start" />
