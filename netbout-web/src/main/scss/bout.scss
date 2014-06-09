@@ -67,6 +67,9 @@
         li.active {
             font-weight: bold;
         }
+        li.unseen {
+            @extend .red;
+        }
     }
 }
 
