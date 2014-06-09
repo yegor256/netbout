@@ -68,7 +68,7 @@
     </organization>
     <licenses>
         <license>
-            <name>netbout persistent communications</name>
+            <name>private</name>
             <url>http://www.netbout.com/LICENSE.txt</url>
             <distribution>repo</distribution>
             <comments>This is a proprietary software, you can't redistribute it</comments>
@@ -78,7 +78,7 @@
         <developer>
             <id>1</id>
             <name>Yegor Bugayenko</name>
-            <email>yegor@tpc2.com</email>
+            <email>yegor@netbout.com</email>
             <organization>Netbout Inc.</organization>
             <organizationUrl>http://www.netbout.com</organizationUrl>
             <roles>
