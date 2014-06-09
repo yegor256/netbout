@@ -74,6 +74,9 @@ $width: 750px;
                 display: inline-block;
                 vertical-align: middle;
                 text-decoration: none;
+                @media all and (max-width: $width) {
+                    display: none;
+                }
             }
             .search {
                 display: inline-block;
@@ -111,6 +114,9 @@ $width: 750px;
                         margin-right: 6px;
                         display: inline;
                         vertical-align: middle;
+                        @media all and (max-width: $width) {
+                            display: none;
+                        }
                     }
                     .start {
                         font-weight: bolder;
