@@ -224,7 +224,7 @@
                 <xsl:if test="html">
                     <xsl:text>active</xsl:text>
                 </xsl:if>
-                <xsl:if test="unseen = 'TRUE'">
+                <xsl:if test="unseen = 'true'">
                     <xsl:text> unseen</xsl:text>
                 </xsl:if>
             </xsl:attribute>
