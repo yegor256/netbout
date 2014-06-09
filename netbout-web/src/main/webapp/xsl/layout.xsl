@@ -33,7 +33,6 @@
     version="2.0" exclude-result-prefixes="xs">
     <xsl:include href="/xsl/templates.xsl"/>
     <xsl:template match="/">
-        <!-- see http://stackoverflow.com/questions/3387127 -->
         <xsl:text disable-output-escaping="yes">&lt;!DOCTYPE html&gt;</xsl:text>
         <xsl:apply-templates select="page"/>
     </xsl:template>
@@ -45,7 +44,7 @@
             <head>
                 <meta charset="UTF-8"/>
                 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-                <script type="text/javascript" src="https://code.jquery.com/jquery-2.1.1-rc1.min.js">
+                <script type="text/javascript" src="//code.jquery.com/jquery-2.1.1-rc1.min.js">
                     <xsl:text> </xsl:text>
                     <!-- this is for W3C compliance -->
                 </script>
@@ -54,7 +53,7 @@
                         <xsl:call-template name="cdn">
                             <xsl:with-param name="name">
                                 <xsl:text>supplementary.js?</xsl:text>
-                                <xsl:value-of select="/page/version/revision"/>
+                                <xsl:value-of select="version/revision"/>
                             </xsl:with-param>
                         </xsl:call-template>
                     </xsl:attribute>
@@ -64,7 +63,7 @@
                 <link rel="stylesheet" type="text/css" media="all">
                     <xsl:attribute name="href">
                         <xsl:text>/css/style.css?</xsl:text>
-                        <xsl:value-of select="/page/version/revision"/>
+                        <xsl:value-of select="version/revision"/>
                     </xsl:attribute>
                 </link>
                 <link rel="icon" type="image/gif">
