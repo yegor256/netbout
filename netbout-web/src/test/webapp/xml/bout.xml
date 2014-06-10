@@ -86,7 +86,7 @@
                     <link href="/xml/inbox.xml" rel="open" />
                     <link href="/xml/inbox.xml" rel="download" />
                 </links>
-                <unseen>true</unseen>
+                <unseen>false</unseen>
                 <name>cv.md</name>
                 <ctype>text/x-markdown</ctype>
                 <html><![CDATA[
@@ -120,6 +120,7 @@
                 <links>
                     <link href="/xml/inbox.xml" rel="download" />
                 </links>
+                <unseen>true</unseen>
                 <ctype>application/excel</ctype>
                 <name>money-data.xls</name>
             </attachment>

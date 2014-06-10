@@ -63,12 +63,12 @@
         li {
             display: inline;
             margin-right: 10px;
-        }
-        .active {
-            font-weight: bold;
-        }
-        .unseen {
-            @extend .red;
+            &.active {
+                font-weight: bold;
+            }
+            &.unseen {
+                @extend .red;
+            }
         }
     }
 }
