@@ -42,18 +42,10 @@
             <xsl:text>: </xsl:text>
             <xsl:value-of select="bout/title"/>
         </title>
-        <script>
-            <xsl:attribute name="src">
-                <xsl:text>/js/friends.js?</xsl:text>
-                <xsl:value-of select="version/revision"/>
-            </xsl:attribute>
+        <script src="/js/friends.js?{version/revision}">
             <xsl:text> </xsl:text> <!-- this is for W3C compliance -->
         </script>
-        <script>
-            <xsl:attribute name="src">
-                <xsl:text>/js/bout.js?</xsl:text>
-                <xsl:value-of select="version/revision"/>
-            </xsl:attribute>
+        <script src="/js/bout.js?{version/revision}">
             <xsl:text> </xsl:text> <!-- this is for W3C compliance -->
         </script>
     </xsl:template>
@@ -62,10 +54,7 @@
     </xsl:template>
     <xsl:template match="bout">
         <h1 class="bout">
-            <a>
-                <xsl:attribute name="href">
-                    <xsl:value-of select="/page/links/link[@rel='self']/@href"/>
-                </xsl:attribute>
+            <a href="{/page/links/link[@rel='self']/@href}">
                 <span class="num">
                     <xsl:text>#</xsl:text>
                     <xsl:value-of select="number"/>
@@ -93,10 +82,7 @@
         <xsl:apply-templates select="attachments"/>
         <xsl:apply-templates select="attachments/attachment[html]" mode="page"/>
         <div class="post">
-            <form method="post">
-                <xsl:attribute name="action">
-                    <xsl:value-of select="/page/links/link[@rel='post']/@href"/>
-                </xsl:attribute>
+            <form method="post" action="{/page/links/link[@rel='post']/@href}">
                 <fieldset>
                     <label for="text">
                         <xsl:text> </xsl:text>
@@ -107,11 +93,7 @@
                     <label for="submit">
                         <xsl:text> </xsl:text>
                     </label>
-                    <input type="submit" id="submit">
-                        <xsl:attribute name="value">
-                            <xsl:value-of select="$TEXTS/Post.new.message"/>
-                        </xsl:attribute>
-                    </input>
+                    <input type="submit" id="submit" value="{$TEXTS/Post.new.message}"/>
                 </fieldset>
             </form>
         </div>
@@ -119,11 +101,7 @@
     </xsl:template>
     <xsl:template match="messages/message">
         <xsl:variable name="msg" select="."/>
-        <div class="message">
-            <xsl:attribute name="id">
-                <xsl:text>msg</xsl:text>
-                <xsl:value-of select="$msg/number"/>
-            </xsl:attribute>
+        <div class="message" id="msg{$msg/number}">
             <div class="left">
                 <img class="photo">
                     <xsl:choose>
@@ -179,31 +157,17 @@
     </xsl:template>
     <xsl:template name="invite">
         <div class="invite">
-            <form method="post" id="invite">
-                <xsl:attribute name="action">
-                    <xsl:value-of select="/page/links/link[@rel='invite']/@href"/>
-                </xsl:attribute>
+            <form method="post" id="invite" action="{/page/links/link[@rel='invite']/@href}">
                 <fieldset>
-                    <input name="name" autocomplete="off">
-                        <xsl:attribute name="placeholder">
-                            <xsl:value-of select="$TEXTS/Invite"/>
-                        </xsl:attribute>
-                    </input>
+                    <input name="name" autocomplete="off" placeholder="{$TEXTS/Invite}"/>
                 </fieldset>
             </form>
         </div>
     </xsl:template>
     <xsl:template name="rename">
         <xsl:if test="/page/links/link[@rel='rename']">
-            <form id="rename" method="post" style="display: none;">
-                <xsl:attribute name="action">
-                    <xsl:value-of select="/page/links/link[@rel='rename']/@href"/>
-                </xsl:attribute>
-                <input name="title" size="50" autocomplete="off">
-                    <xsl:attribute name="value">
-                        <xsl:value-of select="/page/bout/title"/>
-                    </xsl:attribute>
-                </input>
+            <form id="rename" method="post" style="display: none;" action="{/page/links/link[@rel='rename']/@href}">
+                <input name="title" size="50" autocomplete="off" value="{/page/bout/title}"/>
             </form>
         </xsl:if>
     </xsl:template>
@@ -226,10 +190,7 @@
             </xsl:attribute>
             <xsl:choose>
                 <xsl:when test="links/link[@rel='open']">
-                    <a>
-                        <xsl:attribute name="href">
-                            <xsl:value-of select="links/link[@rel='open']/@href"/>
-                        </xsl:attribute>
+                    <a href="{links/link[@rel='open']/@href}">
                         <xsl:value-of select="name" />
                     </a>
                 </xsl:when>
@@ -241,6 +202,13 @@
     </xsl:template>
     <xsl:template match="attachment" mode="page">
         <div class="page">
+            <div class="controls">
+                <xsl:if test="links/link[@rel='download']">
+                    <a title="download {name} ({ctype})" href="{links/link[@rel='download']/@href}">
+                        <i class="ico ico-download"><xsl:comment>download</xsl:comment></i>
+                    </a>
+                </xsl:if>
+            </div>
             <xsl:value-of select="html" disable-output-escaping="yes" />
         </div>
     </xsl:template>

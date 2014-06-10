@@ -47,11 +47,7 @@
                 <xsl:text>)</xsl:text>
             </xsl:if>
         </title>
-        <script>
-            <xsl:attribute name="src">
-                <xsl:text>/js/friends.js?</xsl:text>
-                <xsl:value-of select="version/revision"/>
-            </xsl:attribute>
+        <script src="/js/friends.js?{version/revision}">
             <xsl:text> </xsl:text> <!-- this is for W3C compliance -->
         </script>
     </xsl:template>
@@ -78,11 +74,7 @@
         </xsl:choose>
     </xsl:template>
     <xsl:template match="bout">
-        <li class="bout">
-            <xsl:attribute name="id">
-                <xsl:text>bout</xsl:text>
-                <xsl:value-of select="number"/>
-            </xsl:attribute>
+        <li class="bout" id="bout{number}">
             <h1 class="bout">
                 <span>
                     <xsl:attribute name="class">
@@ -94,10 +86,7 @@
                     <xsl:text>#</xsl:text>
                     <xsl:value-of select="number" />
                 </span>
-                <a class="title">
-                    <xsl:attribute name="href">
-                        <xsl:value-of select="links/link[@rel='open']/@href"/>
-                    </xsl:attribute>
+                <a class="title" href="{links/link[@rel='open']/@href}">
                     <xsl:choose>
                         <xsl:when test="title = ''">
                             <xsl:text>(</xsl:text>

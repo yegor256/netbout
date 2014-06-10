@@ -84,6 +84,9 @@
     border-bottom: 1px solid $color-gray2;
     border-right: 1px solid $color-gray2;
     overflow-y: auto;
+    .controls {
+        float: right;
+    }
     p, table, h1 {
         margin-top: .5em;
         margin-bottom: .5em;

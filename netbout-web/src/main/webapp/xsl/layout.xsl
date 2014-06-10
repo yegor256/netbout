@@ -50,12 +50,7 @@
                 <script type="text/javascript" src="//img.netbout.com/supplementary.js">
                     <xsl:text> </xsl:text>
                 </script>
-                <link rel="stylesheet" type="text/css" media="all">
-                    <xsl:attribute name="href">
-                        <xsl:text>/css/style.css?</xsl:text>
-                        <xsl:value-of select="version/revision"/>
-                    </xsl:attribute>
-                </link>
+                <link rel="stylesheet" type="text/css" media="all" href="/css/style.css?{version/revision}"/>
                 <link rel="icon" type="image/gif" href="//img.netbout.com/favicon.ico"/>
                 <xsl:apply-templates select="." mode="head"/>
             </head>
@@ -76,13 +71,7 @@
     <xsl:template name="cap">
         <div class="header">
             <div class="left">
-                <a>
-                    <xsl:attribute name="href">
-                        <xsl:value-of select="/page/links/link[@rel='home']/@href"/>
-                    </xsl:attribute>
-                    <xsl:attribute name="title">
-                        <xsl:value-of select="$TEXTS/back.to.inbox"/>
-                    </xsl:attribute>
+                <a href="{/page/links/link[@rel='home']/@href}" title="{$TEXTS/back.to.inbox}">
                     <img class="logo" alt="netbout logo">
                         <xsl:attribute name="src">
                             <xsl:text>//img.netbout.com/logo/logo-</xsl:text>
@@ -99,17 +88,9 @@
                     </img>
                 </a>
                 <xsl:if test="/page/links/link[@rel='search']">
-                    <form class="search" method="get" role="search">
-                        <xsl:attribute name="action">
-                            <xsl:value-of select="/page/links/link[@rel='search']/@href"/>
-                        </xsl:attribute>
-                        <input name="q" class="search-input" autocomplete="off" size="10" maxlength="120">
-                            <xsl:attribute name="placeholder">
-                                <xsl:value-of select="$TEXTS/Find"/>
-                            </xsl:attribute>
-                            <xsl:attribute name="value">
-                                <xsl:value-of select="/page/query"/>
-                            </xsl:attribute>
+                    <form class="search" method="get" role="search" action="{/page/links/link[@rel='search']/@href}">
+                        <input name="q" class="search-input" autocomplete="off" size="10" maxlength="120"
+                            placeholder="{$TEXTS/Find}" value="{/page/query}">
                             <xsl:if test="/page/query != ''">
                                 <xsl:attribute name="autofocus">
                                     <xsl:text>autofocus</xsl:text>
@@ -132,9 +113,6 @@
                                 </xsl:attribute>
                             </img>
                             <xsl:call-template name="identity"/>
-                            <xsl:if test="identity/@helper='true'">
-                                <xsl:text>&#xA0;(h)</xsl:text>
-                            </xsl:if>
                         </li>
                         <xsl:if test="links/link[@rel='start']">
                             <li>
@@ -161,25 +139,13 @@
                         </xsl:if>
                         <xsl:if test="links/link[@rel='about']">
                             <li>
-                                <a>
-                                    <xsl:attribute name="href">
-                                        <xsl:value-of select="links/link[@rel='about']/@href"/>
-                                    </xsl:attribute>
-                                    <xsl:attribute name="title">
-                                        <xsl:value-of select="$TEXTS/About"/>
-                                    </xsl:attribute>
+                                <a href="{links/link[@rel='about']/@href}" title="{$TEXTS/About}">
                                     <xsl:value-of select="$TEXTS/About"/>
                                 </a>
                             </li>
                         </xsl:if>
                         <li>
-                            <a>
-                                <xsl:attribute name="href">
-                                    <xsl:value-of select="links/link[@rel='rexsl:logout']/@href"/>
-                                </xsl:attribute>
-                                <xsl:attribute name="title">
-                                    <xsl:value-of select="$TEXTS/leave.right.now"/>
-                                </xsl:attribute>
+                            <a href="{links/link[@rel='rexsl:logout']/@href}" title="{$TEXTS/leave.right.now}">
                                 <i class="ico ico-exit"><xsl:comment>exit</xsl:comment></i>
                             </a>
                         </li>
@@ -191,13 +157,7 @@
     <xsl:template name="identity">
         <xsl:choose>
             <xsl:when test="/page/links/link[@rel='profile']">
-                <a>
-                    <xsl:attribute name="href">
-                        <xsl:value-of select="/page/links/link[@rel='profile']/@href"/>
-                    </xsl:attribute>
-                    <xsl:attribute name="title">
-                        <xsl:value-of select="$TEXTS/settings.of.your.profile"/>
-                    </xsl:attribute>
+                <a href="{/page/links/link[@rel='profile']/@href}" title="{$TEXTS/settings.of.your.profile}">
                     <xsl:call-template name="crop">
                         <xsl:with-param name="text" select="/page/alias/alias"/>
                         <xsl:with-param name="length" select="25"/>

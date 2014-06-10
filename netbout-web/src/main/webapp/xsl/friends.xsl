@@ -71,14 +71,7 @@
                     <xsl:value-of select="(position()-1) * 57"/>
                     <xsl:text>px;</xsl:text>
                 </xsl:attribute>
-                <img class="photo">
-                    <xsl:attribute name="alt">
-                        <xsl:value-of select="alias"/>
-                    </xsl:attribute>
-                    <xsl:attribute name="src">
-                        <xsl:value-of select="photo"/>
-                    </xsl:attribute>
-                </img>
+                <img class="photo" alt="{alias}" src="{photo}"/>
             </div>
         </div>
     </xsl:template>
