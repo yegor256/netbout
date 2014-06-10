@@ -46,7 +46,6 @@
                 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
                 <script type="text/javascript" src="//code.jquery.com/jquery-2.1.1-rc1.min.js">
                     <xsl:text> </xsl:text>
-                    <!-- this is for W3C compliance -->
                 </script>
                 <script type="text/javascript">
                     <xsl:attribute name="src">
@@ -58,7 +57,6 @@
                         </xsl:call-template>
                     </xsl:attribute>
                     <xsl:text> </xsl:text>
-                    <!-- this is for W3C compliance -->
                 </script>
                 <link rel="stylesheet" type="text/css" media="all">
                     <xsl:attribute name="href">
@@ -96,7 +94,7 @@
             <div class="left">
                 <a>
                     <xsl:attribute name="href">
-                        <xsl:value-of select="links/link[@rel='home']/@href"/>
+                        <xsl:value-of select="/page/links/link[@rel='home']/@href"/>
                     </xsl:attribute>
                     <xsl:attribute name="title">
                         <xsl:value-of select="$TEXTS/back.to.inbox"/>
