@@ -26,17 +26,14 @@
  * SUCH DAMAGE.
  -->
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
-    xmlns:xs="http://www.w3.org/2001/XMLSchema" version="2.0">
+    xmlns="http://www.w3.org/1999/xhtml" version="2.0">
     <xsl:include href="/xsl/templates.xsl"/>
     <xsl:template match="/">
         <xsl:text disable-output-escaping="yes">&lt;!DOCTYPE html&gt;</xsl:text>
         <xsl:apply-templates select="page"/>
     </xsl:template>
     <xsl:template match="page">
-        <html>
-            <xsl:attribute name="lang">
-                <xsl:value-of select="alias/locale"/>
-            </xsl:attribute>
+        <html lang="en">
             <head>
                 <meta charset="UTF-8"/>
                 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
@@ -46,15 +43,7 @@
                         <xsl:value-of select="version/revision"/>
                     </xsl:attribute>
                 </link>
-                <link rel="icon" type="image/gif">
-                    <xsl:attribute name="href">
-                        <xsl:call-template name="cdn">
-                            <xsl:with-param name="name">
-                                <xsl:text>favicon.ico</xsl:text>
-                            </xsl:with-param>
-                        </xsl:call-template>
-                    </xsl:attribute>
-                </link>
+                <link rel="icon" type="image/gif" href="//img.netbout.com/favicon.ico"/>
                 <script type="text/javascript" src="//code.jquery.com/jquery-2.1.1-rc1.min.js">
                     <xsl:text> </xsl:text>
                     <!-- this is for W3C compliance -->
@@ -63,7 +52,7 @@
             </head>
             <body>
                 <xsl:apply-templates select="version" />
-                <div class="wrapper">
+                <div class="login-wrapper">
                     <div class="login-main">
                         <div>
                             <a>

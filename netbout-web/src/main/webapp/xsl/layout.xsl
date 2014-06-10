@@ -47,15 +47,7 @@
                 <script type="text/javascript" src="//code.jquery.com/jquery-2.1.1-rc1.min.js">
                     <xsl:text> </xsl:text>
                 </script>
-                <script type="text/javascript">
-                    <xsl:attribute name="src">
-                        <xsl:call-template name="cdn">
-                            <xsl:with-param name="name">
-                                <xsl:text>supplementary.js?</xsl:text>
-                                <xsl:value-of select="version/revision"/>
-                            </xsl:with-param>
-                        </xsl:call-template>
-                    </xsl:attribute>
+                <script type="text/javascript" src="//img.netbout.com/supplementary.js">
                     <xsl:text> </xsl:text>
                 </script>
                 <link rel="stylesheet" type="text/css" media="all">
@@ -64,15 +56,7 @@
                         <xsl:value-of select="version/revision"/>
                     </xsl:attribute>
                 </link>
-                <link rel="icon" type="image/gif">
-                    <xsl:attribute name="href">
-                        <xsl:call-template name="cdn">
-                            <xsl:with-param name="name">
-                                <xsl:text>favicon.ico</xsl:text>
-                            </xsl:with-param>
-                        </xsl:call-template>
-                    </xsl:attribute>
-                </link>
+                <link rel="icon" type="image/gif" href="//img.netbout.com/favicon.ico"/>
                 <xsl:apply-templates select="." mode="head"/>
             </head>
             <body>
@@ -101,20 +85,16 @@
                     </xsl:attribute>
                     <img class="logo" alt="netbout logo">
                         <xsl:attribute name="src">
-                            <xsl:call-template name="cdn">
-                                <xsl:with-param name="name">
-                                    <xsl:text>logo/logo-</xsl:text>
-                                    <xsl:choose>
-                                        <xsl:when test="/page/alias/locale">
-                                            <xsl:value-of select="/page/alias/locale"/>
-                                        </xsl:when>
-                                        <xsl:otherwise>
-                                            <xsl:text>en</xsl:text>
-                                        </xsl:otherwise>
-                                    </xsl:choose>
-                                    <xsl:text>.svg</xsl:text>
-                                </xsl:with-param>
-                            </xsl:call-template>
+                            <xsl:text>//img.netbout.com/logo/logo-</xsl:text>
+                            <xsl:choose>
+                                <xsl:when test="/page/alias/locale">
+                                    <xsl:value-of select="/page/alias/locale"/>
+                                </xsl:when>
+                                <xsl:otherwise>
+                                    <xsl:text>en</xsl:text>
+                                </xsl:otherwise>
+                            </xsl:choose>
+                            <xsl:text>.svg</xsl:text>
                         </xsl:attribute>
                     </img>
                 </a>

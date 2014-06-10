@@ -64,10 +64,10 @@
             display: inline;
             margin-right: 10px;
         }
-        li.active {
+        .active {
             font-weight: bold;
         }
-        li.unseen {
+        .unseen {
             @extend .red;
         }
     }
