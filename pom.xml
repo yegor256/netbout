@@ -47,7 +47,7 @@
     <parent>
         <groupId>com.jcabi</groupId>
         <artifactId>parent</artifactId>
-        <version>0.21</version>
+        <version>0.22</version>
     </parent>
     <groupId>com.netbout</groupId>
     <artifactId>netbout</artifactId>
@@ -115,7 +115,7 @@
             <dependency>
                 <groupId>xml-apis</groupId>
                 <artifactId>xml-apis</artifactId>
-                <version>1.4.01</version>
+                <version>1.4.01</version> <!-- don't change it, keep 1.4.01 -->
                 <scope>provided</scope>
             </dependency>
             <dependency>

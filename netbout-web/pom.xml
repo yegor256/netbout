@@ -65,17 +65,17 @@
         <dependency>
             <groupId>com.amazonaws</groupId>
             <artifactId>aws-java-sdk</artifactId>
-            <version>1.7.9</version>
+            <version>1.7.13</version>
         </dependency>
         <dependency>
             <groupId>com.jcabi</groupId>
             <artifactId>jcabi-dynamo</artifactId>
-            <version>0.15.1</version>
+            <version>0.15.2</version>
         </dependency>
         <dependency>
             <groupId>co.stateful</groupId>
             <artifactId>java-sdk</artifactId>
-            <version>0.7</version>
+            <version>0.8.1</version>
         </dependency>
         <dependency>
             <groupId>org.ocpsoft.prettytime</groupId>
@@ -89,7 +89,7 @@
         <dependency>
             <groupId>com.jcabi</groupId>
             <artifactId>jcabi-http</artifactId>
-            <version>1.5.1</version>
+            <version>1.5.2</version>
         </dependency>
         <dependency>
             <groupId>org.hamcrest</groupId>
@@ -134,7 +134,7 @@
         <dependency>
             <groupId>org.markdownj</groupId>
             <artifactId>markdownj</artifactId>
-            <version>0.3.0-1.0.2b4</version>
+            <version>0.3.0-1.0.2b4</version> <!-- don't change, keep 0.3.0-1.0.2b4 -->
         </dependency>
         <dependency>
             <groupId>net.sf.jtidy</groupId>
@@ -155,7 +155,7 @@
         <dependency>
             <groupId>com.sun.grizzly</groupId>
             <artifactId>grizzly-servlet-webserver</artifactId>
-            <version>1.9.59</version>
+            <version>1.9.60</version>
             <scope>test</scope>
         </dependency>
         <dependency>
