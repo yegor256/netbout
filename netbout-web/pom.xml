@@ -70,7 +70,7 @@
         <dependency>
             <groupId>com.jcabi</groupId>
             <artifactId>jcabi-dynamo</artifactId>
-            <version>0.15.2</version>
+            <version>0.15.3</version>
         </dependency>
         <dependency>
             <groupId>co.stateful</groupId>
