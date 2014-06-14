@@ -24,66 +24,29 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.spi;
+package com.netbout.rest;
 
-import com.jcabi.aspects.Immutable;
-import java.io.IOException;
+import org.hamcrest.MatcherAssert;
+import org.hamcrest.Matchers;
+import org.junit.Test;
 
 /**
- * Alias.
- *
+ * Test case for {@link FaviconRs}.
  * @author Yegor Bugayenko (yegor@tpc2.com)
  * @version $Id$
- * @since 2.0
+ * @since 2.7
  */
-@Immutable
-public interface Inbox extends Pageable<Bout> {
+public final class FaviconRsTest {
 
     /**
-     * Start new bout.
-     * @return Bout number
-     * @throws IOException If fails
+     * FaviconRs can build a GIF image.
+     * @throws Exception If there is some problem inside
      */
-    long start() throws IOException;
-
-    /**
-     * How many unread messages are in total, in this inbox?
-     * @return Number of them
-     * @throws IOException If fails
-     */
-    long unread() throws IOException;
-
-    /**
-     * Get bout by its number.
-     * @param number Bout number
-     * @return Bout found
-     * @throws Inbox.BoutNotFoundException If not found
-     */
-    Bout bout(long number) throws Inbox.BoutNotFoundException;
-
-    /**
-     * Thowable when bout is not found.
-     * @see Inbox#bout(long)
-     */
-    class BoutNotFoundException extends IOException {
-        /**
-         * Serialization marker.
-         */
-        private static final long serialVersionUID = 0x7526FA78EED21470L;
-        /**
-         * Public ctor.
-         * @param num The number of bout not found
-         */
-        public BoutNotFoundException(final long num) {
-            super(String.format("Bout #%d not found", num));
-        }
-        /**
-         * Public ctor.
-         * @param num The number of bout not found
-         * @param cause Cause of it
-         */
-        public BoutNotFoundException(final long num, final Throwable cause) {
-            super(String.format("bout #%d not found", num), cause);
-        }
+    @Test
+    public void buildsGifImage() throws Exception {
+        final FaviconRs rest = new FaviconRs();
+        final byte[] bytes = rest.gif(44L);
+        MatcherAssert.assertThat(bytes, Matchers.notNullValue());
     }
+
 }

@@ -73,4 +73,22 @@ public final class DyInboxITCase {
         );
     }
 
+    /**
+     * DyInbox can count unread messages.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void countsUnreadMessages() throws Exception {
+        final String alias = "sarah";
+        final Aliases aliases =
+            new DyBase().user(new URN("urn:test:88026")).aliases();
+        aliases.add(alias);
+        final Inbox inbox = aliases.iterate().iterator().next().inbox();
+        inbox.start();
+        MatcherAssert.assertThat(
+            inbox.unread(),
+            Matchers.equalTo(0L)
+        );
+    }
+
 }

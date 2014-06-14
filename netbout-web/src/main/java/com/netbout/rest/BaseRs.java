@@ -179,6 +179,38 @@ public class BaseRs extends BaseResource {
     }
 
     /**
+     * Alias link.
+     * @return The inset
+     */
+    @Inset.Runtime
+    public final Inset faviconLink() throws IOException {
+        final long unread;
+        if (this.identified()) {
+            unread = this.alias().inbox().unread();
+        } else {
+            unread = -1L;
+        }
+        return new Inset() {
+            @Override
+            public void render(final BasePage<?, ?> page,
+                final Response.ResponseBuilder builder) {
+                if (BaseRs.this.identified()) {
+                    page.link(
+                        new Link(
+                            "favicon",
+                            BaseRs.this.uriInfo().getBaseUriBuilder()
+                                .clone()
+                                .path(FaviconRs.class)
+                                .queryParam("unread", Long.toString(unread))
+                                .build()
+                        )
+                    );
+                }
+            }
+        };
+    }
+
+    /**
      * Authentication inset.
      * @return The inset
      */

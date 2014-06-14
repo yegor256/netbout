@@ -89,6 +89,11 @@ final class MkInbox implements Inbox {
     }
 
     @Override
+    public long unread() {
+        return 0L;
+    }
+
+    @Override
     public Bout bout(final long number) throws Inbox.BoutNotFoundException {
         final boolean exists;
         try {

@@ -45,6 +45,7 @@ import com.netbout.spi.Bout;
 import com.netbout.spi.Inbox;
 import com.netbout.spi.Pageable;
 import java.io.IOException;
+import java.util.Iterator;
 import java.util.NoSuchElementException;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
@@ -108,6 +109,29 @@ final class DyInbox implements Inbox {
                 .with(DyFriends.ATTR_TITLE, "untitled")
         );
         return number;
+    }
+
+    @Override
+    public long unread() throws IOException {
+        final Iterator<Item> items = this.region.table(DyFriends.TBL)
+            .frame()
+            .where(DyFriends.RANGE, this.self)
+            .through(
+                new QueryValve()
+                    .withIndexName(DyFriends.INDEX)
+                    .withConsistentRead(false)
+                    .withSelect(Select.SPECIFIC_ATTRIBUTES)
+                    .withAttributesToGet(DyFriends.ATTR_UNREAD)
+                    .withScanIndexForward(false)
+            )
+            .iterator();
+        long unread = 0L;
+        while (items.hasNext()) {
+            unread += Long.parseLong(
+                items.next().get(DyFriends.ATTR_UNREAD).getN()
+            );
+        }
+        return unread;
     }
 
     @Override

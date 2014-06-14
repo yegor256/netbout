@@ -71,6 +71,11 @@ public final class CdInbox implements Inbox {
     }
 
     @Override
+    public long unread() throws IOException {
+        return this.origin.unread();
+    }
+
+    @Override
     @Cacheable
     public Bout bout(final long number) throws Inbox.BoutNotFoundException {
         return new CdBout(this.origin.bout(number));

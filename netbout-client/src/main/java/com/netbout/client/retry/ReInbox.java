@@ -72,6 +72,12 @@ public final class ReInbox implements Inbox {
 
     @Override
     @RetryOnFailure(verbose = false)
+    public long unread() throws IOException {
+        return this.origin.unread();
+    }
+
+    @Override
+    @RetryOnFailure(verbose = false)
     public Bout bout(final long number) throws BoutNotFoundException {
         return new ReBout(this.origin.bout(number));
     }

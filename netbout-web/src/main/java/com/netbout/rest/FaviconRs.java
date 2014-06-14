@@ -24,66 +24,32 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.spi;
+package com.netbout.rest;
 
-import com.jcabi.aspects.Immutable;
-import java.io.IOException;
+import javax.ws.rs.GET;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
 
 /**
- * Alias.
+ * Favicon rendering.
  *
  * @author Yegor Bugayenko (yegor@tpc2.com)
  * @version $Id$
- * @since 2.0
+ * @since 2.7
  */
-@Immutable
-public interface Inbox extends Pageable<Bout> {
+@Path("/favicon.ico")
+public final class FaviconRs extends BaseRs {
 
     /**
-     * Start new bout.
-     * @return Bout number
-     * @throws IOException If fails
+     * Get icon in GIF format.
+     * @param unread Number of unread messages
+     * @return The image binary
      */
-    long start() throws IOException;
-
-    /**
-     * How many unread messages are in total, in this inbox?
-     * @return Number of them
-     * @throws IOException If fails
-     */
-    long unread() throws IOException;
-
-    /**
-     * Get bout by its number.
-     * @param number Bout number
-     * @return Bout found
-     * @throws Inbox.BoutNotFoundException If not found
-     */
-    Bout bout(long number) throws Inbox.BoutNotFoundException;
-
-    /**
-     * Thowable when bout is not found.
-     * @see Inbox#bout(long)
-     */
-    class BoutNotFoundException extends IOException {
-        /**
-         * Serialization marker.
-         */
-        private static final long serialVersionUID = 0x7526FA78EED21470L;
-        /**
-         * Public ctor.
-         * @param num The number of bout not found
-         */
-        public BoutNotFoundException(final long num) {
-            super(String.format("Bout #%d not found", num));
-        }
-        /**
-         * Public ctor.
-         * @param num The number of bout not found
-         * @param cause Cause of it
-         */
-        public BoutNotFoundException(final long num, final Throwable cause) {
-            super(String.format("bout #%d not found", num), cause);
-        }
+    @GET
+    @Produces("image/gif")
+    public byte[] gif(@PathParam("unread") final Long unread) {
+        return new byte[0];
     }
+
 }
