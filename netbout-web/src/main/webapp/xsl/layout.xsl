@@ -51,7 +51,7 @@
                     <xsl:text> </xsl:text>
                 </script>
                 <link rel="stylesheet" type="text/css" media="all" href="/css/style.css?{version/revision}"/>
-                <link rel="shortcut icon" type="image/png" href="{links/link[@rel='icon']/@href}"/>
+                <link rel="shortcut icon" type="image/png" href="{links/link[@rel='favicon']/@href}"/>
                 <xsl:apply-templates select="." mode="head"/>
             </head>
             <body>

@@ -39,6 +39,7 @@
         <link href="/xml/inbox.xml" rel="home" />
         <link href="/xml/login.xml" rel="self" />
         <link href="/xml/start.xml" rel="start" />
+        <link href="/favicon.ico" rel="favicon" />
     </links>
     <millis>0</millis>
 </page>

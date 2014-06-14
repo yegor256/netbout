@@ -37,16 +37,10 @@
             <head>
                 <meta charset="UTF-8"/>
                 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-                <link rel="stylesheet" type="text/css" media="all">
-                    <xsl:attribute name="href">
-                        <xsl:text>/css/style.css?</xsl:text>
-                        <xsl:value-of select="version/revision"/>
-                    </xsl:attribute>
-                </link>
-                <link rel="icon" type="image/gif" href="//img.netbout.com/favicon.ico"/>
+                <link rel="stylesheet" type="text/css" media="all" href="/css/style.css?{version/revision}"/>
+                <link rel="shortcut icon" type="image/png" href="{links/link[@rel='favicon']/@href}"/>
                 <script type="text/javascript" src="//code.jquery.com/jquery-2.1.1-rc1.min.js">
                     <xsl:text> </xsl:text>
-                    <!-- this is for W3C compliance -->
                 </script>
                 <xsl:apply-templates select="." mode="head"/>
             </head>
@@ -55,19 +49,8 @@
                 <div class="login-wrapper">
                     <div class="login-main">
                         <div>
-                            <a>
-                                <xsl:attribute name="href">
-                                    <xsl:value-of select="links/link[@rel='home']/@href"/>
-                                </xsl:attribute>
-                                <xsl:attribute name="title">
-                                    <xsl:text>back home</xsl:text>
-                                </xsl:attribute>
-                                <img class="login-logo" alt="back home">
-                                    <xsl:attribute name="src">
-                                        <xsl:text>//img.netbout.com/logo.svg?</xsl:text>
-                                        <xsl:value-of select="version/revision"/>
-                                    </xsl:attribute>
-                                </img>
+                            <a href="{links/link[@rel='home']/@href}" title="back home">
+                                <img class="login-logo" alt="back home" src="//img.netbout.com/logo.svg?{version/revision}"/>
                             </a>
                         </div>
                         <xsl:apply-templates select="message[text() != '']"/>

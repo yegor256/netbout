@@ -26,6 +26,14 @@
  */
 package com.netbout.rest;
 
+import com.jcabi.aspects.Tv;
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.Graphics;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import javax.imageio.ImageIO;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -45,11 +53,34 @@ public final class FaviconRs extends BaseRs {
      * Get icon in GIF format.
      * @param unread Number of unread messages
      * @return The image binary
+     * @throws IOException If fails
      */
     @GET
     @Produces("image/gif")
-    public byte[] gif(@PathParam("unread") final Long unread) {
-        return new byte[0];
+    public byte[] gif(@PathParam("unread") final Long unread)
+        throws IOException {
+        final int width = 64;
+        final int height = 64;
+        final BufferedImage image = new BufferedImage(
+            width, height, BufferedImage.TYPE_INT_RGB
+        );
+        final Graphics graph = image.getGraphics();
+        graph.setColor(new Color(0x4b, 0x42, 0x50));
+        graph.fillRect(0, 0, width, height);
+        if (unread > 0L) {
+            final String text;
+            if (unread >= (long) Tv.HUNDRED) {
+                text = "99+";
+            } else {
+                text = Long.toString(unread);
+            }
+            graph.setColor(Color.WHITE);
+            graph.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, height / 2));
+            graph.drawString(text, width / Tv.TEN, height - height / Tv.TEN);
+        }
+        final ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        ImageIO.write(image, "gif", baos);
+        return baos.toByteArray();
     }
 
 }
