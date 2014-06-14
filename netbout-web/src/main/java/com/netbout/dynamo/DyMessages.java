@@ -35,6 +35,7 @@ import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
 import com.jcabi.aspects.Async;
+import com.jcabi.aspects.Cacheable;
 import com.jcabi.aspects.Immutable;
 import com.jcabi.aspects.Loggable;
 import com.jcabi.dynamo.AttributeUpdates;
@@ -123,17 +124,24 @@ final class DyMessages implements Messages {
      * @param slf Self alias
      */
     DyMessages(final Region reg, final long num, final String slf) {
-        try {
-            this.counter = RtSttc.make(
-                URN.create(Manifests.read("Netbout-SttcUrn")),
-                Manifests.read("Netbout-SttcToken")
-            ).counters().get("nb-message");
-        } catch (final IOException ex) {
-            throw new IllegalStateException(ex);
-        }
+        this(reg, num, slf, DyMessages.sttc());
+    }
+
+    /**
+     * Ctor.
+     * @param reg Region
+     * @param num Bout number
+     * @param slf Self alias
+     * @param ctr Counter
+     * @since 2.7.1
+     * @checkstyle ParameterNumberCheck (5 lines)
+     */
+    DyMessages(final Region reg, final long num, final String slf,
+        final Counter ctr) {
         this.region = reg;
         this.bout = num;
         this.self = slf;
+        this.counter = ctr;
     }
 
     @Override
@@ -259,6 +267,22 @@ final class DyMessages implements Messages {
                 }
             }
         );
+    }
+
+    /**
+     * Sttc counter.
+     * @return Counter
+     */
+    @Cacheable(forever = true)
+    private static Counter sttc() {
+        try {
+            return RtSttc.make(
+                URN.create(Manifests.read("Netbout-SttcUrn")),
+                Manifests.read("Netbout-SttcToken")
+            ).counters().get("nb-message");
+        } catch (final IOException ex) {
+            throw new IllegalStateException(ex);
+        }
     }
 
 }

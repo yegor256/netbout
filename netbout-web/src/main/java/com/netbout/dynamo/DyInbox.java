@@ -28,10 +28,10 @@ package com.netbout.dynamo;
 
 import co.stateful.Counter;
 import co.stateful.RtSttc;
-import co.stateful.retry.ReSttc;
 import com.amazonaws.services.dynamodbv2.model.Select;
 import com.google.common.base.Function;
 import com.google.common.collect.Iterables;
+import com.jcabi.aspects.Cacheable;
 import com.jcabi.aspects.Immutable;
 import com.jcabi.aspects.Loggable;
 import com.jcabi.dynamo.Attributes;
@@ -83,18 +83,20 @@ final class DyInbox implements Inbox {
      * @param slf My alias
      */
     DyInbox(final Region reg, final String slf) {
-        try {
-            this.counter = new ReSttc(
-                RtSttc.make(
-                    URN.create(Manifests.read("Netbout-SttcUrn")),
-                    Manifests.read("Netbout-SttcToken")
-                )
-            ).counters().get("nb-bout");
-        } catch (final IOException ex) {
-            throw new IllegalStateException(ex);
-        }
+        this(reg, slf, DyInbox.sttc());
+    }
+
+    /**
+     * Ctor.
+     * @param reg Region we're in
+     * @param slf My alias
+     * @param ctr Counter
+     * @since 2.7.1
+     */
+    DyInbox(final Region reg, final String slf, final Counter ctr) {
         this.region = reg;
         this.self = slf;
+        this.counter = ctr;
     }
 
     @Override
@@ -136,9 +138,11 @@ final class DyInbox implements Inbox {
                         .withScanIndexForward(false)
                 );
             for (final Item item : items) {
-                unread += Long.parseLong(
-                    item.get(DyFriends.ATTR_UNREAD).getN()
-                );
+                if (item.has(DyFriends.ATTR_UNREAD)) {
+                    unread += Long.parseLong(
+                        item.get(DyFriends.ATTR_UNREAD).getN()
+                    );
+                }
             }
         }
         return unread;
@@ -199,4 +203,21 @@ final class DyInbox implements Inbox {
             }
         );
     }
+
+    /**
+     * Sttc counter.
+     * @return Counter
+     */
+    @Cacheable(forever = true)
+    private static Counter sttc() {
+        try {
+            return RtSttc.make(
+                URN.create(Manifests.read("Netbout-SttcUrn")),
+                Manifests.read("Netbout-SttcToken")
+            ).counters().get("nb-bout");
+        } catch (final IOException ex) {
+            throw new IllegalStateException(ex);
+        }
+    }
+
 }
