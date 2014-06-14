@@ -34,10 +34,11 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import javax.imageio.ImageIO;
+import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 
 /**
  * Favicon rendering.
@@ -57,7 +58,8 @@ public final class FaviconRs extends BaseRs {
      */
     @GET
     @Produces("image/gif")
-    public byte[] gif(@PathParam("unread") final Long unread)
+    public byte[] gif(@QueryParam("unread") @DefaultValue("0")
+        final Long unread)
         throws IOException {
         final int width = 64;
         final int height = 64;
@@ -68,15 +70,15 @@ public final class FaviconRs extends BaseRs {
         // @checkstyle MagicNumber (1 line)
         graph.setColor(new Color(0x4b, 0x42, 0x50));
         graph.fillRect(0, 0, width, height);
-        if (unread > 0L) {
+        if (unread != null && unread > 0L) {
             final String text;
             if (unread >= (long) Tv.HUNDRED) {
-                text = "99+";
+                text = "99";
             } else {
                 text = Long.toString(unread);
             }
             graph.setColor(Color.WHITE);
-            graph.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, height / 2));
+            graph.setFont(new Font(Font.SANS_SERIF, Font.BOLD, height / 2));
             graph.drawString(
                 text,
                 width - width / Tv.TEN

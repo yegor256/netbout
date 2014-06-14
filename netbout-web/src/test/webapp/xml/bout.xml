@@ -48,7 +48,7 @@
         <link href="/xml/bout.xml" rel="rename" />
         <link href="/xml/bout.xml" rel="attach" />
         <link href="/" rel="rexsl:logout" />
-        <link href="/favicon.ico?unread=8" rel="favicon" />
+        <link href="/favicon.ico?unread=17" rel="favicon" />
     </links>
     <identity>
         <urn>urn:facebook:12345678</urn>

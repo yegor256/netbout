@@ -47,7 +47,7 @@
                 <script type="text/javascript" src="//code.jquery.com/jquery-2.1.1-rc1.min.js">
                     <xsl:text> </xsl:text>
                 </script>
-                <script type="text/javascript" src="//img.netbout.com/supplementary.js">
+                <script type="text/javascript" src="/js/supplementary.js?{version/revision}">
                     <xsl:text> </xsl:text>
                 </script>
                 <link rel="stylesheet" type="text/css" media="all" href="/css/style.css?{version/revision}"/>
