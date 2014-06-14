@@ -181,6 +181,7 @@ public class BaseRs extends BaseResource {
     /**
      * Alias link.
      * @return The inset
+     * @throws IOException If fails
      */
     @Inset.Runtime
     public final Inset faviconLink() throws IOException {

@@ -47,7 +47,7 @@ public final class DyBoutITCase {
      */
     @Test
     public void renamesBout() throws Exception {
-        final String alias = "sarah";
+        final String alias = "sandra";
         final Aliases aliases =
             new DyBase().user(new URN("urn:test:890")).aliases();
         aliases.add(alias);

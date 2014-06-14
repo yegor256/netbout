@@ -65,6 +65,7 @@ public final class FaviconRs extends BaseRs {
             width, height, BufferedImage.TYPE_INT_RGB
         );
         final Graphics graph = image.getGraphics();
+        // @checkstyle MagicNumber (1 line)
         graph.setColor(new Color(0x4b, 0x42, 0x50));
         graph.fillRect(0, 0, width, height);
         if (unread > 0L) {

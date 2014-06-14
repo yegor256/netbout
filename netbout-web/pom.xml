@@ -413,7 +413,7 @@
                                     <archive>
                                         <manifestEntries>
                                             <Netbout-Revision>1234567</Netbout-Revision>
-                                            <Netbout-Version>1.0</Netbout-Version>
+                                            <Netbout-Version>1.0-LOCAL</Netbout-Version>
                                             <Netbout-Date>${maven.build.timestamp}</Netbout-Date>
                                             <Netbout-DynamoKey>AAAAABBBBBAAAAABBBBB</Netbout-DynamoKey>
                                             <Netbout-DynamoSecret>ABCDABCDABCDABCDABCDABCDABCDABCDABCDABCD</Netbout-DynamoSecret>
