@@ -11,6 +11,14 @@
         {
             "AttributeName": "updated",
             "AttributeType": "N"
+        },
+        {
+            "AttributeName": "unread",
+            "AttributeType": "N"
+        },
+        {
+            "AttributeName": "unseen",
+            "AttributeType": "N"
         }
     ],
     "KeySchema": [

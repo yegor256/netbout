@@ -76,7 +76,12 @@ public final class FaviconRs extends BaseRs {
             }
             graph.setColor(Color.WHITE);
             graph.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, height / 2));
-            graph.drawString(text, width / Tv.TEN, height - height / Tv.TEN);
+            graph.drawString(
+                text,
+                width - width / Tv.TEN
+                    - graph.getFontMetrics().stringWidth(text),
+                height - height / Tv.TEN
+            );
         }
         final ByteArrayOutputStream baos = new ByteArrayOutputStream();
         ImageIO.write(image, "gif", baos);

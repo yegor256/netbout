@@ -50,6 +50,7 @@ public interface Inbox extends Pageable<Bout> {
      * How many unread messages are in total, in this inbox?
      * @return Number of them
      * @throws IOException If fails
+     * @since 2.7
      */
     long unread() throws IOException;
 
