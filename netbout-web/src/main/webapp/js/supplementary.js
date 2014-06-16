@@ -76,7 +76,7 @@ if (!window.qbaka) {
         };
     }(window, document));
 }
-window.qbaka.options = {autoStacktrace: 1, trackEvents: 1};
+qbaka.options = {autoStacktrace: 1, trackEvents: 1};
 
 // Pingdom RUM
 var _prum = [['id', '5289f7aaabe53def32000000'], ['mark', 'firstbyte', (new Date()).getTime()]];
