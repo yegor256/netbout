@@ -42,8 +42,10 @@ import com.jcabi.dynamo.Region;
 import com.netbout.spi.Attachment;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.HttpURLConnection;
 import java.util.HashSet;
 import java.util.Set;
+import javax.ws.rs.WebApplicationException;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 import org.apache.commons.io.IOUtils;
@@ -123,13 +125,22 @@ final class DyAttachment implements Attachment {
     @Override
     public void write(final InputStream stream,
         final String ctype) throws IOException {
+        final String data = IOUtils.toString(stream, CharEncoding.UTF_8);
+        if (data.isEmpty()) {
+            throw new WebApplicationException(
+                new IllegalArgumentException(
+                    String.format(
+                        "content of attachment '%s' can't be empty",
+                        this.name()
+                    )
+                ),
+                HttpURLConnection.HTTP_BAD_REQUEST
+            );
+        }
         this.item.put(
             new AttributeUpdates()
                 .with(DyAttachments.ATTR_CTYPE, ctype)
-                .with(
-                    DyAttachments.ATTR_DATA,
-                    IOUtils.toString(stream, CharEncoding.UTF_8)
-                )
+                .with(DyAttachments.ATTR_DATA, data)
         );
         this.updated();
     }
