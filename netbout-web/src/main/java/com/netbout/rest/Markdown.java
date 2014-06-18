@@ -28,7 +28,6 @@ package com.netbout.rest;
 
 import com.jcabi.aspects.Immutable;
 import com.jcabi.log.Logger;
-import com.petebevin.markdown.MarkdownProcessor;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -36,6 +35,7 @@ import java.util.logging.Level;
 import javax.validation.constraints.NotNull;
 import org.apache.commons.codec.CharEncoding;
 import org.apache.commons.io.IOUtils;
+import org.pegdown.PegDownProcessor;
 import org.w3c.tidy.Tidy;
 
 /**
@@ -75,7 +75,7 @@ public final class Markdown {
     public String html() {
         synchronized (Markdown.TIDY) {
             return Markdown.clean(
-                new MarkdownProcessor().markdown(this.text)
+                new PegDownProcessor().markdownToHtml(this.text)
             );
         }
     }
