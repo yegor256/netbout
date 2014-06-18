@@ -88,6 +88,11 @@ final class DyAttachments implements Attachments {
     public static final String ATTR_DATA = "data";
 
     /**
+     * S3 key.
+     */
+    public static final String ATTR_KEY = "s3";
+
+    /**
      * Region to work with.
      */
     private final transient Region region;

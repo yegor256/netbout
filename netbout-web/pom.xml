@@ -35,7 +35,7 @@
     <parent>
         <groupId>com.netbout</groupId>
         <artifactId>netbout</artifactId>
-        <version>2.7.5</version>
+        <version>2.8</version>
     </parent>
     <artifactId>netbout-web</artifactId>
     <name>netbout-web</name>
@@ -66,6 +66,11 @@
             <groupId>com.amazonaws</groupId>
             <artifactId>aws-java-sdk</artifactId>
             <version>1.7.13</version>
+        </dependency>
+        <dependency>
+            <groupId>com.jcabi</groupId>
+            <artifactId>jcabi-s3</artifactId>
+            <version>0.6</version>
         </dependency>
         <dependency>
             <groupId>com.jcabi</groupId>
@@ -255,6 +260,9 @@
                             <Netbout-SecurityKey>${security.key}</Netbout-SecurityKey>
                             <Netbout-SttcUrn>${sttc.urn}</Netbout-SttcUrn>
                             <Netbout-SttcToken>${sttc.token}</Netbout-SttcToken>
+                            <Netbout-S3Key>${s3.key}</Netbout-S3Key>
+                            <Netbout-S3Secret>${s3.secret}</Netbout-S3Secret>
+                            <Netbout-S3Bucket>${s3.bucket}</Netbout-S3Bucket>
                         </manifestEntries>
                     </archive>
                     <webResources combine.children="append">
@@ -428,6 +436,9 @@
                                             <Netbout-SecurityKey>test</Netbout-SecurityKey>
                                             <Netbout-SttcUrn>urn:test:1</Netbout-SttcUrn>
                                             <Netbout-SttcToken>test</Netbout-SttcToken>
+                                            <Netbout-S3Key>test</Netbout-S3Key>
+                                            <Netbout-S3Secret>test</Netbout-S3Secret>
+                                            <Netbout-S3Bucket>test</Netbout-S3Bucket>
                                         </manifestEntries>
                                     </archive>
                                 </configuration>

@@ -29,9 +29,11 @@ package com.netbout.dynamo;
 import com.amazonaws.services.dynamodbv2.model.AttributeAction;
 import com.amazonaws.services.dynamodbv2.model.AttributeValue;
 import com.amazonaws.services.dynamodbv2.model.AttributeValueUpdate;
+import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
 import com.jcabi.aspects.Async;
+import com.jcabi.aspects.Cacheable;
 import com.jcabi.aspects.Immutable;
 import com.jcabi.aspects.Loggable;
 import com.jcabi.dynamo.AttributeUpdates;
@@ -39,17 +41,22 @@ import com.jcabi.dynamo.Conditions;
 import com.jcabi.dynamo.Item;
 import com.jcabi.dynamo.QueryValve;
 import com.jcabi.dynamo.Region;
+import com.jcabi.manifests.Manifests;
+import com.jcabi.s3.Bucket;
+import com.jcabi.s3.mock.MkRegion;
 import com.netbout.spi.Attachment;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
+import java.nio.ByteBuffer;
 import java.util.HashSet;
 import java.util.Set;
 import javax.ws.rs.WebApplicationException;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang3.CharEncoding;
 
 /**
  * Dynamo attachment.
@@ -64,6 +71,16 @@ import org.apache.commons.lang3.CharEncoding;
 @EqualsAndHashCode(of = { "region", "item", "self" })
 @SuppressWarnings("PMD.TooManyMethods")
 final class DyAttachment implements Attachment {
+
+    /**
+     * Maximum size to store in DynamoDB.
+     */
+    private static final int MAX_SIZE = 50000;
+
+    /**
+     * Bucket with attachments.
+     */
+    private final transient Bucket bucket;
 
     /**
      * Region we're in.
@@ -87,7 +104,21 @@ final class DyAttachment implements Attachment {
      * @param slf Self alias
      */
     DyAttachment(final Region reg, final Item itm, final String slf) {
+        this(reg, DyAttachment.storage(), itm, slf);
+    }
+
+    /**
+     * Ctor.
+     * @param reg Region
+     * @param bkt Bucket
+     * @param itm Item
+     * @param slf Self alias
+     * @since 2.8
+     */
+    DyAttachment(final Region reg, final Bucket bkt,
+        final Item itm, final String slf) {
         this.region = reg;
+        this.bucket = bkt;
         this.item = itm;
         this.self = slf;
     }
@@ -116,17 +147,24 @@ final class DyAttachment implements Attachment {
     @Override
     public InputStream read() throws IOException {
         this.seen();
-        return IOUtils.toInputStream(
-            this.item.get(DyAttachments.ATTR_DATA).getS(),
-            CharEncoding.UTF_8
-        );
+        final byte[] bytes;
+        if (this.item.has(DyAttachments.ATTR_KEY)) {
+            final ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            this.bucket.ocket(
+                this.item.get(DyAttachments.ATTR_KEY).getS()
+            ).read(baos);
+            bytes = baos.toByteArray();
+        } else {
+            bytes = this.item.get(DyAttachments.ATTR_DATA).getB().array();
+        }
+        return new ByteArrayInputStream(bytes);
     }
 
     @Override
     public void write(final InputStream stream,
         final String ctype) throws IOException {
-        final String data = IOUtils.toString(stream, CharEncoding.UTF_8);
-        if (data.isEmpty()) {
+        final byte[] data = IOUtils.toByteArray(stream);
+        if (data.length == 0) {
             throw new WebApplicationException(
                 new IllegalArgumentException(
                     String.format(
@@ -137,11 +175,48 @@ final class DyAttachment implements Attachment {
                 HttpURLConnection.HTTP_BAD_REQUEST
             );
         }
-        this.item.put(
-            new AttributeUpdates()
-                .with(DyAttachments.ATTR_CTYPE, ctype)
-                .with(DyAttachments.ATTR_DATA, data)
-        );
+        AttributeUpdates updates = new AttributeUpdates()
+            .with(DyAttachments.ATTR_CTYPE, ctype);
+        if (data.length < DyAttachment.MAX_SIZE) {
+            if (this.item.has(DyAttachments.ATTR_KEY)) {
+                this.bucket.remove(
+                    this.item.get(DyAttachments.ATTR_KEY).getS()
+                );
+            }
+            updates = updates
+                .with(
+                    DyAttachments.ATTR_DATA,
+                    new AttributeValue().withB(ByteBuffer.wrap(data))
+                )
+                .with(
+                    DyAttachments.ATTR_KEY,
+                    new AttributeValueUpdate().withAction(
+                        AttributeAction.DELETE
+                    )
+                );
+        } else {
+            final String key;
+            if (this.item.has(DyAttachments.ATTR_KEY)) {
+                key = this.item.get(DyAttachments.ATTR_KEY).getS();
+            } else {
+                key = String.format(
+                    "%d/%s",
+                    Long.parseLong(this.item.get(DyAttachments.HASH).getN()),
+                    this.item.get(DyAttachments.RANGE).getS()
+                );
+                final ObjectMetadata meta = new ObjectMetadata();
+                meta.setContentType(ctype);
+                meta.setContentLength((long) data.length);
+                this.bucket.ocket(key).write(
+                    new ByteArrayInputStream(data),
+                    meta
+                );
+            }
+            updates = updates
+                .with(DyAttachments.ATTR_DATA, "s3")
+                .with(DyAttachments.ATTR_KEY, key);
+        }
+        this.item.put(updates);
         this.updated();
     }
 
@@ -262,6 +337,25 @@ final class DyAttachment implements Attachment {
             list.addAll(itm.get(DyFriends.ATTR_UNSEEN).getSS());
         }
         return list;
+    }
+
+    /**
+     * S3 Bucket storage.
+     * @return Bucket
+     */
+    @Cacheable(forever = true)
+    private static Bucket storage() {
+        final String key = Manifests.read("Netbout-S3Key");
+        final com.jcabi.s3.Region region;
+        if (key.matches("[0-9A-Z]{20}")) {
+            region = new com.jcabi.s3.Region.Simple(
+                Manifests.read("Netbout-S3Key"),
+                Manifests.read("Netbout-S3Secret")
+            );
+        } else {
+            region = new MkRegion();
+        }
+        return region.bucket(Manifests.read("Netbout-S3Bucket"));
     }
 
 }
