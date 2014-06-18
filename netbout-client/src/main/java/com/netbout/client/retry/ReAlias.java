@@ -29,11 +29,13 @@ package com.netbout.client.retry;
 import com.jcabi.aspects.Immutable;
 import com.jcabi.aspects.Loggable;
 import com.jcabi.aspects.RetryOnFailure;
+import com.jcabi.aspects.Tv;
 import com.netbout.spi.Alias;
 import com.netbout.spi.Inbox;
 import java.io.IOException;
 import java.net.URI;
 import java.util.Locale;
+import java.util.concurrent.TimeUnit;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
@@ -64,31 +66,46 @@ public final class ReAlias implements Alias {
     }
 
     @Override
-    @RetryOnFailure(verbose = false)
+    @RetryOnFailure(
+        verbose = false, attempts = Tv.TWENTY,
+        delay = Tv.FIVE, unit = TimeUnit.SECONDS
+    )
     public String name() throws IOException {
         return this.origin.name();
     }
 
     @Override
-    @RetryOnFailure(verbose = false)
+    @RetryOnFailure(
+        verbose = false, attempts = Tv.TWENTY,
+        delay = Tv.FIVE, unit = TimeUnit.SECONDS
+    )
     public URI photo() throws IOException {
         return this.origin.photo();
     }
 
     @Override
-    @RetryOnFailure(verbose = false)
+    @RetryOnFailure(
+        verbose = false, attempts = Tv.TWENTY,
+        delay = Tv.FIVE, unit = TimeUnit.SECONDS
+    )
     public Locale locale() throws IOException {
         return this.origin.locale();
     }
 
     @Override
-    @RetryOnFailure(verbose = false)
+    @RetryOnFailure(
+        verbose = false, attempts = Tv.TWENTY,
+        delay = Tv.FIVE, unit = TimeUnit.SECONDS
+    )
     public void photo(final URI uri) throws IOException {
         this.origin.photo(uri);
     }
 
     @Override
-    @RetryOnFailure(verbose = false)
+    @RetryOnFailure(
+        verbose = false, attempts = Tv.TWENTY,
+        delay = Tv.FIVE, unit = TimeUnit.SECONDS
+    )
     public Inbox inbox() throws IOException {
         return new ReInbox(this.origin.inbox());
     }

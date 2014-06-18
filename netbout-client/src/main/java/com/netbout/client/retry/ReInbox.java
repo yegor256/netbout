@@ -31,10 +31,12 @@ import com.google.common.collect.Iterables;
 import com.jcabi.aspects.Immutable;
 import com.jcabi.aspects.Loggable;
 import com.jcabi.aspects.RetryOnFailure;
+import com.jcabi.aspects.Tv;
 import com.netbout.spi.Bout;
 import com.netbout.spi.Inbox;
 import com.netbout.spi.Pageable;
 import java.io.IOException;
+import java.util.concurrent.TimeUnit;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
@@ -65,31 +67,46 @@ public final class ReInbox implements Inbox {
     }
 
     @Override
-    @RetryOnFailure(verbose = false)
+    @RetryOnFailure(
+        verbose = false, attempts = Tv.TWENTY,
+        delay = Tv.FIVE, unit = TimeUnit.SECONDS
+    )
     public long start() throws IOException {
         return this.origin.start();
     }
 
     @Override
-    @RetryOnFailure(verbose = false)
+    @RetryOnFailure(
+        verbose = false, attempts = Tv.TWENTY,
+        delay = Tv.FIVE, unit = TimeUnit.SECONDS
+    )
     public long unread() throws IOException {
         return this.origin.unread();
     }
 
     @Override
-    @RetryOnFailure(verbose = false)
-    public Bout bout(final long number) throws BoutNotFoundException {
+    @RetryOnFailure(
+        verbose = false, attempts = Tv.TWENTY,
+        delay = Tv.FIVE, unit = TimeUnit.SECONDS
+    )
+    public Bout bout(final long number) throws Inbox.BoutNotFoundException {
         return new ReBout(this.origin.bout(number));
     }
 
     @Override
-    @RetryOnFailure(verbose = false)
+    @RetryOnFailure(
+        verbose = false, attempts = Tv.TWENTY,
+        delay = Tv.FIVE, unit = TimeUnit.SECONDS
+    )
     public Pageable<Bout> jump(final int pos) throws IOException {
         return this.origin.jump(pos);
     }
 
     @Override
-    @RetryOnFailure(verbose = false)
+    @RetryOnFailure(
+        verbose = false, attempts = Tv.TWENTY,
+        delay = Tv.FIVE, unit = TimeUnit.SECONDS
+    )
     public Iterable<Bout> iterate() throws IOException {
         return Iterables.transform(
             this.origin.iterate(),

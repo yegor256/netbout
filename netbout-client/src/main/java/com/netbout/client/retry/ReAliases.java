@@ -31,9 +31,11 @@ import com.google.common.collect.Iterables;
 import com.jcabi.aspects.Immutable;
 import com.jcabi.aspects.Loggable;
 import com.jcabi.aspects.RetryOnFailure;
+import com.jcabi.aspects.Tv;
 import com.netbout.spi.Alias;
 import com.netbout.spi.Aliases;
 import java.io.IOException;
+import java.util.concurrent.TimeUnit;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
@@ -64,19 +66,28 @@ public final class ReAliases implements Aliases {
     }
 
     @Override
-    @RetryOnFailure(verbose = false)
+    @RetryOnFailure(
+        verbose = false, attempts = Tv.TWENTY,
+        delay = Tv.FIVE, unit = TimeUnit.SECONDS
+    )
     public String check(final String name) throws IOException {
         return this.origin.check(name);
     }
 
     @Override
-    @RetryOnFailure(verbose = false)
+    @RetryOnFailure(
+        verbose = false, attempts = Tv.TWENTY,
+        delay = Tv.FIVE, unit = TimeUnit.SECONDS
+    )
     public void add(final String name) throws IOException {
         this.origin.add(name);
     }
 
     @Override
-    @RetryOnFailure(verbose = false)
+    @RetryOnFailure(
+        verbose = false, attempts = Tv.TWENTY,
+        delay = Tv.FIVE, unit = TimeUnit.SECONDS
+    )
     public Iterable<Alias> iterate() throws IOException {
         return Iterables.transform(
             this.origin.iterate(),

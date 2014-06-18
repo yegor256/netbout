@@ -31,9 +31,11 @@ import com.google.common.collect.Iterables;
 import com.jcabi.aspects.Immutable;
 import com.jcabi.aspects.Loggable;
 import com.jcabi.aspects.RetryOnFailure;
+import com.jcabi.aspects.Tv;
 import com.netbout.spi.Friend;
 import com.netbout.spi.Friends;
 import java.io.IOException;
+import java.util.concurrent.TimeUnit;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
@@ -64,19 +66,28 @@ public final class ReFriends implements Friends {
     }
 
     @Override
-    @RetryOnFailure(verbose = false)
+    @RetryOnFailure(
+        verbose = false, attempts = Tv.TWENTY,
+        delay = Tv.FIVE, unit = TimeUnit.SECONDS
+    )
     public void invite(final String friend) throws IOException {
         this.origin.invite(friend);
     }
 
     @Override
-    @RetryOnFailure(verbose = false)
+    @RetryOnFailure(
+        verbose = false, attempts = Tv.TWENTY,
+        delay = Tv.FIVE, unit = TimeUnit.SECONDS
+    )
     public void kick(final String friend) throws IOException {
         this.origin.kick(friend);
     }
 
     @Override
-    @RetryOnFailure(verbose = false)
+    @RetryOnFailure(
+        verbose = false, attempts = Tv.TWENTY,
+        delay = Tv.FIVE, unit = TimeUnit.SECONDS
+    )
     public Iterable<Friend> iterate() throws IOException {
         return Iterables.transform(
             this.origin.iterate(),

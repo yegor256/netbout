@@ -29,8 +29,10 @@ package com.netbout.client.retry;
 import com.jcabi.aspects.Immutable;
 import com.jcabi.aspects.Loggable;
 import com.jcabi.aspects.RetryOnFailure;
+import com.jcabi.aspects.Tv;
 import com.netbout.spi.Aliases;
 import com.netbout.spi.User;
+import java.util.concurrent.TimeUnit;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
@@ -61,7 +63,10 @@ public final class ReUser implements User {
     }
 
     @Override
-    @RetryOnFailure(verbose = false)
+    @RetryOnFailure(
+        verbose = false, attempts = Tv.TWENTY,
+        delay = Tv.FIVE, unit = TimeUnit.SECONDS
+    )
     public Aliases aliases() {
         return new ReAliases(this.origin.aliases());
     }
