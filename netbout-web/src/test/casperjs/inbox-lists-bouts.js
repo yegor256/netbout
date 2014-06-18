@@ -3,7 +3,7 @@ casper.test.begin(
     'inbox can list bouts',
     function (test) {
         casper.start(
-            'http://localhost:${tomcat.port}/',
+            casper.cli.get('home'),
             function () {
                 test.assertHttpStatus(200);
                 test.assertExists('li.bout');

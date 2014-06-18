@@ -16,7 +16,7 @@
             page + ' page can be rendered',
             function (test) {
                 casper.start(
-                    'http://localhost:${tomcat.port}' + page,
+                    casper.cli.get('home') + page,
                     function () {
                         test.assertHttpStatus(200);
                     }
