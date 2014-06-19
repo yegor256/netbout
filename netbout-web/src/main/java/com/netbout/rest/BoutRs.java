@@ -208,6 +208,13 @@ public final class BoutRs extends BaseRs {
         @FormDataParam("file") final InputStream stream,
         @FormDataParam("file") final FormDataContentDisposition disposition)
         throws IOException {
+        if (!name.matches("[a-zA-Z\\.\\-0-9]{3,}")) {
+            throw FlashInset.forward(
+                this.self(),
+                "invalid name, use letters, numbers, dashes and dots",
+                Level.SEVERE
+            );
+        }
         final File temp = File.createTempFile("netbout", "bin");
         IOUtils.copy(stream, new FileOutputStream(temp));
         final StringBuilder msg = new StringBuilder(Tv.HUNDRED);

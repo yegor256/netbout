@@ -202,9 +202,7 @@
                 <form method="post" id="upload" action="{/page/links/link[@rel='attach']/@href}"
                     enctype="multipart/form-data">
                     <fieldset>
-                        <label for="file-name"/>
                         <input id="file-name" name="name" autocomplete="off" placeholder="attachment name..." size="30" maxlength="50"/>
-                        <label for="file-binary"/>
                         <input id="file-binary" name="file" type="file"/>
                         <label for="file-submit"/>
                         <input id="file-submit" type="submit" value="Upload"/>

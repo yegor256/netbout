@@ -39,9 +39,7 @@ import com.jcabi.dynamo.Region;
 import com.netbout.spi.Attachment;
 import com.netbout.spi.Attachments;
 import java.io.IOException;
-import java.net.HttpURLConnection;
 import java.util.Iterator;
-import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
@@ -162,11 +160,8 @@ final class DyAttachments implements Attachments {
     @Override
     public void create(final String name) throws IOException {
         if (!name.matches("[a-zA-Z\\.\\-0-9]{3,}")) {
-            throw new WebApplicationException(
-                new IllegalArgumentException(
-                    String.format("invalid attachment name '%s'", name)
-                ),
-                HttpURLConnection.HTTP_BAD_REQUEST
+            throw new IllegalArgumentException(
+                String.format("invalid attachment name '%s'", name)
             );
         }
         this.region.table(DyAttachments.TBL).put(

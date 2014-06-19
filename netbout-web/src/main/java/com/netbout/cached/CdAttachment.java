@@ -35,8 +35,6 @@ import java.io.InputStream;
 import java.util.concurrent.TimeUnit;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
-import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang3.CharEncoding;
 
 /**
  * Cached Attachments.
@@ -85,10 +83,7 @@ final class CdAttachment implements Attachment {
     @Override
     @Cacheable.FlushBefore
     public InputStream read() throws IOException {
-        return IOUtils.toInputStream(
-            IOUtils.toString(this.origin.read(), CharEncoding.UTF_8),
-            CharEncoding.UTF_8
-        );
+        return this.origin.read();
     }
 
     @Override
