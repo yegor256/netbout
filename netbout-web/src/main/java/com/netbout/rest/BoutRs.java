@@ -49,6 +49,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URI;
+import java.net.URLEncoder;
 import java.util.Collection;
 import java.util.logging.Level;
 import javax.ws.rs.Consumes;
@@ -154,14 +155,17 @@ public final class BoutRs extends BaseRs {
             .type(attachment.ctype())
             .header(
                 "Content-Disposition",
-                String.format("attachment; filename=\"%s\"", attachment.name())
+                String.format(
+                    "attachment; filename=\"%s\"",
+                    URLEncoder.encode(attachment.name(), CharEncoding.UTF_8)
+                )
             )
             .entity(
                 new StreamingOutput() {
                     @Override
                     public void write(final OutputStream output)
                         throws IOException {
-                        IOUtils.copy(attachment.read(), output);
+                        IOUtils.copyLarge(attachment.read(), output);
                     }
                 }
             )
