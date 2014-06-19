@@ -54,15 +54,35 @@ $(document).ready(
         $(window).scroll(
             function () {
                 var $box = $('#messages');
-                if ($(window).scrollTop() >= $(document).height() - $(window).height() - 50) {
+                var number = $box.attr('data-tail-number');
+                if ($(window).scrollTop() >= $(document).height() - $(window).height() - 50
+                    && number !== '0') {
+                    $box.attr('data-tail-number', '0');
                     $.ajax(
                         {
-                            url: $box.attr('data-tail-href')
-                                + '?number=' + $box.attr('data-tail-number'),
+                            url: $box.attr('data-tail-href') + '?number=' + number,
                             cache: false,
-                            type: 'json',
-                            success: function (text) {
-                                $box.html($box.html() + text);
+                            dataType: 'json',
+                            method: 'GET',
+                            success: function (data) {
+                                var appendix = '';
+                                number = 0;
+                                $.each(
+                                    data,
+                                    function (idx, item) {
+                                        var photo = $('#photo-' + item.author).attr('src');
+                                        appendix += '<div class="message" id="msg'
+                                            + item.number + '"><div class="left">'
+                                            + '<img class="photo" src="' + photo + '"/>'
+                                            + '</div><div class="right"><div class="meta"><strong>'
+                                            + item.author + '</strong> said ' + item.timeago
+                                            + '</div><div class="text">'
+                                            + item.text + '</div></div></div>';
+                                        number = item.number;
+                                    }
+                                );
+                                $box.html($box.html() + appendix);
+                                $box.attr('data-tail-number', number);
                             }
                         }
                     );

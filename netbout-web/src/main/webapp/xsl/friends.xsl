@@ -36,13 +36,9 @@
         </div>
     </xsl:template>
     <xsl:template match="friend">
+        <xsl:variable name="left" select="(position()-1) * 57"/>
         <div>
-            <div class="bar">
-                <xsl:attribute name="style">
-                    <xsl:text>left: </xsl:text>
-                    <xsl:value-of select="(position()-1) * 57"/>
-                    <xsl:text>px;</xsl:text>
-                </xsl:attribute>
+            <div class="bar" style="left:{$left}px">
                 <span class="name">
                     <xsl:call-template name="crop">
                         <xsl:with-param name="text" select="alias" />
@@ -65,13 +61,8 @@
                     </a>
                 </xsl:if>
             </div>
-            <div class="friend">
-                <xsl:attribute name="style">
-                    <xsl:text>left: </xsl:text>
-                    <xsl:value-of select="(position()-1) * 57"/>
-                    <xsl:text>px;</xsl:text>
-                </xsl:attribute>
-                <img class="photo" alt="{alias}" src="{photo}"/>
+            <div class="friend" style="left:{$left}px">
+                <img class="photo" id="photo-{alias}" alt="{alias}" src="{photo}"/>
             </div>
         </div>
     </xsl:template>

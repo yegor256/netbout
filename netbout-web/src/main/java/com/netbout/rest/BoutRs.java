@@ -26,6 +26,7 @@
  */
 package com.netbout.rest;
 
+import com.google.common.collect.Iterables;
 import com.jcabi.aspects.Tv;
 import com.netbout.spi.Attachment;
 import com.netbout.spi.Attachments;
@@ -34,6 +35,7 @@ import com.netbout.spi.Friend;
 import com.netbout.spi.Friends;
 import com.netbout.spi.Inbox;
 import com.netbout.spi.Message;
+import com.netbout.spi.Messages;
 import com.netbout.spi.Pageable;
 import com.rexsl.page.JaxbBundle;
 import com.rexsl.page.Link;
@@ -49,6 +51,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.StringWriter;
 import java.net.URI;
 import java.net.URLEncoder;
 import java.util.Collection;
@@ -61,6 +64,7 @@ import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -385,12 +389,14 @@ public final class BoutRs extends BaseRs {
      */
     @GET
     @Path("/tail")
+    @Produces(MediaType.APPLICATION_JSON)
     public String tail(@QueryParam("number") final long number)
         throws IOException {
         final Pageable<Message> messages = this.bout().messages().jump(number);
         final JsonArrayBuilder array = Json.createArrayBuilder();
         final PrettyTime pretty = new PrettyTime();
-        for (final Message msg : messages.iterate()) {
+        for (final Message msg
+            : Iterables.limit(messages.iterate(), Messages.PAGE)) {
             array.add(
                 Json.createObjectBuilder()
                     .add("number", msg.number())
@@ -399,7 +405,9 @@ public final class BoutRs extends BaseRs {
                     .add("timeago", pretty.format(msg.date()))
             );
         }
-        return array.toString();
+        final StringWriter writer = new StringWriter();
+        Json.createWriter(writer).writeArray(array.build());
+        return writer.toString();
     }
 
     /**
@@ -480,7 +488,9 @@ public final class BoutRs extends BaseRs {
             )
             .add(
                 new JaxbBundle("messages").add(
-                    new JaxbBundle.Group<Message>(bout.messages().iterate()) {
+                    new JaxbBundle.Group<Message>(
+                        Iterables.limit(bout.messages().iterate(),
+                        Messages.PAGE)) {
                         @Override
                         public JaxbBundle bundle(final Message message) {
                             try {

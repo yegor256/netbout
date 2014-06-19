@@ -23,7 +23,7 @@ $ mvn clean install -Pqulice
 Want to run it locally? Simple as that:
 
 ```
-$ mvn clean install; mvn pre-integration-test tomcat7:run-war -pl :netbout-web
+$ mvn clean install; mvn clean pre-integration-test tomcat7:run-war -pl :netbout-web
 ```
 
 In a minute the site is ready at `http://localhost:9099`

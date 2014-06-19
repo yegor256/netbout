@@ -40,6 +40,11 @@ import java.io.IOException;
 public interface Messages extends Pageable<Message> {
 
     /**
+     * Page size.
+     */
+    int PAGE = 10;
+
+    /**
      * Post a new message.
      * @param text The text of the new message
      * @throws IOException If fails

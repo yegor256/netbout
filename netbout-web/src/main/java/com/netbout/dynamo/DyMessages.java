@@ -40,7 +40,6 @@ import com.jcabi.aspects.Async;
 import com.jcabi.aspects.Cacheable;
 import com.jcabi.aspects.Immutable;
 import com.jcabi.aspects.Loggable;
-import com.jcabi.aspects.Tv;
 import com.jcabi.dynamo.AttributeUpdates;
 import com.jcabi.dynamo.Attributes;
 import com.jcabi.dynamo.Conditions;
@@ -186,7 +185,9 @@ final class DyMessages implements Messages {
 
     @Override
     public Pageable<Message> jump(final long number) {
-        throw new UnsupportedOperationException("#jump()");
+        return new DyMessages(
+            this.region, this.bout, this.self, this.counter, number
+        );
     }
 
     @Override
@@ -200,7 +201,7 @@ final class DyMessages implements Messages {
                 .through(
                     new QueryValve()
                         .withScanIndexForward(false)
-                        .withLimit(Tv.TEN)
+                        .withLimit(Messages.PAGE)
                         .withAttributesToGet(
                             DyMessages.ATTR_TEXT,
                             DyMessages.ATTR_ALIAS,
