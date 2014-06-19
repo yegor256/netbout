@@ -154,7 +154,7 @@ public final class BoutRs extends BaseRs {
             .type(attachment.ctype())
             .header(
                 "Content-Disposition",
-                String.format("attachment; filename=%s", attachment.name())
+                String.format("attachment; filename=\"%s\"", attachment.name())
             )
             .entity(
                 new StreamingOutput() {

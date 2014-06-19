@@ -26,6 +26,7 @@
  */
 package com.netbout.dynamo;
 
+import com.jcabi.aspects.Tv;
 import com.jcabi.urn.URN;
 import com.netbout.spi.Aliases;
 import com.netbout.spi.Attachment;
@@ -63,7 +64,10 @@ public final class DyAttachmentITCase {
         final String name = "test";
         attachments.create(name);
         final Attachment attachment = attachments.get(name);
-        final byte[] bytes = {(byte) 0x00, (byte) 0xff, (byte) 0x1f};
+        final byte[] bytes = new byte[Tv.FORTY * Tv.THOUSAND];
+        for (int idx = 0; idx < bytes.length; ++idx) {
+            bytes[idx] = (byte) idx;
+        }
         attachment.write(
             new ByteArrayInputStream(bytes),
             MediaType.APPLICATION_OCTET_STREAM
