@@ -55,6 +55,7 @@ import java.util.HashSet;
 import java.util.Set;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
+import org.apache.commons.codec.CharEncoding;
 import org.apache.commons.io.IOUtils;
 
 /**
@@ -156,7 +157,13 @@ final class DyAttachment implements Attachment {
             ).read(baos);
             bytes = baos.toByteArray();
         } else {
-            bytes = this.item.get(DyAttachments.ATTR_DATA).getB().array();
+            final ByteBuffer buf =
+                this.item.get(DyAttachments.ATTR_DATA).getB();
+            if (buf == null) {
+                bytes = "temporary unavailable".getBytes(CharEncoding.UTF_8);
+            } else {
+                bytes = buf.array();
+            }
         }
         return new ByteArrayInputStream(bytes);
     }
