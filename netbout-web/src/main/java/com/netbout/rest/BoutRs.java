@@ -208,27 +208,17 @@ public final class BoutRs extends BaseRs {
         @FormDataParam("file") final InputStream stream,
         @FormDataParam("file") final FormDataContentDisposition disposition)
         throws IOException {
-        if (!name.matches("[a-zA-Z\\.\\-0-9]{3,}")) {
-            throw FlashInset.forward(
-                this.self(),
-                "invalid name, use letters, numbers, dashes and dots",
-                Level.SEVERE
-            );
-        }
         final File temp = File.createTempFile("netbout", "bin");
         IOUtils.copy(stream, new FileOutputStream(temp));
-        if (temp.length() > (long) (Tv.TEN * Tv.MILLION)) {
-            throw FlashInset.forward(
-                this.self(),
-                "attachment is too big, 10Mb is the maximum size",
-                Level.SEVERE
-            );
-        }
         final StringBuilder msg = new StringBuilder(Tv.HUNDRED);
         if (new Attachments.Search(this.bout().attachments()).exists(name)) {
             msg.append(String.format("attachment '%s' overwritten", name));
         } else {
-            this.bout().attachments().create(name);
+            try {
+                this.bout().attachments().create(name);
+            } catch (final Attachments.InvalidNameException ex) {
+                throw FlashInset.forward(this.self(), ex);
+            }
             msg.append(String.format("attachment '%s' uploaded", name));
         }
         final Collection<?> ctypes = MimeUtil.getMimeTypes(temp);
@@ -240,10 +230,16 @@ public final class BoutRs extends BaseRs {
         }
         msg.append(" (").append(temp.length())
             .append(" bytes, ").append(ctype).append(')');
-        this.bout().attachments().get(name).write(
-            new FileInputStream(temp),
-            ctype
-        );
+        try {
+            this.bout().attachments().get(name).write(
+                new FileInputStream(temp),
+                ctype
+            );
+        } catch (final Attachment.TooBigException ex) {
+            throw FlashInset.forward(this.self(), ex);
+        } catch (final Attachment.BrokenContentException ex) {
+            throw FlashInset.forward(this.self(), ex);
+        }
         FileUtils.forceDelete(temp);
         throw FlashInset.forward(this.self(), msg.toString(), Level.INFO);
     }
@@ -257,7 +253,11 @@ public final class BoutRs extends BaseRs {
     @Path("/create")
     public void create(@FormParam("name") final String name)
         throws IOException {
-        this.bout().attachments().create(name);
+        try {
+            this.bout().attachments().create(name);
+        } catch (final Attachments.InvalidNameException ex) {
+            throw FlashInset.forward(this.self(), ex);
+        }
         throw FlashInset.forward(
             this.self(),
             String.format("attachment '%s' created", name),
@@ -274,7 +274,11 @@ public final class BoutRs extends BaseRs {
     @Path("/delete")
     public void delete(@QueryParam("name") final String name)
         throws IOException {
-        this.bout().attachments().delete(name);
+        try {
+            this.bout().attachments().delete(name);
+        } catch (final Attachments.InvalidNameException ex) {
+            throw FlashInset.forward(this.self(), ex);
+        }
         throw FlashInset.forward(
             this.self(),
             String.format("attachment '%s' deleted", name),

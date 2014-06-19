@@ -120,14 +120,15 @@ final class DyAttachments implements Attachments {
     }
 
     @Override
-    public Attachment get(final String name) {
+    public Attachment get(final String name)
+        throws Attachments.NotFoundException {
         final Iterator<Item> items = this.region.table(DyAttachments.TBL)
             .frame()
             .where(DyAttachments.HASH, Conditions.equalTo(this.bout))
             .where(DyAttachments.RANGE, name)
             .iterator();
         if (!items.hasNext()) {
-            throw new IllegalArgumentException(
+            throw new Attachments.NotFoundException(
                 String.format("attachment '%s' not found", name)
             );
         }
@@ -160,7 +161,7 @@ final class DyAttachments implements Attachments {
     @Override
     public void create(final String name) throws IOException {
         if (!name.matches("[a-zA-Z\\.\\-0-9]{3,}")) {
-            throw new IllegalArgumentException(
+            throw new Attachments.InvalidNameException(
                 String.format("invalid attachment name '%s'", name)
             );
         }

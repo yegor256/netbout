@@ -81,4 +81,38 @@ public interface Attachment {
      */
     void write(InputStream stream, String ctype) throws IOException;
 
+    /**
+     * Attachment is too big.
+     */
+    final class TooBigException extends IOException {
+        /**
+         * Serialization marker.
+         */
+        private static final long serialVersionUID = -6379382683897037014L;
+        /**
+         * Ctor.
+         * @param cause Cause of the problem
+         */
+        public TooBigException(final String cause) {
+            super(cause);
+        }
+    }
+
+    /**
+     * Attachment content is not valid.
+     */
+    final class BrokenContentException extends IOException {
+        /**
+         * Serialization marker.
+         */
+        private static final long serialVersionUID = -6379382653897037014L;
+        /**
+         * Ctor.
+         * @param cause Cause of the problem
+         */
+        public BrokenContentException(final String cause) {
+            super(cause);
+        }
+    }
+
 }

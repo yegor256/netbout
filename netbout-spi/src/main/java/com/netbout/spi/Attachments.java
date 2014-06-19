@@ -59,7 +59,7 @@ public interface Attachments {
     void delete(String name) throws IOException;
 
     /**
-     * Get binary by name.
+     * Get attachment by name.
      * @param name Attachment name
      * @return Attachment
      * @throws IOException If fails
@@ -72,6 +72,57 @@ public interface Attachments {
      * @throws IOException If fails
      */
     Iterable<Attachment> iterate() throws IOException;
+
+    /**
+     * You already have too many attachments.
+     */
+    final class TooManyException extends IOException {
+        /**
+         * Serialization marker.
+         */
+        private static final long serialVersionUID = -6379382683897037014L;
+        /**
+         * Ctor.
+         * @param cause Cause of the problem
+         */
+        public TooManyException(final String cause) {
+            super(cause);
+        }
+    }
+
+    /**
+     * Attachment not found.
+     */
+    final class NotFoundException extends IOException {
+        /**
+         * Serialization marker.
+         */
+        private static final long serialVersionUID = -6379382689897037014L;
+        /**
+         * Ctor.
+         * @param cause Cause of the problem
+         */
+        public NotFoundException(final String cause) {
+            super(cause);
+        }
+    }
+
+    /**
+     * Invalid attachment name.
+     */
+    final class InvalidNameException extends IOException {
+        /**
+         * Serialization marker.
+         */
+        private static final long serialVersionUID = -6379342683897037014L;
+        /**
+         * Ctor.
+         * @param cause Cause of the problem
+         */
+        public InvalidNameException(final String cause) {
+            super(cause);
+        }
+    }
 
     /**
      * Unseen.

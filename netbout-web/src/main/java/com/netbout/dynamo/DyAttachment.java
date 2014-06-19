@@ -36,6 +36,7 @@ import com.jcabi.aspects.Async;
 import com.jcabi.aspects.Cacheable;
 import com.jcabi.aspects.Immutable;
 import com.jcabi.aspects.Loggable;
+import com.jcabi.aspects.Tv;
 import com.jcabi.dynamo.AttributeUpdates;
 import com.jcabi.dynamo.Conditions;
 import com.jcabi.dynamo.Item;
@@ -49,11 +50,9 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.HttpURLConnection;
 import java.nio.ByteBuffer;
 import java.util.HashSet;
 import java.util.Set;
-import javax.ws.rs.WebApplicationException;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 import org.apache.commons.io.IOUtils;
@@ -167,14 +166,16 @@ final class DyAttachment implements Attachment {
         final String ctype) throws IOException {
         final byte[] data = IOUtils.toByteArray(stream);
         if (data.length == 0) {
-            throw new WebApplicationException(
-                new IllegalArgumentException(
-                    String.format(
-                        "content of attachment '%s' can't be empty",
-                        this.name()
-                    )
-                ),
-                HttpURLConnection.HTTP_BAD_REQUEST
+            throw new Attachment.BrokenContentException(
+                String.format(
+                    "content of attachment '%s' can't be empty",
+                    this.name()
+                )
+            );
+        }
+        if (data.length > Tv.TEN * Tv.MILLION) {
+            throw new Attachment.TooBigException(
+                "attachment is too big, 10Mb is the maximum size"
             );
         }
         AttributeUpdates updates = new AttributeUpdates()
