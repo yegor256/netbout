@@ -52,6 +52,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.StringWriter;
+import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URLEncoder;
 import java.util.Collection;
@@ -66,6 +67,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.StreamingOutput;
@@ -82,8 +84,9 @@ import org.ocpsoft.prettytime.PrettyTime;
  * @version $Id$
  * @checkstyle ClassDataAbstractionCoupling (500 lines)
  * @checkstyle MultipleStringLiteralsCheck (500 lines)
+ * @checkstyle ClassFanOutComplexityCheck (500 lines)
  */
-@Path("/b/{num}")
+@Path("/b/{num: [0-9]+}")
 @SuppressWarnings({
     "PMD.TooManyMethods", "PMD.AvoidDuplicateLiterals", "PMD.ExcessiveImports"
 })
@@ -383,16 +386,16 @@ public final class BoutRs extends BaseRs {
 
     /**
      * Fetch more messages.
-     * @param number Latest message seen
+     * @param num Latest message seen
      * @return JSON with more messages
      * @throws IOException If fails
      */
     @GET
     @Path("/tail")
     @Produces(MediaType.APPLICATION_JSON)
-    public String tail(@QueryParam("number") final long number)
+    public String tail(@QueryParam("number") final long num)
         throws IOException {
-        final Pageable<Message> messages = this.bout().messages().jump(number);
+        final Pageable<Message> messages = this.bout().messages().jump(num);
         final JsonArrayBuilder array = Json.createArrayBuilder();
         final PrettyTime pretty = new PrettyTime();
         for (final Message msg
@@ -431,8 +434,8 @@ public final class BoutRs extends BaseRs {
         try {
             bout = this.alias().inbox().bout(this.number);
         } catch (final Inbox.BoutNotFoundException ex) {
-            throw FlashInset.forward(
-                this.uriInfo().getBaseUri(), ex
+            throw new WebApplicationException(
+                ex, HttpURLConnection.HTTP_NOT_FOUND
             );
         }
         if (!new Friends.Search(bout.friends()).exists(this.alias().name())) {
@@ -489,8 +492,11 @@ public final class BoutRs extends BaseRs {
             .add(
                 new JaxbBundle("messages").add(
                     new JaxbBundle.Group<Message>(
-                        Iterables.limit(bout.messages().iterate(),
-                        Messages.PAGE)) {
+                        Iterables.limit(
+                            bout.messages().iterate(),
+                            Messages.PAGE
+                        )
+                    ) {
                         @Override
                         public JaxbBundle bundle(final Message message) {
                             try {

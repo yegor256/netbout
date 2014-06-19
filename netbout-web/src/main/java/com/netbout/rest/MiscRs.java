@@ -52,7 +52,7 @@ public final class MiscRs extends BaseRs {
      *  see http://stackoverflow.com/questions/8179547
      */
     @GET
-    @Path("/{code : \\d{3}}")
+    @Path("/{code: \\d{3}}")
     public Response error(@PathParam("code") final Integer code) {
         final Response.Status status = Response.Status.fromStatusCode(code);
         String message = "unknown";
@@ -85,7 +85,7 @@ public final class MiscRs extends BaseRs {
      * @return The JAX-RS response
      */
     @POST
-    @Path("/{code : \\d{3}}")
+    @Path("/{code: \\d{3}}")
     public Response errorByPost(@PathParam("code") final Integer code) {
         return this.error(code);
     }

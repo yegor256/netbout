@@ -30,3 +30,32 @@
         );
     }
 );
+
+[
+    '/page-not-found',
+    '/b/not-found',
+    '/b/55667788',
+    '/xml/absent-always.xml',
+    '/xsl/absent-stylesheet.xsl',
+    '/css/bout.css',
+    '/js/absent-javascript.js'
+].forEach(
+    function (page) {
+        casper.test.begin(
+            page + ' page should be NOT-FOUND',
+            function (test) {
+                casper.start(
+                    casper.cli.get('home') + page,
+                    function () {
+                        test.assertHttpStatus(404);
+                    }
+                );
+                casper.run(
+                    function () {
+                        test.done();
+                    }
+                );
+            }
+        );
+    }
+);

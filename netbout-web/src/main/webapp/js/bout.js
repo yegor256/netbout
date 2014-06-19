@@ -25,7 +25,7 @@
  * SUCH DAMAGE.
  */
 
-/*globals $:false, document:false */
+/*globals $:false, document:false, window:false */
 
 $(document).ready(
     function () {
@@ -53,8 +53,8 @@ $(document).ready(
         }
         $(window).scroll(
             function () {
-                var $box = $('#messages');
-                var number = $box.attr('data-tail-number');
+                var $box = $('#messages'),
+                    number = $box.attr('data-tail-number');
                 if ($(window).scrollTop() >= $(document).height() - $(window).height() - 50
                     && number !== '0') {
                     $box.attr('data-tail-number', '0');
