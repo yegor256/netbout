@@ -97,7 +97,10 @@
                 </fieldset>
             </form>
         </div>
-        <xsl:apply-templates select="messages/message" />
+        <div id="messages" data-tail-href="{/page/links/link[@rel='tail']/@href}"
+            data-tail-number="messages/message[position()=last()]/number">
+            <xsl:apply-templates select="messages/message" />
+        </div>
     </xsl:template>
     <xsl:template match="messages/message">
         <xsl:variable name="msg" select="."/>

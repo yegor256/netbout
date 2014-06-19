@@ -27,42 +27,48 @@
 
 /*globals $:false, document:false */
 
-String.prototype.escaped = function () {
-    "use strict";
-    return this.replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;")
-        .replace(/'/g, "&apos;")
-        .replace(/"/g, "&quot;");
-};
-
-/**
- * Pre-configure this page.
- */
-var setup = function () {
-    "use strict";
-    var bout = parseInt($('a span.num').text(), 10);
-    if ($('#rename')[0]) {
-        $('h1 span.title')
-            .blur(
-                function () {
-                    var $input = $("#rename input[name='title']"),
-                        previous = $input.val(),
-                        entered = $(this).text();
-                    if (entered !== previous) {
-                        $input.val(entered);
-                        $("#rename").submit();
+$(document).ready(
+    function () {
+        "use strict";
+        if ($('#rename')[0]) {
+            $('h1 span.title')
+                .blur(
+                    function () {
+                        var $input = $('#rename').find("input[name='title']"),
+                            previous = $input.val(),
+                            entered = $(this).text();
+                        if (entered !== previous) {
+                            $input.val(entered);
+                            $('#rename').submit();
+                        }
                     }
-                }
-            )
-            .keydown(
-                function (event) {
-                    if (event.keyCode === 13) {
-                        $(this).blur();
+                )
+                .keydown(
+                    function (event) {
+                        if (event.keyCode === 13) {
+                            $(this).blur();
+                        }
                     }
+                );
+        }
+        $(window).scroll(
+            function () {
+                var $box = $('#messages');
+                if ($(window).scrollTop() >= $(document).height() - $(window).height() - 50) {
+                    $.ajax(
+                        {
+                            url: $box.attr('data-tail-href')
+                                + '?number=' + $box.attr('data-tail-number'),
+                            cache: false,
+                            type: 'json',
+                            success: function (text) {
+                                $box.html($box.html() + text);
+                            }
+                        }
+                    );
                 }
-            );
+            }
+        );
     }
-};
+);
 
-$(document).ready(setup);

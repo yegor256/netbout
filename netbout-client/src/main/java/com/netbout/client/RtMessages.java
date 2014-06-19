@@ -83,7 +83,7 @@ final class RtMessages implements Messages {
     }
 
     @Override
-    public Pageable<Message> jump(final int pos) {
+    public Pageable<Message> jump(final long number) {
         throw new UnsupportedOperationException("#jump()");
     }
 

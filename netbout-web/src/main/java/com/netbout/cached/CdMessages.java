@@ -83,8 +83,8 @@ final class CdMessages implements Messages {
     }
 
     @Override
-    public Pageable<Message> jump(final int pos) throws IOException {
-        return this.origin.jump(pos);
+    public Pageable<Message> jump(final long number) throws IOException {
+        return this.origin.jump(number);
     }
 
     @Override

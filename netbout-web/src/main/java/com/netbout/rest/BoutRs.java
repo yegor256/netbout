@@ -34,6 +34,7 @@ import com.netbout.spi.Friend;
 import com.netbout.spi.Friends;
 import com.netbout.spi.Inbox;
 import com.netbout.spi.Message;
+import com.netbout.spi.Pageable;
 import com.rexsl.page.JaxbBundle;
 import com.rexsl.page.Link;
 import com.rexsl.page.PageBuilder;
@@ -52,6 +53,8 @@ import java.net.URI;
 import java.net.URLEncoder;
 import java.util.Collection;
 import java.util.logging.Level;
+import javax.json.Json;
+import javax.json.JsonArrayBuilder;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
@@ -134,6 +137,7 @@ public final class BoutRs extends BaseRs {
             .link(new Link("upload", "./upload"))
             .link(new Link("create", "./create"))
             .link(new Link("attach", "./attach"))
+            .link(new Link("tail", "./tail"))
             .append(this.bundle(this.bout()))
             .render()
             .build();
@@ -371,6 +375,31 @@ public final class BoutRs extends BaseRs {
             ),
             Level.INFO
         );
+    }
+
+    /**
+     * Fetch more messages.
+     * @param number Latest message seen
+     * @return JSON with more messages
+     * @throws IOException If fails
+     */
+    @GET
+    @Path("/tail")
+    public String tail(@QueryParam("number") final long number)
+        throws IOException {
+        final Pageable<Message> messages = this.bout().messages().jump(number);
+        final JsonArrayBuilder array = Json.createArrayBuilder();
+        final PrettyTime pretty = new PrettyTime();
+        for (final Message msg : messages.iterate()) {
+            array.add(
+                Json.createObjectBuilder()
+                    .add("number", msg.number())
+                    .add("author", msg.author())
+                    .add("text", msg.text())
+                    .add("timeago", pretty.format(msg.date()))
+            );
+        }
+        return array.toString();
     }
 
     /**

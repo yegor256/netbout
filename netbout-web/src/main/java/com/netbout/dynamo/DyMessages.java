@@ -31,6 +31,8 @@ import co.stateful.RtSttc;
 import com.amazonaws.services.dynamodbv2.model.AttributeAction;
 import com.amazonaws.services.dynamodbv2.model.AttributeValue;
 import com.amazonaws.services.dynamodbv2.model.AttributeValueUpdate;
+import com.amazonaws.services.dynamodbv2.model.ComparisonOperator;
+import com.amazonaws.services.dynamodbv2.model.Condition;
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
@@ -38,6 +40,7 @@ import com.jcabi.aspects.Async;
 import com.jcabi.aspects.Cacheable;
 import com.jcabi.aspects.Immutable;
 import com.jcabi.aspects.Loggable;
+import com.jcabi.aspects.Tv;
 import com.jcabi.dynamo.AttributeUpdates;
 import com.jcabi.dynamo.Attributes;
 import com.jcabi.dynamo.Conditions;
@@ -118,13 +121,18 @@ final class DyMessages implements Messages {
     private final transient String self;
 
     /**
+     * Start.
+     */
+    private final transient long start;
+
+    /**
      * Ctor.
      * @param reg Region
      * @param num Bout number
      * @param slf Self alias
      */
     DyMessages(final Region reg, final long num, final String slf) {
-        this(reg, num, slf, DyMessages.sttc());
+        this(reg, num, slf, DyMessages.sttc(), Long.MAX_VALUE);
     }
 
     /**
@@ -133,15 +141,17 @@ final class DyMessages implements Messages {
      * @param num Bout number
      * @param slf Self alias
      * @param ctr Counter
+     * @param strt Start message number
      * @since 2.7.1
      * @checkstyle ParameterNumberCheck (5 lines)
      */
     DyMessages(final Region reg, final long num, final String slf,
-        final Counter ctr) {
+        final Counter ctr, final long strt) {
         this.region = reg;
         this.bout = num;
         this.self = slf;
         this.counter = ctr;
+        this.start = strt;
     }
 
     @Override
@@ -175,26 +185,39 @@ final class DyMessages implements Messages {
     }
 
     @Override
-    public Pageable<Message> jump(final int idx) {
+    public Pageable<Message> jump(final long number) {
         throw new UnsupportedOperationException("#jump()");
     }
 
     @Override
     public Iterable<Message> iterate() {
-        this.seen();
+        if (this.start != Long.MAX_VALUE) {
+            this.seen();
+        }
         return Iterables.transform(
             this.region.table(DyMessages.TBL)
                 .frame()
                 .through(
                     new QueryValve()
                         .withScanIndexForward(false)
+                        .withLimit(Tv.TEN)
                         .withAttributesToGet(
                             DyMessages.ATTR_TEXT,
                             DyMessages.ATTR_ALIAS,
                             DyMessages.ATTR_DATE
                         )
                 )
-                .where(DyMessages.HASH, Conditions.equalTo(this.bout)),
+                .where(DyMessages.HASH, Conditions.equalTo(this.bout))
+                .where(
+                    DyMessages.RANGE,
+                    new Condition()
+                        .withComparisonOperator(ComparisonOperator.LT)
+                        .withAttributeValueList(
+                            new AttributeValue().withN(
+                                Long.toString(this.start)
+                            )
+                        )
+                ),
             new Function<Item, Message>() {
                 @Override
                 public Message apply(final Item item) {

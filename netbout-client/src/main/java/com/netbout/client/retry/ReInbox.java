@@ -98,8 +98,8 @@ public final class ReInbox implements Inbox {
         verbose = false, attempts = Tv.TWENTY,
         delay = Tv.FIVE, unit = TimeUnit.SECONDS
     )
-    public Pageable<Bout> jump(final int pos) throws IOException {
-        return this.origin.jump(pos);
+    public Pageable<Bout> jump(final long number) throws IOException {
+        return this.origin.jump(number);
     }
 
     @Override

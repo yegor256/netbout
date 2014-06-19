@@ -101,7 +101,7 @@ final class RtInbox implements Inbox {
     }
 
     @Override
-    public Pageable<Bout> jump(final int pos) {
+    public Pageable<Bout> jump(final long number) {
         throw new UnsupportedOperationException("#jump()");
     }
 

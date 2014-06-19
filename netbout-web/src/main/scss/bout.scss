@@ -91,10 +91,7 @@
     margin-bottom: 14px;
     padding: 10px;
     background-color: $color-gray-light;
-    border-top: 1px solid $color-gray;
-    border-left: 1px solid $color-gray;
-    border-bottom: 1px solid $color-gray2;
-    border-right: 1px solid $color-gray2;
+    border: 1px solid $color-gray;
     overflow-y: auto;
     .controls {
         float: right;

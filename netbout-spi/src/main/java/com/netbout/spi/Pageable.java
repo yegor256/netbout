@@ -41,11 +41,11 @@ public interface Pageable<T> {
 
     /**
      * Jump to the given position.
-     * @param pos Position
+     * @param number Message number to start with
      * @return New collection of items
      * @throws IOException If fails
      */
-    Pageable<T> jump(int pos) throws IOException;
+    Pageable<T> jump(long number) throws IOException;
 
     /**
      * Iterate them all.

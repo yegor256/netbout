@@ -103,7 +103,7 @@ final class MkMessages implements Messages {
     }
 
     @Override
-    public Pageable<Message> jump(final int pos) throws IOException {
+    public Pageable<Message> jump(final long number) throws IOException {
         throw new UnsupportedOperationException("#jump()");
     }
 

@@ -82,8 +82,8 @@ public final class CdInbox implements Inbox {
     }
 
     @Override
-    public Pageable<Bout> jump(final int pos) throws IOException {
-        return this.origin.jump(pos);
+    public Pageable<Bout> jump(final long number) throws IOException {
+        return this.origin.jump(number);
     }
 
     @Override

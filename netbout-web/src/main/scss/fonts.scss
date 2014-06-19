@@ -30,13 +30,16 @@ $font-fixed: 'Source Code Pro', 'Consolas', 'Menlo', 'Monaco', 'Courier New', mo
 
 @import url(//fonts.googleapis.com/css?family=Source+Code+Pro:400,500);
 @font-face {
-    font-family: 'icomoon-netbout';
-    src:url('http://img.netbout.com/fonts/icomoon-3.eot?-cfp6bb');
-    src:url('http://img.netbout.com/fonts/icomoon-3.eot?#iefix-cfp6bb') format('embedded-opentype'),
-        url('http://img.netbout.com/fonts/icomoon-3.woff?-cfp6bb') format('woff'),
-        url('http://img.netbout.com/fonts/icomoon-3.ttf?-cfp6bb') format('truetype');
-    font-weight: normal;
-    font-style: normal;
+  font-family: 'icomoon-netbout';
+  src:url('http://img.netbout.com/fonts/icomoon-3.eot?-cfp6bb');
+  src:url('http://img.netbout.com/fonts/icomoon-3.eot?#iefix-cfp6bb')
+    format('embedded-opentype'),
+    url('http://img.netbout.com/fonts/icomoon-3.woff?-cfp6bb')
+    format('woff'),
+    url('http://img.netbout.com/fonts/icomoon-3.ttf?-cfp6bb')
+    format('truetype');
+  font-weight: normal;
+  font-style: normal;
 }
 
 .ico {
@@ -45,8 +48,6 @@ $font-fixed: 'Source Code Pro', 'Consolas', 'Menlo', 'Monaco', 'Courier New', mo
   font-style: normal;
   font-weight: normal;
   line-height: 1;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
 }
 
 .ico-copy:before { content: "\f0a1"; }
