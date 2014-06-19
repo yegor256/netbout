@@ -217,6 +217,13 @@ public final class BoutRs extends BaseRs {
         }
         final File temp = File.createTempFile("netbout", "bin");
         IOUtils.copy(stream, new FileOutputStream(temp));
+        if (temp.length() > (long) (Tv.TEN * Tv.MILLION)) {
+            throw FlashInset.forward(
+                this.self(),
+                "attachment is too big, 10Mb is the maximum size",
+                Level.SEVERE
+            );
+        }
         final StringBuilder msg = new StringBuilder(Tv.HUNDRED);
         if (new Attachments.Search(this.bout().attachments()).exists(name)) {
             msg.append(String.format("attachment '%s' overwritten", name));
