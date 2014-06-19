@@ -69,6 +69,18 @@
             &.unseen {
                 @extend .red;
             }
+            &.toggle {
+                cursor: pointer;
+            }
+        }
+    }
+    #files {
+        margin-top: 12px;
+        ul {
+            margin-bottom: 12px;
+            li {
+                display: block;
+            }
         }
     }
 }

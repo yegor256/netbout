@@ -35,6 +35,8 @@ import com.netbout.spi.Attachment;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
+import javax.ws.rs.core.HttpHeaders;
+import javax.ws.rs.core.MediaType;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 import org.apache.commons.io.IOUtils;
@@ -128,6 +130,10 @@ final class RtAttachment implements Attachment {
             .back()
             .body().set(IOUtils.toString(stream, CharEncoding.UTF_8)).back()
             .method(Request.POST)
+            .header(
+                HttpHeaders.CONTENT_TYPE,
+                MediaType.APPLICATION_FORM_URLENCODED
+            )
             .fetch()
             .as(RestResponse.class)
             .assertStatus(HttpURLConnection.HTTP_SEE_OTHER);

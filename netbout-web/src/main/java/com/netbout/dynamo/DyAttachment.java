@@ -64,12 +64,13 @@ import org.apache.commons.io.IOUtils;
  * @author Yegor Bugayenko (yegor@tpc2.com)
  * @version $Id$
  * @since 2.0
+ * @checkstyle ClassDataAbstractionCouplingCheck (500 lines)
  */
 @Immutable
 @Loggable(Loggable.DEBUG)
 @ToString(of = "item")
 @EqualsAndHashCode(of = { "region", "item", "self" })
-@SuppressWarnings("PMD.TooManyMethods")
+@SuppressWarnings({ "PMD.TooManyMethods", "PMD.ExcessiveImports"})
 final class DyAttachment implements Attachment {
 
     /**
@@ -114,6 +115,7 @@ final class DyAttachment implements Attachment {
      * @param itm Item
      * @param slf Self alias
      * @since 2.8
+     * @checkstyle ParameterNumberCheck (5 lines)
      */
     DyAttachment(final Region reg, final Bucket bkt,
         final Item itm, final String slf) {
@@ -183,11 +185,10 @@ final class DyAttachment implements Attachment {
                     this.item.get(DyAttachments.ATTR_KEY).getS()
                 );
             }
-            updates = updates
-                .with(
-                    DyAttachments.ATTR_DATA,
-                    new AttributeValue().withB(ByteBuffer.wrap(data))
-                )
+            updates = updates.with(
+                DyAttachments.ATTR_DATA,
+                new AttributeValue().withB(ByteBuffer.wrap(data))
+            )
                 .with(
                     DyAttachments.ATTR_KEY,
                     new AttributeValueUpdate().withAction(
@@ -349,7 +350,7 @@ final class DyAttachment implements Attachment {
         final com.jcabi.s3.Region region;
         if (key.matches("[0-9A-Z]{20}")) {
             region = new com.jcabi.s3.Region.Simple(
-                Manifests.read("Netbout-S3Key"),
+                key,
                 Manifests.read("Netbout-S3Secret")
             );
         } else {

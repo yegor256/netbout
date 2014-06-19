@@ -100,6 +100,9 @@ input {
         background-color: $color-gray-light;
         cursor: pointer;
     }
+    &[type='file'] {
+        border: none;
+    }
 }
 
 textarea {

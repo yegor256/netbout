@@ -26,7 +26,9 @@
  */
 package com.netbout.rest;
 
+import com.jcabi.aspects.Tv;
 import com.netbout.spi.Attachment;
+import com.netbout.spi.Attachments;
 import com.netbout.spi.Bout;
 import com.netbout.spi.Friend;
 import com.netbout.spi.Friends;
@@ -36,16 +38,24 @@ import com.rexsl.page.JaxbBundle;
 import com.rexsl.page.Link;
 import com.rexsl.page.PageBuilder;
 import com.rexsl.page.inset.FlashInset;
+import com.sun.jersey.core.header.FormDataContentDisposition;
+import com.sun.jersey.multipart.FormDataParam;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
+import java.net.URLConnection;
 import java.util.logging.Level;
+import javax.ws.rs.Consumes;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.CharEncoding;
@@ -109,6 +119,7 @@ public final class BoutRs extends BaseRs {
             .link(new Link("invite", "./invite"))
             .link(new Link("upload", "./upload"))
             .link(new Link("create", "./create"))
+            .link(new Link("attach", "./attach"))
             .append(this.bundle(this.bout()))
             .render()
             .build();
@@ -139,15 +150,55 @@ public final class BoutRs extends BaseRs {
      */
     @POST
     @Path("/upload")
+    @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
     public void upload(@QueryParam("name") final String name,
         @QueryParam("ctype") final String ctype, final InputStream content)
         throws IOException {
         this.bout().attachments().get(name).write(content, ctype);
         throw FlashInset.forward(
             this.self(),
-            "attachment uploaded",
+            String.format("attachment '%s' uploaded", name),
             Level.INFO
         );
+    }
+
+    /**
+     * Attach a file as an attachment.
+     * @param name Name of attachment
+     * @param stream Stream
+     * @param disposition Disposition
+     * @throws IOException If fails
+     */
+    @POST
+    @Path("/attach")
+    @Consumes(MediaType.MULTIPART_FORM_DATA)
+    public void attach(
+        @FormDataParam("name") final String name,
+        @FormDataParam("file") final InputStream stream,
+        @FormDataParam("file") final FormDataContentDisposition disposition)
+        throws IOException {
+        final File temp = File.createTempFile("netbout", "bin");
+        IOUtils.copy(stream, new FileOutputStream(temp));
+        final StringBuilder msg = new StringBuilder(Tv.HUNDRED);
+        if (new Attachments.Search(this.bout().attachments()).exists(name)) {
+            msg.append(String.format("attachment '%s' overwritten", name));
+        } else {
+            this.bout().attachments().create(name);
+            msg.append(String.format("attachment '%s' uploaded", name));
+        }
+        String ctype = URLConnection.guessContentTypeFromStream(
+            new FileInputStream(temp)
+        );
+        if (ctype == null) {
+            ctype = MediaType.APPLICATION_OCTET_STREAM;
+        }
+        msg.append(" (").append(temp.length())
+            .append(" bytes, ").append(ctype).append(')');
+        this.bout().attachments().get(name).write(
+            new FileInputStream(temp),
+            ctype
+        );
+        throw FlashInset.forward(this.self(), msg.toString(), Level.INFO);
     }
 
     /**
@@ -404,15 +455,6 @@ public final class BoutRs extends BaseRs {
             .add("unseen", Boolean.toString(attachment.unseen())).up()
             .link(
                 new Link(
-                    "open",
-                    this.uriInfo().getBaseUriBuilder().clone()
-                        .path(BoutRs.class)
-                        .queryParam("open", "{a1}")
-                        .build(bout.number(), attachment.name())
-                )
-            )
-            .link(
-                new Link(
                     "delete",
                     this.uriInfo().getBaseUriBuilder().clone()
                         .path(BoutRs.class)
@@ -431,6 +473,17 @@ public final class BoutRs extends BaseRs {
                         .build(bout.number(), attachment.name())
                 )
             );
+        if (attachment.ctype().equals(Attachment.MARKDOWN)) {
+            bundle = bundle.link(
+                new Link(
+                    "open",
+                    this.uriInfo().getBaseUriBuilder().clone()
+                        .path(BoutRs.class)
+                        .queryParam("open", "{a1}")
+                        .build(bout.number(), attachment.name())
+                )
+            );
+        }
         if (attachment.name().equals(this.open)
             && attachment.ctype().equals(Attachment.MARKDOWN)) {
             bundle = bundle.add(

@@ -173,9 +173,44 @@
     </xsl:template>
     <xsl:template match="attachments">
         <nav class="attachments">
+            <xsl:variable name="files" select="attachment[not(links/link[@rel='open'])]"/>
             <ul>
-                <xsl:apply-templates select="attachment" />
+                <xsl:apply-templates select="attachment[links/link[@rel='open']]" />
+                <li onclick="$('#files').toggle();" class="toggle">
+                    <xsl:variable name="count" select="count($files)"/>
+                    <xsl:text>+</xsl:text>
+                    <xsl:value-of select="$count"/>
+                    <xsl:text> file</xsl:text>
+                    <xsl:if test="$count != 1">
+                        <xsl:text>s</xsl:text>
+                    </xsl:if>
+                </li>
             </ul>
+            <div id="files" style="display:none">
+                <ul>
+                    <xsl:for-each select="$files">
+                        <li>
+                            <a href="{links/link[@rel='download']/@href}">
+                                <xsl:value-of select="name" />
+                            </a>
+                            <xsl:text> (</xsl:text>
+                            <xsl:value-of select="ctype" />
+                            <xsl:text>)</xsl:text>
+                        </li>
+                    </xsl:for-each>
+                </ul>
+                <form method="post" id="upload" action="{/page/links/link[@rel='attach']/@href}"
+                    enctype="multipart/form-data">
+                    <fieldset>
+                        <label for="file-name"/>
+                        <input id="file-name" name="name" autocomplete="off" placeholder="attachment name..." size="30" maxlength="50"/>
+                        <label for="file-binary"/>
+                        <input id="file-binary" name="file" type="file"/>
+                        <label for="file-submit"/>
+                        <input id="file-submit" type="submit" value="Upload"/>
+                    </fieldset>
+                </form>
+            </div>
         </nav>
     </xsl:template>
     <xsl:template match="attachment">

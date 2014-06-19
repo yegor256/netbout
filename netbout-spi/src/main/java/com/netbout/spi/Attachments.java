@@ -116,4 +116,46 @@ public interface Attachments {
         }
     }
 
+    /**
+     * Search.
+     */
+    @Immutable
+    @Loggable(Loggable.DEBUG)
+    @ToString(of = "attachments")
+    @EqualsAndHashCode(of = "attachments")
+    final class Search {
+        /**
+         * Origin.
+         */
+        private final transient Attachments attachments;
+        /**
+         * Ctor.
+         * @param att Attachments
+         */
+        public Search(final Attachments att) {
+            this.attachments = att;
+        }
+        /**
+         * Exists with this name?
+         * @param name Name of it
+         * @return TRUE if exists
+         * @throws IOException If fails
+         */
+        public boolean exists(final String name) throws IOException {
+            return Iterables.any(
+                this.attachments.iterate(),
+                new Predicate<Attachment>() {
+                    @Override
+                    public boolean apply(final Attachment input) {
+                        try {
+                            return input.name().equals(name);
+                        } catch (final IOException ex) {
+                            throw new IllegalStateException(ex);
+                        }
+                    }
+                }
+            );
+        }
+    }
+
 }
