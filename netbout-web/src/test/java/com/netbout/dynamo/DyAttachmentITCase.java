@@ -32,45 +32,46 @@ import com.netbout.spi.Attachment;
 import com.netbout.spi.Attachments;
 import com.netbout.spi.Bout;
 import com.netbout.spi.Inbox;
+import java.io.ByteArrayInputStream;
 import javax.ws.rs.core.MediaType;
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang3.CharEncoding;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;
 
 /**
- * Integration case for {@link DyAttachments}.
+ * Integration case for {@link DyAttachment}.
  * @author Yegor Bugayenko (yegor@tpc2.com)
  * @version $Id$
+ * @since 2.8
  */
-public final class DyAttachmentsITCase {
+public final class DyAttachmentITCase {
 
     /**
-     * DyAttachments can create, save and load attachments.
+     * DyAttachment can create, save and load attachments.
      * @throws Exception If there is some problem inside
      */
     @Test
-    public void createsAndLoadsAttachments() throws Exception {
-        final String alias = "bill";
+    public void createsAndLoadsAttachment() throws Exception {
+        final String alias = "beatrix";
         final Aliases aliases =
-            new DyBase().user(new URN("urn:test:840918")).aliases();
+            new DyBase().user(new URN("urn:test:89635")).aliases();
         aliases.add(alias);
         final Inbox inbox = aliases.iterate().iterator().next().inbox();
         final Bout bout = inbox.bout(inbox.start());
         final Attachments attachments = bout.attachments();
-        final String name = "testing-1";
+        final String name = "test";
         attachments.create(name);
         final Attachment attachment = attachments.get(name);
+        final byte[] bytes = {(byte) 0x00, (byte) 0xff, (byte) 0x1f};
         attachment.write(
-            IOUtils.toInputStream("5\u20ac", CharEncoding.UTF_8),
-            MediaType.TEXT_PLAIN
+            new ByteArrayInputStream(bytes),
+            MediaType.APPLICATION_OCTET_STREAM
         );
         MatcherAssert.assertThat(
-            IOUtils.toString(attachment.read(), CharEncoding.UTF_8),
-            Matchers.containsString("\u20ac")
+            IOUtils.toByteArray(attachment.read()),
+            Matchers.equalTo(bytes)
         );
-        attachments.delete(name);
     }
 
 }

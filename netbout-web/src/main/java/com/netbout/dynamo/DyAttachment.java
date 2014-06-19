@@ -70,7 +70,7 @@ import org.apache.commons.io.IOUtils;
 @Loggable(Loggable.DEBUG)
 @ToString(of = "item")
 @EqualsAndHashCode(of = { "region", "item", "self" })
-@SuppressWarnings({ "PMD.TooManyMethods", "PMD.ExcessiveImports"})
+@SuppressWarnings({ "PMD.TooManyMethods", "PMD.ExcessiveImports" })
 final class DyAttachment implements Attachment {
 
     /**

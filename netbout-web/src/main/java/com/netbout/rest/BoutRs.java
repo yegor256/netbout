@@ -40,13 +40,16 @@ import com.rexsl.page.PageBuilder;
 import com.rexsl.page.inset.FlashInset;
 import com.sun.jersey.core.header.FormDataContentDisposition;
 import com.sun.jersey.multipart.FormDataParam;
+import eu.medsea.mimeutil.MimeUtil;
+import eu.medsea.mimeutil.detector.MagicMimeMimeDetector;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.URI;
-import java.net.URLConnection;
+import java.util.Collection;
 import java.util.logging.Level;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.FormParam;
@@ -57,6 +60,8 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.StreamingOutput;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.CharEncoding;
 import org.apache.commons.lang3.time.DateFormatUtils;
@@ -71,7 +76,9 @@ import org.ocpsoft.prettytime.PrettyTime;
  * @checkstyle MultipleStringLiteralsCheck (500 lines)
  */
 @Path("/b/{num}")
-@SuppressWarnings({ "PMD.TooManyMethods", "PMD.AvoidDuplicateLiterals" })
+@SuppressWarnings({
+    "PMD.TooManyMethods", "PMD.AvoidDuplicateLiterals", "PMD.ExcessiveImports"
+})
 public final class BoutRs extends BaseRs {
 
     /**
@@ -83,6 +90,12 @@ public final class BoutRs extends BaseRs {
      * Name of attachment to show.
      */
     private transient String open;
+
+    static {
+        MimeUtil.registerMimeDetector(
+            MagicMimeMimeDetector.class.getCanonicalName()
+        );
+    }
 
     /**
      * Set number of bout.
@@ -133,12 +146,26 @@ public final class BoutRs extends BaseRs {
      */
     @GET
     @Path("/download")
-    public String download(@QueryParam("name") final String name)
+    public Response download(@QueryParam("name") final String name)
         throws IOException {
-        return IOUtils.toString(
-            this.bout().attachments().get(name).read(),
-            CharEncoding.UTF_8
-        );
+        final Attachment attachment = this.bout().attachments().get(name);
+        return Response
+            .ok()
+            .type(attachment.ctype())
+            .header(
+                "Content-Disposition",
+                String.format("attachment; filename=%s", attachment.name())
+            )
+            .entity(
+                new StreamingOutput() {
+                    @Override
+                    public void write(final OutputStream output)
+                        throws IOException {
+                        IOUtils.copy(attachment.read(), output);
+                    }
+                }
+            )
+            .build();
     }
 
     /**
@@ -186,11 +213,12 @@ public final class BoutRs extends BaseRs {
             this.bout().attachments().create(name);
             msg.append(String.format("attachment '%s' uploaded", name));
         }
-        String ctype = URLConnection.guessContentTypeFromStream(
-            new FileInputStream(temp)
-        );
-        if (ctype == null) {
+        final Collection<?> ctypes = MimeUtil.getMimeTypes(temp);
+        final String ctype;
+        if (ctypes.isEmpty()) {
             ctype = MediaType.APPLICATION_OCTET_STREAM;
+        } else {
+            ctype = ctypes.iterator().next().toString();
         }
         msg.append(" (").append(temp.length())
             .append(" bytes, ").append(ctype).append(')');
@@ -198,6 +226,7 @@ public final class BoutRs extends BaseRs {
             new FileInputStream(temp),
             ctype
         );
+        FileUtils.forceDelete(temp);
         throw FlashInset.forward(this.self(), msg.toString(), Level.INFO);
     }
 
