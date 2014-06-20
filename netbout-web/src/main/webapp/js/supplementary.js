@@ -28,7 +28,7 @@
 /*globals window:false, qbaka:false */
 
 // Qbaka
-if (!window.qbaka) {
+if (!qbaka) {
   (function (a, c) {
     a.__qbaka_eh = a.onerror;
     a.__qbaka_reports = [];

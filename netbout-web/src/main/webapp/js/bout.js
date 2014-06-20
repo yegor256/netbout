@@ -79,7 +79,8 @@ $(document).ready(
                     number = item.number;
                   }
                 );
-                $tail.replaceWith(appendix + '<div id="tail"/>');
+                $tail.removeAttr('id');
+                $tail.html(appendix + '<div id="tail"/>');
                 $box.attr('data-tail-number', number);
               },
               error: function () {

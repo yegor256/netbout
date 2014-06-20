@@ -168,9 +168,8 @@
 #tail {
   display: none;
   color: $color-gray;
-  text-align: center;
   &:before {
-    content: "wait...";
+    content: "please, wait a second...";
   }
 }
 
