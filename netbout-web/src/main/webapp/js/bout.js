@@ -56,39 +56,35 @@ $(document).ready(
     }
     $(window).scroll(
       function () {
-        var $box = $('#messages'),
-          number = $box.attr('data-tail-number'),
-          $tail = $('#tail');
-        if ($(window).scrollTop() >= $(document).height() - $(window).height() - 50
-          && number !== '0') {
-          $box.attr('data-tail-number', '0');
+        var $box = $('#messages'), $tail = $('#tail'), more = $box.attr('data-more');
+        if ($(window).scrollTop() >= $(document).height() - $(window).height() - 50 && more) {
+          $box.removeAttr('data-more', '');
           $tail.show();
           $.ajax(
             {
-              url: $box.attr('data-tail-href') + '?number=' + number,
+              url: more,
               cache: false,
-              dataType: 'json',
+              dataType: 'xml',
               method: 'GET',
               success: function (data) {
-                var appendix = '';
-                number = 0;
-                $.each(
-                  data,
-                  function (idx, item) {
+                var appendix = '', more = '';
+                $(data).find('message').each(
+                  function () {
+                    var $msg = $(this);
                     appendix += '<div class="message" id="msg'
-                      + item.number + '"><div class="left"><img class="photo" src="'
-                      + item.photo + '"/>'
+                      + $msg.find('number').text() + '"><div class="left"><img class="photo" src="'
+                      + $msg.find('link[rel="photo"]').attr('href') + '"/>'
                       + '</div><div class="right"><div class="meta"><strong>'
-                      + escapeHTML(item.author) + '</strong> said '
-                      + escapeHTML(item.timeago)
+                      + escapeHTML($msg.find('author').text()) + '</strong> said '
+                      + escapeHTML($msg.find('timeago').text())
                       + '</div><div class="text">'
-                      + escapeHTML(item.text) + '</div></div></div>';
-                    number = item.number;
+                      + escapeHTML($msg.find('html').text()) + '</div></div></div>';
+                    more = $msg.find('link[rel="more"]').attr('href');
                   }
                 );
                 $tail.removeAttr('id');
                 $tail.html(appendix + '<div id="tail"/>');
-                $box.attr('data-tail-number', number);
+                $box.attr('data-more', more);
               },
               error: function () {
                 $tail.html('Oops, an error :( Please, try to reload the page');

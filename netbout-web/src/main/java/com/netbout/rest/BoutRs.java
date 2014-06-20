@@ -36,7 +36,6 @@ import com.netbout.spi.Friends;
 import com.netbout.spi.Inbox;
 import com.netbout.spi.Message;
 import com.netbout.spi.Messages;
-import com.netbout.spi.Pageable;
 import com.rexsl.page.JaxbBundle;
 import com.rexsl.page.Link;
 import com.rexsl.page.PageBuilder;
@@ -51,21 +50,17 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.io.StringWriter;
 import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URLEncoder;
 import java.util.Collection;
 import java.util.logging.Level;
-import javax.json.Json;
-import javax.json.JsonArrayBuilder;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
@@ -102,6 +97,11 @@ public final class BoutRs extends BaseRs {
      */
     private transient String open;
 
+    /**
+     * Message number to exclude (show messages after this one).
+     */
+    private transient long start = Long.MAX_VALUE;
+
     static {
         MimeUtil.registerMimeDetector(
             MagicMimeMimeDetector.class.getCanonicalName()
@@ -127,6 +127,17 @@ public final class BoutRs extends BaseRs {
     }
 
     /**
+     * Set start message numbe.
+     * @param num The number
+     */
+    @QueryParam("start")
+    public void setStart(final Long num) {
+        if (num != null) {
+            this.start = num;
+        }
+    }
+
+    /**
      * Get bout front page.
      * @return The JAX-RS response
      * @throws IOException If fails
@@ -144,7 +155,6 @@ public final class BoutRs extends BaseRs {
             .link(new Link("upload", "./upload"))
             .link(new Link("create", "./create"))
             .link(new Link("attach", "./attach"))
-            .link(new Link("tail", "./tail"))
             .append(this.bundle(this.bout()))
             .render()
             .build();
@@ -385,43 +395,6 @@ public final class BoutRs extends BaseRs {
     }
 
     /**
-     * Fetch more messages.
-     * @param num Latest message seen
-     * @return JSON with more messages
-     * @throws IOException If fails
-     */
-    @GET
-    @Path("/tail")
-    @Produces(MediaType.APPLICATION_JSON)
-    public String tail(@QueryParam("number") final long num)
-        throws IOException {
-        final Pageable<Message> messages = this.bout().messages().jump(num);
-        final JsonArrayBuilder array = Json.createArrayBuilder();
-        final PrettyTime pretty = new PrettyTime();
-        for (final Message msg
-            : Iterables.limit(messages.iterate(), Messages.PAGE)) {
-            array.add(
-                Json.createObjectBuilder()
-                    .add("number", msg.number())
-                    .add("author", msg.author())
-                    .add("text", msg.text())
-                    .add(
-                        "photo",
-                        this.uriInfo().getBaseUriBuilder().clone()
-                            .path(FriendRs.class)
-                            .path(FriendRs.class, "png")
-                            .build(this.bout().number(), msg.author())
-                            .toString()
-                    )
-                    .add("timeago", pretty.format(msg.date()))
-            );
-        }
-        final StringWriter writer = new StringWriter();
-        Json.createWriter(writer).writeArray(array.build());
-        return writer.toString();
-    }
-
-    /**
      * Get self URI.
      * @return URI
      * @throws IOException If fails
@@ -501,7 +474,7 @@ public final class BoutRs extends BaseRs {
                 new JaxbBundle("messages").add(
                     new JaxbBundle.Group<Message>(
                         Iterables.limit(
-                            bout.messages().iterate(),
+                            bout.messages().jump(this.start).iterate(),
                             Messages.PAGE
                         )
                     ) {
@@ -624,7 +597,25 @@ public final class BoutRs extends BaseRs {
                 "date",
                 DateFormatUtils.ISO_DATETIME_FORMAT.format(message.date())
             )
-            .up();
+            .up()
+            .link(
+                new Link(
+                    "photo",
+                    this.uriInfo().getBaseUriBuilder().clone()
+                        .path(FriendRs.class)
+                        .path(FriendRs.class, "png")
+                        .build(this.bout().number(), message.author())
+                        .toString()
+                )
+            )
+            .link(
+                new Link(
+                    "more",
+                    this.uriInfo().getRequestUriBuilder().clone()
+                        .replaceQueryParam("start", "{x}")
+                        .build(message.number())
+                )
+            );
     }
 
 }

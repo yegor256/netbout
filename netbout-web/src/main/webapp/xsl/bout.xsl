@@ -99,8 +99,7 @@
                 </fieldset>
             </form>
         </div>
-        <div id="messages" data-tail-href="{/page/links/link[@rel='tail']/@href}"
-            data-tail-number="{messages/message[position()=last()]/number}">
+        <div id="messages" data-more="{messages/message[position()=last()]/links/link[@rel='more']/@href}">
             <xsl:apply-templates select="messages/message"/>
             <div id="tail"/>
         </div>
@@ -109,26 +108,7 @@
         <xsl:variable name="msg" select="."/>
         <div class="message" id="msg{$msg/number}">
             <div class="left">
-                <img class="photo">
-                    <xsl:choose>
-                        <xsl:when test="/page/bout/friends/friend[$msg/author=alias]">
-                            <xsl:attribute name="src">
-                                <xsl:value-of select="/page/bout/friends/friend[$msg/author=alias]/photo"/>
-                            </xsl:attribute>
-                            <xsl:attribute name="alt">
-                                <xsl:value-of select="/page/bout/friends/friend[$msg/author=alias]/alias"/>
-                            </xsl:attribute>
-                        </xsl:when>
-                        <xsl:otherwise>
-                            <xsl:attribute name="src">
-                                <xsl:text>//img.netbout.com/someone.png</xsl:text>
-                            </xsl:attribute>
-                            <xsl:attribute name="alt">
-                                <xsl:text>someone some time ago</xsl:text>
-                            </xsl:attribute>
-                        </xsl:otherwise>
-                    </xsl:choose>
-                </img>
+                <img class="photo" src="{links/link[@rel='photo']/@href}"/>
             </div>
             <div class="right">
                 <div class="meta">

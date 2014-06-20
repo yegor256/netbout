@@ -28,7 +28,7 @@
 /*globals window:false, qbaka:false */
 
 // Qbaka
-if (!qbaka) {
+if (typeof window.qbaka === 'undefined') {
   (function (a, c) {
     a.__qbaka_eh = a.onerror;
     a.__qbaka_reports = [];
@@ -74,10 +74,10 @@ if (!qbaka) {
         d();
       }
       qbaka.key = '00dfa61ef8b0f3f6fe1e97790d64ef16';
+      qbaka.options = {autoStacktrace: 1, trackEvents: 1};
     };
   }(window, document));
 }
-qbaka.options = {autoStacktrace: 1, trackEvents: 1};
 
 // Pingdom RUM
 var _prum = [
