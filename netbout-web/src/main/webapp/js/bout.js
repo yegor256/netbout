@@ -70,10 +70,9 @@ $(document).ready(
                                 $.each(
                                     data,
                                     function (idx, item) {
-                                        var photo = $('#photo-' + item.author).attr('src');
                                         appendix += '<div class="message" id="msg'
                                             + item.number + '"><div class="left">'
-                                            + '<img class="photo" src="' + photo + '"/>'
+                                            + '<img class="photo" src="' + item.photo + '"/>'
                                             + '</div><div class="right"><div class="meta"><strong>'
                                             + item.author + '</strong> said ' + item.timeago
                                             + '</div><div class="text">'

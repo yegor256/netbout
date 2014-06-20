@@ -405,6 +405,14 @@ public final class BoutRs extends BaseRs {
                     .add("number", msg.number())
                     .add("author", msg.author())
                     .add("text", msg.text())
+                    .add(
+                        "photo",
+                        this.uriInfo().getBaseUriBuilder().clone()
+                            .path(FriendRs.class)
+                            .path(FriendRs.class, "png")
+                            .build(num, msg.author())
+                            .toString()
+                    )
                     .add("timeago", pretty.format(msg.date()))
             );
         }
@@ -522,7 +530,14 @@ public final class BoutRs extends BaseRs {
         return new JaxbBundle("friend")
             .add("alias", friend.alias())
             .up()
-            .add("photo", friend.photo().toString()).up()
+            .add(
+                "photo",
+                this.uriInfo().getBaseUriBuilder().clone()
+                    .path(FriendRs.class)
+                    .path(FriendRs.class, "png")
+                    .build(bout.number(), friend.alias())
+                    .toString()
+            ).up()
             .link(
                 new Link(
                     "kick",

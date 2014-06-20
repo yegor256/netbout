@@ -161,7 +161,14 @@ public final class InboxRs extends BaseRs {
         return new JaxbBundle("friend")
             .add("alias", friend.alias())
             .up()
-            .add("photo", friend.photo().toString()).up()
+            .add(
+                "photo",
+                this.uriInfo().getBaseUriBuilder().clone()
+                    .path(FriendRs.class)
+                    .path(FriendRs.class, "png")
+                    .build(bout.number(), friend.alias())
+                    .toString()
+            ).up()
             .link(
                 new Link(
                     "kick",
