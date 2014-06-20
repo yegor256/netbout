@@ -53,13 +53,17 @@ $(document).ready(
                 var appendix = '<ul class="bouts">', more = '';
                 $(data).find('bout').each(
                   function (idx, bout) {
-                    var $bout = $(bout);
+                    var $bout = $(bout),
+                      unread = parseInt($bout.find('unread').text()),
+                      unseen = parseInt($bout.find('unseen').text());
                     appendix += '<li class="bout" id="bout'
                       + $bout.find('number').text() + '"><h1 class="bout"><span class="num'
-                      + ($bout.find('unread').text() === '0' ? '' : ' unread') + '">#'
+                      + (unread === 0 && unseen === 0 ? '' : ' unread') + '">#'
                       + $bout.find('number').text() + '</span><a class="title" href="'
                       + $bout.find('link[rel="open"]').attr('href') + '">'
-                      + escapeHTML($bout.find('title').text()) + '</a></h1><div class="friends">';
+                      + escapeHTML($bout.find('title').text()) + '</a>'
+                      + (unread === 0 ? '' : '<span class="unread">' + unread + '</span>')
+                      +'</h1><div class="friends">';
                     $bout.find('friend').each(
                       function (idx, friend) {
                         var $friend = $(friend), shift = 57 * idx;
