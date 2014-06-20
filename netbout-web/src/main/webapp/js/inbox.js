@@ -54,8 +54,8 @@ $(document).ready(
                 $(data).find('bout').each(
                   function (idx, bout) {
                     var $bout = $(bout),
-                      unread = parseInt($bout.find('unread').text()),
-                      unseen = parseInt($bout.find('unseen').text());
+                      unread = parseInt($bout.find('unread').text(), 10),
+                      unseen = parseInt($bout.find('unseen').text(), 10);
                     appendix += '<li class="bout" id="bout'
                       + $bout.find('number').text() + '"><h1 class="bout"><span class="num'
                       + (unread === 0 && unseen === 0 ? '' : ' unread') + '">#'
