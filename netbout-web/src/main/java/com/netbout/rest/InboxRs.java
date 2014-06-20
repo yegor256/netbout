@@ -26,9 +26,11 @@
  */
 package com.netbout.rest;
 
+import com.google.common.collect.Iterables;
 import com.netbout.spi.Attachments;
 import com.netbout.spi.Bout;
 import com.netbout.spi.Friend;
+import com.netbout.spi.Inbox;
 import com.rexsl.page.JaxbBundle;
 import com.rexsl.page.Link;
 import com.rexsl.page.PageBuilder;
@@ -37,6 +39,7 @@ import java.io.IOException;
 import java.util.logging.Level;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
 
 /**
@@ -51,6 +54,22 @@ import javax.ws.rs.core.Response;
 public final class InboxRs extends BaseRs {
 
     /**
+     * Start date.
+     */
+    private transient long since = System.currentTimeMillis() << 1;
+
+    /**
+     * Set start date.
+     * @param num The number
+     */
+    @QueryParam("since")
+    public void setSince(final Long num) {
+        if (num != null) {
+            this.since = num;
+        }
+    }
+
+    /**
      * Get inbox.
      * @return The JAX-RS response
      * @throws IOException If fails
@@ -63,6 +82,7 @@ public final class InboxRs extends BaseRs {
             .build(NbPage.class)
             .init(this)
             .append(this.bouts())
+            .append(new JaxbBundle("since", Long.toString(this.since)))
             .render()
             .build();
     }
@@ -92,7 +112,12 @@ public final class InboxRs extends BaseRs {
      */
     private JaxbBundle bouts() throws IOException {
         return new JaxbBundle("bouts").add(
-            new JaxbBundle.Group<Bout>(this.alias().inbox().iterate()) {
+            new JaxbBundle.Group<Bout>(
+                Iterables.limit(
+                    this.alias().inbox().jump(this.since).iterate(),
+                    Inbox.PAGE
+                )
+            ) {
                 @Override
                 public JaxbBundle bundle(final Bout bout) {
                     try {
@@ -153,9 +178,9 @@ public final class InboxRs extends BaseRs {
                 new Link(
                     "more",
                     this.uriInfo().getRequestUriBuilder().clone()
-                        .path(BoutRs.class)
-                        .replaceQueryParam("start", bout.updated().getTime())
-                        .build(bout.number())
+                        .path(InboxRs.class)
+                        .replaceQueryParam("since", bout.updated().getTime())
+                        .build()
                 )
             );
     }

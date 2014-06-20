@@ -100,7 +100,7 @@ public final class BoutRs extends BaseRs {
     /**
      * Message number to exclude (show messages after this one).
      */
-    private transient long start = Long.MAX_VALUE;
+    private transient long start = System.currentTimeMillis() << 1;
 
     static {
         MimeUtil.registerMimeDetector(

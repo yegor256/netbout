@@ -326,7 +326,7 @@
                             </jsSourceIncludes>
                             <jsEngine>CLOSURE</jsEngine>
                             <skipMerge>true</skipMerge>
-                            <skipMinify>true</skipMinify>
+                            <skipMinify>false</skipMinify>
                         </configuration>
                     </execution>
                     <execution>
