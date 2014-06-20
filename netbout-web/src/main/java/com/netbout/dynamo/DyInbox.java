@@ -28,6 +28,9 @@ package com.netbout.dynamo;
 
 import co.stateful.Counter;
 import co.stateful.RtSttc;
+import com.amazonaws.services.dynamodbv2.model.AttributeValue;
+import com.amazonaws.services.dynamodbv2.model.ComparisonOperator;
+import com.amazonaws.services.dynamodbv2.model.Condition;
 import com.amazonaws.services.dynamodbv2.model.Select;
 import com.google.common.base.Function;
 import com.google.common.collect.Iterables;
@@ -78,12 +81,17 @@ final class DyInbox implements Inbox {
     private final transient String self;
 
     /**
+     * Start moment.
+     */
+    private final transient long start;
+
+    /**
      * Ctor.
      * @param reg Region we're in
      * @param slf My alias
      */
     DyInbox(final Region reg, final String slf) {
-        this(reg, slf, DyInbox.sttc());
+        this(reg, slf, DyInbox.sttc(), System.currentTimeMillis() << 1);
     }
 
     /**
@@ -91,12 +99,15 @@ final class DyInbox implements Inbox {
      * @param reg Region we're in
      * @param slf My alias
      * @param ctr Counter
+     * @param strt Start
      * @since 2.7.1
      */
-    DyInbox(final Region reg, final String slf, final Counter ctr) {
+    DyInbox(final Region reg, final String slf, final Counter ctr,
+        final long strt) {
         this.region = reg;
         this.self = slf;
         this.counter = ctr;
+        this.start = strt;
     }
 
     @Override
@@ -174,7 +185,7 @@ final class DyInbox implements Inbox {
 
     @Override
     public Pageable<Bout> jump(final long number) {
-        throw new UnsupportedOperationException("#jump()");
+        return new DyInbox(this.region, this.self, this.counter, number);
     }
 
     @Override
@@ -183,10 +194,21 @@ final class DyInbox implements Inbox {
             this.region.table(DyFriends.TBL)
                 .frame()
                 .where(DyFriends.RANGE, this.self)
+                .where(
+                    DyFriends.ATTR_UPDATED,
+                    new Condition()
+                        .withComparisonOperator(ComparisonOperator.LT)
+                        .withAttributeValueList(
+                            new AttributeValue().withN(
+                                Long.toString(this.start)
+                            )
+                        )
+                )
                 .through(
                     new QueryValve()
                         .withIndexName(DyFriends.INDEX)
                         .withConsistentRead(false)
+                        .withLimit(Inbox.PAGE)
                         .withSelect(Select.ALL_PROJECTED_ATTRIBUTES)
                         .withScanIndexForward(false)
                 ),

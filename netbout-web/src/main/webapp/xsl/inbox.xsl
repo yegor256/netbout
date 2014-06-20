@@ -47,6 +47,10 @@
                 <xsl:text>)</xsl:text>
             </xsl:if>
         </title>
+        <script src="/js/inbox.js?{version/revision}">
+            <xsl:text> </xsl:text>
+            <!-- this is for W3C compliance -->
+        </script>
         <script src="/js/friends.js?{version/revision}">
             <xsl:text> </xsl:text>
             <!-- this is for W3C compliance -->
@@ -55,24 +59,34 @@
     <xsl:template match="page" mode="body">
         <xsl:choose>
             <xsl:when test="count(bouts/bout) = 0">
-                <h1>
-                    <span class="title">
-                        <xsl:text>Welcome to netbout!</xsl:text>
-                    </span>
-                </h1>
-                <p>
-                    <xsl:value-of select="$TEXTS/Lets.start"/>
+                <p style="margin-top:36px;">
+                    Someone invited you here?
+                    If yes, give him your alias
+                    <strong>@<xsl:value-of select="alias/name"/></strong>
+                    and wait. You will be invited to a private
+                    conversation. The rest is very simple :)
                 </p>
                 <p>
-                    <xsl:value-of select="$TEXTS/We.are.still.testing"/>
+                    If you registered here just because you are
+                    curios what Netbout is, we can explain. It is
+                    a place for your private talks, made right. You start
+                    a new conversation, invite
+                    your friends, post messages, share documents, and never
+                    reveal your real identity. Try to start one ("start"
+                    link is at the top right corner) and invite
+                    <strong>@help</strong>. You'll get the idea
+                    quite soon :)
                 </p>
             </xsl:when>
             <xsl:otherwise>
-                <ul class="bouts">
-                    <xsl:for-each select="bouts/bout">
-                        <xsl:apply-templates select="."/>
-                    </xsl:for-each>
-                </ul>
+                <div id="bouts" data-more="{bouts/bout[position()=last()]/links/link[@rel='more']/@href}">
+                    <ul class="bouts">
+                        <xsl:for-each select="bouts/bout">
+                            <xsl:apply-templates select="."/>
+                        </xsl:for-each>
+                    </ul>
+                    <div id="tail"/>
+                </div>
             </xsl:otherwise>
         </xsl:choose>
     </xsl:template>

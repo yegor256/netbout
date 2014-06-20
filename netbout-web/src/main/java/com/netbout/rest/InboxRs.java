@@ -115,6 +115,8 @@ public final class InboxRs extends BaseRs {
         return new JaxbBundle("bout")
             .add("number", Long.toString(bout.number()))
             .up()
+            .add("updated", Long.toString(bout.updated().getTime()))
+            .up()
             .add("unread", Long.toString(bout.messages().unread()))
             .up()
             .add(
@@ -146,6 +148,15 @@ public final class InboxRs extends BaseRs {
                         .path(BoutRs.class)
                         .build(bout.number())
                 )
+            )
+            .link(
+                new Link(
+                    "more",
+                    this.uriInfo().getRequestUriBuilder().clone()
+                        .path(BoutRs.class)
+                        .replaceQueryParam("start", bout.updated().getTime())
+                        .build(bout.number())
+                )
             );
     }
 
@@ -161,14 +172,16 @@ public final class InboxRs extends BaseRs {
         return new JaxbBundle("friend")
             .add("alias", friend.alias())
             .up()
-            .add(
-                "photo",
-                this.uriInfo().getBaseUriBuilder().clone()
-                    .path(FriendRs.class)
-                    .path(FriendRs.class, "png")
-                    .build(bout.number(), friend.alias())
-                    .toString()
-            ).up()
+            .link(
+                new Link(
+                    "photo",
+                    this.uriInfo().getBaseUriBuilder().clone()
+                        .path(FriendRs.class)
+                        .path(FriendRs.class, "png")
+                        .build(bout.number(), friend.alias())
+                        .toString()
+                )
+            )
             .link(
                 new Link(
                     "kick",

@@ -24,145 +24,145 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-
 @import 'fonts';
 @import 'colors';
 @import 'layout';
 
 .top2 {
-    position: relative;
-    margin-top: 7px;
-    margin-bottom: 37px;
-    clear: both;
-    .invite {
-        background-color: $color-background;
-        .invite input {
-            background-color: $color-background;
-        }
-        @media all and (min-width: $width + 1) {
-            position: absolute;
-            z-index: 10;
-            top: 0;
-            right: 0;
-            text-align: right;
-        }
-        @media all and (max-width: $width) {
-            position: relative;
-            margin-top: 25px;
-        }
+  position: relative;
+  margin-top: 7px;
+  margin-bottom: 37px;
+  clear: both;
+  .invite {
+    background-color: $color-background;
+    .invite input {
+      background-color: $color-background;
     }
+    @media all and (min-width: $width + 1) {
+      position: absolute;
+      z-index: 10;
+      top: 0;
+      right: 0;
+      text-align: right;
+    }
+    @media all and (max-width: $width) {
+      position: relative;
+      margin-top: 25px;
+    }
+  }
 }
 
 .attachments {
+  position: relative;
+  clear: both;
+  ul {
+    margin-left: 0;
     position: relative;
-    clear: both;
+    list-style: none;
+    li {
+      display: inline;
+      margin-right: 10px;
+      &.active {
+        font-weight: bold;
+      }
+      &.unseen {
+        @extend .red;
+      }
+      &.toggle {
+        cursor: pointer;
+      }
+    }
+  }
+  #files {
+    margin-top: 12px;
     ul {
-        margin-left: 0;
-        position: relative;
-        list-style: none;
-        li {
-            display: inline;
-            margin-right: 10px;
-            &.active {
-                font-weight: bold;
-            }
-            &.unseen {
-                @extend .red;
-            }
-            &.toggle {
-                cursor: pointer;
-            }
-        }
+      margin-bottom: 12px;
+      li {
+        display: block;
+      }
     }
-    #files {
-        margin-top: 12px;
-        ul {
-            margin-bottom: 12px;
-            li {
-                display: block;
-            }
-        }
-    }
+  }
 }
 
 .page {
-    min-height: 30px;
-    margin-top: 14px;
-    margin-bottom: 14px;
-    padding: 10px;
-    background-color: $color-gray-light;
-    border: 1px solid $color-gray;
-    overflow-y: auto;
-    .controls {
-        float: right;
+  min-height: 30px;
+  margin-top: 14px;
+  margin-bottom: 14px;
+  padding: 10px;
+  background-color: $color-gray-light;
+  border: 1px solid $color-gray;
+  overflow-y: auto;
+  .controls {
+    float: right;
+  }
+  p, table, h1 {
+    margin-top: .5em;
+    margin-bottom: .5em;
+  }
+  h1 {
+    font-size: 1.4em;
+    font-weight: normal;
+  }
+  table {
+    border-spacing: 0;
+    padding: 0;
+    th {
+      font-weight: normal;
+      border-bottom: 1px solid $color-gray-dark;
+      text-align: left;
     }
-    p, table, h1 {
-        margin-top: .5em;
-        margin-bottom: .5em;
+    td, th {
+      padding-right: 1em;
+      vertical-align: top;
     }
-    h1 {
-        font-size: 1.4em;
-        font-weight: normal;
-    }
-    table {
-        border-spacing: 0;
-        padding: 0;
-        th {
-            font-weight: normal;
-            border-bottom: 1px solid $color-gray-dark;
-            text-align: left;
-        }
-        td, th {
-            padding-right: 1em;
-        }
-    }
-    code {
-        background-color: $color-gray;
-        border: 1px solid $color-gray-dark;
-    }
+  }
+  code {
+    background-color: $color-gray;
+    border: 1px solid $color-gray-dark;
+  }
 }
 
 .post {
-    clear: both;
-    margin-top: 10px;
-    margin-bottom: 10px;
-    textarea {
-        display: inline;
-        width: 100%;
-    }
+  clear: both;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  textarea {
+    display: inline;
+    width: 100%;
+  }
 }
 
 .message {
-    margin-top: 25px;
+  margin-top: 25px;
+  position: relative;
+  min-height: 60px;
+  .left {
+    position: absolute;
+    left: 0;
+    top: 0;
+    img {
+      height: 50px;
+      width: 50px;
+      border-bottom: 1px solid $color-gray2;
+      border-right: 1px solid $color-gray2;
+    }
+  }
+  .right {
+    margin-left: 70px;
     position: relative;
-    min-height: 60px;
-    .left {
-        position: absolute;
-        left: 0;
-        top: 0;
-        img {
-            height: 50px;
-            width: 50px;
-            border-bottom: 1px solid $color-gray2;
-            border-right: 1px solid $color-gray2;
-        }
+    overflow-x: auto;
+    .meta {
+      font-size: 14px;
+      color: gray;
     }
-    .right {
-        margin-left: 70px;
-        position: relative;
+    .text {
+      pre {
+        padding: 10px;
         overflow-x: auto;
-        .meta {
-            font-size: 14px;
-            color: gray;
-        }
-        .text {
-            pre {
-                padding: 10px;
-                overflow-x: auto;
-                max-height: 250px;
-            }
-        }
+        max-height: 250px;
+      }
     }
+  }
 }
 
 #tail {

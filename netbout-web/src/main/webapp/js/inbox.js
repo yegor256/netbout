@@ -37,26 +37,9 @@ function escapeHTML(txt) {
 $(document).ready(
   function () {
     "use strict";
-    if ($('#rename')[0]) {
-      $('h1 span.title')
-        .blur(function () {
-          var $input = $('#rename').find("input[name='title']"),
-            previous = $input.val(),
-            entered = $(this).text();
-          if (entered !== previous) {
-            $input.val(entered);
-            $('#rename').submit();
-          }
-        })
-        .keydown(function (event) {
-          if (event.keyCode === 13) {
-            $(this).blur();
-          }
-        });
-    }
     $(window).scroll(
       function () {
-        var $box = $('#messages'), $tail = $('#tail'), more = $box.attr('data-more');
+        var $box = $('#bouts'), $tail = $('#tail'), more = $box.attr('data-more');
         if ($(window).scrollTop() >= $(document).height() - $(window).height() - 50 && more) {
           $box.removeAttr('data-more', '');
           $tail.show();
@@ -67,22 +50,32 @@ $(document).ready(
               dataType: 'xml',
               method: 'GET',
               success: function (data) {
-                var appendix = '', more = '';
-                $(data).find('message').each(
-                  function (idx, $msg) {
-                    appendix += '<div class="message" id="msg'
-                      + $msg.find('number').text() + '"><div class="left"><img class="photo" src="'
-                      + $msg.find('link[rel="photo"]').attr('href') + '"/>'
-                      + '</div><div class="right"><div class="meta"><strong>'
-                      + escapeHTML($msg.find('author').text()) + '</strong> said '
-                      + escapeHTML($msg.find('timeago').text())
-                      + '</div><div class="text">'
-                      + escapeHTML($msg.find('html').text()) + '</div></div></div>';
+                var appendix = '<ul class="bouts">', more = '';
+                $(data).find('bout').each(
+                  function (idx, msg) {
+                    var $msg = $(msg);
+                    appendix += '<li class="bout" id="bout'
+                      + $msg.find('number').text() + '"><h1 class="bout"><span class="num'
+                      + ($msg.find('unread').text() === '0' ? '' : ' unread') + '">#'
+                      + $msg.find('number').text() + '</span><a class="title" href="'
+                      + $msg.find('link[rel="open"]').attr('href') + '">'
+                      + escapeHTML($msg.find('title').text()) + '</a></h1><div class="friends">';
+                    $msg.find('friend').each(
+                      function (idx, friend) {
+                        var $friend = $(friend);
+                        var shift = 57 * idx;
+                        appendix += '<div class="friend" style="left:'
+                          + shift + 'px;"><img class="photo" alt="'
+                          + escapeHTML($friend.find('alias').text()) +'" src="'
+                          + $friend.find('link[rel="photo"]').attr('href') + '"/></div>';
+                      }
+                    );
+                    appendix += '</div></li>';
                     more = $msg.find('link[rel="more"]').attr('href');
                   }
                 );
                 $tail.removeAttr('id');
-                $tail.html(appendix + '<div id="tail"/>');
+                $tail.html(appendix + '</ul><div id="tail"/>');
                 $box.attr('data-more', more);
               },
               error: function () {

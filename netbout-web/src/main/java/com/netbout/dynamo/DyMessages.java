@@ -131,7 +131,7 @@ final class DyMessages implements Messages {
      * @param slf Self alias
      */
     DyMessages(final Region reg, final long num, final String slf) {
-        this(reg, num, slf, DyMessages.sttc(), Long.MAX_VALUE);
+        this(reg, num, slf, DyMessages.sttc(), System.currentTimeMillis() << 1);
     }
 
     /**

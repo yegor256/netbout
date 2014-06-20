@@ -100,6 +100,11 @@ final class RtBout implements Bout {
     }
 
     @Override
+    public Date updated() throws IOException {
+        throw new UnsupportedOperationException("#updated()");
+    }
+
+    @Override
     public String title() throws IOException {
         return this.request.fetch()
             .as(RestResponse.class)

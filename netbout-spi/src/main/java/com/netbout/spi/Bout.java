@@ -58,6 +58,13 @@ public interface Bout {
     Date date() throws IOException;
 
     /**
+     * When it was updated.
+     * @return The date of update
+     * @throws IOException If fails
+     */
+    Date updated() throws IOException;
+
+    /**
      * Get its title.
      * @return The title of the bout
      * @throws IOException If fails
@@ -125,6 +132,10 @@ public interface Bout {
         @Override
         public Date date() throws IOException {
             return this.origin.date();
+        }
+        @Override
+        public Date updated() throws IOException {
+            return this.origin.updated();
         }
         @Override
         public String title() throws IOException {

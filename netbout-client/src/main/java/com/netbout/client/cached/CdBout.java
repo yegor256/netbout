@@ -78,6 +78,12 @@ public final class CdBout implements Bout {
 
     @Override
     @Cacheable
+    public Date updated() throws IOException {
+        return this.origin.updated();
+    }
+
+    @Override
+    @Cacheable
     public String title() throws IOException {
         return this.origin.title();
     }

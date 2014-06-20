@@ -26,11 +26,16 @@
  */
 package com.netbout.dynamo;
 
+import com.jcabi.aspects.Tv;
 import com.jcabi.urn.URN;
 import com.netbout.spi.Aliases;
 import com.netbout.spi.Bout;
 import com.netbout.spi.Inbox;
+import com.netbout.spi.Message;
 import com.netbout.spi.Messages;
+import com.netbout.spi.Pageable;
+import java.util.Iterator;
+import java.util.concurrent.TimeUnit;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;
@@ -61,6 +66,37 @@ public final class DyMessagesITCase {
             messages.iterate(),
             Matchers.not(Matchers.emptyIterable())
         );
+    }
+
+    /**
+     * DyMessages can jump through the list.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void jumpsThroughTheList() throws Exception {
+        final String alias = "rodrigo";
+        final Aliases aliases =
+            new DyBase().user(new URN("urn:test:844838")).aliases();
+        aliases.add(alias);
+        final Inbox inbox = aliases.iterate().iterator().next().inbox();
+        final Bout bout = inbox.bout(inbox.start());
+        final Messages messages = bout.messages();
+        final int total = Tv.FIVE;
+        for (int idx = 0; idx < total; ++idx) {
+            messages.post(String.format("msg #%d", idx));
+        }
+        TimeUnit.SECONDS.sleep((long) Tv.FIVE);
+        Pageable<Message> pageable = messages;
+        int found = 0;
+        while (true) {
+            final Iterator<Message> iterator = pageable.iterate().iterator();
+            if (!iterator.hasNext()) {
+                break;
+            }
+            pageable = pageable.jump(iterator.next().number());
+            ++found;
+        }
+        MatcherAssert.assertThat(found, Matchers.equalTo(total));
     }
 
 }

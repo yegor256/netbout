@@ -95,6 +95,11 @@ final class DyBout implements Bout {
     }
 
     @Override
+    public Date updated() throws IOException {
+        return this.date();
+    }
+
+    @Override
     public String title() throws IOException {
         return this.item.get(DyFriends.ATTR_TITLE).getS();
     }

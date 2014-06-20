@@ -89,6 +89,15 @@ public final class ReBout implements Bout {
         verbose = false, attempts = Tv.TWENTY,
         delay = Tv.FIVE, unit = TimeUnit.SECONDS
     )
+    public Date updated() throws IOException {
+        return this.origin.updated();
+    }
+
+    @Override
+    @RetryOnFailure(
+        verbose = false, attempts = Tv.TWENTY,
+        delay = Tv.FIVE, unit = TimeUnit.SECONDS
+    )
     public String title() throws IOException {
         return this.origin.title();
     }

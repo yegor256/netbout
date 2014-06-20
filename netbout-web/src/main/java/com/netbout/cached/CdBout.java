@@ -79,6 +79,12 @@ final class CdBout implements Bout {
 
     @Override
     @Cacheable(lifetime = Tv.FIVE, unit = TimeUnit.MINUTES)
+    public Date updated() throws IOException {
+        return this.origin.updated();
+    }
+
+    @Override
+    @Cacheable(lifetime = Tv.FIVE, unit = TimeUnit.MINUTES)
     public String title() throws IOException {
         return this.origin.title();
     }

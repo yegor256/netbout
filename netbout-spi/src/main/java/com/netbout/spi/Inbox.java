@@ -40,6 +40,11 @@ import java.io.IOException;
 public interface Inbox extends Pageable<Bout> {
 
     /**
+     * Page size.
+     */
+    int PAGE = 8;
+
+    /**
      * Start new bout.
      * @return Bout number
      * @throws IOException If fails

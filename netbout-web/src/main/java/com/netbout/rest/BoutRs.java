@@ -503,14 +503,16 @@ public final class BoutRs extends BaseRs {
         return new JaxbBundle("friend")
             .add("alias", friend.alias())
             .up()
-            .add(
-                "photo",
-                this.uriInfo().getBaseUriBuilder().clone()
-                    .path(FriendRs.class)
-                    .path(FriendRs.class, "png")
-                    .build(bout.number(), friend.alias())
-                    .toString()
-            ).up()
+            .link(
+                new Link(
+                    "photo",
+                    this.uriInfo().getBaseUriBuilder().clone()
+                        .path(FriendRs.class)
+                        .path(FriendRs.class, "png")
+                        .build(bout.number(), friend.alias())
+                        .toString()
+                )
+            )
             .link(
                 new Link(
                     "kick",

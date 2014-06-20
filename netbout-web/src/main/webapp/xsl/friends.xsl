@@ -62,7 +62,8 @@
                 </xsl:if>
             </div>
             <div class="friend" style="left:{$left}px">
-                <img class="photo" id="photo-{alias}" alt="{alias}" src="{photo}"/>
+                <img class="photo" id="photo-{alias}" alt="{alias}"
+                    src="{links/link[@rel='photo']/@href}"/>
             </div>
         </div>
     </xsl:template>

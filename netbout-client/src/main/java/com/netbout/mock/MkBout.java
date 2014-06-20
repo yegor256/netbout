@@ -99,6 +99,11 @@ final class MkBout implements Bout {
     }
 
     @Override
+    public Date updated() throws IOException {
+        throw new UnsupportedOperationException("#updated()");
+    }
+
+    @Override
     public String title() throws IOException {
         try {
             return new JdbcSession(this.sql.source())
