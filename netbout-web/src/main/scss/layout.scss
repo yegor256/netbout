@@ -176,3 +176,11 @@ $width: 750px;
     color: $color-orange;
   }
 }
+
+#tail {
+  display: none;
+  color: $color-gray-dark;
+  &:before {
+    content: "please, wait a second...";
+  }
+}

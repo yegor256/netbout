@@ -164,12 +164,3 @@
     }
   }
 }
-
-#tail {
-  display: none;
-  color: $color-gray;
-  &:before {
-    content: "please, wait a second...";
-  }
-}
-
