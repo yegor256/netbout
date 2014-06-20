@@ -41,8 +41,8 @@
             <div class="bar" style="left:{$left}px">
                 <span class="name">
                     <xsl:call-template name="crop">
-                        <xsl:with-param name="text" select="alias" />
-                        <xsl:with-param name="length" select="25" />
+                        <xsl:with-param name="text" select="alias"/>
+                        <xsl:with-param name="length" select="25"/>
                     </xsl:call-template>
                 </span>
                 <xsl:if test="links/link[@rel='kick']">
@@ -53,8 +53,8 @@
                         </xsl:attribute>
                         <xsl:attribute name="title">
                             <xsl:call-template name="format">
-                                <xsl:with-param name="text" select="'kick.X.off.this.bout'" />
-                                <xsl:with-param name="value" select="alias" />
+                                <xsl:with-param name="text" select="'kick.X.off.this.bout'"/>
+                                <xsl:with-param name="value" select="alias"/>
                             </xsl:call-template>
                         </xsl:attribute>
                         <xsl:text>x</xsl:text>

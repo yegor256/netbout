@@ -85,12 +85,14 @@
                         <xsl:text>https://github.com/netbout/netbout/commit/</xsl:text>
                         <xsl:value-of select="revision"/>
                     </xsl:attribute>
-                    <i class="ico ico-github"><xsl:comment>github</xsl:comment></i>
+                    <i class="ico ico-github">
+                        <xsl:comment>github</xsl:comment>
+                    </i>
                 </a>
             </span>
             <span>
                 <xsl:call-template name="millis">
-                    <xsl:with-param name="millis" select="/page/millis" />
+                    <xsl:with-param name="millis" select="/page/millis"/>
                 </xsl:call-template>
             </span>
         </div>

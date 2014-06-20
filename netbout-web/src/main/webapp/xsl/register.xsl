@@ -33,14 +33,15 @@
     xmlns="http://www.w3.org/1999/xhtml"
     version="2.0" exclude-result-prefixes="xs">
     <xsl:output method="xml" omit-xml-declaration="yes"/>
-    <xsl:include href="/xsl/login-layout.xsl" />
+    <xsl:include href="/xsl/login-layout.xsl"/>
     <xsl:template match="page" mode="head">
         <script>
             <xsl:attribute name="src">
                 <xsl:text>/js/register.js?</xsl:text>
                 <xsl:value-of select="version/revision"/>
             </xsl:attribute>
-            <xsl:text> </xsl:text> <!-- this is for W3C compliance -->
+            <xsl:text> </xsl:text>
+            <!-- this is for W3C compliance -->
         </script>
         <title>register</title>
     </xsl:template>
@@ -69,9 +70,10 @@
                     </xsl:attribute>
                 </input>
                 <label for="submit">
-                    <xsl:text> </xsl:text> <!-- this is for W3C compliance -->
+                    <xsl:text> </xsl:text>
+                    <!-- this is for W3C compliance -->
                 </label>
-                <input id="submit" type="submit" value="register" disabled="disabled" />
+                <input id="submit" type="submit" value="register" disabled="disabled"/>
             </fieldset>
         </form>
         <p id="error"/>

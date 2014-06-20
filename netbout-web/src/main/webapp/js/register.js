@@ -28,29 +28,26 @@
 /*globals $:false, document:false */
 
 $(document).ready(
-    function () {
-        "use strict";
-        $('#alias').keyup(
-            function () {
-                var $input = $(this), $button = $('#submit'), $error = $('#error');
-                $.ajax(
-                    {
-                        url: $input.attr('data-check')
-                            + '?alias=' + encodeURI($input.val()),
-                        cache: false,
-                        success: function (text) {
-                            if (text === '') {
-                                $button.prop('disabled', false);
-                                $error.hide();
-                            } else {
-                                $button.prop('disabled', true);
-                                $error.html(text);
-                                $error.show();
-                            }
-                        }
-                    }
-                );
+  function () {
+    "use strict";
+    $('#alias').keyup(function () {
+      var $input = $(this), $button = $('#submit'), $error = $('#error');
+      $.ajax(
+        {
+          url: $input.attr('data-check') + '?alias=' + encodeURI($input.val()),
+          cache: false,
+          success: function (text) {
+            if (text === '') {
+              $button.prop('disabled', false);
+              $error.hide();
+            } else {
+              $button.prop('disabled', true);
+              $error.html(text);
+              $error.show();
             }
-        );
-    }
+          }
+        }
+      );
+    });
+  }
 );

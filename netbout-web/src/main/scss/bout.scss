@@ -165,3 +165,12 @@
     }
 }
 
+#tail {
+  display: none;
+  color: $color-gray;
+  text-align: center;
+  &:before {
+    content: "wait...";
+  }
+}
+

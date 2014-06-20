@@ -24,156 +24,155 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-
 @import 'fonts';
 @import 'colors';
 
 $width: 750px;
 
 .wrapper {
-    width: $width;
-    position: relative;
-    clear: both;
-    margin-left: auto;
-    margin-right: auto;
-    padding-left: 10px;
-    padding-right: 10px;
-    @media all and (max-width: $width) {
-        width: 100%;
-    }
+  width: $width;
+  position: relative;
+  clear: both;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 10px;
+  padding-right: 10px;
+  @media all and (max-width: $width) {
+    width: 100%;
+  }
 }
 
 .cap {
-    width: 100%;
-    position: relative;
-    background-color: $color-gray-light;
-    height: 71px;
-    border-bottom: 2px solid $color-gray2;
+  width: 100%;
+  position: relative;
+  background-color: $color-gray-light;
+  height: 71px;
+  border-bottom: 2px solid $color-gray2;
+  display: table;
+  overflow: hidden;
+  .incap {
+    display: table-cell;
+    position: static;
+    vertical-align: middle;
+    text-align: center;
+  }
+  .header {
+    @extend .wrapper;
     display: table;
-    overflow: hidden;
-    .incap {
-        display: table-cell;
-        position: static;
+    text-align: left;
+    line-height: 0;
+    color: $color-text2;
+    .left {
+      display: table-cell;
+      text-align: left;
+      vertical-align: middle;
+      .logo {
+        width: 113px;
+        height: 37px;
+        margin-right: 20px;
+        display: inline-block;
         vertical-align: middle;
-        text-align: center;
-    }
-    .header {
-        @extend .wrapper;
-        display: table;
-        text-align: left;
-        line-height: 0;
-        color: $color-text2;
-        .left {
-            display: table-cell;
-            text-align: left;
-            vertical-align: middle;
-            .logo {
-                width: 113px;
-                height: 37px;
-                margin-right: 20px;
-                display: inline-block;
-                vertical-align: middle;
-                text-decoration: none;
-                @media all and (max-width: $width) {
-                    display: none;
-                }
-            }
-            .search {
-                display: inline-block;
-                vertical-align: middle;
-                position: relative;
-                font-size: 14px;
-                .search-input {
-                    display: inline-block;
-                    position: relative;
-                    width: 160px;
-                    vertical-align: middle;
-                }
-            }
+        text-decoration: none;
+        @media all and (max-width: $width) {
+          display: none;
         }
-        .right {
-            display: table-cell;
-            text-align: right;
-            vertical-align: middle;
+      }
+      .search {
+        display: inline-block;
+        vertical-align: middle;
+        position: relative;
+        font-size: 14px;
+        .search-input {
+          display: inline-block;
+          position: relative;
+          width: 160px;
+          vertical-align: middle;
+        }
+      }
+    }
+    .right {
+      display: table-cell;
+      text-align: right;
+      vertical-align: middle;
+      height: 32px;
+      position: relative;
+      ul {
+        margin: 0 !important;
+        padding: 0 !important;
+        display: inline;
+        li {
+          list-style: none;
+          display: inline;
+          margin-left: 27px;
+          font-size: 14px;
+          font-weight: 600;
+          vertical-align: middle;
+          .photo {
             height: 32px;
-            position: relative;
-            ul {
-                margin: 0 !important;
-                padding: 0 !important;
-                display: inline;
-                li {
-                    list-style: none;
-                    display: inline;
-                    margin-left: 27px;
-                    font-size: 14px;
-                    font-weight: 600;
-                    vertical-align: middle;
-                    .photo {
-                        height: 32px;
-                        width: 32px;
-                        margin-right: 6px;
-                        display: inline;
-                        vertical-align: middle;
-                        @media all and (max-width: $width) {
-                            display: none;
-                        }
-                    }
-                    .start {
-                        font-weight: bolder;
-                        color: $color-red;
-                        padding-left: 5px;
-                    }
-                    a {
-                        font-weight: 600;
-                        color: $color-text2;
-                        text-decoration: none;
-                        &:hover {
-                            text-decoration: underline;
-                        }
-                    }
-                }
+            width: 32px;
+            margin-right: 6px;
+            display: inline;
+            vertical-align: middle;
+            @media all and (max-width: $width) {
+              display: none;
             }
+          }
+          .start {
+            font-weight: bolder;
+            color: $color-red;
+            padding-left: 5px;
+          }
+          a {
+            font-weight: 600;
+            color: $color-text2;
+            text-decoration: none;
+            &:hover {
+              text-decoration: underline;
+            }
+          }
         }
+      }
     }
+  }
 }
 
 .content {
-    @extend .wrapper;
-    color: $color-text;
-    padding-bottom: 20px;
-    h2 {
-        position: relative;
-        padding-top: 20px;
-        font-size: 20px;
-        font-weight: 500;
-    }
+  @extend .wrapper;
+  color: $color-text;
+  padding-bottom: 20px;
+  h2 {
+    position: relative;
+    padding-top: 20px;
+    font-size: 20px;
+    font-weight: 500;
+  }
 }
 
 .version {
-    font-size: 12px;
-    position: fixed;
-    right: 0;
-    bottom: 0;
-    padding: 4px 0.8em;
-    background-color: $color-gray;
-    color: gray;
-    @media all and (max-width: $width) {
-        display: none !important;
-    }
+  font-size: 12px;
+  position: fixed;
+  right: 0;
+  bottom: 0;
+  padding: 4px 0.8em;
+  background-color: $color-gray;
+  color: gray;
+  @media all and (max-width: $width) {
+    display: none !important;
+  }
 }
 
 .flash {
-    position: relative;
-    font-size: 14px;
-    margin-top: 10px;
-    font-weight: bold;
-    &.SEVERE {
-        color: $color-red;
-    }
-    &.INFO {
-        color: $color-green;
-    }
-    &.WARNING {
-        color: $color-orange;
-    }
+  position: relative;
+  font-size: 14px;
+  margin-top: 10px;
+  font-weight: bold;
+  &.SEVERE {
+    color: $color-red;
+  }
+  &.INFO {
+    color: $color-green;
+  }
+  &.WARNING {
+    color: $color-orange;
+  }
 }

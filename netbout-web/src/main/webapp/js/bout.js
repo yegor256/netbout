@@ -28,66 +28,68 @@
 /*globals $:false, document:false, window:false */
 
 $(document).ready(
-    function () {
-        "use strict";
-        if ($('#rename')[0]) {
-            $('h1 span.title')
-                .blur(
-                    function () {
-                        var $input = $('#rename').find("input[name='title']"),
-                            previous = $input.val(),
-                            entered = $(this).text();
-                        if (entered !== previous) {
-                            $input.val(entered);
-                            $('#rename').submit();
-                        }
-                    }
-                )
-                .keydown(
-                    function (event) {
-                        if (event.keyCode === 13) {
-                            $(this).blur();
-                        }
-                    }
-                );
-        }
-        $(window).scroll(
-            function () {
-                var $box = $('#messages'),
-                    number = $box.attr('data-tail-number');
-                if ($(window).scrollTop() >= $(document).height() - $(window).height() - 50
-                    && number !== '0') {
-                    $box.attr('data-tail-number', '0');
-                    $.ajax(
-                        {
-                            url: $box.attr('data-tail-href') + '?number=' + number,
-                            cache: false,
-                            dataType: 'json',
-                            method: 'GET',
-                            success: function (data) {
-                                var appendix = '';
-                                number = 0;
-                                $.each(
-                                    data,
-                                    function (idx, item) {
-                                        appendix += '<div class="message" id="msg'
-                                            + item.number + '"><div class="left">'
-                                            + '<img class="photo" src="' + item.photo + '"/>'
-                                            + '</div><div class="right"><div class="meta"><strong>'
-                                            + item.author + '</strong> said ' + item.timeago
-                                            + '</div><div class="text">'
-                                            + item.text + '</div></div></div>';
-                                        number = item.number;
-                                    }
-                                );
-                                $box.html($box.html() + appendix);
-                                $box.attr('data-tail-number', number);
-                            }
-                        }
-                    );
-                }
-            }
-        );
+  function () {
+    "use strict";
+    if ($('#rename')[0]) {
+      $('h1 span.title')
+        .blur(function () {
+          var $input = $('#rename').find("input[name='title']"),
+            previous = $input.val(),
+            entered = $(this).text();
+          if (entered !== previous) {
+            $input.val(entered);
+            $('#rename').submit();
+          }
+        })
+        .keydown(function (event) {
+          if (event.keyCode === 13) {
+            $(this).blur();
+          }
+        });
     }
+    $(window).scroll(
+      function () {
+        var $box = $('#messages'),
+          number = $box.attr('data-tail-number'),
+          $tail = $('#tail');
+        if ($(window).scrollTop() >= $(document).height() - $(window).height() - 50
+          && number !== '0') {
+          $box.attr('data-tail-number', '0');
+          $tail.show();
+          $.ajax(
+            {
+              url: $box.attr('data-tail-href') + '?number=' + number,
+              cache: false,
+              dataType: 'json',
+              method: 'GET',
+              success: function (data) {
+                var appendix = '';
+                number = 0;
+                $.each(
+                  data,
+                  function (idx, item) {
+                    appendix += '<div class="message" id="msg'
+                      + item.number + '"><div class="left"><img class="photo" src="'
+                      + item.photo + '"/>'
+                      + '</div><div class="right"><div class="meta"><strong>'
+                      + item.author + '</strong> said '
+                      + item.timeago
+                      + '</div><div class="text">'
+                      + item.text + '</div></div></div>';
+                    number = item.number;
+                  }
+                );
+                $tail.replaceWith(appendix + '<div id="tail"/>');
+                $box.attr('data-tail-number', number);
+              },
+              error: function () {
+                $tail.html('Oops, an error :( Please, try to reload the page');
+              }
+            }
+          );
+        }
+      }
+    );
+  }
 );
 

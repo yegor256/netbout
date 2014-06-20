@@ -33,8 +33,8 @@
     <xsl:output method="xml" omit-xml-declaration="yes"/>
     <xsl:param name="TEXTS"
         select="document(concat('/lang/', /page/alias/locale, '.xml?', /page/version/revision))/texts"/>
-    <xsl:include href="/xsl/layout.xsl" />
-    <xsl:include href="/xsl/friends.xsl" />
+    <xsl:include href="/xsl/layout.xsl"/>
+    <xsl:include href="/xsl/friends.xsl"/>
     <xsl:template match="page" mode="head">
         <title>
             <xsl:text>#</xsl:text>
@@ -43,14 +43,16 @@
             <xsl:value-of select="bout/title"/>
         </title>
         <script src="/js/friends.js?{version/revision}">
-            <xsl:text> </xsl:text> <!-- this is for W3C compliance -->
+            <xsl:text> </xsl:text>
+            <!-- this is for W3C compliance -->
         </script>
         <script src="/js/bout.js?{version/revision}">
-            <xsl:text> </xsl:text> <!-- this is for W3C compliance -->
+            <xsl:text> </xsl:text>
+            <!-- this is for W3C compliance -->
         </script>
     </xsl:template>
     <xsl:template match="page" mode="body">
-        <xsl:apply-templates select="bout" />
+        <xsl:apply-templates select="bout"/>
     </xsl:template>
     <xsl:template match="bout">
         <h1 class="bout">
@@ -67,16 +69,16 @@
                     </xsl:attribute>
                 </xsl:if>
                 <xsl:call-template name="crop">
-                    <xsl:with-param name="text" select="title" />
-                    <xsl:with-param name="length" select="50" />
+                    <xsl:with-param name="text" select="title"/>
+                    <xsl:with-param name="length" select="50"/>
                 </xsl:call-template>
             </span>
         </h1>
         <div class="top2">
-            <xsl:apply-templates select="friends" />
+            <xsl:apply-templates select="friends"/>
             <xsl:if test="not(/page/links/link[@rel='re-login'])">
-                <xsl:call-template name="invite" />
-                <xsl:call-template name="rename" />
+                <xsl:call-template name="invite"/>
+                <xsl:call-template name="rename"/>
             </xsl:if>
         </div>
         <xsl:apply-templates select="attachments"/>
@@ -99,7 +101,8 @@
         </div>
         <div id="messages" data-tail-href="{/page/links/link[@rel='tail']/@href}"
             data-tail-number="{messages/message[position()=last()]/number}">
-            <xsl:apply-templates select="messages/message" />
+            <xsl:apply-templates select="messages/message"/>
+            <div id="tail"/>
         </div>
     </xsl:template>
     <xsl:template match="messages/message">
@@ -153,7 +156,7 @@
                     <xsl:value-of select="timeago"/>
                 </div>
                 <div class="text">
-                    <xsl:value-of select="html" disable-output-escaping="yes" />
+                    <xsl:value-of select="html" disable-output-escaping="yes"/>
                 </div>
             </div>
         </div>
@@ -178,7 +181,7 @@
         <nav class="attachments">
             <xsl:variable name="files" select="attachment[not(links/link[@rel='open'])]"/>
             <ul>
-                <xsl:apply-templates select="attachment[links/link[@rel='open']]" />
+                <xsl:apply-templates select="attachment[links/link[@rel='open']]"/>
                 <li onclick="$('#files').toggle();" class="toggle">
                     <xsl:variable name="count" select="count($files)"/>
                     <xsl:text>+</xsl:text>
@@ -194,10 +197,10 @@
                     <xsl:for-each select="$files">
                         <li>
                             <a href="{links/link[@rel='download']/@href}">
-                                <xsl:value-of select="name" />
+                                <xsl:value-of select="name"/>
                             </a>
                             <xsl:text> (</xsl:text>
-                            <xsl:value-of select="ctype" />
+                            <xsl:value-of select="ctype"/>
                             <xsl:text>)</xsl:text>
                         </li>
                     </xsl:for-each>
@@ -227,11 +230,11 @@
             <xsl:choose>
                 <xsl:when test="links/link[@rel='open']">
                     <a href="{links/link[@rel='open']/@href}">
-                        <xsl:value-of select="name" />
+                        <xsl:value-of select="name"/>
                     </a>
                 </xsl:when>
                 <xsl:otherwise>
-                    <xsl:value-of select="name" />
+                    <xsl:value-of select="name"/>
                 </xsl:otherwise>
             </xsl:choose>
         </li>
@@ -241,11 +244,13 @@
             <div class="controls">
                 <xsl:if test="links/link[@rel='download']">
                     <a title="download {name} ({ctype})" href="{links/link[@rel='download']/@href}">
-                        <i class="ico ico-download"><xsl:comment>download</xsl:comment></i>
+                        <i class="ico ico-download">
+                            <xsl:comment>download</xsl:comment>
+                        </i>
                     </a>
                 </xsl:if>
             </div>
-            <xsl:value-of select="html" disable-output-escaping="yes" />
+            <xsl:value-of select="html" disable-output-escaping="yes"/>
         </div>
     </xsl:template>
 </xsl:stylesheet>

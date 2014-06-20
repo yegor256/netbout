@@ -48,7 +48,7 @@
                 <xsl:apply-templates select="." mode="head"/>
             </head>
             <body>
-                <xsl:apply-templates select="version" />
+                <xsl:apply-templates select="version"/>
                 <div class="login-wrapper">
                     <div class="login-main">
                         <div>

@@ -33,8 +33,8 @@
     <xsl:output method="xml" omit-xml-declaration="yes"/>
     <xsl:param name="TEXTS"
         select="document(concat('/lang/', /page/alias/locale, '.xml?', /page/version/revision))/texts"/>
-    <xsl:include href="/xsl/layout.xsl" />
-    <xsl:include href="/xsl/friends.xsl" />
+    <xsl:include href="/xsl/layout.xsl"/>
+    <xsl:include href="/xsl/friends.xsl"/>
     <xsl:template match="page" mode="head">
         <title>
             <xsl:value-of select="$TEXTS/inbox"/>
@@ -48,14 +48,17 @@
             </xsl:if>
         </title>
         <script src="/js/friends.js?{version/revision}">
-            <xsl:text> </xsl:text> <!-- this is for W3C compliance -->
+            <xsl:text> </xsl:text>
+            <!-- this is for W3C compliance -->
         </script>
     </xsl:template>
     <xsl:template match="page" mode="body">
         <xsl:choose>
             <xsl:when test="count(bouts/bout) = 0">
                 <h1>
-                    <span class="title"><xsl:text>Welcome to netbout!</xsl:text></span>
+                    <span class="title">
+                        <xsl:text>Welcome to netbout!</xsl:text>
+                    </span>
                 </h1>
                 <p>
                     <xsl:value-of select="$TEXTS/Lets.start"/>
@@ -67,7 +70,7 @@
             <xsl:otherwise>
                 <ul class="bouts">
                     <xsl:for-each select="bouts/bout">
-                        <xsl:apply-templates select="." />
+                        <xsl:apply-templates select="."/>
                     </xsl:for-each>
                 </ul>
             </xsl:otherwise>
@@ -84,7 +87,7 @@
                         </xsl:if>
                     </xsl:attribute>
                     <xsl:text>#</xsl:text>
-                    <xsl:value-of select="number" />
+                    <xsl:value-of select="number"/>
                 </span>
                 <a class="title" href="{links/link[@rel='open']/@href}">
                     <xsl:choose>
@@ -95,19 +98,19 @@
                         </xsl:when>
                         <xsl:otherwise>
                             <xsl:call-template name="crop">
-                                <xsl:with-param name="text" select="title" />
-                                <xsl:with-param name="length" select="50" />
+                                <xsl:with-param name="text" select="title"/>
+                                <xsl:with-param name="length" select="50"/>
                             </xsl:call-template>
                         </xsl:otherwise>
                     </xsl:choose>
                 </a>
                 <xsl:if test="unread &gt; 0">
                     <span class="unread">
-                        <xsl:value-of select="unread" />
+                        <xsl:value-of select="unread"/>
                     </span>
                 </xsl:if>
             </h1>
-            <xsl:apply-templates select="friends" />
+            <xsl:apply-templates select="friends"/>
         </li>
     </xsl:template>
 </xsl:stylesheet>

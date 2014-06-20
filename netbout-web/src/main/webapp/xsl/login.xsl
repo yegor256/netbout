@@ -31,7 +31,7 @@
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
     xmlns="http://www.w3.org/1999/xhtml" version="2.0">
     <xsl:output method="xml" omit-xml-declaration="yes"/>
-    <xsl:include href="/xsl/login-layout.xsl" />
+    <xsl:include href="/xsl/login-layout.xsl"/>
     <xsl:template match="page" mode="head">
         <title>netbout - private talks made easy</title>
     </xsl:template>
@@ -39,30 +39,36 @@
         <nav class="buttons">
             <a>
                 <xsl:attribute name="href">
-                    <xsl:value-of select="/page/links/link[@rel='rexsl:facebook']/@href" />
+                    <xsl:value-of select="/page/links/link[@rel='rexsl:facebook']/@href"/>
                 </xsl:attribute>
                 <xsl:attribute name="title">
                     <xsl:text>click to authenticate yourself via Facebook</xsl:text>
                 </xsl:attribute>
-                <i class="ico ico-facebook"><xsl:comment>facebook</xsl:comment></i>
+                <i class="ico ico-facebook">
+                    <xsl:comment>facebook</xsl:comment>
+                </i>
             </a>
             <a>
                 <xsl:attribute name="href">
-                    <xsl:value-of select="/page/links/link[@rel='rexsl:google']/@href" />
+                    <xsl:value-of select="/page/links/link[@rel='rexsl:google']/@href"/>
                 </xsl:attribute>
                 <xsl:attribute name="title">
                     <xsl:text>click to authenticate yourself via Google+</xsl:text>
                 </xsl:attribute>
-                <i class="ico ico-google"><xsl:comment>google</xsl:comment></i>
+                <i class="ico ico-google">
+                    <xsl:comment>google</xsl:comment>
+                </i>
             </a>
             <a>
                 <xsl:attribute name="href">
-                    <xsl:value-of select="/page/links/link[@rel='rexsl:github']/@href" />
+                    <xsl:value-of select="/page/links/link[@rel='rexsl:github']/@href"/>
                 </xsl:attribute>
                 <xsl:attribute name="title">
                     <xsl:text>click to authenticate yourself via Github</xsl:text>
                 </xsl:attribute>
-                <i class="ico ico-github"><xsl:comment>github</xsl:comment></i>
+                <i class="ico ico-github">
+                    <xsl:comment>github</xsl:comment>
+                </i>
             </a>
         </nav>
     </xsl:template>

@@ -24,95 +24,94 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-
 @import 'fonts';
 @import 'colors';
 
 * {
-    padding: 0;
-    margin: 0;
-    border: 0;
-    box-sizing: border-box;
-    -moz-box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+  border: 0;
+  box-sizing: border-box;
+  -moz-box-sizing: border-box;
 }
 
 html,
 body {
-    height: 100%;
-    width: 100%;
+  height: 100%;
+  width: 100%;
 }
 
 body,
 input,
 textarea {
-    font-family: $font-main;
-    color: $color-text;
-    text-decoration: none;
+  font-family: $font-main;
+  color: $color-text;
+  text-decoration: none;
 }
 
 body,
 input,
 textarea {
-    font-size: 16px;
-    font-stretch: normal;
-    font-weight: normal;
+  font-size: 16px;
+  font-stretch: normal;
+  font-weight: normal;
 }
 
 a {
-    color: inherit;
+  color: inherit;
+  text-decoration: underline;
+  &:hover {
     text-decoration: underline;
-    &:hover {
-        text-decoration: underline;
-    }
+  }
 }
 
 p {
-    margin-top: 5px;
-    margin-bottom: 5px;
+  margin-top: 5px;
+  margin-bottom: 5px;
 }
 
 span {
-    margin-left: 2px;
-    margin-right: 2px;
+  margin-left: 2px;
+  margin-right: 2px;
 }
 
 ul, ol {
-    margin-left: 20px;
+  margin-left: 20px;
 }
 
 .tt, .fixed, pre, textarea, code {
-    font-family: $font-fixed;
+  font-family: $font-fixed;
 }
 
 .tt, .fixed, pre, code {
-    background-color: $color-gray-light;
+  background-color: $color-gray-light;
 }
 
 .tt, code {
-    padding: 0 3px;
+  padding: 0 3px;
 }
 
 input {
-    border: 1px solid $color-gray-dark;
-    background-color: $color-background;
-    padding: 8px 10px;
-    &[type="submit"] {
-        background-color: $color-gray-light;
-        cursor: pointer;
-    }
-    &[type='file'] {
-        border: none;
-    }
+  border: 1px solid $color-gray-dark;
+  background-color: $color-background;
+  padding: 8px 10px;
+  &[type="submit"] {
+    background-color: $color-gray-light;
+    cursor: pointer;
+  }
+  &[type='file'] {
+    border: none;
+  }
 }
 
 textarea {
-    padding: 10px;
-    border: 1px solid $color-gray;
-    overflow: hidden;
+  padding: 10px;
+  border: 1px solid $color-gray;
+  overflow: hidden;
 }
 
 label {
-    margin-top: 2px;
-    margin-bottom: 2px;
-    display: block;
+  margin-top: 2px;
+  margin-bottom: 2px;
+  display: block;
 }
