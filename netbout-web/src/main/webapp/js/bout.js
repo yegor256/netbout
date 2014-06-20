@@ -27,6 +27,13 @@
 
 /*globals $:false, document:false, window:false */
 
+function escapeHTML(txt) {
+  return txt.replace(/&/g, '&amp;')
+    .replace(/"/g, '&quot;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;');
+}
+
 $(document).ready(
   function () {
     "use strict";
@@ -72,10 +79,10 @@ $(document).ready(
                       + item.number + '"><div class="left"><img class="photo" src="'
                       + item.photo + '"/>'
                       + '</div><div class="right"><div class="meta"><strong>'
-                      + item.author + '</strong> said '
-                      + item.timeago
+                      + escapeHTML(item.author) + '</strong> said '
+                      + escapeHTML(item.timeago)
                       + '</div><div class="text">'
-                      + item.text + '</div></div></div>';
+                      + escapeHTML(item.text) + '</div></div></div>';
                     number = item.number;
                   }
                 );
