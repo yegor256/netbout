@@ -32,6 +32,7 @@ import com.jcabi.http.Request;
 import com.jcabi.http.request.JdkRequest;
 import com.jcabi.http.wire.CookieOptimizingWire;
 import com.netbout.spi.Aliases;
+import com.netbout.spi.Friend;
 import com.netbout.spi.User;
 import java.net.URI;
 import javax.validation.constraints.NotNull;
@@ -81,5 +82,11 @@ public final class RtUser implements User {
     @Override
     public Aliases aliases() {
         return new RtAliases(this.request);
+    }
+
+    @Override
+    public Iterable<Friend> friends(
+        @NotNull(message = "text can't be NULL") final String text) {
+        throw new UnsupportedOperationException("#friends()");
     }
 }

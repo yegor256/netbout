@@ -31,7 +31,9 @@ import com.jcabi.aspects.Loggable;
 import com.jcabi.aspects.RetryOnFailure;
 import com.jcabi.aspects.Tv;
 import com.netbout.spi.Aliases;
+import com.netbout.spi.Friend;
 import com.netbout.spi.User;
+import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
@@ -69,5 +71,14 @@ public final class ReUser implements User {
     )
     public Aliases aliases() {
         return new ReAliases(this.origin.aliases());
+    }
+
+    @Override
+    @RetryOnFailure(
+        verbose = false, attempts = Tv.TWENTY,
+        delay = Tv.FIVE, unit = TimeUnit.SECONDS
+    )
+    public Iterable<Friend> friends(final String text) throws IOException {
+        return this.origin.friends(text);
     }
 }

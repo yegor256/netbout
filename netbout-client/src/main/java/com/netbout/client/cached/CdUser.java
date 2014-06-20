@@ -30,7 +30,9 @@ import com.jcabi.aspects.Cacheable;
 import com.jcabi.aspects.Immutable;
 import com.jcabi.aspects.Loggable;
 import com.netbout.spi.Aliases;
+import com.netbout.spi.Friend;
 import com.netbout.spi.User;
+import java.io.IOException;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
@@ -64,5 +66,11 @@ public final class CdUser implements User {
     @Cacheable
     public Aliases aliases() {
         return new CdAliases(this.origin.aliases());
+    }
+
+    @Override
+    @Cacheable
+    public Iterable<Friend> friends(final String text) throws IOException {
+        return this.origin.friends(text);
     }
 }

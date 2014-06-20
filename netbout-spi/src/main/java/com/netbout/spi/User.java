@@ -27,6 +27,8 @@
 package com.netbout.spi;
 
 import com.jcabi.aspects.Immutable;
+import java.io.IOException;
+import javax.validation.constraints.NotNull;
 
 /**
  * User of the system.
@@ -43,5 +45,15 @@ public interface User {
      * @return Aliases
      */
     Aliases aliases();
+
+    /**
+     * Find potential friends to talk to.
+     * @param text Text to search with
+     * @return Friends
+     * @throws java.io.IOException If fails
+     */
+    Iterable<Friend> friends(
+        @NotNull(message = "text can't be NULL") String text)
+        throws IOException;
 
 }

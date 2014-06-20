@@ -31,6 +31,7 @@ import com.jcabi.aspects.Immutable;
 import com.jcabi.aspects.Loggable;
 import com.jcabi.urn.URN;
 import com.netbout.spi.Aliases;
+import com.netbout.spi.Friend;
 import com.netbout.spi.User;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
@@ -72,5 +73,10 @@ final class MkUser implements User {
     @Cacheable
     public Aliases aliases() {
         return new MkAliases(this.sql, this.urn);
+    }
+
+    @Override
+    public Iterable<Friend> friends(final String text) {
+        throw new UnsupportedOperationException("#friends()");
     }
 }

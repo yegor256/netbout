@@ -194,7 +194,7 @@ public final class InboxRs extends BaseRs {
                     this.uriInfo().getBaseUriBuilder().clone()
                         .path(FriendRs.class)
                         .path(FriendRs.class, "png")
-                        .build(bout.number(), friend.alias())
+                        .build(friend.alias())
                         .toString()
                 )
             )

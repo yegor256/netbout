@@ -26,12 +26,19 @@
  */
 package com.netbout.dynamo;
 
+import com.google.common.base.Function;
+import com.google.common.collect.Iterables;
 import com.jcabi.aspects.Immutable;
 import com.jcabi.aspects.Loggable;
+import com.jcabi.dynamo.Conditions;
+import com.jcabi.dynamo.Item;
+import com.jcabi.dynamo.QueryValve;
 import com.jcabi.dynamo.Region;
 import com.jcabi.urn.URN;
 import com.netbout.spi.Aliases;
+import com.netbout.spi.Friend;
 import com.netbout.spi.User;
+import java.io.IOException;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
@@ -71,6 +78,29 @@ final class DyUser implements User {
     @Override
     public Aliases aliases() {
         return new DyAliases(this.region, this.urn);
+    }
+
+    @Override
+    public Iterable<Friend> friends(final String text) {
+        return Iterables.transform(
+            this.region.table(DyAliases.TBL)
+                .frame()
+                .through(new QueryValve())
+                .where(DyAliases.HASH, Conditions.equalTo(text)),
+            new Function<Item, Friend>() {
+                @Override
+                public Friend apply(final Item input) {
+                    try {
+                        return new DyFriend(
+                            DyUser.this.region,
+                            input.get(DyAliases.HASH).getS()
+                        );
+                    } catch (final IOException ex) {
+                        throw new IllegalStateException(ex);
+                    }
+                }
+            }
+        );
     }
 
 }

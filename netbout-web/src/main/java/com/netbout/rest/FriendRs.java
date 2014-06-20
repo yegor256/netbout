@@ -26,6 +26,7 @@
  */
 package com.netbout.rest;
 
+import com.google.common.collect.Iterables;
 import com.google.common.net.HttpHeaders;
 import com.jcabi.http.request.JdkRequest;
 import com.jcabi.http.response.RestResponse;
@@ -33,7 +34,7 @@ import com.jcabi.http.wire.AutoRedirectingWire;
 import com.jcabi.http.wire.OneMinuteWire;
 import com.jcabi.http.wire.RetryWire;
 import com.netbout.spi.Friend;
-import com.netbout.spi.Friends;
+import com.rexsl.page.inset.FlashInset;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -41,6 +42,7 @@ import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.concurrent.TimeUnit;
+import java.util.logging.Level;
 import javax.imageio.ImageIO;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -60,18 +62,30 @@ public final class FriendRs extends BaseRs {
 
     /**
      * Get his photo.
-     * @param bout Bout number
      * @param alias Friend's alias
      * @return The JAX-RS response
      * @throws IOException If fails
      */
     @GET
-    @Path("/{bout: [0-9]+}/{alias: [a-zA-Z0-9]+}.png")
-    public Response png(@PathParam("bout") final Long bout,
-        @PathParam("alias") final String alias) throws IOException {
-        final Friend friend = new Friends.Search(
-            this.alias().inbox().bout(bout).friends()
-        ).find(alias);
+    @Path("/{alias: [a-zA-Z0-9]+}.png")
+    public Response png(@PathParam("alias") final String alias)
+        throws IOException {
+        final Iterable<Friend> opts = this.user().friends(alias);
+        if (Iterables.isEmpty(opts)) {
+            throw FlashInset.forward(
+                this.uriInfo().getBaseUri(),
+                String.format("alias '%s' not found", alias),
+                Level.SEVERE
+            );
+        }
+        final Friend friend = opts.iterator().next();
+        if (!friend.alias().equals(alias)) {
+            throw FlashInset.forward(
+                this.uriInfo().getBaseUri(),
+                String.format("alias '%s' is not found", alias),
+                Level.SEVERE
+            );
+        }
         final byte[] img = new JdkRequest(friend.photo())
             .through(AutoRedirectingWire.class)
             .through(RetryWire.class)
