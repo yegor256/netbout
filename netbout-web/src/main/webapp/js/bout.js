@@ -69,7 +69,8 @@ $(document).ready(
               success: function (data) {
                 var appendix = '', more = '';
                 $(data).find('message').each(
-                  function (idx, $msg) {
+                  function (idx, msg) {
+                    var $msg = $(msg);
                     appendix += '<div class="message" id="msg'
                       + $msg.find('number').text() + '"><div class="left"><img class="photo" src="'
                       + $msg.find('link[rel="photo"]').attr('href') + '"/>'

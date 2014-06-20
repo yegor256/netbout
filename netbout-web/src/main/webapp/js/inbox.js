@@ -52,15 +52,15 @@ $(document).ready(
               success: function (data) {
                 var appendix = '<ul class="bouts">', more = '';
                 $(data).find('bout').each(
-                  function (idx, msg) {
-                    var $msg = $(msg);
+                  function (idx, bout) {
+                    var $bout = $(bout);
                     appendix += '<li class="bout" id="bout'
-                      + $msg.find('number').text() + '"><h1 class="bout"><span class="num'
-                      + ($msg.find('unread').text() === '0' ? '' : ' unread') + '">#'
-                      + $msg.find('number').text() + '</span><a class="title" href="'
-                      + $msg.find('link[rel="open"]').attr('href') + '">'
-                      + escapeHTML($msg.find('title').text()) + '</a></h1><div class="friends">';
-                    $msg.find('friend').each(
+                      + $bout.find('number').text() + '"><h1 class="bout"><span class="num'
+                      + ($bout.find('unread').text() === '0' ? '' : ' unread') + '">#'
+                      + $bout.find('number').text() + '</span><a class="title" href="'
+                      + $bout.find('link[rel="open"]').attr('href') + '">'
+                      + escapeHTML($bout.find('title').text()) + '</a></h1><div class="friends">';
+                    $bout.find('friend').each(
                       function (idx, friend) {
                         var $friend = $(friend), shift = 57 * idx;
                         appendix += '<div class="friend" style="left:'
@@ -70,7 +70,7 @@ $(document).ready(
                       }
                     );
                     appendix += '</div></li>';
-                    more = $msg.find('link[rel="more"]').attr('href');
+                    more = $bout.find('link[rel="more"]').attr('href');
                   }
                 );
                 $tail.removeAttr('id');
