@@ -82,9 +82,9 @@ import org.ocpsoft.prettytime.PrettyTime;
  *
  * @author Yegor Bugayenko (yegor@tpc2.com)
  * @version $Id$
- * @checkstyle ClassDataAbstractionCoupling (500 lines)
- * @checkstyle MultipleStringLiteralsCheck (500 lines)
- * @checkstyle ClassFanOutComplexityCheck (500 lines)
+ * @checkstyle ClassDataAbstractionCoupling (1000 lines)
+ * @checkstyle MultipleStringLiteralsCheck (1000 lines)
+ * @checkstyle ClassFanOutComplexityCheck (1000 lines)
  */
 @Path("/b/{num: [0-9]+}")
 @SuppressWarnings({

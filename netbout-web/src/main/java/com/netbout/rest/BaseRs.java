@@ -91,7 +91,7 @@ public class BaseRs extends BaseResource {
                 identity = new Identity.Simple(
                     URN.create("urn:test:123456"),
                     "localhost",
-                    URI.create("//img.netbout.com/localhost.png")
+                    URI.create("http://img.netbout.com/localhost.png")
                 );
             } else {
                 identity = Identity.ANONYMOUS;

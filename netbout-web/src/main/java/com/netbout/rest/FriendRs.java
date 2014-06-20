@@ -47,6 +47,8 @@ public final class FriendRs extends BaseRs {
 
     /**
      * Get his photo.
+     * @param bout Bout number
+     * @param alias Friend's alias
      * @return The JAX-RS response
      * @throws IOException If fails
      */
