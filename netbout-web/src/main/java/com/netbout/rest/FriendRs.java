@@ -26,12 +26,19 @@
  */
 package com.netbout.rest;
 
+import com.google.common.net.HttpHeaders;
 import com.jcabi.http.request.JdkRequest;
+import com.jcabi.http.response.RestResponse;
+import com.jcabi.http.wire.OneMinuteWire;
+import com.jcabi.http.wire.RetryWire;
 import com.netbout.spi.Friend;
 import com.netbout.spi.Friends;
+import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.concurrent.TimeUnit;
 import javax.imageio.ImageIO;
 import javax.ws.rs.GET;
@@ -58,18 +65,27 @@ public final class FriendRs extends BaseRs {
      * @throws IOException If fails
      */
     @GET
-    @Path("/{bout: [0-9]+}/{alias: [a-zA-Z0-9]+}")
+    @Path("/{bout: [0-9]+}/{alias: [a-zA-Z0-9]+}.png")
     public Response png(@PathParam("bout") final Long bout,
         @PathParam("alias") final String alias) throws IOException {
         final Friend friend = new Friends.Search(
             this.alias().inbox().bout(bout).friends()
         ).find(alias);
-        final byte[] img = new JdkRequest(friend.photo()).fetch().binary();
+        final byte[] img = new JdkRequest(friend.photo())
+            .through(RetryWire.class)
+            .through(OneMinuteWire.class)
+            .header(HttpHeaders.ACCEPT, "image/*")
+            .header(HttpHeaders.USER_AGENT, "Netbout.com")
+            .fetch()
+            .as(RestResponse.class)
+            .assertStatus(HttpURLConnection.HTTP_OK)
+            .binary();
+        BufferedImage image = ImageIO.read(new ByteArrayInputStream(img));
+        if (image == null) {
+            image = ImageIO.read(new URL("http://img.netbout.com/unknown.png"));
+        }
         final ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        ImageIO.write(
-            ImageIO.read(new ByteArrayInputStream(img)),
-            "png", baos
-        );
+        ImageIO.write(image, "png", baos);
         final CacheControl cache = new CacheControl();
         cache.setMaxAge((int) TimeUnit.DAYS.toSeconds(1L));
         cache.setPrivate(true);
