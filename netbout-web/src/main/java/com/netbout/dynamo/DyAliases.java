@@ -154,12 +154,7 @@ final class DyAliases implements Aliases {
                     new QueryValve()
                         .withIndexName(DyAliases.INDEX)
                         .withConsistentRead(false)
-                        .withSelect(Select.SPECIFIC_ATTRIBUTES)
-                        .withAttributesToGet(
-                            DyAliases.HASH,
-                            DyAliases.ATTR_PHOTO,
-                            DyAliases.ATTR_LOCALE
-                        )
+                        .withSelect(Select.ALL_PROJECTED_ATTRIBUTES)
                 ),
             new Function<Item, Alias>() {
                 @Override

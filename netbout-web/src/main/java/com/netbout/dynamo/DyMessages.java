@@ -70,6 +70,7 @@ import lombok.ToString;
 @Loggable(Loggable.DEBUG)
 @ToString(of = "bout")
 @EqualsAndHashCode(of = { "counter", "region", "bout", "self", "start" })
+@SuppressWarnings("PMD.ExcessiveImports")
 final class DyMessages implements Messages {
 
     /**
