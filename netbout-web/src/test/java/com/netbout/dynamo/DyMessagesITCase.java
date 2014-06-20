@@ -35,7 +35,6 @@ import com.netbout.spi.Message;
 import com.netbout.spi.Messages;
 import com.netbout.spi.Pageable;
 import java.util.Iterator;
-import java.util.concurrent.TimeUnit;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;
@@ -85,7 +84,6 @@ public final class DyMessagesITCase {
         for (int idx = 0; idx < total; ++idx) {
             messages.post(String.format("msg #%d", idx));
         }
-        TimeUnit.SECONDS.sleep((long) Tv.FIVE);
         Pageable<Message> pageable = messages;
         int found = 0;
         while (true) {

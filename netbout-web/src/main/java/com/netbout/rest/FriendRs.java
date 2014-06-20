@@ -29,11 +29,16 @@ package com.netbout.rest;
 import com.jcabi.http.request.JdkRequest;
 import com.netbout.spi.Friend;
 import com.netbout.spi.Friends;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.concurrent.TimeUnit;
+import javax.imageio.ImageIO;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
+import javax.ws.rs.core.CacheControl;
+import javax.ws.rs.core.Response;
 
 /**
  * RESTful front of a single friend.
@@ -54,13 +59,24 @@ public final class FriendRs extends BaseRs {
      */
     @GET
     @Path("/{bout: [0-9]+}/{alias: [a-zA-Z0-9]+}")
-    @Produces("image/png")
-    public byte[] png(@PathParam("bout") final Long bout,
+    public Response png(@PathParam("bout") final Long bout,
         @PathParam("alias") final String alias) throws IOException {
         final Friend friend = new Friends.Search(
             this.alias().inbox().bout(bout).friends()
         ).find(alias);
-        return new JdkRequest(friend.photo()).fetch().binary();
+        final byte[] img = new JdkRequest(friend.photo()).fetch().binary();
+        final ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        ImageIO.write(
+            ImageIO.read(new ByteArrayInputStream(img)),
+            "png", baos
+        );
+        final CacheControl cache = new CacheControl();
+        cache.setMaxAge((int) TimeUnit.DAYS.toSeconds(1L));
+        cache.setPrivate(true);
+        return Response.ok(new ByteArrayInputStream(baos.toByteArray()))
+            .cacheControl(cache)
+            .type("image/png")
+            .build();
     }
 
 }
