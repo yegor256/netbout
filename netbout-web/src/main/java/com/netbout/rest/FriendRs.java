@@ -29,6 +29,7 @@ package com.netbout.rest;
 import com.google.common.net.HttpHeaders;
 import com.jcabi.http.request.JdkRequest;
 import com.jcabi.http.response.RestResponse;
+import com.jcabi.http.wire.AutoRedirectingWire;
 import com.jcabi.http.wire.OneMinuteWire;
 import com.jcabi.http.wire.RetryWire;
 import com.netbout.spi.Friend;
@@ -74,6 +75,7 @@ public final class FriendRs extends BaseRs {
         final byte[] img = new JdkRequest(friend.photo())
             .through(RetryWire.class)
             .through(OneMinuteWire.class)
+            .through(AutoRedirectingWire.class)
             .header(HttpHeaders.ACCEPT, "image/*")
             .header(HttpHeaders.USER_AGENT, "Netbout.com")
             .fetch()
