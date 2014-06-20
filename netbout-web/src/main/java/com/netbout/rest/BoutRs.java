@@ -56,7 +56,6 @@ import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URLEncoder;
 import java.util.Collection;
-import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import javax.json.Json;
 import javax.json.JsonArrayBuilder;
