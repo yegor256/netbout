@@ -3,26 +3,34 @@
     <head>
         <title>Internal application error</title>
         <link href="/css/style.css?${buildNumber}" rel="stylesheet" type="text/css"/>
-        <link rel="icon" type="image/gif" href="http://img.netbout.com/favicon.ico?${buildNumber}"/>
+        <link rel="icon" type="image/gif" href="/favicon.ico"/>
     </head>
     <body style="padding: 1em;">
         <p>
             <a href="http://www.netbout.com/">
-                <img src="http://img.netbout.com/logo.svg?${buildNumber}"
+                <img src="//img.netbout.com/logo.svg?${buildNumber}"
                     style="width:113px;height:37px;"/>
             </a>
         </p>
         <p>
-            <b style="color: red;">
-                Internal application error (r.${buildNumber}).
-            </b>
+            <strong style="color: red;">
+                Internal Application Error
+            </strong>
+        </p>
+        <p>
+            Build number: <code>${buildNumber}</code>
         </p>
         <p>
             Netbout team already received a notification about this
             problem and will work with it as soon as possible. In the
             mean time click "Back" button in your browser and try
-            to do something else.
+            again. It may work :)
         </p>
-        <pre style="display:none;">${text}</pre>
+        <p>
+            If you want to help our project, please post the following
+            exception stacktrace to our
+            <a href="https://github.com/netbout/netbout/issues/new">Github<a> account.
+        </p>
+        <pre>${text}</pre>
     </body>
 </html>
