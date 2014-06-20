@@ -155,7 +155,11 @@ final class DyAliases implements Aliases {
                         .withIndexName(DyAliases.INDEX)
                         .withConsistentRead(false)
                         .withSelect(Select.SPECIFIC_ATTRIBUTES)
-                        .withAttributesToGet(DyAliases.HASH)
+                        .withAttributesToGet(
+                            DyAliases.HASH,
+                            DyAliases.ATTR_PHOTO,
+                            DyAliases.ATTR_LOCALE
+                        )
                 ),
             new Function<Item, Alias>() {
                 @Override

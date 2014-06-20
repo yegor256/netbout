@@ -28,6 +28,8 @@ package com.netbout.dynamo;
 
 import co.stateful.Counter;
 import co.stateful.RtSttc;
+import co.stateful.cached.CdSttc;
+import co.stateful.retry.ReSttc;
 import com.amazonaws.services.dynamodbv2.model.AttributeAction;
 import com.amazonaws.services.dynamodbv2.model.AttributeValue;
 import com.amazonaws.services.dynamodbv2.model.AttributeValueUpdate;
@@ -48,6 +50,7 @@ import com.jcabi.dynamo.QueryValve;
 import com.jcabi.dynamo.Region;
 import com.jcabi.manifests.Manifests;
 import com.jcabi.urn.URN;
+import com.netbout.spi.Inbox;
 import com.netbout.spi.Message;
 import com.netbout.spi.Messages;
 import com.netbout.spi.Pageable;
@@ -66,7 +69,7 @@ import lombok.ToString;
 @Immutable
 @Loggable(Loggable.DEBUG)
 @ToString(of = "bout")
-@EqualsAndHashCode(of = { "counter", "region", "bout", "self" })
+@EqualsAndHashCode(of = { "counter", "region", "bout", "self", "start" })
 final class DyMessages implements Messages {
 
     /**
@@ -131,7 +134,7 @@ final class DyMessages implements Messages {
      * @param slf Self alias
      */
     DyMessages(final Region reg, final long num, final String slf) {
-        this(reg, num, slf, DyMessages.sttc(), System.currentTimeMillis() << 1);
+        this(reg, num, slf, DyMessages.sttc(), Inbox.NEVER);
     }
 
     /**
@@ -170,7 +173,12 @@ final class DyMessages implements Messages {
     @Override
     public long unread() throws IOException {
         final Item item = this.region.table(DyFriends.TBL)
-            .frame().through(new QueryValve())
+            .frame()
+            .through(
+                new QueryValve()
+                    .withLimit(1)
+                    .withAttributesToGet(DyFriends.ATTR_UNREAD)
+            )
             .where(DyFriends.HASH, Conditions.equalTo(this.bout))
             .where(DyFriends.RANGE, Conditions.equalTo(this.self))
             .iterator().next();
@@ -300,9 +308,13 @@ final class DyMessages implements Messages {
     @Cacheable(forever = true)
     private static Counter sttc() {
         try {
-            return RtSttc.make(
-                URN.create(Manifests.read("Netbout-SttcUrn")),
-                Manifests.read("Netbout-SttcToken")
+            return new CdSttc(
+                new ReSttc(
+                    RtSttc.make(
+                        URN.create(Manifests.read("Netbout-SttcUrn")),
+                        Manifests.read("Netbout-SttcToken")
+                    )
+                )
             ).counters().get("nb-message");
         } catch (final IOException ex) {
             throw new IllegalStateException(ex);

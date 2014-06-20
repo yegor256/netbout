@@ -45,6 +45,11 @@ public interface Inbox extends Pageable<Bout> {
     int PAGE = 8;
 
     /**
+     * Point in never reached future.
+     */
+    long NEVER = System.currentTimeMillis() << 1;
+
+    /**
      * Start new bout.
      * @return Bout number
      * @throws IOException If fails

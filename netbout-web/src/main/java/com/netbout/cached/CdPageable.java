@@ -24,97 +24,74 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.client.retry;
+package com.netbout.cached;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Iterables;
+import com.google.common.collect.Lists;
+import com.jcabi.aspects.Cacheable;
 import com.jcabi.aspects.Immutable;
 import com.jcabi.aspects.Loggable;
-import com.jcabi.aspects.RetryOnFailure;
 import com.jcabi.aspects.Tv;
-import com.netbout.spi.Attachment;
-import com.netbout.spi.Attachments;
+import com.netbout.spi.Bout;
+import com.netbout.spi.Message;
+import com.netbout.spi.Pageable;
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
 /**
- * Cached attachments.
+ * Cached pageable.
  *
  * @author Yegor Bugayenko (yegor@tpc2.com)
  * @version $Id$
- * @since 2.3
+ * @since 2.10.3
  */
 @Immutable
-@ToString
 @Loggable(Loggable.DEBUG)
+@ToString(of = "origin")
 @EqualsAndHashCode(of = "origin")
-public final class ReAttachments implements Attachments {
+final class CdPageable<T> implements Pageable<T> {
 
     /**
-     * Original object.
+     * Original.
      */
-    private final transient Attachments origin;
+    private final transient Pageable<T> origin;
 
     /**
      * Public ctor.
-     * @param orgn Original object
+     * @param org Origin
      */
-    public ReAttachments(final Attachments orgn) {
-        this.origin = orgn;
+    CdPageable(final Pageable<T> org) {
+        this.origin = org;
     }
 
     @Override
-    @RetryOnFailure(
-        verbose = false, attempts = Tv.TWENTY,
-        delay = Tv.FIVE, unit = TimeUnit.SECONDS
-    )
-    public int unseen() throws IOException {
-        return this.origin.unseen();
+    public Pageable<T> jump(final long number) throws IOException {
+        return new CdPageable<T>(this.origin.jump(number));
     }
 
     @Override
-    @RetryOnFailure(
-        verbose = false, attempts = Tv.TWENTY,
-        delay = Tv.FIVE, unit = TimeUnit.SECONDS
-    )
-    public void create(final String name) throws IOException {
-        this.origin.create(name);
-    }
-
-    @Override
-    @RetryOnFailure(
-        verbose = false, attempts = Tv.TWENTY,
-        delay = Tv.FIVE, unit = TimeUnit.SECONDS
-    )
-    public void delete(final String name) throws IOException {
-        this.origin.delete(name);
-    }
-
-    @Override
-    @RetryOnFailure(
-        verbose = false, attempts = Tv.TWENTY,
-        delay = Tv.FIVE, unit = TimeUnit.SECONDS
-    )
-    public Attachment get(final String name) throws IOException {
-        return new ReAttachment(this.origin.get(name));
-    }
-
-    @Override
-    @RetryOnFailure(
-        verbose = false, attempts = Tv.TWENTY,
-        delay = Tv.FIVE, unit = TimeUnit.SECONDS
-    )
-    public Iterable<Attachment> iterate() throws IOException {
-        return Iterables.transform(
-            this.origin.iterate(),
-            new Function<Attachment, Attachment>() {
-                @Override
-                public Attachment apply(final Attachment attachment) {
-                    return new ReAttachment(attachment);
+    @Cacheable(lifetime = Tv.FIVE, unit = TimeUnit.MINUTES)
+    public Iterable<T> iterate() throws IOException {
+        return Lists.newArrayList(
+            Iterables.transform(
+                this.origin.iterate(),
+                new Function<T, T>() {
+                    @Override
+                    @SuppressWarnings("unchecked")
+                    public T apply(final T input) {
+                        final Object result;
+                        if (input instanceof Message) {
+                            result = new CdMessage(Message.class.cast(input));
+                        } else {
+                            result = new CdBout(Bout.class.cast(input));
+                        }
+                        return (T) result;
+                    }
                 }
-            }
+            )
         );
     }
 }

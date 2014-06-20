@@ -26,6 +26,7 @@
  */
 package com.netbout.spi;
 
+import com.jcabi.aspects.Immutable;
 import java.io.IOException;
 import java.util.Date;
 import org.hamcrest.BaseMatcher;
@@ -39,6 +40,7 @@ import org.hamcrest.Matcher;
  * @version $Id$
  * @since 2.0
  */
+@Immutable
 public interface Message {
 
     /**

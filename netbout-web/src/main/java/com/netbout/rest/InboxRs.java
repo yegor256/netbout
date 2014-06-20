@@ -27,7 +27,6 @@
 package com.netbout.rest;
 
 import com.google.common.collect.Iterables;
-import com.netbout.spi.Attachments;
 import com.netbout.spi.Bout;
 import com.netbout.spi.Friend;
 import com.netbout.spi.Inbox;
@@ -56,7 +55,7 @@ public final class InboxRs extends BaseRs {
     /**
      * Start date.
      */
-    private transient long since = System.currentTimeMillis() << 1;
+    private transient long since = Inbox.NEVER;
 
     /**
      * Set start date.
@@ -140,17 +139,9 @@ public final class InboxRs extends BaseRs {
         return new JaxbBundle("bout")
             .add("number", Long.toString(bout.number()))
             .up()
-            .add("updated", Long.toString(bout.updated().getTime()))
-            .up()
-            .add("unread", Long.toString(bout.messages().unread()))
-            .up()
-            .add(
-                "unseen",
-                Integer.toString(
-                    new Attachments.Unseen(bout.attachments()).get()
-                )
-            )
-            .up()
+            .add("updated", Long.toString(bout.updated().getTime())).up()
+            .add("unread", Long.toString(bout.messages().unread())).up()
+            .add("unseen", Integer.toString(bout.attachments().unseen())).up()
             .add("title", bout.title()).up()
             .add(
                 new JaxbBundle("friends").add(

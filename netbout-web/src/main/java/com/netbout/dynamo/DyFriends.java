@@ -137,6 +137,7 @@ final class DyFriends implements Friends {
     public void kick(final String friend) throws IOException {
         Iterators.removeIf(
             this.region.table(DyFriends.TBL).frame()
+                .through(new QueryValve())
                 .where(DyFriends.HASH, Conditions.equalTo(this.bout()))
                 .where(DyFriends.RANGE, friend)
                 .iterator(),

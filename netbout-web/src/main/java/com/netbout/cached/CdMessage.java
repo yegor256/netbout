@@ -26,80 +26,57 @@
  */
 package com.netbout.cached;
 
-import com.google.common.base.Function;
-import com.google.common.collect.Iterables;
-import com.jcabi.aspects.Cacheable;
 import com.jcabi.aspects.Immutable;
 import com.jcabi.aspects.Loggable;
-import com.jcabi.aspects.Tv;
-import com.netbout.spi.Bout;
-import com.netbout.spi.Inbox;
-import com.netbout.spi.Pageable;
+import com.netbout.spi.Message;
 import java.io.IOException;
-import java.util.concurrent.TimeUnit;
+import java.util.Date;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
 /**
- * Cached Inbox.
+ * Cached Message.
  *
  * @author Yegor Bugayenko (yegor@tpc2.com)
  * @version $Id$
- * @since 2.0
+ * @since 2.10.3
  */
 @Immutable
 @Loggable(Loggable.DEBUG)
 @ToString(of = "origin")
 @EqualsAndHashCode(of = "origin")
-final class CdInbox implements Inbox {
+final class CdMessage implements Message {
 
     /**
      * Original.
      */
-    private final transient Inbox origin;
+    private final transient Message origin;
 
     /**
      * Public ctor.
      * @param org Origin
      */
-    CdInbox(final Inbox org) {
+    CdMessage(final Message org) {
         this.origin = org;
     }
 
     @Override
-    @Cacheable.FlushBefore
-    public long start() throws IOException {
-        return this.origin.start();
+    public long number() throws IOException {
+        return this.origin.number();
     }
 
     @Override
-    @Cacheable(lifetime = Tv.SIX, unit = TimeUnit.HOURS)
-    public long unread() throws IOException {
-        return this.origin.unread();
+    public Date date() throws IOException {
+        return this.origin.date();
     }
 
     @Override
-    @Cacheable(lifetime = Tv.SIX, unit = TimeUnit.HOURS)
-    public Bout bout(final long number) throws Inbox.BoutNotFoundException {
-        return new CdBout(this.origin.bout(number));
+    public String text() throws IOException {
+        return this.origin.text();
     }
 
     @Override
-    public Pageable<Bout> jump(final long number) throws IOException {
-        return new CdPageable<Bout>(this.origin.jump(number));
-    }
-
-    @Override
-    @Cacheable(lifetime = Tv.FIVE, unit = TimeUnit.MINUTES)
-    public Iterable<Bout> iterate() throws IOException {
-        return Iterables.transform(
-            this.origin.iterate(),
-            new Function<Bout, Bout>() {
-                @Override
-                public Bout apply(final Bout input) {
-                    return new CdBout(input);
-                }
-            }
-        );
+    public String author() throws IOException {
+        return this.origin.author();
     }
 }

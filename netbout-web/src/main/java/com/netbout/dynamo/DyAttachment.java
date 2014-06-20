@@ -138,7 +138,12 @@ final class DyAttachment implements Attachment {
     @Override
     public boolean unseen() throws IOException {
         final Item itm = this.region.table(DyFriends.TBL)
-            .frame().through(new QueryValve())
+            .frame()
+            .through(
+                new QueryValve()
+                    .withLimit(1)
+                    .withAttributesToGet(DyFriends.ATTR_UNSEEN)
+            )
             .where(DyFriends.HASH, Conditions.equalTo(this.bout()))
             .where(DyFriends.RANGE, Conditions.equalTo(this.self))
             .iterator().next();

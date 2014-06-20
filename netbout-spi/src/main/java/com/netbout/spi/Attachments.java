@@ -45,6 +45,13 @@ import lombok.ToString;
 public interface Attachments {
 
     /**
+     * How many unseen attachments are there?
+     * @return Number of them
+     * @throws IOException If fails
+     */
+    int unseen() throws IOException;
+
+    /**
      * Create attachment.
      * @param name Attachment name
      * @throws IOException If fails
@@ -121,49 +128,6 @@ public interface Attachments {
          */
         public InvalidNameException(final String cause) {
             super(cause);
-        }
-    }
-
-    /**
-     * Unseen.
-     */
-    @Immutable
-    @Loggable(Loggable.DEBUG)
-    @ToString(of = "origin")
-    @EqualsAndHashCode(of = "origin")
-    final class Unseen {
-        /**
-         * Origin.
-         */
-        private final transient Attachments origin;
-        /**
-         * Ctor.
-         * @param att Attachments
-         */
-        public Unseen(final Attachments att) {
-            this.origin = att;
-        }
-        /**
-         * Get total unseen attachments.
-         * @return Total unseen
-         * @throws IOException If fails
-         */
-        public int get() throws IOException {
-            return Iterables.size(
-                Iterables.filter(
-                    this.origin.iterate(),
-                    new Predicate<Attachment>() {
-                        @Override
-                        public boolean apply(final Attachment input) {
-                            try {
-                                return input.unseen();
-                            } catch (final IOException ex) {
-                                throw new IllegalStateException(ex);
-                            }
-                        }
-                    }
-                )
-            );
         }
     }
 

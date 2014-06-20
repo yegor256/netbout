@@ -82,7 +82,11 @@ final class DyFriend implements Friend {
     public URI photo() throws IOException {
         final Iterator<Item> items = this.table.frame()
             .where(DyAliases.HASH, this.name)
-            .through(new QueryValve().withLimit(1))
+            .through(
+                new QueryValve()
+                    .withLimit(1)
+                    .withAttributesToGet(DyAliases.ATTR_PHOTO)
+            )
             .iterator();
         final URI uri;
         if (items.hasNext()) {

@@ -28,6 +28,8 @@ package com.netbout.dynamo;
 
 import co.stateful.Counter;
 import co.stateful.RtSttc;
+import co.stateful.cached.CdSttc;
+import co.stateful.retry.ReSttc;
 import com.amazonaws.services.dynamodbv2.model.AttributeValue;
 import com.amazonaws.services.dynamodbv2.model.ComparisonOperator;
 import com.amazonaws.services.dynamodbv2.model.Condition;
@@ -63,7 +65,7 @@ import lombok.ToString;
 @Immutable
 @Loggable(Loggable.DEBUG)
 @ToString(of = "self")
-@EqualsAndHashCode(of = { "counter", "region", "self" })
+@EqualsAndHashCode(of = { "counter", "region", "self", "since" })
 final class DyInbox implements Inbox {
 
     /**
@@ -92,7 +94,7 @@ final class DyInbox implements Inbox {
      * @param slf My alias
      */
     DyInbox(final Region reg, final String slf) {
-        this(reg, slf, DyInbox.sttc(), System.currentTimeMillis() << 1);
+        this(reg, slf, DyInbox.sttc(), Inbox.NEVER);
     }
 
     /**
@@ -235,9 +237,13 @@ final class DyInbox implements Inbox {
     @Cacheable(forever = true)
     private static Counter sttc() {
         try {
-            return RtSttc.make(
-                URN.create(Manifests.read("Netbout-SttcUrn")),
-                Manifests.read("Netbout-SttcToken")
+            return new CdSttc(
+                new ReSttc(
+                    RtSttc.make(
+                        URN.create(Manifests.read("Netbout-SttcUrn")),
+                        Manifests.read("Netbout-SttcToken")
+                    )
+                )
             ).counters().get("nb-bout");
         } catch (final IOException ex) {
             throw new IllegalStateException(ex);

@@ -26,6 +26,8 @@
  */
 package com.netbout.cached;
 
+import com.google.common.base.Function;
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.jcabi.aspects.Cacheable;
 import com.jcabi.aspects.Immutable;
@@ -84,14 +86,24 @@ final class CdMessages implements Messages {
 
     @Override
     public Pageable<Message> jump(final long number) throws IOException {
-        return this.origin.jump(number);
+        return new CdPageable<Message>(this.origin.jump(number));
     }
 
     @Override
     @Cacheable(lifetime = Tv.FIVE, unit = TimeUnit.MINUTES)
     public Iterable<Message> iterate() throws IOException {
         this.flag.touch();
-        return Lists.newArrayList(this.origin.iterate());
+        return Lists.newArrayList(
+            Iterables.transform(
+                this.origin.iterate(),
+                new Function<Message, Message>() {
+                    @Override
+                    public Message apply(final Message input) {
+                        return new CdMessage(input);
+                    }
+                }
+            )
+        );
     }
 
     /**

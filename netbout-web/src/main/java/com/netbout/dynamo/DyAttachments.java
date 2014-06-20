@@ -124,6 +124,14 @@ final class DyAttachments implements Attachments {
         throws Attachments.NotFoundException {
         final Iterator<Item> items = this.region.table(DyAttachments.TBL)
             .frame()
+            .through(
+                new QueryValve()
+                    .withLimit(1)
+                    .withAttributesToGet(
+                        DyAttachments.ATTR_CTYPE,
+                        DyAttachments.ATTR_KEY
+                    )
+            )
             .where(DyAttachments.HASH, Conditions.equalTo(this.bout))
             .where(DyAttachments.RANGE, name)
             .iterator();
@@ -156,6 +164,27 @@ final class DyAttachments implements Attachments {
                 }
             }
         );
+    }
+
+    @Override
+    public int unseen() throws IOException {
+        final Item itm = this.region.table(DyFriends.TBL)
+            .frame()
+            .through(
+                new QueryValve()
+                    .withLimit(1)
+                    .withAttributesToGet(DyFriends.ATTR_UNSEEN)
+            )
+            .where(DyFriends.HASH, Conditions.equalTo(this.bout))
+            .where(DyFriends.RANGE, Conditions.equalTo(this.self))
+            .iterator().next();
+        final int unseen;
+        if (itm.has(DyFriends.ATTR_UNSEEN)) {
+            unseen = itm.get(DyFriends.ATTR_UNSEEN).getSS().size();
+        } else {
+            unseen = 0;
+        }
+        return unseen;
     }
 
     @Override

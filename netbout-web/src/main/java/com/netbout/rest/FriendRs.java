@@ -73,9 +73,9 @@ public final class FriendRs extends BaseRs {
             this.alias().inbox().bout(bout).friends()
         ).find(alias);
         final byte[] img = new JdkRequest(friend.photo())
+            .through(AutoRedirectingWire.class)
             .through(RetryWire.class)
             .through(OneMinuteWire.class)
-            .through(AutoRedirectingWire.class)
             .header(HttpHeaders.ACCEPT, "image/*")
             .header(HttpHeaders.USER_AGENT, "Netbout.com")
             .fetch()

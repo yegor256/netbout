@@ -67,6 +67,11 @@ final class RtAttachments implements Attachments {
     }
 
     @Override
+    public int unseen() throws IOException {
+        throw new UnsupportedOperationException("#unseen()");
+    }
+
+    @Override
     public void create(final String name) throws IOException {
         this.request.fetch()
             .as(RestResponse.class)
