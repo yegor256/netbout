@@ -58,6 +58,7 @@ import lombok.ToString;
  * @author Yegor Bugayenko (yegor@tpc2.com)
  * @version $Id$
  * @since 2.0
+ * @checkstyle ClassDataAbstractionCouplingCheck (500 lines)
  */
 @Immutable
 @Loggable(Loggable.DEBUG)
@@ -83,7 +84,7 @@ final class DyInbox implements Inbox {
     /**
      * Start moment.
      */
-    private final transient long start;
+    private final transient long since;
 
     /**
      * Ctor.
@@ -101,13 +102,14 @@ final class DyInbox implements Inbox {
      * @param ctr Counter
      * @param strt Start
      * @since 2.7.1
+     * @checkstyle ParameterNumberCheck (5 lines)
      */
     DyInbox(final Region reg, final String slf, final Counter ctr,
         final long strt) {
         this.region = reg;
         this.self = slf;
         this.counter = ctr;
-        this.start = strt;
+        this.since = strt;
     }
 
     @Override
@@ -200,7 +202,7 @@ final class DyInbox implements Inbox {
                         .withComparisonOperator(ComparisonOperator.LT)
                         .withAttributeValueList(
                             new AttributeValue().withN(
-                                Long.toString(this.start)
+                                Long.toString(this.since)
                             )
                         )
                 )

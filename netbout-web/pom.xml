@@ -676,6 +676,7 @@
                     <plugin>
                         <artifactId>maven-failsafe-plugin</artifactId>
                         <configuration>
+                            <parallel>none</parallel>
                             <systemPropertyVariables combine.children="append">
                                 <dynamo.port>${dynamodblocal.port}</dynamo.port>
                             </systemPropertyVariables>

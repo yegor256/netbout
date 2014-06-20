@@ -62,8 +62,7 @@ $(document).ready(
                       + escapeHTML($msg.find('title').text()) + '</a></h1><div class="friends">';
                     $msg.find('friend').each(
                       function (idx, friend) {
-                        var $friend = $(friend);
-                        var shift = 57 * idx;
+                        var $friend = $(friend), shift = 57 * idx;
                         appendix += '<div class="friend" style="left:'
                           + shift + 'px;"><img class="photo" alt="'
                           + escapeHTML($friend.find('alias').text()) +'" src="'
