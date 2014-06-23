@@ -602,7 +602,8 @@ public final class BoutRs extends BaseRs {
             .add("number", Long.toString(message.number()))
             .up()
             .add("author", message.author()).up()
-            .add("html", message.text()).up()
+            .add("text", message.text()).up()
+            .add("html", new Markdown(message.text()).html()).up()
             .add("timeago", new PrettyTime().format(message.date())).up()
             .add(
                 "date",
