@@ -43,6 +43,7 @@ import com.netbout.spi.Friends;
 import java.io.IOException;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * Dynamo friends.
@@ -119,7 +120,8 @@ final class DyFriends implements Friends {
 
     @Override
     public void invite(final String friend) throws IOException {
-        if (!new Everybody(this.region).occupied(friend)) {
+        final String alias = DyFriends.clean(friend);
+        if (!new Everybody(this.region).occupied(alias)) {
             throw new Friends.UnknownAliasException(
                 String.format("alias '%s' doesn't exist", friend)
             );
@@ -127,7 +129,7 @@ final class DyFriends implements Friends {
         this.region.table(DyFriends.TBL).put(
             new Attributes()
                 .with(DyFriends.HASH, this.bout())
-                .with(DyFriends.RANGE, friend)
+                .with(DyFriends.RANGE, alias)
                 .with(DyFriends.ATTR_TITLE, this.item.get(DyFriends.ATTR_TITLE))
                 .with(DyFriends.ATTR_UPDATED, System.currentTimeMillis())
         );
@@ -135,11 +137,12 @@ final class DyFriends implements Friends {
 
     @Override
     public void kick(final String friend) throws IOException {
+        final String alias = DyFriends.clean(friend);
         Iterators.removeIf(
             this.region.table(DyFriends.TBL).frame()
                 .through(new QueryValve())
                 .where(DyFriends.HASH, Conditions.equalTo(this.bout()))
-                .where(DyFriends.RANGE, friend)
+                .where(DyFriends.RANGE, alias)
                 .iterator(),
             Predicates.alwaysTrue()
         );
@@ -175,6 +178,15 @@ final class DyFriends implements Friends {
      */
     private AttributeValue bout() throws IOException {
         return this.item.get(DyFriends.HASH);
+    }
+
+    /**
+     * Clean alias.
+     * @param friend Friend name
+     * @return Alias
+     */
+    private static String clean(final String friend) {
+        return StringUtils.strip(friend, " @\n\t\r");
     }
 
 }
