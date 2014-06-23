@@ -243,14 +243,14 @@ final class DyAttachment implements Attachment {
                     ),
                     this.item.get(DyAttachments.RANGE).getS()
                 );
-                final ObjectMetadata meta = new ObjectMetadata();
-                meta.setContentType(ctype);
-                meta.setContentLength((long) data.length);
-                this.bucket.ocket(key).write(
-                    new ByteArrayInputStream(data),
-                    meta
-                );
             }
+            final ObjectMetadata meta = new ObjectMetadata();
+            meta.setContentType(ctype);
+            meta.setContentLength((long) data.length);
+            this.bucket.ocket(key).write(
+                new ByteArrayInputStream(data),
+                meta
+            );
             updates = updates
                 .with(DyAttachments.ATTR_DATA, "s3")
                 .with(DyAttachments.ATTR_KEY, key);
