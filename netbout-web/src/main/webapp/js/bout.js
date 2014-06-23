@@ -57,7 +57,7 @@ $(document).ready(
     $(window).scroll(
       function () {
         var $box = $('#messages'), $tail = $('#tail'), more = $box.attr('data-more');
-        if ($(window).scrollTop() >= $(document).height() - $(window).height() - 50 && more) {
+        if ($(window).scrollTop() >= $(document).height() - $(window).height() - 400 && more) {
           $box.removeAttr('data-more', '');
           $tail.show();
           $.ajax(
