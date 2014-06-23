@@ -31,11 +31,13 @@ import com.jcabi.aspects.Loggable;
 import com.jcabi.aspects.RetryOnFailure;
 import com.jcabi.aspects.Tv;
 import com.netbout.spi.Attachment;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.concurrent.TimeUnit;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
+import org.apache.commons.io.IOUtils;
 
 /**
  * Cached attachment.
@@ -100,12 +102,24 @@ public final class ReAttachment implements Attachment {
     }
 
     @Override
+    public void write(final InputStream stream, final String ctype)
+        throws IOException {
+        this.write(IOUtils.toByteArray(stream), ctype);
+    }
+
+    /**
+     * Write a byte array.
+     * @param bytes Bytes to write
+     * @param ctype Content type
+     * @throws IOException If fails
+     */
     @RetryOnFailure(
         verbose = false, attempts = Tv.TWENTY,
         delay = Tv.FIVE, unit = TimeUnit.SECONDS
     )
-    public void write(final InputStream stream, final String ctype)
+    private void write(final byte[] bytes, final String ctype)
         throws IOException {
-        this.origin.write(stream, ctype);
+        this.origin.write(new ByteArrayInputStream(bytes), ctype);
     }
+
 }
