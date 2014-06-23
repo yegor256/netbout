@@ -319,7 +319,11 @@ public final class BoutRs extends BaseRs {
     @POST
     @Path("/post")
     public void post(@FormParam("text") final String text) throws IOException {
-        this.bout().messages().post(text);
+        try {
+            this.bout().messages().post(text);
+        } catch (final Messages.BrokenPostException ex) {
+            throw FlashInset.forward(this.self(), ex);
+        }
         throw FlashInset.forward(
             this.self(),
             String.format(

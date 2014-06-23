@@ -57,6 +57,7 @@ import com.netbout.spi.Pageable;
 import java.io.IOException;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * Dynamo messages.
@@ -159,12 +160,18 @@ final class DyMessages implements Messages {
 
     @Override
     public void post(final String text) throws IOException {
+        final String clean = StringUtils.strip(text);
+        if (clean.isEmpty()) {
+            throw new Messages.BrokenPostException(
+                "empty message content is not allowed"
+            );
+        }
         final long number = this.counter.incrementAndGet(1L);
         this.region.table(DyMessages.TBL).put(
             new Attributes()
                 .with(DyMessages.HASH, this.bout)
                 .with(DyMessages.RANGE, number)
-                .with(DyMessages.ATTR_TEXT, text)
+                .with(DyMessages.ATTR_TEXT, clean)
                 .with(DyMessages.ATTR_ALIAS, this.self)
                 .with(DyMessages.ATTR_DATE, System.currentTimeMillis())
         );

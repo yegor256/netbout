@@ -58,4 +58,21 @@ public interface Messages extends Pageable<Message> {
      */
     long unread() throws IOException;
 
+    /**
+     * Message content is not valid.
+     */
+    final class BrokenPostException extends IOException {
+        /**
+         * Serialization marker.
+         */
+        private static final long serialVersionUID = -6379382623897037014L;
+        /**
+         * Ctor.
+         * @param cause Cause of the problem
+         */
+        public BrokenPostException(final String cause) {
+            super(cause);
+        }
+    }
+
 }
