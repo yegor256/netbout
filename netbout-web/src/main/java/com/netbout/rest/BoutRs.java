@@ -542,6 +542,7 @@ public final class BoutRs extends BaseRs {
             .add("name", attachment.name())
             .up()
             .add("ctype", attachment.ctype()).up()
+            .add("etag", attachment.etag()).up()
             .add("unseen", Boolean.toString(attachment.unseen())).up()
             .link(
                 new Link(
