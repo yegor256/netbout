@@ -200,12 +200,14 @@
     <xsl:template match="attachment">
         <li>
             <xsl:attribute name="class">
-                <xsl:if test="html">
-                    <xsl:text>active</xsl:text>
-                </xsl:if>
-                <xsl:if test="unseen = 'true'">
-                    <xsl:text> unseen</xsl:text>
-                </xsl:if>
+                <xsl:choose>
+                    <xsl:when test="html">
+                        <xsl:text>active</xsl:text>
+                    </xsl:when>
+                    <xsl:when test="unseen = 'true'">
+                        <xsl:text>unseen</xsl:text>
+                    </xsl:when>
+                </xsl:choose>
             </xsl:attribute>
             <xsl:choose>
                 <xsl:when test="links/link[@rel='open']">
