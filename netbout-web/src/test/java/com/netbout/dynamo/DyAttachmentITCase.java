@@ -70,7 +70,8 @@ public final class DyAttachmentITCase {
         }
         attachment.write(
             new ByteArrayInputStream(bytes),
-            MediaType.APPLICATION_OCTET_STREAM
+            MediaType.APPLICATION_OCTET_STREAM,
+            Long.toString(System.currentTimeMillis())
         );
         MatcherAssert.assertThat(
             IOUtils.toByteArray(attachment.read()),

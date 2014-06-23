@@ -60,6 +60,13 @@ public interface Attachment {
     String ctype() throws IOException;
 
     /**
+     * Get its etag (up to 256 characters).
+     * @return ETag or empty string if not yet set
+     * @throws IOException If fails
+     */
+    String etag() throws IOException;
+
+    /**
      * Is it unseen?
      * @return TRUE if it's unseen
      * @throws IOException If fails
@@ -74,12 +81,15 @@ public interface Attachment {
     InputStream read() throws IOException;
 
     /**
-     * Write content.
-     * @param stream Steam with content
+     * Write content (don't touch it if etag is the same as before).
+     * @param stream Stream with content
      * @param ctype MIME content type
+     * @param etag New ETag (up to 256 characters)
      * @throws IOException If fails
+     * @since 2.11
      */
-    void write(InputStream stream, String ctype) throws IOException;
+    void write(InputStream stream, String ctype, String etag)
+        throws IOException;
 
     /**
      * Attachment is too big.

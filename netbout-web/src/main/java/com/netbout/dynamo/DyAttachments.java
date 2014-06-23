@@ -83,6 +83,11 @@ final class DyAttachments implements Attachments {
     public static final String ATTR_CTYPE = "ctype";
 
     /**
+     * Etag of the attachment.
+     */
+    public static final String ATTR_ETAG = "etag";
+
+    /**
      * Data.
      */
     public static final String ATTR_DATA = "data";

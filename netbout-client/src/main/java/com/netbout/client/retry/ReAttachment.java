@@ -88,6 +88,15 @@ public final class ReAttachment implements Attachment {
         verbose = false, attempts = Tv.TWENTY,
         delay = Tv.FIVE, unit = TimeUnit.SECONDS
     )
+    public String etag() throws IOException {
+        return this.origin.etag();
+    }
+
+    @Override
+    @RetryOnFailure(
+        verbose = false, attempts = Tv.TWENTY,
+        delay = Tv.FIVE, unit = TimeUnit.SECONDS
+    )
     public boolean unseen() throws IOException {
         return this.origin.unseen();
     }
@@ -102,24 +111,25 @@ public final class ReAttachment implements Attachment {
     }
 
     @Override
-    public void write(final InputStream stream, final String ctype)
-        throws IOException {
-        this.write(IOUtils.toByteArray(stream), ctype);
+    public void write(final InputStream stream, final String ctype,
+        final String etag) throws IOException {
+        this.write(IOUtils.toByteArray(stream), ctype, etag);
     }
 
     /**
      * Write a byte array.
      * @param bytes Bytes to write
      * @param ctype Content type
+     * @param etag Etag
      * @throws IOException If fails
      */
     @RetryOnFailure(
         verbose = false, attempts = Tv.TWENTY,
         delay = Tv.FIVE, unit = TimeUnit.SECONDS
     )
-    private void write(final byte[] bytes, final String ctype)
-        throws IOException {
-        this.origin.write(new ByteArrayInputStream(bytes), ctype);
+    private void write(final byte[] bytes, final String ctype,
+        final String etag) throws IOException {
+        this.origin.write(new ByteArrayInputStream(bytes), ctype, etag);
     }
 
 }

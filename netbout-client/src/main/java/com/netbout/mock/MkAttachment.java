@@ -99,6 +99,11 @@ final class MkAttachment implements Attachment {
     }
 
     @Override
+    public String etag() throws IOException {
+        throw new UnsupportedOperationException("#etag()");
+    }
+
+    @Override
     public boolean unseen() throws IOException {
         throw new UnsupportedOperationException("#unseen()");
     }
@@ -121,8 +126,8 @@ final class MkAttachment implements Attachment {
     }
 
     @Override
-    public void write(final InputStream stream, final String ctype)
-        throws IOException {
+    public void write(final InputStream stream, final String ctype,
+        final String etag) throws IOException {
         try {
             new JdbcSession(this.sql.source())
                 // @checkstyle LineLength (1 line)

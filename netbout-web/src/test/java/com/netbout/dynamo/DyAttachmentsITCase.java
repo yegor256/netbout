@@ -64,7 +64,8 @@ public final class DyAttachmentsITCase {
         final Attachment attachment = attachments.get(name);
         attachment.write(
             IOUtils.toInputStream("5\u20ac", CharEncoding.UTF_8),
-            MediaType.TEXT_PLAIN
+            MediaType.TEXT_PLAIN,
+            Long.toString(System.currentTimeMillis())
         );
         MatcherAssert.assertThat(
             IOUtils.toString(attachment.read(), CharEncoding.UTF_8),

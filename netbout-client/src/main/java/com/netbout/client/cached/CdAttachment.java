@@ -75,6 +75,12 @@ public final class CdAttachment implements Attachment {
 
     @Override
     @Cacheable
+    public String etag() throws IOException {
+        return this.origin.etag();
+    }
+
+    @Override
+    @Cacheable
     public boolean unseen() throws IOException {
         return this.origin.unseen();
     }
@@ -85,8 +91,9 @@ public final class CdAttachment implements Attachment {
     }
 
     @Override
-    public void write(final InputStream stream, final String ctype)
-        throws IOException {
-        this.origin.write(stream, ctype);
+    public void write(final InputStream stream, final String ctype,
+        final String etag) throws IOException {
+        this.origin.write(stream, ctype, etag);
     }
+
 }

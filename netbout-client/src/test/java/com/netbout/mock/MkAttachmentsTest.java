@@ -56,7 +56,8 @@ public final class MkAttachmentsTest {
         final Attachment attachment = attachments.get(name);
         attachment.write(
             IOUtils.toInputStream("hey \u20ac", CharEncoding.UTF_8),
-            "text/plain"
+            "text/plain",
+            Long.toString(System.currentTimeMillis())
         );
         MatcherAssert.assertThat(
             IOUtils.toString(attachment.read(), CharEncoding.UTF_8),

@@ -65,7 +65,8 @@ public final class BoutRsITCase {
         final Attachment attachment = attachments.get(name);
         attachment.write(
             IOUtils.toInputStream("how are you, \u20ac?"),
-            Attachment.MARKDOWN
+            Attachment.MARKDOWN,
+            Long.toString(System.currentTimeMillis())
         );
         MatcherAssert.assertThat(
             IOUtils.toString(attachment.read()),

@@ -197,16 +197,20 @@ public final class BoutRs extends BaseRs {
      * Upload attachment.
      * @param name Name of attachment
      * @param ctype Ctype of it
+     * @param etag ETag
      * @param content Content to upload
      * @throws IOException If fails
+     * @checkstyle ParameterNumberCheck (10 lines)
      */
     @POST
     @Path("/upload")
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
     public void upload(@QueryParam("name") final String name,
-        @QueryParam("ctype") final String ctype, final InputStream content)
+        @QueryParam("ctype") final String ctype,
+        @QueryParam("etag") final String etag,
+        final InputStream content)
         throws IOException {
-        this.bout().attachments().get(name).write(content, ctype);
+        this.bout().attachments().get(name).write(content, ctype, etag);
         throw FlashInset.forward(
             this.self(),
             String.format("attachment '%s' uploaded", name),
@@ -254,7 +258,7 @@ public final class BoutRs extends BaseRs {
         try {
             this.bout().attachments().get(name).write(
                 new FileInputStream(temp),
-                ctype
+                ctype, Long.toString(System.currentTimeMillis())
             );
         } catch (final Attachment.TooBigException ex) {
             throw FlashInset.forward(this.self(), ex);

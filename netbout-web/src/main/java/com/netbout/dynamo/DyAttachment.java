@@ -136,6 +136,17 @@ final class DyAttachment implements Attachment {
     }
 
     @Override
+    public String etag() throws IOException {
+        final String etag;
+        if (this.item.has(DyAttachments.ATTR_ETAG)) {
+            etag = this.item.get(DyAttachments.ATTR_ETAG).getS();
+        } else {
+            etag = "";
+        }
+        return etag;
+    }
+
+    @Override
     public boolean unseen() throws IOException {
         final Item itm = this.region.table(DyFriends.TBL)
             .frame()
@@ -174,8 +185,8 @@ final class DyAttachment implements Attachment {
     }
 
     @Override
-    public void write(final InputStream stream,
-        final String ctype) throws IOException {
+    public void write(final InputStream stream, final String ctype,
+        final String etag) throws IOException {
         final byte[] data = IOUtils.toByteArray(stream);
         if (data.length == 0) {
             throw new Attachment.BrokenContentException(
@@ -190,6 +201,18 @@ final class DyAttachment implements Attachment {
                 "attachment is too big, 10Mb is the maximum size"
             );
         }
+        if (!etag.equals(this.etag())) {
+            this.save(data, ctype);
+        }
+    }
+
+    /**
+     * Save content.
+     * @param data Data to save
+     * @param ctype CType
+     * @throws IOException If fails
+     */
+    public void save(final byte[] data, final String ctype) throws IOException {
         AttributeUpdates updates = new AttributeUpdates()
             .with(DyAttachments.ATTR_CTYPE, ctype);
         if (data.length < DyAttachment.MAX_SIZE) {
@@ -215,7 +238,9 @@ final class DyAttachment implements Attachment {
             } else {
                 key = String.format(
                     "%d/%s",
-                    Long.parseLong(this.item.get(DyAttachments.HASH).getN()),
+                    Long.parseLong(
+                        this.item.get(DyAttachments.HASH).getN()
+                    ),
                     this.item.get(DyAttachments.RANGE).getS()
                 );
                 final ObjectMetadata meta = new ObjectMetadata();

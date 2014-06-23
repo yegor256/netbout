@@ -92,6 +92,17 @@ final class RtAttachment implements Attachment {
     }
 
     @Override
+    public String etag() throws IOException {
+        return this.request.fetch()
+            .as(RestResponse.class)
+            .assertStatus(HttpURLConnection.HTTP_OK)
+            .as(XmlResponse.class)
+            .xml()
+            .xpath(this.xpath("etag/text()"))
+            .get(0);
+    }
+
+    @Override
     public boolean unseen() throws IOException {
         return Boolean.parseBoolean(
             this.request.fetch()
@@ -117,8 +128,8 @@ final class RtAttachment implements Attachment {
     }
 
     @Override
-    public void write(final InputStream stream, final String ctype)
-        throws IOException {
+    public void write(final InputStream stream, final String ctype,
+        final String etag) throws IOException {
         this.request.fetch()
             .as(RestResponse.class)
             .assertStatus(HttpURLConnection.HTTP_OK)
@@ -127,6 +138,7 @@ final class RtAttachment implements Attachment {
             .uri()
             .queryParam("name", this.name())
             .queryParam("ctype", ctype)
+            .queryParam("etag", etag)
             .back()
             .body().set(IOUtils.toString(stream, CharEncoding.UTF_8)).back()
             .method(Request.POST)
