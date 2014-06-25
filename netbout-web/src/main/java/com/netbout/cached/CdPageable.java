@@ -28,7 +28,6 @@ package com.netbout.cached;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Iterables;
-import com.google.common.collect.Lists;
 import com.jcabi.aspects.Immutable;
 import com.jcabi.aspects.Loggable;
 import com.netbout.spi.Bout;
@@ -71,23 +70,21 @@ final class CdPageable<T> implements Pageable<T> {
 
     @Override
     public Iterable<T> iterate() throws IOException {
-        return Lists.newArrayList(
-            Iterables.transform(
-                this.origin.iterate(),
-                new Function<T, T>() {
-                    @Override
-                    @SuppressWarnings("unchecked")
-                    public T apply(final T input) {
-                        final Object result;
-                        if (input instanceof Message) {
-                            result = new CdMessage(Message.class.cast(input));
-                        } else {
-                            result = new CdBout(Bout.class.cast(input));
-                        }
-                        return (T) result;
+        return Iterables.transform(
+            this.origin.iterate(),
+            new Function<T, T>() {
+                @Override
+                @SuppressWarnings("unchecked")
+                public T apply(final T input) {
+                    final Object result;
+                    if (input instanceof Message) {
+                        result = new CdMessage(Message.class.cast(input));
+                    } else {
+                        result = new CdBout(Bout.class.cast(input));
                     }
+                    return (T) result;
                 }
-            )
+            }
         );
     }
 }

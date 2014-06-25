@@ -90,7 +90,6 @@ final class CdInbox implements Inbox {
     }
 
     @Override
-    @Cacheable(lifetime = Tv.FIVE, unit = TimeUnit.MINUTES)
     public Iterable<Bout> iterate() throws IOException {
         return Iterables.transform(
             this.origin.iterate(),
