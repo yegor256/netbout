@@ -202,7 +202,10 @@ final class DyAttachment implements Attachment {
             );
         }
         if (!etag.equals(this.etag())) {
-            this.save(data, ctype);
+            final AttributeUpdates updates = this.save(data, ctype)
+                .with(DyAttachments.ATTR_ETAG, etag);
+            this.item.put(updates);
+            this.updated();
         }
     }
 
@@ -210,9 +213,11 @@ final class DyAttachment implements Attachment {
      * Save content.
      * @param data Data to save
      * @param ctype CType
+     * @return Updates to apply
      * @throws IOException If fails
      */
-    public void save(final byte[] data, final String ctype) throws IOException {
+    public AttributeUpdates save(final byte[] data, final String ctype)
+        throws IOException {
         AttributeUpdates updates = new AttributeUpdates()
             .with(DyAttachments.ATTR_CTYPE, ctype);
         if (data.length < DyAttachment.MAX_SIZE) {
@@ -252,11 +257,10 @@ final class DyAttachment implements Attachment {
                 meta
             );
             updates = updates
-                .with(DyAttachments.ATTR_DATA, "s3")
+                .with(DyAttachments.ATTR_DATA, key)
                 .with(DyAttachments.ATTR_KEY, key);
         }
-        this.item.put(updates);
-        this.updated();
+        return updates;
     }
 
     /**

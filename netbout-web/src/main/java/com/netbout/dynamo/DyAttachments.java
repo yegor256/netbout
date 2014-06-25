@@ -134,6 +134,7 @@ final class DyAttachments implements Attachments {
                     .withLimit(1)
                     .withAttributesToGet(
                         DyAttachments.ATTR_CTYPE,
+                        DyAttachments.ATTR_ETAG,
                         DyAttachments.ATTR_KEY
                     )
             )
@@ -155,7 +156,9 @@ final class DyAttachments implements Attachments {
                 .frame()
                 .through(
                     new QueryValve().withAttributesToGet(
-                        DyAttachments.ATTR_ALIAS, DyAttachments.ATTR_CTYPE
+                        DyAttachments.ATTR_ALIAS,
+                        DyAttachments.ATTR_CTYPE,
+                        DyAttachments.ATTR_ETAG
                     )
                 )
                 .where(DyAttachments.HASH, Conditions.equalTo(this.bout)),
@@ -206,6 +209,7 @@ final class DyAttachments implements Attachments {
                 .with(DyAttachments.ATTR_ALIAS, this.self)
                 .with(DyAttachments.ATTR_CTYPE, MediaType.TEXT_PLAIN)
                 .with(DyAttachments.ATTR_DATA, " ")
+                .with(DyAttachments.ATTR_ETAG, "empty")
         );
     }
 

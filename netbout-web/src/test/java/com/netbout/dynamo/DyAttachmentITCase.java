@@ -68,18 +68,19 @@ public final class DyAttachmentITCase {
         for (int idx = 0; idx < bytes.length; ++idx) {
             bytes[idx] = (byte) idx;
         }
+        final String etag = Long.toString(System.currentTimeMillis());
         attachment.write(
             new ByteArrayInputStream(bytes),
             MediaType.APPLICATION_OCTET_STREAM,
-            Long.toString(System.currentTimeMillis())
+            etag
         );
         MatcherAssert.assertThat(
             IOUtils.toByteArray(attachment.read()),
             Matchers.equalTo(bytes)
         );
         MatcherAssert.assertThat(
-            attachment.etag(),
-            Matchers.not(Matchers.isEmptyOrNullString())
+            attachments.get(name).etag(),
+            Matchers.equalTo(etag)
         );
     }
 
