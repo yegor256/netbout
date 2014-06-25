@@ -86,6 +86,7 @@
                             <xsl:text>.svg</xsl:text>
                         </xsl:attribute>
                     </img>
+                    <i class="ico ico-home"><xsl:comment>home</xsl:comment></i>
                 </a>
                 <xsl:if test="/page/links/link[@rel='search']">
                     <form class="search" method="get" role="search" action="{/page/links/link[@rel='search']/@href}">

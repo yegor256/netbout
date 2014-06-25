@@ -66,6 +66,9 @@ $width: 750px;
       display: table-cell;
       text-align: left;
       vertical-align: middle;
+      a {
+        text-decoration: none;
+      }
       .logo {
         width: 113px;
         height: 37px;
@@ -75,6 +78,12 @@ $width: 750px;
         text-decoration: none;
         @media all and (max-width: $width) {
           display: none;
+        }
+      }
+      .ico-home {
+        display: none;
+        @media all and (max-width: $width) {
+          display: inline;
         }
       }
       .search {
