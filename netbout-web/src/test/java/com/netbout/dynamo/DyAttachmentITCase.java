@@ -77,6 +77,10 @@ public final class DyAttachmentITCase {
             IOUtils.toByteArray(attachment.read()),
             Matchers.equalTo(bytes)
         );
+        MatcherAssert.assertThat(
+            attachment.etag(),
+            Matchers.not(Matchers.isEmptyOrNullString())
+        );
     }
 
 }
