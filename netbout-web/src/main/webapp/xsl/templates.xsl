@@ -64,13 +64,7 @@
                 <xsl:attribute name="style">
                     <xsl:choose>
                         <xsl:when test="contains(name, '-LOCAL')">
-                            color: magenta;
-                        </xsl:when>
-                        <xsl:when test="contains(name, '-SNAPSHOT')">
-                            color: red;
-                        </xsl:when>
-                        <xsl:when test="contains(name, '-RC')">
-                            color: green;
+                            <xsl:text>color:magenta</xsl:text>
                         </xsl:when>
                         <xsl:otherwise>
                             <!-- nothing -->
@@ -91,9 +85,38 @@
                 </a>
             </span>
             <span>
+                <xsl:attribute name="style">
+                    <xsl:choose>
+                        <xsl:when test="number(/page/millis) &gt; 3000">
+                            <xsl:text>color:red</xsl:text>
+                        </xsl:when>
+                        <xsl:when test="number(/page/millis) &gt; 1000">
+                            <xsl:text>color:orange</xsl:text>
+                        </xsl:when>
+                        <xsl:otherwise>
+                            <!-- nothing -->
+                        </xsl:otherwise>
+                    </xsl:choose>
+                </xsl:attribute>
                 <xsl:call-template name="millis">
                     <xsl:with-param name="millis" select="/page/millis"/>
                 </xsl:call-template>
+            </span>
+            <span>
+                <xsl:attribute name="style">
+                    <xsl:choose>
+                        <xsl:when test="number(/page/@sla) &gt; 6">
+                            <xsl:text>color:red</xsl:text>
+                        </xsl:when>
+                        <xsl:when test="number(/page/@sla) &gt; 3">
+                            <xsl:text>color:orange</xsl:text>
+                        </xsl:when>
+                        <xsl:otherwise>
+                            <!-- nothing -->
+                        </xsl:otherwise>
+                    </xsl:choose>
+                </xsl:attribute>
+                <xsl:value-of select="/page/@sla"/>
             </span>
         </div>
     </xsl:template>
