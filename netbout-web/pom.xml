@@ -65,7 +65,7 @@
         <dependency>
             <groupId>com.amazonaws</groupId>
             <artifactId>aws-java-sdk</artifactId>
-            <version>1.8.0</version>
+            <version>1.8.1</version>
         </dependency>
         <dependency>
             <groupId>com.jcabi</groupId>
@@ -78,7 +78,7 @@
         <dependency>
             <groupId>co.stateful</groupId>
             <artifactId>java-sdk</artifactId>
-            <version>0.8.2</version>
+            <version>0.9.1</version>
         </dependency>
         <dependency>
             <groupId>eu.medsea.mimeutil</groupId>
@@ -103,7 +103,7 @@
         <dependency>
             <groupId>com.jcabi</groupId>
             <artifactId>jcabi-http</artifactId>
-            <version>1.6.1</version>
+            <version>1.7</version>
         </dependency>
         <dependency>
             <groupId>org.hamcrest</groupId>
@@ -114,10 +114,6 @@
             <groupId>org.hamcrest</groupId>
             <artifactId>hamcrest-library</artifactId>
             <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>xml-apis</groupId>
-            <artifactId>xml-apis</artifactId>
         </dependency>
         <dependency>
             <groupId>com.jcabi</groupId>
@@ -158,7 +154,7 @@
         <dependency>
             <groupId>com.rexsl</groupId>
             <artifactId>rexsl</artifactId>
-            <version>1.2</version>
+            <version>1.2.1</version>
         </dependency>
         <dependency>
             <groupId>com.sun.jersey</groupId>

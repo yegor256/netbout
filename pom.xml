@@ -47,7 +47,7 @@
     <parent>
         <groupId>com.jcabi</groupId>
         <artifactId>parent</artifactId>
-        <version>0.24</version>
+        <version>0.25</version>
     </parent>
     <groupId>com.netbout</groupId>
     <artifactId>netbout</artifactId>
@@ -110,19 +110,4 @@
     <properties>
         <jersey.version>1.18.1</jersey.version>
     </properties>
-    <dependencyManagement>
-        <dependencies>
-            <dependency>
-                <groupId>xml-apis</groupId>
-                <artifactId>xml-apis</artifactId>
-                <version>1.4.01</version> <!-- don't change it, keep 1.4.01 -->
-                <scope>provided</scope>
-            </dependency>
-            <dependency>
-                <groupId>com.jcabi</groupId>
-                <artifactId>jcabi-aspects</artifactId>
-                <version>0.16</version>
-            </dependency>
-        </dependencies>
-    </dependencyManagement>
 </project>
