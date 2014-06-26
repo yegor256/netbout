@@ -187,6 +187,18 @@ final class DyAttachment implements Attachment {
     @Override
     public void write(final InputStream stream, final String ctype,
         final String etag) throws IOException {
+        if (etag.isEmpty()) {
+            throw new Attachment.BrokenContentException("etag can't be empty");
+        }
+        if (etag.length() > 2 * Tv.HUNDRED) {
+            throw new Attachment.BrokenContentException("etag is too big");
+        }
+        if (ctype.isEmpty()) {
+            throw new Attachment.BrokenContentException("ctype is empty");
+        }
+        if (ctype.length() > Tv.HUNDRED) {
+            throw new Attachment.BrokenContentException("ctype is too long");
+        }
         final byte[] data = IOUtils.toByteArray(stream);
         if (data.length == 0) {
             throw new Attachment.BrokenContentException(

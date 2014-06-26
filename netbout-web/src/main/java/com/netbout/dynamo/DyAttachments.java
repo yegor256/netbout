@@ -197,7 +197,7 @@ final class DyAttachments implements Attachments {
 
     @Override
     public void create(final String name) throws IOException {
-        if (!name.matches("[a-zA-Z\\.\\-0-9]{3,}")) {
+        if (!name.matches("[a-zA-Z\\.\\-0-9]{3,128}")) {
             throw new Attachments.InvalidNameException(
                 String.format("invalid attachment name '%s'", name)
             );

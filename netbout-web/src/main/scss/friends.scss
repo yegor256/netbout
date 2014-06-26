@@ -32,9 +32,7 @@
   height: 50px;
   .friend {
     position: absolute;
-    height: 50px;
-    width: 50px;
-    top: 0;
+    height: 50px + $em;
     img {
       display: block;
       height: 50px;
