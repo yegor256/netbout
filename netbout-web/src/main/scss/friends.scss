@@ -43,14 +43,14 @@
       display: none;
       z-index: 100;
       margin-top: 1px;
+      font-size: 0.875 * $em;
       font-weight: 500;
       background-color: $color-gray-light;
       border-bottom: 1px solid $color-gray2;
       border-right: 1px solid $color-gray2;
       padding: 1px 7px;
-      font-size: 14px;
       .kick {
-        color: $color-red;
+        @extend .red;
         text-decoration: none;
         font-weight: bold;
       }

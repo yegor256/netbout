@@ -90,7 +90,7 @@ $width: 750px;
         display: inline-block;
         vertical-align: middle;
         position: relative;
-        font-size: 14px;
+        font-size: 0.875 * $em;
         .search-input {
           display: inline-block;
           position: relative;
@@ -113,7 +113,7 @@ $width: 750px;
           list-style: none;
           display: inline;
           margin-left: 27px;
-          font-size: 14px;
+          font-size: 0.875 * $em;
           font-weight: 600;
           vertical-align: middle;
           .photo {
@@ -127,8 +127,8 @@ $width: 750px;
             }
           }
           .start {
+            @extend .red;
             font-weight: bolder;
-            color: $color-red;
             padding-left: 5px;
           }
           a {
@@ -152,13 +152,13 @@ $width: 750px;
   h2 {
     position: relative;
     padding-top: 20px;
-    font-size: 20px;
+    font-size: 1.25 * $em;
     font-weight: 500;
   }
 }
 
 .version {
-  font-size: 12px;
+  font-size: 0.75 * $em;
   position: fixed;
   right: 0;
   bottom: 0;
@@ -172,7 +172,7 @@ $width: 750px;
 
 .flash {
   position: relative;
-  font-size: 14px;
+  font-size: 0.875 * $em;
   margin-top: 10px;
   font-weight: bold;
   &.SEVERE {

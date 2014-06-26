@@ -25,10 +25,10 @@
  * SUCH DAMAGE.
  */
 
-/* JIGSAW IGNORE: there is some problem in w3c server now */
+@import 'fonts';
+@import 'colors';
 
-/* header with friends */
 #error {
+  @extend .red;
   display: none;
-  color: red;
 }

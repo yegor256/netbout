@@ -100,7 +100,7 @@
     margin-bottom: .5em;
   }
   h1 {
-    font-size: 1.4em;
+    font-size: 1.4 * $em;
     font-weight: normal;
   }
   table {
@@ -152,7 +152,7 @@
     position: relative;
     overflow-x: auto;
     .meta {
-      font-size: 14px;
+      font-size: 0.875 * $em;
       color: gray;
     }
     .text {
