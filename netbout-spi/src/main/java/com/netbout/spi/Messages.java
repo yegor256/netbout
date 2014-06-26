@@ -42,7 +42,7 @@ public interface Messages extends Pageable<Message> {
     /**
      * Page size.
      */
-    int PAGE = 10;
+    int PAGE = 16;
 
     /**
      * Post a new message.

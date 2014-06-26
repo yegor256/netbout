@@ -42,7 +42,7 @@ public interface Inbox extends Pageable<Bout> {
     /**
      * Page size.
      */
-    int PAGE = 8;
+    int PAGE = 12;
 
     /**
      * Point in never reached future.
