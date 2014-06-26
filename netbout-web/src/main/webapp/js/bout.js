@@ -85,7 +85,7 @@ $(document).ready(
                       '</strong> said ',
                       escapeHTML($msg.find('timeago').text()),
                       '</div><div class="text">',
-                      escapeHTML($msg.find('html').text()),
+                      $msg.find('html').text(),
                       '</div></div></div>'
                     ].join('');
                     more = $msg.find('link[rel="more"]').attr('href');
