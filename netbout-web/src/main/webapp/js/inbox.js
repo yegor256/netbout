@@ -83,7 +83,7 @@ $(document).ready(
                           '" src="',
                           $friend.find('link[rel="photo"]').attr('href'),
                           '"/></div>'
-                        ].join();
+                        ].join('');
                       }
                     );
                     appendix += '</div></li>';
