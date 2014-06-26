@@ -33,6 +33,7 @@ import com.google.common.collect.Iterables;
 import com.google.common.collect.Iterators;
 import com.jcabi.aspects.Immutable;
 import com.jcabi.aspects.Loggable;
+import com.jcabi.aspects.Tv;
 import com.jcabi.dynamo.Attributes;
 import com.jcabi.dynamo.Conditions;
 import com.jcabi.dynamo.Item;
@@ -186,7 +187,14 @@ final class DyFriends implements Friends {
      * @return Alias
      */
     private static String clean(final String friend) {
-        return StringUtils.strip(friend, " @\n\t\r");
+        final String alias = StringUtils.strip(friend, " @\n\t\r");
+        if (alias.isEmpty()) {
+            throw new IllegalArgumentException("alias can't be empty");
+        }
+        if (alias.length() > Tv.HUNDRED) {
+            throw new IllegalArgumentException("alias is too long");
+        }
+        return alias;
     }
 
 }

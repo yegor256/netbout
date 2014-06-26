@@ -28,6 +28,7 @@ package com.netbout.dynamo;
 
 import com.jcabi.aspects.Immutable;
 import com.jcabi.aspects.Loggable;
+import com.jcabi.aspects.Tv;
 import com.jcabi.dynamo.Conditions;
 import com.jcabi.dynamo.QueryValve;
 import com.jcabi.dynamo.Region;
@@ -66,6 +67,12 @@ final class Everybody {
      * @return TRUE if occupied
      */
     public boolean occupied(final String name) {
+        if (name.isEmpty()) {
+            throw new IllegalArgumentException("alias can't be empty");
+        }
+        if (name.length() > Tv.HUNDRED) {
+            throw new IllegalArgumentException("alias is too long");
+        }
         return this.region.table(DyAliases.TBL).frame()
             .through(new QueryValve().withLimit(1))
             .where(DyAliases.HASH, Conditions.equalTo(name))

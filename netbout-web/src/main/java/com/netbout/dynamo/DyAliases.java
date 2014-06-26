@@ -129,6 +129,12 @@ final class DyAliases implements Aliases {
 
     @Override
     public void add(final String name) throws IOException {
+        if (name.isEmpty()) {
+            throw new IllegalArgumentException("alias can't be empty");
+        }
+        if (name.length() > Tv.HUNDRED) {
+            throw new IllegalArgumentException("alias is too long");
+        }
         if (new Everybody(this.region).occupied(name)) {
             throw new IllegalArgumentException(
                 String.format("alias '%s' is occupied", name)

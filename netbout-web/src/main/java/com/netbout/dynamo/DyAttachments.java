@@ -31,6 +31,7 @@ import com.google.common.base.Predicates;
 import com.google.common.collect.Iterables;
 import com.jcabi.aspects.Immutable;
 import com.jcabi.aspects.Loggable;
+import com.jcabi.aspects.Tv;
 import com.jcabi.dynamo.Attributes;
 import com.jcabi.dynamo.Conditions;
 import com.jcabi.dynamo.Item;
@@ -197,7 +198,7 @@ final class DyAttachments implements Attachments {
 
     @Override
     public void create(final String name) throws IOException {
-        if (!name.matches("[a-zA-Z\\.\\-0-9]{3,128}")) {
+        if (!name.matches("[a-zA-Z\\.\\-0-9]{3,100}")) {
             throw new Attachments.InvalidNameException(
                 String.format("invalid attachment name '%s'", name)
             );
@@ -215,6 +216,12 @@ final class DyAttachments implements Attachments {
 
     @Override
     public void delete(final String name) {
+        if (name.isEmpty()) {
+            throw new IllegalArgumentException("name can't be empty");
+        }
+        if (name.length() > Tv.HUNDRED) {
+            throw new IllegalArgumentException("name is too long");
+        }
         Iterables.removeIf(
             this.region.table(DyAttachments.TBL)
                 .frame()

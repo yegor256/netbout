@@ -167,7 +167,7 @@ final class DyMessages implements Messages {
                 "empty message content is not allowed"
             );
         }
-        if (clean.length() > 10 * Tv.THOUSAND) {
+        if (clean.length() > Tv.TEN * Tv.THOUSAND) {
             throw new Messages.BrokenPostException(
                 "message is too big, break it into parts or upload attachment"
             );
