@@ -28,6 +28,7 @@ package com.netbout.dynamo;
 
 import com.jcabi.aspects.Immutable;
 import com.jcabi.aspects.Loggable;
+import com.jcabi.aspects.Tv;
 import com.jcabi.dynamo.AttributeUpdates;
 import com.jcabi.dynamo.Item;
 import com.jcabi.dynamo.Region;
@@ -106,6 +107,12 @@ final class DyBout implements Bout {
 
     @Override
     public void rename(final String text) throws IOException {
+        if (text.isEmpty()) {
+            throw new IllegalArgumentException("bout title can't be empty");
+        }
+        if (text.length() > 2 * Tv.HUNDRED) {
+            throw new IllegalArgumentException("bout name is too long");
+        }
         this.item.put(
             new AttributeUpdates().with(DyFriends.ATTR_TITLE, text)
         );

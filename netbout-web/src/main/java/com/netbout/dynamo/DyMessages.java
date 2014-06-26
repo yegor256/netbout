@@ -42,6 +42,7 @@ import com.jcabi.aspects.Async;
 import com.jcabi.aspects.Cacheable;
 import com.jcabi.aspects.Immutable;
 import com.jcabi.aspects.Loggable;
+import com.jcabi.aspects.Tv;
 import com.jcabi.dynamo.AttributeUpdates;
 import com.jcabi.dynamo.Attributes;
 import com.jcabi.dynamo.Conditions;
@@ -164,6 +165,11 @@ final class DyMessages implements Messages {
         if (clean.isEmpty()) {
             throw new Messages.BrokenPostException(
                 "empty message content is not allowed"
+            );
+        }
+        if (clean.length() > 10 * Tv.THOUSAND) {
+            throw new Messages.BrokenPostException(
+                "message is too big, break it into parts or upload attachment"
             );
         }
         final long number = this.counter.incrementAndGet(1L);
