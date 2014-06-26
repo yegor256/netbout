@@ -28,6 +28,7 @@
 /*globals $:false, document:false, window:false */
 
 function escapeHTML(txt) {
+  "use strict";
   return txt.replace(/&/g, '&amp;')
     .replace(/"/g, '&quot;')
     .replace(/</g, '&lt;')
@@ -37,15 +38,16 @@ function escapeHTML(txt) {
 $(document).ready(
   function () {
     "use strict";
-    if ($('#rename')[0]) {
+    var $rename = $('#rename');
+    if ($rename[0]) {
       $('h1 span.title')
         .blur(function () {
-          var $input = $('#rename').find("input[name='title']"),
+          var $input = $rename.find("input[name='title']"),
             previous = $input.val(),
             entered = $(this).text();
           if (entered !== previous) {
             $input.val(entered);
-            $('#rename').submit();
+            $rename.submit();
           }
         })
         .keydown(function (event) {
@@ -67,18 +69,25 @@ $(document).ready(
               dataType: 'xml',
               method: 'GET',
               success: function (data) {
-                var appendix = '', more = '';
+                var appendix = '';
+                more = '';
                 $(data).find('message').each(
                   function (idx, msg) {
                     var $msg = $(msg);
-                    appendix += '<div class="message" id="msg'
-                      + $msg.find('number').text() + '"><div class="left"><img class="photo" src="'
-                      + $msg.find('link[rel="photo"]').attr('href') + '"/>'
-                      + '</div><div class="right"><div class="meta"><strong>'
-                      + escapeHTML($msg.find('author').text()) + '</strong> said '
-                      + escapeHTML($msg.find('timeago').text())
-                      + '</div><div class="text">'
-                      + escapeHTML($msg.find('html').text()) + '</div></div></div>';
+                    appendix += [
+                      '<div class="message" id="msg',
+                      $msg.find('number').text(),
+                      '"><div class="left"><img class="photo" src="',
+                      $msg.find('link[rel="photo"]').attr('href'),
+                      '"/>',
+                      '</div><div class="right"><div class="meta"><strong>',
+                      escapeHTML($msg.find('author').text()),
+                      '</strong> said ',
+                      escapeHTML($msg.find('timeago').text()),
+                      '</div><div class="text">',
+                      escapeHTML($msg.find('html').text()),
+                      '</div></div></div>'
+                    ].join();
                     more = $msg.find('link[rel="more"]').attr('href');
                   }
                 );

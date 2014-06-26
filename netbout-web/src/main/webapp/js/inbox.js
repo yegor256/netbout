@@ -28,6 +28,7 @@
 /*globals $:false, document:false, window:false */
 
 function escapeHTML(txt) {
+  "use strict";
   return txt.replace(/&/g, '&amp;')
     .replace(/"/g, '&quot;')
     .replace(/</g, '&lt;')
@@ -50,27 +51,37 @@ $(document).ready(
               dataType: 'xml',
               method: 'GET',
               success: function (data) {
-                var appendix = '<ul class="bouts">', more = '';
+                var appendix = '<ul class="bouts">';
+                more = '';
                 $(data).find('bout').each(
                   function (idx, bout) {
                     var $bout = $(bout),
                       unread = parseInt($bout.find('unread').text(), 10),
                       unseen = parseInt($bout.find('unseen').text(), 10);
-                    appendix += '<li class="bout" id="bout'
-                      + $bout.find('number').text() + '"><h1 class="bout"><span class="num'
-                      + (unread === 0 && unseen === 0 ? '' : ' unread') + '">#'
-                      + $bout.find('number').text() + '</span><a class="title" href="'
-                      + $bout.find('link[rel="open"]').attr('href') + '">'
-                      + escapeHTML($bout.find('title').text()) + '</a>'
-                      + (unread === 0 ? '' : '<span class="unread">' + unread + '</span>')
-                      +'</h1><div class="friends">';
+                    appendix += [
+                      '<li class="bout" id="bout',
+                      $bout.find('number').text(),
+                      '"><h1 class="bout"><span class="num',
+                      (unread === 0 && unseen === 0 ? '' : ' unread') + '">#',
+                      $bout.find('number').text(),
+                      '</span><a class="title" href="',
+                      $bout.find('link[rel="open"]').attr('href') + '">',
+                      escapeHTML($bout.find('title').text()),
+                      '</a>',
+                      (unread === 0 ? '' : '<span class="unread">' + unread + '</span>'),
+                      '</h1><div class="friends">'
+                    ].join();
                     $bout.find('friend').each(
                       function (idx, friend) {
                         var $friend = $(friend), shift = 57 * idx;
-                        appendix += '<div class="friend" style="left:'
-                          + shift + 'px;"><img class="photo" alt="'
-                          + escapeHTML($friend.find('alias').text()) +'" src="'
-                          + $friend.find('link[rel="photo"]').attr('href') + '"/></div>';
+                        appendix += [
+                          '<div class="friend" style="left:',
+                          shift + 'px;"><img class="photo" alt="',
+                          escapeHTML($friend.find('alias').text()),
+                          '" src="',
+                          $friend.find('link[rel="photo"]').attr('href'),
+                          '"/></div>'
+                        ].join();
                       }
                     );
                     appendix += '</div></li>';
