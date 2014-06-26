@@ -78,7 +78,7 @@ $(document).ready(
                         var $friend = $(friend), shift = 57 * idx;
                         appendix += [
                           '<div class="friend" style="left:',
-                          shift + 'px;"><img class="photo" alt="',
+                          shift + 'px;"><img alt="',
                           escapeHTML($friend.find('alias').text()),
                           '" src="',
                           $friend.find('link[rel="photo"]').attr('href'),
