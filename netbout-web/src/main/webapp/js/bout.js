@@ -87,7 +87,7 @@ $(document).ready(
                       '</div><div class="text">',
                       escapeHTML($msg.find('html').text()),
                       '</div></div></div>'
-                    ].join();
+                    ].join('');
                     more = $msg.find('link[rel="more"]').attr('href');
                   }
                 );

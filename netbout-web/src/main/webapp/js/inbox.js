@@ -62,15 +62,17 @@ $(document).ready(
                       '<li class="bout" id="bout',
                       $bout.find('number').text(),
                       '"><h1 class="bout"><span class="num',
-                      (unread === 0 && unseen === 0 ? '' : ' unread') + '">#',
+                      (unread === 0 && unseen === 0 ? '' : ' unread'),
+                      '">#',
                       $bout.find('number').text(),
                       '</span><a class="title" href="',
-                      $bout.find('link[rel="open"]').attr('href') + '">',
+                      $bout.find('link[rel="open"]').attr('href'),
+                      '">',
                       escapeHTML($bout.find('title').text()),
                       '</a>',
                       (unread === 0 ? '' : '<span class="unread">' + unread + '</span>'),
                       '</h1><div class="friends">'
-                    ].join();
+                    ].join('');
                     $bout.find('friend').each(
                       function (idx, friend) {
                         var $friend = $(friend), shift = 57 * idx;
