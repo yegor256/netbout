@@ -70,6 +70,11 @@ import org.apache.commons.lang3.Validate;
 public class BaseRs extends BaseResource {
 
     /**
+     * Test URN.
+     */
+    public static final URN TEST_URN = URN.create("urn:test:123456");
+
+    /**
      * Version of the system, to show in header.
      */
     private static final String VERSION_LABEL = String.format(
@@ -89,7 +94,7 @@ public class BaseRs extends BaseResource {
             final Identity identity;
             if ("1234567".equals(Manifests.read("Netbout-Revision"))) {
                 identity = new Identity.Simple(
-                    URN.create("urn:test:123456"),
+                    BaseRs.TEST_URN,
                     "localhost",
                     URI.create("http://img.netbout.com/localhost.png")
                 );

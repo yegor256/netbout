@@ -28,6 +28,7 @@ package com.netbout.rest;
 
 import com.google.common.collect.Iterables;
 import com.google.common.net.HttpHeaders;
+import com.jcabi.aspects.Tv;
 import com.jcabi.http.request.JdkRequest;
 import com.jcabi.http.response.RestResponse;
 import com.jcabi.http.wire.AutoRedirectingWire;
@@ -35,6 +36,7 @@ import com.jcabi.http.wire.OneMinuteWire;
 import com.jcabi.http.wire.RetryWire;
 import com.netbout.spi.Friend;
 import com.rexsl.page.inset.FlashInset;
+import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -100,8 +102,16 @@ public final class FriendRs extends BaseRs {
         if (image == null) {
             image = ImageIO.read(new URL("http://img.netbout.com/unknown.png"));
         }
+        final Image thumb = image.getScaledInstance(
+            Tv.HUNDRED, -1, Image.SCALE_SMOOTH
+        );
+        final BufferedImage bthumb = new BufferedImage(
+            thumb.getWidth(null), thumb.getHeight(null),
+            BufferedImage.TYPE_INT_RGB
+        );
+        bthumb.getGraphics().drawImage(thumb, 0, 0, null);
         final ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        ImageIO.write(image, "png", baos);
+        ImageIO.write(bthumb, "png", baos);
         final CacheControl cache = new CacheControl();
         cache.setMaxAge((int) TimeUnit.DAYS.toSeconds(1L));
         cache.setPrivate(true);

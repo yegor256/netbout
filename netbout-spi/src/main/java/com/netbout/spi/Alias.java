@@ -47,7 +47,7 @@ public interface Alias {
     /**
      * Anonymous photo.
      */
-    URI BLANK = URI.create("//img.netbout.com/unknown.png");
+    URI BLANK = URI.create("http://img.netbout.com/unknown.png");
 
     /**
      * Get its name.

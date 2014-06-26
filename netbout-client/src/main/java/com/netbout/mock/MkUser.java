@@ -29,10 +29,18 @@ package com.netbout.mock;
 import com.jcabi.aspects.Cacheable;
 import com.jcabi.aspects.Immutable;
 import com.jcabi.aspects.Loggable;
+import com.jcabi.jdbc.JdbcSession;
+import com.jcabi.jdbc.Outcome;
 import com.jcabi.urn.URN;
 import com.netbout.spi.Aliases;
 import com.netbout.spi.Friend;
 import com.netbout.spi.User;
+import java.io.IOException;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.Collection;
+import java.util.LinkedList;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
@@ -76,7 +84,32 @@ final class MkUser implements User {
     }
 
     @Override
-    public Iterable<Friend> friends(final String text) {
-        throw new UnsupportedOperationException("#friends()");
+    public Iterable<Friend> friends(final String text) throws IOException {
+        try {
+            return new JdbcSession(this.sql.source())
+                .sql("SELECT name FROM alias WHERE name = ?")
+                .set(text)
+                .select(
+                    new Outcome<Iterable<Friend>>() {
+                        @Override
+                        public Iterable<Friend> handle(final ResultSet rset,
+                            final Statement stmt) throws SQLException {
+                            final Collection<Friend> list =
+                                new LinkedList<Friend>();
+                            while (rset.next()) {
+                                list.add(
+                                    new MkFriend(
+                                        MkUser.this.sql,
+                                        rset.getString(1)
+                                    )
+                                );
+                            }
+                            return list;
+                        }
+                    }
+                );
+        } catch (final SQLException ex) {
+            throw new IOException(ex);
+        }
     }
 }

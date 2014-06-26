@@ -99,9 +99,10 @@ final class MkAliases implements Aliases {
     public void add(final String name) throws IOException {
         try {
             new JdbcSession(this.sql.source())
-                .sql("INSERT INTO alias (name, urn) VALUES (?, ?)")
+                .sql("INSERT INTO alias (name, urn, photo) VALUES (?, ?, ?)")
                 .set(name)
                 .set(this.urn.toString())
+                .set(Alias.BLANK)
                 .insert(Outcome.VOID);
         } catch (final SQLException ex) {
             throw new IOException(ex);
