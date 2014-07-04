@@ -27,6 +27,7 @@
 package com.netbout.rest;
 
 import com.jcabi.aspects.Immutable;
+import com.jcabi.aspects.RetryOnFailure;
 import com.jcabi.log.Logger;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -71,7 +72,9 @@ public final class Markdown {
     /**
      * Convert it to HTML.
      * @return The HTML
+     * @link https://github.com/sirthias/pegdown/issues/136
      */
+    @RetryOnFailure(verbose = false)
     public String html() {
         synchronized (Markdown.TIDY) {
             return Markdown.clean(
