@@ -33,6 +33,7 @@ import com.netbout.spi.Bout;
 import com.netbout.spi.Inbox;
 import com.netbout.spi.User;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.CharEncoding;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Rule;
@@ -68,12 +69,14 @@ public final class RtAttachmentsITCase {
         attachments.create(name);
         final Attachment attachment = attachments.get(name);
         attachment.write(
-            IOUtils.toInputStream("how are you, \u20ac?"),
+            IOUtils.toInputStream(
+                "how are you, \u20ac?", CharEncoding.UTF_8
+            ),
             Attachment.MARKDOWN,
             Long.toString(System.currentTimeMillis())
         );
         MatcherAssert.assertThat(
-            IOUtils.toString(attachment.read()),
+            IOUtils.toString(attachment.read(), CharEncoding.UTF_8),
             Matchers.containsString("\u20ac")
         );
         attachments.delete(name);

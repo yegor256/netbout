@@ -123,7 +123,8 @@ final class RtAttachment implements Attachment {
                 .assertStatus(HttpURLConnection.HTTP_OK)
                 .as(XmlResponse.class)
                 .rel(this.xpath("links/link[@rel='download']/@href"))
-                .fetch().body()
+                .fetch().body(),
+            CharEncoding.UTF_8
         );
     }
 
