@@ -7,7 +7,7 @@ deploy:
   env:
     MAVEN_OPTS: "-XX:MaxPermSize=256m -Xmx1g"
   script:
-    - "mvn clean deploy -Ppdd -Pqulice --errors --settings ../settings.xml"
+    - "mvn clean deploy -Pqulice --errors --settings ../settings.xml"
 
 merge:
   env:
@@ -22,4 +22,4 @@ release:
     - "mvn versions:set \"-DnewVersion=${tag}\""
     - "git commit -am \"${tag}\""
     - "mvn clean deploy -Pqulice -Psonatype -Pnetbout --errors --settings ../settings.xml"
-    - "mvn clean site-deploy -Psite -Prempl --errors --settings ../settings.xml"
+    - "mvn clean site -Psite --errors --settings ../settings.xml"
