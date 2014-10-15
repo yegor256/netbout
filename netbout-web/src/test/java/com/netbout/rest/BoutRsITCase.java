@@ -34,6 +34,7 @@ import com.netbout.spi.Bout;
 import com.netbout.spi.User;
 import java.net.URI;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.CharEncoding;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;
@@ -64,12 +65,14 @@ public final class BoutRsITCase {
         attachments.create(name);
         final Attachment attachment = attachments.get(name);
         attachment.write(
-            IOUtils.toInputStream("how are you, \u20ac?"),
+            IOUtils.toInputStream(
+                "how are you, \u20ac?", CharEncoding.UTF_8
+            ),
             Attachment.MARKDOWN,
             Long.toString(System.currentTimeMillis())
         );
         MatcherAssert.assertThat(
-            IOUtils.toString(attachment.read()),
+            IOUtils.toString(attachment.read(), CharEncoding.UTF_8),
             Matchers.containsString("\u20ac")
         );
         MatcherAssert.assertThat(
