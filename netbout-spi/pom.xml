@@ -72,6 +72,12 @@
                     <path>${project.artifactId}</path>
                 </configuration>
             </plugin>
+            <plugin>
+                <artifactId>maven-site-plugin</artifactId>
+                <configuration>
+                    <skipDeploy>true</skipDeploy>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
     <profiles>
