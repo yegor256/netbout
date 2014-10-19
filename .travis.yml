@@ -2,12 +2,10 @@ language: java
 cache:
   directories:
     - $HOME/.m2
-jdk:
-  - oraclejdk7
-  - openjdk7
 before_install:
   - unset GEM_PATH
 install:
   - npm install phantomjs -g
   - npm install casperjs -g
-script: mvn clean install -Pqulice --batch-mode --errors
+script:
+  - mvn clean install -Pqulice --batch-mode --errors
