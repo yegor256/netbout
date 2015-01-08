@@ -146,7 +146,7 @@
 <a class="jxr_linenumber" name="L138" href="#L138">138</a>                 .sql(<span class="jxr_string">"UPDATE alias SET email = ? WHERE name = ?"</span>)
 <a class="jxr_linenumber" name="L139" href="#L139">139</a>                 .set(email)
 <a class="jxr_linenumber" name="L140" href="#L140">140</a>                 .set(<strong class="jxr_keyword">this</strong>.label)
-<a class="jxr_linenumber" name="L141" href="#L141">141</a>                 .select(<strong class="jxr_keyword">new</strong> SingleOutcome&lt;String&gt;(String.<strong class="jxr_keyword">class</strong>));
+<a class="jxr_linenumber" name="L141" href="#L141">141</a>                 .update(Outcome.VOID);
 <a class="jxr_linenumber" name="L142" href="#L142">142</a>         } <strong class="jxr_keyword">catch</strong> (<strong class="jxr_keyword">final</strong> SQLException ex) {
 <a class="jxr_linenumber" name="L143" href="#L143">143</a>             <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> IOException(ex);
 <a class="jxr_linenumber" name="L144" href="#L144">144</a>         }
