@@ -88,6 +88,9 @@ final class EmMessages implements Messages {
     public void post(final String text) throws IOException {
         this.origin.post(text);
         for (final Friend friend : this.bout.friends().iterate()) {
+            if (friend.email().isEmpty()) {
+                continue;
+            }
             this.email(friend, text);
         }
     }
