@@ -24,69 +24,70 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.client.retry;
+package com.netbout.email;
 
 import com.jcabi.aspects.Immutable;
 import com.jcabi.aspects.Loggable;
-import com.jcabi.aspects.RetryOnFailure;
-import com.jcabi.aspects.Tv;
-import com.netbout.spi.Friend;
+import com.netbout.spi.Attachment;
 import java.io.IOException;
-import java.net.URI;
-import java.util.concurrent.TimeUnit;
+import java.io.InputStream;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
 /**
- * Cached friend.
+ * Email Attachments.
  *
  * @author Yegor Bugayenko (yegor@tpc2.com)
  * @version $Id$
- * @since 2.3
+ * @since 2.2
  */
 @Immutable
-@ToString
 @Loggable(Loggable.DEBUG)
+@ToString(of = "origin")
 @EqualsAndHashCode(of = "origin")
-public final class ReFriend implements Friend {
+final class EmAttachment implements Attachment {
 
     /**
-     * Original object.
+     * Original.
      */
-    private final transient Friend origin;
+    private final transient Attachment origin;
 
     /**
      * Public ctor.
-     * @param orgn Original object
+     * @param org Origin
      */
-    public ReFriend(final Friend orgn) {
-        this.origin = orgn;
+    EmAttachment(final Attachment org) {
+        this.origin = org;
     }
 
     @Override
-    @RetryOnFailure(
-        verbose = false, attempts = Tv.TWENTY,
-        delay = Tv.FIVE, unit = TimeUnit.SECONDS
-    )
-    public String alias() throws IOException {
-        return this.origin.alias();
+    public String name() throws IOException {
+        return this.origin.name();
     }
 
     @Override
-    @RetryOnFailure(
-        verbose = false, attempts = Tv.TWENTY,
-        delay = Tv.FIVE, unit = TimeUnit.SECONDS
-    )
-    public URI photo() throws IOException {
-        return this.origin.photo();
+    public String ctype() throws IOException {
+        return this.origin.ctype();
     }
 
     @Override
-    @RetryOnFailure(
-        verbose = false, attempts = Tv.TWENTY,
-        delay = Tv.FIVE, unit = TimeUnit.SECONDS
-    )
-    public String email() throws IOException {
-        return this.origin.email();
+    public String etag() throws IOException {
+        return this.origin.etag();
+    }
+
+    @Override
+    public boolean unseen() throws IOException {
+        return this.origin.unseen();
+    }
+
+    @Override
+    public InputStream read() throws IOException {
+        return this.origin.read();
+    }
+
+    @Override
+    public void write(final InputStream stream, final String ctype,
+        final String etag) throws IOException {
+        this.origin.write(stream, ctype, etag);
     }
 }

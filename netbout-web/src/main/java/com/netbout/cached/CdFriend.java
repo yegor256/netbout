@@ -74,4 +74,10 @@ final class CdFriend implements Friend {
     public URI photo() throws IOException {
         return this.origin.photo();
     }
+
+    @Override
+    @Cacheable(lifetime = Tv.FIVE, unit = TimeUnit.MINUTES)
+    public String email() throws IOException {
+        return this.origin.email();
+    }
 }

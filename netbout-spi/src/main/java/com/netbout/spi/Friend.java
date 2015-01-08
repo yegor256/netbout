@@ -58,6 +58,13 @@ public interface Friend {
     URI photo() throws IOException;
 
     /**
+     * Email.
+     * @return Email
+     * @throws IOException If fails
+     */
+    String email() throws IOException;
+
+    /**
      * Matcher of its alias.
      */
     final class HasAlias extends BaseMatcher<Friend> {

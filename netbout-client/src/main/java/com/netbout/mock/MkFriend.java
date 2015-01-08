@@ -88,4 +88,16 @@ final class MkFriend implements Friend {
             throw new IOException(ex);
         }
     }
+
+    @Override
+    public String email() throws IOException {
+        try {
+            return new JdbcSession(this.sql.source())
+                .sql("SELECT email FROM alias WHERE name = ?")
+                .set(this.name)
+                .select(new SingleOutcome<String>(String.class));
+        } catch (final SQLException ex) {
+            throw new IOException(ex);
+        }
+    }
 }

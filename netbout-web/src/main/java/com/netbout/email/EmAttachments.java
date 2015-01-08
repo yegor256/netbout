@@ -24,69 +24,74 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.client.retry;
+package com.netbout.email;
 
+import com.google.common.base.Function;
+import com.google.common.collect.Iterables;
 import com.jcabi.aspects.Immutable;
 import com.jcabi.aspects.Loggable;
-import com.jcabi.aspects.RetryOnFailure;
-import com.jcabi.aspects.Tv;
-import com.netbout.spi.Friend;
+import com.netbout.spi.Attachment;
+import com.netbout.spi.Attachments;
 import java.io.IOException;
-import java.net.URI;
-import java.util.concurrent.TimeUnit;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
 /**
- * Cached friend.
+ * Email Attachments.
  *
  * @author Yegor Bugayenko (yegor@tpc2.com)
  * @version $Id$
- * @since 2.3
+ * @since 2.2
  */
 @Immutable
-@ToString
 @Loggable(Loggable.DEBUG)
+@ToString(of = "origin")
 @EqualsAndHashCode(of = "origin")
-public final class ReFriend implements Friend {
+final class EmAttachments implements Attachments {
 
     /**
-     * Original object.
+     * Original.
      */
-    private final transient Friend origin;
+    private final transient Attachments origin;
 
     /**
      * Public ctor.
-     * @param orgn Original object
+     * @param org Origin
      */
-    public ReFriend(final Friend orgn) {
-        this.origin = orgn;
+    EmAttachments(final Attachments org) {
+        this.origin = org;
     }
 
     @Override
-    @RetryOnFailure(
-        verbose = false, attempts = Tv.TWENTY,
-        delay = Tv.FIVE, unit = TimeUnit.SECONDS
-    )
-    public String alias() throws IOException {
-        return this.origin.alias();
+    public int unseen() throws IOException {
+        return this.origin.unseen();
     }
 
     @Override
-    @RetryOnFailure(
-        verbose = false, attempts = Tv.TWENTY,
-        delay = Tv.FIVE, unit = TimeUnit.SECONDS
-    )
-    public URI photo() throws IOException {
-        return this.origin.photo();
+    public void create(final String name) throws IOException {
+        this.origin.create(name);
     }
 
     @Override
-    @RetryOnFailure(
-        verbose = false, attempts = Tv.TWENTY,
-        delay = Tv.FIVE, unit = TimeUnit.SECONDS
-    )
-    public String email() throws IOException {
-        return this.origin.email();
+    public void delete(final String name) throws IOException {
+        this.origin.delete(name);
+    }
+
+    @Override
+    public Attachment get(final String name) throws IOException {
+        return new EmAttachment(this.origin.get(name));
+    }
+
+    @Override
+    public Iterable<Attachment> iterate() throws IOException {
+        return Iterables.transform(
+            this.origin.iterate(),
+            new Function<Attachment, Attachment>() {
+                @Override
+                public Attachment apply(final Attachment attachment) {
+                    return new EmAttachment(attachment);
+                }
+            }
+        );
     }
 }

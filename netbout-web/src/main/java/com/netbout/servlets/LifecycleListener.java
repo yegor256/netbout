@@ -27,10 +27,15 @@
 package com.netbout.servlets;
 
 import com.jcabi.aspects.Loggable;
+import com.jcabi.email.Postman;
+import com.jcabi.email.postman.PostNoLoops;
+import com.jcabi.email.wire.SMTP;
 import com.jcabi.log.Logger;
 import com.jcabi.manifests.Manifests;
+import com.jcabi.manifests.ServletMfs;
 import com.netbout.cached.CdBase;
 import com.netbout.dynamo.DyBase;
+import com.netbout.email.EmBase;
 import com.netbout.spi.Base;
 import java.io.IOException;
 import javax.servlet.ServletContextEvent;
@@ -59,14 +64,17 @@ public final class LifecycleListener implements ServletContextListener {
     @Override
     public void contextInitialized(final ServletContextEvent event) {
         try {
-            Manifests.append(event.getServletContext());
+            Manifests.DEFAULT.append(new ServletMfs(event.getServletContext()));
         } catch (final IOException ex) {
             Logger.error(
                 this, "#contextInitialized(): %[exception]s", ex
             );
             throw new IllegalStateException(ex);
         }
-        this.base = new CdBase(new DyBase());
+        this.base = new EmBase(
+            new CdBase(new DyBase()),
+            new PostNoLoops(this.postman())
+        );
         event.getServletContext().setAttribute(Base.class.getName(), this.base);
     }
 
@@ -90,6 +98,28 @@ public final class LifecycleListener implements ServletContextListener {
             "#contextDestroyed(): app was alive for %[ms]s",
             System.currentTimeMillis() - this.start
         );
+    }
+
+    /**
+     * Create a postman.
+     * @return Postman
+     */
+    private Postman postman() {
+        final int port = Integer.parseInt(Manifests.read("Netbout-SmtpPort"));
+        final Postman postman;
+        if (port == 0) {
+            postman = Postman.CONSOLE;
+        } else {
+            postman = new Postman.Default(
+                new SMTP(
+                    Manifests.read("Netbout-SmtpHost"),
+                    port,
+                    Manifests.read("Netbout-SmtpUser"),
+                    Manifests.read("Netbout-SmtpPassword")
+                )
+            );
+        }
+        return postman;
     }
 
 }

@@ -67,6 +67,11 @@
         </dependency>
         <dependency>
             <groupId>com.jcabi</groupId>
+            <artifactId>jcabi-email</artifactId>
+            <version>1.6</version>
+        </dependency>
+        <dependency>
+            <groupId>com.jcabi</groupId>
             <artifactId>jcabi-dynamo</artifactId>
         </dependency>
         <dependency>
@@ -437,6 +442,10 @@
                                             <Netbout-S3Key>test</Netbout-S3Key>
                                             <Netbout-S3Secret>test</Netbout-S3Secret>
                                             <Netbout-S3Bucket>test</Netbout-S3Bucket>
+                                            <Netbout-SmtpHost>test</Netbout-SmtpHost>
+                                            <Netbout-SmtpPort>0</Netbout-SmtpPort>
+                                            <Netbout-SmtpUser>test</Netbout-SmtpUser>
+                                            <Netbout-SmtpPassword>test</Netbout-SmtpPassword>
                                         </manifestEntries>
                                     </archive>
                                 </configuration>
@@ -726,6 +735,10 @@
                                             <Netbout-S3Key>${s3.key}</Netbout-S3Key>
                                             <Netbout-S3Secret>${s3.secret}</Netbout-S3Secret>
                                             <Netbout-S3Bucket>${s3.bucket}</Netbout-S3Bucket>
+                                            <Netbout-SmtpHost>${smtp.host}</Netbout-SmtpHost>
+                                            <Netbout-SmtpPort>${smtp.port}</Netbout-SmtpPort>
+                                            <Netbout-SmtpUser>${smtp.user}</Netbout-SmtpUser>
+                                            <Netbout-SmtpPassword>${smtp.password}</Netbout-SmtpPassword>
                                         </manifestEntries>
                                     </archive>
                                 </configuration>

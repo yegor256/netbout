@@ -24,69 +24,94 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.client.retry;
+package com.netbout.email;
 
 import com.jcabi.aspects.Immutable;
 import com.jcabi.aspects.Loggable;
-import com.jcabi.aspects.RetryOnFailure;
-import com.jcabi.aspects.Tv;
-import com.netbout.spi.Friend;
+import com.jcabi.email.Postman;
+import com.netbout.spi.Attachments;
+import com.netbout.spi.Bout;
+import com.netbout.spi.Friends;
+import com.netbout.spi.Messages;
 import java.io.IOException;
-import java.net.URI;
-import java.util.concurrent.TimeUnit;
+import java.util.Date;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
 /**
- * Cached friend.
+ * Email Bout.
  *
  * @author Yegor Bugayenko (yegor@tpc2.com)
  * @version $Id$
- * @since 2.3
+ * @since 2.12
  */
 @Immutable
-@ToString
 @Loggable(Loggable.DEBUG)
+@ToString(of = "origin")
 @EqualsAndHashCode(of = "origin")
-public final class ReFriend implements Friend {
+final class EmBout implements Bout {
 
     /**
-     * Original object.
+     * Original.
      */
-    private final transient Friend origin;
+    private final transient Bout origin;
+
+    /**
+     * Postman.
+     */
+    private final transient Postman postman;
 
     /**
      * Public ctor.
-     * @param orgn Original object
+     * @param org Origin
+     * @param pst Postman
      */
-    public ReFriend(final Friend orgn) {
-        this.origin = orgn;
+    EmBout(final Bout org, final Postman pst) {
+        this.origin = org;
+        this.postman = pst;
     }
 
     @Override
-    @RetryOnFailure(
-        verbose = false, attempts = Tv.TWENTY,
-        delay = Tv.FIVE, unit = TimeUnit.SECONDS
-    )
-    public String alias() throws IOException {
-        return this.origin.alias();
+    public long number() throws IOException {
+        return this.origin.number();
     }
 
     @Override
-    @RetryOnFailure(
-        verbose = false, attempts = Tv.TWENTY,
-        delay = Tv.FIVE, unit = TimeUnit.SECONDS
-    )
-    public URI photo() throws IOException {
-        return this.origin.photo();
+    public Date date() throws IOException {
+        return this.origin.date();
     }
 
     @Override
-    @RetryOnFailure(
-        verbose = false, attempts = Tv.TWENTY,
-        delay = Tv.FIVE, unit = TimeUnit.SECONDS
-    )
-    public String email() throws IOException {
-        return this.origin.email();
+    public Date updated() throws IOException {
+        return this.origin.updated();
+    }
+
+    @Override
+    public String title() throws IOException {
+        return this.origin.title();
+    }
+
+    @Override
+    public void rename(final String text) throws IOException {
+        this.origin.rename(text);
+    }
+
+    @Override
+    public Messages messages() throws IOException {
+        return new EmMessages(
+            this.origin.messages(),
+            this.postman,
+            this
+        );
+    }
+
+    @Override
+    public Friends friends() throws IOException {
+        return new EmFriends(this.origin.friends());
+    }
+
+    @Override
+    public Attachments attachments() throws IOException {
+        return new EmAttachments(this.origin.attachments());
     }
 }

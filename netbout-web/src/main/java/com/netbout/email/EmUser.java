@@ -24,69 +24,58 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.client.retry;
+package com.netbout.email;
 
 import com.jcabi.aspects.Immutable;
 import com.jcabi.aspects.Loggable;
-import com.jcabi.aspects.RetryOnFailure;
-import com.jcabi.aspects.Tv;
+import com.jcabi.email.Postman;
+import com.netbout.spi.Aliases;
 import com.netbout.spi.Friend;
+import com.netbout.spi.User;
 import java.io.IOException;
-import java.net.URI;
-import java.util.concurrent.TimeUnit;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
 /**
- * Cached friend.
+ * Email Base.
  *
  * @author Yegor Bugayenko (yegor@tpc2.com)
  * @version $Id$
- * @since 2.3
+ * @since 2.12
  */
 @Immutable
-@ToString
 @Loggable(Loggable.DEBUG)
+@ToString(of = "origin")
 @EqualsAndHashCode(of = "origin")
-public final class ReFriend implements Friend {
+final class EmUser implements User {
 
     /**
-     * Original object.
+     * Original.
      */
-    private final transient Friend origin;
+    private final transient User origin;
+
+    /**
+     * Postman.
+     */
+    private final transient Postman postman;
 
     /**
      * Public ctor.
-     * @param orgn Original object
+     * @param org Origin
+     * @param pst Postman
      */
-    public ReFriend(final Friend orgn) {
-        this.origin = orgn;
+    EmUser(final User org, final Postman pst) {
+        this.origin = org;
+        this.postman = pst;
     }
 
     @Override
-    @RetryOnFailure(
-        verbose = false, attempts = Tv.TWENTY,
-        delay = Tv.FIVE, unit = TimeUnit.SECONDS
-    )
-    public String alias() throws IOException {
-        return this.origin.alias();
+    public Aliases aliases() {
+        return new EmAliases(this.origin.aliases(), this.postman);
     }
 
     @Override
-    @RetryOnFailure(
-        verbose = false, attempts = Tv.TWENTY,
-        delay = Tv.FIVE, unit = TimeUnit.SECONDS
-    )
-    public URI photo() throws IOException {
-        return this.origin.photo();
-    }
-
-    @Override
-    @RetryOnFailure(
-        verbose = false, attempts = Tv.TWENTY,
-        delay = Tv.FIVE, unit = TimeUnit.SECONDS
-    )
-    public String email() throws IOException {
-        return this.origin.email();
+    public Iterable<Friend> friends(final String text) throws IOException {
+        return this.origin.friends(text);
     }
 }

@@ -24,69 +24,59 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.client.retry;
+package com.netbout.email;
 
 import com.jcabi.aspects.Immutable;
 import com.jcabi.aspects.Loggable;
-import com.jcabi.aspects.RetryOnFailure;
-import com.jcabi.aspects.Tv;
-import com.netbout.spi.Friend;
+import com.jcabi.email.Postman;
+import com.jcabi.urn.URN;
+import com.netbout.spi.Base;
+import com.netbout.spi.User;
 import java.io.IOException;
-import java.net.URI;
-import java.util.concurrent.TimeUnit;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
 /**
- * Cached friend.
+ * Email Base.
  *
  * @author Yegor Bugayenko (yegor@tpc2.com)
  * @version $Id$
- * @since 2.3
+ * @since 2.12
  */
 @Immutable
-@ToString
 @Loggable(Loggable.DEBUG)
+@ToString(of = "origin")
 @EqualsAndHashCode(of = "origin")
-public final class ReFriend implements Friend {
+public final class EmBase implements Base {
 
     /**
-     * Original object.
+     * Original base.
      */
-    private final transient Friend origin;
+    private final transient Base origin;
+
+    /**
+     * Postman.
+     */
+    private final transient Postman postman;
 
     /**
      * Public ctor.
-     * @param orgn Original object
+     * @param org Origin
+     * @param pst Postman
      */
-    public ReFriend(final Friend orgn) {
-        this.origin = orgn;
+    public EmBase(final Base org, final Postman pst) {
+        this.origin = org;
+        this.postman = pst;
     }
 
     @Override
-    @RetryOnFailure(
-        verbose = false, attempts = Tv.TWENTY,
-        delay = Tv.FIVE, unit = TimeUnit.SECONDS
-    )
-    public String alias() throws IOException {
-        return this.origin.alias();
+    public User user(final URN urn) throws IOException {
+        return new EmUser(this.origin.user(urn), this.postman);
     }
 
     @Override
-    @RetryOnFailure(
-        verbose = false, attempts = Tv.TWENTY,
-        delay = Tv.FIVE, unit = TimeUnit.SECONDS
-    )
-    public URI photo() throws IOException {
-        return this.origin.photo();
+    public void close() throws IOException {
+        this.origin.close();
     }
 
-    @Override
-    @RetryOnFailure(
-        verbose = false, attempts = Tv.TWENTY,
-        delay = Tv.FIVE, unit = TimeUnit.SECONDS
-    )
-    public String email() throws IOException {
-        return this.origin.email();
-    }
 }

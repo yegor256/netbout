@@ -24,69 +24,54 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.client.retry;
+package com.netbout.email;
 
 import com.jcabi.aspects.Immutable;
 import com.jcabi.aspects.Loggable;
-import com.jcabi.aspects.RetryOnFailure;
-import com.jcabi.aspects.Tv;
 import com.netbout.spi.Friend;
+import com.netbout.spi.Friends;
 import java.io.IOException;
-import java.net.URI;
-import java.util.concurrent.TimeUnit;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
 /**
- * Cached friend.
+ * Email Friends.
  *
  * @author Yegor Bugayenko (yegor@tpc2.com)
  * @version $Id$
- * @since 2.3
+ * @since 2.12
  */
 @Immutable
-@ToString
 @Loggable(Loggable.DEBUG)
+@ToString(of = "origin")
 @EqualsAndHashCode(of = "origin")
-public final class ReFriend implements Friend {
+final class EmFriends implements Friends {
 
     /**
-     * Original object.
+     * Original.
      */
-    private final transient Friend origin;
+    private final transient Friends origin;
 
     /**
      * Public ctor.
-     * @param orgn Original object
+     * @param org Origin
      */
-    public ReFriend(final Friend orgn) {
-        this.origin = orgn;
+    EmFriends(final Friends org) {
+        this.origin = org;
     }
 
     @Override
-    @RetryOnFailure(
-        verbose = false, attempts = Tv.TWENTY,
-        delay = Tv.FIVE, unit = TimeUnit.SECONDS
-    )
-    public String alias() throws IOException {
-        return this.origin.alias();
+    public void invite(final String friend) throws IOException {
+        this.origin.invite(friend);
     }
 
     @Override
-    @RetryOnFailure(
-        verbose = false, attempts = Tv.TWENTY,
-        delay = Tv.FIVE, unit = TimeUnit.SECONDS
-    )
-    public URI photo() throws IOException {
-        return this.origin.photo();
+    public void kick(final String friend) throws IOException {
+        this.origin.kick(friend);
     }
 
     @Override
-    @RetryOnFailure(
-        verbose = false, attempts = Tv.TWENTY,
-        delay = Tv.FIVE, unit = TimeUnit.SECONDS
-    )
-    public String email() throws IOException {
-        return this.origin.email();
+    public Iterable<Friend> iterate() throws IOException {
+        return this.origin.iterate();
     }
 }

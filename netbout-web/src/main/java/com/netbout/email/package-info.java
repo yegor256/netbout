@@ -24,69 +24,12 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.client.retry;
-
-import com.jcabi.aspects.Immutable;
-import com.jcabi.aspects.Loggable;
-import com.jcabi.aspects.RetryOnFailure;
-import com.jcabi.aspects.Tv;
-import com.netbout.spi.Friend;
-import java.io.IOException;
-import java.net.URI;
-import java.util.concurrent.TimeUnit;
-import lombok.EqualsAndHashCode;
-import lombok.ToString;
 
 /**
- * Cached friend.
+ * Email base.
  *
  * @author Yegor Bugayenko (yegor@tpc2.com)
  * @version $Id$
- * @since 2.3
+ * @since 2.12
  */
-@Immutable
-@ToString
-@Loggable(Loggable.DEBUG)
-@EqualsAndHashCode(of = "origin")
-public final class ReFriend implements Friend {
-
-    /**
-     * Original object.
-     */
-    private final transient Friend origin;
-
-    /**
-     * Public ctor.
-     * @param orgn Original object
-     */
-    public ReFriend(final Friend orgn) {
-        this.origin = orgn;
-    }
-
-    @Override
-    @RetryOnFailure(
-        verbose = false, attempts = Tv.TWENTY,
-        delay = Tv.FIVE, unit = TimeUnit.SECONDS
-    )
-    public String alias() throws IOException {
-        return this.origin.alias();
-    }
-
-    @Override
-    @RetryOnFailure(
-        verbose = false, attempts = Tv.TWENTY,
-        delay = Tv.FIVE, unit = TimeUnit.SECONDS
-    )
-    public URI photo() throws IOException {
-        return this.origin.photo();
-    }
-
-    @Override
-    @RetryOnFailure(
-        verbose = false, attempts = Tv.TWENTY,
-        delay = Tv.FIVE, unit = TimeUnit.SECONDS
-    )
-    public String email() throws IOException {
-        return this.origin.email();
-    }
-}
+package com.netbout.email;

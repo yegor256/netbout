@@ -24,69 +24,95 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.client.retry;
+package com.netbout.email;
 
 import com.jcabi.aspects.Immutable;
 import com.jcabi.aspects.Loggable;
-import com.jcabi.aspects.RetryOnFailure;
-import com.jcabi.aspects.Tv;
-import com.netbout.spi.Friend;
+import com.jcabi.email.Envelope;
+import com.jcabi.email.Postman;
+import com.jcabi.email.stamp.StSender;
+import com.netbout.spi.Alias;
+import com.netbout.spi.Inbox;
 import java.io.IOException;
 import java.net.URI;
-import java.util.concurrent.TimeUnit;
+import java.util.Locale;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
 /**
- * Cached friend.
+ * Email Alias.
  *
  * @author Yegor Bugayenko (yegor@tpc2.com)
  * @version $Id$
- * @since 2.3
+ * @since 2.12
  */
 @Immutable
-@ToString
 @Loggable(Loggable.DEBUG)
+@ToString(of = "origin")
 @EqualsAndHashCode(of = "origin")
-public final class ReFriend implements Friend {
+final class EmAlias implements Alias {
 
     /**
-     * Original object.
+     * Original.
      */
-    private final transient Friend origin;
+    private final transient Alias origin;
+
+    /**
+     * Postman.
+     */
+    private final transient Postman postman;
 
     /**
      * Public ctor.
-     * @param orgn Original object
+     * @param org Origin
+     * @param pst Postman
      */
-    public ReFriend(final Friend orgn) {
-        this.origin = orgn;
+    EmAlias(final Alias org, final Postman pst) {
+        this.origin = org;
+        this.postman = new Postman() {
+            @Override
+            public void send(final Envelope envelope) throws IOException {
+                pst.send(
+                    new Envelope.MIME(envelope).with(
+                        new StSender(org.name(), "no-reply@netbout.com")
+                    )
+                );
+            }
+        };
     }
 
     @Override
-    @RetryOnFailure(
-        verbose = false, attempts = Tv.TWENTY,
-        delay = Tv.FIVE, unit = TimeUnit.SECONDS
-    )
-    public String alias() throws IOException {
-        return this.origin.alias();
+    public String name() throws IOException {
+        return this.origin.name();
     }
 
     @Override
-    @RetryOnFailure(
-        verbose = false, attempts = Tv.TWENTY,
-        delay = Tv.FIVE, unit = TimeUnit.SECONDS
-    )
     public URI photo() throws IOException {
         return this.origin.photo();
     }
 
     @Override
-    @RetryOnFailure(
-        verbose = false, attempts = Tv.TWENTY,
-        delay = Tv.FIVE, unit = TimeUnit.SECONDS
-    )
+    public Locale locale() throws IOException {
+        return this.origin.locale();
+    }
+
+    @Override
+    public void photo(final URI uri) throws IOException {
+        this.origin.photo(uri);
+    }
+
+    @Override
     public String email() throws IOException {
         return this.origin.email();
+    }
+
+    @Override
+    public void email(final String email) throws IOException {
+        this.origin.email(email);
+    }
+
+    @Override
+    public Inbox inbox() throws IOException {
+        return new EmInbox(this.origin.inbox(), this.postman);
     }
 }

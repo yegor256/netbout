@@ -96,4 +96,24 @@ final class DyFriend implements Friend {
         }
         return uri;
     }
+
+    @Override
+    public String email() throws IOException {
+        final Iterator<Item> items = this.table.frame()
+            .where(DyAliases.HASH, this.name)
+            .through(
+                new QueryValve()
+                    .withLimit(1)
+                    .withAttributesToGet(DyAliases.ATTR_EMAIL)
+            )
+            .iterator();
+        String email = "";
+        if (items.hasNext()) {
+            final Item item = items.next();
+            if (item.has(DyAliases.ATTR_EMAIL)) {
+                email = item.get(DyAliases.ATTR_EMAIL).getS();
+            }
+        }
+        return email;
+    }
 }
