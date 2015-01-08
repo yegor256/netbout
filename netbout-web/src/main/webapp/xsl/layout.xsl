@@ -166,6 +166,11 @@
                         <xsl:with-param name="length" select="25"/>
                     </xsl:call-template>
                 </a>
+                <xsl:if test="alias/email = ''">
+                    <span id="notice">
+                        <xsl:value-of select="$TEXTS/email.empty"/>
+                    </span>
+                </xsl:if>
             </xsl:when>
             <xsl:when test="/page/alias/name">
                 <xsl:call-template name="crop">

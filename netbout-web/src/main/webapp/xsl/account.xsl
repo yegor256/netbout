@@ -42,10 +42,14 @@
     <xsl:template match="page" mode="body">
         <form method="post" action="{links/link[@rel='save-email']/@href}">
             <fieldset>
-                <input name="email" autocomplete="off" value="alias/email" placeholder="{$TEXTS/your.email}/>
-                <button type="submit">
-                    <xsl:value-of select="$TEXTS/save.email"/>
-                </button>
+                <p>
+                    <xsl:value-of select="$TEXTS/email.hello"/>
+                </p>
+                <p>
+                    <input name="email" autocomplete="off"
+                        value="{alias/email}" placeholder="{$TEXTS/your.email}"/>
+                    <input type="submit" value="{$TEXTS/save.email}"/>
+                </p>
             </fieldset>
         </form>
     </xsl:template>

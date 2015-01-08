@@ -77,6 +77,9 @@ span {
 
 ul, ol {
   margin-left: 20px;
+  li {
+    position: relative;
+  }
 }
 
 .tt, .fixed, pre, textarea, code {
@@ -91,7 +94,7 @@ ul, ol {
   padding: 0 3px;
 }
 
-input {
+input, button {
   border: 1px solid $color-gray-dark;
   background-color: $color-background;
   padding: 8px 10px;

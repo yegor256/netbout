@@ -53,6 +53,10 @@
     <account>account</account>
     <save.email>save</save.email>
     <your.email>your email address...</your.email>
+    <email.empty>give us your email please</email.empty>
+    <email.hello>Every time you get a new message in any of your bouts, we
+        send a notification email to this address. We don't send anything else
+        there, no promotion or marketing materials.</email.hello>
 
     <!-- inbox -->
     <inbox>inbox</inbox>

@@ -193,3 +193,16 @@ $width: 750px;
     content: "please, wait a second...";
   }
 }
+
+#notice {
+  position: absolute;
+  top: $em;
+  left: 0;
+  width: 12 * $em;
+  background: $color-orange;
+  border: 1px solid $color-red;
+  color: $color-red;
+  padding: .7 * $em;
+  font-weight: normal;
+  text-align: left;
+}
