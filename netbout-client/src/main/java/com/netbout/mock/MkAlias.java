@@ -138,7 +138,7 @@ final class MkAlias implements Alias {
                 .sql("UPDATE alias SET email = ? WHERE name = ?")
                 .set(email)
                 .set(this.label)
-                .select(new SingleOutcome<String>(String.class));
+                .update(Outcome.VOID);
         } catch (final SQLException ex) {
             throw new IOException(ex);
         }

@@ -83,11 +83,11 @@ public final class MkBase implements Base {
     }
 
     /**
-     * Random bout.
-     * @return Bout
+     * Random alias.
+     * @return Alias
      * @throws IOException If fails
      */
-    public Bout randomBout() throws IOException {
+    public Alias randomAlias() throws IOException {
         final User user = this.user(
             URN.create(
                 String.format(
@@ -103,7 +103,17 @@ public final class MkBase implements Base {
             )
         );
         final Alias alias = aliases.iterate().iterator().next();
-        final Inbox inbox = alias.inbox();
+        alias.email(String.format("%s@example.com", alias.name()));
+        return alias;
+    }
+
+    /**
+     * Random bout.
+     * @return Bout
+     * @throws IOException If fails
+     */
+    public Bout randomBout() throws IOException {
+        final Inbox inbox = this.randomAlias().inbox();
         final Bout bout = inbox.bout(inbox.start());
         bout.rename(
             String.format(
