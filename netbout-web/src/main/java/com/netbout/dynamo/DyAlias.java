@@ -99,6 +99,27 @@ final class DyAlias implements Alias {
     }
 
     @Override
+    public String email() throws IOException {
+        final String email;
+        if (this.item.has(DyAliases.ATTR_EMAIL)) {
+            email = this.item.get(DyAliases.ATTR_EMAIL).getS();
+        } else {
+            email = "";
+        }
+        return email;
+    }
+
+    @Override
+    public void email(final String email) throws IOException {
+        if (!email.matches("[a-z_\\.@\\-A-Z0-9]+")) {
+            throw new Alias.InvalidEmailException(email);
+        }
+        this.item.put(
+            new AttributeUpdates().with(DyAliases.ATTR_EMAIL, email)
+        );
+    }
+
+    @Override
     public Inbox inbox() throws IOException {
         return new DyInbox(this.region, this.name());
     }

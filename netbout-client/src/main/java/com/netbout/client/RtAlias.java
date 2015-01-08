@@ -103,6 +103,16 @@ final class RtAlias implements Alias {
     }
 
     @Override
+    public String email() {
+        throw new UnsupportedOperationException("#email() not implemented");
+    }
+
+    @Override
+    public void email(final String email) {
+        throw new UnsupportedOperationException("#email()");
+    }
+
+    @Override
     public Inbox inbox() {
         return new RtInbox(this.request);
     }

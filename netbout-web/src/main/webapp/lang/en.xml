@@ -49,6 +49,11 @@
     <Logout>Logout</Logout>
     <leave.right.now>leave netbout right now</leave.right.now>
 
+    <!-- account -->
+    <account>account</account>
+    <save.email>save</save.email>
+    <your.email>your email address...</your.email>
+
     <!-- inbox -->
     <inbox>inbox</inbox>
     <back.to.recent.bouts>back to recent bouts</back.to.recent.bouts>

@@ -1,5 +1,4 @@
-<?xml version="1.0"?>
-<!--
+/**
  * Copyright (c) 2009-2014, netbout.com
  * All rights reserved.
  *
@@ -24,35 +23,50 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
- *
+ */
+package com.netbout.rest;
+
+import com.jcabi.matchers.JaxbConverter;
+import com.jcabi.matchers.XhtmlMatchers;
+import com.netbout.mock.MkBase;
+import com.netbout.spi.Base;
+import com.rexsl.mock.MkServletContext;
+import com.rexsl.page.mock.ResourceMocker;
+import javax.ws.rs.core.Response;
+import org.hamcrest.MatcherAssert;
+import org.junit.Test;
+
+/**
+ * Test case for {@link AccountRs}.
  * @author Yegor Bugayenko (yegor@tpc2.com)
  * @version $Id$
- -->
-<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
-    xmlns:xs="http://www.w3.org/2001/XMLSchema"
-    xmlns="http://www.w3.org/1999/xhtml"
-    version="1.0" exclude-result-prefixes="xs">
-    <xsl:output method="xml" omit-xml-declaration="yes"/>
-    <xsl:param name="TEXTS"
-        select="document(concat('/lang/en.xml?', /page/version/revision))/texts"/>
-    <xsl:include href="/xsl/layout.xsl" />
-    <xsl:template match="page" mode="head">
-        <title>
-            <xsl:value-of select="error/code"/>
-            <xsl:text>: error</xsl:text>
-        </title>
-    </xsl:template>
-    <xsl:template match="page" mode="body">
-        <p>
-            <span class="red">
-                <xsl:value-of select="error/code"/>
-                <xsl:text>: </xsl:text>
-                <xsl:value-of select="error/message"/>
-            </span>
-            <xsl:text>.
-                Maybe the page you're requesting in is no longer available,
-                try to submit some other request.
-            </xsl:text>
-        </p>
-    </xsl:template>
-</xsl:stylesheet>
+ * @since 2.12
+ */
+public final class AccountRsTest {
+
+    /**
+     * AccountRs can build render a page.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void rendersPage() throws Exception {
+        final AccountRs rest = new ResourceMocker().mock(AccountRs.class);
+        final Base base = new MkBase();
+        final String alias = "test";
+        base.user(BaseRs.TEST_URN).aliases().add(alias);
+        rest.setServletContext(
+            new MkServletContext().withAttr(
+                Base.class.getName(), base
+            )
+        );
+        final Response response = rest.index();
+        MatcherAssert.assertThat(
+            JaxbConverter.the(response.getEntity()),
+            XhtmlMatchers.hasXPaths(
+                "/page/alias/email",
+                "/page/links/link[@rel='save-email']/@href"
+            )
+        );
+    }
+
+}

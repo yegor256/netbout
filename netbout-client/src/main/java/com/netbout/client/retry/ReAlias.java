@@ -106,6 +106,24 @@ public final class ReAlias implements Alias {
         verbose = false, attempts = Tv.TWENTY,
         delay = Tv.FIVE, unit = TimeUnit.SECONDS
     )
+    public String email() throws IOException {
+        return this.origin.email();
+    }
+
+    @Override
+    @RetryOnFailure(
+        verbose = false, attempts = Tv.TWENTY,
+        delay = Tv.FIVE, unit = TimeUnit.SECONDS
+    )
+    public void email(final String email) throws IOException {
+        this.origin.email(email);
+    }
+
+    @Override
+    @RetryOnFailure(
+        verbose = false, attempts = Tv.TWENTY,
+        delay = Tv.FIVE, unit = TimeUnit.SECONDS
+    )
     public Inbox inbox() throws IOException {
         return new ReInbox(this.origin.inbox());
     }

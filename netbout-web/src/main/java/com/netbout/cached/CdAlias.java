@@ -89,6 +89,18 @@ final class CdAlias implements Alias {
     }
 
     @Override
+    @Cacheable(lifetime = 1, unit = TimeUnit.HOURS)
+    public String email() throws IOException {
+        return this.origin.email();
+    }
+
+    @Override
+    @Cacheable.FlushBefore
+    public void email(final String email) throws IOException {
+        this.origin.email(email);
+    }
+
+    @Override
     public Inbox inbox() throws IOException {
         return new CdInbox(this.origin.inbox());
     }

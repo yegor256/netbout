@@ -29,6 +29,7 @@ package com.netbout.mock;
 import com.jcabi.aspects.Immutable;
 import com.jcabi.aspects.Loggable;
 import com.jcabi.jdbc.JdbcSession;
+import com.jcabi.jdbc.Outcome;
 import com.jcabi.jdbc.SingleOutcome;
 import com.netbout.spi.Alias;
 import com.netbout.spi.Inbox;
@@ -109,7 +110,33 @@ final class MkAlias implements Alias {
     public void photo(final URI uri) throws IOException {
         try {
             new JdbcSession(this.sql.source())
-                .sql("UPDATE alias FROM alias WHERE name = ?")
+                .sql("UPDATE alias SET photo = ? WHERE name = ?")
+                .set(uri)
+                .set(this.label)
+                .update(Outcome.VOID);
+        } catch (final SQLException ex) {
+            throw new IOException(ex);
+        }
+    }
+
+    @Override
+    public String email() throws IOException {
+        try {
+            return new JdbcSession(this.sql.source())
+                .sql("SELECT email FROM alias WHERE name = ?")
+                .set(this.label)
+                .select(new SingleOutcome<String>(String.class));
+        } catch (final SQLException ex) {
+            throw new IOException(ex);
+        }
+    }
+
+    @Override
+    public void email(final String email) throws IOException {
+        try {
+            new JdbcSession(this.sql.source())
+                .sql("UPDATE alias SET email = ? WHERE name = ?")
+                .set(email)
                 .set(this.label)
                 .select(new SingleOutcome<String>(String.class));
         } catch (final SQLException ex) {

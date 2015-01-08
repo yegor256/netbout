@@ -30,7 +30,7 @@
  -->
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
     xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="http://www.w3.org/1999/xhtml"
-    version="2.0" exclude-result-prefixes="xs">
+    version="1.0" exclude-result-prefixes="xs">
     <xsl:include href="/xsl/templates.xsl"/>
     <xsl:template match="/">
         <xsl:text disable-output-escaping="yes">&lt;!DOCTYPE html&gt;</xsl:text>
@@ -39,7 +39,7 @@
     <xsl:template match="page">
         <html>
             <xsl:attribute name="lang">
-                <xsl:value-of select="/page/alias/locale"/>
+                <xsl:value-of select="alias/locale"/>
             </xsl:attribute>
             <head>
                 <meta charset="UTF-8"/>
@@ -159,10 +159,10 @@
     </xsl:template>
     <xsl:template name="identity">
         <xsl:choose>
-            <xsl:when test="/page/links/link[@rel='profile']">
-                <a href="{/page/links/link[@rel='profile']/@href}" title="{$TEXTS/settings.of.your.profile}">
+            <xsl:when test="/page/links/link[@rel='account']">
+                <a href="{/page/links/link[@rel='account']/@href}" title="{$TEXTS/settings.of.your.profile}">
                     <xsl:call-template name="crop">
-                        <xsl:with-param name="text" select="/page/alias/alias"/>
+                        <xsl:with-param name="text" select="/page/alias/name"/>
                         <xsl:with-param name="length" select="25"/>
                     </xsl:call-template>
                 </a>

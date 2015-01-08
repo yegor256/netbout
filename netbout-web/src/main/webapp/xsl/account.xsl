@@ -29,30 +29,24 @@
  * @version $Id$
  -->
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
-    xmlns:xs="http://www.w3.org/2001/XMLSchema"
-    xmlns="http://www.w3.org/1999/xhtml"
-    version="1.0" exclude-result-prefixes="xs">
+    xmlns="http://www.w3.org/1999/xhtml" version="1.0">
     <xsl:output method="xml" omit-xml-declaration="yes"/>
     <xsl:param name="TEXTS"
-        select="document(concat('/lang/en.xml?', /page/version/revision))/texts"/>
-    <xsl:include href="/xsl/layout.xsl" />
+        select="document(concat('/lang/', /page/alias/locale, '.xml?', /page/version/revision))/texts"/>
+    <xsl:include href="/xsl/layout.xsl"/>
     <xsl:template match="page" mode="head">
         <title>
-            <xsl:value-of select="error/code"/>
-            <xsl:text>: error</xsl:text>
+            <xsl:value-of select="$TEXTS/account"/>
         </title>
     </xsl:template>
     <xsl:template match="page" mode="body">
-        <p>
-            <span class="red">
-                <xsl:value-of select="error/code"/>
-                <xsl:text>: </xsl:text>
-                <xsl:value-of select="error/message"/>
-            </span>
-            <xsl:text>.
-                Maybe the page you're requesting in is no longer available,
-                try to submit some other request.
-            </xsl:text>
-        </p>
+        <form method="post" action="{links/link[@rel='save-email']/@href}">
+            <fieldset>
+                <input name="email" autocomplete="off" value="alias/email" placeholder="{$TEXTS/your.email}/>
+                <button type="submit">
+                    <xsl:value-of select="$TEXTS/save.email"/>
+                </button>
+            </fieldset>
+        </form>
     </xsl:template>
 </xsl:stylesheet>

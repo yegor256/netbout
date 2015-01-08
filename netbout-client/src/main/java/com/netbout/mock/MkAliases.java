@@ -39,6 +39,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Collection;
 import java.util.LinkedList;
+import java.util.Locale;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
@@ -99,10 +100,13 @@ final class MkAliases implements Aliases {
     public void add(final String name) throws IOException {
         try {
             new JdbcSession(this.sql.source())
-                .sql("INSERT INTO alias (name, urn, photo) VALUES (?, ?, ?)")
+                // @checkstyle LineLength (1 line)
+                .sql("INSERT INTO alias (name, urn, photo, locale, email) VALUES (?, ?, ?, ?, ?)")
                 .set(name)
                 .set(this.urn.toString())
                 .set(Alias.BLANK)
+                .set(Locale.ENGLISH)
+                .set("test@example.com")
                 .insert(Outcome.VOID);
         } catch (final SQLException ex) {
             throw new IOException(ex);

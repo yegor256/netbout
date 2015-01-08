@@ -42,6 +42,7 @@ import org.hamcrest.Matcher;
  * @since 2.0
  */
 @Immutable
+@SuppressWarnings("PMD.TooManyMethods")
 public interface Alias {
 
     /**
@@ -76,6 +77,20 @@ public interface Alias {
      * @throws IOException If fails
      */
     void photo(URI uri) throws IOException;
+
+    /**
+     * Get email.
+     * @return Email
+     * @throws IOException If fails
+     */
+    String email() throws IOException;
+
+    /**
+     * Save email.
+     * @param email Email to save
+     * @throws IOException If fails
+     */
+    void email(String email) throws IOException;
 
     /**
      * Get inbox.
@@ -147,6 +162,24 @@ public interface Alias {
         public void describeTo(final Description description) {
             description.appendText("alias with photo ");
             this.matcher.describeTo(description);
+        }
+    }
+
+    /**
+     * Thowable when email is wrong.
+     * @see Alias#email(String)
+     */
+    class InvalidEmailException extends IOException {
+        /**
+         * Serialization marker.
+         */
+        private static final long serialVersionUID = 0x7529FA78EED21470L;
+        /**
+         * Public ctor.
+         * @param email The number of bout not found
+         */
+        public InvalidEmailException(final String email) {
+            super(String.format("Email '%s' is wrong", email));
         }
     }
 

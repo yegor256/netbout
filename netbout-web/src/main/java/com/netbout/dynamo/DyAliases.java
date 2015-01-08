@@ -84,6 +84,12 @@ final class DyAliases implements Aliases {
     public static final String ATTR_PHOTO = "photo";
 
     /**
+     * Photo attribute.
+     * @since 2.12
+     */
+    public static final String ATTR_EMAIL = "email";
+
+    /**
      * Index name.
      */
     private static final String INDEX = "users";

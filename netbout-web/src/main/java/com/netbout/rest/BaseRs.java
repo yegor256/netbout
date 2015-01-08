@@ -151,12 +151,10 @@ public class BaseRs extends BaseResource {
                         final Alias alias = BaseRs.this.alias();
                         page.append(
                             new JaxbBundle("alias")
-                                .add("name", alias.name())
-                                .up()
-                                .add("locale", alias.locale().toString())
-                                .up()
-                                .add("photo", alias.photo().toString())
-                                .up()
+                                .add("name", alias.name()).up()
+                                .add("locale", alias.locale().toString()).up()
+                                .add("photo", alias.photo().toString()).up()
+                                .add("email", alias.email()).up()
                         );
                     } catch (final IOException ex) {
                         throw new IllegalStateException(ex);
@@ -178,6 +176,7 @@ public class BaseRs extends BaseResource {
                 final Response.ResponseBuilder builder) {
                 if (BaseRs.this.identified()) {
                     page.link(new Link("start", "/start"));
+                    page.link(new Link("account", "/acc"));
                 }
             }
         };
