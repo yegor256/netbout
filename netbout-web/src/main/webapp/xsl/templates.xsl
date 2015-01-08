@@ -76,7 +76,7 @@
             <span>
                 <a>
                     <xsl:attribute name="href">
-                        <xsl:text>https://github.com/netbout/netbout/commit/</xsl:text>
+                        <xsl:text>https://github.com/yegor256/netbout/commit/</xsl:text>
                         <xsl:value-of select="revision"/>
                     </xsl:attribute>
                     <i class="ico ico-github">

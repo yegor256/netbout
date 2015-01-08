@@ -29,7 +29,7 @@
         <p>
             If you want to help our project, please post the following
             exception stacktrace to our
-            <a href="https://github.com/netbout/netbout/issues/new">Github</a> account.
+            <a href="https://github.com/yegor256/netbout/issues/new">Github</a> account.
         </p>
         <pre>${text}</pre>
     </body>

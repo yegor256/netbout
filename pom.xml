@@ -90,16 +90,16 @@
     </developers>
     <issueManagement>
         <system>github</system>
-        <url>https://github.com/netbout/netbout/issues</url>
+        <url>https://github.com/yegor256/netbout/issues</url>
     </issueManagement>
     <ciManagement>
         <system>rultor</system>
         <url>http://www.rultor.com/s/netbout</url>
     </ciManagement>
     <scm>
-        <connection>scm:git:github.com:netbout/netbout.git</connection>
-        <developerConnection>scm:git:github.com:netbout/netbout.git</developerConnection>
-        <url>https://github.com/netbout/netbout</url>
+        <connection>scm:git:github.com:yegor256/netbout.git</connection>
+        <developerConnection>scm:git:github.com:yegor256/netbout.git</developerConnection>
+        <url>https://github.com/yegor256/netbout</url>
     </scm>
     <distributionManagement>
         <site>
