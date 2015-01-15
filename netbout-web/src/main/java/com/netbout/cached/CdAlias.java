@@ -29,6 +29,7 @@ package com.netbout.cached;
 import com.jcabi.aspects.Cacheable;
 import com.jcabi.aspects.Immutable;
 import com.jcabi.aspects.Loggable;
+import com.jcabi.aspects.Tv;
 import com.netbout.spi.Alias;
 import com.netbout.spi.Inbox;
 import java.io.IOException;
@@ -65,19 +66,19 @@ final class CdAlias implements Alias {
     }
 
     @Override
-    @Cacheable(lifetime = 1, unit = TimeUnit.HOURS)
+    @Cacheable(lifetime = Tv.FIVE, unit = TimeUnit.HOURS)
     public String name() throws IOException {
         return this.origin.name();
     }
 
     @Override
-    @Cacheable(lifetime = 1, unit = TimeUnit.HOURS)
+    @Cacheable(lifetime = Tv.FIVE, unit = TimeUnit.HOURS)
     public URI photo() throws IOException {
         return this.origin.photo();
     }
 
     @Override
-    @Cacheable(lifetime = 1, unit = TimeUnit.HOURS)
+    @Cacheable(lifetime = Tv.FIVE, unit = TimeUnit.HOURS)
     public Locale locale() throws IOException {
         return this.origin.locale();
     }
@@ -89,7 +90,7 @@ final class CdAlias implements Alias {
     }
 
     @Override
-    @Cacheable(lifetime = 1, unit = TimeUnit.HOURS)
+    @Cacheable(lifetime = Tv.FIVE, unit = TimeUnit.HOURS)
     public String email() throws IOException {
         return this.origin.email();
     }

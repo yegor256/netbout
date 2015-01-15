@@ -32,6 +32,7 @@ import com.google.common.collect.Lists;
 import com.jcabi.aspects.Cacheable;
 import com.jcabi.aspects.Immutable;
 import com.jcabi.aspects.Loggable;
+import com.jcabi.aspects.Tv;
 import com.netbout.spi.Alias;
 import com.netbout.spi.Aliases;
 import java.io.IOException;
@@ -77,7 +78,7 @@ final class CdAliases implements Aliases {
     }
 
     @Override
-    @Cacheable(lifetime = 1, unit = TimeUnit.HOURS)
+    @Cacheable(lifetime = Tv.FIVE, unit = TimeUnit.HOURS)
     public Iterable<Alias> iterate() throws IOException {
         return Lists.newArrayList(
             Iterables.transform(

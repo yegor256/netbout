@@ -29,6 +29,7 @@ package com.netbout.cached;
 import com.jcabi.aspects.Cacheable;
 import com.jcabi.aspects.Immutable;
 import com.jcabi.aspects.Loggable;
+import com.jcabi.aspects.Tv;
 import com.netbout.spi.Attachment;
 import java.io.IOException;
 import java.io.InputStream;
@@ -63,25 +64,25 @@ final class CdAttachment implements Attachment {
     }
 
     @Override
-    @Cacheable(lifetime = 1, unit = TimeUnit.HOURS)
+    @Cacheable(lifetime = Tv.FIVE, unit = TimeUnit.HOURS)
     public String name() throws IOException {
         return this.origin.name();
     }
 
     @Override
-    @Cacheable(lifetime = 1, unit = TimeUnit.HOURS)
+    @Cacheable(lifetime = Tv.FIVE, unit = TimeUnit.HOURS)
     public String ctype() throws IOException {
         return this.origin.ctype();
     }
 
     @Override
-    @Cacheable(lifetime = 1, unit = TimeUnit.HOURS)
+    @Cacheable(lifetime = Tv.FIVE, unit = TimeUnit.HOURS)
     public String etag() throws IOException {
         return this.origin.etag();
     }
 
     @Override
-    @Cacheable(lifetime = 1, unit = TimeUnit.HOURS)
+    @Cacheable(lifetime = Tv.FIVE, unit = TimeUnit.HOURS)
     public boolean unseen() throws IOException {
         return this.origin.unseen();
     }

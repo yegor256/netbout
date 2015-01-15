@@ -64,19 +64,19 @@ final class CdFriend implements Friend {
     }
 
     @Override
-    @Cacheable(lifetime = Tv.FIVE, unit = TimeUnit.MINUTES)
+    @Cacheable(lifetime = Tv.FIVE, unit = TimeUnit.HOURS)
     public String alias() throws IOException {
         return this.origin.alias();
     }
 
     @Override
-    @Cacheable(lifetime = Tv.FIVE, unit = TimeUnit.MINUTES)
+    @Cacheable(lifetime = Tv.FIVE, unit = TimeUnit.HOURS)
     public URI photo() throws IOException {
         return this.origin.photo();
     }
 
     @Override
-    @Cacheable(lifetime = Tv.FIVE, unit = TimeUnit.MINUTES)
+    @Cacheable(lifetime = Tv.FIVE, unit = TimeUnit.HOURS)
     public String email() throws IOException {
         return this.origin.email();
     }

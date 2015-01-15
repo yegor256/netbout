@@ -67,7 +67,7 @@ final class CdAttachments implements Attachments {
     }
 
     @Override
-    @Cacheable(lifetime = Tv.FIVE, unit = TimeUnit.MINUTES)
+    @Cacheable(lifetime = Tv.FIVE, unit = TimeUnit.HOURS)
     public int unseen() throws IOException {
         return this.origin.unseen();
     }
@@ -85,13 +85,13 @@ final class CdAttachments implements Attachments {
     }
 
     @Override
-    @Cacheable(lifetime = Tv.FIVE, unit = TimeUnit.MINUTES)
+    @Cacheable(lifetime = Tv.FIVE, unit = TimeUnit.HOURS)
     public Attachment get(final String name) throws IOException {
         return new CdAttachment(this.origin.get(name));
     }
 
     @Override
-    @Cacheable(lifetime = Tv.FIVE, unit = TimeUnit.MINUTES)
+    @Cacheable(lifetime = Tv.FIVE, unit = TimeUnit.HOURS)
     public Iterable<Attachment> iterate() throws IOException {
         return Lists.newArrayList(
             Iterables.transform(

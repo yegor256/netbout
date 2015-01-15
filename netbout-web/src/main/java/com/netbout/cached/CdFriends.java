@@ -79,7 +79,7 @@ final class CdFriends implements Friends {
     }
 
     @Override
-    @Cacheable(lifetime = Tv.FIVE, unit = TimeUnit.MINUTES)
+    @Cacheable(lifetime = Tv.FIVE, unit = TimeUnit.HOURS)
     public Iterable<Friend> iterate() throws IOException {
         return Lists.newArrayList(
             Iterables.transform(

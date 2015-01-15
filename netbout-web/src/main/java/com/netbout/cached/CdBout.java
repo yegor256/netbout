@@ -72,19 +72,19 @@ final class CdBout implements Bout {
     }
 
     @Override
-    @Cacheable(lifetime = Tv.FIVE, unit = TimeUnit.MINUTES)
+    @Cacheable(lifetime = Tv.FIVE, unit = TimeUnit.HOURS)
     public Date date() throws IOException {
         return this.origin.date();
     }
 
     @Override
-    @Cacheable(lifetime = Tv.FIVE, unit = TimeUnit.MINUTES)
+    @Cacheable(lifetime = Tv.FIVE, unit = TimeUnit.HOURS)
     public Date updated() throws IOException {
         return this.origin.updated();
     }
 
     @Override
-    @Cacheable(lifetime = Tv.FIVE, unit = TimeUnit.MINUTES)
+    @Cacheable(lifetime = Tv.FIVE, unit = TimeUnit.HOURS)
     public String title() throws IOException {
         return this.origin.title();
     }

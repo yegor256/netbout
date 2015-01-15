@@ -73,13 +73,13 @@ final class CdInbox implements Inbox {
     }
 
     @Override
-    @Cacheable(lifetime = Tv.SIX, unit = TimeUnit.HOURS)
+    @Cacheable(lifetime = Tv.FIVE, unit = TimeUnit.HOURS)
     public long unread() throws IOException {
         return this.origin.unread();
     }
 
     @Override
-    @Cacheable(lifetime = Tv.SIX, unit = TimeUnit.HOURS)
+    @Cacheable(lifetime = Tv.FIVE, unit = TimeUnit.HOURS)
     public Bout bout(final long number) throws Inbox.BoutNotFoundException {
         return new CdBout(this.origin.bout(number));
     }
