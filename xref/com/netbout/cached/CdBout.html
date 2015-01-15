@@ -80,19 +80,19 @@
 <a class="jxr_linenumber" name="L72" href="#L72">72</a>      }
 <a class="jxr_linenumber" name="L73" href="#L73">73</a>  
 <a class="jxr_linenumber" name="L74" href="#L74">74</a>      @Override
-<a class="jxr_linenumber" name="L75" href="#L75">75</a>      @Cacheable(lifetime = Tv.FIVE, unit = TimeUnit.MINUTES)
+<a class="jxr_linenumber" name="L75" href="#L75">75</a>      @Cacheable(lifetime = Tv.FIVE, unit = TimeUnit.HOURS)
 <a class="jxr_linenumber" name="L76" href="#L76">76</a>      <strong class="jxr_keyword">public</strong> Date date() <strong class="jxr_keyword">throws</strong> IOException {
 <a class="jxr_linenumber" name="L77" href="#L77">77</a>          <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">this</strong>.origin.date();
 <a class="jxr_linenumber" name="L78" href="#L78">78</a>      }
 <a class="jxr_linenumber" name="L79" href="#L79">79</a>  
 <a class="jxr_linenumber" name="L80" href="#L80">80</a>      @Override
-<a class="jxr_linenumber" name="L81" href="#L81">81</a>      @Cacheable(lifetime = Tv.FIVE, unit = TimeUnit.MINUTES)
+<a class="jxr_linenumber" name="L81" href="#L81">81</a>      @Cacheable(lifetime = Tv.FIVE, unit = TimeUnit.HOURS)
 <a class="jxr_linenumber" name="L82" href="#L82">82</a>      <strong class="jxr_keyword">public</strong> Date updated() <strong class="jxr_keyword">throws</strong> IOException {
 <a class="jxr_linenumber" name="L83" href="#L83">83</a>          <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">this</strong>.origin.updated();
 <a class="jxr_linenumber" name="L84" href="#L84">84</a>      }
 <a class="jxr_linenumber" name="L85" href="#L85">85</a>  
 <a class="jxr_linenumber" name="L86" href="#L86">86</a>      @Override
-<a class="jxr_linenumber" name="L87" href="#L87">87</a>      @Cacheable(lifetime = Tv.FIVE, unit = TimeUnit.MINUTES)
+<a class="jxr_linenumber" name="L87" href="#L87">87</a>      @Cacheable(lifetime = Tv.FIVE, unit = TimeUnit.HOURS)
 <a class="jxr_linenumber" name="L88" href="#L88">88</a>      <strong class="jxr_keyword">public</strong> String title() <strong class="jxr_keyword">throws</strong> IOException {
 <a class="jxr_linenumber" name="L89" href="#L89">89</a>          <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">this</strong>.origin.title();
 <a class="jxr_linenumber" name="L90" href="#L90">90</a>      }
