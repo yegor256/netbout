@@ -47,7 +47,7 @@ import org.apache.commons.io.IOUtils;
  * @since 2.3
  */
 @Immutable
-@ToString
+@ToString(includeFieldNames = false)
 @Loggable(Loggable.DEBUG)
 @EqualsAndHashCode(of = "origin")
 public final class ReAttachment implements Attachment {

@@ -95,6 +95,7 @@ final class RtInbox implements Inbox {
     @Override
     public Bout bout(final long number) {
         return new RtBout(
+            number,
             this.request
                 .uri().path("/b").path(Long.toString(number)).back()
         );

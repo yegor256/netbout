@@ -40,7 +40,6 @@ import java.net.HttpURLConnection;
 import java.text.ParseException;
 import java.util.Date;
 import lombok.EqualsAndHashCode;
-import lombok.ToString;
 import org.apache.commons.lang3.time.DateFormatUtils;
 
 /**
@@ -51,10 +50,14 @@ import org.apache.commons.lang3.time.DateFormatUtils;
  * @since 2.0
  */
 @Immutable
-@ToString
 @Loggable(Loggable.DEBUG)
-@EqualsAndHashCode(of = "request")
+@EqualsAndHashCode(of = { "num", "request" })
 final class RtBout implements Bout {
+
+    /**
+     * Its number.
+     */
+    private final transient long num;
 
     /**
      * Request to use.
@@ -63,23 +66,22 @@ final class RtBout implements Bout {
 
     /**
      * Public ctor.
+     * @param number The number
      * @param req Request to use
      */
-    RtBout(final Request req) {
+    RtBout(final long number, final Request req) {
+        this.num = number;
         this.request = req;
     }
 
     @Override
-    public long number() throws IOException {
-        return Long.parseLong(
-            this.request.fetch()
-                .as(RestResponse.class)
-                .assertStatus(HttpURLConnection.HTTP_OK)
-                .as(XmlResponse.class)
-                .xml()
-                .xpath("/page/bout/number/text()")
-                .get(0)
-        );
+    public String toString() {
+        return Long.toString(this.num);
+    }
+
+    @Override
+    public long number() {
+        return this.num;
     }
 
     @Override
@@ -100,7 +102,7 @@ final class RtBout implements Bout {
     }
 
     @Override
-    public Date updated() throws IOException {
+    public Date updated() {
         throw new UnsupportedOperationException("#updated()");
     }
 

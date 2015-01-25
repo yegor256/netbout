@@ -48,7 +48,7 @@ import lombok.ToString;
  * @since 2.0
  */
 @Immutable
-@ToString
+@ToString(includeFieldNames = false)
 @Loggable(Loggable.DEBUG)
 @EqualsAndHashCode(of = "request")
 final class RtAttachments implements Attachments {

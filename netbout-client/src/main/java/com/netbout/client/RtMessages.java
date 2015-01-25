@@ -47,7 +47,7 @@ import lombok.ToString;
  * @since 2.0
  */
 @Immutable
-@ToString
+@ToString(includeFieldNames = false)
 @Loggable(Loggable.DEBUG)
 @EqualsAndHashCode(of = "request")
 final class RtMessages implements Messages {
@@ -78,7 +78,7 @@ final class RtMessages implements Messages {
     }
 
     @Override
-    public long unread() throws IOException {
+    public long unread() {
         return 0L;
     }
 

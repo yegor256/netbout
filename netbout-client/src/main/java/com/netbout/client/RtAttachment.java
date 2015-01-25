@@ -50,7 +50,7 @@ import org.apache.commons.lang3.CharEncoding;
  * @since 2.0
  */
 @Immutable
-@ToString
+@ToString(includeFieldNames = false)
 @Loggable(Loggable.DEBUG)
 @EqualsAndHashCode(of = { "request", "attachment" })
 final class RtAttachment implements Attachment {

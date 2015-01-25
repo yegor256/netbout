@@ -31,7 +31,6 @@ import com.jcabi.aspects.Loggable;
 import com.jcabi.http.Request;
 import com.netbout.spi.Friend;
 import com.netbout.spi.Friends;
-import java.io.IOException;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
@@ -43,7 +42,7 @@ import lombok.ToString;
  * @since 2.0
  */
 @Immutable
-@ToString
+@ToString(includeFieldNames = false)
 @Loggable(Loggable.DEBUG)
 @EqualsAndHashCode(of = "request")
 final class RtFriends implements Friends {
@@ -62,18 +61,18 @@ final class RtFriends implements Friends {
     }
 
     @Override
-    public void invite(final String friend) throws IOException {
+    public void invite(final String friend) {
         assert this.request != null;
         throw new UnsupportedOperationException("#invite()");
     }
 
     @Override
-    public void kick(final String friend) throws IOException {
+    public void kick(final String friend) {
         throw new UnsupportedOperationException("#kick()");
     }
 
     @Override
-    public Iterable<Friend> iterate() throws IOException {
+    public Iterable<Friend> iterate() {
         throw new UnsupportedOperationException("#iterate()");
     }
 }

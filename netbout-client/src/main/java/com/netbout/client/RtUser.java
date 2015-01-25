@@ -49,7 +49,7 @@ import lombok.ToString;
  * @since 2.0
  */
 @Immutable
-@ToString
+@ToString(includeFieldNames = false)
 @Loggable(Loggable.DEBUG)
 @EqualsAndHashCode(of = "request")
 public final class RtUser implements User {

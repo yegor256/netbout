@@ -45,7 +45,7 @@ import lombok.ToString;
  * @since 2.3
  */
 @Immutable
-@ToString
+@ToString(includeFieldNames = false)
 @Loggable(Loggable.DEBUG)
 @EqualsAndHashCode(of = "origin")
 public final class CdAlias implements Alias {
