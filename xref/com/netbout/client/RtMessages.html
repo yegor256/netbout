@@ -55,7 +55,7 @@
 <a class="jxr_linenumber" name="L47" href="#L47">47</a>  <em class="jxr_javadoccomment"> * @since 2.0</em>
 <a class="jxr_linenumber" name="L48" href="#L48">48</a>  <em class="jxr_javadoccomment"> */</em>
 <a class="jxr_linenumber" name="L49" href="#L49">49</a>  @Immutable
-<a class="jxr_linenumber" name="L50" href="#L50">50</a>  @ToString
+<a class="jxr_linenumber" name="L50" href="#L50">50</a>  @ToString(includeFieldNames = false)
 <a class="jxr_linenumber" name="L51" href="#L51">51</a>  @Loggable(Loggable.DEBUG)
 <a class="jxr_linenumber" name="L52" href="#L52">52</a>  @EqualsAndHashCode(of = <span class="jxr_string">"request"</span>)
 <a class="jxr_linenumber" name="L53" href="#L53">53</a>  <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">class</strong> <a href="../../../com/netbout/client/RtMessages.html">RtMessages</a> <strong class="jxr_keyword">implements</strong> <a href="../../../com/netbout/spi/Messages.html">Messages</a> {
@@ -86,7 +86,7 @@
 <a class="jxr_linenumber" name="L78" href="#L78">78</a>      }
 <a class="jxr_linenumber" name="L79" href="#L79">79</a>  
 <a class="jxr_linenumber" name="L80" href="#L80">80</a>      @Override
-<a class="jxr_linenumber" name="L81" href="#L81">81</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">long</strong> unread() <strong class="jxr_keyword">throws</strong> IOException {
+<a class="jxr_linenumber" name="L81" href="#L81">81</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">long</strong> unread() {
 <a class="jxr_linenumber" name="L82" href="#L82">82</a>          <strong class="jxr_keyword">return</strong> 0L;
 <a class="jxr_linenumber" name="L83" href="#L83">83</a>      }
 <a class="jxr_linenumber" name="L84" href="#L84">84</a>  
