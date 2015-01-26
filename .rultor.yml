@@ -30,7 +30,7 @@ release:
     mvn versions:set "-DnewVersion=${tag}"
     git commit -am "${tag}"
     cp ../settings.xml settings.xml
-    mvn clean deploy -Pqulice -Pnetbout --errors --batch-mode
+    mvn clean deploy -Pqulice -Pnetbout --errors --batch-mode --settings ../settings.xml
     git remote add heroku git@heroku.com:netbout.git
     mkdir ~/.ssh
     mv ../id_rsa ../id_rsa.pub ~/.ssh
