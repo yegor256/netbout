@@ -88,13 +88,13 @@ final class CdAttachment implements Attachment {
     }
 
     @Override
-    @Cacheable.FlushBefore
+    @Cacheable.FlushAfter
     public InputStream read() throws IOException {
         return this.origin.read();
     }
 
     @Override
-    @Cacheable.FlushBefore
+    @Cacheable.FlushAfter
     public void write(final InputStream stream, final String ctype,
         final String etag) throws IOException {
         this.origin.write(stream, ctype, etag);

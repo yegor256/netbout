@@ -213,7 +213,10 @@ public final class BoutRs extends BaseRs {
         this.bout().attachments().get(name).write(content, ctype, etag);
         throw FlashInset.forward(
             this.self(),
-            String.format("attachment '%s' uploaded", name),
+            String.format(
+                "attachment '%s' uploaded (ctype=%s, etag=%s)",
+                name, ctype, etag
+            ),
             Level.INFO
         );
     }

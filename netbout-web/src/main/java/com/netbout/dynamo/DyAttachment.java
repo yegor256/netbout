@@ -241,13 +241,13 @@ final class DyAttachment implements Attachment {
             updates = updates.with(
                 DyAttachments.ATTR_DATA,
                 new AttributeValue().withB(ByteBuffer.wrap(data))
-            )
-                .with(
-                    DyAttachments.ATTR_KEY,
-                    new AttributeValueUpdate().withAction(
-                        AttributeAction.DELETE
-                    )
-                );
+            );
+            updates = updates.with(
+                DyAttachments.ATTR_KEY,
+                new AttributeValueUpdate().withAction(
+                    AttributeAction.DELETE
+                )
+            );
         } else {
             final String key;
             if (this.item.has(DyAttachments.ATTR_KEY)) {
