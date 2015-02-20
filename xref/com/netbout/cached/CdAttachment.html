@@ -96,13 +96,13 @@
 <a class="jxr_linenumber" name="L88" href="#L88">88</a>      }
 <a class="jxr_linenumber" name="L89" href="#L89">89</a>  
 <a class="jxr_linenumber" name="L90" href="#L90">90</a>      @Override
-<a class="jxr_linenumber" name="L91" href="#L91">91</a>      @Cacheable.FlushBefore
+<a class="jxr_linenumber" name="L91" href="#L91">91</a>      @Cacheable.FlushAfter
 <a class="jxr_linenumber" name="L92" href="#L92">92</a>      <strong class="jxr_keyword">public</strong> InputStream read() <strong class="jxr_keyword">throws</strong> IOException {
 <a class="jxr_linenumber" name="L93" href="#L93">93</a>          <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">this</strong>.origin.read();
 <a class="jxr_linenumber" name="L94" href="#L94">94</a>      }
 <a class="jxr_linenumber" name="L95" href="#L95">95</a>  
 <a class="jxr_linenumber" name="L96" href="#L96">96</a>      @Override
-<a class="jxr_linenumber" name="L97" href="#L97">97</a>      @Cacheable.FlushBefore
+<a class="jxr_linenumber" name="L97" href="#L97">97</a>      @Cacheable.FlushAfter
 <a class="jxr_linenumber" name="L98" href="#L98">98</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> write(<strong class="jxr_keyword">final</strong> InputStream stream, <strong class="jxr_keyword">final</strong> String ctype,
 <a class="jxr_linenumber" name="L99" href="#L99">99</a>          <strong class="jxr_keyword">final</strong> String etag) <strong class="jxr_keyword">throws</strong> IOException {
 <a class="jxr_linenumber" name="L100" href="#L100">100</a>         <strong class="jxr_keyword">this</strong>.origin.write(stream, ctype, etag);
