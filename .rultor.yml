@@ -1,7 +1,12 @@
-assets: {settings.xml: yegor256/home#assets/netbout/settings.xml, pubring.gpg: yegor256/home#assets/pubring.gpg,
-  secring.gpg: yegor256/home#assets/secring.gpg, id_rsa: yegor256/home#assets/heroku-key,
-  id_rsa.pub: yegor256/home#assets/heroku-key.pub, s3cfg: yegor256/home#assets/s3cfg}
-env: {MAVEN_OPTS: '-XX:MaxPermSize=256m -Xmx1g'}
+assets:
+  settings.xml: yegor256/home#assets/netbout/settings.xml
+  pubring.gpg: yegor256/home#assets/pubring.gpg
+  secring.gpg: yegor256/home#assets/secring.gpg
+  id_rsa: yegor256/home#assets/heroku-key
+  id_rsa.pub: yegor256/home#assets/heroku-key.pub
+  s3cfg: yegor256/home#assets/s3cfg
+env:
+  MAVEN_OPTS: -XX:MaxPermSize=256m -Xmx1g
 install: |
   sudo gem install pdd
 deploy:
@@ -33,4 +38,7 @@ release:
     git reset HEAD~1
     curl -f --connect-timeout 15 --retry 5 --retry-delay 30 http://www.netbout.com
     mvn clean site-deploy -Psite --errors --settings ../settings.xml --batch-mode
-architect: [yegor256, yegor256, karato]
+architect:
+- yegor256
+- yegor256
+- karato
