@@ -20,6 +20,8 @@ merge:
     mvn clean install -Pqulice --errors --settings ../settings.xml
     mvn clean
     pdd --source=$(pwd) --verbose --file=/dev/null
+  commanders:
+  - yegor256
 release:
   script: |-
     mvn versions:set "-DnewVersion=${tag}"
