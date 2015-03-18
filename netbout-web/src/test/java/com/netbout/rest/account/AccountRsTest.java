@@ -24,11 +24,12 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.rest;
+package com.netbout.rest.account;
 
 import com.jcabi.matchers.JaxbConverter;
 import com.jcabi.matchers.XhtmlMatchers;
 import com.netbout.mock.MkBase;
+import com.netbout.rest.BaseRs;
 import com.netbout.spi.Base;
 import com.rexsl.mock.MkServletContext;
 import com.rexsl.page.mock.ResourceMocker;

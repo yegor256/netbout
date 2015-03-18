@@ -88,7 +88,6 @@ final class CdAttachment implements Attachment {
     }
 
     @Override
-    @Cacheable.FlushAfter
     public InputStream read() throws IOException {
         return this.origin.read();
     }

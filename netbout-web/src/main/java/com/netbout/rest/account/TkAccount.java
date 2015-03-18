@@ -24,8 +24,9 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.rest;
+package com.netbout.rest.account;
 
+import com.netbout.rest.RsPage;
 import com.netbout.spi.Alias;
 import com.rexsl.page.Link;
 import com.rexsl.page.PageBuilder;
@@ -38,33 +39,47 @@ import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.core.Response;
+import org.takes.Request;
+import org.takes.Response;
+import org.takes.Take;
+import org.takes.rs.xe.XeLink;
 
 /**
- * RESTful front of user's account.
+ * User account.
  *
  * @author Yegor Bugayenko (yegor@tpc2.com)
  * @version $Id$
- * @since 2.12
- * @checkstyle ClassDataAbstractionCoupling (500 lines)
- * @checkstyle MultipleStringLiteralsCheck (500 lines)
+ * @since 2.14
  */
-@Path("/acc")
-public final class AccountRs extends BaseRs {
+final class TkAccount implements Take {
 
     /**
-     * Get page.
-     * @return The JAX-RS response
+     * Alias.
      */
-    @GET
-    @Path("/")
-    public Response index() {
-        return new PageBuilder()
-            .stylesheet("/xsl/account.xsl")
-            .build(NbPage.class)
-            .init(this)
-            .link(new Link("save-email", "./email"))
-            .render()
-            .build();
+    private final transient Alias alias;
+
+    /**
+     * Request.
+     */
+    private final transient Request request;
+
+    /**
+     * Ctor.
+     * @param als Alias
+     * @param req Request
+     */
+    TkAccount(final Alias als, final Request req) {
+        this.alias = als;
+        this.request = req;
+    }
+
+    @Override
+    public Response act() throws IOException {
+        return new RsPage(
+            "/xsl/account.xsl",
+            this.request,
+            new XeLink("save-email", "/acc/save-email")
+        );
     }
 
     /**
