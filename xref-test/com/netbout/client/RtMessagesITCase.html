@@ -68,16 +68,17 @@
 <a class="jxr_linenumber" name="L60" href="#L60">60</a>          <strong class="jxr_keyword">final</strong> User user = <strong class="jxr_keyword">this</strong>.rule.get();
 <a class="jxr_linenumber" name="L61" href="#L61">61</a>          <strong class="jxr_keyword">final</strong> Alias alias = user.aliases().iterate().iterator().next();
 <a class="jxr_linenumber" name="L62" href="#L62">62</a>          <strong class="jxr_keyword">final</strong> Inbox inbox = alias.inbox();
-<a class="jxr_linenumber" name="L63" href="#L63">63</a>          <strong class="jxr_keyword">final</strong> Bout bout = inbox.bout(inbox.start());
-<a class="jxr_linenumber" name="L64" href="#L64">64</a>          bout.messages().post(<span class="jxr_string">"hey, how are you?"</span>);
-<a class="jxr_linenumber" name="L65" href="#L65">65</a>          bout.messages().post(<span class="jxr_string">"I'm fine"</span>);
-<a class="jxr_linenumber" name="L66" href="#L66">66</a>          MatcherAssert.assertThat(
-<a class="jxr_linenumber" name="L67" href="#L67">67</a>              bout.messages().iterate(),
-<a class="jxr_linenumber" name="L68" href="#L68">68</a>              Matchers.&lt;Message&gt;iterableWithSize(Matchers.greaterThan(1))
-<a class="jxr_linenumber" name="L69" href="#L69">69</a>          );
-<a class="jxr_linenumber" name="L70" href="#L70">70</a>      }
-<a class="jxr_linenumber" name="L71" href="#L71">71</a>  
-<a class="jxr_linenumber" name="L72" href="#L72">72</a>  }
+<a class="jxr_linenumber" name="L63" href="#L63">63</a>          inbox.start();
+<a class="jxr_linenumber" name="L64" href="#L64">64</a>          <strong class="jxr_keyword">final</strong> Bout bout = inbox.iterate().iterator().next();
+<a class="jxr_linenumber" name="L65" href="#L65">65</a>          bout.messages().post(<span class="jxr_string">"hey, how are you?"</span>);
+<a class="jxr_linenumber" name="L66" href="#L66">66</a>          bout.messages().post(<span class="jxr_string">"I'm fine"</span>);
+<a class="jxr_linenumber" name="L67" href="#L67">67</a>          MatcherAssert.assertThat(
+<a class="jxr_linenumber" name="L68" href="#L68">68</a>              bout.messages().iterate(),
+<a class="jxr_linenumber" name="L69" href="#L69">69</a>              Matchers.&lt;Message&gt;iterableWithSize(Matchers.greaterThan(1))
+<a class="jxr_linenumber" name="L70" href="#L70">70</a>          );
+<a class="jxr_linenumber" name="L71" href="#L71">71</a>      }
+<a class="jxr_linenumber" name="L72" href="#L72">72</a>  
+<a class="jxr_linenumber" name="L73" href="#L73">73</a>  }
 </pre>
 <hr/>
 <div id="footer">Copyright &#169; 2009&#x2013;2015 <a href="http://www.netbout.com">Netbout Inc.</a>. All rights reserved.</div>
