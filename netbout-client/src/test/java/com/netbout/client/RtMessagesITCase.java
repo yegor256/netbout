@@ -60,7 +60,8 @@ public final class RtMessagesITCase {
         final User user = this.rule.get();
         final Alias alias = user.aliases().iterate().iterator().next();
         final Inbox inbox = alias.inbox();
-        final Bout bout = inbox.bout(inbox.start());
+        inbox.start();
+        final Bout bout = inbox.iterate().iterator().next();
         bout.messages().post("hey, how are you?");
         bout.messages().post("I'm fine");
         MatcherAssert.assertThat(

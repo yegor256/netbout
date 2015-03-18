@@ -119,9 +119,13 @@ final class RtBoutIterator implements Iterator<Bout> {
                 new Function<String, Bout>() {
                     @Override
                     public Bout apply(final String input) {
+                        final long number = Long.parseLong(input);
                         return new RtBout(
-                            Long.parseLong(input),
+                            number,
                             RtBoutIterator.this.request
+                                .uri().path("/b")
+                                .path(Long.toString(number))
+                                .back()
                         );
                     }
                 }
