@@ -33,15 +33,18 @@ import com.jcabi.http.Request;
 import com.jcabi.http.response.RestResponse;
 import com.jcabi.http.response.XmlResponse;
 import com.jcabi.xml.XML;
-import com.netbout.spi.Bout;
+import com.netbout.spi.Message;
 import java.io.IOException;
 import java.net.HttpURLConnection;
+import java.text.ParseException;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.NoSuchElementException;
 import java.util.Queue;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
+import org.apache.commons.lang3.time.DateFormatUtils;
 
 /**
  * REST bout iterator.
@@ -52,13 +55,13 @@ import lombok.ToString;
  */
 @ToString
 @Loggable(Loggable.DEBUG)
-@EqualsAndHashCode(of = { "request", "bouts" })
-final class RtBoutIterator implements Iterator<Bout> {
+@EqualsAndHashCode(of = { "request", "messages" })
+final class RtMessageIterator implements Iterator<Message> {
 
     /**
-     * Pre-fetched bouts.
+     * Pre-fetched messages.
      */
-    private final transient Queue<Bout> bouts = new LinkedList<Bout>();
+    private final transient Queue<Message> messages = new LinkedList<Message>();
 
     /**
      * Request to use.
@@ -74,28 +77,28 @@ final class RtBoutIterator implements Iterator<Bout> {
      * Public ctor.
      * @param req Request to use
      */
-    RtBoutIterator(final Request req) {
+    RtMessageIterator(final Request req) {
         this.request = req;
     }
 
     @Override
     public boolean hasNext() {
-        if (this.bouts.isEmpty() && this.more) {
+        if (this.messages.isEmpty() && this.more) {
             try {
                 this.fetch();
             } catch (final IOException ex) {
                 throw new IllegalStateException(ex);
             }
         }
-        return !this.bouts.isEmpty();
+        return !this.messages.isEmpty();
     }
 
     @Override
-    public Bout next() {
+    public Message next() {
         if (!this.hasNext()) {
-            throw new NoSuchElementException("end of inbox");
+            throw new NoSuchElementException("end of the bout");
         }
-        return this.bouts.poll();
+        return this.messages.poll();
     }
 
     @Override
@@ -113,27 +116,60 @@ final class RtBoutIterator implements Iterator<Bout> {
             .assertStatus(HttpURLConnection.HTTP_OK)
             .as(XmlResponse.class);
         final XML xml = response.xml();
-        this.bouts.addAll(
+        this.messages.addAll(
             Lists.transform(
-                xml.xpath("/page/bouts/bout/number/text()"),
-                new Function<String, Bout>() {
+                xml.nodes("/page/bout/messages/message"),
+                new Function<XML, Message>() {
                     @Override
-                    public Bout apply(final String input) {
-                        return new RtBout(
-                            Long.parseLong(input),
-                            RtBoutIterator.this.request
-                        );
+                    public Message apply(final XML node) {
+                        return RtMessageIterator.msg(node);
                     }
                 }
             )
         );
-        if (xml.nodes("/page/bouts/bout").isEmpty()) {
+        if (xml.nodes("/page/bout/messages/message ").isEmpty()) {
             this.more = false;
         } else {
             this.request = response.rel(
-                "/page/bouts/bout[last()]/links/link[@rel='more']/@href"
+                // @checkstyle LineLength (1 line)
+                "/page/bout/messages/message[last()]/links/link[@rel='more']/@href"
             );
         }
+    }
+
+    /**
+     * Turn XML into a message.
+     * @param xml The XML
+     * @return Message
+     */
+    private static Message msg(final XML xml) {
+        // @checkstyle AnonInnerLengthCheck (50 lines)
+        return new Message() {
+            @Override
+            public long number() {
+                return Long.parseLong(
+                    xml.xpath("number/text()").get(0)
+                );
+            }
+            @Override
+            public Date date() throws IOException {
+                try {
+                    return DateFormatUtils.ISO_DATETIME_FORMAT.parse(
+                        xml.xpath("date/text()").get(0)
+                    );
+                } catch (final ParseException ex) {
+                    throw new IOException(ex);
+                }
+            }
+            @Override
+            public String text() {
+                return xml.xpath("text/text()").get(0);
+            }
+            @Override
+            public String author() {
+                return xml.xpath("author/text()").get(0);
+            }
+        };
     }
 
 }
