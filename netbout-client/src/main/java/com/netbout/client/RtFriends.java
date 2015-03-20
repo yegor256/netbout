@@ -26,11 +26,19 @@
  */
 package com.netbout.client;
 
+import com.google.common.base.Function;
+import com.google.common.collect.Iterables;
 import com.jcabi.aspects.Immutable;
 import com.jcabi.aspects.Loggable;
 import com.jcabi.http.Request;
+import com.jcabi.http.response.RestResponse;
+import com.jcabi.http.response.XmlResponse;
+import com.jcabi.xml.XML;
 import com.netbout.spi.Friend;
 import com.netbout.spi.Friends;
+import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.net.URI;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
@@ -61,18 +69,74 @@ final class RtFriends implements Friends {
     }
 
     @Override
-    public void invite(final String friend) {
-        assert this.request != null;
-        throw new UnsupportedOperationException("#invite()");
+    public void invite(final String friend) throws IOException {
+        this.request
+            .fetch()
+            .as(RestResponse.class)
+            .assertStatus(HttpURLConnection.HTTP_OK)
+            .as(XmlResponse.class)
+            .rel("/page/links/link[@rel='invite']/@href")
+            .method(Request.POST)
+            // @checkstyle MultipleStringLiteralsCheck (1 line)
+            .body().formParam("name", friend).back()
+            .fetch()
+            .as(RestResponse.class)
+            .assertStatus(HttpURLConnection.HTTP_SEE_OTHER);
     }
 
     @Override
-    public void kick(final String friend) {
-        throw new UnsupportedOperationException("#kick()");
+    public void kick(final String friend) throws IOException {
+        this.request
+            .fetch()
+            .as(RestResponse.class)
+            .assertStatus(HttpURLConnection.HTTP_OK)
+            .as(XmlResponse.class)
+            .rel(
+                String.format(
+                    // @checkstyle LineLength (1 line)
+                    "/page/bout/friends/friend[alias='%s']/links/link[@rel='kick']/@href",
+                    friend
+                )
+            )
+            .uri().queryParam("name", friend).back()
+            .fetch()
+            .as(RestResponse.class)
+            .assertStatus(HttpURLConnection.HTTP_SEE_OTHER);
     }
 
     @Override
-    public Iterable<Friend> iterate() {
-        throw new UnsupportedOperationException("#iterate()");
+    public Iterable<Friend> iterate() throws IOException {
+        return Iterables.transform(
+            this.request
+                .fetch()
+                .as(RestResponse.class)
+                .assertStatus(HttpURLConnection.HTTP_OK)
+                .as(XmlResponse.class)
+                .xml().nodes("/page/bout/friends/friend"),
+            // @checkstyle AnonInnerLengthCheck (50 lines)
+            new Function<XML, Friend>() {
+                @Override
+                public Friend apply(final XML xml) {
+                    return new Friend() {
+                        @Override
+                        public String alias() {
+                            return xml.xpath("alias/text()").get(0);
+                        }
+                        @Override
+                        public URI photo() {
+                            return URI.create(
+                                xml.xpath(
+                                    "links/link[@rel='photo']/@href"
+                                ).get(0)
+                            );
+                        }
+                        @Override
+                        public String email() {
+                            throw new UnsupportedOperationException("#email()");
+                        }
+                    };
+                }
+            }
+        );
     }
 }
