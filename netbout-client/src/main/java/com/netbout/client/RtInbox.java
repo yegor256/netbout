@@ -36,6 +36,7 @@ import com.netbout.spi.Inbox;
 import com.netbout.spi.Pageable;
 import java.io.IOException;
 import java.net.HttpURLConnection;
+import java.util.Iterator;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
@@ -108,6 +109,11 @@ final class RtInbox implements Inbox {
 
     @Override
     public Iterable<Bout> iterate() {
-        throw new UnsupportedOperationException("#iterator()");
+        return new Iterable<Bout>() {
+            @Override
+            public Iterator<Bout> iterator() {
+                return new RtBoutIterator(RtInbox.this.request);
+            }
+        };
     }
 }

@@ -36,6 +36,7 @@ import com.netbout.spi.Messages;
 import com.netbout.spi.Pageable;
 import java.io.IOException;
 import java.net.HttpURLConnection;
+import java.util.Iterator;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
@@ -89,6 +90,11 @@ final class RtMessages implements Messages {
 
     @Override
     public Iterable<Message> iterate() {
-        throw new UnsupportedOperationException("#iterator()");
+        return new Iterable<Message>() {
+            @Override
+            public Iterator<Message> iterator() {
+                return new RtMessageIterator(RtMessages.this.request);
+            }
+        };
     }
 }
