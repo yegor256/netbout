@@ -24,11 +24,31 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
+package com.netbout.rest;
+
+import org.hamcrest.MatcherAssert;
+import org.hamcrest.Matchers;
+import org.junit.Test;
+import org.takes.rs.RsPrint;
 
 /**
- * Heroku deploy.
- *
+ * Test case for {@link TkFavicon}.
  * @author Yegor Bugayenko (yegor@tpc2.com)
  * @version $Id$
+ * @since 2.14
  */
-package com.netbout.heroku;
+public final class TkFaviconTest {
+
+    /**
+     * TkFavicon can build a GIF image.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void buildsGifImage() throws Exception {
+        MatcherAssert.assertThat(
+            new RsPrint(new TkFavicon(44L).act()).printBody(),
+            Matchers.notNullValue()
+        );
+    }
+
+}

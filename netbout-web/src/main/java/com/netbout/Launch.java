@@ -24,7 +24,7 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.heroku;
+package com.netbout;
 
 import java.io.File;
 import org.apache.catalina.startup.Tomcat;

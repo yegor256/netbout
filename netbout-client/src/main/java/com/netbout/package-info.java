@@ -24,44 +24,11 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.rest;
-
-import com.netbout.mock.MkBase;
-import com.netbout.spi.Base;
-import com.rexsl.mock.HttpHeadersMocker;
-import com.rexsl.mock.UriInfoMocker;
-import javax.servlet.ServletContext;
-import javax.ws.rs.core.Response;
-import org.hamcrest.MatcherAssert;
-import org.hamcrest.Matchers;
-import org.junit.Test;
-import org.mockito.Mockito;
 
 /**
- * Test case for {@link FriendRs}.
+ * Heroku deploy.
+ *
  * @author Yegor Bugayenko (yegor@tpc2.com)
  * @version $Id$
- * @since 2.11.4
  */
-public final class FriendRsTest {
-
-    /**
-     * FriendRs can build a PNG image.
-     * @throws Exception If there is some problem inside
-     */
-    @Test
-    public void buildsPngImage() throws Exception {
-        final FriendRs rest = new FriendRs();
-        final Base base = new MkBase();
-        final String alias = "test";
-        base.user(BaseRs.TEST_URN).aliases().add(alias);
-        final ServletContext ctx = Mockito.mock(ServletContext.class);
-        Mockito.doReturn(base).when(ctx).getAttribute(Base.class.getName());
-        rest.setServletContext(ctx);
-        rest.setHttpHeaders(new HttpHeadersMocker().mock());
-        rest.setUriInfo(new UriInfoMocker().mock());
-        final Response response = rest.png(alias);
-        MatcherAssert.assertThat(response.getEntity(), Matchers.notNullValue());
-    }
-
-}
+package com.netbout;

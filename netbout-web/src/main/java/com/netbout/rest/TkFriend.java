@@ -35,7 +35,7 @@ import com.jcabi.http.wire.AutoRedirectingWire;
 import com.jcabi.http.wire.OneMinuteWire;
 import com.jcabi.http.wire.RetryWire;
 import com.netbout.spi.Friend;
-import com.rexsl.page.inset.FlashInset;
+import com.netbout.spi.User;
 import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
@@ -46,46 +46,61 @@ import java.net.URL;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import javax.imageio.ImageIO;
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.core.CacheControl;
-import javax.ws.rs.core.Response;
+import org.takes.Response;
+import org.takes.Take;
+import org.takes.facets.flash.RsFlash;
+import org.takes.facets.forward.RsForward;
+import org.takes.rs.RsWithBody;
+import org.takes.rs.RsWithHeader;
+import org.takes.rs.RsWithType;
 
 /**
- * RESTful front of a single friend.
+ * Friend.
  *
  * @author Yegor Bugayenko (yegor@tpc2.com)
  * @version $Id$
- * @since 2.10
+ * @since 2.14
  */
-@Path("/f")
-public final class FriendRs extends BaseRs {
+public final class TkFriend implements Take {
 
     /**
-     * Get his photo.
-     * @param alias Friend's alias
-     * @return The JAX-RS response
-     * @throws IOException If fails
+     * Current user.
      */
-    @GET
-    @Path("/{alias: [a-zA-Z0-9]+}.png")
-    public Response png(@PathParam("alias") final String alias)
-        throws IOException {
-        final Iterable<Friend> opts = this.user().friends(alias);
+    private final transient User user;
+
+    /**
+     * Alias of a friend.
+     */
+    private final transient String alias;
+
+    /**
+     * Ctor.
+     * @param usr User
+     * @param als Alias of a friend
+     */
+    public TkFriend(final User usr, final String als) {
+        this.user = usr;
+        this.alias = als;
+    }
+
+    @Override
+    public Response act() throws IOException {
+        final Iterable<Friend> opts = this.user.friends(this.alias);
         if (Iterables.isEmpty(opts)) {
-            throw FlashInset.forward(
-                this.uriInfo().getBaseUri(),
-                String.format("alias '%s' not found", alias),
-                Level.SEVERE
+            throw new RsForward(
+                new RsFlash(
+                    String.format("alias '%s' not found", this.alias),
+                    Level.SEVERE
+                )
             );
         }
         final Friend friend = opts.iterator().next();
-        if (!friend.alias().equals(alias)) {
-            throw FlashInset.forward(
-                this.uriInfo().getBaseUri(),
-                String.format("alias '%s' is not found", alias),
-                Level.SEVERE
+        if (!friend.alias().equals(this.alias)) {
+            throw new RsForward(
+                new RsFlash(
+                    String.format("alias '%s' is not found", this.alias),
+                    Level.SEVERE
+                )
             );
         }
         final byte[] img = new JdkRequest(friend.photo())
@@ -112,13 +127,14 @@ public final class FriendRs extends BaseRs {
         bthumb.getGraphics().drawImage(thumb, 0, 0, null);
         final ByteArrayOutputStream baos = new ByteArrayOutputStream();
         ImageIO.write(bthumb, "png", baos);
-        final CacheControl cache = new CacheControl();
-        cache.setMaxAge((int) TimeUnit.DAYS.toSeconds(1L));
-        cache.setPrivate(true);
-        return Response.ok(new ByteArrayInputStream(baos.toByteArray()))
-            .cacheControl(cache)
-            .type("image/png")
-            .build();
+        return new RsWithHeader(
+            new RsWithType(
+                new RsWithBody(new ByteArrayInputStream(baos.toByteArray())),
+                "image/png"
+            ),
+            "Cache-Control",
+            String.format("private, max-age=%d", TimeUnit.DAYS.toSeconds(1L))
+        );
     }
 
 }

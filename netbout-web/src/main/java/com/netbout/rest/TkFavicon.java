@@ -33,34 +33,54 @@ import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.Iterator;
 import javax.imageio.ImageIO;
-import javax.ws.rs.DefaultValue;
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
+import org.takes.Request;
+import org.takes.Response;
+import org.takes.Take;
+import org.takes.rq.RqHref;
+import org.takes.rs.RsWithBody;
+import org.takes.rs.RsWithType;
 
 /**
  * Favicon rendering.
  *
  * @author Yegor Bugayenko (yegor@tpc2.com)
  * @version $Id$
- * @since 2.7
+ * @since 2.14
  */
-@Path("/favicon.ico")
-public final class FaviconRs extends BaseRs {
+public final class TkFavicon implements Take {
 
     /**
-     * Get icon in GIF format.
-     * @param unread Number of unread messages
-     * @return The image binary
+     * How many unread.
+     */
+    private final transient long unread;
+
+    /**
+     * Ctor.
+     * @param req Request
      * @throws IOException If fails
      */
-    @GET
-    @Produces("image/gif")
-    public byte[] gif(@QueryParam("unread") @DefaultValue("0")
-        final Long unread)
-        throws IOException {
+    public TkFavicon(final Request req) throws IOException {
+        final Iterator<String> param =
+            new RqHref(req).href().param("unread").iterator();
+        if (param.hasNext()) {
+            this.unread = Long.parseLong(param.next());
+        } else {
+            this.unread = 0L;
+        }
+    }
+
+    /**
+     * Ctor.
+     * @param num Number
+     */
+    public TkFavicon(final long num) {
+        this.unread = num;
+    }
+
+    @Override
+    public Response act() throws IOException {
         final int width = 64;
         final int height = 64;
         final BufferedImage image = new BufferedImage(
@@ -70,12 +90,12 @@ public final class FaviconRs extends BaseRs {
         // @checkstyle MagicNumber (1 line)
         graph.setColor(new Color(0x4b, 0x42, 0x50));
         graph.fillRect(0, 0, width, height);
-        if (unread != null && unread > 0L) {
+        if (this.unread > 0L) {
             final String text;
-            if (unread >= (long) Tv.HUNDRED) {
+            if (this.unread >= (long) Tv.HUNDRED) {
                 text = "99";
             } else {
-                text = Long.toString(unread);
+                text = Long.toString(this.unread);
             }
             graph.setColor(Color.WHITE);
             graph.setFont(new Font(Font.SANS_SERIF, Font.BOLD, height / 2));
@@ -88,7 +108,10 @@ public final class FaviconRs extends BaseRs {
         }
         final ByteArrayOutputStream baos = new ByteArrayOutputStream();
         ImageIO.write(image, "gif", baos);
-        return baos.toByteArray();
+        return new RsWithType(
+            new RsWithBody(baos.toByteArray()),
+            "image/gif"
+        );
     }
 
 }

@@ -26,27 +26,36 @@
  */
 package com.netbout.rest;
 
+import com.netbout.mock.MkBase;
+import com.netbout.spi.Base;
+import com.netbout.spi.User;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;
+import org.takes.rs.RsPrint;
 
 /**
- * Test case for {@link FaviconRs}.
+ * Test case for {@link TkFriend}.
  * @author Yegor Bugayenko (yegor@tpc2.com)
  * @version $Id$
- * @since 2.7
+ * @since 2.14
  */
-public final class FaviconRsTest {
+public final class TkFriendTest {
 
     /**
-     * FaviconRs can build a GIF image.
+     * TkFriend can build a PNG image.
      * @throws Exception If there is some problem inside
      */
     @Test
-    public void buildsGifImage() throws Exception {
-        final FaviconRs rest = new FaviconRs();
-        final byte[] bytes = rest.gif(44L);
-        MatcherAssert.assertThat(bytes, Matchers.notNullValue());
+    public void buildsPngImage() throws Exception {
+        final Base base = new MkBase();
+        final String alias = "test";
+        final User user = base.user(BaseRs.TEST_URN);
+        user.aliases().add(alias);
+        MatcherAssert.assertThat(
+            new RsPrint(new TkFriend(user, alias).act()),
+            Matchers.notNullValue()
+        );
     }
 
 }
