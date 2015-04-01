@@ -24,11 +24,64 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
+package com.netbout.rest.login;
+
+import com.netbout.rest.RqAlias;
+import com.netbout.spi.Base;
+import java.io.IOException;
+import java.util.Iterator;
+import java.util.logging.Level;
+import org.takes.Request;
+import org.takes.Response;
+import org.takes.Take;
+import org.takes.facets.flash.RsFlash;
+import org.takes.facets.forward.RsForward;
+import org.takes.rq.RqForm;
 
 /**
- * Supplementary servlets.
+ * Register.
  *
  * @author Yegor Bugayenko (yegor@tpc2.com)
  * @version $Id$
+ * @since 2.14
  */
-package com.netbout.servlets;
+public final class TkRegister implements Take {
+
+    /**
+     * Base.
+     */
+    private final transient Base base;
+
+    /**
+     * Request.
+     */
+    private final transient Request request;
+
+    /**
+     * Ctor.
+     * @param bse Base
+     * @param req Request
+     */
+    public TkRegister(final Base bse, final Request req) {
+        this.base = bse;
+        this.request = req;
+    }
+
+    @Override
+    public Response act() throws IOException {
+        final Iterator<String> alias = new RqForm(this.request)
+            .param("alias").iterator();
+        if (!alias.hasNext()) {
+            throw new RsForward(
+                new RsFlash("'alias' is a mandatory form param", Level.SEVERE)
+            );
+        }
+        new RqAlias(this.base, this.request).user().aliases().add(alias.next());
+        return new RsForward(
+            new RsFlash(
+                String.format("your alias '%s' was registered", alias),
+                Level.INFO
+            )
+        );
+    }
+}

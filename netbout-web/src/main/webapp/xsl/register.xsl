@@ -32,7 +32,7 @@
     xmlns:xs="http://www.w3.org/2001/XMLSchema"
     xmlns="http://www.w3.org/1999/xhtml"
     version="1.0" exclude-result-prefixes="xs">
-    <xsl:output method="xml" omit-xml-declaration="yes"/>
+    <xsl:output method="html" doctype-system="about:legacy-compat" encoding="UTF-8" indent="yes" />
     <xsl:include href="/xsl/login-layout.xsl"/>
     <xsl:template match="page" mode="head">
         <script>

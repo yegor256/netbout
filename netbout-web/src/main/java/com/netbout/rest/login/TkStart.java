@@ -24,71 +24,53 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout;
+package com.netbout.rest.login;
 
-import com.jcabi.email.Postman;
-import com.jcabi.email.postman.PostNoLoops;
-import com.jcabi.email.wire.SMTP;
-import com.jcabi.manifests.Manifests;
-import com.netbout.cached.CdBase;
-import com.netbout.dynamo.DyBase;
-import com.netbout.email.EmBase;
-import com.netbout.rest.TsApp;
-import org.takes.http.Exit;
-import org.takes.http.FtCLI;
+import com.netbout.rest.RsPage;
+import com.netbout.spi.Base;
+import java.io.IOException;
+import org.takes.Request;
+import org.takes.Response;
+import org.takes.Take;
+import org.takes.rs.xe.XeLink;
 
 /**
- * Launch (used only for heroku).
+ * Start.
  *
  * @author Yegor Bugayenko (yegor@tpc2.com)
  * @version $Id$
+ * @since 2.14
  */
-public final class Launch {
+public final class TkStart implements Take {
 
     /**
-     * Utility class.
+     * Base.
      */
-    private Launch() {
-        // intentionally empty
-    }
+    private final transient Base base;
 
     /**
-     * Entry point.
-     * @param args Command line args
-     * @throws Exception If fails
+     * Request.
      */
-    public static void main(final String[] args) throws Exception {
-        new FtCLI(
-            new TsApp(
-                new EmBase(
-                    new CdBase(new DyBase()),
-                    new PostNoLoops(Launch.postman())
-                )
-            ),
-            args
-        ).start(Exit.NEVER);
-    }
+    private final transient Request request;
 
     /**
-     * Create a postman.
-     * @return Postman
+     * Ctor.
+     * @param bse Base
+     * @param req Request
      */
-    private static Postman postman() {
-        final int port = Integer.parseInt(Manifests.read("Netbout-SmtpPort"));
-        final Postman postman;
-        if (port == 0) {
-            postman = Postman.CONSOLE;
-        } else {
-            postman = new Postman.Default(
-                new SMTP(
-                    Manifests.read("Netbout-SmtpHost"),
-                    port,
-                    Manifests.read("Netbout-SmtpUser"),
-                    Manifests.read("Netbout-SmtpPassword")
-                )
-            );
-        }
-        return postman;
+    public TkStart(final Base bse, final Request req) {
+        this.base = bse;
+        this.request = req;
     }
 
+    @Override
+    public Response act() throws IOException {
+        return new RsPage(
+            "/xsl/register.xsl",
+            this.base,
+            this.request,
+            new XeLink("register", "/login/r"),
+            new XeLink("check", "/login/check")
+        );
+    }
 }

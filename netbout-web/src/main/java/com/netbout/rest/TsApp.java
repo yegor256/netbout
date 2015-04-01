@@ -28,6 +28,7 @@ package com.netbout.rest;
 
 import com.jcabi.manifests.Manifests;
 import com.jcabi.urn.URN;
+import com.netbout.rest.login.TsLogin;
 import com.netbout.spi.Base;
 import com.netbout.spi.User;
 import java.io.IOException;
@@ -224,15 +225,8 @@ public final class TsApp extends TsWrap {
                 "/css/.*",
                 new TsWithType(new TsClasspath(), "text/css")
             ),
-            new FkRegex(
-                "/",
-                new Target<RqRegex>() {
-                    @Override
-                    public Take route(final RqRegex req) {
-                        return new TkHome(talks, toggles, req);
-                    }
-                }
-            ),
+            new FkRegex("/", new TsLogin(base)),
+            new FkRegex("/login.*", new TsLogin(base)),
             new FkRegex(
                 "/f/([a-zA-Z0-9]+)\\.png",
                 new Target<RqRegex>() {

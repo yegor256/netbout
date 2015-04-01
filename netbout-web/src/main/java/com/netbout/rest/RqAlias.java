@@ -26,75 +26,76 @@
  */
 package com.netbout.rest;
 
-import com.rexsl.page.Link;
-import com.rexsl.page.PageBuilder;
-import com.rexsl.page.auth.Identity;
-import com.rexsl.page.inset.FlashInset;
+import com.jcabi.urn.URN;
+import com.netbout.spi.Alias;
+import com.netbout.spi.Base;
+import com.netbout.spi.User;
 import java.io.IOException;
-import java.util.logging.Level;
-import javax.ws.rs.FormParam;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.Response;
+import lombok.EqualsAndHashCode;
+import org.takes.Request;
+import org.takes.facets.auth.Identity;
+import org.takes.facets.auth.RqAuth;
+import org.takes.facets.flash.RsFlash;
+import org.takes.facets.forward.RsForward;
+import org.takes.rq.RqWrap;
 
 /**
- * RESTful front of login functions.
+ * Xembly for alias.
  *
  * @author Yegor Bugayenko (yegor@tpc2.com)
  * @version $Id$
+ * @since 2.14
+ * @checkstyle ClassDataAbstractionCouplingCheck (500 lines)
  */
-@Path("/login")
-public final class LoginRs extends BaseRs {
+@EqualsAndHashCode(callSuper = true)
+public final class RqAlias extends RqWrap {
 
     /**
-     * Register page.
-     * @return The JAX-RS response
-     * @throws IOException If fails
+     * Base.
      */
-    @GET
-    @Path("/r")
-    public Response start() throws IOException {
-        this.user();
-        return new PageBuilder()
-            .stylesheet("/xsl/register.xsl")
-            .build(NbPage.class)
-            .init(this)
-            .link(new Link("register", "."))
-            .link(new Link("check", "./check"))
-            .render()
-            .build();
+    private final transient Base base;
+
+    /**
+     * Ctor.
+     * @param bse The base
+     * @param req Request
+     */
+    public RqAlias(final Base bse, final Request req) {
+        super(req);
+        this.base = bse;
     }
 
     /**
-     * Register and continue.
-     * @param alias Alias to try
+     * Has alias?
+     * @return TRUE if alias is there
      * @throws IOException If fails
      */
-    @POST
-    @Path("/r")
-    public void register(@FormParam("alias") final String alias)
-        throws IOException {
-        this.user().aliases().add(alias);
-        throw FlashInset.forward(
-            this.uriInfo().getBaseUri(),
-            String.format("your alias '%s' was registered", alias),
-            Level.INFO
-        );
+    public boolean has() throws IOException {
+        return !new RqAuth(this).identity().equals(Identity.ANONYMOUS);
     }
 
     /**
-     * Check availability.
-     * @param alias Alias to check
-     * @return Text "available" if this alias is available
+     * Get user.
+     * @return User
      * @throws IOException If fails
      */
-    @GET
-    @Path("/r/check")
-    public String check(@QueryParam("alias") final String alias)
-        throws IOException {
-        return this.user().aliases().check(alias);
+    public User user() throws IOException {
+        final Identity identity = new RqAuth(this).identity();
+        if (identity.equals(Identity.ANONYMOUS)) {
+            throw new RsForward(
+                new RsFlash("you are not logged in yet")
+            );
+        }
+        return this.base.user(URN.create(identity.urn()));
+    }
+
+    /**
+     * Get alias.
+     * @return Alias
+     * @throws IOException If fails
+     */
+    public Alias alias() throws IOException {
+        return this.user().aliases().iterate().iterator().next();
     }
 
 }

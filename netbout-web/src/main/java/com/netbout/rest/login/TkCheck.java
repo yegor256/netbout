@@ -24,71 +24,63 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout;
+package com.netbout.rest.login;
 
-import com.jcabi.email.Postman;
-import com.jcabi.email.postman.PostNoLoops;
-import com.jcabi.email.wire.SMTP;
-import com.jcabi.manifests.Manifests;
-import com.netbout.cached.CdBase;
-import com.netbout.dynamo.DyBase;
-import com.netbout.email.EmBase;
-import com.netbout.rest.TsApp;
-import org.takes.http.Exit;
-import org.takes.http.FtCLI;
+import com.netbout.rest.RqAlias;
+import com.netbout.spi.Base;
+import java.io.IOException;
+import java.util.Iterator;
+import java.util.logging.Level;
+import org.takes.Request;
+import org.takes.Response;
+import org.takes.Take;
+import org.takes.facets.flash.RsFlash;
+import org.takes.facets.forward.RsForward;
+import org.takes.rq.RqHref;
+import org.takes.rs.RsWithBody;
 
 /**
- * Launch (used only for heroku).
+ * Check.
  *
  * @author Yegor Bugayenko (yegor@tpc2.com)
  * @version $Id$
+ * @since 2.14
  */
-public final class Launch {
+public final class TkCheck implements Take {
 
     /**
-     * Utility class.
+     * Base.
      */
-    private Launch() {
-        // intentionally empty
+    private final transient Base base;
+
+    /**
+     * Request.
+     */
+    private final transient Request request;
+
+    /**
+     * Ctor.
+     * @param bse Base
+     * @param req Request
+     */
+    public TkCheck(final Base bse, final Request req) {
+        this.base = bse;
+        this.request = req;
     }
 
-    /**
-     * Entry point.
-     * @param args Command line args
-     * @throws Exception If fails
-     */
-    public static void main(final String[] args) throws Exception {
-        new FtCLI(
-            new TsApp(
-                new EmBase(
-                    new CdBase(new DyBase()),
-                    new PostNoLoops(Launch.postman())
-                )
-            ),
-            args
-        ).start(Exit.NEVER);
-    }
-
-    /**
-     * Create a postman.
-     * @return Postman
-     */
-    private static Postman postman() {
-        final int port = Integer.parseInt(Manifests.read("Netbout-SmtpPort"));
-        final Postman postman;
-        if (port == 0) {
-            postman = Postman.CONSOLE;
-        } else {
-            postman = new Postman.Default(
-                new SMTP(
-                    Manifests.read("Netbout-SmtpHost"),
-                    port,
-                    Manifests.read("Netbout-SmtpUser"),
-                    Manifests.read("Netbout-SmtpPassword")
-                )
+    @Override
+    public Response act() throws IOException {
+        final Iterator<String> alias = new RqHref(this.request)
+            .href().param("alias").iterator();
+        if (!alias.hasNext()) {
+            throw new RsForward(
+                new RsFlash("'alias' is a mandatory form param", Level.SEVERE)
             );
         }
-        return postman;
+        return new RsWithBody(
+            new RqAlias(this.base, this.request).user().aliases().check(
+                alias.next()
+            )
+        );
     }
-
 }

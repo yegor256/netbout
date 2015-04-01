@@ -29,7 +29,6 @@
     xmlns="http://www.w3.org/1999/xhtml" version="1.0">
     <xsl:include href="/xsl/templates.xsl"/>
     <xsl:template match="/">
-        <xsl:text disable-output-escaping="yes">&lt;!DOCTYPE html&gt;</xsl:text>
         <xsl:apply-templates select="page"/>
     </xsl:template>
     <xsl:template match="page">
