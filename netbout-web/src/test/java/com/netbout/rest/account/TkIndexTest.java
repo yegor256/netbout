@@ -24,45 +24,41 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.rest.login;
+package com.netbout.rest.account;
 
+import com.jcabi.matchers.XhtmlMatchers;
+import com.netbout.mock.MkBase;
+import com.netbout.rest.BaseRs;
 import com.netbout.spi.Base;
-import java.io.IOException;
-import org.takes.Request;
-import org.takes.Take;
-import org.takes.Takes;
-import org.takes.facets.fork.FkRegex;
-import org.takes.facets.fork.TsFork;
+import org.hamcrest.MatcherAssert;
+import org.junit.Test;
+import org.takes.rq.RqFake;
+import org.takes.rs.RsPrint;
 
 /**
- * Login.
- *
+ * Test case for {@link TkIndex}.
  * @author Yegor Bugayenko (yegor@tpc2.com)
  * @version $Id$
  * @since 2.14
  */
-public final class TsLogin implements Takes {
+public final class TkIndexTest {
 
     /**
-     * Base.
+     * TkIndex can build a page.
+     * @throws Exception If there is some problem inside
      */
-    private final transient Base base;
-
-    /**
-     * Ctor.
-     * @param bse Base
-     */
-    public TsLogin(final Base bse) {
-        this.base = bse;
+    @Test
+    public void rendersPage() throws Exception {
+        final Base base = new MkBase();
+        final String alias = "test";
+        base.user(BaseRs.TEST_URN).aliases().add(alias);
+        MatcherAssert.assertThat(
+            new RsPrint(new TkIndex(base).act(new RqFake())).printBody(),
+            XhtmlMatchers.hasXPaths(
+                "/page/alias/email",
+                "/page/links/link[@rel='save-email']/@href"
+            )
+        );
     }
 
-    @Override
-    public Take route(final Request req) throws IOException {
-        return new TsFork(
-            new FkRegex("/login", new TkLogin(this.base, req)),
-            new FkRegex("/login/start", new TkStart(this.base, req)),
-            new FkRegex("/login/register", new TkRegister(this.base, req)),
-            new FkRegex("/login/check", new TkCheck(this.base, req))
-        ).route(req);
-    }
 }

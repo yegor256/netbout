@@ -26,26 +26,20 @@
  */
 package com.netbout.rest.account;
 
-import com.netbout.rest.RsPage;
+import com.netbout.rest.RqAlias;
 import com.netbout.spi.Alias;
-import com.rexsl.page.Link;
-import com.rexsl.page.PageBuilder;
-import com.rexsl.page.inset.FlashInset;
+import com.netbout.spi.Base;
 import java.io.IOException;
-import java.net.URI;
 import java.util.logging.Level;
-import javax.ws.rs.FormParam;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.core.Response;
 import org.takes.Request;
 import org.takes.Response;
 import org.takes.Take;
-import org.takes.rs.xe.XeLink;
+import org.takes.facets.flash.RsFlash;
+import org.takes.facets.forward.RsForward;
+import org.takes.rq.RqForm;
 
 /**
- * Save user email.
+ * User account.
  *
  * @author Yegor Bugayenko (yegor@tpc2.com)
  * @version $Id$
@@ -54,55 +48,36 @@ import org.takes.rs.xe.XeLink;
 final class TkSaveEmail implements Take {
 
     /**
-     * Alias.
+     * Base.
      */
-    private final transient Alias alias;
-
-    /**
-     * Request.
-     */
-    private final transient Request request;
+    private final transient Base base;
 
     /**
      * Ctor.
-     * @param als Alias
-     * @param req Request
+     * @param bse Base
      */
-    TkSaveEmail(final Alias als, final Request req) {
-        this.alias = als;
-        this.request = req;
+    TkSaveEmail(final Base bse) {
+        this.base = bse;
     }
 
     @Override
-    public Response act() throws IOException {
-
-    }
-
-    public void post(@FormParam("email") final String email)
-        throws IOException {
+    public Response act(final Request req) throws IOException {
+        final String email = new RqForm(req).param("email").iterator().next();
         try {
-            this.alias().email(email);
+            new RqAlias(this.base, req).alias().email(email);
         } catch (final Alias.InvalidEmailException ex) {
-            throw FlashInset.forward(this.self(), ex);
+            throw new RsForward(
+                new RsFlash(ex.getLocalizedMessage(), Level.WARNING)
+            );
         }
-        throw FlashInset.forward(
-            this.self(),
-            String.format(
-                "email changed to '%s'",
-                email
-            ),
-            Level.INFO
+        return new RsForward(
+            new RsFlash(
+                String.format(
+                    "email changed to '%s'",
+                    email
+                )
+            )
         );
-    }
-
-    /**
-     * Get self URI.
-     * @return URI
-     */
-    private URI self() {
-        return this.uriInfo().getBaseUriBuilder().clone()
-            .path(AccountRs.class)
-            .build();
     }
 
 }

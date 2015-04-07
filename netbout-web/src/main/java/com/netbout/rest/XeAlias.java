@@ -31,6 +31,7 @@ import com.netbout.spi.Base;
 import java.io.IOException;
 import lombok.EqualsAndHashCode;
 import org.takes.Request;
+import org.takes.rs.xe.XeLink;
 import org.takes.rs.xe.XeSource;
 import org.takes.rs.xe.XeWrap;
 import org.xembly.Directive;
@@ -60,17 +61,31 @@ final class XeAlias extends XeWrap {
                     final Directives dirs = new Directives();
                     final RqAlias rqa = new RqAlias(base, req);
                     if (rqa.has()) {
-                        final Alias alias = rqa.alias();
-                        dirs.add("alias")
-                            .add("name").set(alias.name()).up()
-                            .add("locale").set(alias.locale().toString()).up()
-                            .add("photo").set(alias.photo().toString()).up()
-                            .add("email").set(alias.email()).up();
+                        dirs.append(XeAlias.toXembly(rqa.alias()));
                     }
                     return dirs;
                 }
             }
         );
+    }
+
+    /**
+     * Make xembly for account.
+     * @param alias Alias
+     * @return Xembly directives
+     * @throws IOException If fails
+     */
+    private static Iterable<Directive> toXembly(final Alias alias)
+        throws IOException {
+        final Directives dirs = new Directives();
+        dirs.add("alias")
+            .add("name").set(alias.name()).up()
+            .add("locale").set(alias.locale().toString()).up()
+            .add("photo").set(alias.photo().toString()).up()
+            .add("email").set(alias.email()).up()
+            .append(new XeLink("start", "/start").toXembly())
+            .append(new XeLink("account", "/acc").toXembly());
+        return dirs;
     }
 
 }

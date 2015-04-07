@@ -49,26 +49,19 @@ public final class TkStart implements Take {
     private final transient Base base;
 
     /**
-     * Request.
-     */
-    private final transient Request request;
-
-    /**
      * Ctor.
      * @param bse Base
-     * @param req Request
      */
-    public TkStart(final Base bse, final Request req) {
+    public TkStart(final Base bse) {
         this.base = bse;
-        this.request = req;
     }
 
     @Override
-    public Response act() throws IOException {
+    public Response act(final Request req) throws IOException {
         return new RsPage(
             "/xsl/register.xsl",
             this.base,
-            this.request,
+            req,
             new XeLink("register", "/login/r"),
             new XeLink("check", "/login/check")
         );

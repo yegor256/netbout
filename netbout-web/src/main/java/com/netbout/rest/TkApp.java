@@ -27,25 +27,21 @@
 package com.netbout.rest;
 
 import com.jcabi.manifests.Manifests;
-import com.jcabi.urn.URN;
-import com.netbout.rest.login.TsLogin;
+import com.netbout.rest.login.TkLogin;
 import com.netbout.spi.Base;
-import com.netbout.spi.User;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.nio.charset.Charset;
 import java.util.regex.Pattern;
 import org.apache.commons.lang3.exception.ExceptionUtils;
-import org.takes.Request;
+import org.takes.Response;
 import org.takes.Take;
-import org.takes.Takes;
 import org.takes.facets.auth.PsByFlag;
 import org.takes.facets.auth.PsChain;
 import org.takes.facets.auth.PsCookie;
 import org.takes.facets.auth.PsFake;
 import org.takes.facets.auth.PsLogout;
-import org.takes.facets.auth.RqAuth;
-import org.takes.facets.auth.TsAuth;
+import org.takes.facets.auth.TkAuth;
 import org.takes.facets.auth.codecs.CcCompact;
 import org.takes.facets.auth.codecs.CcHex;
 import org.takes.facets.auth.codecs.CcSafe;
@@ -54,26 +50,24 @@ import org.takes.facets.auth.codecs.CcXOR;
 import org.takes.facets.auth.social.PsGithub;
 import org.takes.facets.fallback.Fallback;
 import org.takes.facets.fallback.RqFallback;
-import org.takes.facets.fallback.TsFallback;
-import org.takes.facets.flash.TsFlash;
+import org.takes.facets.fallback.TkFallback;
+import org.takes.facets.flash.TkFlash;
 import org.takes.facets.fork.FkParams;
 import org.takes.facets.fork.FkRegex;
-import org.takes.facets.fork.RqRegex;
-import org.takes.facets.fork.Target;
-import org.takes.facets.fork.TsFork;
-import org.takes.facets.forward.TsForward;
+import org.takes.facets.fork.TkFork;
+import org.takes.facets.forward.TkForward;
 import org.takes.rs.RsVelocity;
 import org.takes.rs.RsWithStatus;
 import org.takes.rs.RsWithType;
+import org.takes.tk.TkClasspath;
 import org.takes.tk.TkFixed;
+import org.takes.tk.TkGzip;
+import org.takes.tk.TkMeasured;
 import org.takes.tk.TkRedirect;
-import org.takes.ts.TsClasspath;
-import org.takes.ts.TsGzip;
-import org.takes.ts.TsMeasured;
-import org.takes.ts.TsVersioned;
-import org.takes.ts.TsWithHeaders;
-import org.takes.ts.TsWithType;
-import org.takes.ts.TsWrap;
+import org.takes.tk.TkVersioned;
+import org.takes.tk.TkWithHeaders;
+import org.takes.tk.TkWithType;
+import org.takes.tk.TkWrap;
 
 /**
  * Web app.
@@ -82,7 +76,7 @@ import org.takes.ts.TsWrap;
  * @version $Id$
  * @since 2.14
  */
-public final class TsApp extends TsWrap {
+public final class TkApp extends TkWrap {
 
     /**
      * Revision of netbout.
@@ -93,16 +87,16 @@ public final class TsApp extends TsWrap {
      * Ctor.
      * @param base Base
      */
-    public TsApp(final Base base) {
-        super(TsApp.make(base));
+    public TkApp(final Base base) {
+        super(TkApp.make(base));
     }
 
     /**
      * Ctor.
      * @param base Base
-     * @return Takes
+     * @return Take
      */
-    private static Takes make(final Base base) {
+    private static Take make(final Base base) {
         if (!"UTF-8".equals(Charset.defaultCharset().name())) {
             throw new IllegalStateException(
                 String.format(
@@ -110,34 +104,34 @@ public final class TsApp extends TsWrap {
                 )
             );
         }
-        final Takes takes = new TsGzip(
-            TsApp.fallback(
-                new TsFlash(
-                    TsApp.auth(
-                        new TsForward(TsApp.regex(base))
+        final Take take = new TkGzip(
+            TkApp.fallback(
+                new TkFlash(
+                    TkApp.auth(
+                        new TkForward(TkApp.regex(base))
                     )
                 )
             )
         );
-        return new TsWithHeaders(
-            new TsVersioned(new TsMeasured(takes)),
-            String.format("X-Rultor-Revision: %s", TsApp.REV),
+        return new TkWithHeaders(
+            new TkVersioned(new TkMeasured(take)),
+            String.format("X-Rultor-Revision: %s", TkApp.REV),
             "Vary: Cookie"
         );
     }
 
     /**
      * Authenticated.
-     * @param takes Takes
+     * @param takes Take
      * @return Authenticated takes
      */
-    private static Takes fallback(final Takes takes) {
-        return new TsFallback(
+    private static Take fallback(final Take takes) {
+        return new TkFallback(
             takes,
             // @checkstyle AnonInnerLengthCheck (50 lines)
             new Fallback() {
                 @Override
-                public Take take(final RqFallback req) throws IOException {
+                public Response act(final RqFallback req) throws IOException {
                     final String err = ExceptionUtils.getStackTrace(
                         req.throwable()
                     );
@@ -149,13 +143,13 @@ public final class TsApp extends TsWrap {
                                         "error.html.vm"
                                     ),
                                     new RsVelocity.Pair("err", err),
-                                    new RsVelocity.Pair("rev", TsApp.REV)
+                                    new RsVelocity.Pair("rev", TkApp.REV)
                                 ),
                                 "text/html"
                             ),
                             HttpURLConnection.HTTP_INTERNAL_ERROR
                         )
-                    );
+                    ).act(req);
                 }
             }
         );
@@ -163,11 +157,11 @@ public final class TsApp extends TsWrap {
 
     /**
      * Authenticated.
-     * @param takes Takes
+     * @param takes Take
      * @return Authenticated takes
      */
-    private static Takes auth(final Takes takes) {
-        return new TsAuth(
+    private static Take auth(final Take takes) {
+        return new TkAuth(
             takes,
             new PsChain(
                 new PsFake(
@@ -203,10 +197,10 @@ public final class TsApp extends TsWrap {
     /**
      * Regex takes.
      * @param base Base
-     * @return Takes
+     * @return Take
      */
-    private static Takes regex(final Base base) {
-        return new TsFork(
+    private static Take regex(final Base base) {
+        return new TkFork(
             new FkParams(
                 PsByFlag.class.getSimpleName(),
                 Pattern.compile(".+"),
@@ -215,45 +209,20 @@ public final class TsApp extends TsWrap {
             new FkRegex("/robots.txt", ""),
             new FkRegex(
                 "/xsl/.*",
-                new TsWithType(new TsClasspath(), "text/xsl")
+                new TkWithType(new TkClasspath(), "text/xsl")
             ),
             new FkRegex(
                 "/js/.*",
-                new TsWithType(new TsClasspath(), "text/javascript")
+                new TkWithType(new TkClasspath(), "text/javascript")
             ),
             new FkRegex(
                 "/css/.*",
-                new TsWithType(new TsClasspath(), "text/css")
+                new TkWithType(new TkClasspath(), "text/css")
             ),
-            new FkRegex("/", new TsLogin(base)),
-            new FkRegex("/login.*", new TsLogin(base)),
-            new FkRegex(
-                "/f/([a-zA-Z0-9]+)\\.png",
-                new Target<RqRegex>() {
-                    @Override
-                    public Take route(final RqRegex req) throws IOException {
-                        return new TkFriend(
-                            TsApp.user(base, req),
-                            req.matcher().group(1)
-                        );
-                    }
-                }
-            )
+            new FkRegex("/", new TkLogin(base)),
+            new FkRegex("/login.*", new TkLogin(base)),
+            new FkRegex("/f/([a-zA-Z0-9]+)\\.png", new TkFriend(base))
         );
-    }
-
-    /**
-     * Get authenticated user.
-     * @param base Base
-     * @param req Request
-     * @return User
-     * @throws IOException If fails
-     */
-    private static User user(final Base base, final Request req)
-        throws IOException {
-        base.user(
-            URN.create(new RqAuth(req).identity().urn())
-        )
     }
 
 }

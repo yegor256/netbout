@@ -24,48 +24,43 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.rest.account;
+package com.netbout.rest.inbox;
 
-import com.jcabi.matchers.JaxbConverter;
-import com.jcabi.matchers.XhtmlMatchers;
-import com.netbout.mock.MkBase;
-import com.netbout.rest.BaseRs;
+import com.netbout.rest.login.TkCheck;
+import com.netbout.rest.login.TkIndex;
+import com.netbout.rest.login.TkRegister;
+import com.netbout.rest.login.TkStart;
 import com.netbout.spi.Base;
-import com.rexsl.mock.MkServletContext;
-import com.rexsl.page.mock.ResourceMocker;
-import javax.ws.rs.core.Response;
-import org.hamcrest.MatcherAssert;
-import org.junit.Test;
+import org.takes.facets.fork.FkMethods;
+import org.takes.facets.fork.FkRegex;
+import org.takes.facets.fork.TkFork;
+import org.takes.tk.TkWrap;
 
 /**
- * Test case for {@link AccountRs}.
+ * Inbox.
+ *
  * @author Yegor Bugayenko (yegor@tpc2.com)
  * @version $Id$
- * @since 2.12
+ * @since 2.14
  */
-public final class AccountRsTest {
+public final class TkInbox extends TkWrap {
 
     /**
-     * AccountRs can build render a page.
-     * @throws Exception If there is some problem inside
+     * Ctor.
+     * @param base Base
      */
-    @Test
-    public void rendersPage() throws Exception {
-        final AccountRs rest = new ResourceMocker().mock(AccountRs.class);
-        final Base base = new MkBase();
-        final String alias = "test";
-        base.user(BaseRs.TEST_URN).aliases().add(alias);
-        rest.setServletContext(
-            new MkServletContext().withAttr(
-                Base.class.getName(), base
-            )
-        );
-        final Response response = rest.index();
-        MatcherAssert.assertThat(
-            JaxbConverter.the(response.getEntity()),
-            XhtmlMatchers.hasXPaths(
-                "/page/alias/email",
-                "/page/links/link[@rel='save-email']/@href"
+    public TkInbox(final Base base) {
+        super(
+            new TkFork(
+                new FkRegex(
+                    "/login",
+                    new TkFork(
+                        new FkMethods("GET", new TkIndex(base))
+                    )
+                ),
+                new FkRegex("/login/start", new TkStart(base)),
+                new FkRegex("/login/register", new TkRegister(base)),
+                new FkRegex("/login/check", new TkCheck(base))
             )
         );
     }

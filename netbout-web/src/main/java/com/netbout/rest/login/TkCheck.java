@@ -54,23 +54,16 @@ public final class TkCheck implements Take {
     private final transient Base base;
 
     /**
-     * Request.
-     */
-    private final transient Request request;
-
-    /**
      * Ctor.
      * @param bse Base
-     * @param req Request
      */
-    public TkCheck(final Base bse, final Request req) {
+    public TkCheck(final Base bse) {
         this.base = bse;
-        this.request = req;
     }
 
     @Override
-    public Response act() throws IOException {
-        final Iterator<String> alias = new RqHref(this.request)
+    public Response act(final Request req) throws IOException {
+        final Iterator<String> alias = new RqHref(req)
             .href().param("alias").iterator();
         if (!alias.hasNext()) {
             throw new RsForward(
@@ -78,7 +71,7 @@ public final class TkCheck implements Take {
             );
         }
         return new RsWithBody(
-            new RqAlias(this.base, this.request).user().aliases().check(
+            new RqAlias(this.base, req).user().aliases().check(
                 alias.next()
             )
         );

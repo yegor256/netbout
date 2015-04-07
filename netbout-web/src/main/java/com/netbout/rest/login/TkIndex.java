@@ -27,25 +27,24 @@
 package com.netbout.rest.login;
 
 import com.netbout.rest.RqAlias;
+import com.netbout.rest.RsPage;
 import com.netbout.spi.Base;
 import java.io.IOException;
-import java.util.Iterator;
 import java.util.logging.Level;
 import org.takes.Request;
 import org.takes.Response;
 import org.takes.Take;
 import org.takes.facets.flash.RsFlash;
 import org.takes.facets.forward.RsForward;
-import org.takes.rq.RqForm;
 
 /**
- * Register.
+ * Login.
  *
  * @author Yegor Bugayenko (yegor@tpc2.com)
  * @version $Id$
  * @since 2.14
  */
-public final class TkRegister implements Take {
+public final class TkIndex implements Take {
 
     /**
      * Base.
@@ -56,25 +55,28 @@ public final class TkRegister implements Take {
      * Ctor.
      * @param bse Base
      */
-    public TkRegister(final Base bse) {
+    public TkIndex(final Base bse) {
         this.base = bse;
     }
 
     @Override
     public Response act(final Request req) throws IOException {
-        final Iterator<String> alias = new RqForm(req)
-            .param("alias").iterator();
-        if (!alias.hasNext()) {
+        final RqAlias rqa = new RqAlias(this.base, req);
+        if (rqa.has()) {
             throw new RsForward(
-                new RsFlash("'alias' is a mandatory form param", Level.SEVERE)
+                new RsFlash(
+                    String.format(
+                        "you are logged in already as '%s'",
+                        rqa.alias().name()
+                    ),
+                    Level.INFO
+                )
             );
         }
-        new RqAlias(this.base, req).user().aliases().add(alias.next());
-        return new RsForward(
-            new RsFlash(
-                String.format("your alias '%s' was registered", alias),
-                Level.INFO
-            )
+        return new RsPage(
+            "/xsl/login.xsl",
+            this.base,
+            req
         );
     }
 }

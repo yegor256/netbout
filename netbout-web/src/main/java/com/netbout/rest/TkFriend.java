@@ -34,6 +34,7 @@ import com.jcabi.http.response.RestResponse;
 import com.jcabi.http.wire.AutoRedirectingWire;
 import com.jcabi.http.wire.OneMinuteWire;
 import com.jcabi.http.wire.RetryWire;
+import com.netbout.spi.Base;
 import com.netbout.spi.Friend;
 import com.netbout.spi.User;
 import java.awt.Image;
@@ -47,8 +48,9 @@ import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import javax.imageio.ImageIO;
 import org.takes.Response;
-import org.takes.Take;
 import org.takes.facets.flash.RsFlash;
+import org.takes.facets.fork.RqRegex;
+import org.takes.facets.fork.TkRegex;
 import org.takes.facets.forward.RsForward;
 import org.takes.rs.RsWithBody;
 import org.takes.rs.RsWithHeader;
@@ -61,44 +63,39 @@ import org.takes.rs.RsWithType;
  * @version $Id$
  * @since 2.14
  */
-public final class TkFriend implements Take {
+public final class TkFriend implements TkRegex {
 
     /**
-     * Current user.
+     * Base.
      */
-    private final transient User user;
-
-    /**
-     * Alias of a friend.
-     */
-    private final transient String alias;
+    private final transient Base base;
 
     /**
      * Ctor.
-     * @param usr User
-     * @param als Alias of a friend
+     * @param bse Base
      */
-    public TkFriend(final User usr, final String als) {
-        this.user = usr;
-        this.alias = als;
+    public TkFriend(final Base bse) {
+        this.base = bse;
     }
 
     @Override
-    public Response act() throws IOException {
-        final Iterable<Friend> opts = this.user.friends(this.alias);
+    public Response act(final RqRegex req) throws IOException {
+        final User user = new RqAlias(this.base, req).user();
+        final String alias = req.matcher().group(1);
+        final Iterable<Friend> opts = user.friends(alias);
         if (Iterables.isEmpty(opts)) {
             throw new RsForward(
                 new RsFlash(
-                    String.format("alias '%s' not found", this.alias),
+                    String.format("alias '%s' not found", alias),
                     Level.SEVERE
                 )
             );
         }
         final Friend friend = opts.iterator().next();
-        if (!friend.alias().equals(this.alias)) {
+        if (!friend.alias().equals(alias)) {
             throw new RsForward(
                 new RsFlash(
-                    String.format("alias '%s' is not found", this.alias),
+                    String.format("alias '%s' is not found", alias),
                     Level.SEVERE
                 )
             );

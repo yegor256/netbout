@@ -33,7 +33,7 @@ import com.jcabi.manifests.Manifests;
 import com.netbout.cached.CdBase;
 import com.netbout.dynamo.DyBase;
 import com.netbout.email.EmBase;
-import com.netbout.rest.TsApp;
+import com.netbout.rest.TkApp;
 import org.takes.http.Exit;
 import org.takes.http.FtCLI;
 
@@ -59,7 +59,7 @@ public final class Launch {
      */
     public static void main(final String[] args) throws Exception {
         new FtCLI(
-            new TsApp(
+            new TkApp(
                 new EmBase(
                     new CdBase(new DyBase()),
                     new PostNoLoops(Launch.postman())

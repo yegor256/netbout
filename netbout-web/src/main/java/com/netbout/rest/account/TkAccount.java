@@ -26,94 +26,42 @@
  */
 package com.netbout.rest.account;
 
-import com.netbout.rest.RsPage;
-import com.netbout.spi.Alias;
-import com.rexsl.page.Link;
-import com.rexsl.page.PageBuilder;
-import com.rexsl.page.inset.FlashInset;
-import java.io.IOException;
-import java.net.URI;
-import java.util.logging.Level;
-import javax.ws.rs.FormParam;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.core.Response;
-import org.takes.Request;
-import org.takes.Response;
-import org.takes.Take;
-import org.takes.rs.xe.XeLink;
+import com.netbout.spi.Base;
+import org.takes.facets.fork.FkMethods;
+import org.takes.facets.fork.FkRegex;
+import org.takes.facets.fork.TkFork;
+import org.takes.tk.TkWrap;
 
 /**
- * User account.
+ * Login.
  *
  * @author Yegor Bugayenko (yegor@tpc2.com)
  * @version $Id$
  * @since 2.14
  */
-final class TkAccount implements Take {
-
-    /**
-     * Alias.
-     */
-    private final transient Alias alias;
-
-    /**
-     * Request.
-     */
-    private final transient Request request;
+public final class TkAccount extends TkWrap {
 
     /**
      * Ctor.
-     * @param als Alias
-     * @param req Request
+     * @param base Base
      */
-    TkAccount(final Alias als, final Request req) {
-        this.alias = als;
-        this.request = req;
-    }
-
-    @Override
-    public Response act() throws IOException {
-        return new RsPage(
-            "/xsl/account.xsl",
-            this.request,
-            new XeLink("save-email", "/acc/save-email")
+    public TkAccount(final Base base) {
+        super(
+            new TkFork(
+                new FkRegex(
+                    "/acc",
+                    new TkFork(
+                        new FkMethods("GET", new TkIndex(base))
+                    )
+                ),
+                new FkRegex(
+                    "/acc/save",
+                    new TkFork(
+                        new FkMethods("POST", new TkSaveEmail(base))
+                    )
+                )
+            )
         );
-    }
-
-    /**
-     * Update email.
-     * @param email Email to set
-     * @throws IOException If fails
-     */
-    @POST
-    @Path("/email")
-    public void post(@FormParam("email") final String email)
-        throws IOException {
-        try {
-            this.alias().email(email);
-        } catch (final Alias.InvalidEmailException ex) {
-            throw FlashInset.forward(this.self(), ex);
-        }
-        throw FlashInset.forward(
-            this.self(),
-            String.format(
-                "email changed to '%s'",
-                email
-            ),
-            Level.INFO
-        );
-    }
-
-    /**
-     * Get self URI.
-     * @return URI
-     */
-    private URI self() {
-        return this.uriInfo().getBaseUriBuilder().clone()
-            .path(AccountRs.class)
-            .build();
     }
 
 }

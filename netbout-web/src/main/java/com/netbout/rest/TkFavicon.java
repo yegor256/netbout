@@ -51,36 +51,9 @@ import org.takes.rs.RsWithType;
  */
 public final class TkFavicon implements Take {
 
-    /**
-     * How many unread.
-     */
-    private final transient long unread;
-
-    /**
-     * Ctor.
-     * @param req Request
-     * @throws IOException If fails
-     */
-    public TkFavicon(final Request req) throws IOException {
-        final Iterator<String> param =
-            new RqHref(req).href().param("unread").iterator();
-        if (param.hasNext()) {
-            this.unread = Long.parseLong(param.next());
-        } else {
-            this.unread = 0L;
-        }
-    }
-
-    /**
-     * Ctor.
-     * @param num Number
-     */
-    public TkFavicon(final long num) {
-        this.unread = num;
-    }
-
     @Override
-    public Response act() throws IOException {
+    public Response act(final Request req) throws IOException {
+        final long unread = TkFavicon.unread(req);
         final int width = 64;
         final int height = 64;
         final BufferedImage image = new BufferedImage(
@@ -90,12 +63,12 @@ public final class TkFavicon implements Take {
         // @checkstyle MagicNumber (1 line)
         graph.setColor(new Color(0x4b, 0x42, 0x50));
         graph.fillRect(0, 0, width, height);
-        if (this.unread > 0L) {
+        if (unread > 0L) {
             final String text;
-            if (this.unread >= (long) Tv.HUNDRED) {
+            if (unread >= (long) Tv.HUNDRED) {
                 text = "99";
             } else {
-                text = Long.toString(this.unread);
+                text = Long.toString(unread);
             }
             graph.setColor(Color.WHITE);
             graph.setFont(new Font(Font.SANS_SERIF, Font.BOLD, height / 2));
@@ -112,6 +85,24 @@ public final class TkFavicon implements Take {
             new RsWithBody(baos.toByteArray()),
             "image/gif"
         );
+    }
+
+    /**
+     * Unread number.
+     * @param req Request
+     * @return Number
+     * @throws IOException If fails
+     */
+    private static long unread(final Request req) throws IOException {
+        final Iterator<String> param =
+            new RqHref(req).href().param("unread").iterator();
+        final long unread;
+        if (param.hasNext()) {
+            unread = Long.parseLong(param.next());
+        } else {
+            unread = 0L;
+        }
+        return unread;
     }
 
 }

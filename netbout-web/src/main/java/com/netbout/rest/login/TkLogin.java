@@ -26,16 +26,11 @@
  */
 package com.netbout.rest.login;
 
-import com.netbout.rest.RqAlias;
-import com.netbout.rest.RsPage;
 import com.netbout.spi.Base;
-import java.io.IOException;
-import java.util.logging.Level;
-import org.takes.Request;
-import org.takes.Response;
-import org.takes.Take;
-import org.takes.facets.flash.RsFlash;
-import org.takes.facets.forward.RsForward;
+import org.takes.facets.fork.FkMethods;
+import org.takes.facets.fork.FkRegex;
+import org.takes.facets.fork.TkFork;
+import org.takes.tk.TkWrap;
 
 /**
  * Login.
@@ -44,46 +39,26 @@ import org.takes.facets.forward.RsForward;
  * @version $Id$
  * @since 2.14
  */
-public final class TkLogin implements Take {
-
-    /**
-     * Base.
-     */
-    private final transient Base base;
-
-    /**
-     * Request.
-     */
-    private final transient Request request;
+public final class TkLogin extends TkWrap {
 
     /**
      * Ctor.
-     * @param bse Base
-     * @param req Request
+     * @param base Base
      */
-    public TkLogin(final Base bse, final Request req) {
-        this.base = bse;
-        this.request = req;
-    }
-
-    @Override
-    public Response act() throws IOException {
-        final RqAlias rqa = new RqAlias(this.base, this.request);
-        if (rqa.has()) {
-            throw new RsForward(
-                new RsFlash(
-                    String.format(
-                        "you are logged in already as '%s'",
-                        rqa.alias().name()
-                    ),
-                    Level.INFO
-                )
-            );
-        }
-        return new RsPage(
-            "/xsl/login.xsl",
-            this.base,
-            this.request
+    public TkLogin(final Base base) {
+        super(
+            new TkFork(
+                new FkRegex(
+                    "/login",
+                    new TkFork(
+                        new FkMethods("GET", new TkIndex(base))
+                    )
+                ),
+                new FkRegex("/login/start", new TkStart(base)),
+                new FkRegex("/login/register", new TkRegister(base)),
+                new FkRegex("/login/check", new TkCheck(base))
+            )
         );
     }
+
 }
