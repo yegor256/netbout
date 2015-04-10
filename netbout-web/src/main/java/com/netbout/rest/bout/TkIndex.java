@@ -24,7 +24,7 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.rest.inbox;
+package com.netbout.rest.bout;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Iterables;
@@ -71,11 +71,22 @@ final class TkIndex implements Take {
 
     @Override
     public Response act(final Request req) throws IOException {
+        final Bout bout = new RqAlias(this.base, req).alias().inbox().bout(
+            new Rq
+        );
+        final Href home = new Href();
         return new RsPage(
-            "/xsl/inbox.xsl",
+            "/xsl/bout.xsl",
             this.base,
             req,
             new XeAppend("bouts", this.bouts(req))
+            new XeLink("post", new Href("/b"))
+                .link(new Link("post", "./post"))
+                .link(new Link("rename", "./rename"))
+                .link(new Link("invite", "./invite"))
+                .link(new Link("upload", "./upload"))
+                .link(new Link("create", "./create"))
+                .link(new Link("attach", "./attach"))
         );
     }
 
@@ -85,7 +96,7 @@ final class TkIndex implements Take {
      * @return Bouts
      * @throws IOException If fails
      */
-    private Iterable<XeSource> bouts(final Request req) throws IOException {
+    private Iterable<XeSource> messages(final Request req) throws IOException {
         long since = Inbox.NEVER;
         final Iterator<String> param = new RqHref.Base(req).href()
             .param("since").iterator();
