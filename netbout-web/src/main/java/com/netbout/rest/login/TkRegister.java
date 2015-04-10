@@ -45,7 +45,7 @@ import org.takes.rq.RqForm;
  * @version $Id$
  * @since 2.14
  */
-public final class TkRegister implements Take {
+final class TkRegister implements Take {
 
     /**
      * Base.
@@ -56,7 +56,7 @@ public final class TkRegister implements Take {
      * Ctor.
      * @param bse Base
      */
-    public TkRegister(final Base bse) {
+    TkRegister(final Base bse) {
         this.base = bse;
     }
 

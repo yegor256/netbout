@@ -28,7 +28,6 @@ package com.netbout.rest.inbox;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Iterables;
-import com.netbout.rest.BoutRs;
 import com.netbout.rest.RqAlias;
 import com.netbout.rest.RsPage;
 import com.netbout.spi.Base;
@@ -88,7 +87,7 @@ public final class TkIndex implements Take {
      */
     private Iterable<XeSource> bouts(final Request req) throws IOException {
         long since = Inbox.NEVER;
-        final Iterator<String> param = new RqHref(req).href()
+        final Iterator<String> param = new RqHref.Base(req).href()
             .param("since").iterator();
         if (param.hasNext()) {
             since = Long.parseLong(param.next());
@@ -103,7 +102,7 @@ public final class TkIndex implements Take {
                 @Override
                 public XeSource apply(final Bout bout) {
                     try {
-                        return TkIndex.source(req, bout);
+                        return TkIndex.source(bout);
                     } catch (final IOException ex) {
                         throw new IllegalStateException(ex);
                     }
@@ -118,7 +117,7 @@ public final class TkIndex implements Take {
      * @return Bundle
      * @throws IOException If fails
      */
-    private static XeSource source(final Href href, final Bout bout) throws IOException {
+    private static XeSource source(final Bout bout) throws IOException {
         return new XeAppend(
             "bout",
             new XeDirectives(
@@ -134,10 +133,10 @@ public final class TkIndex implements Take {
                     .add("title")
                     .set(bout.title()).up()
             ),
-            new XeLink("open", String.format("/b/%d", bout.number())),
+            new XeLink("open", new Href("/b").path(bout.number())),
             new XeLink(
                 "more",
-                String.format("/?since=%d", bout.updated().getTime())
+                new Href().with("since", bout.updated().getTime())
             ),
             new XeAppend(
                 "friends",
@@ -146,7 +145,11 @@ public final class TkIndex implements Take {
                     new Function<Friend, XeSource>() {
                         @Override
                         public XeSource apply(final Friend friend) {
-                            return TkIndex.source(bout, friend);
+                            try {
+                                return TkIndex.source(bout, friend);
+                            } catch (final IOException ex) {
+                                throw new IllegalStateException(ex);
+                            }
                         }
                     }
                 )
@@ -161,27 +164,25 @@ public final class TkIndex implements Take {
      * @return Xembly source
      * @throws IOException If fails
      */
-    private static XeSource friend(final Bout bout, final Friend friend)
+    private static XeSource source(final Bout bout, final Friend friend)
         throws IOException {
         return new XeAppend(
             "friend",
             new XeDirectives(
                 new Directives().add("alias").set(friend.alias())
             ),
-            new XeLink("photo", String.format("/f/%s.png", friend.alias())),
-            new XeLink("kick", String.format("/b/%d/kick?name=%s", friend.alias()))
-        )
-        return new JaxbBundle("friend")
-            .link(
-                new Link(
-                    "kick",
-                    this.uriInfo().getBaseUriBuilder().clone()
-                        .path(BoutRs.class)
-                        .path(BoutRs.class, "kick")
-                        .queryParam("name", "{x}")
-                        .build(bout.number(), friend.alias())
-                )
-            );
+            new XeLink(
+                "photo",
+                new Href("/f").path(String.format("%s.png", friend.alias()))
+            ),
+            new XeLink(
+                "kick",
+                new Href("/b")
+                    .path(bout.number())
+                    .path("/kick")
+                    .with("name", friend.alias())
+            )
+        );
     }
 
 }

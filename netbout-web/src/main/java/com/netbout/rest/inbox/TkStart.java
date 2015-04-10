@@ -26,35 +26,45 @@
  */
 package com.netbout.rest.inbox;
 
+import com.netbout.rest.RqAlias;
 import com.netbout.spi.Base;
-import org.takes.facets.fork.FkMethods;
-import org.takes.facets.fork.FkRegex;
-import org.takes.facets.fork.TkFork;
-import org.takes.tk.TkWrap;
+import java.io.IOException;
+import java.util.logging.Level;
+import org.takes.Request;
+import org.takes.Response;
+import org.takes.Take;
+import org.takes.facets.flash.RsFlash;
+import org.takes.facets.forward.RsForward;
 
 /**
- * Inbox.
+ * Start.
  *
  * @author Yegor Bugayenko (yegor@tpc2.com)
  * @version $Id$
  * @since 2.14
  */
-public final class TkInbox extends TkWrap {
+public final class TkStart implements Take {
+
+    /**
+     * Base.
+     */
+    private final transient Base base;
 
     /**
      * Ctor.
-     * @param base Base
+     * @param bse Base
      */
-    public TkInbox(final Base base) {
-        super(
-            new TkFork(
-                new FkRegex(
-                    "/",
-                    new TkFork(
-                        new FkMethods("GET", new TkIndex(base))
-                    )
-                ),
-                new FkRegex("/start", new TkStart(base))
+    public TkStart(final Base bse) {
+        this.base = bse;
+    }
+
+    @Override
+    public Response act(final Request req) throws IOException {
+        final long number = new RqAlias(this.base, req).alias().inbox().start();
+        throw new RsForward(
+            new RsFlash(
+                String.format("new bout #%d started", number),
+                Level.INFO
             )
         );
     }

@@ -41,7 +41,7 @@ import org.takes.rs.xe.XeLink;
  * @version $Id$
  * @since 2.14
  */
-public final class TkStart implements Take {
+final class TkStart implements Take {
 
     /**
      * Base.
@@ -52,7 +52,7 @@ public final class TkStart implements Take {
      * Ctor.
      * @param bse Base
      */
-    public TkStart(final Base bse) {
+    TkStart(final Base bse) {
         this.base = bse;
     }
 

@@ -46,7 +46,7 @@ import org.takes.rs.RsWithBody;
  * @version $Id$
  * @since 2.14
  */
-public final class TkCheck implements Take {
+final class TkCheck implements Take {
 
     /**
      * Base.
@@ -57,13 +57,13 @@ public final class TkCheck implements Take {
      * Ctor.
      * @param bse Base
      */
-    public TkCheck(final Base bse) {
+    TkCheck(final Base bse) {
         this.base = bse;
     }
 
     @Override
     public Response act(final Request req) throws IOException {
-        final Iterator<String> alias = new RqHref(req)
+        final Iterator<String> alias = new RqHref.Base(req)
             .href().param("alias").iterator();
         if (!alias.hasNext()) {
             throw new RsForward(

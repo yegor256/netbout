@@ -44,7 +44,7 @@ import org.takes.facets.forward.RsForward;
  * @version $Id$
  * @since 2.14
  */
-public final class TkIndex implements Take {
+final class TkIndex implements Take {
 
     /**
      * Base.
@@ -55,7 +55,7 @@ public final class TkIndex implements Take {
      * Ctor.
      * @param bse Base
      */
-    public TkIndex(final Base bse) {
+    TkIndex(final Base bse) {
         this.base = bse;
     }
 
