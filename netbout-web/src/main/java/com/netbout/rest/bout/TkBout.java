@@ -42,7 +42,7 @@ import org.takes.tk.TkWrap;
 /**
  * Bout.
  *
- * @author Yegor Bugayenko (yegor@tpc2.com)
+ * @author Yegor Bugayenko (yegor@teamed.io)
  * @version $Id$
  * @since 2.14
  */
@@ -56,17 +56,15 @@ public final class TkBout extends TkWrap {
         super(
             new TkFork(
                 new FkRegex(
-                    "/b/[0-9]+",
-                    new TkFork(
-                        new FkMethods("GET", new TkIndex(base))
-                    )
+                    "/b/([0-9]+)",
+                    new TkIndex(base, )
                 ),
                 new FkRegex(
-                    "/acc/save",
+                    "/b/([0-9]+)/attach",
                     new TkFork(
-                        new FkMethods("POST", new TkSaveEmail(base))
+                        new FkMethods("POST", new TkAttach(base))
                     )
-                )
+                ),
             )
         );
     }

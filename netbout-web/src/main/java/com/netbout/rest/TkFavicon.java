@@ -45,7 +45,7 @@ import org.takes.rs.RsWithType;
 /**
  * Favicon rendering.
  *
- * @author Yegor Bugayenko (yegor@tpc2.com)
+ * @author Yegor Bugayenko (yegor@teamed.io)
  * @version $Id$
  * @since 2.14
  */
@@ -95,7 +95,7 @@ public final class TkFavicon implements Take {
      */
     private static long unread(final Request req) throws IOException {
         final Iterator<String> param =
-            new RqHref(req).href().param("unread").iterator();
+            new RqHref.Base(req).href().param("unread").iterator();
         final long unread;
         if (param.hasNext()) {
             unread = Long.parseLong(param.next());

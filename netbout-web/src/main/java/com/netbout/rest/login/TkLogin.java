@@ -35,7 +35,7 @@ import org.takes.tk.TkWrap;
 /**
  * Login.
  *
- * @author Yegor Bugayenko (yegor@tpc2.com)
+ * @author Yegor Bugayenko (yegor@teamed.io)
  * @version $Id$
  * @since 2.14
  */
@@ -49,7 +49,7 @@ public final class TkLogin extends TkWrap {
         super(
             new TkFork(
                 new FkRegex(
-                    "/login",
+                    "/login/index",
                     new TkFork(
                         new FkMethods("GET", new TkIndex(base))
                     )

@@ -60,7 +60,7 @@ import org.apache.commons.lang3.Validate;
 /**
  * Base RESTful resource.
  *
- * @author Yegor Bugayenko (yegor@tpc2.com)
+ * @author Yegor Bugayenko (yegor@teamed.io)
  * @version $Id$
  * @checkstyle ClassDataAbstractionCouplingCheck (500 lines)
  */

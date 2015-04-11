@@ -27,11 +27,15 @@
 package com.netbout.rest;
 
 import com.jcabi.manifests.Manifests;
+import com.netbout.rest.account.TkAccount;
+import com.netbout.rest.bout.TkBout;
 import com.netbout.rest.login.TkLogin;
 import com.netbout.spi.Base;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.nio.charset.Charset;
+import java.util.Collections;
+import java.util.Iterator;
 import java.util.regex.Pattern;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.takes.Response;
@@ -60,7 +64,6 @@ import org.takes.rs.RsVelocity;
 import org.takes.rs.RsWithStatus;
 import org.takes.rs.RsWithType;
 import org.takes.tk.TkClasspath;
-import org.takes.tk.TkFixed;
 import org.takes.tk.TkGzip;
 import org.takes.tk.TkMeasured;
 import org.takes.tk.TkRedirect;
@@ -72,7 +75,7 @@ import org.takes.tk.TkWrap;
 /**
  * Web app.
  *
- * @author Yegor Bugayenko (yegor@tpc2.com)
+ * @author Yegor Bugayenko (yegor@teamed.io)
  * @version $Id$
  * @since 2.14
  */
@@ -131,11 +134,12 @@ public final class TkApp extends TkWrap {
             // @checkstyle AnonInnerLengthCheck (50 lines)
             new Fallback() {
                 @Override
-                public Response act(final RqFallback req) throws IOException {
+                public Iterator<Response> route(final RqFallback req)
+                    throws IOException {
                     final String err = ExceptionUtils.getStackTrace(
                         req.throwable()
                     );
-                    return new TkFixed(
+                    return Collections.<Response>singleton(
                         new RsWithStatus(
                             new RsWithType(
                                 new RsVelocity(
@@ -149,7 +153,7 @@ public final class TkApp extends TkWrap {
                             ),
                             HttpURLConnection.HTTP_INTERNAL_ERROR
                         )
-                    ).act(req);
+                    ).iterator();
                 }
             }
         );
@@ -208,20 +212,24 @@ public final class TkApp extends TkWrap {
             ),
             new FkRegex("/robots.txt", ""),
             new FkRegex(
-                "/xsl/.*",
+                "/xsl/[a-z]+\\.xsl",
                 new TkWithType(new TkClasspath(), "text/xsl")
             ),
             new FkRegex(
-                "/js/.*",
+                "/js/[a-z]+\\.js",
                 new TkWithType(new TkClasspath(), "text/javascript")
             ),
             new FkRegex(
-                "/css/.*",
+                "/css/[a-z]+\\.css",
                 new TkWithType(new TkClasspath(), "text/css")
             ),
-            new FkRegex("/", new TkLogin(base)),
-            new FkRegex("/login.*", new TkLogin(base)),
-            new FkRegex("/f/([a-zA-Z0-9]+)\\.png", new TkFriend(base))
+            new FkRegex("/", new TkInbox(base)),
+            new FkRegex("/start", new TkStart(base)),
+            new FkRegex("/f/([a-zA-Z0-9]+)\\.png", new TkFriend(base)),
+            new FkRegex("/favicon.ico", new TkFavicon()),
+            new FkRegex("/login/.*", new TkLogin(base)),
+            new FkRegex("/b/.*", new TkBout(base)),
+            new FkRegex("/acc/.*", new TkAccount(base))
         );
     }
 

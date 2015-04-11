@@ -30,7 +30,7 @@ import org.junit.Test;
 
 /**
  * Test case for {@link BaseRs}.
- * @author Yegor Bugayenko (yegor@tpc2.com)
+ * @author Yegor Bugayenko (yegor@teamed.io)
  * @version $Id$
  */
 public final class BaseRsTest {

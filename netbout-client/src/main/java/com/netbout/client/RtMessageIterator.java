@@ -49,7 +49,7 @@ import org.apache.commons.lang3.time.DateFormatUtils;
 /**
  * REST bout iterator.
  *
- * @author Yegor Bugayenko (yegor@tpc2.com)
+ * @author Yegor Bugayenko (yegor@teamed.io)
  * @version $Id$
  * @since 2.14
  */

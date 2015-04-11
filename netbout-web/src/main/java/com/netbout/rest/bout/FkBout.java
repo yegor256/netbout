@@ -26,57 +26,23 @@
  */
 package com.netbout.rest.bout;
 
-import com.netbout.spi.Attachment;
-import com.netbout.spi.Bout;
 import java.io.IOException;
-import java.util.logging.Level;
+import java.util.Iterator;
 import org.takes.Request;
 import org.takes.Response;
-import org.takes.Take;
-import org.takes.facets.flash.RsFlash;
-import org.takes.facets.forward.RsForward;
-import org.takes.misc.Href;
-import org.takes.rq.RqHref;
+import org.takes.facets.fork.Fork;
 
 /**
- * Download.
+ * Bout fork.
  *
  * @author Yegor Bugayenko (yegor@teamed.io)
  * @version $Id$
  * @since 2.14
  */
-final class TkUpload implements Take {
-
-    /**
-     * Bout.
-     */
-    private final transient Bout bout;
-
-    /**
-     * Ctor.
-     * @param bot Bout
-     */
-    TkUpload(final Bout bot) {
-        this.bout = bot;
-    }
+final class FkBout implements Fork {
 
     @Override
-    public Response act(final Request req) throws IOException {
-        final Href href = new RqHref.Base(req).href();
-        final String name = href.param("name").iterator().next();
-        final String ctype = href.param("ctype").iterator().next();
-        final String etag = href.param("etag").iterator().next();
-        final Attachment attachment = this.bout.attachments().get(name);
-        attachment.write(req.body(), ctype, etag);
-        return new RsForward(
-            new RsFlash(
-                String.format(
-                    "attachment '%s' uploaded (ctype=%s, etag=%s)",
-                    name, ctype, etag
-                ),
-                Level.INFO
-            )
-        );
+    public Iterator<Response> route(final Request request) throws IOException {
+        throw new UnsupportedOperationException("#route()");
     }
-
 }

@@ -40,9 +40,9 @@ import org.takes.facets.forward.RsForward;
 import org.takes.rq.RqWrap;
 
 /**
- * Xembly for alias.
+ * User and alias retriever from request.
  *
- * @author Yegor Bugayenko (yegor@tpc2.com)
+ * @author Yegor Bugayenko (yegor@teamed.io)
  * @version $Id$
  * @since 2.14
  * @checkstyle ClassDataAbstractionCouplingCheck (500 lines)

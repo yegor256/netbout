@@ -38,7 +38,7 @@ import org.junit.Test;
 
 /**
  * Integration case for {@link RtMessages}.
- * @author Yegor Bugayenko (yegor@tpc2.com)
+ * @author Yegor Bugayenko (yegor@teamed.io)
  * @version $Id$
  * @since 2.14
  */

@@ -61,7 +61,7 @@ import org.apache.commons.io.IOUtils;
 /**
  * Dynamo attachment.
  *
- * @author Yegor Bugayenko (yegor@tpc2.com)
+ * @author Yegor Bugayenko (yegor@teamed.io)
  * @version $Id$
  * @since 2.0
  * @checkstyle ClassDataAbstractionCouplingCheck (500 lines)

@@ -24,11 +24,9 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.rest.inbox;
+package com.netbout.rest;
 
 import com.google.common.collect.Iterables;
-import com.netbout.rest.RqAlias;
-import com.netbout.rest.RsPage;
 import com.netbout.spi.Base;
 import com.netbout.spi.Bout;
 import com.netbout.spi.Friend;
@@ -50,11 +48,11 @@ import org.xembly.Directives;
 /**
  * Index.
  *
- * @author Yegor Bugayenko (yegor@tpc2.com)
+ * @author Yegor Bugayenko (yegor@teamed.io)
  * @version $Id$
  * @since 2.14
  */
-final class TkIndex implements Take {
+final class TkInbox implements Take {
 
     /**
      * Base.
@@ -65,7 +63,7 @@ final class TkIndex implements Take {
      * Ctor.
      * @param bse Base
      */
-    TkIndex(final Base bse) {
+    TkInbox(final Base bse) {
         this.base = bse;
     }
 
@@ -101,7 +99,7 @@ final class TkIndex implements Take {
             new XeTransform.Func<Bout>() {
                 @Override
                 public XeSource transform(final Bout bout) throws IOException {
-                    return TkIndex.source(bout);
+                    return TkInbox.source(bout);
                 }
             }
         );
@@ -142,7 +140,7 @@ final class TkIndex implements Take {
                         @Override
                         public XeSource transform(final Friend friend)
                             throws IOException {
-                            return TkIndex.source(bout, friend);
+                            return TkInbox.source(bout, friend);
                         }
                     }
                 )

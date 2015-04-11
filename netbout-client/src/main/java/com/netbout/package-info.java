@@ -28,7 +28,7 @@
 /**
  * Heroku deploy.
  *
- * @author Yegor Bugayenko (yegor@tpc2.com)
+ * @author Yegor Bugayenko (yegor@teamed.io)
  * @version $Id$
  */
 package com.netbout;

@@ -37,7 +37,7 @@
  * attachments: (hash:bout, range:name, owner, ctype, data)
  * </pre>
  *
- * @author Yegor Bugayenko (yegor@tpc2.com)
+ * @author Yegor Bugayenko (yegor@teamed.io)
  * @version $Id$
  * @since 2.0
  */

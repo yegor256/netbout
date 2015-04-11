@@ -41,7 +41,7 @@ import org.junit.Test;
 
 /**
  * Integration case for {@link BoutRs}.
- * @author Yegor Bugayenko (yegor@tpc2.com)
+ * @author Yegor Bugayenko (yegor@teamed.io)
  * @version $Id$
  */
 public final class BoutRsITCase {

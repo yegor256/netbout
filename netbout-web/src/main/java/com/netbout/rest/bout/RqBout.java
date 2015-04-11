@@ -24,26 +24,31 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.rest.inbox;
+package com.netbout.rest.bout;
 
-import com.netbout.rest.RqAlias;
+import com.jcabi.urn.URN;
+import com.netbout.spi.Alias;
 import com.netbout.spi.Base;
+import com.netbout.spi.User;
 import java.io.IOException;
-import java.util.logging.Level;
+import lombok.EqualsAndHashCode;
 import org.takes.Request;
-import org.takes.Response;
-import org.takes.Take;
+import org.takes.facets.auth.Identity;
+import org.takes.facets.auth.RqAuth;
 import org.takes.facets.flash.RsFlash;
 import org.takes.facets.forward.RsForward;
+import org.takes.rq.RqWrap;
 
 /**
- * Start.
+ * Xembly for alias.
  *
- * @author Yegor Bugayenko (yegor@tpc2.com)
+ * @author Yegor Bugayenko (yegor@teamed.io)
  * @version $Id$
  * @since 2.14
+ * @checkstyle ClassDataAbstractionCouplingCheck (500 lines)
  */
-public final class TkStart implements Take {
+@EqualsAndHashCode(callSuper = true)
+public final class RqAlias extends RqWrap {
 
     /**
      * Base.
@@ -52,21 +57,45 @@ public final class TkStart implements Take {
 
     /**
      * Ctor.
-     * @param bse Base
+     * @param bse The base
+     * @param req Request
      */
-    public TkStart(final Base bse) {
+    public RqAlias(final Base bse, final Request req) {
+        super(req);
         this.base = bse;
     }
 
-    @Override
-    public Response act(final Request req) throws IOException {
-        final long number = new RqAlias(this.base, req).alias().inbox().start();
-        throw new RsForward(
-            new RsFlash(
-                String.format("new bout #%d started", number),
-                Level.INFO
-            )
-        );
+    /**
+     * Has alias?
+     * @return TRUE if alias is there
+     * @throws IOException If fails
+     */
+    public boolean has() throws IOException {
+        return !new RqAuth(this).identity().equals(Identity.ANONYMOUS);
+    }
+
+    /**
+     * Get user.
+     * @return User
+     * @throws IOException If fails
+     */
+    public User user() throws IOException {
+        final Identity identity = new RqAuth(this).identity();
+        if (identity.equals(Identity.ANONYMOUS)) {
+            throw new RsForward(
+                new RsFlash("you are not logged in yet")
+            );
+        }
+        return this.base.user(URN.create(identity.urn()));
+    }
+
+    /**
+     * Get alias.
+     * @return Alias
+     * @throws IOException If fails
+     */
+    public Alias alias() throws IOException {
+        return this.user().aliases().iterate().iterator().next();
     }
 
 }

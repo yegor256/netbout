@@ -57,7 +57,7 @@ import lombok.ToString;
 /**
  * Dynamo inbox.
  *
- * @author Yegor Bugayenko (yegor@tpc2.com)
+ * @author Yegor Bugayenko (yegor@teamed.io)
  * @version $Id$
  * @since 2.0
  * @checkstyle ClassDataAbstractionCouplingCheck (500 lines)
