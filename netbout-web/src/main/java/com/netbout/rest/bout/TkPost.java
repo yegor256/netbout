@@ -27,6 +27,7 @@
 package com.netbout.rest.bout;
 
 import com.netbout.spi.Attachments;
+import com.netbout.spi.Base;
 import com.netbout.spi.Bout;
 import java.io.IOException;
 import org.takes.Request;
@@ -46,23 +47,24 @@ import org.takes.rq.RqForm;
 final class TkPost implements Take {
 
     /**
-     * Bout.
+     * Base.
      */
-    private final transient Bout bout;
+    private final transient Base base;
 
     /**
      * Ctor.
-     * @param bot Bout
+     * @param bse Base
      */
-    TkPost(final Bout bot) {
-        this.bout = bot;
+    TkPost(final Base bse) {
+        this.base = bse;
     }
 
     @Override
     public Response act(final Request req) throws IOException {
         final String text = new RqForm(req).param("text").iterator().next();
+        final Bout bout = new RqBout(this.base, req).bout();
         try {
-            this.bout.messages().post(text);
+            bout.messages().post(text);
         } catch (final Attachments.InvalidNameException ex) {
             throw new RsForward(new RsFlash(ex));
         }
@@ -70,7 +72,7 @@ final class TkPost implements Take {
             new RsFlash(
                 String.format(
                     "message posted to the bout #%d",
-                    this.bout.number()
+                    bout.number()
                 )
             )
         );

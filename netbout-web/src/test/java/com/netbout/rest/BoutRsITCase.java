@@ -49,7 +49,7 @@ public final class BoutRsITCase {
     /**
      * Home page of Tomcat.
      */
-    private static final String HOME = System.getProperty("tomcat.home");
+    private static final String HOME = System.getProperty("takes.home");
 
     /**
      * BoutRs can upload and download attachments.

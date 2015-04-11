@@ -29,6 +29,7 @@ package com.netbout.rest.bout;
 import com.jcabi.aspects.Tv;
 import com.netbout.spi.Attachment;
 import com.netbout.spi.Attachments;
+import com.netbout.spi.Base;
 import com.netbout.spi.Bout;
 import eu.medsea.mimeutil.MimeUtil;
 import eu.medsea.mimeutil.detector.MagicMimeMimeDetector;
@@ -63,16 +64,16 @@ final class TkAttach implements Take {
     }
 
     /**
-     * Bout.
+     * Base.
      */
-    private final transient Bout bout;
+    private final transient Base base;
 
     /**
      * Ctor.
-     * @param bot Bout
+     * @param bse Base
      */
-    TkAttach(final Bout bot) {
-        this.bout = bot;
+    TkAttach(final Base bse) {
+        this.base = bse;
     }
 
     @Override
@@ -83,12 +84,13 @@ final class TkAttach implements Take {
         ).printBody();
         final File temp = File.createTempFile("netbout", "bin");
         IOUtils.copy(req.body(), new FileOutputStream(temp));
+        final Bout bout = new RqBout(this.base, req).bout();
         final StringBuilder msg = new StringBuilder(Tv.HUNDRED);
-        if (new Attachments.Search(this.bout.attachments()).exists(name)) {
+        if (new Attachments.Search(bout.attachments()).exists(name)) {
             msg.append(String.format("attachment '%s' overwritten", name));
         } else {
             try {
-                this.bout.attachments().create(name);
+                bout.attachments().create(name);
             } catch (final Attachments.InvalidNameException ex) {
                 throw new RsForward(new RsFlash(ex));
             }
@@ -104,7 +106,7 @@ final class TkAttach implements Take {
         msg.append(" (").append(temp.length())
             .append(" bytes, ").append(ctype).append(')');
         try {
-            this.bout.attachments().get(name).write(
+            bout.attachments().get(name).write(
                 new FileInputStream(temp),
                 ctype, Long.toString(System.currentTimeMillis())
             );

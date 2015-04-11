@@ -27,8 +27,8 @@
 package com.netbout.rest.account;
 
 import com.jcabi.matchers.XhtmlMatchers;
+import com.jcabi.urn.URN;
 import com.netbout.mock.MkBase;
-import com.netbout.rest.BaseRs;
 import com.netbout.spi.Base;
 import org.hamcrest.MatcherAssert;
 import org.junit.Test;
@@ -51,7 +51,7 @@ public final class TkIndexTest {
     public void rendersPage() throws Exception {
         final Base base = new MkBase();
         final String alias = "test";
-        base.user(BaseRs.TEST_URN).aliases().add(alias);
+        base.user(URN.create("urn:test:1")).aliases().add(alias);
         MatcherAssert.assertThat(
             new RsPrint(new TkIndex(base).act(new RqFake())).printBody(),
             XhtmlMatchers.hasXPaths(

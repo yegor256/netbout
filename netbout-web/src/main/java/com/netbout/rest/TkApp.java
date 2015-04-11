@@ -223,6 +223,10 @@ public final class TkApp extends TkWrap {
                 "/css/[a-z]+\\.css",
                 new TkWithType(new TkClasspath(), "text/css")
             ),
+            new FkRegex(
+                "/lang/[a-z]+\\.xml",
+                new TkWithType(new TkClasspath(), "text/xml")
+            ),
             new FkRegex("/", new TkInbox(base)),
             new FkRegex("/start", new TkStart(base)),
             new FkRegex("/f/([a-zA-Z0-9]+)\\.png", new TkFriend(base)),

@@ -44,7 +44,7 @@ public final class BaseRsITCase {
     /**
      * Home page of Tomcat.
      */
-    private static final String HOME = System.getProperty("tomcat.home");
+    private static final String HOME = System.getProperty("takes.home");
 
     /**
      * BaseRs can render static resources.

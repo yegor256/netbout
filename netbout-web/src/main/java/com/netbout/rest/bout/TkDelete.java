@@ -27,6 +27,7 @@
 package com.netbout.rest.bout;
 
 import com.netbout.spi.Attachments;
+import com.netbout.spi.Base;
 import com.netbout.spi.Bout;
 import java.io.IOException;
 import org.takes.Request;
@@ -46,24 +47,25 @@ import org.takes.rq.RqHref;
 final class TkDelete implements Take {
 
     /**
-     * Bout.
+     * Base.
      */
-    private final transient Bout bout;
+    private final transient Base base;
 
     /**
      * Ctor.
-     * @param bot Bout
+     * @param bse Base
      */
-    TkDelete(final Bout bot) {
-        this.bout = bot;
+    TkDelete(final Base bse) {
+        this.base = bse;
     }
 
     @Override
     public Response act(final Request req) throws IOException {
         final String name = new RqHref.Base(req).href()
             .param("name").iterator().next();
+        final Bout bout = new RqBout(this.base, req).bout();
         try {
-            this.bout.attachments().delete(name);
+            bout.attachments().delete(name);
         } catch (final Attachments.InvalidNameException ex) {
             throw new RsForward(new RsFlash(ex));
         }

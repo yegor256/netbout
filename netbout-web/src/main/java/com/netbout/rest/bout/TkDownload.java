@@ -27,6 +27,7 @@
 package com.netbout.rest.bout;
 
 import com.netbout.spi.Attachment;
+import com.netbout.spi.Base;
 import com.netbout.spi.Bout;
 import java.io.IOException;
 import java.net.URLEncoder;
@@ -47,21 +48,22 @@ import org.takes.rs.RsFluent;
 final class TkDownload implements Take {
 
     /**
-     * Bout.
+     * Base.
      */
-    private final transient Bout bout;
+    private final transient Base base;
 
     /**
      * Ctor.
-     * @param bot Bout
+     * @param bse Base
      */
-    TkDownload(final Bout bot) {
-        this.bout = bot;
+    TkDownload(final Base bse) {
+        this.base = bse;
     }
 
     @Override
     public Response act(final Request req) throws IOException {
-        final Attachment attachment = this.bout.attachments().get(
+        final Bout bout = new RqBout(this.base, req).bout();
+        final Attachment attachment = bout.attachments().get(
             new RqHref.Base(req).href().param("name").iterator().next()
         );
         return new RsFluent()

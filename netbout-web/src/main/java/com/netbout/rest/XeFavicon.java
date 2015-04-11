@@ -26,22 +26,55 @@
  */
 package com.netbout.rest;
 
-import org.junit.Test;
+import com.netbout.spi.Base;
+import java.io.IOException;
+import lombok.EqualsAndHashCode;
+import org.takes.Request;
+import org.takes.misc.Href;
+import org.takes.rs.xe.XeLink;
+import org.takes.rs.xe.XeSource;
+import org.takes.rs.xe.XeWrap;
+import org.xembly.Directive;
+import org.xembly.Directives;
 
 /**
- * Test case for {@link InboxRs}.
+ * Xembly for favicon link.
+ *
  * @author Yegor Bugayenko (yegor@teamed.io)
  * @version $Id$
+ * @since 2.14
+ * @checkstyle ClassDataAbstractionCouplingCheck (500 lines)
  */
-public final class InboxRsTest {
+@EqualsAndHashCode(callSuper = true)
+final class XeFavicon extends XeWrap {
 
     /**
-     * InboxRs can render front page of the inbox.
-     * @throws Exception If there is some problem inside
+     * Ctor.
+     * @param base The base
+     * @param req Request
      */
-    @Test
-    public void rendersInboxFrontPage() throws Exception {
-        // todo
+    XeFavicon(final Base base, final Request req) {
+        super(
+            new XeSource() {
+                @Override
+                public Iterable<Directive> toXembly() throws IOException {
+                    final Directives dirs = new Directives();
+                    final RqAlias rqa = new RqAlias(base, req);
+                    if (rqa.has()) {
+                        dirs.append(
+                            new XeLink(
+                                "favicon",
+                                new Href().path("favicon.ico").with(
+                                    "unread",
+                                    rqa.alias().inbox().unread()
+                                )
+                            ).toXembly()
+                        );
+                    }
+                    return dirs;
+                }
+            }
+        );
     }
 
 }

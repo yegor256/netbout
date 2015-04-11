@@ -27,6 +27,7 @@
 package com.netbout.rest.bout;
 
 import com.netbout.spi.Attachments;
+import com.netbout.spi.Base;
 import com.netbout.spi.Bout;
 import java.io.IOException;
 import org.takes.Request;
@@ -46,29 +47,30 @@ import org.takes.rq.RqForm;
 final class TkRename implements Take {
 
     /**
-     * Bout.
+     * Base.
      */
-    private final transient Bout bout;
+    private final transient Base base;
 
     /**
      * Ctor.
-     * @param bot Bout
+     * @param bse Base
      */
-    TkRename(final Bout bot) {
-        this.bout = bot;
+    TkRename(final Base bse) {
+        this.base = bse;
     }
 
     @Override
     public Response act(final Request req) throws IOException {
         final String title = new RqForm(req).param("title").iterator().next();
+        final Bout bout = new RqBout(this.base, req).bout();
         try {
-            this.bout.rename(title);
+            bout.rename(title);
         } catch (final Attachments.InvalidNameException ex) {
             throw new RsForward(new RsFlash(ex));
         }
         return new RsForward(
             new RsFlash(
-                String.format("bout #%d renamed", this.bout.number())
+                String.format("bout #%d renamed", bout.number())
             )
         );
     }

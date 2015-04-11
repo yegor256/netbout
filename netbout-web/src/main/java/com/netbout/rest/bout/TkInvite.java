@@ -26,9 +26,10 @@
  */
 package com.netbout.rest.bout;
 
+import com.netbout.rest.RqAlias;
+import com.netbout.spi.Base;
 import com.netbout.spi.Bout;
 import com.netbout.spi.Friends;
-import com.netbout.spi.User;
 import java.io.IOException;
 import java.util.logging.Level;
 import org.takes.Request;
@@ -48,28 +49,23 @@ import org.takes.rq.RqForm;
 final class TkInvite implements Take {
 
     /**
-     * User.
+     * Base.
      */
-    private final transient User user;
-
-    /**
-     * Bout.
-     */
-    private final transient Bout bout;
+    private final transient Base base;
 
     /**
      * Ctor.
-     * @param bot Bout
+     * @param bse Base
      */
-    TkInvite(final User usr, final Bout bot) {
-        this.user = usr;
-        this.bout = bot;
+    TkInvite(final Base bse) {
+        this.base = bse;
     }
 
     @Override
     public Response act(final Request req) throws IOException {
         final String name = new RqForm(req).param("name").iterator().next();
-        final String check = this.user.aliases().check(name);
+        final String check = new RqAlias(this.base, req)
+            .user().aliases().check(name);
         if (check.isEmpty()) {
             throw new RsForward(
                 new RsFlash(
@@ -79,8 +75,9 @@ final class TkInvite implements Take {
                 )
             );
         }
+        final Bout bout = new RqBout(this.base, req).bout();
         try {
-            this.bout.friends().invite(name);
+            bout.friends().invite(name);
         } catch (final Friends.UnknownAliasException ex) {
             throw new RsForward(new RsFlash(ex));
         }
@@ -88,7 +85,7 @@ final class TkInvite implements Take {
             new RsFlash(
                 String.format(
                     "new person invited to the bout #%d",
-                    this.bout.number()
+                    bout.number()
                 ),
                 Level.INFO
             )

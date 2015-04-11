@@ -77,15 +77,13 @@ final class XeAlias extends XeWrap {
      */
     private static Iterable<Directive> toXembly(final Alias alias)
         throws IOException {
-        final Directives dirs = new Directives();
-        dirs.add("alias")
+        return new Directives().add("alias")
             .add("name").set(alias.name()).up()
             .add("locale").set(alias.locale().toString()).up()
             .add("photo").set(alias.photo().toString()).up()
             .add("email").set(alias.email()).up()
             .append(new XeLink("start", "/start").toXembly())
             .append(new XeLink("account", "/acc").toXembly());
-        return dirs;
     }
 
 }

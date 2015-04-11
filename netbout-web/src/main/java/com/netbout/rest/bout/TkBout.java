@@ -26,15 +26,7 @@
  */
 package com.netbout.rest.bout;
 
-import com.netbout.rest.inbox.TkIndex;
 import com.netbout.spi.Base;
-import com.netbout.spi.Bout;
-import com.netbout.spi.Friends;
-import com.netbout.spi.Inbox;
-import java.io.IOException;
-import java.net.HttpURLConnection;
-import java.util.logging.Level;
-import org.takes.facets.fork.FkMethods;
 import org.takes.facets.fork.FkRegex;
 import org.takes.facets.fork.TkFork;
 import org.takes.tk.TkWrap;
@@ -55,42 +47,17 @@ public final class TkBout extends TkWrap {
     public TkBout(final Base base) {
         super(
             new TkFork(
-                new FkRegex(
-                    "/b/([0-9]+)",
-                    new TkIndex(base, )
-                ),
-                new FkRegex(
-                    "/b/([0-9]+)/attach",
-                    new TkFork(
-                        new FkMethods("POST", new TkAttach(base))
-                    )
-                ),
+                new FkBout("", new TkIndex(base)),
+                new FkRegex("/attach", new TkAttach(base)),
+                new FkRegex("/upload", new TkUpload(base)),
+                new FkRegex("/download", new TkDownload(base)),
+                new FkRegex("/rename", new TkRename(base)),
+                new FkRegex("/create", new TkCreate(base)),
+                new FkRegex("/post", new TkPost(base)),
+                new FkRegex("/invite", new TkInvite(base)),
+                new FkRegex("/kick", new TkKick(base))
             )
         );
-    }
-
-    /**
-     * Get bout.
-     * @return The bout
-     * @throws java.io.IOException If fails
-     */
-    private Bout bout() throws IOException {
-        final Bout bout;
-        try {
-            bout = this.alias().inbox().bout(this.number);
-        } catch (final Inbox.BoutNotFoundException ex) {
-            throw new WebApplicationException(
-                ex, HttpURLConnection.HTTP_NOT_FOUND
-            );
-        }
-        if (!new Friends.Search(bout.friends()).exists(this.alias().name())) {
-            throw FlashInset.forward(
-                this.uriInfo().getBaseUri(),
-                String.format("you're not in bout #%d", bout.number()),
-                Level.WARNING
-            );
-        }
-        return bout;
     }
 
 }

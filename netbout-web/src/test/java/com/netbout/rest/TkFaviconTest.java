@@ -29,6 +29,7 @@ package com.netbout.rest;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;
+import org.takes.rq.RqFake;
 import org.takes.rs.RsPrint;
 
 /**
@@ -46,7 +47,9 @@ public final class TkFaviconTest {
     @Test
     public void buildsGifImage() throws Exception {
         MatcherAssert.assertThat(
-            new RsPrint(new TkFavicon(44L).act()).printBody(),
+            new RsPrint(
+                new TkFavicon().act(new RqFake("GET", "/?unread=44"))
+            ).printBody(),
             Matchers.notNullValue()
         );
     }

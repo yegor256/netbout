@@ -32,6 +32,7 @@ import com.netbout.spi.User;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;
+import org.takes.facets.fork.RqRegex;
 import org.takes.rs.RsPrint;
 
 /**
@@ -53,7 +54,7 @@ public final class TkFriendTest {
         final User user = base.user(BaseRs.TEST_URN);
         user.aliases().add(alias);
         MatcherAssert.assertThat(
-            new RsPrint(new TkFriend(user, alias).act()),
+            new RsPrint(new TkFriend(base).act(new RqRegex.Fake(".*", "jeff"))),
             Matchers.notNullValue()
         );
     }

@@ -26,29 +26,32 @@
  */
 package com.netbout.rest.bout;
 
-import com.jcabi.urn.URN;
+import com.netbout.rest.RqAlias;
 import com.netbout.spi.Alias;
 import com.netbout.spi.Base;
-import com.netbout.spi.User;
+import com.netbout.spi.Bout;
+import com.netbout.spi.Friends;
+import com.netbout.spi.Inbox;
 import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.util.logging.Level;
 import lombok.EqualsAndHashCode;
+import org.takes.HttpException;
 import org.takes.Request;
-import org.takes.facets.auth.Identity;
-import org.takes.facets.auth.RqAuth;
 import org.takes.facets.flash.RsFlash;
 import org.takes.facets.forward.RsForward;
+import org.takes.rq.RqHeaders;
 import org.takes.rq.RqWrap;
 
 /**
- * Xembly for alias.
+ * Retrieves bout from request.
  *
  * @author Yegor Bugayenko (yegor@teamed.io)
  * @version $Id$
  * @since 2.14
- * @checkstyle ClassDataAbstractionCouplingCheck (500 lines)
  */
 @EqualsAndHashCode(callSuper = true)
-public final class RqAlias extends RqWrap {
+public final class RqBout extends RqWrap {
 
     /**
      * Base.
@@ -60,42 +63,36 @@ public final class RqAlias extends RqWrap {
      * @param bse The base
      * @param req Request
      */
-    public RqAlias(final Base bse, final Request req) {
+    public RqBout(final Base bse, final Request req) {
         super(req);
         this.base = bse;
     }
 
     /**
-     * Has alias?
-     * @return TRUE if alias is there
+     * Get bout.
+     * @return Bout
      * @throws IOException If fails
      */
-    public boolean has() throws IOException {
-        return !new RqAuth(this).identity().equals(Identity.ANONYMOUS);
-    }
-
-    /**
-     * Get user.
-     * @return User
-     * @throws IOException If fails
-     */
-    public User user() throws IOException {
-        final Identity identity = new RqAuth(this).identity();
-        if (identity.equals(Identity.ANONYMOUS)) {
+    public Bout bout() throws IOException {
+        final Alias alias = new RqAlias(this.base, this).alias();
+        final long number = Long.parseLong(
+            new RqHeaders(this).header("X-Netbout-Bout").iterator().next()
+        );
+        final Bout bout;
+        try {
+            bout = alias.inbox().bout(number);
+        } catch (final Inbox.BoutNotFoundException ex) {
+            throw new HttpException(HttpURLConnection.HTTP_NOT_FOUND, ex);
+        }
+        if (!new Friends.Search(bout.friends()).exists(alias.name())) {
             throw new RsForward(
-                new RsFlash("you are not logged in yet")
+                new RsFlash(
+                    String.format("you're not in bout #%d", bout.number()),
+                    Level.WARNING
+                )
             );
         }
-        return this.base.user(URN.create(identity.urn()));
-    }
-
-    /**
-     * Get alias.
-     * @return Alias
-     * @throws IOException If fails
-     */
-    public Alias alias() throws IOException {
-        return this.user().aliases().iterate().iterator().next();
+        return bout;
     }
 
 }

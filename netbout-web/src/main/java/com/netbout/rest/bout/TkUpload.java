@@ -27,6 +27,7 @@
 package com.netbout.rest.bout;
 
 import com.netbout.spi.Attachment;
+import com.netbout.spi.Base;
 import com.netbout.spi.Bout;
 import java.io.IOException;
 import java.util.logging.Level;
@@ -48,16 +49,16 @@ import org.takes.rq.RqHref;
 final class TkUpload implements Take {
 
     /**
-     * Bout.
+     * Base.
      */
-    private final transient Bout bout;
+    private final transient Base base;
 
     /**
      * Ctor.
-     * @param bot Bout
+     * @param bse Base
      */
-    TkUpload(final Bout bot) {
-        this.bout = bot;
+    TkUpload(final Base bse) {
+        this.base = bse;
     }
 
     @Override
@@ -66,7 +67,8 @@ final class TkUpload implements Take {
         final String name = href.param("name").iterator().next();
         final String ctype = href.param("ctype").iterator().next();
         final String etag = href.param("etag").iterator().next();
-        final Attachment attachment = this.bout.attachments().get(name);
+        final Bout bout = new RqBout(this.base, req).bout();
+        final Attachment attachment = bout.attachments().get(name);
         attachment.write(req.body(), ctype, etag);
         return new RsForward(
             new RsFlash(

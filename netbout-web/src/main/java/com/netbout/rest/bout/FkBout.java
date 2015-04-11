@@ -30,7 +30,13 @@ import java.io.IOException;
 import java.util.Iterator;
 import org.takes.Request;
 import org.takes.Response;
+import org.takes.Take;
+import org.takes.facets.fork.FkRegex;
+import org.takes.facets.fork.FkWrap;
 import org.takes.facets.fork.Fork;
+import org.takes.facets.fork.RqRegex;
+import org.takes.facets.fork.TkRegex;
+import org.takes.rq.RqWithHeader;
 
 /**
  * Bout fork.
@@ -39,10 +45,35 @@ import org.takes.facets.fork.Fork;
  * @version $Id$
  * @since 2.14
  */
-final class FkBout implements Fork {
+final class FkBout extends FkWrap {
 
-    @Override
-    public Iterator<Response> route(final Request request) throws IOException {
-        throw new UnsupportedOperationException("#route()");
+    /**
+     * Ctor.
+     * @param regex Regular expression
+     * @param take Take
+     */
+    FkBout(final String regex, final Take take) {
+        super(
+            new Fork() {
+                @Override
+                public Iterator<Response> route(final Request req) throws IOException {
+                    return new FkRegex(
+                        String.format("/b/([0-9]+)%s", regex),
+                        new TkRegex() {
+                            @Override
+                            public Response act(final RqRegex rreq) throws IOException {
+                                return take.act(
+                                    new RqWithHeader(
+                                        rreq, "X-Netbout-Bout",
+                                        rreq.matcher().group(1)
+                                    )
+                                );
+                            }
+                        }
+                    ).route(req);
+                }
+            }
+        );
     }
+
 }

@@ -110,6 +110,7 @@ public final class RsPage extends RsWrap {
                 new XeLocalhost(),
                 new XeIdentity(req),
                 new XeAlias(base, req),
+                new XeFavicon(base, req),
                 new XeFlash(req),
                 new XeGithubLink(req, Manifests.read("Netbout-GithubId")),
                 new XeFacebookLink(req, Manifests.read("Netbout-FacebookId")),

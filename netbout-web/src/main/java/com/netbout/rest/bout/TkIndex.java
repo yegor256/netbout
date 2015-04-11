@@ -70,17 +70,11 @@ final class TkIndex implements Take {
     private final transient Base base;
 
     /**
-     * Bout.
-     */
-    private final transient Bout bout;
-
-    /**
      * Ctor.
-     * @param bot Bout
+     * @param bse base
      */
-    TkIndex(final Base bse, final Bout bot) {
+    TkIndex(final Base bse) {
         this.base = bse;
-        this.bout = bot;
     }
 
     @Override
@@ -91,7 +85,8 @@ final class TkIndex implements Take {
         if (param.hasNext()) {
             start = Long.parseLong(param.next());
         }
-        final Href home = new Href("/b").path(this.bout.number());
+        final Bout bout = new RqBout(this.base, req).bout();
+        final Href home = new Href("/b").path(bout.number());
         return new RsPage(
             "/xsl/bout.xsl",
             this.base,
@@ -101,21 +96,21 @@ final class TkIndex implements Take {
                 new XeDirectives(
                     new Directives()
                         .add("number")
-                        .set(Long.toString(this.bout.number()))
+                        .set(Long.toString(bout.number()))
                         .up()
-                        .add("title").set(this.bout.title()).up()
+                        .add("title").set(bout.title()).up()
                         .add("unread")
-                        .set(Long.toString(this.bout.messages().unread()))
+                        .set(Long.toString(bout.messages().unread()))
                 ),
                 new XeAppend(
                     "friends",
                     new XeTransform<Friend>(
-                        this.bout.friends().iterate(),
+                        bout.friends().iterate(),
                         new XeTransform.Func<Friend>() {
                             @Override
                             public XeSource transform(final Friend friend)
                                 throws IOException {
-                                return TkIndex.this.source(friend);
+                                return TkIndex.this.source(bout, friend);
                             }
                         }
                     )
@@ -123,12 +118,12 @@ final class TkIndex implements Take {
                 new XeAppend(
                     "attachments",
                     new XeTransform<Attachment>(
-                        this.bout.attachments().iterate(),
+                        bout.attachments().iterate(),
                         new XeTransform.Func<Attachment>() {
                             @Override
                             public XeSource transform(final Attachment atmt)
                                 throws IOException {
-                                return TkIndex.this.source(req, atmt);
+                                return TkIndex.this.source(req, bout, atmt);
                             }
                         }
                     )
@@ -137,14 +132,14 @@ final class TkIndex implements Take {
                     "messages",
                     new XeTransform<Message>(
                         Iterables.limit(
-                            this.bout.messages().jump(start).iterate(),
+                            bout.messages().jump(start).iterate(),
                             Messages.PAGE
                         ),
                         new XeTransform.Func<Message>() {
                             @Override
                             public XeSource transform(final Message msg)
                                 throws IOException {
-                                return TkIndex.this.source(msg);
+                                return TkIndex.this.source(bout, msg);
                             }
                         }
                     )
@@ -165,7 +160,8 @@ final class TkIndex implements Take {
      * @return Xembly
      * @throws IOException If fails
      */
-    private XeSource source(final Friend friend) throws IOException {
+    private XeSource source(final Bout bout, final Friend friend)
+        throws IOException {
         return new XeAppend(
             "friend",
             new XeDirectives(
@@ -180,7 +176,7 @@ final class TkIndex implements Take {
             new XeLink(
                 "kick",
                 new Href().path("b")
-                    .path(this.bout.number())
+                    .path(bout.number())
                     .path("kick")
                     .with("name", friend.alias())
             )
@@ -190,12 +186,13 @@ final class TkIndex implements Take {
     /**
      * Convert attachment to Xembly source.
      * @param req Request
+     * @param bout Bout
      * @param atmt Attachment
      * @return Xembly source
      * @throws IOException If fails
      */
-    private XeSource source(final Request req, final Attachment atmt)
-        throws IOException {
+    private XeSource source(final Request req, final Bout bout,
+        final Attachment atmt) throws IOException {
         String open = "";
         final Iterator<String> param = new RqHref.Base(req).href()
             .param("open").iterator();
@@ -214,14 +211,14 @@ final class TkIndex implements Take {
             new XeLink(
                 "delete",
                 new Href().path("b")
-                    .path(this.bout.number())
+                    .path(bout.number())
                     .path("delete")
                     .with("name", atmt.name())
             ),
             new XeLink(
                 "download",
                 new Href().path("b")
-                    .path(this.bout.number())
+                    .path(bout.number())
                     .path("download")
                     .with("name", atmt.name())
             ),
@@ -230,7 +227,7 @@ final class TkIndex implements Take {
                 new XeLink(
                     "open",
                     new Href().path("b")
-                        .path(this.bout.number())
+                        .path(bout.number())
                         .path("open")
                         .with("name", atmt.name())
                 )
@@ -254,40 +251,42 @@ final class TkIndex implements Take {
 
     /**
      * Convert message to Xembly source.
-     * @param message Message
+     * @param bout Bout
+     * @param msg Message
      * @return Xembly source
      * @throws IOException In case of failure
      */
-    private XeSource source(final Message message) throws IOException {
+    private XeSource source(final Bout bout, final Message msg)
+        throws IOException {
         return new XeAppend(
             "message",
             new XeDirectives(
                 new Directives()
-                    .add("number").set(Long.toString(message.number()))
+                    .add("number").set(Long.toString(msg.number()))
                     .up()
-                    .add("author").set(message.author()).up()
-                    .add("text").set(message.text()).up()
-                    .add("html").set(new Markdown(message.text()).html()).up()
+                    .add("author").set(msg.author()).up()
+                    .add("text").set(msg.text()).up()
+                    .add("html").set(new Markdown(msg.text()).html()).up()
                     .add("timeago")
-                    .set(new PrettyTime().format(message.date())).up()
+                    .set(new PrettyTime().format(msg.date())).up()
                     .add("date")
                     .set(
                         DateFormatUtils.ISO_DATETIME_FORMAT.format(
-                            message.date()
+                            msg.date()
                         )
                     )
             ),
             new XeLink(
                 "photo",
                 new Href().path("f").path(
-                    String.format("%s.png", message.author())
+                    String.format("%s.png", msg.author())
                 )
             ),
             new XeLink(
                 "more",
                 new Href().path("b")
-                    .path(this.bout.number())
-                    .with("start", message.number())
+                    .path(bout.number())
+                    .with("start", msg.number())
             )
         );
     }
