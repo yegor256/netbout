@@ -26,9 +26,11 @@
  */
 package com.netbout.rest.bout;
 
-import com.netbout.spi.Attachments;
 import com.netbout.spi.Bout;
+import com.netbout.spi.Friends;
+import com.netbout.spi.User;
 import java.io.IOException;
+import java.util.logging.Level;
 import org.takes.Request;
 import org.takes.Response;
 import org.takes.Take;
@@ -37,13 +39,18 @@ import org.takes.facets.forward.RsForward;
 import org.takes.rq.RqForm;
 
 /**
- * Create attachment.
+ * Invite a friend to the bout.
  *
  * @author Yegor Bugayenko (yegor@tpc2.com)
  * @version $Id$
  * @since 2.14
  */
-final class TkCreate implements Take {
+final class TkInvite implements Take {
+
+    /**
+     * User.
+     */
+    private final transient User user;
 
     /**
      * Bout.
@@ -54,20 +61,37 @@ final class TkCreate implements Take {
      * Ctor.
      * @param bot Bout
      */
-    TkCreate(final Bout bot) {
+    TkInvite(final User usr, final Bout bot) {
+        this.user = usr;
         this.bout = bot;
     }
 
     @Override
     public Response act(final Request req) throws IOException {
         final String name = new RqForm(req).param("name").iterator().next();
+        final String check = this.user.aliases().check(name);
+        if (check.isEmpty()) {
+            throw new RsForward(
+                new RsFlash(
+                    String.format("incorrect alias '%s', try again", name),
+                    Level.WARNING
+
+                )
+            );
+        }
         try {
-            this.bout.attachments().create(name);
-        } catch (final Attachments.InvalidNameException ex) {
+            this.bout.friends().invite(name);
+        } catch (final Friends.UnknownAliasException ex) {
             throw new RsForward(new RsFlash(ex));
         }
         return new RsForward(
-            new RsFlash(String.format("attachment '%s' created", name))
+            new RsFlash(
+                String.format(
+                    "new person invited to the bout #%d",
+                    this.bout.number()
+                ),
+                Level.INFO
+            )
         );
     }
 

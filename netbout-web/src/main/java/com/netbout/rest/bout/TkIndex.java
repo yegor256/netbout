@@ -26,16 +26,22 @@
  */
 package com.netbout.rest.bout;
 
-import com.google.common.base.Function;
 import com.google.common.collect.Iterables;
-import com.netbout.rest.RqAlias;
+import com.netbout.rest.Markdown;
 import com.netbout.rest.RsPage;
+import com.netbout.spi.Attachment;
 import com.netbout.spi.Base;
 import com.netbout.spi.Bout;
 import com.netbout.spi.Friend;
 import com.netbout.spi.Inbox;
+import com.netbout.spi.Message;
+import com.netbout.spi.Messages;
 import java.io.IOException;
 import java.util.Iterator;
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.CharEncoding;
+import org.apache.commons.lang3.time.DateFormatUtils;
+import org.ocpsoft.prettytime.PrettyTime;
 import org.takes.Request;
 import org.takes.Response;
 import org.takes.Take;
@@ -45,6 +51,8 @@ import org.takes.rs.xe.XeAppend;
 import org.takes.rs.xe.XeDirectives;
 import org.takes.rs.xe.XeLink;
 import org.takes.rs.xe.XeSource;
+import org.takes.rs.xe.XeTransform;
+import org.takes.rs.xe.XeWhen;
 import org.xembly.Directives;
 
 /**
@@ -62,121 +70,102 @@ final class TkIndex implements Take {
     private final transient Base base;
 
     /**
-     * Ctor.
-     * @param bse Base
+     * Bout.
      */
-    TkIndex(final Base bse) {
+    private final transient Bout bout;
+
+    /**
+     * Ctor.
+     * @param bot Bout
+     */
+    TkIndex(final Base bse, final Bout bot) {
         this.base = bse;
+        this.bout = bot;
     }
 
     @Override
     public Response act(final Request req) throws IOException {
-        final Bout bout = new RqAlias(this.base, req).alias().inbox().bout(
-            new Rq
-        );
-        final Href home = new Href();
+        long start = Inbox.NEVER;
+        final Iterator<String> param = new RqHref.Base(req).href()
+            .param("start").iterator();
+        if (param.hasNext()) {
+            start = Long.parseLong(param.next());
+        }
+        final Href home = new Href("/b").path(this.bout.number());
         return new RsPage(
             "/xsl/bout.xsl",
             this.base,
             req,
-            new XeAppend("bouts", this.bouts(req))
-            new XeLink("post", new Href("/b"))
-                .link(new Link("post", "./post"))
-                .link(new Link("rename", "./rename"))
-                .link(new Link("invite", "./invite"))
-                .link(new Link("upload", "./upload"))
-                .link(new Link("create", "./create"))
-                .link(new Link("attach", "./attach"))
-        );
-    }
-
-    /**
-     * All bouts in the inbox.
-     * @param req Request
-     * @return Bouts
-     * @throws IOException If fails
-     */
-    private Iterable<XeSource> messages(final Request req) throws IOException {
-        long since = Inbox.NEVER;
-        final Iterator<String> param = new RqHref.Base(req).href()
-            .param("since").iterator();
-        if (param.hasNext()) {
-            since = Long.parseLong(param.next());
-        }
-        return Iterables.transform(
-            Iterables.limit(
-                new RqAlias(this.base, req).alias()
-                    .inbox().jump(since).iterate(),
-                Inbox.PAGE
-            ),
-            new Function<Bout, XeSource>() {
-                @Override
-                public XeSource apply(final Bout bout) {
-                    try {
-                        return TkIndex.source(bout);
-                    } catch (final IOException ex) {
-                        throw new IllegalStateException(ex);
-                    }
-                }
-            }
-        );
-    }
-
-    /**
-     * Convert bout to bundle.
-     * @param bout Bout to convert
-     * @return Bundle
-     * @throws IOException If fails
-     */
-    private static XeSource source(final Bout bout) throws IOException {
-        return new XeAppend(
-            "bout",
-            new XeDirectives(
-                new Directives()
-                    .add("number")
-                    .set(Long.toString(bout.number())).up()
-                    .add("updated")
-                    .set(Long.toString(bout.updated().getTime())).up()
-                    .add("unread")
-                    .set(Long.toString(bout.messages().unread())).up()
-                    .add("unseen")
-                    .set(Integer.toString(bout.attachments().unseen())).up()
-                    .add("title")
-                    .set(bout.title()).up()
-            ),
-            new XeLink("open", new Href("/b").path(bout.number())),
-            new XeLink(
-                "more",
-                new Href().with("since", bout.updated().getTime())
-            ),
             new XeAppend(
-                "friends",
-                Iterables.transform(
-                    bout.friends().iterate(),
-                    new Function<Friend, XeSource>() {
-                        @Override
-                        public XeSource apply(final Friend friend) {
-                            try {
-                                return TkIndex.source(bout, friend);
-                            } catch (final IOException ex) {
-                                throw new IllegalStateException(ex);
+                "bouts",
+                new XeDirectives(
+                    new Directives()
+                        .add("number")
+                        .set(Long.toString(this.bout.number()))
+                        .up()
+                        .add("title").set(this.bout.title()).up()
+                        .add("unread")
+                        .set(Long.toString(this.bout.messages().unread()))
+                ),
+                new XeAppend(
+                    "friends",
+                    new XeTransform<Friend>(
+                        this.bout.friends().iterate(),
+                        new XeTransform.Func<Friend>() {
+                            @Override
+                            public XeSource transform(final Friend friend)
+                                throws IOException {
+                                return TkIndex.this.source(friend);
                             }
                         }
-                    }
+                    )
+                ),
+                new XeAppend(
+                    "attachments",
+                    new XeTransform<Attachment>(
+                        this.bout.attachments().iterate(),
+                        new XeTransform.Func<Attachment>() {
+                            @Override
+                            public XeSource transform(final Attachment atmt)
+                                throws IOException {
+                                return TkIndex.this.source(req, atmt);
+                            }
+                        }
+                    )
+                ),
+                new XeAppend(
+                    "messages",
+                    new XeTransform<Message>(
+                        Iterables.limit(
+                            this.bout.messages().jump(start).iterate(),
+                            Messages.PAGE
+                        ),
+                        new XeTransform.Func<Message>() {
+                            @Override
+                            public XeSource transform(final Message msg)
+                                throws IOException {
+                                return TkIndex.this.source(msg);
+                            }
+                        }
+                    )
                 )
-            )
+            ),
+            new XeLink("post", home.path("post")),
+            new XeLink("rename", home.path("rename")),
+            new XeLink("invite", home.path("invite")),
+            new XeLink("upload", home.path("upload")),
+            new XeLink("create", home.path("create")),
+            new XeLink("attach", home.path("attach"))
         );
     }
 
     /**
-     * Convert friend to Xembly source.
-     * @param bout The bout
-     * @param friend The friend
-     * @return Xembly source
+     * Convert friend to Xembly.
+     * @param friend Friend to convert
+     * @return Xembly
      * @throws IOException If fails
      */
-    private static XeSource source(final Bout bout, final Friend friend)
-        throws IOException {
+    private XeSource source(final Friend friend) throws IOException {
         return new XeAppend(
             "friend",
             new XeDirectives(
@@ -184,14 +173,121 @@ final class TkIndex implements Take {
             ),
             new XeLink(
                 "photo",
-                new Href("/f").path(String.format("%s.png", friend.alias()))
+                new Href().path("f").path(
+                    String.format("%s.png", friend.alias())
+                )
             ),
             new XeLink(
                 "kick",
-                new Href("/b")
-                    .path(bout.number())
-                    .path("/kick")
+                new Href().path("b")
+                    .path(this.bout.number())
+                    .path("kick")
                     .with("name", friend.alias())
+            )
+        );
+    }
+
+    /**
+     * Convert attachment to Xembly source.
+     * @param req Request
+     * @param atmt Attachment
+     * @return Xembly source
+     * @throws IOException If fails
+     */
+    private XeSource source(final Request req, final Attachment atmt)
+        throws IOException {
+        String open = "";
+        final Iterator<String> param = new RqHref.Base(req).href()
+            .param("open").iterator();
+        if (param.hasNext()) {
+            open = param.next();
+        }
+        return new XeAppend(
+            "attachment",
+            new XeDirectives(
+                new Directives()
+                    .add("name").set(atmt.name()).up()
+                    .add("ctype").set(atmt.ctype()).up()
+                    .add("etag").set(atmt.etag()).up()
+                    .add("unseen").set(Boolean.toString(atmt.unseen()))
+            ),
+            new XeLink(
+                "delete",
+                new Href().path("b")
+                    .path(this.bout.number())
+                    .path("delete")
+                    .with("name", atmt.name())
+            ),
+            new XeLink(
+                "download",
+                new Href().path("b")
+                    .path(this.bout.number())
+                    .path("download")
+                    .with("name", atmt.name())
+            ),
+            new XeWhen(
+                atmt.ctype().equals(Attachment.MARKDOWN),
+                new XeLink(
+                    "open",
+                    new Href().path("b")
+                        .path(this.bout.number())
+                        .path("open")
+                        .with("name", atmt.name())
+                )
+            ),
+            new XeWhen(
+                atmt.name().equals(open)
+                    && atmt.ctype().equals(Attachment.MARKDOWN),
+                new XeDirectives(
+                    new Directives().add("html").set(
+                        new Markdown(
+                            IOUtils.toString(
+                                atmt.read(),
+                                CharEncoding.UTF_8
+                            )
+                        ).html()
+                    )
+                )
+            )
+        );
+    }
+
+    /**
+     * Convert message to Xembly source.
+     * @param message Message
+     * @return Xembly source
+     * @throws IOException In case of failure
+     */
+    private XeSource source(final Message message) throws IOException {
+        return new XeAppend(
+            "message",
+            new XeDirectives(
+                new Directives()
+                    .add("number").set(Long.toString(message.number()))
+                    .up()
+                    .add("author").set(message.author()).up()
+                    .add("text").set(message.text()).up()
+                    .add("html").set(new Markdown(message.text()).html()).up()
+                    .add("timeago")
+                    .set(new PrettyTime().format(message.date())).up()
+                    .add("date")
+                    .set(
+                        DateFormatUtils.ISO_DATETIME_FORMAT.format(
+                            message.date()
+                        )
+                    )
+            ),
+            new XeLink(
+                "photo",
+                new Href().path("f").path(
+                    String.format("%s.png", message.author())
+                )
+            ),
+            new XeLink(
+                "more",
+                new Href().path("b")
+                    .path(this.bout.number())
+                    .with("start", message.number())
             )
         );
     }

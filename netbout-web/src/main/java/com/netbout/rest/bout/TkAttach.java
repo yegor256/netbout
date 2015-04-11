@@ -31,6 +31,7 @@ import com.netbout.spi.Attachment;
 import com.netbout.spi.Attachments;
 import com.netbout.spi.Bout;
 import eu.medsea.mimeutil.MimeUtil;
+import eu.medsea.mimeutil.detector.MagicMimeMimeDetector;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -54,6 +55,12 @@ import org.takes.rq.RqPrint;
  * @since 2.14
  */
 final class TkAttach implements Take {
+
+    static {
+        MimeUtil.registerMimeDetector(
+            MagicMimeMimeDetector.class.getCanonicalName()
+        );
+    }
 
     /**
      * Bout.

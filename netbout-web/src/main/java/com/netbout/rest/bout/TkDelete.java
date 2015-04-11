@@ -34,16 +34,16 @@ import org.takes.Response;
 import org.takes.Take;
 import org.takes.facets.flash.RsFlash;
 import org.takes.facets.forward.RsForward;
-import org.takes.rq.RqForm;
+import org.takes.rq.RqHref;
 
 /**
- * Create attachment.
+ * Delete attachment.
  *
  * @author Yegor Bugayenko (yegor@tpc2.com)
  * @version $Id$
  * @since 2.14
  */
-final class TkCreate implements Take {
+final class TkDelete implements Take {
 
     /**
      * Bout.
@@ -54,20 +54,21 @@ final class TkCreate implements Take {
      * Ctor.
      * @param bot Bout
      */
-    TkCreate(final Bout bot) {
+    TkDelete(final Bout bot) {
         this.bout = bot;
     }
 
     @Override
     public Response act(final Request req) throws IOException {
-        final String name = new RqForm(req).param("name").iterator().next();
+        final String name = new RqHref.Base(req).href()
+            .param("name").iterator().next();
         try {
-            this.bout.attachments().create(name);
+            this.bout.attachments().delete(name);
         } catch (final Attachments.InvalidNameException ex) {
             throw new RsForward(new RsFlash(ex));
         }
         return new RsForward(
-            new RsFlash(String.format("attachment '%s' created", name))
+            new RsFlash(String.format("attachment '%s' deleted", name))
         );
     }
 

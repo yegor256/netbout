@@ -28,6 +28,12 @@ package com.netbout.rest.bout;
 
 import com.netbout.rest.inbox.TkIndex;
 import com.netbout.spi.Base;
+import com.netbout.spi.Bout;
+import com.netbout.spi.Friends;
+import com.netbout.spi.Inbox;
+import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.util.logging.Level;
 import org.takes.facets.fork.FkMethods;
 import org.takes.facets.fork.FkRegex;
 import org.takes.facets.fork.TkFork;
@@ -63,6 +69,30 @@ public final class TkBout extends TkWrap {
                 )
             )
         );
+    }
+
+    /**
+     * Get bout.
+     * @return The bout
+     * @throws java.io.IOException If fails
+     */
+    private Bout bout() throws IOException {
+        final Bout bout;
+        try {
+            bout = this.alias().inbox().bout(this.number);
+        } catch (final Inbox.BoutNotFoundException ex) {
+            throw new WebApplicationException(
+                ex, HttpURLConnection.HTTP_NOT_FOUND
+            );
+        }
+        if (!new Friends.Search(bout.friends()).exists(this.alias().name())) {
+            throw FlashInset.forward(
+                this.uriInfo().getBaseUri(),
+                String.format("you're not in bout #%d", bout.number()),
+                Level.WARNING
+            );
+        }
+        return bout;
     }
 
 }

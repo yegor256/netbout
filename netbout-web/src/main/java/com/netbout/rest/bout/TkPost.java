@@ -37,13 +37,13 @@ import org.takes.facets.forward.RsForward;
 import org.takes.rq.RqForm;
 
 /**
- * Create attachment.
+ * Post a message.
  *
  * @author Yegor Bugayenko (yegor@tpc2.com)
  * @version $Id$
  * @since 2.14
  */
-final class TkCreate implements Take {
+final class TkPost implements Take {
 
     /**
      * Bout.
@@ -54,20 +54,25 @@ final class TkCreate implements Take {
      * Ctor.
      * @param bot Bout
      */
-    TkCreate(final Bout bot) {
+    TkPost(final Bout bot) {
         this.bout = bot;
     }
 
     @Override
     public Response act(final Request req) throws IOException {
-        final String name = new RqForm(req).param("name").iterator().next();
+        final String text = new RqForm(req).param("text").iterator().next();
         try {
-            this.bout.attachments().create(name);
+            this.bout.messages().post(text);
         } catch (final Attachments.InvalidNameException ex) {
             throw new RsForward(new RsFlash(ex));
         }
         return new RsForward(
-            new RsFlash(String.format("attachment '%s' created", name))
+            new RsFlash(
+                String.format(
+                    "message posted to the bout #%d",
+                    this.bout.number()
+                )
+            )
         );
     }
 

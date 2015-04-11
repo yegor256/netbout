@@ -49,7 +49,7 @@ import org.w3c.tidy.Tidy;
  * @see <a href="Markdown Syntax">http://daringfireball.net/projects/markdown/syntax</a>
  */
 @Immutable
-final class Markdown {
+public final class Markdown {
 
     /**
      * Tidy.

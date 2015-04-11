@@ -26,7 +26,6 @@
  */
 package com.netbout.rest.inbox;
 
-import com.google.common.base.Function;
 import com.google.common.collect.Iterables;
 import com.netbout.rest.RqAlias;
 import com.netbout.rest.RsPage;
@@ -45,6 +44,7 @@ import org.takes.rs.xe.XeAppend;
 import org.takes.rs.xe.XeDirectives;
 import org.takes.rs.xe.XeLink;
 import org.takes.rs.xe.XeSource;
+import org.takes.rs.xe.XeTransform;
 import org.xembly.Directives;
 
 /**
@@ -92,20 +92,16 @@ final class TkIndex implements Take {
         if (param.hasNext()) {
             since = Long.parseLong(param.next());
         }
-        return Iterables.transform(
+        return new XeTransform<Bout>(
             Iterables.limit(
                 new RqAlias(this.base, req).alias()
                     .inbox().jump(since).iterate(),
                 Inbox.PAGE
             ),
-            new Function<Bout, XeSource>() {
+            new XeTransform.Func<Bout>() {
                 @Override
-                public XeSource apply(final Bout bout) {
-                    try {
-                        return TkIndex.source(bout);
-                    } catch (final IOException ex) {
-                        throw new IllegalStateException(ex);
-                    }
+                public XeSource transform(final Bout bout) throws IOException {
+                    return TkIndex.source(bout);
                 }
             }
         );
@@ -140,16 +136,13 @@ final class TkIndex implements Take {
             ),
             new XeAppend(
                 "friends",
-                Iterables.transform(
+                new XeTransform<Friend>(
                     bout.friends().iterate(),
-                    new Function<Friend, XeSource>() {
+                    new XeTransform.Func<Friend>() {
                         @Override
-                        public XeSource apply(final Friend friend) {
-                            try {
-                                return TkIndex.source(bout, friend);
-                            } catch (final IOException ex) {
-                                throw new IllegalStateException(ex);
-                            }
+                        public XeSource transform(final Friend friend)
+                            throws IOException {
+                            return TkIndex.source(bout, friend);
                         }
                     }
                 )
