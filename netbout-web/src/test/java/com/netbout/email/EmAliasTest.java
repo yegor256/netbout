@@ -33,6 +33,7 @@ import com.netbout.spi.Alias;
 import com.netbout.spi.Bout;
 import java.io.ByteArrayOutputStream;
 import javax.mail.Message;
+import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMultipart;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
@@ -49,6 +50,11 @@ import org.mockito.Mockito;
 public final class EmAliasTest {
 
     /**
+     * Test email body.
+     */
+    private static final String EMAIL_BODY = "how are you?";
+
+    /**
      * EmAlias can send an email.
      * @throws Exception If there is some problem inside
      */
@@ -59,7 +65,7 @@ public final class EmAliasTest {
         final Alias alias = new EmAlias(base.randomAlias(), postman);
         final Bout bout = alias.inbox().bout(alias.inbox().start());
         bout.friends().invite(base.randomAlias().name());
-        bout.messages().post("how are you?");
+        bout.messages().post(EmAliasTest.EMAIL_BODY);
         final ArgumentCaptor<Envelope> captor =
             ArgumentCaptor.forClass(Envelope.class);
         Mockito.verify(postman).send(captor.capture());
@@ -70,8 +76,37 @@ public final class EmAliasTest {
         final ByteArrayOutputStream baos = new ByteArrayOutputStream();
         MimeMultipart.class.cast(msg.getContent()).writeTo(baos);
         MatcherAssert.assertThat(
-            baos.toString(), Matchers.containsString("how are you")
+            baos.toString(), Matchers.containsString(EmAliasTest.EMAIL_BODY)
         );
     }
 
+    /**
+     * EmAlias does not send an email to the sender of the message.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void doesNotSendEmailToSender() throws Exception {
+        final Postman postman = Mockito.mock(Postman.class);
+        final MkBase base = new MkBase();
+        final Alias alias = new EmAlias(base.randomAlias(), postman);
+        final Alias friend = base.randomAlias();
+        final Bout bout = alias.inbox().bout(alias.inbox().start());
+        bout.friends().invite(friend.name());
+        bout.friends().invite(alias.name());
+        bout.messages().post(EmAliasTest.EMAIL_BODY);
+        final ArgumentCaptor<Envelope> captor =
+            ArgumentCaptor.forClass(Envelope.class);
+        Mockito.verify(postman, Mockito.times(1)).send(captor.capture());
+        final Message msg = captor.getValue().unwrap();
+        MatcherAssert.assertThat(
+            msg.getAllRecipients().length,
+            Matchers.is(1)
+        );
+        final InternetAddress address =
+            (InternetAddress) msg.getAllRecipients()[0];
+        MatcherAssert.assertThat(
+            address.getAddress(),
+            Matchers.is(friend.email())
+        );
+    }
 }
