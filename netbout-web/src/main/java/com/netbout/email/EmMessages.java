@@ -33,6 +33,7 @@ import com.jcabi.email.Envelope;
 import com.jcabi.email.Postman;
 import com.jcabi.email.enclosure.EnHTML;
 import com.jcabi.email.stamp.StRecipient;
+import com.jcabi.email.stamp.StSender;
 import com.jcabi.email.stamp.StSubject;
 import com.netbout.rest.Markdown;
 import com.netbout.spi.Bout;
@@ -133,6 +134,7 @@ final class EmMessages implements Messages {
         throws IOException {
         this.postman.send(
             new Envelope.MIME()
+                .with(new StSender(this.self, "no-reply@netbout.com"))
                 .with(new StRecipient(friend.alias(), friend.email()))
                 .with(
                     new StSubject(

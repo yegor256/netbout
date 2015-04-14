@@ -71,6 +71,15 @@ public final class EmAliasTest {
         Mockito.verify(postman).send(captor.capture());
         final Message msg = captor.getValue().unwrap();
         MatcherAssert.assertThat(msg.getFrom().length, Matchers.is(1));
+        final InternetAddress from = (InternetAddress) msg.getFrom()[0];
+        MatcherAssert.assertThat(
+            from.getPersonal(),
+            Matchers.is(alias.name())
+        );
+        MatcherAssert.assertThat(
+            from.getAddress(),
+            Matchers.is("no-reply@netbout.com")
+        );
         MatcherAssert.assertThat(msg.getAllRecipients().length, Matchers.is(1));
         MatcherAssert.assertThat(msg.getSubject(), Matchers.startsWith("#1: "));
         final ByteArrayOutputStream baos = new ByteArrayOutputStream();

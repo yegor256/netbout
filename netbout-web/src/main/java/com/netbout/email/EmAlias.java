@@ -28,9 +28,7 @@ package com.netbout.email;
 
 import com.jcabi.aspects.Immutable;
 import com.jcabi.aspects.Loggable;
-import com.jcabi.email.Envelope;
 import com.jcabi.email.Postman;
-import com.jcabi.email.stamp.StSender;
 import com.netbout.spi.Alias;
 import com.netbout.spi.Inbox;
 import java.io.IOException;
@@ -69,16 +67,7 @@ final class EmAlias implements Alias {
      */
     EmAlias(final Alias org, final Postman pst) {
         this.origin = org;
-        this.postman = new Postman() {
-            @Override
-            public void send(final Envelope envelope) throws IOException {
-                pst.send(
-                    new Envelope.MIME(envelope).with(
-                        new StSender(org.name(), "no-reply@netbout.com")
-                    )
-                );
-            }
-        };
+        this.postman = pst;
     }
 
     @Override
