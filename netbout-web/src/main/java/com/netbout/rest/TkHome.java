@@ -24,18 +24,13 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.rest.login;
+package com.netbout.rest;
 
-import com.netbout.rest.RqAlias;
-import com.netbout.rest.RsPage;
 import com.netbout.spi.Base;
 import java.io.IOException;
-import java.util.logging.Level;
 import org.takes.Request;
 import org.takes.Response;
 import org.takes.Take;
-import org.takes.facets.flash.RsFlash;
-import org.takes.facets.forward.RsForward;
 
 /**
  * Login.
@@ -44,7 +39,7 @@ import org.takes.facets.forward.RsForward;
  * @version $Id$
  * @since 2.14
  */
-final class TkIndex implements Take {
+final class TkHome implements Take {
 
     /**
      * Base.
@@ -55,24 +50,12 @@ final class TkIndex implements Take {
      * Ctor.
      * @param bse Base
      */
-    TkIndex(final Base bse) {
+    TkHome(final Base bse) {
         this.base = bse;
     }
 
     @Override
     public Response act(final Request req) throws IOException {
-        final RqAlias rqa = new RqAlias(this.base, req);
-        if (rqa.has()) {
-            throw new RsForward(
-                new RsFlash(
-                    String.format(
-                        "you are logged in already as '%s'",
-                        rqa.alias().name()
-                    ),
-                    Level.INFO
-                )
-            );
-        }
         return new RsPage(
             "/xsl/login.xsl",
             this.base,

@@ -60,6 +60,8 @@ import org.takes.facets.fallback.FbStatus;
 import org.takes.facets.fallback.RqFallback;
 import org.takes.facets.fallback.TkFallback;
 import org.takes.facets.flash.TkFlash;
+import org.takes.facets.fork.FkAnonymous;
+import org.takes.facets.fork.FkAuthenticated;
 import org.takes.facets.fork.FkParams;
 import org.takes.facets.fork.FkRegex;
 import org.takes.facets.fork.TkFork;
@@ -256,13 +258,22 @@ public final class TkApp extends TkWrap {
                 "/lang/[a-z]+\\.xml",
                 new TkWithType(new TkClasspath(), "text/xml")
             ),
-            new FkRegex("/", new TkInbox(base)),
-            new FkRegex("/start", new TkStart(base)),
-            new FkRegex("/f/([a-zA-Z0-9]+)\\.png", new TkFriend(base)),
-            new FkRegex("/favicon.ico", new TkFavicon()),
-            new FkRegex("/login/.*", new TkLogin(base)),
-            new FkRegex("/b/.*", new TkBout(base)),
-            new FkRegex("/acc/.*", new TkAccount(base))
+            new FkAnonymous(
+                new TkFork(
+                    new FkRegex("/", new TkHome(base)),
+                    new FkRegex("/login/.*", new TkLogin(base))
+                )
+            ),
+            new FkAuthenticated(
+                new TkFork(
+                    new FkRegex("/", new TkInbox(base)),
+                    new FkRegex("/start", new TkStart(base)),
+                    new FkRegex("/b/.*", new TkBout(base)),
+                    new FkRegex("/acc/.*", new TkAccount(base)),
+                    new FkRegex("/f/([a-zA-Z0-9]+)\\.png", new TkFriend(base))
+                )
+            ),
+            new FkRegex("/favicon.ico", new TkFavicon())
         );
     }
 

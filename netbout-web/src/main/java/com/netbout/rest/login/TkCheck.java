@@ -29,13 +29,9 @@ package com.netbout.rest.login;
 import com.netbout.rest.RqAlias;
 import com.netbout.spi.Base;
 import java.io.IOException;
-import java.util.Iterator;
-import java.util.logging.Level;
 import org.takes.Request;
 import org.takes.Response;
 import org.takes.Take;
-import org.takes.facets.flash.RsFlash;
-import org.takes.facets.forward.RsForward;
 import org.takes.rq.RqHref;
 import org.takes.rs.RsWithBody;
 
@@ -63,16 +59,9 @@ final class TkCheck implements Take {
 
     @Override
     public Response act(final Request req) throws IOException {
-        final Iterator<String> alias = new RqHref.Base(req)
-            .href().param("alias").iterator();
-        if (!alias.hasNext()) {
-            throw new RsForward(
-                new RsFlash("'alias' is a mandatory form param", Level.SEVERE)
-            );
-        }
         return new RsWithBody(
             new RqAlias(this.base, req).user().aliases().check(
-                alias.next()
+                new RqHref.Smart(new RqHref.Base(req)).param("alias")
             )
         );
     }

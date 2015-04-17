@@ -28,13 +28,14 @@ package com.netbout.rest;
 
 import com.jcabi.http.request.JdkRequest;
 import com.jcabi.http.response.RestResponse;
+import com.jcabi.http.response.XmlResponse;
 import java.net.HttpURLConnection;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import org.junit.Test;
 
 /**
- * Integration case for {@link BaseRs}.
+ * Integration case for {@link TkApp}.
  * @author Yegor Bugayenko (yegor@teamed.io)
  * @version $Id$
  */
@@ -47,7 +48,7 @@ public final class TkAppITCase {
     private static final String HOME = System.getProperty("takes.home");
 
     /**
-     * BaseRs can render static resources.
+     * TkApp can render static resources.
      * @throws Exception If there is some problem inside
      */
     @Test
@@ -70,7 +71,7 @@ public final class TkAppITCase {
     }
 
     /**
-     * BaseRs can render non-found pages.
+     * TkApp can render non-found pages.
      * @throws Exception If there is some problem inside
      */
     @Test
@@ -87,6 +88,21 @@ public final class TkAppITCase {
                 .as(RestResponse.class)
                 .assertStatus(HttpURLConnection.HTTP_NOT_FOUND);
         }
+    }
+
+    /**
+     * BaseRs can authenticate test user.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void authenticatesTestUser() throws Exception {
+        new JdkRequest(TkAppITCase.HOME)
+            .header(HttpHeaders.ACCEPT, MediaType.TEXT_XML)
+            .fetch()
+            .as(RestResponse.class)
+            .assertStatus(HttpURLConnection.HTTP_OK)
+            .as(XmlResponse.class)
+            .assertXPath("/page/identity");
     }
 
 }

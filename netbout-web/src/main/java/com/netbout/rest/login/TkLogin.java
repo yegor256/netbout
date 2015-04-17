@@ -27,7 +27,6 @@
 package com.netbout.rest.login;
 
 import com.netbout.spi.Base;
-import org.takes.facets.fork.FkMethods;
 import org.takes.facets.fork.FkRegex;
 import org.takes.facets.fork.TkFork;
 import org.takes.tk.TkWrap;
@@ -48,12 +47,6 @@ public final class TkLogin extends TkWrap {
     public TkLogin(final Base base) {
         super(
             new TkFork(
-                new FkRegex(
-                    "/login/index",
-                    new TkFork(
-                        new FkMethods("GET", new TkIndex(base))
-                    )
-                ),
                 new FkRegex("/login/start", new TkStart(base)),
                 new FkRegex("/login/register", new TkRegister(base)),
                 new FkRegex("/login/check", new TkCheck(base))
