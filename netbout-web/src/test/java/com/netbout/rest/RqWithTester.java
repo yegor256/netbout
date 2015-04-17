@@ -24,44 +24,44 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.rest.account;
+package com.netbout.rest;
 
-import com.jcabi.matchers.XhtmlMatchers;
 import com.jcabi.urn.URN;
-import com.netbout.mock.MkBase;
-import com.netbout.rest.RqWithTester;
-import com.netbout.spi.Base;
-import org.hamcrest.MatcherAssert;
-import org.junit.Test;
-import org.takes.rs.RsPrint;
+import java.io.IOException;
+import lombok.EqualsAndHashCode;
+import org.takes.facets.auth.Identity;
+import org.takes.facets.auth.TkAuth;
+import org.takes.facets.auth.codecs.CcPlain;
+import org.takes.rq.RqFake;
+import org.takes.rq.RqWithHeader;
+import org.takes.rq.RqWrap;
 
 /**
- * Test case for {@link TkIndex}.
+ * Request with tester on board.
+ *
  * @author Yegor Bugayenko (yegor@teamed.io)
  * @version $Id$
  * @since 2.14
+ * @checkstyle ClassDataAbstractionCouplingCheck (500 lines)
  */
-public final class TkIndexTest {
+@EqualsAndHashCode(callSuper = true)
+public final class RqWithTester extends RqWrap {
 
     /**
-     * TkIndex can build a page.
-     * @throws Exception If there is some problem inside
+     * Ctor.
+     * @param urn URN of the tester
      */
-    @Test
-    public void rendersPage() throws Exception {
-        final Base base = new MkBase();
-        final String alias = "test";
-        final URN urn = URN.create("urn:test:1");
-        base.user(urn).aliases().add(alias);
-        MatcherAssert.assertThat(
-            new RsPrint(
-                new TkIndex(base).act(new RqWithTester(urn))
-            ).printBody(),
-            XhtmlMatchers.hasXPaths(
-                "/page/alias/email",
-                "/page/links/link[@rel='save-email']/@href"
+    public RqWithTester(final URN urn) throws IOException {
+        super(
+            new RqWithHeader(
+                new RqFake(),
+                TkAuth.class.getSimpleName(),
+                new String(
+                    new CcPlain().encode(
+                        new Identity.Simple(urn.toString())
+                    )
+                )
             )
         );
     }
-
 }

@@ -51,8 +51,12 @@ import org.takes.facets.auth.codecs.CcHex;
 import org.takes.facets.auth.codecs.CcSafe;
 import org.takes.facets.auth.codecs.CcSalted;
 import org.takes.facets.auth.codecs.CcXOR;
+import org.takes.facets.auth.social.PsFacebook;
 import org.takes.facets.auth.social.PsGithub;
+import org.takes.facets.auth.social.PsGoogle;
 import org.takes.facets.fallback.Fallback;
+import org.takes.facets.fallback.FbChain;
+import org.takes.facets.fallback.FbStatus;
 import org.takes.facets.fallback.RqFallback;
 import org.takes.facets.fallback.TkFallback;
 import org.takes.facets.flash.TkFlash;
@@ -60,6 +64,7 @@ import org.takes.facets.fork.FkParams;
 import org.takes.facets.fork.FkRegex;
 import org.takes.facets.fork.TkFork;
 import org.takes.facets.forward.TkForward;
+import org.takes.rs.RsText;
 import org.takes.rs.RsVelocity;
 import org.takes.rs.RsWithStatus;
 import org.takes.rs.RsWithType;
@@ -131,31 +136,40 @@ public final class TkApp extends TkWrap {
     private static Take fallback(final Take takes) {
         return new TkFallback(
             takes,
-            // @checkstyle AnonInnerLengthCheck (50 lines)
-            new Fallback() {
-                @Override
-                public Iterator<Response> route(final RqFallback req)
-                    throws IOException {
-                    final String err = ExceptionUtils.getStackTrace(
-                        req.throwable()
-                    );
-                    return Collections.<Response>singleton(
-                        new RsWithStatus(
-                            new RsWithType(
-                                new RsVelocity(
-                                    this.getClass().getResource(
-                                        "error.html.vm"
+            new FbChain(
+                new FbStatus(
+                    HttpURLConnection.HTTP_NOT_FOUND,
+                    new RsWithStatus(
+                        new RsText("page not found"),
+                        HttpURLConnection.HTTP_NOT_FOUND
+                    )
+                ),
+                // @checkstyle AnonInnerLengthCheck (50 lines)
+                new Fallback() {
+                    @Override
+                    public Iterator<Response> route(final RqFallback req)
+                        throws IOException {
+                        final String err = ExceptionUtils.getStackTrace(
+                            req.throwable()
+                        );
+                        return Collections.<Response>singleton(
+                            new RsWithStatus(
+                                new RsWithType(
+                                    new RsVelocity(
+                                        this.getClass().getResource(
+                                            "error.html.vm"
+                                        ),
+                                        new RsVelocity.Pair("err", err),
+                                        new RsVelocity.Pair("rev", TkApp.REV)
                                     ),
-                                    new RsVelocity.Pair("err", err),
-                                    new RsVelocity.Pair("rev", TkApp.REV)
+                                    "text/html"
                                 ),
-                                "text/html"
-                            ),
-                            HttpURLConnection.HTTP_INTERNAL_ERROR
-                        )
-                    ).iterator();
+                                HttpURLConnection.HTTP_INTERNAL_ERROR
+                            )
+                        ).iterator();
+                    }
                 }
-            }
+            )
         );
     }
 
@@ -177,6 +191,21 @@ public final class TkApp extends TkWrap {
                         new PsGithub(
                             Manifests.read("Netbout-GithubId"),
                             Manifests.read("Netbout-GithubSecret")
+                        )
+                    ),
+                    new PsByFlag.Pair(
+                        PsFacebook.class.getSimpleName(),
+                        new PsFacebook(
+                            Manifests.read("Netbout-FbId"),
+                            Manifests.read("Netbout-FbSecret")
+                        )
+                    ),
+                    new PsByFlag.Pair(
+                        PsGoogle.class.getSimpleName(),
+                        new PsGoogle(
+                            Manifests.read("Netbout-GoogleId"),
+                            Manifests.read("Netbout-GoogleSecret"),
+                            "http://www.netbout.com/?PsByFlag=PsGoogle"
                         )
                     ),
                     new PsByFlag.Pair(

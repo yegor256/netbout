@@ -26,6 +26,7 @@
  */
 package com.netbout.rest;
 
+import com.jcabi.urn.URN;
 import com.netbout.mock.MkBase;
 import com.netbout.spi.Base;
 import com.netbout.spi.User;
@@ -51,10 +52,18 @@ public final class TkFriendTest {
     public void buildsPngImage() throws Exception {
         final Base base = new MkBase();
         final String alias = "test";
-        final User user = base.user(BaseRs.TEST_URN);
+        final URN urn = new URN("urn:test:1");
+        final User user = base.user(urn);
         user.aliases().add(alias);
         MatcherAssert.assertThat(
-            new RsPrint(new TkFriend(base).act(new RqRegex.Fake(".*", "jeff"))),
+            new RsPrint(
+                new TkFriend(base).act(
+                    new RqRegex.Fake(
+                        new RqWithTester(urn),
+                        "(.*)", alias
+                    )
+                )
+            ),
             Matchers.notNullValue()
         );
     }

@@ -52,9 +52,7 @@ import org.takes.facets.flash.RsFlash;
 import org.takes.facets.fork.RqRegex;
 import org.takes.facets.fork.TkRegex;
 import org.takes.facets.forward.RsForward;
-import org.takes.rs.RsWithBody;
-import org.takes.rs.RsWithHeader;
-import org.takes.rs.RsWithType;
+import org.takes.rs.RsFluent;
 
 /**
  * Friend.
@@ -124,14 +122,16 @@ public final class TkFriend implements TkRegex {
         bthumb.getGraphics().drawImage(thumb, 0, 0, null);
         final ByteArrayOutputStream baos = new ByteArrayOutputStream();
         ImageIO.write(bthumb, "png", baos);
-        return new RsWithHeader(
-            new RsWithType(
-                new RsWithBody(new ByteArrayInputStream(baos.toByteArray())),
-                "image/png"
-            ),
-            "Cache-Control",
-            String.format("private, max-age=%d", TimeUnit.DAYS.toSeconds(1L))
-        );
+        return new RsFluent()
+            .withType("image/png")
+            .withHeader(
+                "Cache-Control",
+                String.format(
+                    "private, max-age=%d",
+                    TimeUnit.DAYS.toSeconds(1L)
+                )
+            )
+            .withBody(new ByteArrayInputStream(baos.toByteArray()));
     }
 
 }

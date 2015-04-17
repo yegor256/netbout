@@ -39,7 +39,7 @@ import org.junit.Test;
  * @version $Id$
  */
 @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
-public final class BaseRsITCase {
+public final class TkAppITCase {
 
     /**
      * Home page of Tomcat.
@@ -60,7 +60,7 @@ public final class BaseRsITCase {
             "/lang/en.xml",
         };
         for (final String page : pages) {
-            new JdkRequest(BaseRsITCase.HOME)
+            new JdkRequest(TkAppITCase.HOME)
                 .uri().path(page).back()
                 .header(HttpHeaders.ACCEPT, MediaType.TEXT_PLAIN)
                 .fetch()
@@ -80,7 +80,7 @@ public final class BaseRsITCase {
             "/-this-one-also",
         };
         for (final String page : pages) {
-            new JdkRequest(BaseRsITCase.HOME)
+            new JdkRequest(TkAppITCase.HOME)
                 .uri().path(page).back()
                 .header(HttpHeaders.ACCEPT, MediaType.TEXT_PLAIN)
                 .fetch()

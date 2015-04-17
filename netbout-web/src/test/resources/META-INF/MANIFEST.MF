@@ -16,3 +16,7 @@ Netbout-SttcToken: test
 Netbout-S3Key: test
 Netbout-S3Secret: test
 Netbout-S3Bucket: test
+Netbout-SmtpHost: localhost
+Netbout-SmtpPort: 2525
+Netbout-SmtpUser: test
+Netbout-SmtpPassword: test

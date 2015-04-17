@@ -31,10 +31,13 @@ import com.netbout.spi.Base;
 import java.io.IOException;
 import lombok.EqualsAndHashCode;
 import org.takes.Request;
+import org.takes.rs.xe.XeAppend;
+import org.takes.rs.xe.XeChain;
+import org.takes.rs.xe.XeDirectives;
 import org.takes.rs.xe.XeLink;
 import org.takes.rs.xe.XeSource;
+import org.takes.rs.xe.XeWhen;
 import org.takes.rs.xe.XeWrap;
-import org.xembly.Directive;
 import org.xembly.Directives;
 
 /**
@@ -53,37 +56,47 @@ final class XeAlias extends XeWrap {
      * @param base The base
      * @param req Request
      */
-    XeAlias(final Base base, final Request req) {
-        super(
-            new XeSource() {
-                @Override
-                public Iterable<Directive> toXembly() throws IOException {
-                    final Directives dirs = new Directives();
-                    final RqAlias rqa = new RqAlias(base, req);
-                    if (rqa.has()) {
-                        dirs.append(XeAlias.toXembly(rqa.alias()));
-                    }
-                    return dirs;
-                }
-            }
-        );
+    XeAlias(final Base base, final Request req) throws IOException {
+        super(XeAlias.source(base, req));
     }
 
     /**
      * Make xembly for account.
-     * @param alias Alias
-     * @return Xembly directives
+     * @param base The base
+     * @param req Request
+     * @return Xembly source
      * @throws IOException If fails
      */
-    private static Iterable<Directive> toXembly(final Alias alias)
-        throws IOException {
-        return new Directives().add("alias")
-            .add("name").set(alias.name()).up()
-            .add("locale").set(alias.locale().toString()).up()
-            .add("photo").set(alias.photo().toString()).up()
-            .add("email").set(alias.email()).up()
-            .append(new XeLink("start", "/start").toXembly())
-            .append(new XeLink("account", "/acc").toXembly());
+    private static XeSource source(final Base base,
+        final Request req) throws IOException {
+        final RqAlias rqa = new RqAlias(base, req);
+        return new XeWhen(
+            rqa.has(),
+            new XeChain(
+                XeAlias.source(rqa.alias()),
+                new XeLink("start", "/start"),
+                new XeLink("account", "/acc")
+            )
+        );
+    }
+
+    /**
+     * Make xembly for alias.
+     * @param alias Alias
+     * @return Xembly source
+     * @throws IOException If fails
+     */
+    private static XeSource source(final Alias alias) throws IOException {
+        return new XeAppend(
+            "alias",
+            new XeDirectives(
+                new Directives()
+                    .add("name").set(alias.name()).up()
+                    .add("locale").set(alias.locale().toString()).up()
+                    .add("photo").set(alias.photo().toString()).up()
+                    .add("email").set(alias.email())
+            )
+        );
     }
 
 }

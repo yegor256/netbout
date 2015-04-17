@@ -75,7 +75,7 @@ public final class RtUser implements User {
     public RtUser(@NotNull final URI uri, @NotNull final String token) {
         this.request = new JdkRequest(uri)
             .through(CookieOptimizingWire.class)
-            .header(HttpHeaders.COOKIE, String.format("Rexsl-Auth=%s", token))
+            .header(HttpHeaders.COOKIE, String.format("PsCookie=%s", token))
             .header(HttpHeaders.ACCEPT, MediaType.TEXT_XML);
     }
 

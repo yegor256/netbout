@@ -48,6 +48,8 @@ import org.takes.rs.xe.RsXembly;
 import org.takes.rs.xe.XeAppend;
 import org.takes.rs.xe.XeChain;
 import org.takes.rs.xe.XeDate;
+import org.takes.rs.xe.XeLinkHome;
+import org.takes.rs.xe.XeLinkSelf;
 import org.takes.rs.xe.XeLocalhost;
 import org.takes.rs.xe.XeMillis;
 import org.takes.rs.xe.XeSLA;
@@ -107,14 +109,19 @@ public final class RsPage extends RsWrap {
                 new XeMillis(true),
                 new XeDate(),
                 new XeSLA(),
+                new XeLinkHome(req),
+                new XeLinkSelf(req),
                 new XeLocalhost(),
                 new XeIdentity(req),
                 new XeAlias(base, req),
                 new XeFavicon(base, req),
                 new XeFlash(req),
                 new XeGithubLink(req, Manifests.read("Netbout-GithubId")),
-                new XeFacebookLink(req, Manifests.read("Netbout-FacebookId")),
-                new XeGoogleLink(req, Manifests.read("Netbout-GoogleId")),
+                new XeFacebookLink(req, Manifests.read("Netbout-FbId")),
+                new XeGoogleLink(
+                    req, Manifests.read("Netbout-GoogleId"),
+                    "http://www.netbout.com/?PsByFlag=PsGoogle"
+                ),
                 new XeLogoutLink(req),
                 new XeAppend(
                     "version",

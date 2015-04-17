@@ -2,13 +2,13 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
     <head>
         <title>Internal application error</title>
-        <link href="/css/style.css?${buildNumber}" rel="stylesheet" type="text/css"/>
+        <link href="/css/style.css?${rev}" rel="stylesheet" type="text/css"/>
         <link rel="icon" type="image/gif" href="/favicon.ico"/>
     </head>
     <body style="padding: 1em;">
         <p>
             <a href="http://www.netbout.com/">
-                <img src="//img.netbout.com/logo.svg?${buildNumber}"
+                <img src="//img.netbout.com/logo.svg?${rev}"
                     style="width:113px;height:37px;"/>
             </a>
         </p>
@@ -18,7 +18,7 @@
             </strong>
         </p>
         <p>
-            Build number: <code>${buildNumber}</code>
+            Build number: <code>${rev}</code>
         </p>
         <p>
             Netbout team has already received a notification about this
@@ -31,6 +31,6 @@
             exception stacktrace to our
             <a href="https://github.com/yegor256/netbout/issues/new">Github</a> account.
         </p>
-        <pre>${text}</pre>
+        <pre>${err}</pre>
     </body>
 </html>
