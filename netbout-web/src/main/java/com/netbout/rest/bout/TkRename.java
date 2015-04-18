@@ -61,14 +61,16 @@ final class TkRename implements Take {
 
     @Override
     public Response act(final Request req) throws IOException {
-        final String title = new RqForm(req).param("title").iterator().next();
+        final String title = new RqForm.Smart(
+            new RqForm.Base(req)
+        ).single("title");
         final Bout bout = new RqBout(this.base, req).bout();
         try {
             bout.rename(title);
         } catch (final Attachments.InvalidNameException ex) {
             throw new RsForward(new RsFlash(ex));
         }
-        return new RsForward(
+        throw new RsForward(
             new RsFlash(
                 String.format("bout #%d renamed", bout.number())
             )

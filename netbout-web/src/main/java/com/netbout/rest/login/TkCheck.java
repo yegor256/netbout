@@ -61,7 +61,7 @@ final class TkCheck implements Take {
     public Response act(final Request req) throws IOException {
         return new RsWithBody(
             new RqAlias(this.base, req).user().aliases().check(
-                new RqHref.Smart(new RqHref.Base(req)).param("alias")
+                new RqHref.Smart(new RqHref.Base(req)).single("alias")
             )
         );
     }

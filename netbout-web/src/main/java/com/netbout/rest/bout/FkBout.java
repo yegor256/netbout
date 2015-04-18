@@ -36,6 +36,7 @@ import org.takes.facets.fork.FkWrap;
 import org.takes.facets.fork.Fork;
 import org.takes.facets.fork.RqRegex;
 import org.takes.facets.fork.TkRegex;
+import org.takes.facets.forward.RsForward;
 import org.takes.rq.RqWithHeader;
 
 /**
@@ -62,10 +63,13 @@ final class FkBout extends FkWrap {
                         new TkRegex() {
                             @Override
                             public Response act(final RqRegex rreq) throws IOException {
-                                return take.act(
+                                final long bout = Long.parseLong(
+                                    rreq.matcher().group(1)
+                                );
+                                return FkBout.redirect(bout, take).act(
                                     new RqWithHeader(
                                         rreq, "X-Netbout-Bout",
-                                        rreq.matcher().group(1)
+                                        Long.toString(bout)
                                     )
                                 );
                             }
@@ -74,6 +78,25 @@ final class FkBout extends FkWrap {
                 }
             }
         );
+    }
+
+    /**
+     * Redirect to the bout.
+     * @param bout Bout number
+     * @param take Take
+     * @return New take
+     */
+    private static Take redirect(final long bout, final Take take) {
+        return new Take() {
+            @Override
+            public Response act(final Request request) throws IOException {
+                try {
+                    return take.act(request);
+                } catch (final RsForward ex) {
+                    throw new RsForward(ex, String.format("/b/%d", bout));
+                }
+            }
+        };
     }
 
 }

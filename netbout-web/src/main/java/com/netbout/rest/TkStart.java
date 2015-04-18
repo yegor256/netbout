@@ -26,10 +26,8 @@
  */
 package com.netbout.rest;
 
-import com.netbout.rest.RqAlias;
 import com.netbout.spi.Base;
 import java.io.IOException;
-import java.util.logging.Level;
 import org.takes.Request;
 import org.takes.Response;
 import org.takes.Take;
@@ -63,8 +61,7 @@ public final class TkStart implements Take {
         final long number = new RqAlias(this.base, req).alias().inbox().start();
         throw new RsForward(
             new RsFlash(
-                String.format("new bout #%d started", number),
-                Level.INFO
+                String.format("new bout #%d started", number)
             )
         );
     }

@@ -79,12 +79,12 @@ final class TkIndex implements Take {
 
     @Override
     public Response act(final Request req) throws IOException {
-        long start = Inbox.NEVER;
-        final Iterator<String> param = new RqHref.Base(req).href()
-            .param("start").iterator();
-        if (param.hasNext()) {
-            start = Long.parseLong(param.next());
-        }
+        final long start = Long.parseLong(
+            new RqHref.Smart(new RqHref.Base(req)).single(
+                "start",
+                Long.toString(Inbox.NEVER)
+            )
+        );
         final Bout bout = new RqBout(this.base, req).bout();
         final Href home = new Href("/b").path(bout.number());
         return new RsPage(
@@ -92,7 +92,7 @@ final class TkIndex implements Take {
             this.base,
             req,
             new XeAppend(
-                "bouts",
+                "bout",
                 new XeDirectives(
                     new Directives()
                         .add("number")

@@ -63,7 +63,9 @@ final class TkInvite implements Take {
 
     @Override
     public Response act(final Request req) throws IOException {
-        final String name = new RqForm(req).param("name").iterator().next();
+        final String name = new RqForm.Smart(
+            new RqForm.Base(req)
+        ).single("name");
         final String check = new RqAlias(this.base, req)
             .user().aliases().check(name);
         if (check.isEmpty()) {
@@ -81,7 +83,7 @@ final class TkInvite implements Take {
         } catch (final Friends.UnknownAliasException ex) {
             throw new RsForward(new RsFlash(ex));
         }
-        return new RsForward(
+        throw new RsForward(
             new RsFlash(
                 String.format(
                     "new person invited to the bout #%d",

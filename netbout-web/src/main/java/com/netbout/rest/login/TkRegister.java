@@ -29,7 +29,6 @@ package com.netbout.rest.login;
 import com.netbout.rest.RqAlias;
 import com.netbout.spi.Base;
 import java.io.IOException;
-import java.util.Iterator;
 import java.util.logging.Level;
 import org.takes.Request;
 import org.takes.Response;
@@ -62,14 +61,10 @@ final class TkRegister implements Take {
 
     @Override
     public Response act(final Request req) throws IOException {
-        final Iterator<String> alias = new RqForm(req)
-            .param("alias").iterator();
-        if (!alias.hasNext()) {
-            throw new RsForward(
-                new RsFlash("'alias' is a mandatory form param", Level.SEVERE)
-            );
-        }
-        new RqAlias(this.base, req).user().aliases().add(alias.next());
+        final String alias = new RqForm.Smart(
+            new RqForm.Base(req)
+        ).single("alias");
+        new RqAlias(this.base, req).user().aliases().add(alias);
         return new RsForward(
             new RsFlash(
                 String.format("your alias '%s' was registered", alias),

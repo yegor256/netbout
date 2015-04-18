@@ -78,7 +78,7 @@ final class TkAttach implements Take {
 
     @Override
     public Response act(final Request req) throws IOException {
-        final RqMultipart multi = new RqMultipart(req);
+        final RqMultipart multi = new RqMultipart.Base(req);
         final String name = new RqPrint(
             multi.part("name").iterator().next()
         ).printBody();
@@ -116,7 +116,7 @@ final class TkAttach implements Take {
             throw new RsForward(new RsFlash(ex));
         }
         FileUtils.forceDelete(temp);
-        return new RsForward(new RsFlash(msg.toString()));
+        throw new RsForward(new RsFlash(msg.toString()));
     }
 
 }

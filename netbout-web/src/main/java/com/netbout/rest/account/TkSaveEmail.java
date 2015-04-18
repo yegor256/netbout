@@ -62,7 +62,9 @@ final class TkSaveEmail implements Take {
 
     @Override
     public Response act(final Request req) throws IOException {
-        final String email = new RqForm(req).param("email").iterator().next();
+        final String email = new RqForm.Smart(
+            new RqForm.Base(req)
+        ).single("email");
         try {
             new RqAlias(this.base, req).alias().email(email);
         } catch (final Alias.InvalidEmailException ex) {

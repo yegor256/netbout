@@ -27,7 +27,6 @@
 package com.netbout.rest.bout;
 
 import com.netbout.spi.Base;
-import org.takes.facets.fork.FkRegex;
 import org.takes.facets.fork.TkFork;
 import org.takes.tk.TkWrap;
 
@@ -48,14 +47,14 @@ public final class TkBout extends TkWrap {
         super(
             new TkFork(
                 new FkBout("", new TkIndex(base)),
-                new FkRegex("/attach", new TkAttach(base)),
-                new FkRegex("/upload", new TkUpload(base)),
-                new FkRegex("/download", new TkDownload(base)),
-                new FkRegex("/rename", new TkRename(base)),
-                new FkRegex("/create", new TkCreate(base)),
-                new FkRegex("/post", new TkPost(base)),
-                new FkRegex("/invite", new TkInvite(base)),
-                new FkRegex("/kick", new TkKick(base))
+                new FkBout("/attach", new TkAttach(base)),
+                new FkBout("/upload", new TkUpload(base)),
+                new FkBout("/download", new TkDownload(base)),
+                new FkBout("/rename", new TkRename(base)),
+                new FkBout("/create", new TkCreate(base)),
+                new FkBout("/post", new TkPost(base)),
+                new FkBout("/invite", new TkInvite(base)),
+                new FkBout("/kick", new TkKick(base))
             )
         );
     }

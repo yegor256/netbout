@@ -61,14 +61,17 @@ final class TkPost implements Take {
 
     @Override
     public Response act(final Request req) throws IOException {
-        final String text = new RqForm(req).param("text").iterator().next();
         final Bout bout = new RqBout(this.base, req).bout();
         try {
-            bout.messages().post(text);
+            bout.messages().post(
+                new RqForm.Smart(
+                    new RqForm.Base(req)
+                ).single("text")
+            );
         } catch (final Attachments.InvalidNameException ex) {
             throw new RsForward(new RsFlash(ex));
         }
-        return new RsForward(
+        throw new RsForward(
             new RsFlash(
                 String.format(
                     "message posted to the bout #%d",

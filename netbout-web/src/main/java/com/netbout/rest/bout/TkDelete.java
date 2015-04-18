@@ -61,15 +61,16 @@ final class TkDelete implements Take {
 
     @Override
     public Response act(final Request req) throws IOException {
-        final String name = new RqHref.Base(req).href()
-            .param("name").iterator().next();
+        final String name = new RqHref.Smart(
+            new RqHref.Base(req)
+        ).single("name");
         final Bout bout = new RqBout(this.base, req).bout();
         try {
             bout.attachments().delete(name);
         } catch (final Attachments.InvalidNameException ex) {
             throw new RsForward(new RsFlash(ex));
         }
-        return new RsForward(
+        throw new RsForward(
             new RsFlash(String.format("attachment '%s' deleted", name))
         );
     }

@@ -36,7 +36,6 @@ import org.takes.Response;
 import org.takes.Take;
 import org.takes.facets.flash.RsFlash;
 import org.takes.facets.forward.RsForward;
-import org.takes.misc.Href;
 import org.takes.rq.RqHref;
 
 /**
@@ -63,14 +62,14 @@ final class TkUpload implements Take {
 
     @Override
     public Response act(final Request req) throws IOException {
-        final Href href = new RqHref.Base(req).href();
-        final String name = href.param("name").iterator().next();
-        final String ctype = href.param("ctype").iterator().next();
-        final String etag = href.param("etag").iterator().next();
+        final RqHref.Smart smart = new RqHref.Smart(new RqHref.Base(req));
+        final String name = smart.single("name");
+        final String ctype = smart.single("ctype");
+        final String etag = smart.single("etag");
         final Bout bout = new RqBout(this.base, req).bout();
         final Attachment attachment = bout.attachments().get(name);
         attachment.write(req.body(), ctype, etag);
-        return new RsForward(
+        throw new RsForward(
             new RsFlash(
                 String.format(
                     "attachment '%s' uploaded (ctype=%s, etag=%s)",

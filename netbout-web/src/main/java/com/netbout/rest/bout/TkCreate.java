@@ -35,7 +35,7 @@ import org.takes.Response;
 import org.takes.Take;
 import org.takes.facets.flash.RsFlash;
 import org.takes.facets.forward.RsForward;
-import org.takes.rq.RqForm;
+import org.takes.rq.RqHref;
 
 /**
  * Create attachment.
@@ -61,14 +61,16 @@ final class TkCreate implements Take {
 
     @Override
     public Response act(final Request req) throws IOException {
-        final String name = new RqForm(req).param("name").iterator().next();
+        final String name = new RqHref.Smart(
+            new RqHref.Base(req)
+        ).single("name");
         final Bout bout = new RqBout(this.base, req).bout();
         try {
             bout.attachments().create(name);
         } catch (final Attachments.InvalidNameException ex) {
             throw new RsForward(new RsFlash(ex));
         }
-        return new RsForward(
+        throw new RsForward(
             new RsFlash(String.format("attachment '%s' created", name))
         );
     }

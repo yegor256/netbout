@@ -64,7 +64,7 @@ final class TkDownload implements Take {
     public Response act(final Request req) throws IOException {
         final Bout bout = new RqBout(this.base, req).bout();
         final Attachment attachment = bout.attachments().get(
-            new RqHref.Base(req).href().param("name").iterator().next()
+            new RqHref.Smart(new RqHref.Base(req)).single("name")
         );
         return new RsFluent()
             .withBody(attachment.read())
