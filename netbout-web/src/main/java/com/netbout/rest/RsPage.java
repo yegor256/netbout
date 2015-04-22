@@ -71,7 +71,7 @@ public final class RsPage extends RsWrap {
      * Version of the system, to show in header.
      */
     private static final String VERSION_LABEL = String.format(
-        "%s/%s built on %s",
+        "%s %s %s",
         // @checkstyle MultipleStringLiterals (3 lines)
         Manifests.read("Netbout-Version"),
         Manifests.read("Netbout-Revision"),

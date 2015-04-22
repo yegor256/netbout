@@ -53,7 +53,9 @@ import org.takes.rs.xe.XeLink;
 import org.takes.rs.xe.XeSource;
 import org.takes.rs.xe.XeTransform;
 import org.takes.rs.xe.XeWhen;
+import org.xembly.Directive;
 import org.xembly.Directives;
+import org.xembly.Xembler;
 
 /**
  * Index.
@@ -235,16 +237,21 @@ final class TkIndex implements Take {
             new XeWhen(
                 atmt.name().equals(open)
                     && atmt.ctype().equals(Attachment.MARKDOWN),
-                new XeDirectives(
-                    new Directives().add("html").set(
-                        new Markdown(
-                            IOUtils.toString(
-                                atmt.read(),
-                                CharEncoding.UTF_8
+                new XeSource() {
+                    @Override
+                    public Iterable<Directive> toXembly() throws IOException {
+                        return new Directives().add("html").set(
+                            Xembler.escape(
+                                new Markdown(
+                                    IOUtils.toString(
+                                        atmt.read(),
+                                        CharEncoding.UTF_8
+                                    )
+                                ).html()
                             )
-                        ).html()
-                    )
-                )
+                        );
+                    }
+                }
             )
         );
     }

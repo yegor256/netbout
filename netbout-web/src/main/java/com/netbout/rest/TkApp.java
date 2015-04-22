@@ -98,7 +98,7 @@ public final class TkApp extends TkWrap {
      * @param base Base
      */
     public TkApp(final Base base) {
-        super(TkApp.make(base));
+        super(TkApp.fallback(TkApp.make(base)));
     }
 
     /**
@@ -115,17 +115,15 @@ public final class TkApp extends TkWrap {
             );
         }
         final Take take = new TkGzip(
-            TkApp.fallback(
-                new TkFlash(
-                    TkApp.auth(
-                        new TkForward(TkApp.regex(base))
-                    )
+            new TkFlash(
+                TkApp.auth(
+                    new TkForward(TkApp.regex(base))
                 )
             )
         );
         return new TkWithHeaders(
             new TkVersioned(new TkMeasured(take)),
-            String.format("X-Rultor-Revision: %s", TkApp.REV),
+            String.format("X-Netbout-Revision: %s", TkApp.REV),
             "Vary: Cookie"
         );
     }

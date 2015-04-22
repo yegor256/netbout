@@ -27,7 +27,6 @@
 package com.netbout.rest.bout;
 
 import java.io.IOException;
-import java.util.Iterator;
 import org.takes.Request;
 import org.takes.Response;
 import org.takes.Take;
@@ -37,6 +36,7 @@ import org.takes.facets.fork.Fork;
 import org.takes.facets.fork.RqRegex;
 import org.takes.facets.fork.TkRegex;
 import org.takes.facets.forward.RsForward;
+import org.takes.misc.Opt;
 import org.takes.rq.RqWithHeader;
 
 /**
@@ -57,7 +57,7 @@ final class FkBout extends FkWrap {
         super(
             new Fork() {
                 @Override
-                public Iterator<Response> route(final Request req) throws IOException {
+                public Opt<Response> route(final Request req) throws IOException {
                     return new FkRegex(
                         String.format("/b/([0-9]+)%s", regex),
                         new TkRegex() {

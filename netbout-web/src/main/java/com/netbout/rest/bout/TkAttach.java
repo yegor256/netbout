@@ -78,12 +78,12 @@ final class TkAttach implements Take {
 
     @Override
     public Response act(final Request req) throws IOException {
-        final RqMultipart multi = new RqMultipart.Base(req);
-        final String name = new RqPrint(
-            multi.part("name").iterator().next()
-        ).printBody();
+        final RqMultipart.Smart multi = new RqMultipart.Smart(
+            new RqMultipart.Base(req)
+        );
+        final String name = new RqPrint(multi.single("name")).printBody();
         final File temp = File.createTempFile("netbout", "bin");
-        IOUtils.copy(req.body(), new FileOutputStream(temp));
+        IOUtils.copy(multi.single("file").body(), new FileOutputStream(temp));
         final Bout bout = new RqBout(this.base, req).bout();
         final StringBuilder msg = new StringBuilder(Tv.HUNDRED);
         if (new Attachments.Search(bout.attachments()).exists(name)) {
