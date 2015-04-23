@@ -171,6 +171,7 @@
                         <xsl:text>s</xsl:text>
                     </xsl:if>
                 </li>
+                <xsl:text> </xsl:text>
             </ul>
             <div id="files" style="display:none">
                 <ul>
