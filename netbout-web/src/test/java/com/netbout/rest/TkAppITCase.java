@@ -58,11 +58,12 @@ public final class TkAppITCase {
             "/css/style.css",
             "/js/bout.js",
             "/xsl/login.xsl",
+            "/xsl/bout.xsl",
             "/lang/en.xml",
         };
         for (final String page : pages) {
             new JdkRequest(TkAppITCase.HOME)
-                .uri().path(page).back()
+                .uri().path(page).queryParam("alpha", "boom1").back()
                 .fetch()
                 .as(RestResponse.class)
                 .assertStatus(HttpURLConnection.HTTP_OK);
