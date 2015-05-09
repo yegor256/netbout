@@ -100,6 +100,7 @@
         <dependency>
             <groupId>com.jcabi</groupId>
             <artifactId>jcabi-dynamo</artifactId>
+            <version>0.18.4</version>
         </dependency>
         <dependency>
             <groupId>co.stateful</groupId>
