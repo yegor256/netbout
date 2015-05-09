@@ -37,6 +37,7 @@ import org.takes.facets.fork.RqRegex;
 import org.takes.facets.fork.TkRegex;
 import org.takes.facets.forward.RsForward;
 import org.takes.misc.Opt;
+import org.takes.rq.RqHref;
 import org.takes.rq.RqWithHeader;
 
 /**
@@ -103,11 +104,16 @@ final class FkBout extends FkWrap {
     private static Take redirect(final long bout, final Take take) {
         return new Take() {
             @Override
-            public Response act(final Request request) throws IOException {
+            public Response act(final Request req) throws IOException {
                 try {
-                    return take.act(request);
+                    return take.act(req);
                 } catch (final RsForward ex) {
-                    throw new RsForward(ex, String.format("/b/%d", bout));
+                    throw new RsForward(
+                        ex,
+                        new RqHref.Smart(
+                            new RqHref.Base(req)
+                        ).home().path("b").path(Long.toString(bout))
+                    );
                 }
             }
         };
