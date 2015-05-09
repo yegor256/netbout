@@ -24,78 +24,83 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.rest;
+package com.netbout.rest.bout;
 
-import com.netbout.spi.Alias;
-import com.netbout.spi.Base;
+import com.netbout.rest.Markdown;
+import com.netbout.spi.Bout;
+import com.netbout.spi.Message;
 import java.io.IOException;
-import lombok.EqualsAndHashCode;
-import org.takes.Request;
+import org.apache.commons.lang3.time.DateFormatUtils;
+import org.ocpsoft.prettytime.PrettyTime;
+import org.takes.misc.Href;
 import org.takes.rs.xe.XeAppend;
-import org.takes.rs.xe.XeChain;
 import org.takes.rs.xe.XeDirectives;
 import org.takes.rs.xe.XeLink;
 import org.takes.rs.xe.XeSource;
-import org.takes.rs.xe.XeWhen;
 import org.takes.rs.xe.XeWrap;
 import org.xembly.Directives;
 
 /**
- * Xembly for alias.
+ * Message in Xembly.
  *
  * @author Yegor Bugayenko (yegor@teamed.io)
  * @version $Id$
  * @since 2.14
+ * @checkstyle MultipleStringLiteralsCheck (500 lines)
  * @checkstyle ClassDataAbstractionCouplingCheck (500 lines)
  */
-@EqualsAndHashCode(callSuper = true)
-final class XeAlias extends XeWrap {
+final class XeMessage extends XeWrap {
 
     /**
      * Ctor.
-     * @param base The base
-     * @param req Request
-     * @throws IOException If fails
+     * @param bout Bout
+     * @param msg Message
+     * @throws IOException In case of failure
      */
-    XeAlias(final Base base, final Request req) throws IOException {
-        super(XeAlias.source(base, req));
+    XeMessage(final Bout bout, final Message msg)
+        throws IOException {
+        super(XeMessage.make(bout, msg));
     }
 
     /**
-     * Make xembly for account.
-     * @param base The base
-     * @param req Request
+     * Convert message to Xembly source.
+     * @param bout Bout
+     * @param msg Message
      * @return Xembly source
-     * @throws IOException If fails
+     * @throws IOException In case of failure
      */
-    private static XeSource source(final Base base,
-        final Request req) throws IOException {
-        final RqAlias rqa = new RqAlias(base, req);
-        return new XeWhen(
-            rqa.has(),
-            new XeChain(
-                XeAlias.source(rqa.alias()),
-                new XeLink("start", "/start"),
-                new XeLink("account", "/acc/index")
-            )
-        );
-    }
-
-    /**
-     * Make xembly for alias.
-     * @param alias Alias
-     * @return Xembly source
-     * @throws IOException If fails
-     */
-    private static XeSource source(final Alias alias) throws IOException {
+    private static XeSource make(final Bout bout, final Message msg)
+        throws IOException {
         return new XeAppend(
-            "alias",
+            "message",
             new XeDirectives(
                 new Directives()
-                    .add("name").set(alias.name()).up()
-                    .add("locale").set(alias.locale().toString()).up()
-                    .add("photo").set(alias.photo().toString()).up()
-                    .add("email").set(alias.email())
+                    .add("number")
+                    .set(Long.toString(msg.number()))
+                    .up()
+                    .add("author").set(msg.author()).up()
+                    .add("text").set(msg.text()).up()
+                    .add("html").set(new Markdown(msg.text()).html()).up()
+                    .add("timeago")
+                    .set(new PrettyTime().format(msg.date())).up()
+                    .add("date")
+                    .set(
+                        DateFormatUtils.ISO_DATETIME_FORMAT.format(
+                            msg.date()
+                        )
+                    )
+            ),
+            new XeLink(
+                "photo",
+                new Href().path("f").path(
+                    String.format("%s.png", msg.author())
+                )
+            ),
+            new XeLink(
+                "more",
+                new Href().path("b")
+                    .path(bout.number())
+                    .with("start", msg.number())
             )
         );
     }

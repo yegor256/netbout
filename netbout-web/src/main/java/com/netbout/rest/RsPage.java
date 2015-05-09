@@ -81,9 +81,11 @@ public final class RsPage extends RsWrap {
     /**
      * Ctor.
      * @param xsl XSL
+     * @param base Base
      * @param req Request
      * @param src Source
      * @throws IOException If fails
+     * @checkstyle ParameterNumberCheck (5 lines)
      */
     public RsPage(final String xsl, final Base base,
         final Request req, final XeSource... src) throws IOException {
@@ -93,10 +95,12 @@ public final class RsPage extends RsWrap {
     /**
      * Make it.
      * @param xsl XSL
+     * @param base Base
      * @param req Request
      * @param src Source
      * @return Response
      * @throws IOException If fails
+     * @checkstyle ParameterNumberCheck (5 lines)
      */
     private static Response make(final String xsl, final Base base,
         final Request req, final XeSource... src) throws IOException {

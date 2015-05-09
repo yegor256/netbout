@@ -1,6 +1,4 @@
-<?xml version="1.0"?>
-<?xml-stylesheet href="/xsl/login.xsl" type="text/xsl"?>
-<!--
+/**
  * Copyright (c) 2009-2014, netbout.com
  * All rights reserved.
  *
@@ -25,21 +23,13 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
+ */
+
+/**
+ * App-wide classes.
  *
  * @author Yegor Bugayenko (yegor@teamed.io)
  * @version $Id$
- -->
-<page>
-    <version>
-        <name>1.0</name>
-        <revision>9988</revision>
-        <date>2011-09-23</date>
-    </version>
-    <links>
-        <link href="/xml/inbox.xml" rel="home" />
-        <link href="/xml/login.xml" rel="self" />
-        <link href="/xml/start.xml" rel="start" />
-        <link href="/favicon.ico" rel="favicon" />
-    </links>
-    <millis>0</millis>
-</page>
+ * @since 2.14
+ */
+package com.netbout;

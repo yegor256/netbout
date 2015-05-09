@@ -57,27 +57,41 @@ final class FkBout extends FkWrap {
         super(
             new Fork() {
                 @Override
-                public Opt<Response> route(final Request req) throws IOException {
-                    return new FkRegex(
-                        String.format("/b/([0-9]+)%s", regex),
-                        new TkRegex() {
-                            @Override
-                            public Response act(final RqRegex rreq) throws IOException {
-                                final long bout = Long.parseLong(
-                                    rreq.matcher().group(1)
-                                );
-                                return FkBout.redirect(bout, take).act(
-                                    new RqWithHeader(
-                                        rreq, "X-Netbout-Bout",
-                                        Long.toString(bout)
-                                    )
-                                );
-                            }
-                        }
-                    ).route(req);
+                public Opt<Response> route(final Request req)
+                    throws IOException {
+                    return FkBout.route(regex, take, req);
                 }
             }
         );
+    }
+
+    /**
+     * Route.
+     * @param regex Regular expression
+     * @param take Take
+     * @param req Request
+     * @return Response or empty
+     * @throws IOException If fails
+     */
+    private static Opt<Response> route(final String regex, final Take take,
+        final Request req) throws IOException {
+        return new FkRegex(
+            String.format("/b/([0-9]+)%s", regex),
+            new TkRegex() {
+                @Override
+                public Response act(final RqRegex rreq) throws IOException {
+                    final long bout = Long.parseLong(
+                        rreq.matcher().group(1)
+                    );
+                    return FkBout.redirect(bout, take).act(
+                        new RqWithHeader(
+                            rreq, "X-Netbout-Bout",
+                            Long.toString(bout)
+                        )
+                    );
+                }
+            }
+        ).route(req);
     }
 
     /**

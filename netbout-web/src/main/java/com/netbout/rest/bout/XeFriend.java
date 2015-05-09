@@ -24,46 +24,68 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.rest.account;
+package com.netbout.rest.bout;
 
-import com.netbout.rest.RsPage;
-import com.netbout.spi.Base;
+import com.netbout.spi.Bout;
+import com.netbout.spi.Friend;
 import java.io.IOException;
-import org.takes.Request;
-import org.takes.Response;
-import org.takes.Take;
+import org.takes.misc.Href;
+import org.takes.rs.xe.XeAppend;
+import org.takes.rs.xe.XeDirectives;
 import org.takes.rs.xe.XeLink;
+import org.takes.rs.xe.XeSource;
+import org.takes.rs.xe.XeWrap;
+import org.xembly.Directives;
 
 /**
- * User account.
+ * Friend in Xembly.
  *
  * @author Yegor Bugayenko (yegor@teamed.io)
  * @version $Id$
  * @since 2.14
+ * @checkstyle MultipleStringLiteralsCheck (500 lines)
  * @checkstyle ClassDataAbstractionCouplingCheck (500 lines)
  */
-final class TkIndex implements Take {
-
-    /**
-     * Base.
-     */
-    private final transient Base base;
+final class XeFriend extends XeWrap {
 
     /**
      * Ctor.
-     * @param bse Base
+     * @param bout Bout
+     * @param friend Friend to convert
+     * @throws IOException If fails
      */
-    TkIndex(final Base bse) {
-        this.base = bse;
+    XeFriend(final Bout bout, final Friend friend)
+        throws IOException {
+        super(XeFriend.make(bout, friend));
     }
 
-    @Override
-    public Response act(final Request req) throws IOException {
-        return new RsPage(
-            "/xsl/account.xsl",
-            this.base,
-            req,
-            new XeLink("save-email", "/acc/save")
+    /**
+     * Convert friend to Xembly.
+     * @param bout Bout
+     * @param friend Friend to convert
+     * @return Xembly
+     * @throws IOException If fails
+     */
+    private static XeSource make(final Bout bout, final Friend friend)
+        throws IOException {
+        return new XeAppend(
+            "friend",
+            new XeDirectives(
+                new Directives().add("alias").set(friend.alias())
+            ),
+            new XeLink(
+                "photo",
+                new Href().path("f").path(
+                    String.format("%s.png", friend.alias())
+                )
+            ),
+            new XeLink(
+                "kick",
+                new Href().path("b")
+                    .path(bout.number())
+                    .path("kick")
+                    .with("name", friend.alias())
+            )
         );
     }
 

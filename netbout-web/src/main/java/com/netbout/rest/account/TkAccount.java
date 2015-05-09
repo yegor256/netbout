@@ -27,6 +27,7 @@
 package com.netbout.rest.account;
 
 import com.netbout.spi.Base;
+import org.takes.Take;
 import org.takes.facets.fork.FkMethods;
 import org.takes.facets.fork.FkRegex;
 import org.takes.facets.fork.TkFork;
@@ -46,19 +47,26 @@ public final class TkAccount extends TkWrap {
      * @param base Base
      */
     public TkAccount(final Base base) {
-        super(
-            new TkFork(
-                new FkRegex(
-                    "/acc/index",
-                    new TkFork(
-                        new FkMethods("GET", new TkIndex(base))
-                    )
-                ),
-                new FkRegex(
-                    "/acc/save",
-                    new TkFork(
-                        new FkMethods("POST", new TkSaveEmail(base))
-                    )
+        super(TkAccount.make(base));
+    }
+
+    /**
+     * Make it.
+     * @param base Base
+     * @return Take
+     */
+    private static Take make(final Base base) {
+        return new TkFork(
+            new FkRegex(
+                "/acc/index",
+                new TkFork(
+                    new FkMethods("GET", new TkIndex(base))
+                )
+            ),
+            new FkRegex(
+                "/acc/save",
+                new TkFork(
+                    new FkMethods("POST", new TkSaveEmail(base))
                 )
             )
         );

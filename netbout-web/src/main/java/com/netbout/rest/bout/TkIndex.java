@@ -27,7 +27,6 @@
 package com.netbout.rest.bout;
 
 import com.google.common.collect.Iterables;
-import com.netbout.rest.Markdown;
 import com.netbout.rest.RsPage;
 import com.netbout.spi.Attachment;
 import com.netbout.spi.Base;
@@ -37,11 +36,6 @@ import com.netbout.spi.Inbox;
 import com.netbout.spi.Message;
 import com.netbout.spi.Messages;
 import java.io.IOException;
-import java.util.Iterator;
-import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang3.CharEncoding;
-import org.apache.commons.lang3.time.DateFormatUtils;
-import org.ocpsoft.prettytime.PrettyTime;
 import org.takes.Request;
 import org.takes.Response;
 import org.takes.Take;
@@ -52,10 +46,7 @@ import org.takes.rs.xe.XeDirectives;
 import org.takes.rs.xe.XeLink;
 import org.takes.rs.xe.XeSource;
 import org.takes.rs.xe.XeTransform;
-import org.takes.rs.xe.XeWhen;
-import org.xembly.Directive;
 import org.xembly.Directives;
-import org.xembly.Xembler;
 
 /**
  * Index.
@@ -63,6 +54,8 @@ import org.xembly.Xembler;
  * @author Yegor Bugayenko (yegor@teamed.io)
  * @version $Id$
  * @since 2.14
+ * @checkstyle MultipleStringLiteralsCheck (500 lines)
+ * @checkstyle ClassDataAbstractionCouplingCheck (500 lines)
  */
 final class TkIndex implements Take {
 
@@ -73,7 +66,7 @@ final class TkIndex implements Take {
 
     /**
      * Ctor.
-     * @param bse base
+     * @param bse Base
      */
     TkIndex(final Base bse) {
         this.base = bse;
@@ -106,33 +99,33 @@ final class TkIndex implements Take {
                 ),
                 new XeAppend(
                     "friends",
-                    new XeTransform<Friend>(
+                    new XeTransform<>(
                         bout.friends().iterate(),
                         new XeTransform.Func<Friend>() {
                             @Override
                             public XeSource transform(final Friend friend)
                                 throws IOException {
-                                return TkIndex.this.source(bout, friend);
+                                return new XeFriend(bout, friend);
                             }
                         }
                     )
                 ),
                 new XeAppend(
                     "attachments",
-                    new XeTransform<Attachment>(
+                    new XeTransform<>(
                         bout.attachments().iterate(),
                         new XeTransform.Func<Attachment>() {
                             @Override
                             public XeSource transform(final Attachment atmt)
                                 throws IOException {
-                                return TkIndex.this.source(req, bout, atmt);
+                                return new XeAttachment(req, bout, atmt);
                             }
                         }
                     )
                 ),
                 new XeAppend(
                     "messages",
-                    new XeTransform<Message>(
+                    new XeTransform<>(
                         Iterables.limit(
                             bout.messages().jump(start).iterate(),
                             Messages.PAGE
@@ -141,7 +134,7 @@ final class TkIndex implements Take {
                             @Override
                             public XeSource transform(final Message msg)
                                 throws IOException {
-                                return TkIndex.this.source(bout, msg);
+                                return new XeMessage(bout, msg);
                             }
                         }
                     )
@@ -153,148 +146,6 @@ final class TkIndex implements Take {
             new XeLink("upload", home.path("upload")),
             new XeLink("create", home.path("create")),
             new XeLink("attach", home.path("attach"))
-        );
-    }
-
-    /**
-     * Convert friend to Xembly.
-     * @param friend Friend to convert
-     * @return Xembly
-     * @throws IOException If fails
-     */
-    private XeSource source(final Bout bout, final Friend friend)
-        throws IOException {
-        return new XeAppend(
-            "friend",
-            new XeDirectives(
-                new Directives().add("alias").set(friend.alias())
-            ),
-            new XeLink(
-                "photo",
-                new Href().path("f").path(
-                    String.format("%s.png", friend.alias())
-                )
-            ),
-            new XeLink(
-                "kick",
-                new Href().path("b")
-                    .path(bout.number())
-                    .path("kick")
-                    .with("name", friend.alias())
-            )
-        );
-    }
-
-    /**
-     * Convert attachment to Xembly source.
-     * @param req Request
-     * @param bout Bout
-     * @param atmt Attachment
-     * @return Xembly source
-     * @throws IOException If fails
-     */
-    private XeSource source(final Request req, final Bout bout,
-        final Attachment atmt) throws IOException {
-        String open = "";
-        final Iterator<String> param = new RqHref.Base(req).href()
-            .param("open").iterator();
-        if (param.hasNext()) {
-            open = param.next();
-        }
-        return new XeAppend(
-            "attachment",
-            new XeDirectives(
-                new Directives()
-                    .add("name").set(atmt.name()).up()
-                    .add("ctype").set(atmt.ctype()).up()
-                    .add("etag").set(atmt.etag()).up()
-                    .add("unseen").set(Boolean.toString(atmt.unseen()))
-            ),
-            new XeLink(
-                "delete",
-                new Href().path("b")
-                    .path(bout.number())
-                    .path("delete")
-                    .with("name", atmt.name())
-            ),
-            new XeLink(
-                "download",
-                new Href().path("b")
-                    .path(bout.number())
-                    .path("download")
-                    .with("name", atmt.name())
-            ),
-            new XeWhen(
-                atmt.ctype().equals(Attachment.MARKDOWN),
-                new XeLink(
-                    "open",
-                    new Href().path("b")
-                        .path(bout.number())
-                        .path("open")
-                        .with("name", atmt.name())
-                )
-            ),
-            new XeWhen(
-                atmt.name().equals(open)
-                    && atmt.ctype().equals(Attachment.MARKDOWN),
-                new XeSource() {
-                    @Override
-                    public Iterable<Directive> toXembly() throws IOException {
-                        return new Directives().add("html").set(
-                            Xembler.escape(
-                                new Markdown(
-                                    IOUtils.toString(
-                                        atmt.read(),
-                                        CharEncoding.UTF_8
-                                    )
-                                ).html()
-                            )
-                        );
-                    }
-                }
-            )
-        );
-    }
-
-    /**
-     * Convert message to Xembly source.
-     * @param bout Bout
-     * @param msg Message
-     * @return Xembly source
-     * @throws IOException In case of failure
-     */
-    private XeSource source(final Bout bout, final Message msg)
-        throws IOException {
-        return new XeAppend(
-            "message",
-            new XeDirectives(
-                new Directives()
-                    .add("number").set(Long.toString(msg.number()))
-                    .up()
-                    .add("author").set(msg.author()).up()
-                    .add("text").set(msg.text()).up()
-                    .add("html").set(new Markdown(msg.text()).html()).up()
-                    .add("timeago")
-                    .set(new PrettyTime().format(msg.date())).up()
-                    .add("date")
-                    .set(
-                        DateFormatUtils.ISO_DATETIME_FORMAT.format(
-                            msg.date()
-                        )
-                    )
-            ),
-            new XeLink(
-                "photo",
-                new Href().path("f").path(
-                    String.format("%s.png", msg.author())
-                )
-            ),
-            new XeLink(
-                "more",
-                new Href().path("b")
-                    .path(bout.number())
-                    .with("start", msg.number())
-            )
         );
     }
 

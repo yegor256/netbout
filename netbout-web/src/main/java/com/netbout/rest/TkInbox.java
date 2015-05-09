@@ -51,6 +51,8 @@ import org.xembly.Directives;
  * @author Yegor Bugayenko (yegor@teamed.io)
  * @version $Id$
  * @since 2.14
+ * @checkstyle ClassDataAbstractionCouplingCheck (500 lines)
+ * @checkstyle MultipleStringLiteralsCheck (500 lines)
  */
 final class TkInbox implements Take {
 
@@ -90,7 +92,7 @@ final class TkInbox implements Take {
         if (param.hasNext()) {
             since = Long.parseLong(param.next());
         }
-        return new XeTransform<Bout>(
+        return new XeTransform<>(
             Iterables.limit(
                 new RqAlias(this.base, req).alias()
                     .inbox().jump(since).iterate(),
@@ -134,7 +136,7 @@ final class TkInbox implements Take {
             ),
             new XeAppend(
                 "friends",
-                new XeTransform<Friend>(
+                new XeTransform<>(
                     bout.friends().iterate(),
                     new XeTransform.Func<Friend>() {
                         @Override

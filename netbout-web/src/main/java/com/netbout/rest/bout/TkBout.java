@@ -27,6 +27,7 @@
 package com.netbout.rest.bout;
 
 import com.netbout.spi.Base;
+import org.takes.Take;
 import org.takes.facets.fork.TkFork;
 import org.takes.tk.TkWrap;
 
@@ -36,6 +37,7 @@ import org.takes.tk.TkWrap;
  * @author Yegor Bugayenko (yegor@teamed.io)
  * @version $Id$
  * @since 2.14
+ * @checkstyle ClassDataAbstractionCouplingCheck (500 lines)
  */
 public final class TkBout extends TkWrap {
 
@@ -44,19 +46,26 @@ public final class TkBout extends TkWrap {
      * @param base Base
      */
     public TkBout(final Base base) {
-        super(
-            new TkFork(
-                new FkBout("", new TkIndex(base)),
-                new FkBout("/attach", new TkAttach(base)),
-                new FkBout("/upload", new TkUpload(base)),
-                new FkBout("/download", new TkDownload(base)),
-                new FkBout("/rename", new TkRename(base)),
-                new FkBout("/create", new TkCreate(base)),
-                new FkBout("/delete", new TkDelete(base)),
-                new FkBout("/post", new TkPost(base)),
-                new FkBout("/invite", new TkInvite(base)),
-                new FkBout("/kick", new TkKick(base))
-            )
+        super(TkBout.make(base));
+    }
+
+    /**
+     * Ctor.
+     * @param base Base
+     * @return Take
+     */
+    private static Take make(final Base base) {
+        return new TkFork(
+            new FkBout("", new TkIndex(base)),
+            new FkBout("/attach", new TkAttach(base)),
+            new FkBout("/upload", new TkUpload(base)),
+            new FkBout("/download", new TkDownload(base)),
+            new FkBout("/rename", new TkRename(base)),
+            new FkBout("/create", new TkCreate(base)),
+            new FkBout("/delete", new TkDelete(base)),
+            new FkBout("/post", new TkPost(base)),
+            new FkBout("/invite", new TkInvite(base)),
+            new FkBout("/kick", new TkKick(base))
         );
     }
 

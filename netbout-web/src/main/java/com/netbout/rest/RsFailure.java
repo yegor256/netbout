@@ -48,6 +48,7 @@ public final class RsFailure extends RsForward {
     /**
      * Ctor.
      * @param cause Cause
+     * @throws UnsupportedEncodingException If fails
      */
     public RsFailure(final Throwable cause)
         throws UnsupportedEncodingException {
@@ -60,6 +61,7 @@ public final class RsFailure extends RsForward {
     /**
      * Ctor.
      * @param cause Cause
+     * @throws UnsupportedEncodingException If fails
      */
     public RsFailure(final String cause)
         throws UnsupportedEncodingException {

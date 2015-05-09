@@ -31,34 +31,10 @@ import com.netbout.rest.account.TkAccount;
 import com.netbout.rest.bout.TkBout;
 import com.netbout.rest.login.TkLogin;
 import com.netbout.spi.Base;
-import java.io.IOException;
-import java.net.HttpURLConnection;
 import java.nio.charset.Charset;
-import java.util.Collections;
-import java.util.Iterator;
 import java.util.regex.Pattern;
-import org.apache.commons.lang3.exception.ExceptionUtils;
-import org.takes.Response;
 import org.takes.Take;
 import org.takes.facets.auth.PsByFlag;
-import org.takes.facets.auth.PsChain;
-import org.takes.facets.auth.PsCookie;
-import org.takes.facets.auth.PsFake;
-import org.takes.facets.auth.PsLogout;
-import org.takes.facets.auth.TkAuth;
-import org.takes.facets.auth.codecs.CcCompact;
-import org.takes.facets.auth.codecs.CcHex;
-import org.takes.facets.auth.codecs.CcSafe;
-import org.takes.facets.auth.codecs.CcSalted;
-import org.takes.facets.auth.codecs.CcXOR;
-import org.takes.facets.auth.social.PsFacebook;
-import org.takes.facets.auth.social.PsGithub;
-import org.takes.facets.auth.social.PsGoogle;
-import org.takes.facets.fallback.Fallback;
-import org.takes.facets.fallback.FbChain;
-import org.takes.facets.fallback.FbStatus;
-import org.takes.facets.fallback.RqFallback;
-import org.takes.facets.fallback.TkFallback;
 import org.takes.facets.flash.TkFlash;
 import org.takes.facets.fork.FkAnonymous;
 import org.takes.facets.fork.FkAuthenticated;
@@ -66,10 +42,6 @@ import org.takes.facets.fork.FkParams;
 import org.takes.facets.fork.FkRegex;
 import org.takes.facets.fork.TkFork;
 import org.takes.facets.forward.TkForward;
-import org.takes.rs.RsText;
-import org.takes.rs.RsVelocity;
-import org.takes.rs.RsWithStatus;
-import org.takes.rs.RsWithType;
 import org.takes.tk.TkClasspath;
 import org.takes.tk.TkGzip;
 import org.takes.tk.TkMeasured;
@@ -85,6 +57,8 @@ import org.takes.tk.TkWrap;
  * @author Yegor Bugayenko (yegor@teamed.io)
  * @version $Id$
  * @since 2.14
+ * @checkstyle ClassDataAbstractionCouplingCheck (500 lines)
+ * @checkstyle MultipleStringLiteralsCheck (500 lines)
  */
 public final class TkApp extends TkWrap {
 
@@ -98,7 +72,7 @@ public final class TkApp extends TkWrap {
      * @param base Base
      */
     public TkApp(final Base base) {
-        super(TkApp.fallback(TkApp.make(base)));
+        super(TkApp.make(base));
     }
 
     /**
@@ -114,116 +88,24 @@ public final class TkApp extends TkWrap {
                 )
             );
         }
-        final Take take = new TkGzip(
-            new TkFlash(
-                TkApp.auth(
-                    new TkForward(TkApp.regex(base))
-                )
-            )
-        );
         return new TkWithHeaders(
-            new TkVersioned(new TkMeasured(take)),
+            new TkVersioned(
+                new TkMeasured(
+                    new TkAppFallback(
+                        new TkGzip(
+                            new TkFlash(
+                                new TkAppAuth(
+                                    new TkForward(
+                                        TkApp.regex(base)
+                                    )
+                                )
+                            )
+                        )
+                    )
+                )
+            ),
             String.format("X-Netbout-Revision: %s", TkApp.REV),
             "Vary: Cookie"
-        );
-    }
-
-    /**
-     * Authenticated.
-     * @param takes Take
-     * @return Authenticated takes
-     */
-    private static Take fallback(final Take takes) {
-        return new TkFallback(
-            takes,
-            new FbChain(
-                new FbStatus(
-                    HttpURLConnection.HTTP_NOT_FOUND,
-                    new RsWithStatus(
-                        new RsText("page not found"),
-                        HttpURLConnection.HTTP_NOT_FOUND
-                    )
-                ),
-                // @checkstyle AnonInnerLengthCheck (50 lines)
-                new Fallback() {
-                    @Override
-                    public Iterator<Response> route(final RqFallback req)
-                        throws IOException {
-                        final String err = ExceptionUtils.getStackTrace(
-                            req.throwable()
-                        );
-                        return Collections.<Response>singleton(
-                            new RsWithStatus(
-                                new RsWithType(
-                                    new RsVelocity(
-                                        this.getClass().getResource(
-                                            "error.html.vm"
-                                        ),
-                                        new RsVelocity.Pair("err", err),
-                                        new RsVelocity.Pair("rev", TkApp.REV)
-                                    ),
-                                    "text/html"
-                                ),
-                                HttpURLConnection.HTTP_INTERNAL_ERROR
-                            )
-                        ).iterator();
-                    }
-                }
-            )
-        );
-    }
-
-    /**
-     * Authenticated.
-     * @param takes Take
-     * @return Authenticated takes
-     */
-    private static Take auth(final Take takes) {
-        return new TkAuth(
-            takes,
-            new PsChain(
-                new PsFake(
-                    Manifests.read("Netbout-DynamoKey").startsWith("AAAA")
-                ),
-                new PsByFlag(
-                    new PsByFlag.Pair(
-                        PsGithub.class.getSimpleName(),
-                        new PsGithub(
-                            Manifests.read("Netbout-GithubId"),
-                            Manifests.read("Netbout-GithubSecret")
-                        )
-                    ),
-                    new PsByFlag.Pair(
-                        PsFacebook.class.getSimpleName(),
-                        new PsFacebook(
-                            Manifests.read("Netbout-FbId"),
-                            Manifests.read("Netbout-FbSecret")
-                        )
-                    ),
-                    new PsByFlag.Pair(
-                        PsGoogle.class.getSimpleName(),
-                        new PsGoogle(
-                            Manifests.read("Netbout-GoogleId"),
-                            Manifests.read("Netbout-GoogleSecret"),
-                            "http://www.netbout.com/?PsByFlag=PsGoogle"
-                        )
-                    ),
-                    new PsByFlag.Pair(
-                        PsLogout.class.getSimpleName(),
-                        new PsLogout()
-                    )
-                ),
-                new PsCookie(
-                    new CcSafe(
-                        new CcHex(
-                            new CcXOR(
-                                new CcSalted(new CcCompact()),
-                                Manifests.read("Netbout-SecurityKey")
-                            )
-                        )
-                    )
-                )
-            )
         );
     }
 

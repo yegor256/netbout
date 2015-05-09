@@ -29,6 +29,7 @@ package com.netbout.rest;
 import com.jcabi.urn.URN;
 import java.io.IOException;
 import lombok.EqualsAndHashCode;
+import org.takes.Request;
 import org.takes.facets.auth.Identity;
 import org.takes.facets.auth.TkAuth;
 import org.takes.facets.auth.codecs.CcPlain;
@@ -50,16 +51,25 @@ public final class RqWithTester extends RqWrap {
     /**
      * Ctor.
      * @param urn URN of the tester
+     * @throws IOException If fails
      */
     public RqWithTester(final URN urn) throws IOException {
-        super(
-            new RqWithHeader(
-                new RqFake(),
-                TkAuth.class.getSimpleName(),
-                new String(
-                    new CcPlain().encode(
-                        new Identity.Simple(urn.toString())
-                    )
+        super(RqWithTester.make(urn));
+    }
+
+    /**
+     * Ctor.
+     * @param urn URN of the tester
+     * @return Request
+     * @throws IOException If fails
+     */
+    private static Request make(final URN urn) throws IOException {
+        return new RqWithHeader(
+            new RqFake(),
+            TkAuth.class.getSimpleName(),
+            new String(
+                new CcPlain().encode(
+                    new Identity.Simple(urn.toString())
                 )
             )
         );

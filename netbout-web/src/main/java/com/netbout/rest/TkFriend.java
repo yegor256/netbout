@@ -57,6 +57,7 @@ import org.takes.rs.RsFluent;
  * @author Yegor Bugayenko (yegor@teamed.io)
  * @version $Id$
  * @since 2.14
+ * @checkstyle ClassDataAbstractionCouplingCheck (500 lines)
  */
 public final class TkFriend implements TkRegex {
 

@@ -55,19 +55,20 @@ import org.takes.rq.RqPrint;
  * @author Yegor Bugayenko (yegor@teamed.io)
  * @version $Id$
  * @since 2.14
+ * @checkstyle ClassDataAbstractionCouplingCheck (500 lines)
  */
 final class TkAttach implements Take {
+
+    /**
+     * Base.
+     */
+    private final transient Base base;
 
     static {
         MimeUtil.registerMimeDetector(
             MagicMimeMimeDetector.class.getCanonicalName()
         );
     }
-
-    /**
-     * Base.
-     */
-    private final transient Base base;
 
     /**
      * Ctor.
@@ -97,13 +98,7 @@ final class TkAttach implements Take {
             }
             msg.append(String.format("attachment '%s' uploaded", name));
         }
-        final Collection<?> ctypes = MimeUtil.getMimeTypes(temp);
-        final String ctype;
-        if (ctypes.isEmpty()) {
-            ctype = "application/octet-stream";
-        } else {
-            ctype = ctypes.iterator().next().toString();
-        }
+        final String ctype = TkAttach.ctype(temp);
         msg.append(" (").append(temp.length())
             .append(" bytes, ").append(ctype).append(')');
         try {
@@ -117,6 +112,22 @@ final class TkAttach implements Take {
         }
         FileUtils.forceDelete(temp);
         throw new RsForward(new RsFlash(msg.toString()));
+    }
+
+    /**
+     * Get CType of file.
+     * @param file File
+     * @return MIME type
+     */
+    private static String ctype(final File file) {
+        final Collection<?> ctypes = MimeUtil.getMimeTypes(file);
+        final String ctype;
+        if (ctypes.isEmpty()) {
+            ctype = "application/octet-stream";
+        } else {
+            ctype = ctypes.iterator().next().toString();
+        }
+        return ctype;
     }
 
 }
