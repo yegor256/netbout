@@ -1,10 +1,7 @@
 /*globals casper:false */
 [
-    '/xml/bout.xml',
-    '/xml/error.xml',
-    '/xml/inbox.xml',
-    '/xml/empty-inbox.xml',
-    '/xml/login.xml',
+    '/xsl/bout.xsl',
+    '/xsl/login.xsl',
     '/lang/en.xml',
     '/css/style.css',
     '/robots.txt',
@@ -18,7 +15,7 @@
                 casper.start(
                     casper.cli.get('home') + page,
                     function () {
-                        test.assertHttpStatus(200);
+                        test.assertHttpStatus(200, page);
                     }
                 );
                 casper.run(
@@ -47,7 +44,7 @@
                 casper.start(
                     casper.cli.get('home') + page,
                     function () {
-                        test.assertHttpStatus(404);
+                        test.assertHttpStatus(404, page);
                     }
                 );
                 casper.run(

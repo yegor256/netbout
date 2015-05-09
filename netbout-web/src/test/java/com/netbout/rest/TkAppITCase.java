@@ -63,7 +63,6 @@ public final class TkAppITCase {
         for (final String page : pages) {
             new JdkRequest(TkAppITCase.HOME)
                 .uri().path(page).back()
-                .header(HttpHeaders.ACCEPT, MediaType.TEXT_PLAIN)
                 .fetch()
                 .as(RestResponse.class)
                 .assertStatus(HttpURLConnection.HTTP_OK);
@@ -83,7 +82,6 @@ public final class TkAppITCase {
         for (final String page : pages) {
             new JdkRequest(TkAppITCase.HOME)
                 .uri().path(page).back()
-                .header(HttpHeaders.ACCEPT, MediaType.TEXT_PLAIN)
                 .fetch()
                 .as(RestResponse.class)
                 .assertStatus(HttpURLConnection.HTTP_NOT_FOUND);
@@ -91,7 +89,7 @@ public final class TkAppITCase {
     }
 
     /**
-     * BaseRs can authenticate test user.
+     * TkApp can authenticate test user.
      * @throws Exception If there is some problem inside
      */
     @Test
@@ -103,6 +101,20 @@ public final class TkAppITCase {
             .assertStatus(HttpURLConnection.HTTP_OK)
             .as(XmlResponse.class)
             .assertXPath("/page/identity");
+    }
+
+    /**
+     * TkApp can render HTML by default.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void rendersHtmlByDefault() throws Exception {
+        new JdkRequest(TkAppITCase.HOME)
+            .fetch()
+            .as(RestResponse.class)
+            .assertStatus(HttpURLConnection.HTTP_OK)
+            .as(XmlResponse.class)
+            .assertXPath("/xhtml:html");
     }
 
 }

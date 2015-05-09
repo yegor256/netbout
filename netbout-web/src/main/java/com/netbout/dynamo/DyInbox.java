@@ -50,7 +50,7 @@ import com.netbout.spi.Bout;
 import com.netbout.spi.Inbox;
 import com.netbout.spi.Pageable;
 import java.io.IOException;
-import java.util.NoSuchElementException;
+import java.util.Iterator;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
@@ -165,26 +165,22 @@ final class DyInbox implements Inbox {
 
     @Override
     public Bout bout(final long number) throws Inbox.BoutNotFoundException {
-        try {
-            return new DyBout(
-                this.region,
-                this.region.table(DyFriends.TBL)
-                    .frame()
-                    .through(
-                        new QueryValve().withLimit(1)
-                            .withSelect(Select.SPECIFIC_ATTRIBUTES)
-                            .withAttributesToGet(
-                                DyFriends.HASH, DyFriends.RANGE
-                            )
+        final Iterator<Item> items = this.region.table(DyFriends.TBL)
+            .frame()
+            .through(
+                new QueryValve().withLimit(1)
+                    .withSelect(Select.SPECIFIC_ATTRIBUTES)
+                    .withAttributesToGet(
+                        DyFriends.HASH, DyFriends.RANGE
                     )
-                    .where(DyFriends.HASH, Conditions.equalTo(number))
-                    .where(DyFriends.RANGE, this.self)
-                    .iterator().next(),
-                this.self
-            );
-        } catch (final NoSuchElementException ex) {
-            throw new Inbox.BoutNotFoundException(number, ex);
+            )
+            .where(DyFriends.HASH, Conditions.equalTo(number))
+            .where(DyFriends.RANGE, this.self)
+            .iterator();
+        if (!items.hasNext()) {
+            throw new Inbox.BoutNotFoundException(number);
         }
+        return new DyBout(this.region, items.next(), this.self);
     }
 
     @Override
