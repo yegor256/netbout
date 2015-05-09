@@ -5,10 +5,10 @@
     '/xml/inbox.xml',
     '/xml/empty-inbox.xml',
     '/xml/login.xml',
+    '/lang/en.xml',
     '/css/style.css',
     '/robots.txt',
     '/js/bout.js',
-    '/m/200',
     '/'
 ].forEach(
     function (page) {

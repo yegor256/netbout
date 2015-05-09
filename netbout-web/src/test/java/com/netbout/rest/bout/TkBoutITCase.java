@@ -24,14 +24,17 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.rest;
+package com.netbout.rest.bout;
 
+import com.jcabi.http.request.JdkRequest;
+import com.jcabi.http.response.RestResponse;
 import com.netbout.client.RtUser;
 import com.netbout.spi.Alias;
 import com.netbout.spi.Attachment;
 import com.netbout.spi.Attachments;
 import com.netbout.spi.Bout;
 import com.netbout.spi.User;
+import java.net.HttpURLConnection;
 import java.net.URI;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.CharEncoding;
@@ -40,11 +43,11 @@ import org.hamcrest.Matchers;
 import org.junit.Test;
 
 /**
- * Integration case for {@link BoutRs}.
+ * Integration case for {@link TkBout}.
  * @author Yegor Bugayenko (yegor@teamed.io)
  * @version $Id$
  */
-public final class BoutRsITCase {
+public final class TkBoutITCase {
 
     /**
      * Home page of Tomcat.
@@ -52,12 +55,12 @@ public final class BoutRsITCase {
     private static final String HOME = System.getProperty("takes.home");
 
     /**
-     * BoutRs can upload and download attachments.
+     * TkBout can upload and download attachments.
      * @throws Exception If there is some problem inside
      */
     @Test
     public void uploadsAndDownloadsAttachments() throws Exception {
-        final User user = new RtUser(URI.create(BoutRsITCase.HOME), "");
+        final User user = new RtUser(URI.create(TkBoutITCase.HOME), "");
         final Alias alias = user.aliases().iterate().iterator().next();
         final Bout bout = alias.inbox().bout(alias.inbox().start());
         final Attachments attachments = bout.attachments();
@@ -80,6 +83,19 @@ public final class BoutRsITCase {
             Matchers.equalTo(attachment.name())
         );
         attachments.delete(name);
+    }
+
+    /**
+     * TkBout can show 404 when bout not found.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void showsBoutNotFound() throws Exception {
+        new JdkRequest(TkBoutITCase.HOME)
+            .uri().path("/b/123456789").back()
+            .fetch()
+            .as(RestResponse.class)
+            .assertStatus(HttpURLConnection.HTTP_NOT_FOUND);
     }
 
 }
