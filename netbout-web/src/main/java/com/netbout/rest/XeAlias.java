@@ -75,7 +75,7 @@ final class XeAlias extends XeWrap {
             new XeChain(
                 XeAlias.source(rqa.alias()),
                 new XeLink("start", "/start"),
-                new XeLink("account", "/acc")
+                new XeLink("account", "/acc/index")
             )
         );
     }

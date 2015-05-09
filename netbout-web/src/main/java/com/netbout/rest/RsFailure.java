@@ -24,58 +24,48 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.rest.bout;
+package com.netbout.rest;
 
-import com.netbout.spi.Attachment;
-import com.netbout.spi.Base;
-import com.netbout.spi.Bout;
-import java.io.IOException;
-import org.takes.Request;
-import org.takes.Response;
-import org.takes.Take;
+import java.io.UnsupportedEncodingException;
+import java.net.HttpURLConnection;
 import org.takes.facets.flash.RsFlash;
 import org.takes.facets.forward.RsForward;
-import org.takes.rq.RqHref;
-import org.takes.rq.RqLengthAware;
 
 /**
- * Download.
+ * Failure.
  *
  * @author Yegor Bugayenko (yegor@teamed.io)
  * @version $Id$
  * @since 2.14
  */
-final class TkUpload implements Take {
+public final class RsFailure extends RsForward {
 
     /**
-     * Base.
+     * Serialization marker.
      */
-    private final transient Base base;
+    private static final long serialVersionUID = 396488574468386488L;
 
     /**
      * Ctor.
-     * @param bse Base
+     * @param cause Cause
      */
-    TkUpload(final Base bse) {
-        this.base = bse;
+    public RsFailure(final Throwable cause)
+        throws UnsupportedEncodingException {
+        super(
+            new RsFlash(cause),
+            HttpURLConnection.HTTP_MOVED_PERM
+        );
     }
 
-    @Override
-    public Response act(final Request req) throws IOException {
-        final RqHref.Smart smart = new RqHref.Smart(new RqHref.Base(req));
-        final String name = smart.single("name");
-        final String ctype = smart.single("ctype");
-        final String etag = smart.single("etag");
-        final Bout bout = new RqBout(this.base, req).bout();
-        final Attachment attachment = bout.attachments().get(name);
-        attachment.write(new RqLengthAware(req).body(), ctype, etag);
-        return new RsForward(
-            new RsFlash(
-                String.format(
-                    "attachment '%s' uploaded (ctype=%s, etag=%s)",
-                    name, ctype, etag
-                )
-            )
+    /**
+     * Ctor.
+     * @param cause Cause
+     */
+    public RsFailure(final String cause)
+        throws UnsupportedEncodingException {
+        super(
+            new RsFlash(cause),
+            HttpURLConnection.HTTP_MOVED_PERM
         );
     }
 

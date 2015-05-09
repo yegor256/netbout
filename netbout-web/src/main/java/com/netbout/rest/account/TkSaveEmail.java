@@ -27,10 +27,10 @@
 package com.netbout.rest.account;
 
 import com.netbout.rest.RqAlias;
+import com.netbout.rest.RsFailure;
 import com.netbout.spi.Alias;
 import com.netbout.spi.Base;
 import java.io.IOException;
-import java.util.logging.Level;
 import org.takes.Request;
 import org.takes.Response;
 import org.takes.Take;
@@ -68,9 +68,7 @@ final class TkSaveEmail implements Take {
         try {
             new RqAlias(this.base, req).alias().email(email);
         } catch (final Alias.InvalidEmailException ex) {
-            throw new RsForward(
-                new RsFlash(ex.getLocalizedMessage(), Level.WARNING)
-            );
+            throw new RsFailure(ex);
         }
         return new RsForward(
             new RsFlash(

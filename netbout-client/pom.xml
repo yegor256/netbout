@@ -62,6 +62,10 @@
         </dependency>
         <dependency>
             <groupId>com.jcabi</groupId>
+            <artifactId>jcabi-log</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.jcabi</groupId>
             <artifactId>jcabi-jdbc</artifactId>
             <optional>true</optional>
         </dependency>

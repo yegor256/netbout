@@ -26,6 +26,7 @@
  */
 package com.netbout.rest.bout;
 
+import com.netbout.rest.RsFailure;
 import com.netbout.spi.Attachments;
 import com.netbout.spi.Base;
 import com.netbout.spi.Bout;
@@ -35,7 +36,7 @@ import org.takes.Response;
 import org.takes.Take;
 import org.takes.facets.flash.RsFlash;
 import org.takes.facets.forward.RsForward;
-import org.takes.rq.RqHref;
+import org.takes.rq.RqForm;
 
 /**
  * Create attachment.
@@ -61,14 +62,14 @@ final class TkCreate implements Take {
 
     @Override
     public Response act(final Request req) throws IOException {
-        final String name = new RqHref.Smart(
-            new RqHref.Base(req)
+        final String name = new RqForm.Smart(
+            new RqForm.Base(req)
         ).single("name");
         final Bout bout = new RqBout(this.base, req).bout();
         try {
             bout.attachments().create(name);
         } catch (final Attachments.InvalidNameException ex) {
-            throw new RsForward(new RsFlash(ex));
+            throw new RsFailure(ex);
         }
         throw new RsForward(
             new RsFlash(String.format("attachment '%s' created", name))

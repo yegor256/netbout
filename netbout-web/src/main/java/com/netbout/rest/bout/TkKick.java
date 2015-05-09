@@ -26,6 +26,7 @@
  */
 package com.netbout.rest.bout;
 
+import com.netbout.rest.RsFailure;
 import com.netbout.spi.Attachments;
 import com.netbout.spi.Base;
 import com.netbout.spi.Bout;
@@ -68,7 +69,7 @@ final class TkKick implements Take {
         try {
             bout.friends().kick(name);
         } catch (final Attachments.InvalidNameException ex) {
-            throw new RsForward(new RsFlash(ex));
+            throw new RsFailure(ex);
         }
         throw new RsForward(
             new RsFlash(

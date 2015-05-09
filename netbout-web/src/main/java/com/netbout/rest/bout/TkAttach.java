@@ -27,6 +27,7 @@
 package com.netbout.rest.bout;
 
 import com.jcabi.aspects.Tv;
+import com.netbout.rest.RsFailure;
 import com.netbout.spi.Attachment;
 import com.netbout.spi.Attachments;
 import com.netbout.spi.Base;
@@ -92,7 +93,7 @@ final class TkAttach implements Take {
             try {
                 bout.attachments().create(name);
             } catch (final Attachments.InvalidNameException ex) {
-                throw new RsForward(new RsFlash(ex));
+                throw new RsFailure(ex);
             }
             msg.append(String.format("attachment '%s' uploaded", name));
         }
@@ -110,10 +111,9 @@ final class TkAttach implements Take {
                 new FileInputStream(temp),
                 ctype, Long.toString(System.currentTimeMillis())
             );
-        } catch (final Attachment.TooBigException ex) {
-            throw new RsForward(new RsFlash(ex));
-        } catch (final Attachment.BrokenContentException ex) {
-            throw new RsForward(new RsFlash(ex));
+        } catch (final Attachment.TooBigException
+            | Attachment.BrokenContentException ex) {
+            throw new RsFailure(ex);
         }
         FileUtils.forceDelete(temp);
         throw new RsForward(new RsFlash(msg.toString()));

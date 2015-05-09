@@ -31,6 +31,7 @@ import com.jcabi.aspects.Loggable;
 import com.jcabi.http.Request;
 import com.jcabi.http.response.RestResponse;
 import com.jcabi.http.response.XmlResponse;
+import com.jcabi.log.Logger;
 import com.netbout.spi.Attachment;
 import java.io.IOException;
 import java.io.InputStream;
@@ -150,6 +151,7 @@ final class RtAttachment implements Attachment {
             .fetch()
             .as(RestResponse.class)
             .assertStatus(HttpURLConnection.HTTP_SEE_OTHER);
+        Logger.info(this, "attachment '%s' written", this.attachment);
     }
 
     /**

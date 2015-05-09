@@ -27,6 +27,7 @@
 package com.netbout.rest.bout;
 
 import com.netbout.rest.RqAlias;
+import com.netbout.rest.RsFailure;
 import com.netbout.spi.Alias;
 import com.netbout.spi.Base;
 import com.netbout.spi.Bout;
@@ -34,12 +35,9 @@ import com.netbout.spi.Friends;
 import com.netbout.spi.Inbox;
 import java.io.IOException;
 import java.net.HttpURLConnection;
-import java.util.logging.Level;
 import lombok.EqualsAndHashCode;
 import org.takes.HttpException;
 import org.takes.Request;
-import org.takes.facets.flash.RsFlash;
-import org.takes.facets.forward.RsForward;
 import org.takes.rq.RqHeaders;
 import org.takes.rq.RqWrap;
 
@@ -76,7 +74,9 @@ public final class RqBout extends RqWrap {
     public Bout bout() throws IOException {
         final Alias alias = new RqAlias(this.base, this).alias();
         final long number = Long.parseLong(
-            new RqHeaders(this).header("X-Netbout-Bout").iterator().next()
+            new RqHeaders.Smart(
+                new RqHeaders.Base(this)
+            ).single("X-Netbout-Bout")
         );
         final Bout bout;
         try {
@@ -85,11 +85,8 @@ public final class RqBout extends RqWrap {
             throw new HttpException(HttpURLConnection.HTTP_NOT_FOUND, ex);
         }
         if (!new Friends.Search(bout.friends()).exists(alias.name())) {
-            throw new RsForward(
-                new RsFlash(
-                    String.format("you're not in bout #%d", bout.number()),
-                    Level.WARNING
-                )
+            throw new RsFailure(
+                String.format("you're not in bout #%d", bout.number())
             );
         }
         return bout;

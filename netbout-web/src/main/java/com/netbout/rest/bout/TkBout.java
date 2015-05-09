@@ -52,6 +52,7 @@ public final class TkBout extends TkWrap {
                 new FkBout("/download", new TkDownload(base)),
                 new FkBout("/rename", new TkRename(base)),
                 new FkBout("/create", new TkCreate(base)),
+                new FkBout("/delete", new TkDelete(base)),
                 new FkBout("/post", new TkPost(base)),
                 new FkBout("/invite", new TkInvite(base)),
                 new FkBout("/kick", new TkKick(base))

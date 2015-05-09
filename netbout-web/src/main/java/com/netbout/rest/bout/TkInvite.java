@@ -27,6 +27,7 @@
 package com.netbout.rest.bout;
 
 import com.netbout.rest.RqAlias;
+import com.netbout.rest.RsFailure;
 import com.netbout.spi.Base;
 import com.netbout.spi.Bout;
 import com.netbout.spi.Friends;
@@ -69,19 +70,15 @@ final class TkInvite implements Take {
         final String check = new RqAlias(this.base, req)
             .user().aliases().check(name);
         if (check.isEmpty()) {
-            throw new RsForward(
-                new RsFlash(
-                    String.format("incorrect alias '%s', try again", name),
-                    Level.WARNING
-
-                )
+            throw new RsFailure(
+                String.format("incorrect alias '%s', try again", name)
             );
         }
         final Bout bout = new RqBout(this.base, req).bout();
         try {
             bout.friends().invite(name);
         } catch (final Friends.UnknownAliasException ex) {
-            throw new RsForward(new RsFlash(ex));
+            throw new RsFailure(ex);
         }
         throw new RsForward(
             new RsFlash(

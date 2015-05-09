@@ -45,13 +45,10 @@ import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.concurrent.TimeUnit;
-import java.util.logging.Level;
 import javax.imageio.ImageIO;
 import org.takes.Response;
-import org.takes.facets.flash.RsFlash;
 import org.takes.facets.fork.RqRegex;
 import org.takes.facets.fork.TkRegex;
-import org.takes.facets.forward.RsForward;
 import org.takes.rs.RsFluent;
 
 /**
@@ -82,20 +79,14 @@ public final class TkFriend implements TkRegex {
         final String alias = req.matcher().group(1);
         final Iterable<Friend> opts = user.friends(alias);
         if (Iterables.isEmpty(opts)) {
-            throw new RsForward(
-                new RsFlash(
-                    String.format("alias '%s' not found", alias),
-                    Level.SEVERE
-                )
+            throw new RsFailure(
+                String.format("alias '%s' not found", alias)
             );
         }
         final Friend friend = opts.iterator().next();
         if (!friend.alias().equals(alias)) {
-            throw new RsForward(
-                new RsFlash(
-                    String.format("alias '%s' is not found", alias),
-                    Level.SEVERE
-                )
+            throw new RsFailure(
+                String.format("alias '%s' is not found", alias)
             );
         }
         final byte[] img = new JdkRequest(friend.photo())
