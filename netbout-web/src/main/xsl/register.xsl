@@ -38,7 +38,7 @@
         <script>
             <xsl:attribute name="src">
                 <xsl:text>/js/register.js?</xsl:text>
-                <xsl:value-of select="version/revision"/>
+                <xsl:value-of select="version/rev"/>
             </xsl:attribute>
             <xsl:text> </xsl:text>
             <!-- this is for W3C compliance -->

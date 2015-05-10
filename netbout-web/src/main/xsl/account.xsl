@@ -32,7 +32,7 @@
     xmlns="http://www.w3.org/1999/xhtml" version="1.0">
     <xsl:output method="html" doctype-system="about:legacy-compat" encoding="UTF-8" indent="yes" />
     <xsl:param name="TEXTS"
-        select="document(concat('/lang/', /page/alias/locale, '.xml?', /page/version/revision))/texts"/>
+        select="document(concat('/lang/', /page/alias/locale, '.xml?', /page/version/rev))/texts"/>
     <xsl:include href="/xsl/layout.xsl"/>
     <xsl:template match="page" mode="head">
         <title>

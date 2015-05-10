@@ -31,6 +31,7 @@ import java.net.HttpURLConnection;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;
+import org.takes.Take;
 import org.takes.facets.hamcrest.HmRsStatus;
 import org.takes.rq.RqFake;
 
@@ -54,6 +55,32 @@ public final class TkAppTest {
                 Matchers.equalTo(HttpURLConnection.HTTP_OK)
             )
         );
+    }
+
+    /**
+     * TkApp can render front page.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
+    public void rendersStaticResources() throws Exception {
+        final String[] pages = {
+            "/robots.txt",
+            "/css/style.css",
+            "/js/bout.js",
+            "/xsl/login.xsl",
+            "/xsl/bout.xsl",
+            "/lang/en.xml",
+        };
+        final Take app = new TkApp(new MkBase());
+        for (final String page : pages) {
+            MatcherAssert.assertThat(
+                app.act(new RqFake("get", page)),
+                new HmRsStatus(
+                    Matchers.equalTo(HttpURLConnection.HTTP_OK)
+                )
+            );
+        }
     }
 
 }
