@@ -32,6 +32,7 @@ import com.netbout.spi.Aliases;
 import com.netbout.spi.Base;
 import com.netbout.spi.User;
 import java.io.IOException;
+import java.net.HttpURLConnection;
 import lombok.EqualsAndHashCode;
 import org.takes.Request;
 import org.takes.facets.auth.Identity;
@@ -97,7 +98,10 @@ public final class RqAlias extends RqWrap {
         if (!aliases.iterate().iterator().hasNext()) {
             final Identity identity = new RqAuth(this).identity();
             if (!"urn:test:1".equals(identity.urn())) {
-                throw new RsForward("/login/start");
+                throw new RsForward(
+                    HttpURLConnection.HTTP_MOVED_TEMP,
+                    "/login/start"
+                );
             }
             aliases.add("tester");
         }

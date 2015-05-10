@@ -27,6 +27,7 @@
 package com.netbout.rest.bout;
 
 import java.io.IOException;
+import java.net.HttpURLConnection;
 import org.takes.Request;
 import org.takes.Response;
 import org.takes.Take;
@@ -109,12 +110,15 @@ final class FkBout extends FkWrap {
                 try {
                     return take.act(req);
                 } catch (final RsForward ex) {
-                    throw new RsForward(
-                        ex,
-                        new RqHref.Smart(
-                            new RqHref.Base(req)
-                        ).home().path("b").path(Long.toString(bout))
-                    );
+                    if (ex.code() == HttpURLConnection.HTTP_SEE_OTHER) {
+                        throw new RsForward(
+                            ex,
+                            new RqHref.Smart(
+                                new RqHref.Base(req)
+                            ).home().path("b").path(Long.toString(bout))
+                        );
+                    }
+                    throw ex;
                 }
             }
         };
