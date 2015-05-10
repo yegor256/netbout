@@ -57,9 +57,9 @@ import org.takes.tk.TkWrap;
 final class TkAppFallback extends TkWrap {
 
     /**
-     * Revision of netbout.
+     * Version of netbout.
      */
-    private static final String REV = Manifests.read("Netbout-Revision");
+    private static final String VERSION = Manifests.read("Netbout-Version");
 
     /**
      * Ctor.
@@ -113,8 +113,8 @@ final class TkAppFallback extends TkWrap {
             new RsWithType(
                 new RsVelocity(
                     TkAppFallback.class.getResource("error.html.vm"),
-                    new RsVelocity.Pair("err", err),
-                    new RsVelocity.Pair("rev", TkAppFallback.REV)
+                    new RsVelocity.Pair("error", err),
+                    new RsVelocity.Pair("version", TkAppFallback.VERSION)
                 ),
                 "text/html"
             ),
