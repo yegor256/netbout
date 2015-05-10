@@ -145,7 +145,7 @@
                             </li>
                         </xsl:if>
                         <li>
-                            <a href="{links/link[@rel='rexsl:logout']/@href}" title="{$TEXTS/leave.right.now}">
+                            <a href="{links/link[@rel='takes:logout']/@href}" title="{$TEXTS/leave.right.now}">
                                 <i class="ico ico-exit">
                                     <xsl:comment>exit</xsl:comment>
                                 </i>
