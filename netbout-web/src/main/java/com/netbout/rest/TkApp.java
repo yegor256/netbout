@@ -137,13 +137,13 @@ public final class TkApp extends TkWrap {
             ),
             new FkAnonymous(
                 new TkFork(
-                    new FkRegex("/", new TkHome(base)),
-                    new FkRegex("/login/.*", new TkLogin(base))
+                    new FkRegex("/", new TkHome(base))
                 )
             ),
             new FkAuthenticated(
                 new TkFork(
                     new FkRegex("/", new TkInbox(base)),
+                    new FkRegex("/login/.*", new TkLogin(base)),
                     new FkRegex("/start", new TkStart(base)),
                     new FkRegex("/b/.*", new TkBout(base)),
                     new FkRegex("/acc/.*", new TkAccount(base)),
