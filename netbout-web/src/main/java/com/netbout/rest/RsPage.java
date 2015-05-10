@@ -40,7 +40,6 @@ import org.takes.facets.auth.social.XeGoogleLink;
 import org.takes.facets.flash.XeFlash;
 import org.takes.facets.fork.FkTypes;
 import org.takes.facets.fork.RsFork;
-import org.takes.rs.RsWithHeader;
 import org.takes.rs.RsWithType;
 import org.takes.rs.RsWrap;
 import org.takes.rs.RsXSLT;
@@ -66,17 +65,6 @@ import org.takes.rs.xe.XeStylesheet;
  */
 @EqualsAndHashCode(callSuper = true)
 public final class RsPage extends RsWrap {
-
-    /**
-     * Version of the system, to show in header.
-     */
-    private static final String VERSION_LABEL = String.format(
-        "%s %s %s",
-        // @checkstyle MultipleStringLiterals (3 lines)
-        Manifests.read("Netbout-Version"),
-        Manifests.read("Netbout-Revision"),
-        Manifests.read("Netbout-Date")
-    );
 
     /**
      * Ctor.
@@ -135,20 +123,16 @@ public final class RsPage extends RsWrap {
                 )
             )
         );
-        return new RsWithHeader(
-            new RsFork(
-                req,
-                new FkTypes(
-                    "application/xml,text/xml",
-                    new RsWithType(raw, "text/xml")
-                ),
-                new FkTypes(
-                    "*/*",
-                    new RsXSLT(new RsWithType(raw, "text/html"))
-                )
+        return new RsFork(
+            req,
+            new FkTypes(
+                "application/xml,text/xml",
+                new RsWithType(raw, "text/xml")
             ),
-            "X-Netbout-Version",
-            RsPage.VERSION_LABEL
+            new FkTypes(
+                "*/*",
+                new RsXSLT(new RsWithType(raw, "text/html"))
+            )
         );
     }
 

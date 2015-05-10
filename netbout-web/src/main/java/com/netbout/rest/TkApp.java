@@ -62,9 +62,15 @@ import org.takes.tk.TkWrap;
 public final class TkApp extends TkWrap {
 
     /**
-     * Revision of netbout.
+     * Version of the system, to show in header.
      */
-    private static final String VERSION = Manifests.read("Netbout-Version");
+    private static final String VERSION = String.format(
+        "%s %s %s",
+        // @checkstyle MultipleStringLiterals (3 lines)
+        Manifests.read("Netbout-Version"),
+        Manifests.read("Netbout-Revision"),
+        Manifests.read("Netbout-Date")
+    );
 
     /**
      * Ctor.
