@@ -39,7 +39,7 @@
         <nav class="buttons">
             <a>
                 <xsl:attribute name="href">
-                    <xsl:value-of select="/page/links/link[@rel='rexsl:facebook']/@href"/>
+                    <xsl:value-of select="/page/links/link[@rel='takes:facebook']/@href"/>
                 </xsl:attribute>
                 <xsl:attribute name="title">
                     <xsl:text>click to authenticate yourself via Facebook</xsl:text>
@@ -50,7 +50,7 @@
             </a>
             <a>
                 <xsl:attribute name="href">
-                    <xsl:value-of select="/page/links/link[@rel='rexsl:google']/@href"/>
+                    <xsl:value-of select="/page/links/link[@rel='takes:google']/@href"/>
                 </xsl:attribute>
                 <xsl:attribute name="title">
                     <xsl:text>click to authenticate yourself via Google+</xsl:text>
@@ -61,7 +61,7 @@
             </a>
             <a>
                 <xsl:attribute name="href">
-                    <xsl:value-of select="/page/links/link[@rel='rexsl:github']/@href"/>
+                    <xsl:value-of select="/page/links/link[@rel='takes:github']/@href"/>
                 </xsl:attribute>
                 <xsl:attribute name="title">
                     <xsl:text>click to authenticate yourself via Github</xsl:text>

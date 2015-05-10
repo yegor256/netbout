@@ -64,7 +64,7 @@ public final class TkApp extends TkWrap {
     /**
      * Revision of netbout.
      */
-    private static final String REV = Manifests.read("Netbout-Revision");
+    private static final String VERSION = Manifests.read("Netbout-Version");
 
     /**
      * Ctor.
@@ -101,7 +101,7 @@ public final class TkApp extends TkWrap {
                     )
                 )
             ),
-            String.format("X-Netbout-Revision: %s", TkApp.REV),
+            String.format("X-Netbout-Version: %s", TkApp.VERSION),
             "Vary: Cookie"
         );
     }
