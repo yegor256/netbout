@@ -92,8 +92,8 @@ public final class TkApp extends TkWrap {
                 new TkMeasured(
                     new TkFlash(
                         new TkAppFallback(
-                            new TkAppAuth(
-                                new TkForward(
+                            new TkForward(
+                                new TkAppAuth(
                                     TkApp.regex(base)
                                 )
                             )
