@@ -35,11 +35,7 @@
     <xsl:output method="html" doctype-system="about:legacy-compat" encoding="UTF-8" indent="yes" />
     <xsl:include href="/xsl/login-layout.xsl"/>
     <xsl:template match="page" mode="head">
-        <script>
-            <xsl:attribute name="src">
-                <xsl:text>/js/register.js?</xsl:text>
-                <xsl:value-of select="version/name"/>
-            </xsl:attribute>
+        <script src="/js/register.js?{version/name}">
             <xsl:text> </xsl:text>
             <!-- this is for W3C compliance -->
         </script>
@@ -80,7 +76,7 @@
         <p>
             <a>
                 <xsl:attribute name="href">
-                    <xsl:value-of select="links/link[@rel='rexsl:logout']/@href"/>
+                    <xsl:value-of select="links/link[@rel='takes:logout']/@href"/>
                 </xsl:attribute>
                 <xsl:text>logout</xsl:text>
             </a>
