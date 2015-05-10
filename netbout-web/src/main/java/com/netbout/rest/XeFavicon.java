@@ -33,9 +33,9 @@ import org.takes.Request;
 import org.takes.misc.Href;
 import org.takes.rs.xe.XeLink;
 import org.takes.rs.xe.XeSource;
+import org.takes.rs.xe.XeWhen;
 import org.takes.rs.xe.XeWrap;
 import org.xembly.Directive;
-import org.xembly.Directives;
 
 /**
  * Xembly for favicon link.
@@ -52,26 +52,35 @@ final class XeFavicon extends XeWrap {
      * Ctor.
      * @param base The base
      * @param req Request
+     * @throws IOException If fails
      */
-    XeFavicon(final Base base, final Request req) {
-        super(
+    XeFavicon(final Base base, final Request req) throws IOException {
+        super(XeFavicon.make(base, req));
+    }
+
+    /**
+     * Ctor.
+     * @param base The base
+     * @param req Request
+     * @return Xembly source
+     * @throws IOException If fails
+     */
+    private static XeSource make(final Base base, final Request req)
+        throws IOException {
+        final RqAlias rqa = new RqAlias(base, req);
+        return new XeWhen(
+            rqa.has(),
             new XeSource() {
                 @Override
                 public Iterable<Directive> toXembly() throws IOException {
-                    final Directives dirs = new Directives();
-                    final RqAlias rqa = new RqAlias(base, req);
-                    if (rqa.has()) {
-                        dirs.append(
-                            new XeLink(
-                                "favicon",
-                                new Href().path("favicon.ico").with(
-                                    "unread",
-                                    rqa.alias().inbox().unread()
-                                )
-                            ).toXembly()
-                        );
-                    }
-                    return dirs;
+                    return new XeLink(
+                        "favicon",
+                        new Href().path("favicon.ico").with(
+                            "unread",
+                            rqa.alias().inbox().unread()
+                        ),
+                        "image/png"
+                    ).toXembly();
                 }
             }
         );

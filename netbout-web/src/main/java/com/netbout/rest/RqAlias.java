@@ -36,6 +36,7 @@ import lombok.EqualsAndHashCode;
 import org.takes.Request;
 import org.takes.facets.auth.Identity;
 import org.takes.facets.auth.RqAuth;
+import org.takes.facets.forward.RsForward;
 import org.takes.rq.RqWrap;
 
 /**
@@ -96,11 +97,7 @@ public final class RqAlias extends RqWrap {
         if (!aliases.iterate().iterator().hasNext()) {
             final Identity identity = new RqAuth(this).identity();
             if (!"urn:test:1".equals(identity.urn())) {
-                throw new IllegalStateException(
-                    String.format(
-                        "hm... no alias for %s?", identity.urn()
-                    )
-                );
+                throw new RsForward("/login/start");
             }
             aliases.add("tester");
         }
