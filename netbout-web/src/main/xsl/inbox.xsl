@@ -120,7 +120,14 @@
                 </a>
                 <xsl:if test="unread &gt; 0">
                     <span class="unread">
-                        <xsl:value-of select="unread"/>
+                        <xsl:choose>
+                            <xsl:when test="unread &gt; 100">
+                                <xsl:text>99+</xsl:text>
+                            </xsl:when>
+                            <xsl:otherwise>
+                                <xsl:value-of select="unread"/>
+                            </xsl:otherwise>
+                        </xsl:choose>
                     </span>
                 </xsl:if>
             </h1>
