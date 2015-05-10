@@ -46,6 +46,7 @@ import org.takes.rq.RqWithHeader;
  * @author Yegor Bugayenko (yegor@teamed.io)
  * @version $Id$
  * @since 2.14
+ * @checkstyle ClassDataAbstractionCouplingCheck (500 lines)
  */
 final class FkBout extends FkWrap {
 

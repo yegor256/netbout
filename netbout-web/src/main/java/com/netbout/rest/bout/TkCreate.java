@@ -71,7 +71,7 @@ final class TkCreate implements Take {
         } catch (final Attachments.InvalidNameException ex) {
             throw new RsFailure(ex);
         }
-        throw new RsForward(
+        return new RsForward(
             new RsFlash(String.format("attachment '%s' created", name))
         );
     }

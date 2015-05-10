@@ -24,66 +24,54 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.rest;
+package com.netbout.rest.bout;
 
 import com.jcabi.urn.URN;
-import java.io.IOException;
-import lombok.EqualsAndHashCode;
-import org.takes.Request;
-import org.takes.facets.auth.Identity;
-import org.takes.facets.auth.TkAuth;
-import org.takes.facets.auth.codecs.CcPlain;
+import com.netbout.mock.MkBase;
+import com.netbout.rest.RqWithTester;
+import com.netbout.spi.Alias;
+import com.netbout.spi.User;
+import org.hamcrest.MatcherAssert;
+import org.hamcrest.Matchers;
+import org.junit.Test;
 import org.takes.rq.RqFake;
-import org.takes.rq.RqWithHeader;
-import org.takes.rq.RqWrap;
 
 /**
- * Request with tester on board.
- *
+ * Test case for {@link TkCreate}.
  * @author Yegor Bugayenko (yegor@teamed.io)
  * @version $Id$
  * @since 2.14
- * @checkstyle ClassDataAbstractionCouplingCheck (500 lines)
  */
-@EqualsAndHashCode(callSuper = true)
-public final class RqWithTester extends RqWrap {
+public final class TkCreateTest {
 
     /**
-     * Ctor.
-     * @param urn URN of the tester
-     * @throws IOException If fails
+     * TkCreate can create an attachment.
+     * @throws Exception If there is some problem inside
      */
-    public RqWithTester(final URN urn) throws IOException {
-        this(urn, new RqFake());
-    }
-
-    /**
-     * Ctor.
-     * @param urn URN of the tester
-     * @param req Request
-     * @throws IOException If fails
-     */
-    public RqWithTester(final URN urn, final Request req) throws IOException {
-        super(RqWithTester.make(urn, req));
-    }
-
-    /**
-     * Ctor.
-     * @param urn URN of the tester
-     * @param req Request
-     * @return Request
-     * @throws IOException If fails
-     */
-    private static Request make(final URN urn, final Request req)
-        throws IOException {
-        return new RqWithHeader(
-            req,
-            TkAuth.class.getSimpleName(),
-            new String(
-                new CcPlain().encode(
-                    new Identity.Simple(urn.toString())
+    @Test
+    public void createsAttachments() throws Exception {
+        final MkBase base = new MkBase();
+        final URN urn = new URN("urn:test:1");
+        final User user = base.user(urn);
+        user.aliases().add("jeff");
+        final Alias alias = user.aliases().iterate().iterator().next();
+        final long bout = alias.inbox().start();
+        alias.inbox().bout(bout).friends().invite(alias.name());
+        new FkBout(".*", new TkCreate(base)).route(
+            new RqWithTester(
+                urn,
+                new RqFake(
+                    "GET",
+                    String.format("/b/%d", bout),
+                    "name=foo"
                 )
             )
         );
+        MatcherAssert.assertThat(
+            alias.inbox().bout(bout).attachments()
+                .iterate().iterator().next().name(),
+            Matchers.equalTo("foo")
+        );
     }
+
 }
