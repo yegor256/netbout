@@ -33,7 +33,7 @@
     <xsl:output method="html" doctype-system="about:legacy-compat" encoding="UTF-8" indent="yes" />
     <xsl:include href="/xsl/login-layout.xsl"/>
     <xsl:template match="page" mode="head">
-        <title>netbout - private talks made easy</title>
+        <title>netbout</title>
     </xsl:template>
     <xsl:template match="page" mode="body">
         <nav class="buttons">
