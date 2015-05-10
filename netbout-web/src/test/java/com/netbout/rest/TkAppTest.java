@@ -73,6 +73,7 @@ public final class TkAppTest {
             "/xsl/login-layout.xsl",
             "/xsl/bout.xsl",
             "/lang/en.xml",
+            "/favicon.ico",
         };
         final Take app = new TkApp(new MkBase());
         for (final String page : pages) {

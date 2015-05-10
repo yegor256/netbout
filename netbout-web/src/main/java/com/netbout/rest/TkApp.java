@@ -135,6 +135,7 @@ public final class TkApp extends TkWrap {
                 "/lang/[a-z]+\\.xml",
                 new TkWithType(new TkClasspath(), "text/xml")
             ),
+            new FkRegex("/favicon.ico", new TkFavicon()),
             new FkAnonymous(
                 new TkFork(
                     new FkRegex("/", new TkHome(base))
@@ -149,8 +150,7 @@ public final class TkApp extends TkWrap {
                     new FkRegex("/acc/.*", new TkAccount(base)),
                     new FkRegex("/f/([a-zA-Z0-9]+)\\.png", new TkFriend(base))
                 )
-            ),
-            new FkRegex("/favicon.ico", new TkFavicon())
+            )
         );
     }
 
