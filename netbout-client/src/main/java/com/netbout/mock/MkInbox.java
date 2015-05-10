@@ -112,7 +112,7 @@ final class MkInbox implements Inbox {
 
     @Override
     public Pageable<Bout> jump(final long number) {
-        throw new UnsupportedOperationException("#jump()");
+        return this;
     }
 
     @Override

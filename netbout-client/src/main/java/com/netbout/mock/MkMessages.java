@@ -98,13 +98,13 @@ final class MkMessages implements Messages {
     }
 
     @Override
-    public long unread() throws IOException {
+    public long unread() {
         return 0L;
     }
 
     @Override
-    public Pageable<Message> jump(final long number) throws IOException {
-        throw new UnsupportedOperationException("#jump()");
+    public Pageable<Message> jump(final long number) {
+        return this;
     }
 
     @Override

@@ -36,8 +36,6 @@ import lombok.EqualsAndHashCode;
 import org.takes.Request;
 import org.takes.facets.auth.Identity;
 import org.takes.facets.auth.RqAuth;
-import org.takes.facets.flash.RsFlash;
-import org.takes.facets.forward.RsForward;
 import org.takes.rq.RqWrap;
 
 /**
@@ -83,9 +81,7 @@ public final class RqAlias extends RqWrap {
     public User user() throws IOException {
         final Identity identity = new RqAuth(this).identity();
         if (identity.equals(Identity.ANONYMOUS)) {
-            throw new RsForward(
-                new RsFlash("you are not logged in yet")
-            );
+            throw new RsFailure("you are not logged in yet");
         }
         return this.base.user(URN.create(identity.urn()));
     }

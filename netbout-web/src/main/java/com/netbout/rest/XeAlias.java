@@ -38,6 +38,7 @@ import org.takes.rs.xe.XeLink;
 import org.takes.rs.xe.XeSource;
 import org.takes.rs.xe.XeWhen;
 import org.takes.rs.xe.XeWrap;
+import org.xembly.Directive;
 import org.xembly.Directives;
 
 /**
@@ -73,11 +74,16 @@ final class XeAlias extends XeWrap {
         final RqAlias rqa = new RqAlias(base, req);
         return new XeWhen(
             rqa.has(),
-            new XeChain(
-                XeAlias.source(rqa.alias()),
-                new XeLink("start", "/start"),
-                new XeLink("account", "/acc/index")
-            )
+            new XeSource() {
+                @Override
+                public Iterable<Directive> toXembly() throws IOException {
+                    return new XeChain(
+                        XeAlias.source(rqa.alias()),
+                        new XeLink("start", "/start"),
+                        new XeLink("account", "/acc/index")
+                    ).toXembly();
+                }
+            }
         );
     }
 
