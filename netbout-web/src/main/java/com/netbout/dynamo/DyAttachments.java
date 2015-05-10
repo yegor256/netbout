@@ -41,14 +41,13 @@ import com.netbout.spi.Attachment;
 import com.netbout.spi.Attachments;
 import java.io.IOException;
 import java.util.Iterator;
-import javax.ws.rs.core.MediaType;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
 /**
  * Dynamo attachments.
  *
- * @author Yegor Bugayenko (yegor@tpc2.com)
+ * @author Yegor Bugayenko (yegor@teamed.io)
  * @version $Id$
  * @since 2.0
  */
@@ -208,7 +207,7 @@ final class DyAttachments implements Attachments {
                 .with(DyAttachments.HASH, this.bout)
                 .with(DyAttachments.RANGE, name)
                 .with(DyAttachments.ATTR_ALIAS, this.self)
-                .with(DyAttachments.ATTR_CTYPE, MediaType.TEXT_PLAIN)
+                .with(DyAttachments.ATTR_CTYPE, "text/plain")
                 .with(DyAttachments.ATTR_DATA, " ")
                 .with(DyAttachments.ATTR_ETAG, "empty")
         );

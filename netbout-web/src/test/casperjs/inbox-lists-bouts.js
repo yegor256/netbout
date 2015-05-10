@@ -2,11 +2,22 @@
 casper.test.begin(
     'inbox can list bouts',
     function (test) {
-        casper.start(
-            casper.cli.get('home'),
-            function () {
-                test.assertHttpStatus(200);
-                test.assertExists('li.bout');
+        casper.start().then(
+            function() {
+                this.open(
+                    casper.cli.get('home'),
+                    {
+                        method: 'GET',
+                        headers: {
+                            'Accept': 'text/html'
+                        }
+                    }
+                ).then(
+                    function() {
+                        test.assertHttpStatus(200, 'home page');
+                        test.assertExists('li.bout');
+                    }
+                )
             }
         );
         casper.run(

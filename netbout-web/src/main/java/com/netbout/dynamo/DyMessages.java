@@ -63,7 +63,7 @@ import org.apache.commons.lang3.StringUtils;
 /**
  * Dynamo messages.
  *
- * @author Yegor Bugayenko (yegor@tpc2.com)
+ * @author Yegor Bugayenko (yegor@teamed.io)
  * @version $Id$
  * @since 2.0
  * @checkstyle ClassDataAbstractionCouplingCheck (500 lines)

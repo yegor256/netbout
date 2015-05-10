@@ -44,7 +44,7 @@ import org.w3c.tidy.Tidy;
  *
  * <p>The class is immutable and thread-safe.
  *
- * @author Yegor Bugayenko (yegor@tpc2.com)
+ * @author Yegor Bugayenko (yegor@teamed.io)
  * @version $Id$
  * @see <a href="Markdown Syntax">http://daringfireball.net/projects/markdown/syntax</a>
  */

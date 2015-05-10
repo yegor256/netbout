@@ -25,7 +25,7 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  *
- * @author Yegor Bugayenko (yegor@tpc2.com)
+ * @author Yegor Bugayenko (yegor@teamed.io)
  * @version $Id$
  -->
 <project xmlns="http://maven.apache.org/POM/4.0.0"
@@ -39,11 +39,21 @@
     </parent>
     <artifactId>netbout-web</artifactId>
     <name>netbout-web</name>
-    <packaging>war</packaging>
+    <packaging>jar</packaging>
     <dependencies>
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.takes</groupId>
+            <artifactId>takes</artifactId>
+            <version>0.16.4</version>
+        </dependency>
+        <dependency>
+            <groupId>com.jcabi.incubator</groupId>
+            <artifactId>xembly</artifactId>
+            <version>0.21</version>
         </dependency>
         <dependency>
             <groupId>com.netbout</groupId>
@@ -90,6 +100,7 @@
         <dependency>
             <groupId>com.jcabi</groupId>
             <artifactId>jcabi-dynamo</artifactId>
+            <version>0.18.4</version>
         </dependency>
         <dependency>
             <groupId>co.stateful</groupId>
@@ -120,6 +131,18 @@
             <groupId>com.jcabi</groupId>
             <artifactId>jcabi-http</artifactId>
             <version>1.10.2</version>
+        </dependency>
+        <dependency>
+            <groupId>com.restfb</groupId>
+            <artifactId>restfb</artifactId>
+            <version>1.6.14</version>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.velocity</groupId>
+            <artifactId>velocity</artifactId>
+            <version>1.7</version>
+            <scope>runtime</scope>
         </dependency>
         <dependency>
             <groupId>org.hamcrest</groupId>
@@ -168,21 +191,6 @@
             <version>r938</version>
         </dependency>
         <dependency>
-            <groupId>com.rexsl</groupId>
-            <artifactId>rexsl</artifactId>
-            <version>1.6</version>
-        </dependency>
-        <dependency>
-            <groupId>com.sun.jersey</groupId>
-            <artifactId>jersey-core</artifactId>
-            <version>${jersey.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.sun.jersey.contribs</groupId>
-            <artifactId>jersey-multipart</artifactId>
-            <version>${jersey.version}</version>
-        </dependency>
-        <dependency>
             <groupId>com.sun.grizzly</groupId>
             <artifactId>grizzly-servlet-webserver</artifactId>
             <version>1.9.61</version>
@@ -201,10 +209,6 @@
             <scope>runtime</scope>
         </dependency>
         <dependency>
-            <groupId>javax.servlet</groupId>
-            <artifactId>servlet-api</artifactId>
-        </dependency>
-        <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
         </dependency>
@@ -221,16 +225,6 @@
             <groupId>log4j</groupId>
             <artifactId>log4j</artifactId>
             <scope>runtime</scope>
-        </dependency>
-        <dependency>
-            <groupId>javax.ws.rs</groupId>
-            <artifactId>jsr311-api</artifactId>
-            <version>1.1.1</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>javax.xml.bind</groupId>
-            <artifactId>jaxb-api</artifactId>
         </dependency>
         <dependency>
             <groupId>com.google.guava</groupId>
@@ -252,6 +246,19 @@
             <artifactId>jcabi-jdbc</artifactId>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>net.sourceforge.saxon</groupId>
+            <artifactId>saxon</artifactId>
+            <version>9.1.0.8</version>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>net.sourceforge.saxon</groupId>
+            <artifactId>saxon</artifactId>
+            <version>9.1.0.8</version>
+            <classifier>dom</classifier>
+            <scope>runtime</scope>
+        </dependency>
     </dependencies>
     <build>
         <pluginManagement>
@@ -260,11 +267,6 @@
                     <groupId>org.codehaus.mojo</groupId>
                     <artifactId>build-helper-maven-plugin</artifactId>
                     <version>1.8</version>
-                </plugin>
-                <plugin>
-                    <groupId>org.apache.tomcat.maven</groupId>
-                    <artifactId>tomcat7-maven-plugin</artifactId>
-                    <version>2.2</version>
                 </plugin>
             </plugins>
         </pluginManagement>
@@ -288,187 +290,107 @@
                     <skip>true</skip>
                 </configuration>
             </plugin>
-            <plugin>
-                <artifactId>maven-war-plugin</artifactId>
-                <configuration>
-                    <warSourceExcludes>js/**, xsl/**, css/**</warSourceExcludes>
-                    <archive>
-                        <manifestEntries>
-                            <Netbout-Revision>${buildNumber}</Netbout-Revision>
-                            <Netbout-Version>${project.version}</Netbout-Version>
-                            <Netbout-Date>${maven.build.timestamp}</Netbout-Date>
-                            <Netbout-DynamoKey>${dynamo.key}</Netbout-DynamoKey>
-                            <Netbout-DynamoSecret>${dynamo.secret}</Netbout-DynamoSecret>
-                            <Netbout-DynamoPrefix>${dynamo.prefix}</Netbout-DynamoPrefix>
-                            <Netbout-FbId>${fb.id}</Netbout-FbId>
-                            <Netbout-FbSecret>${fb.secret}</Netbout-FbSecret>
-                            <Netbout-GoogleId>${google.id}</Netbout-GoogleId>
-                            <Netbout-GoogleSecret>${google.secret}</Netbout-GoogleSecret>
-                            <Netbout-GithubId>${github.id}</Netbout-GithubId>
-                            <Netbout-GithubSecret>${github.secret}</Netbout-GithubSecret>
-                            <Netbout-SecurityKey>${security.key}</Netbout-SecurityKey>
-                            <Netbout-SttcUrn>${sttc.urn}</Netbout-SttcUrn>
-                            <Netbout-SttcToken>${sttc.token}</Netbout-SttcToken>
-                            <Netbout-S3Key>${s3.key}</Netbout-S3Key>
-                            <Netbout-S3Secret>${s3.secret}</Netbout-S3Secret>
-                            <Netbout-S3Bucket>${s3.bucket}</Netbout-S3Bucket>
-                        </manifestEntries>
-                    </archive>
-                    <webResources combine.children="append">
-                        <resource>
-                            <directory>${project.build.directory}/minify</directory>
-                        </resource>
-                    </webResources>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.jasig.maven</groupId>
-                <artifactId>sass-maven-plugin</artifactId>
-                <version>1.1.1</version>
-                <executions>
-                    <execution>
-                        <id>generate-css</id>
-                        <phase>generate-resources</phase>
-                        <goals>
-                            <goal>update-stylesheets</goal>
-                        </goals>
-                        <configuration>
-                            <sassSourceDirectory>${basedir}/src/main/scss</sassSourceDirectory>
-                            <destination>${project.build.directory}/css</destination>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>com.samaxes.maven</groupId>
-                <artifactId>minify-maven-plugin</artifactId>
-                <version>1.7.2</version>
-                <configuration>
-                    <charset>UTF-8</charset>
-                    <nosuffix>true</nosuffix>
-                    <webappTargetDir>${project.build.directory}/minify</webappTargetDir>
-                </configuration>
-                <executions>
-                    <execution>
-                        <id>minify-js</id>
-                        <goals>
-                            <goal>minify</goal>
-                        </goals>
-                        <configuration>
-                            <jsSourceIncludes>
-                                <include>*.js</include>
-                            </jsSourceIncludes>
-                            <jsEngine>CLOSURE</jsEngine>
-                            <skipMerge>true</skipMerge>
-                            <skipMinify>false</skipMinify>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>minify-css</id>
-                        <goals>
-                            <goal>minify</goal>
-                        </goals>
-                        <configuration>
-                            <webappSourceDir>${project.build.directory}</webappSourceDir>
-                            <cssSourceDir>css</cssSourceDir>
-                            <cssSourceIncludes>
-                                <include>*.css</include>
-                            </cssSourceIncludes>
-                            <skipMerge>false</skipMerge>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>com.tunyk.mvn.plugins.htmlcompressor</groupId>
-                <artifactId>htmlcompressor-maven-plugin</artifactId>
-                <version>1.3</version>
-                <executions>
-                    <execution>
-                        <id>compress-xsl</id>
-                        <phase>generate-resources</phase>
-                        <goals>
-                            <goal>xml</goal>
-                        </goals>
-                        <configuration>
-                            <srcFolder>${basedir}/src/main/webapp/xsl</srcFolder>
-                            <targetFolder>${project.build.directory}/${project.build.finalName}/xsl</targetFolder>
-                            <fileExt>
-                                <ext>xsl</ext>
-                            </fileExt>
-                            <removeIntertagSpaces>false</removeIntertagSpaces>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
         </plugins>
     </build>
     <profiles>
         <profile>
-            <id>tomcat-test</id>
+            <id>resources</id>
             <activation>
-                <property><name>!skipTests</name></property>
+                <file><exists>pom.xml</exists></file>
             </activation>
-            <properties>
-                <tomcat.home>${project.build.directory}/webapp-test</tomcat.home>
-            </properties>
             <build>
                 <plugins>
                     <plugin>
-                        <artifactId>maven-war-plugin</artifactId>
+                        <groupId>nl.geodienstencentrum.maven</groupId>
+                        <artifactId>sass-maven-plugin</artifactId>
+                        <version>2.5</version>
                         <executions>
                             <execution>
-                                <id>prepare-webapp-for-tests</id>
+                                <id>generate-css</id>
+                                <phase>generate-resources</phase>
                                 <goals>
-                                    <goal>exploded</goal>
+                                    <goal>update-stylesheets</goal>
                                 </goals>
                                 <configuration>
-                                    <warSourceExcludes>nothing/**</warSourceExcludes>
-                                    <webappDirectory>${tomcat.home}</webappDirectory>
-                                    <webResources combine.children="append">
-                                        <resource>
-                                            <directory>src/test/webapp</directory>
-                                        </resource>
-                                    </webResources>
-                                </configuration>
-                            </execution>
-                            <execution>
-                                <id>prepare-manifest-for-tests</id>
-                                <goals>
-                                    <goal>manifest</goal>
-                                </goals>
-                                <configuration>
-                                    <warSourceDirectory>${tomcat.home}</warSourceDirectory>
-                                    <archive>
-                                        <manifestEntries>
-                                            <Netbout-Revision>1234567</Netbout-Revision>
-                                            <Netbout-Version>1.0-LOCAL</Netbout-Version>
-                                            <Netbout-Date>${maven.build.timestamp}</Netbout-Date>
-                                            <Netbout-DynamoKey>AAAAABBBBBAAAAABBBBB</Netbout-DynamoKey>
-                                            <Netbout-DynamoSecret>ABCDABCDABCDABCDABCDABCDABCDABCDABCDABCD</Netbout-DynamoSecret>
-                                            <Netbout-DynamoPrefix>nb-</Netbout-DynamoPrefix>
-                                            <Netbout-FbId>test</Netbout-FbId>
-                                            <Netbout-FbSecret>test</Netbout-FbSecret>
-                                            <Netbout-GoogleId>test</Netbout-GoogleId>
-                                            <Netbout-GoogleSecret>test</Netbout-GoogleSecret>
-                                            <Netbout-GithubId>test</Netbout-GithubId>
-                                            <Netbout-GithubSecret>test</Netbout-GithubSecret>
-                                            <Netbout-SecurityKey>test</Netbout-SecurityKey>
-                                            <Netbout-SttcUrn>urn:test:1</Netbout-SttcUrn>
-                                            <Netbout-SttcToken>test</Netbout-SttcToken>
-                                            <Netbout-S3Key>test</Netbout-S3Key>
-                                            <Netbout-S3Secret>test</Netbout-S3Secret>
-                                            <Netbout-S3Bucket>test</Netbout-S3Bucket>
-                                            <Netbout-SmtpHost>test</Netbout-SmtpHost>
-                                            <Netbout-SmtpPort>0</Netbout-SmtpPort>
-                                            <Netbout-SmtpUser>test</Netbout-SmtpUser>
-                                            <Netbout-SmtpPassword>test</Netbout-SmtpPassword>
-                                        </manifestEntries>
-                                    </archive>
+                                    <sassSourceDirectory>${basedir}/src/main/scss</sassSourceDirectory>
+                                    <destination>${project.build.directory}/css</destination>
                                 </configuration>
                             </execution>
                         </executions>
                     </plugin>
+                    <plugin>
+                        <groupId>com.samaxes.maven</groupId>
+                        <artifactId>minify-maven-plugin</artifactId>
+                        <version>1.7.2</version>
+                        <configuration>
+                            <charset>UTF-8</charset>
+                            <nosuffix>true</nosuffix>
+                            <webappTargetDir>${project.build.outputDirectory}</webappTargetDir>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <id>minify-js</id>
+                                <goals>
+                                    <goal>minify</goal>
+                                </goals>
+                                <configuration>
+                                    <webappSourceDir>${project.basedir}/src/main</webappSourceDir>
+                                    <jsSourceIncludes>
+                                        <include>*.js</include>
+                                    </jsSourceIncludes>
+                                    <jsEngine>CLOSURE</jsEngine>
+                                    <skipMerge>true</skipMerge>
+                                    <skipMinify>false</skipMinify>
+                                </configuration>
+                            </execution>
+                            <execution>
+                                <id>minify-css</id>
+                                <goals>
+                                    <goal>minify</goal>
+                                </goals>
+                                <configuration>
+                                    <webappSourceDir>${project.build.directory}</webappSourceDir>
+                                    <cssSourceDir>css</cssSourceDir>
+                                    <cssSourceIncludes>
+                                        <include>*.css</include>
+                                    </cssSourceIncludes>
+                                    <skipMerge>false</skipMerge>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>com.tunyk.mvn.plugins.htmlcompressor</groupId>
+                        <artifactId>htmlcompressor-maven-plugin</artifactId>
+                        <version>1.3</version>
+                        <executions>
+                            <execution>
+                                <id>compress-xsl</id>
+                                <phase>generate-resources</phase>
+                                <goals>
+                                    <goal>xml</goal>
+                                </goals>
+                                <configuration>
+                                    <srcFolder>${basedir}/src/main/xsl</srcFolder>
+                                    <targetFolder>${project.build.outputDirectory}/xsl</targetFolder>
+                                    <fileExt>
+                                        <ext>xsl</ext>
+                                    </fileExt>
+                                    <removeIntertagSpaces>false</removeIntertagSpaces>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <id>takes-test</id>
+            <activation>
+                <property><name>!skipTests</name></property>
+            </activation>
+            <build>
+                <plugins>
                     <plugin>
                         <groupId>org.codehaus.mojo</groupId>
                         <artifactId>build-helper-maven-plugin</artifactId>
@@ -479,7 +401,7 @@
                                 </goals>
                                 <configuration>
                                     <portNames>
-                                        <portName>tomcat.port</portName>
+                                        <portName>takes.port</portName>
                                     </portNames>
                                 </configuration>
                             </execution>
@@ -489,7 +411,7 @@
                         <artifactId>maven-failsafe-plugin</artifactId>
                         <configuration>
                             <systemPropertyVariables combine.children="append">
-                                <tomcat.home>http://localhost:${tomcat.port}</tomcat.home>
+                                <takes.home>http://localhost:${takes.port}</takes.home>
                             </systemPropertyVariables>
                         </configuration>
                         <executions>
@@ -497,38 +419,6 @@
                                 <goals>
                                     <goal>integration-test</goal>
                                     <goal>verify</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                    </plugin>
-                    <plugin>
-                        <groupId>org.apache.tomcat.maven</groupId>
-                        <artifactId>tomcat7-maven-plugin</artifactId>
-                        <configuration>
-                            <port>9099</port>
-                            <path>/</path>
-                            <warDirectory>${tomcat.home}</warDirectory>
-                            <systemProperties>
-                                <log4j.configuration>file:${basedir}/src/test/resources/log4j.properties</log4j.configuration>
-                            </systemProperties>
-                        </configuration>
-                        <executions>
-                            <execution>
-                                <id>start-tomcat</id>
-                                <phase>pre-integration-test</phase>
-                                <goals>
-                                    <goal>run-war-only</goal>
-                                </goals>
-                                <configuration>
-                                    <port>${tomcat.port}</port>
-                                    <fork>true</fork>
-                                </configuration>
-                            </execution>
-                            <execution>
-                                <id>stop-tomcat</id>
-                                <phase>post-integration-test</phase>
-                                <goals>
-                                    <goal>shutdown</goal>
                                 </goals>
                             </execution>
                         </executions>
@@ -553,6 +443,28 @@
                         <artifactId>exec-maven-plugin</artifactId>
                         <version>1.3</version>
                         <executions>
+                            <execution>
+                                <id>start-takes-server</id>
+                                <phase>pre-integration-test</phase>
+                                <goals>
+                                    <goal>java</goal>
+                                </goals>
+                                <configuration>
+                                    <mainClass>com.netbout.Launch</mainClass>
+                                    <classpathScope>test</classpathScope>
+                                    <cleanupDaemonThreads>false</cleanupDaemonThreads>
+                                    <arguments>
+                                        <argument>--port=${takes.port}</argument>
+                                        <argument>--daemon=yes</argument>
+                                    </arguments>
+                                    <systemProperties>
+                                        <property>
+                                            <key>dynamo.port</key>
+                                            <value>${dynamodblocal.port}</value>
+                                        </property>
+                                    </systemProperties>
+                                </configuration>
+                            </execution>
                             <execution>
                                 <id>casperjs-install</id>
                                 <phase>pre-integration-test</phase>
@@ -584,7 +496,7 @@
                                         <argument>--verbose</argument>
                                         <argument>--no-colors</argument>
                                         <argument>--concise</argument>
-                                        <argument>--home=http://localhost:${tomcat.port}</argument>
+                                        <argument>--home=http://localhost:${takes.port}</argument>
                                         <argument>--engine=phantomjs</argument>
                                         <argument>${basedir}/src/test/casperjs</argument>
                                     </arguments>
@@ -673,15 +585,6 @@
                         </executions>
                     </plugin>
                     <plugin>
-                        <groupId>org.apache.tomcat.maven</groupId>
-                        <artifactId>tomcat7-maven-plugin</artifactId>
-                        <configuration>
-                            <systemProperties combine.children="append">
-                                <dynamo.port>${dynamodblocal.port}</dynamo.port>
-                            </systemProperties>
-                        </configuration>
-                    </plugin>
-                    <plugin>
                         <artifactId>maven-failsafe-plugin</artifactId>
                         <configuration>
                             <parallel>none</parallel>
@@ -694,70 +597,65 @@
             </build>
         </profile>
         <profile>
+            <id>hit-refresh</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>exec-maven-plugin</artifactId>
+                        <version>1.3</version>
+                        <executions>
+                            <execution>
+                                <id>start-server</id>
+                                <phase>pre-integration-test</phase>
+                                <goals>
+                                    <goal>java</goal>
+                                </goals>
+                                <configuration>
+                                    <mainClass>com.netbout.Launch</mainClass>
+                                    <classpathScope>test</classpathScope>
+                                    <cleanupDaemonThreads>false</cleanupDaemonThreads>
+                                    <arguments>
+                                        <argument>--port=${port}</argument>
+                                        <argument>--hit-refresh</argument>
+                                    </arguments>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
             <id>heroku</id>
             <activation>
                 <file><exists>pom.xml</exists></file>
             </activation>
-            <properties>
-                <tomcat.version>7.0.34</tomcat.version>
-            </properties>
-            <dependencies>
-                <dependency>
-                    <groupId>org.apache.tomcat.embed</groupId>
-                    <artifactId>tomcat-embed-core</artifactId>
-                    <version>${tomcat.version}</version>
-                </dependency>
-                <dependency>
-                    <groupId>org.apache.tomcat.embed</groupId>
-                    <artifactId>tomcat-embed-logging-juli</artifactId>
-                    <version>${tomcat.version}</version>
-                    <scope>runtime</scope>
-                </dependency>
-                <dependency>
-                    <groupId>org.apache.tomcat.embed</groupId>
-                    <artifactId>tomcat-embed-jasper</artifactId>
-                    <version>${tomcat.version}</version>
-                    <scope>runtime</scope>
-                </dependency>
-            </dependencies>
             <build>
                 <finalName>netbout</finalName>
                 <plugins>
                     <plugin>
                         <artifactId>maven-jar-plugin</artifactId>
+                        <configuration>
+                            <archive>
+                                <manifestFile>${project.build.outputDirectory}/META-INF/MANIFEST.MF</manifestFile>
+                            </archive>
+                        </configuration>
+                    </plugin>
+                    <plugin>
+                        <artifactId>maven-dependency-plugin</artifactId>
                         <executions>
                             <execution>
+                                <id>copy-dependencies-for-heroku</id>
                                 <phase>package</phase>
                                 <goals>
-                                    <goal>jar</goal>
+                                    <goal>copy-dependencies</goal>
                                 </goals>
                                 <configuration>
-                                    <archive>
-                                        <manifestEntries>
-                                            <Netbout-Revision>${buildNumber}</Netbout-Revision>
-                                            <Netbout-Version>${project.version}</Netbout-Version>
-                                            <Netbout-Date>${maven.build.timestamp}</Netbout-Date>
-                                            <Netbout-DynamoKey>${dynamo.key}</Netbout-DynamoKey>
-                                            <Netbout-DynamoSecret>${dynamo.secret}</Netbout-DynamoSecret>
-                                            <Netbout-DynamoPrefix>${dynamo.prefix}</Netbout-DynamoPrefix>
-                                            <Netbout-FbId>${fb.id}</Netbout-FbId>
-                                            <Netbout-FbSecret>${fb.secret}</Netbout-FbSecret>
-                                            <Netbout-GoogleId>${google.id}</Netbout-GoogleId>
-                                            <Netbout-GoogleSecret>${google.secret}</Netbout-GoogleSecret>
-                                            <Netbout-GithubId>${github.id}</Netbout-GithubId>
-                                            <Netbout-GithubSecret>${github.secret}</Netbout-GithubSecret>
-                                            <Netbout-SecurityKey>${security.key}</Netbout-SecurityKey>
-                                            <Netbout-SttcUrn>${sttc.urn}</Netbout-SttcUrn>
-                                            <Netbout-SttcToken>${sttc.token}</Netbout-SttcToken>
-                                            <Netbout-S3Key>${s3.key}</Netbout-S3Key>
-                                            <Netbout-S3Secret>${s3.secret}</Netbout-S3Secret>
-                                            <Netbout-S3Bucket>${s3.bucket}</Netbout-S3Bucket>
-                                            <Netbout-SmtpHost>${smtp.host}</Netbout-SmtpHost>
-                                            <Netbout-SmtpPort>${smtp.port}</Netbout-SmtpPort>
-                                            <Netbout-SmtpUser>${smtp.user}</Netbout-SmtpUser>
-                                            <Netbout-SmtpPassword>${smtp.password}</Netbout-SmtpPassword>
-                                        </manifestEntries>
-                                    </archive>
+                                    <outputDirectory>${project.build.directory}/deps</outputDirectory>
+                                    <overWriteReleases>true</overWriteReleases>
+                                    <overWriteSnapshots>true</overWriteSnapshots>
+                                    <overWriteIfNewer>true</overWriteIfNewer>
                                 </configuration>
                             </execution>
                         </executions>
@@ -774,13 +672,11 @@
                         <artifactId>qulice-maven-plugin</artifactId>
                         <configuration>
                             <excludes>
-                                <exclude>checkstyle:/src/main/webapp/.*</exclude>
                                 <exclude>checkstyle:/src/main/scss/.*</exclude>
                                 <exclude>checkstyle:/src/test/casperjs/.*</exclude>
+                                <exclude>checkstyle:/src/main/js/.*</exclude>
                                 <exclude>findbugs:.*</exclude>
-                                <exclude>xml:/src/main/webapp/WEB-INF/web.xml</exclude>
-                                <exclude>xml:/src/main/webapp/lang/.*</exclude>
-                                <exclude>xml:/src/test/webapp/xml/.*</exclude>
+                                <exclude>xml:/src/main/resources/lang/.*</exclude>
                                 <exclude>duplicatefinder:.*</exclude>
                             </excludes>
                         </configuration>

@@ -31,6 +31,7 @@ import com.jcabi.aspects.Loggable;
 import com.jcabi.http.Request;
 import com.jcabi.http.response.RestResponse;
 import com.jcabi.http.response.XmlResponse;
+import com.jcabi.log.Logger;
 import com.netbout.spi.Message;
 import com.netbout.spi.Messages;
 import com.netbout.spi.Pageable;
@@ -43,7 +44,7 @@ import lombok.ToString;
 /**
  * REST messages.
  *
- * @author Yegor Bugayenko (yegor@tpc2.com)
+ * @author Yegor Bugayenko (yegor@teamed.io)
  * @version $Id$
  * @since 2.0
  */
@@ -76,6 +77,7 @@ final class RtMessages implements Messages {
             .method(Request.POST)
             .body().formParam("text", text).back()
             .fetch();
+        Logger.info(this, "message posted");
     }
 
     @Override

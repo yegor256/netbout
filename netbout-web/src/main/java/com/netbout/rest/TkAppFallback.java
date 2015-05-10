@@ -1,0 +1,117 @@
+/**
+ * Copyright (c) 2009-2014, netbout.com
+ * All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are PROHIBITED without prior written permission from
+ * the author. This product may NOT be used anywhere and on any computer
+ * except the server platform of netbout Inc. located at www.netbout.com.
+ * Federal copyright law prohibits unauthorized reproduction by any means
+ * and imposes fines up to $25,000 for violation. If you received
+ * this code accidentally and without intent to use it, please report this
+ * incident to the author by email.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+ * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+ * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+ * A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+ * OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+ * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+ * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
+ * ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+ * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
+ * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
+ * SUCH DAMAGE.
+ */
+package com.netbout.rest;
+
+import com.jcabi.manifests.Manifests;
+import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.util.Collections;
+import java.util.Iterator;
+import org.apache.commons.lang3.exception.ExceptionUtils;
+import org.takes.Response;
+import org.takes.Take;
+import org.takes.facets.fallback.Fallback;
+import org.takes.facets.fallback.FbChain;
+import org.takes.facets.fallback.FbStatus;
+import org.takes.facets.fallback.RqFallback;
+import org.takes.facets.fallback.TkFallback;
+import org.takes.rs.RsText;
+import org.takes.rs.RsVelocity;
+import org.takes.rs.RsWithStatus;
+import org.takes.rs.RsWithType;
+import org.takes.tk.TkWrap;
+
+/**
+ * App with fallback.
+ *
+ * @author Yegor Bugayenko (yegor@teamed.io)
+ * @version $Id$
+ * @since 2.14
+ * @checkstyle ClassDataAbstractionCouplingCheck (500 lines)
+ */
+final class TkAppFallback extends TkWrap {
+
+    /**
+     * Revision of netbout.
+     */
+    private static final String REV = Manifests.read("Netbout-Revision");
+
+    /**
+     * Ctor.
+     * @param take Take
+     */
+    TkAppFallback(final Take take) {
+        super(TkAppFallback.make(take));
+    }
+
+    /**
+     * Authenticated.
+     * @param takes Take
+     * @return Authenticated takes
+     */
+    private static Take make(final Take takes) {
+        return new TkFallback(
+            takes,
+            new FbChain(
+                new FbStatus(
+                    HttpURLConnection.HTTP_NOT_FOUND,
+                    new RsWithStatus(
+                        new RsText("page not found"),
+                        HttpURLConnection.HTTP_NOT_FOUND
+                    )
+                ),
+                // @checkstyle AnonInnerLengthCheck (50 lines)
+                new Fallback() {
+                    @Override
+                    public Iterator<Response> route(final RqFallback req)
+                        throws IOException {
+                        final String err = ExceptionUtils.getStackTrace(
+                            req.throwable()
+                        );
+                        return Collections.<Response>singleton(
+                            new RsWithStatus(
+                                new RsWithType(
+                                    new RsVelocity(
+                                        this.getClass().getResource(
+                                            "error.html.vm"
+                                        ),
+                                        new RsVelocity.Pair("err", err),
+                                        new RsVelocity.Pair(
+                                            "rev", TkAppFallback.REV
+                                        )
+                                    ),
+                                    "text/html"
+                                ),
+                                HttpURLConnection.HTTP_INTERNAL_ERROR
+                            )
+                        ).iterator();
+                    }
+                }
+            )
+        );
+    }
+}

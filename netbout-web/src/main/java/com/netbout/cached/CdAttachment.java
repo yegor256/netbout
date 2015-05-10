@@ -40,7 +40,7 @@ import lombok.ToString;
 /**
  * Cached Attachments.
  *
- * @author Yegor Bugayenko (yegor@tpc2.com)
+ * @author Yegor Bugayenko (yegor@teamed.io)
  * @version $Id$
  * @since 2.2
  */
@@ -88,7 +88,6 @@ final class CdAttachment implements Attachment {
     }
 
     @Override
-    @Cacheable.FlushAfter
     public InputStream read() throws IOException {
         return this.origin.read();
     }

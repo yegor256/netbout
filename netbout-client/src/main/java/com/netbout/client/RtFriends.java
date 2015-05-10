@@ -33,6 +33,7 @@ import com.jcabi.aspects.Loggable;
 import com.jcabi.http.Request;
 import com.jcabi.http.response.RestResponse;
 import com.jcabi.http.response.XmlResponse;
+import com.jcabi.log.Logger;
 import com.jcabi.xml.XML;
 import com.netbout.spi.Friend;
 import com.netbout.spi.Friends;
@@ -45,7 +46,7 @@ import lombok.ToString;
 /**
  * REST friends.
  *
- * @author Yegor Bugayenko (yegor@tpc2.com)
+ * @author Yegor Bugayenko (yegor@teamed.io)
  * @version $Id$
  * @since 2.0
  */
@@ -82,6 +83,7 @@ final class RtFriends implements Friends {
             .fetch()
             .as(RestResponse.class)
             .assertStatus(HttpURLConnection.HTTP_SEE_OTHER);
+        Logger.info(this, "friend '%s' invited", friend);
     }
 
     @Override
@@ -102,6 +104,7 @@ final class RtFriends implements Friends {
             .fetch()
             .as(RestResponse.class)
             .assertStatus(HttpURLConnection.HTTP_SEE_OTHER);
+        Logger.info(this, "friend '%s' kicked out", friend);
     }
 
     @Override

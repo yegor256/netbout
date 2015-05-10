@@ -31,6 +31,7 @@ import com.jcabi.aspects.Loggable;
 import com.jcabi.http.Request;
 import com.jcabi.http.response.RestResponse;
 import com.jcabi.http.response.XmlResponse;
+import com.jcabi.log.Logger;
 import com.netbout.spi.Attachments;
 import com.netbout.spi.Bout;
 import com.netbout.spi.Friends;
@@ -45,7 +46,7 @@ import org.apache.commons.lang3.time.DateFormatUtils;
 /**
  * REST bout.
  *
- * @author Yegor Bugayenko (yegor@tpc2.com)
+ * @author Yegor Bugayenko (yegor@teamed.io)
  * @version $Id$
  * @since 2.0
  */
@@ -129,6 +130,7 @@ final class RtBout implements Bout {
             .fetch()
             .as(RestResponse.class)
             .assertStatus(HttpURLConnection.HTTP_SEE_OTHER);
+        Logger.info(this, "bout #%d renamed", this.num);
     }
 
     @Override

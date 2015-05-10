@@ -33,6 +33,7 @@ import com.jcabi.aspects.Loggable;
 import com.jcabi.http.Request;
 import com.jcabi.http.response.RestResponse;
 import com.jcabi.http.response.XmlResponse;
+import com.jcabi.log.Logger;
 import com.netbout.spi.Attachment;
 import com.netbout.spi.Attachments;
 import java.io.IOException;
@@ -43,7 +44,7 @@ import lombok.ToString;
 /**
  * REST attachments.
  *
- * @author Yegor Bugayenko (yegor@tpc2.com)
+ * @author Yegor Bugayenko (yegor@teamed.io)
  * @version $Id$
  * @since 2.0
  */
@@ -83,6 +84,7 @@ final class RtAttachments implements Attachments {
             .fetch()
             .as(RestResponse.class)
             .assertStatus(HttpURLConnection.HTTP_SEE_OTHER);
+        Logger.info(this, "attachment '%s' created", name);
     }
 
     @Override
@@ -101,6 +103,7 @@ final class RtAttachments implements Attachments {
             .fetch()
             .as(RestResponse.class)
             .assertStatus(HttpURLConnection.HTTP_SEE_OTHER);
+        Logger.info(this, "attachment '%s' deleted", name);
     }
 
     @Override

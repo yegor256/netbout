@@ -31,6 +31,7 @@ import com.jcabi.aspects.Loggable;
 import com.jcabi.http.Request;
 import com.jcabi.http.response.RestResponse;
 import com.jcabi.http.response.XmlResponse;
+import com.jcabi.log.Logger;
 import com.netbout.spi.Bout;
 import com.netbout.spi.Inbox;
 import com.netbout.spi.Pageable;
@@ -43,7 +44,7 @@ import lombok.ToString;
 /**
  * REST inbox.
  *
- * @author Yegor Bugayenko (yegor@tpc2.com)
+ * @author Yegor Bugayenko (yegor@teamed.io)
  * @version $Id$
  * @since 2.0
  */
@@ -68,7 +69,7 @@ final class RtInbox implements Inbox {
 
     @Override
     public long start() throws IOException {
-        return Long.parseLong(
+        final long number = Long.parseLong(
             this.request.fetch()
                 .as(RestResponse.class)
                 .assertStatus(HttpURLConnection.HTTP_OK)
@@ -86,6 +87,8 @@ final class RtInbox implements Inbox {
                 .xpath("/page/bout/number/text()")
                 .get(0)
         );
+        Logger.info(this, "bout #%d started", number);
+        return number;
     }
 
     @Override
