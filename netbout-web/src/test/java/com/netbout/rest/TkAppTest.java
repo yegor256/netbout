@@ -70,6 +70,7 @@ public final class TkAppTest {
             "/css/style.css",
             "/js/bout.js",
             "/xsl/login.xsl",
+            "/xsl/login-layout.xsl",
             "/xsl/bout.xsl",
             "/lang/en.xml",
         };

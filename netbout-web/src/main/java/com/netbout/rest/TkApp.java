@@ -120,7 +120,7 @@ public final class TkApp extends TkWrap {
             ),
             new FkRegex("/robots.txt", ""),
             new FkRegex(
-                "/xsl/[a-z]+\\.xsl",
+                "/xsl/[a-z\\-]+\\.xsl",
                 new TkWithType(new TkClasspath(), "text/xsl")
             ),
             new FkRegex(
