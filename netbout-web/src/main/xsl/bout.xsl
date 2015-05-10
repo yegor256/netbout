@@ -32,7 +32,7 @@
     xmlns="http://www.w3.org/1999/xhtml" version="1.0">
     <xsl:output method="html" doctype-system="about:legacy-compat" encoding="UTF-8" indent="yes" />
     <xsl:param name="TEXTS"
-        select="document(concat('/lang/', /page/alias/locale, '.xml?', /page/version/rev))/texts"/>
+        select="document(concat('/lang/', /page/alias/locale, '.xml?', /page/version/name))/texts"/>
     <xsl:include href="/xsl/layout.xsl"/>
     <xsl:include href="/xsl/friends.xsl"/>
     <xsl:template match="page" mode="head">
@@ -42,11 +42,11 @@
             <xsl:text>: </xsl:text>
             <xsl:value-of select="bout/title"/>
         </title>
-        <script src="/js/friends.js?{version/rev}">
+        <script src="/js/friends.js?{version/name}">
             <xsl:text> </xsl:text>
             <!-- this is for W3C compliance -->
         </script>
-        <script src="/js/bout.js?{version/rev}">
+        <script src="/js/bout.js?{version/name}">
             <xsl:text> </xsl:text>
             <!-- this is for W3C compliance -->
         </script>

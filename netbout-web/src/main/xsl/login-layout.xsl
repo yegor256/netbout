@@ -36,9 +36,9 @@
             <head>
                 <meta charset="UTF-8"/>
                 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-                <link rel="stylesheet" type="text/css" media="all" href="/css/style.css?{version/rev}"/>
+                <link rel="stylesheet" type="text/css" media="all" href="/css/style.css?{version/name}"/>
                 <link rel="shortcut icon" type="image/png" href="{links/link[@rel='favicon']/@href}"/>
-                <script type="text/javascript" src="/js/supplementary.js?{version/rev}">
+                <script type="text/javascript" src="/js/supplementary.js?{version/name}">
                     <xsl:text> </xsl:text>
                 </script>
                 <script type="text/javascript" src="//code.jquery.com/jquery-2.1.1-rc1.min.js">
@@ -52,7 +52,7 @@
                     <div class="login-main">
                         <div>
                             <a href="{links/link[@rel='home']/@href}" title="back home">
-                                <img class="login-logo" alt="back home" src="//img.netbout.com/logo.svg?{version/rev}"/>
+                                <img class="login-logo" alt="back home" src="//img.netbout.com/logo.svg?{version/name}"/>
                             </a>
                         </div>
                         <xsl:apply-templates select="message[text() != '']"/>
