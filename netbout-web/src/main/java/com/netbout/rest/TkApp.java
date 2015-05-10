@@ -43,7 +43,6 @@ import org.takes.facets.fork.FkRegex;
 import org.takes.facets.fork.TkFork;
 import org.takes.facets.forward.TkForward;
 import org.takes.tk.TkClasspath;
-import org.takes.tk.TkGzip;
 import org.takes.tk.TkMeasured;
 import org.takes.tk.TkRedirect;
 import org.takes.tk.TkVersioned;
@@ -91,13 +90,11 @@ public final class TkApp extends TkWrap {
         return new TkWithHeaders(
             new TkVersioned(
                 new TkMeasured(
-                    new TkAppFallback(
-                        new TkGzip(
-                            new TkFlash(
-                                new TkAppAuth(
-                                    new TkForward(
-                                        TkApp.regex(base)
-                                    )
+                    new TkFlash(
+                        new TkAppFallback(
+                            new TkAppAuth(
+                                new TkForward(
+                                    TkApp.regex(base)
                                 )
                             )
                         )

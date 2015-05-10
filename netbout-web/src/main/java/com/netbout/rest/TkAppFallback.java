@@ -26,6 +26,7 @@
  */
 package com.netbout.rest;
 
+import com.jcabi.log.Logger;
 import com.jcabi.manifests.Manifests;
 import java.io.IOException;
 import java.net.HttpURLConnection;
@@ -84,34 +85,40 @@ final class TkAppFallback extends TkWrap {
                         HttpURLConnection.HTTP_NOT_FOUND
                     )
                 ),
-                // @checkstyle AnonInnerLengthCheck (50 lines)
                 new Fallback() {
                     @Override
                     public Iterator<Response> route(final RqFallback req)
                         throws IOException {
-                        final String err = ExceptionUtils.getStackTrace(
-                            req.throwable()
-                        );
-                        return Collections.<Response>singleton(
-                            new RsWithStatus(
-                                new RsWithType(
-                                    new RsVelocity(
-                                        this.getClass().getResource(
-                                            "error.html.vm"
-                                        ),
-                                        new RsVelocity.Pair("err", err),
-                                        new RsVelocity.Pair(
-                                            "rev", TkAppFallback.REV
-                                        )
-                                    ),
-                                    "text/html"
-                                ),
-                                HttpURLConnection.HTTP_INTERNAL_ERROR
-                            )
+                        return Collections.singleton(
+                            TkAppFallback.fatal(req)
                         ).iterator();
                     }
                 }
             )
+        );
+    }
+
+    /**
+     * Make a fatal response.
+     * @param req Request
+     * @return Response
+     * @throws IOException If fails
+     */
+    private static Response fatal(final RqFallback req) throws IOException {
+        final String err = ExceptionUtils.getStackTrace(
+            req.throwable()
+        );
+        Logger.error(TkAppFallback.class, "%[exception]s", req.throwable());
+        return new RsWithStatus(
+            new RsWithType(
+                new RsVelocity(
+                    TkAppFallback.class.getResource("error.html.vm"),
+                    new RsVelocity.Pair("err", err),
+                    new RsVelocity.Pair("rev", TkAppFallback.REV)
+                ),
+                "text/html"
+            ),
+            HttpURLConnection.HTTP_INTERNAL_ERROR
         );
     }
 }

@@ -34,6 +34,7 @@ import org.junit.Test;
 import org.takes.Take;
 import org.takes.facets.hamcrest.HmRsStatus;
 import org.takes.rq.RqFake;
+import org.takes.rq.RqMethod;
 
 /**
  * Test case for {@link TkApp}.
@@ -50,7 +51,7 @@ public final class TkAppTest {
     @Test
     public void rendersFrontPage() throws Exception {
         MatcherAssert.assertThat(
-            new TkApp(new MkBase()).act(new RqFake("GET", "/")),
+            new TkApp(new MkBase()).act(new RqFake(RqMethod.GET, "/")),
             new HmRsStatus(
                 Matchers.equalTo(HttpURLConnection.HTTP_OK)
             )
@@ -75,7 +76,8 @@ public final class TkAppTest {
         final Take app = new TkApp(new MkBase());
         for (final String page : pages) {
             MatcherAssert.assertThat(
-                app.act(new RqFake("get", page)),
+                page,
+                app.act(new RqFake(RqMethod.GET, page)),
                 new HmRsStatus(
                     Matchers.equalTo(HttpURLConnection.HTTP_OK)
                 )
