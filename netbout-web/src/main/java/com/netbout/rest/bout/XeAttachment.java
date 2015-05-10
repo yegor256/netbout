@@ -115,8 +115,7 @@ final class XeAttachment extends XeWrap {
                     "open",
                     new Href().path("b")
                         .path(bout.number())
-                        .path("open")
-                        .with(name, atmt.name())
+                        .with("open", atmt.name())
                 )
             ),
             new XeWhen(
