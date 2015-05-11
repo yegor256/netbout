@@ -41,9 +41,9 @@
 <a class="jxr_linenumber" name="L33" href="#L33">33</a>  <strong class="jxr_keyword">import</strong> org.takes.misc.Href;
 <a class="jxr_linenumber" name="L34" href="#L34">34</a>  <strong class="jxr_keyword">import</strong> org.takes.rs.xe.XeLink;
 <a class="jxr_linenumber" name="L35" href="#L35">35</a>  <strong class="jxr_keyword">import</strong> org.takes.rs.xe.XeSource;
-<a class="jxr_linenumber" name="L36" href="#L36">36</a>  <strong class="jxr_keyword">import</strong> org.takes.rs.xe.XeWrap;
-<a class="jxr_linenumber" name="L37" href="#L37">37</a>  <strong class="jxr_keyword">import</strong> org.xembly.Directive;
-<a class="jxr_linenumber" name="L38" href="#L38">38</a>  <strong class="jxr_keyword">import</strong> org.xembly.Directives;
+<a class="jxr_linenumber" name="L36" href="#L36">36</a>  <strong class="jxr_keyword">import</strong> org.takes.rs.xe.XeWhen;
+<a class="jxr_linenumber" name="L37" href="#L37">37</a>  <strong class="jxr_keyword">import</strong> org.takes.rs.xe.XeWrap;
+<a class="jxr_linenumber" name="L38" href="#L38">38</a>  <strong class="jxr_keyword">import</strong> org.xembly.Directive;
 <a class="jxr_linenumber" name="L39" href="#L39">39</a>  
 <a class="jxr_linenumber" name="L40" href="#L40">40</a>  <em class="jxr_javadoccomment">/**</em>
 <a class="jxr_linenumber" name="L41" href="#L41">41</a>  <em class="jxr_javadoccomment"> * Xembly for favicon link.</em>
@@ -60,32 +60,41 @@
 <a class="jxr_linenumber" name="L52" href="#L52">52</a>  <em class="jxr_javadoccomment">     * Ctor.</em>
 <a class="jxr_linenumber" name="L53" href="#L53">53</a>  <em class="jxr_javadoccomment">     * @param base The base</em>
 <a class="jxr_linenumber" name="L54" href="#L54">54</a>  <em class="jxr_javadoccomment">     * @param req Request</em>
-<a class="jxr_linenumber" name="L55" href="#L55">55</a>  <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L56" href="#L56">56</a>      <a href="../../../com/netbout/rest/XeFavicon.html">XeFavicon</a>(<strong class="jxr_keyword">final</strong> <a href="../../../com/netbout/spi/Base.html">Base</a> base, <strong class="jxr_keyword">final</strong> Request req) {
-<a class="jxr_linenumber" name="L57" href="#L57">57</a>          <strong class="jxr_keyword">super</strong>(
-<a class="jxr_linenumber" name="L58" href="#L58">58</a>              <strong class="jxr_keyword">new</strong> XeSource() {
-<a class="jxr_linenumber" name="L59" href="#L59">59</a>                  @Override
-<a class="jxr_linenumber" name="L60" href="#L60">60</a>                  <strong class="jxr_keyword">public</strong> Iterable&lt;Directive&gt; toXembly() <strong class="jxr_keyword">throws</strong> IOException {
-<a class="jxr_linenumber" name="L61" href="#L61">61</a>                      <strong class="jxr_keyword">final</strong> Directives dirs = <strong class="jxr_keyword">new</strong> Directives();
-<a class="jxr_linenumber" name="L62" href="#L62">62</a>                      <strong class="jxr_keyword">final</strong> <a href="../../../com/netbout/rest/RqAlias.html">RqAlias</a> rqa = <strong class="jxr_keyword">new</strong> <a href="../../../com/netbout/rest/RqAlias.html">RqAlias</a>(base, req);
-<a class="jxr_linenumber" name="L63" href="#L63">63</a>                      <strong class="jxr_keyword">if</strong> (rqa.has()) {
-<a class="jxr_linenumber" name="L64" href="#L64">64</a>                          dirs.append(
-<a class="jxr_linenumber" name="L65" href="#L65">65</a>                              <strong class="jxr_keyword">new</strong> XeLink(
-<a class="jxr_linenumber" name="L66" href="#L66">66</a>                                  <span class="jxr_string">"favicon"</span>,
-<a class="jxr_linenumber" name="L67" href="#L67">67</a>                                  <strong class="jxr_keyword">new</strong> Href().path(<span class="jxr_string">"favicon.ico"</span>).with(
-<a class="jxr_linenumber" name="L68" href="#L68">68</a>                                      <span class="jxr_string">"unread"</span>,
-<a class="jxr_linenumber" name="L69" href="#L69">69</a>                                      rqa.alias().inbox().unread()
-<a class="jxr_linenumber" name="L70" href="#L70">70</a>                                  )
-<a class="jxr_linenumber" name="L71" href="#L71">71</a>                              ).toXembly()
-<a class="jxr_linenumber" name="L72" href="#L72">72</a>                          );
-<a class="jxr_linenumber" name="L73" href="#L73">73</a>                      }
-<a class="jxr_linenumber" name="L74" href="#L74">74</a>                      <strong class="jxr_keyword">return</strong> dirs;
-<a class="jxr_linenumber" name="L75" href="#L75">75</a>                  }
-<a class="jxr_linenumber" name="L76" href="#L76">76</a>              }
-<a class="jxr_linenumber" name="L77" href="#L77">77</a>          );
-<a class="jxr_linenumber" name="L78" href="#L78">78</a>      }
-<a class="jxr_linenumber" name="L79" href="#L79">79</a>  
-<a class="jxr_linenumber" name="L80" href="#L80">80</a>  }
+<a class="jxr_linenumber" name="L55" href="#L55">55</a>  <em class="jxr_javadoccomment">     * @throws IOException If fails</em>
+<a class="jxr_linenumber" name="L56" href="#L56">56</a>  <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="L57" href="#L57">57</a>      <a href="../../../com/netbout/rest/XeFavicon.html">XeFavicon</a>(<strong class="jxr_keyword">final</strong> <a href="../../../com/netbout/spi/Base.html">Base</a> base, <strong class="jxr_keyword">final</strong> Request req) <strong class="jxr_keyword">throws</strong> IOException {
+<a class="jxr_linenumber" name="L58" href="#L58">58</a>          <strong class="jxr_keyword">super</strong>(XeFavicon.make(base, req));
+<a class="jxr_linenumber" name="L59" href="#L59">59</a>      }
+<a class="jxr_linenumber" name="L60" href="#L60">60</a>  
+<a class="jxr_linenumber" name="L61" href="#L61">61</a>      <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L62" href="#L62">62</a>  <em class="jxr_javadoccomment">     * Ctor.</em>
+<a class="jxr_linenumber" name="L63" href="#L63">63</a>  <em class="jxr_javadoccomment">     * @param base The base</em>
+<a class="jxr_linenumber" name="L64" href="#L64">64</a>  <em class="jxr_javadoccomment">     * @param req Request</em>
+<a class="jxr_linenumber" name="L65" href="#L65">65</a>  <em class="jxr_javadoccomment">     * @return Xembly source</em>
+<a class="jxr_linenumber" name="L66" href="#L66">66</a>  <em class="jxr_javadoccomment">     * @throws IOException If fails</em>
+<a class="jxr_linenumber" name="L67" href="#L67">67</a>  <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="L68" href="#L68">68</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> XeSource make(<strong class="jxr_keyword">final</strong> <a href="../../../com/netbout/spi/Base.html">Base</a> base, <strong class="jxr_keyword">final</strong> Request req)
+<a class="jxr_linenumber" name="L69" href="#L69">69</a>          <strong class="jxr_keyword">throws</strong> IOException {
+<a class="jxr_linenumber" name="L70" href="#L70">70</a>          <strong class="jxr_keyword">final</strong> <a href="../../../com/netbout/rest/RqAlias.html">RqAlias</a> rqa = <strong class="jxr_keyword">new</strong> <a href="../../../com/netbout/rest/RqAlias.html">RqAlias</a>(base, req);
+<a class="jxr_linenumber" name="L71" href="#L71">71</a>          <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> XeWhen(
+<a class="jxr_linenumber" name="L72" href="#L72">72</a>              rqa.has(),
+<a class="jxr_linenumber" name="L73" href="#L73">73</a>              <strong class="jxr_keyword">new</strong> XeSource() {
+<a class="jxr_linenumber" name="L74" href="#L74">74</a>                  @Override
+<a class="jxr_linenumber" name="L75" href="#L75">75</a>                  <strong class="jxr_keyword">public</strong> Iterable&lt;Directive&gt; toXembly() <strong class="jxr_keyword">throws</strong> IOException {
+<a class="jxr_linenumber" name="L76" href="#L76">76</a>                      <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> XeLink(
+<a class="jxr_linenumber" name="L77" href="#L77">77</a>                          <span class="jxr_string">"favicon"</span>,
+<a class="jxr_linenumber" name="L78" href="#L78">78</a>                          <strong class="jxr_keyword">new</strong> Href().path(<span class="jxr_string">"favicon.ico"</span>).with(
+<a class="jxr_linenumber" name="L79" href="#L79">79</a>                              <span class="jxr_string">"unread"</span>,
+<a class="jxr_linenumber" name="L80" href="#L80">80</a>                              rqa.alias().inbox().unread()
+<a class="jxr_linenumber" name="L81" href="#L81">81</a>                          ),
+<a class="jxr_linenumber" name="L82" href="#L82">82</a>                          <span class="jxr_string">"image/png"</span>
+<a class="jxr_linenumber" name="L83" href="#L83">83</a>                      ).toXembly();
+<a class="jxr_linenumber" name="L84" href="#L84">84</a>                  }
+<a class="jxr_linenumber" name="L85" href="#L85">85</a>              }
+<a class="jxr_linenumber" name="L86" href="#L86">86</a>          );
+<a class="jxr_linenumber" name="L87" href="#L87">87</a>      }
+<a class="jxr_linenumber" name="L88" href="#L88">88</a>  
+<a class="jxr_linenumber" name="L89" href="#L89">89</a>  }
 </pre>
 <hr/>
 <div id="footer">Copyright &#169; 2009&#x2013;2015 <a href="http://www.netbout.com">Netbout Inc.</a>. All rights reserved.</div>

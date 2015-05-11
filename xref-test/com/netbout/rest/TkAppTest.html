@@ -81,20 +81,21 @@
 <a class="jxr_linenumber" name="L73" href="#L73">73</a>              <span class="jxr_string">"/xsl/login-layout.xsl"</span>,
 <a class="jxr_linenumber" name="L74" href="#L74">74</a>              <span class="jxr_string">"/xsl/bout.xsl"</span>,
 <a class="jxr_linenumber" name="L75" href="#L75">75</a>              <span class="jxr_string">"/lang/en.xml"</span>,
-<a class="jxr_linenumber" name="L76" href="#L76">76</a>          };
-<a class="jxr_linenumber" name="L77" href="#L77">77</a>          <strong class="jxr_keyword">final</strong> Take app = <strong class="jxr_keyword">new</strong> TkApp(<strong class="jxr_keyword">new</strong> MkBase());
-<a class="jxr_linenumber" name="L78" href="#L78">78</a>          <strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">final</strong> String page : pages) {
-<a class="jxr_linenumber" name="L79" href="#L79">79</a>              MatcherAssert.assertThat(
-<a class="jxr_linenumber" name="L80" href="#L80">80</a>                  page,
-<a class="jxr_linenumber" name="L81" href="#L81">81</a>                  app.act(<strong class="jxr_keyword">new</strong> RqFake(RqMethod.GET, page)),
-<a class="jxr_linenumber" name="L82" href="#L82">82</a>                  <strong class="jxr_keyword">new</strong> HmRsStatus(
-<a class="jxr_linenumber" name="L83" href="#L83">83</a>                      Matchers.equalTo(HttpURLConnection.HTTP_OK)
-<a class="jxr_linenumber" name="L84" href="#L84">84</a>                  )
-<a class="jxr_linenumber" name="L85" href="#L85">85</a>              );
-<a class="jxr_linenumber" name="L86" href="#L86">86</a>          }
-<a class="jxr_linenumber" name="L87" href="#L87">87</a>      }
-<a class="jxr_linenumber" name="L88" href="#L88">88</a>  
-<a class="jxr_linenumber" name="L89" href="#L89">89</a>  }
+<a class="jxr_linenumber" name="L76" href="#L76">76</a>              <span class="jxr_string">"/favicon.ico"</span>,
+<a class="jxr_linenumber" name="L77" href="#L77">77</a>          };
+<a class="jxr_linenumber" name="L78" href="#L78">78</a>          <strong class="jxr_keyword">final</strong> Take app = <strong class="jxr_keyword">new</strong> TkApp(<strong class="jxr_keyword">new</strong> MkBase());
+<a class="jxr_linenumber" name="L79" href="#L79">79</a>          <strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">final</strong> String page : pages) {
+<a class="jxr_linenumber" name="L80" href="#L80">80</a>              MatcherAssert.assertThat(
+<a class="jxr_linenumber" name="L81" href="#L81">81</a>                  page,
+<a class="jxr_linenumber" name="L82" href="#L82">82</a>                  app.act(<strong class="jxr_keyword">new</strong> RqFake(RqMethod.GET, page)),
+<a class="jxr_linenumber" name="L83" href="#L83">83</a>                  <strong class="jxr_keyword">new</strong> HmRsStatus(
+<a class="jxr_linenumber" name="L84" href="#L84">84</a>                      Matchers.equalTo(HttpURLConnection.HTTP_OK)
+<a class="jxr_linenumber" name="L85" href="#L85">85</a>                  )
+<a class="jxr_linenumber" name="L86" href="#L86">86</a>              );
+<a class="jxr_linenumber" name="L87" href="#L87">87</a>          }
+<a class="jxr_linenumber" name="L88" href="#L88">88</a>      }
+<a class="jxr_linenumber" name="L89" href="#L89">89</a>  
+<a class="jxr_linenumber" name="L90" href="#L90">90</a>  }
 </pre>
 <hr/>
 <div id="footer">Copyright &#169; 2009&#x2013;2015 <a href="http://www.netbout.com">Netbout Inc.</a>. All rights reserved.</div>
