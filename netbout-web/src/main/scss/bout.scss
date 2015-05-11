@@ -107,6 +107,11 @@
     width: 100%;
     border-spacing: 0;
     padding: 0;
+    tr {
+      &.even {
+        background-color: lighten($color-gray, 50);
+      }
+    }
     th {
       font-weight: normal;
       border-bottom: 1px solid $color-gray-dark;
