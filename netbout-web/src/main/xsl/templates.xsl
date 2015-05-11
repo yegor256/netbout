@@ -33,7 +33,7 @@
     xmlns="http://www.w3.org/1999/xhtml"
     version="1.0" exclude-result-prefixes="xs">
     <xsl:template name="millis">
-        <xsl:param name="millis" as="xs:integer"/>
+        <xsl:param name="millis"/>
         <xsl:choose>
             <xsl:when test="$millis &gt; 1000">
                 <xsl:value-of select="format-number($millis div 1000, '0.0')"/>
@@ -46,8 +46,8 @@
         </xsl:choose>
     </xsl:template>
     <xsl:template name="crop">
-        <xsl:param name="text" as="xs:string"/>
-        <xsl:param name="length" as="xs:integer"/>
+        <xsl:param name="text"/>
+        <xsl:param name="length"/>
         <xsl:choose>
             <xsl:when test="string-length($text) &gt; $length">
                 <xsl:value-of select="substring($text, 0, $length - 3)"/>
