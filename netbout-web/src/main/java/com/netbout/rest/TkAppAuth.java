@@ -27,7 +27,15 @@
 package com.netbout.rest;
 
 import com.jcabi.manifests.Manifests;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
+import org.takes.Request;
+import org.takes.Response;
 import org.takes.Take;
+import org.takes.facets.auth.Identity;
+import org.takes.facets.auth.Pass;
 import org.takes.facets.auth.PsByFlag;
 import org.takes.facets.auth.PsChain;
 import org.takes.facets.auth.PsCookie;
@@ -42,6 +50,7 @@ import org.takes.facets.auth.codecs.CcXOR;
 import org.takes.facets.auth.social.PsFacebook;
 import org.takes.facets.auth.social.PsGithub;
 import org.takes.facets.auth.social.PsGoogle;
+import org.takes.rq.RqHref;
 import org.takes.tk.TkWrap;
 
 /**
@@ -53,6 +62,12 @@ import org.takes.tk.TkWrap;
  * @checkstyle ClassDataAbstractionCouplingCheck (500 lines)
  */
 final class TkAppAuth extends TkWrap {
+
+    /**
+     * Testing mode is ON?
+     */
+    private static final boolean TESTING =
+        Manifests.read("Netbout-DynamoKey").startsWith("AAAA");
 
     /**
      * Ctor.
@@ -71,9 +86,6 @@ final class TkAppAuth extends TkWrap {
         return new TkAuth(
             take,
             new PsChain(
-                new PsFake(
-                    Manifests.read("Netbout-DynamoKey").startsWith("AAAA")
-                ),
                 new PsByFlag(
                     new PsByFlag.Pair(
                         PsGithub.class.getSimpleName(),
@@ -98,6 +110,10 @@ final class TkAppAuth extends TkWrap {
                         )
                     ),
                     new PsByFlag.Pair(
+                        "fake-user",
+                        new TkAppAuth.FakePass()
+                    ),
+                    new PsByFlag.Pair(
                         PsLogout.class.getSimpleName(),
                         new PsLogout()
                     )
@@ -111,8 +127,31 @@ final class TkAppAuth extends TkWrap {
                             )
                         )
                     )
-                )
+                ),
+                new PsFake(TkAppAuth.TESTING)
             )
         );
+    }
+
+    /**
+     * Fake pass.
+     */
+    private static final class FakePass implements Pass {
+        @Override
+        public Iterator<Identity> enter(final Request req) throws IOException {
+            final Collection<Identity> user = new ArrayList<>(1);
+            if (TkAppAuth.TESTING) {
+                user.add(
+                    new Identity.Simple(
+                        new RqHref.Smart(new RqHref.Base(req)).single("urn")
+                    )
+                );
+            }
+            return user.iterator();
+        }
+        @Override
+        public Response exit(final Response response, final Identity identity) {
+            return response;
+        }
     }
 }

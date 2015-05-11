@@ -62,7 +62,7 @@ final class TkStart implements Take {
             "/xsl/register.xsl",
             this.base,
             req,
-            new XeLink("register", "/login/r"),
+            new XeLink("register", "/login/register"),
             new XeLink("check", "/login/check")
         );
     }
