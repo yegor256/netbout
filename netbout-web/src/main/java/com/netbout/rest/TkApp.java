@@ -42,6 +42,7 @@ import org.takes.facets.fork.FkParams;
 import org.takes.facets.fork.FkRegex;
 import org.takes.facets.fork.TkFork;
 import org.takes.facets.forward.TkForward;
+import org.takes.rs.RsRedirect;
 import org.takes.tk.TkClasspath;
 import org.takes.tk.TkMeasured;
 import org.takes.tk.TkRedirect;
@@ -162,6 +163,7 @@ public final class TkApp extends TkWrap {
                             )
                         )
                     ),
+                    new FkRegex("/", new RsRedirect("/login/start")),
                     new FkRegex("/login/.*", new TkLogin(base))
                 )
             )
