@@ -73,10 +73,12 @@ public final class RqAlias extends RqWrap {
      */
     public boolean has() throws IOException {
         final Identity identity = new RqAuth(this).identity();
-        final Aliases aliases = this.user().aliases();
-        if (!aliases.iterate().iterator().hasNext()
-            && "urn:test:1".equals(identity.urn())) {
-            aliases.add("tester");
+        if (!identity.equals(Identity.ANONYMOUS)) {
+            final Aliases aliases = this.user().aliases();
+            if (!aliases.iterate().iterator().hasNext()
+                && "urn:test:1".equals(identity.urn())) {
+                aliases.add("tester");
+            }
         }
         return !identity.equals(Identity.ANONYMOUS)
             && this.user().aliases().iterate().iterator().hasNext();
