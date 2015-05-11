@@ -45,10 +45,10 @@
         <p>
             <img style="width: 32px;">
                 <xsl:attribute name="src">
-                    <xsl:value-of select="identity/photo"/>
+                    <xsl:value-of select="identity/photo|identity/picture|identity/avatar"/>
                 </xsl:attribute>
                 <xsl:attribute name="alt">
-                    <xsl:value-of select="identity/alias"/>
+                    <xsl:value-of select="identity/alias|identity/name"/>
                 </xsl:attribute>
             </img>
         </p>
