@@ -90,6 +90,12 @@
             <groupId>com.jcabi</groupId>
             <artifactId>jcabi-email</artifactId>
             <version>1.6.3</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>javax.mail</groupId>
+                    <artifactId>mail</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>com.jcabi</groupId>
@@ -231,11 +237,6 @@
             <artifactId>guava</artifactId>
         </dependency>
         <dependency>
-            <groupId>javax.el</groupId>
-            <artifactId>javax.el-api</artifactId>
-            <scope>runtime</scope>
-        </dependency>
-        <dependency>
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>
             <version>1.4.185</version>
@@ -258,12 +259,6 @@
             <version>9.1.0.8</version>
             <classifier>dom</classifier>
             <scope>runtime</scope>
-        </dependency>
-        <dependency>
-            <groupId>javax.mail</groupId>
-            <artifactId>mail</artifactId>
-            <version>1.5.0-b01</version>
-            <scope>test</scope>
         </dependency>
     </dependencies>
     <build>
