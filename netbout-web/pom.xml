@@ -53,7 +53,7 @@
         <dependency>
             <groupId>com.jcabi.incubator</groupId>
             <artifactId>xembly</artifactId>
-            <version>0.21</version>
+            <version>0.21.1</version>
         </dependency>
         <dependency>
             <groupId>com.netbout</groupId>
@@ -69,18 +69,18 @@
         <dependency>
             <groupId>com.amazonaws</groupId>
             <artifactId>aws-java-sdk</artifactId>
-            <version>1.9.16</version>
+            <version>1.9.17</version>
             <scope>runtime</scope>
         </dependency>
         <dependency>
             <groupId>com.amazonaws</groupId>
             <artifactId>aws-java-sdk-dynamodb</artifactId>
-            <version>1.9.16</version>
+            <version>1.9.17</version>
         </dependency>
         <dependency>
             <groupId>com.amazonaws</groupId>
             <artifactId>aws-java-sdk-s3</artifactId>
-            <version>1.9.16</version>
+            <version>1.9.17</version>
         </dependency>
         <dependency>
             <groupId>com.jcabi</groupId>
@@ -105,7 +105,7 @@
         <dependency>
             <groupId>co.stateful</groupId>
             <artifactId>java-sdk</artifactId>
-            <version>0.12.3</version>
+            <version>0.12.4</version>
         </dependency>
         <dependency>
             <groupId>eu.medsea.mimeutil</groupId>
@@ -121,7 +121,7 @@
         <dependency>
             <groupId>org.ocpsoft.prettytime</groupId>
             <artifactId>prettytime</artifactId>
-            <version>3.2.7.Final</version>
+            <version>4.0.0.Final</version>
         </dependency>
         <dependency>
             <groupId>com.jcabi</groupId>
@@ -130,12 +130,12 @@
         <dependency>
             <groupId>com.jcabi</groupId>
             <artifactId>jcabi-http</artifactId>
-            <version>1.10.2</version>
+            <version>1.10.3</version>
         </dependency>
         <dependency>
             <groupId>com.restfb</groupId>
             <artifactId>restfb</artifactId>
-            <version>1.6.14</version>
+            <version>1.6.15</version>
             <scope>runtime</scope>
         </dependency>
         <dependency>
@@ -183,7 +183,7 @@
         <dependency>
             <groupId>org.pegdown</groupId>
             <artifactId>pegdown</artifactId>
-            <version>1.4.2</version>
+            <version>1.5.0</version>
         </dependency>
         <dependency>
             <groupId>net.sf.jtidy</groupId>
@@ -193,25 +193,25 @@
         <dependency>
             <groupId>com.sun.grizzly</groupId>
             <artifactId>grizzly-servlet-webserver</artifactId>
-            <version>1.9.61</version>
+            <version>1.9.62</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>com.sun.mail</groupId>
             <artifactId>mailapi</artifactId>
-            <version>1.5.1</version>
+            <version>1.5.2</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.sun.mail</groupId>
             <artifactId>javax.mail</artifactId>
-            <version>1.5.1</version>
+            <version>1.5.2</version>
             <scope>runtime</scope>
         </dependency>
         <dependency>
             <groupId>com.sun.mail</groupId>
             <artifactId>smtp</artifactId>
-            <version>1.5.1</version>
+            <version>1.5.2</version>
             <scope>runtime</scope>
         </dependency>
         <dependency>
@@ -239,7 +239,7 @@
         <dependency>
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>
-            <version>1.4.185</version>
+            <version>1.4.186</version>
             <scope>test</scope>
         </dependency>
         <dependency>

@@ -53,7 +53,7 @@
         <dependency>
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>
-            <version>1.4.185</version>
+            <version>1.4.186</version>
             <optional>true</optional>
         </dependency>
         <dependency>
@@ -107,7 +107,7 @@
         <dependency>
             <groupId>com.jcabi</groupId>
             <artifactId>jcabi-http</artifactId>
-            <version>1.10.2</version>
+            <version>1.10.3</version>
         </dependency>
         <dependency>
             <groupId>com.jcabi</groupId>
