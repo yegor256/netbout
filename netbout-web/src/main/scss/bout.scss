@@ -109,7 +109,7 @@
     padding: 0;
     tr {
       &.even {
-        background-color: lighten($color-gray, 50);
+        background-color: lighten($color-gray, 25);
       }
     }
     th {
