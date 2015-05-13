@@ -85,6 +85,13 @@ final class TkAppFallback extends TkWrap {
                         HttpURLConnection.HTTP_NOT_FOUND
                     )
                 ),
+                new FbStatus(
+                    HttpURLConnection.HTTP_BAD_REQUEST,
+                    new RsWithStatus(
+                        new RsText("bad request"),
+                        HttpURLConnection.HTTP_BAD_REQUEST
+                    )
+                ),
                 new Fallback() {
                     @Override
                     public Iterator<Response> route(final RqFallback req)
