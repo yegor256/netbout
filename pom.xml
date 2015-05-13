@@ -108,7 +108,7 @@
         </site>
     </distributionManagement>
     <properties>
-        <jersey.version>1.18.1</jersey.version>
+        <timestamp>${maven.build.timestamp}</timestamp>
     </properties>
     <dependencyManagement>
         <dependencies>
