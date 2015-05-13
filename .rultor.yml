@@ -40,6 +40,12 @@ release:
     mv ../id_rsa ../id_rsa.pub ~/.ssh
     chmod -R 600 ~/.ssh/*
     echo -e "Host *\n  StrictHostKeyChecking no\n  UserKnownHostsFile=/dev/null" > ~/.ssh/config
+    build=$(git rev-parse --short HEAD)
+    sed -i "s/BUILD/${build}/g" netbout-web/src/main/resources/META-INF/MANIFEST.MF
+    sed -i "s/BUILD/${build}/g" netbout-web/src/main/resources/log4j.properties
+    git add netbout-web/src/main/resources/META-INF/MANIFEST.MF
+    git add netbout-web/src/main/resources/log4j.properties
+    git commit -m 'build number set'
     git add settings.xml
     git commit -m 'settings.xml'
     git push -f heroku $(git symbolic-ref --short HEAD):master
