@@ -77,7 +77,7 @@
                 <a>
                     <xsl:attribute name="href">
                         <xsl:text>https://github.com/yegor256/netbout/commit/</xsl:text>
-                        <xsl:value-of select="revision"/>
+                        <xsl:value-of select="rev"/>
                     </xsl:attribute>
                     <i class="ico ico-github">
                         <xsl:comment>github</xsl:comment>

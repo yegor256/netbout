@@ -32,7 +32,7 @@
  * @author Yegor Bugayenko (yegor@teamed.io)
  * @version $Id$
  -->
-<texts revision="${build.number}">
+<texts revision="BUILD">
     <beta.version>ベータ版</beta.version>
     <!-- global messages -->
     <We.recommend.to.reauthenticate>自分を再度認証させることをお勧めします</We.recommend.to.reauthenticate>

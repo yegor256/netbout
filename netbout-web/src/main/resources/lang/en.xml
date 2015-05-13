@@ -28,7 +28,7 @@
  * @author Yegor Bugayenko (yegor@teamed.io)
  * @version $Id$
  -->
-<texts revision="${buildNumber}">
+<texts revision="BUILD">
     <!-- global messages -->
     <We.recommend.to.reauthenticate>We recommend you to re-authenticate yourself</We.recommend.to.reauthenticate>
     <sec>sec</sec>

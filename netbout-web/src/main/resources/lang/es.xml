@@ -30,7 +30,7 @@
  * @author Yegor Bugayenko (yegor@teamed.io)
  * @version $Id$
  -->
-<texts revision="${buildNumber}">
+<texts revision="BUILD">
     <We.recommend.to.reauthenticate>Recomendamos re-autenticarse</We.recommend.to.reauthenticate>
     <click.here>haga click aqui</click.here>
     <the.server.is.busy>

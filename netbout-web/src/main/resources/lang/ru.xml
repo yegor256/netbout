@@ -28,7 +28,7 @@
  * @author Yegor Bugayenko (yegor@teamed.io)
  * @version $Id$
  -->
-<texts revision="${buildNumber}">
+<texts revision="BUILD">
     <About>О нас</About>
     <AKA>Имена</AKA>
     <Identity>Идентификатор</Identity>

@@ -28,7 +28,7 @@
  * @author Yegor Bugayenko (yegor@teamed.io)
  * @version $Id$
  -->
-<texts revision="${buildNumber}">
+<texts revision="BUILD">
     <!-- global messages -->
     <We.recommend.to.reauthenticate>
         Ми рекомендуємо ввійти до системи іншим способом

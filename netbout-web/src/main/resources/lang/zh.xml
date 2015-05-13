@@ -30,7 +30,7 @@
  * @author Yegor Bugayenko (yegor@teamed.io)
  * @version $Id$
  -->
-<texts revision="${buildNumber}">
+<texts revision="BUILD">
     <beta.version>预发布版本</beta.version>
     <We.recommend.to.reauthenticate>我们建议用户用另一种方式重新登录</We.recommend.to.reauthenticate>
     <the.server.is.busy>
