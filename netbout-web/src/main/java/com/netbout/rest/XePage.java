@@ -26,23 +26,27 @@
  */
 package com.netbout.rest;
 
+import com.jcabi.manifests.Manifests;
 import com.netbout.spi.Base;
 import java.io.IOException;
-import java.util.Iterator;
 import lombok.EqualsAndHashCode;
 import org.takes.Request;
-import org.takes.Response;
-import org.takes.facets.fork.FkTypes;
-import org.takes.facets.fork.Fork;
-import org.takes.facets.fork.RsFork;
-import org.takes.misc.Opt;
-import org.takes.rq.RqHeaders;
-import org.takes.rs.RsWithType;
-import org.takes.rs.RsWrap;
-import org.takes.rs.RsXSLT;
-import org.takes.rs.xe.RsXembly;
+import org.takes.facets.auth.XeIdentity;
+import org.takes.facets.auth.XeLogoutLink;
+import org.takes.facets.auth.social.XeFacebookLink;
+import org.takes.facets.auth.social.XeGithubLink;
+import org.takes.facets.auth.social.XeGoogleLink;
+import org.takes.facets.flash.XeFlash;
+import org.takes.rs.xe.XeAppend;
+import org.takes.rs.xe.XeChain;
+import org.takes.rs.xe.XeDate;
+import org.takes.rs.xe.XeLinkHome;
+import org.takes.rs.xe.XeLinkSelf;
+import org.takes.rs.xe.XeLocalhost;
+import org.takes.rs.xe.XeMillis;
+import org.takes.rs.xe.XeSLA;
 import org.takes.rs.xe.XeSource;
-import org.takes.rs.xe.XeStylesheet;
+import org.takes.rs.xe.XeWrap;
 
 /**
  * Index resource, front page of the website.
@@ -53,64 +57,56 @@ import org.takes.rs.xe.XeStylesheet;
  * @checkstyle ClassDataAbstractionCouplingCheck (500 lines)
  */
 @EqualsAndHashCode(callSuper = true)
-public final class RsPage extends RsWrap {
+public final class XePage extends XeWrap {
 
     /**
      * Ctor.
-     * @param xsl XSL
      * @param base Base
      * @param req Request
      * @param src Source
      * @throws IOException If fails
-     * @checkstyle ParameterNumberCheck (5 lines)
      */
-    public RsPage(final String xsl, final Base base,
+    public XePage(final Base base,
         final Request req, final XeSource... src) throws IOException {
-        super(RsPage.make(xsl, base, req, src));
+        super(XePage.make(base, req, src));
     }
 
     /**
      * Make it.
-     * @param xsl XSL
      * @param base Base
      * @param req Request
      * @param src Source
      * @return Response
      * @throws IOException If fails
-     * @checkstyle ParameterNumberCheck (5 lines)
      */
-    private static Response make(final String xsl, final Base base,
+    private static XeSource make(final Base base,
         final Request req, final XeSource... src) throws IOException {
-        final Response xbl = new RsXembly(
-            new XeStylesheet(xsl),
-            new XePage(base, req, src)
-        );
-        final Response raw = new RsWithType(xbl, "text/xml");
-        return new RsFork(
-            req,
-            new Fork() {
-                @Override
-                public Opt<Response> route(final Request rst)
-                    throws IOException {
-                    final RqHeaders hdr = new RqHeaders.Base(rst);
-                    final Iterator<String> agent =
-                        hdr.header("User-Agent").iterator();
-                    final Opt<Response> opt;
-                    if (agent.hasNext() && agent.next().contains("Firefox")) {
-                        opt = new Opt.Single<Response>(
-                            // @checkstyle MultipleStringLiteralsCheck (1 line)
-                            new RsXSLT(new RsWithType(raw, "text/html"))
-                        );
-                    } else {
-                        opt = new Opt.Empty<>();
-                    }
-                    return opt;
-                }
-            },
-            new FkTypes("application/xml,text/xml", raw),
-            new FkTypes(
-                "*/*",
-                new RsXSLT(new RsWithType(raw, "text/html"))
+        return new XeAppend(
+            "page",
+            new XeMillis(false),
+            new XeChain(src),
+            new XeMillis(true),
+            new XeDate(),
+            new XeSLA(),
+            new XeLinkHome(req),
+            new XeLinkSelf(req),
+            new XeLocalhost(),
+            new XeIdentity(req),
+            new XeAlias(base, req),
+            new XeFavicon(base, req),
+            new XeFlash(req),
+            new XeGithubLink(req, Manifests.read("Netbout-GithubId")),
+            new XeFacebookLink(req, Manifests.read("Netbout-FbId")),
+            new XeGoogleLink(
+                req, Manifests.read("Netbout-GoogleId"),
+                "http://www.netbout.com/?PsByFlag=PsGoogle"
+            ),
+            new XeLogoutLink(req),
+            new XeAppend(
+                "version",
+                new XeAppend("name", Manifests.read("Netbout-Version")),
+                new XeAppend("rev", Manifests.read("Netbout-Revision")),
+                new XeAppend("date", Manifests.read("Netbout-Date"))
             )
         );
     }
