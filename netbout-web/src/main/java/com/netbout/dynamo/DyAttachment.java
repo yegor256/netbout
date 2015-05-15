@@ -228,8 +228,8 @@ final class DyAttachment implements Attachment {
             this.item.put(updates);
             this.updated();
             Logger.info(
-                this, "attachment %s uploaded into #%d by @%s",
-                this.name(), this.bout(), this.self
+                this, "attachment %s (%d bytes) uploaded into #%d by @%s",
+                this.name(), data.length, this.bout(), this.self
             );
         }
     }
