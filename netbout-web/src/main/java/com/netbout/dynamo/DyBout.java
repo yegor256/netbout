@@ -32,6 +32,7 @@ import com.jcabi.aspects.Tv;
 import com.jcabi.dynamo.AttributeUpdates;
 import com.jcabi.dynamo.Item;
 import com.jcabi.dynamo.Region;
+import com.jcabi.log.Logger;
 import com.netbout.spi.Attachments;
 import com.netbout.spi.Bout;
 import com.netbout.spi.Friends;
@@ -116,6 +117,7 @@ final class DyBout implements Bout {
         this.item.put(
             new AttributeUpdates().with(DyFriends.ATTR_TITLE, text)
         );
+        Logger.info(this, "bout #%d renamed to \"%s\"", this.number(), text);
     }
 
     @Override

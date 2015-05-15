@@ -44,6 +44,7 @@ import com.jcabi.dynamo.Conditions;
 import com.jcabi.dynamo.Item;
 import com.jcabi.dynamo.QueryValve;
 import com.jcabi.dynamo.Region;
+import com.jcabi.log.Logger;
 import com.jcabi.manifests.Manifests;
 import com.jcabi.urn.URN;
 import com.netbout.spi.Bout;
@@ -124,6 +125,7 @@ final class DyInbox implements Inbox {
                 .with(DyFriends.ATTR_UPDATED, System.currentTimeMillis())
                 .with(DyFriends.ATTR_TITLE, "untitled")
         );
+        Logger.info(this, "bout #%d started by @%s", number, this.self);
         return number;
     }
 

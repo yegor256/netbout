@@ -28,9 +28,7 @@ package com.netbout.dynamo;
 
 import com.amazonaws.services.dynamodbv2.model.AttributeValue;
 import com.google.common.base.Function;
-import com.google.common.base.Predicates;
 import com.google.common.collect.Iterables;
-import com.google.common.collect.Iterators;
 import com.jcabi.aspects.Immutable;
 import com.jcabi.aspects.Loggable;
 import com.jcabi.aspects.Tv;
@@ -39,9 +37,11 @@ import com.jcabi.dynamo.Conditions;
 import com.jcabi.dynamo.Item;
 import com.jcabi.dynamo.QueryValve;
 import com.jcabi.dynamo.Region;
+import com.jcabi.log.Logger;
 import com.netbout.spi.Friend;
 import com.netbout.spi.Friends;
 import java.io.IOException;
+import java.util.Iterator;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 import org.apache.commons.lang3.StringUtils;
@@ -134,19 +134,25 @@ final class DyFriends implements Friends {
                 .with(DyFriends.ATTR_TITLE, this.item.get(DyFriends.ATTR_TITLE))
                 .with(DyFriends.ATTR_UPDATED, System.currentTimeMillis())
         );
+        Logger.info(this, "@%s invited to #%s", friend, this.bout().getN());
     }
 
     @Override
     public void kick(final String friend) throws IOException {
         final String alias = DyFriends.clean(friend);
-        Iterators.removeIf(
-            this.region.table(DyFriends.TBL).frame()
-                .through(new QueryValve())
-                .where(DyFriends.HASH, Conditions.equalTo(this.bout()))
-                .where(DyFriends.RANGE, alias)
-                .iterator(),
-            Predicates.alwaysTrue()
-        );
+        final Iterator<Item> items = this.region.table(DyFriends.TBL).frame()
+            .through(new QueryValve())
+            .where(DyFriends.HASH, Conditions.equalTo(this.bout()))
+            .where(DyFriends.RANGE, alias)
+            .iterator();
+        if (!items.hasNext()) {
+            throw new Friends.UnknownAliasException(
+                String.format("alias '%s' is not in the bout", friend)
+            );
+        }
+        items.next();
+        items.remove();
+        Logger.info(this, "@%s kicked off #%s", friend, this.bout().getN());
     }
 
     @Override

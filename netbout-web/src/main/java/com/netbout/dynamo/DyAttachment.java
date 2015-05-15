@@ -42,6 +42,7 @@ import com.jcabi.dynamo.Conditions;
 import com.jcabi.dynamo.Item;
 import com.jcabi.dynamo.QueryValve;
 import com.jcabi.dynamo.Region;
+import com.jcabi.log.Logger;
 import com.jcabi.manifests.Manifests;
 import com.jcabi.s3.Bucket;
 import com.jcabi.s3.mock.MkRegion;
@@ -227,6 +228,7 @@ final class DyAttachment implements Attachment {
             this.item.put(updates);
             this.updated();
         }
+        Logger.info(this, "attachment %s uploaded", this.name());
     }
 
     /**
@@ -236,7 +238,7 @@ final class DyAttachment implements Attachment {
      * @return Updates to apply
      * @throws IOException If fails
      */
-    public AttributeUpdates save(final byte[] data, final String ctype)
+    private AttributeUpdates save(final byte[] data, final String ctype)
         throws IOException {
         AttributeUpdates updates = new AttributeUpdates()
             .with(DyAttachments.ATTR_CTYPE, ctype);

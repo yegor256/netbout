@@ -37,6 +37,7 @@ import com.jcabi.dynamo.Conditions;
 import com.jcabi.dynamo.Item;
 import com.jcabi.dynamo.QueryValve;
 import com.jcabi.dynamo.Region;
+import com.jcabi.log.Logger;
 import com.jcabi.urn.URN;
 import com.netbout.spi.Alias;
 import com.netbout.spi.Aliases;
@@ -153,6 +154,7 @@ final class DyAliases implements Aliases {
                 .with(DyAliases.ATTR_PHOTO, Alias.BLANK)
                 .with(DyAliases.ATTR_LOCALE, Locale.ENGLISH)
         );
+        Logger.info(this, "alias @%s added to %s", name, this.urn);
     }
 
     @Override

@@ -36,6 +36,7 @@ import com.jcabi.dynamo.Conditions;
 import com.jcabi.dynamo.Item;
 import com.jcabi.dynamo.QueryValve;
 import com.jcabi.dynamo.Region;
+import com.jcabi.log.Logger;
 import com.netbout.spi.Attachment;
 import com.netbout.spi.Attachments;
 import java.io.IOException;
@@ -210,6 +211,7 @@ final class DyAttachments implements Attachments {
                 .with(DyAttachments.ATTR_DATA, " ")
                 .with(DyAttachments.ATTR_ETAG, "empty")
         );
+        Logger.info(this, "attachment %s created in #%d", name, this.bout);
     }
 
     @Override

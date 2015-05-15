@@ -31,6 +31,7 @@ import com.jcabi.aspects.Loggable;
 import com.jcabi.dynamo.AttributeUpdates;
 import com.jcabi.dynamo.Item;
 import com.jcabi.dynamo.Region;
+import com.jcabi.log.Logger;
 import com.netbout.spi.Alias;
 import com.netbout.spi.Inbox;
 import java.io.IOException;
@@ -117,6 +118,7 @@ final class DyAlias implements Alias {
         this.item.put(
             new AttributeUpdates().with(DyAliases.ATTR_EMAIL, email)
         );
+        Logger.info(this, "@%s changed email to %s", this.name(), email);
     }
 
     @Override

@@ -49,6 +49,7 @@ import com.jcabi.dynamo.Conditions;
 import com.jcabi.dynamo.Item;
 import com.jcabi.dynamo.QueryValve;
 import com.jcabi.dynamo.Region;
+import com.jcabi.log.Logger;
 import com.jcabi.manifests.Manifests;
 import com.jcabi.urn.URN;
 import com.netbout.spi.Inbox;
@@ -182,6 +183,7 @@ final class DyMessages implements Messages {
                 .with(DyMessages.ATTR_DATE, System.currentTimeMillis())
         );
         this.updated();
+        Logger.info(this, "posted to #%d by @%s", this.bout, this.self);
     }
 
     @Override
