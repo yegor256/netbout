@@ -36,20 +36,20 @@
 <a class="jxr_linenumber" name="L28" href="#L28">28</a>  
 <a class="jxr_linenumber" name="L29" href="#L29">29</a>  <strong class="jxr_keyword">import</strong> com.amazonaws.services.dynamodbv2.model.AttributeValue;
 <a class="jxr_linenumber" name="L30" href="#L30">30</a>  <strong class="jxr_keyword">import</strong> com.google.common.base.Function;
-<a class="jxr_linenumber" name="L31" href="#L31">31</a>  <strong class="jxr_keyword">import</strong> com.google.common.base.Predicates;
-<a class="jxr_linenumber" name="L32" href="#L32">32</a>  <strong class="jxr_keyword">import</strong> com.google.common.collect.Iterables;
-<a class="jxr_linenumber" name="L33" href="#L33">33</a>  <strong class="jxr_keyword">import</strong> com.google.common.collect.Iterators;
-<a class="jxr_linenumber" name="L34" href="#L34">34</a>  <strong class="jxr_keyword">import</strong> com.jcabi.aspects.Immutable;
-<a class="jxr_linenumber" name="L35" href="#L35">35</a>  <strong class="jxr_keyword">import</strong> com.jcabi.aspects.Loggable;
-<a class="jxr_linenumber" name="L36" href="#L36">36</a>  <strong class="jxr_keyword">import</strong> com.jcabi.aspects.Tv;
-<a class="jxr_linenumber" name="L37" href="#L37">37</a>  <strong class="jxr_keyword">import</strong> com.jcabi.dynamo.Attributes;
-<a class="jxr_linenumber" name="L38" href="#L38">38</a>  <strong class="jxr_keyword">import</strong> com.jcabi.dynamo.Conditions;
-<a class="jxr_linenumber" name="L39" href="#L39">39</a>  <strong class="jxr_keyword">import</strong> com.jcabi.dynamo.Item;
-<a class="jxr_linenumber" name="L40" href="#L40">40</a>  <strong class="jxr_keyword">import</strong> com.jcabi.dynamo.QueryValve;
-<a class="jxr_linenumber" name="L41" href="#L41">41</a>  <strong class="jxr_keyword">import</strong> com.jcabi.dynamo.Region;
-<a class="jxr_linenumber" name="L42" href="#L42">42</a>  <strong class="jxr_keyword">import</strong> com.netbout.spi.Friend;
-<a class="jxr_linenumber" name="L43" href="#L43">43</a>  <strong class="jxr_keyword">import</strong> com.netbout.spi.Friends;
-<a class="jxr_linenumber" name="L44" href="#L44">44</a>  <strong class="jxr_keyword">import</strong> java.io.IOException;
+<a class="jxr_linenumber" name="L31" href="#L31">31</a>  <strong class="jxr_keyword">import</strong> com.google.common.collect.Iterables;
+<a class="jxr_linenumber" name="L32" href="#L32">32</a>  <strong class="jxr_keyword">import</strong> com.jcabi.aspects.Immutable;
+<a class="jxr_linenumber" name="L33" href="#L33">33</a>  <strong class="jxr_keyword">import</strong> com.jcabi.aspects.Loggable;
+<a class="jxr_linenumber" name="L34" href="#L34">34</a>  <strong class="jxr_keyword">import</strong> com.jcabi.aspects.Tv;
+<a class="jxr_linenumber" name="L35" href="#L35">35</a>  <strong class="jxr_keyword">import</strong> com.jcabi.dynamo.Attributes;
+<a class="jxr_linenumber" name="L36" href="#L36">36</a>  <strong class="jxr_keyword">import</strong> com.jcabi.dynamo.Conditions;
+<a class="jxr_linenumber" name="L37" href="#L37">37</a>  <strong class="jxr_keyword">import</strong> com.jcabi.dynamo.Item;
+<a class="jxr_linenumber" name="L38" href="#L38">38</a>  <strong class="jxr_keyword">import</strong> com.jcabi.dynamo.QueryValve;
+<a class="jxr_linenumber" name="L39" href="#L39">39</a>  <strong class="jxr_keyword">import</strong> com.jcabi.dynamo.Region;
+<a class="jxr_linenumber" name="L40" href="#L40">40</a>  <strong class="jxr_keyword">import</strong> com.jcabi.log.Logger;
+<a class="jxr_linenumber" name="L41" href="#L41">41</a>  <strong class="jxr_keyword">import</strong> com.netbout.spi.Friend;
+<a class="jxr_linenumber" name="L42" href="#L42">42</a>  <strong class="jxr_keyword">import</strong> com.netbout.spi.Friends;
+<a class="jxr_linenumber" name="L43" href="#L43">43</a>  <strong class="jxr_keyword">import</strong> java.io.IOException;
+<a class="jxr_linenumber" name="L44" href="#L44">44</a>  <strong class="jxr_keyword">import</strong> java.util.Iterator;
 <a class="jxr_linenumber" name="L45" href="#L45">45</a>  <strong class="jxr_keyword">import</strong> lombok.EqualsAndHashCode;
 <a class="jxr_linenumber" name="L46" href="#L46">46</a>  <strong class="jxr_keyword">import</strong> lombok.ToString;
 <a class="jxr_linenumber" name="L47" href="#L47">47</a>  <strong class="jxr_keyword">import</strong> org.apache.commons.lang3.StringUtils;
@@ -142,70 +142,76 @@
 <a class="jxr_linenumber" name="L134" href="#L134">134</a>                 .with(DyFriends.ATTR_TITLE, <strong class="jxr_keyword">this</strong>.item.get(DyFriends.ATTR_TITLE))
 <a class="jxr_linenumber" name="L135" href="#L135">135</a>                 .with(DyFriends.ATTR_UPDATED, System.currentTimeMillis())
 <a class="jxr_linenumber" name="L136" href="#L136">136</a>         );
-<a class="jxr_linenumber" name="L137" href="#L137">137</a>     }
-<a class="jxr_linenumber" name="L138" href="#L138">138</a> 
-<a class="jxr_linenumber" name="L139" href="#L139">139</a>     @Override
-<a class="jxr_linenumber" name="L140" href="#L140">140</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> kick(<strong class="jxr_keyword">final</strong> String friend) <strong class="jxr_keyword">throws</strong> IOException {
-<a class="jxr_linenumber" name="L141" href="#L141">141</a>         <strong class="jxr_keyword">final</strong> String alias = DyFriends.clean(friend);
-<a class="jxr_linenumber" name="L142" href="#L142">142</a>         Iterators.removeIf(
-<a class="jxr_linenumber" name="L143" href="#L143">143</a>             <strong class="jxr_keyword">this</strong>.region.table(DyFriends.TBL).frame()
-<a class="jxr_linenumber" name="L144" href="#L144">144</a>                 .through(<strong class="jxr_keyword">new</strong> QueryValve())
-<a class="jxr_linenumber" name="L145" href="#L145">145</a>                 .where(DyFriends.HASH, Conditions.equalTo(<strong class="jxr_keyword">this</strong>.bout()))
-<a class="jxr_linenumber" name="L146" href="#L146">146</a>                 .where(DyFriends.RANGE, alias)
-<a class="jxr_linenumber" name="L147" href="#L147">147</a>                 .iterator(),
-<a class="jxr_linenumber" name="L148" href="#L148">148</a>             Predicates.alwaysTrue()
-<a class="jxr_linenumber" name="L149" href="#L149">149</a>         );
-<a class="jxr_linenumber" name="L150" href="#L150">150</a>     }
-<a class="jxr_linenumber" name="L151" href="#L151">151</a> 
-<a class="jxr_linenumber" name="L152" href="#L152">152</a>     @Override
-<a class="jxr_linenumber" name="L153" href="#L153">153</a>     <strong class="jxr_keyword">public</strong> Iterable&lt;Friend&gt; iterate() <strong class="jxr_keyword">throws</strong> IOException {
-<a class="jxr_linenumber" name="L154" href="#L154">154</a>         <strong class="jxr_keyword">return</strong> Iterables.transform(
-<a class="jxr_linenumber" name="L155" href="#L155">155</a>             <strong class="jxr_keyword">this</strong>.region.table(DyFriends.TBL)
-<a class="jxr_linenumber" name="L156" href="#L156">156</a>                 .frame()
-<a class="jxr_linenumber" name="L157" href="#L157">157</a>                 .through(<strong class="jxr_keyword">new</strong> QueryValve())
-<a class="jxr_linenumber" name="L158" href="#L158">158</a>                 .where(DyFriends.HASH, Conditions.equalTo(<strong class="jxr_keyword">this</strong>.bout())),
-<a class="jxr_linenumber" name="L159" href="#L159">159</a>             <strong class="jxr_keyword">new</strong> Function&lt;Item, Friend&gt;() {
-<a class="jxr_linenumber" name="L160" href="#L160">160</a>                 @Override
-<a class="jxr_linenumber" name="L161" href="#L161">161</a>                 <strong class="jxr_keyword">public</strong> <a href="../../../com/netbout/spi/Friend.html">Friend</a> apply(<strong class="jxr_keyword">final</strong> Item input) {
-<a class="jxr_linenumber" name="L162" href="#L162">162</a>                     <strong class="jxr_keyword">try</strong> {
-<a class="jxr_linenumber" name="L163" href="#L163">163</a>                         <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> <a href="../../../com/netbout/dynamo/DyFriend.html">DyFriend</a>(
-<a class="jxr_linenumber" name="L164" href="#L164">164</a>                             DyFriends.<strong class="jxr_keyword">this</strong>.region,
-<a class="jxr_linenumber" name="L165" href="#L165">165</a>                             input.get(DyFriends.RANGE).getS()
-<a class="jxr_linenumber" name="L166" href="#L166">166</a>                         );
-<a class="jxr_linenumber" name="L167" href="#L167">167</a>                     } <strong class="jxr_keyword">catch</strong> (<strong class="jxr_keyword">final</strong> IOException ex) {
-<a class="jxr_linenumber" name="L168" href="#L168">168</a>                         <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> IllegalStateException(ex);
-<a class="jxr_linenumber" name="L169" href="#L169">169</a>                     }
-<a class="jxr_linenumber" name="L170" href="#L170">170</a>                 }
-<a class="jxr_linenumber" name="L171" href="#L171">171</a>             }
-<a class="jxr_linenumber" name="L172" href="#L172">172</a>         );
-<a class="jxr_linenumber" name="L173" href="#L173">173</a>     }
-<a class="jxr_linenumber" name="L174" href="#L174">174</a> 
-<a class="jxr_linenumber" name="L175" href="#L175">175</a>     <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="L176" href="#L176">176</a> <em class="jxr_javadoccomment">     * The bout we're in.</em>
-<a class="jxr_linenumber" name="L177" href="#L177">177</a> <em class="jxr_javadoccomment">     * @return Bout number</em>
-<a class="jxr_linenumber" name="L178" href="#L178">178</a> <em class="jxr_javadoccomment">     * @throws IOException If fails</em>
-<a class="jxr_linenumber" name="L179" href="#L179">179</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L180" href="#L180">180</a>     <strong class="jxr_keyword">private</strong> AttributeValue bout() <strong class="jxr_keyword">throws</strong> IOException {
-<a class="jxr_linenumber" name="L181" href="#L181">181</a>         <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">this</strong>.item.get(DyFriends.HASH);
-<a class="jxr_linenumber" name="L182" href="#L182">182</a>     }
-<a class="jxr_linenumber" name="L183" href="#L183">183</a> 
-<a class="jxr_linenumber" name="L184" href="#L184">184</a>     <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="L185" href="#L185">185</a> <em class="jxr_javadoccomment">     * Clean alias.</em>
-<a class="jxr_linenumber" name="L186" href="#L186">186</a> <em class="jxr_javadoccomment">     * @param friend Friend name</em>
-<a class="jxr_linenumber" name="L187" href="#L187">187</a> <em class="jxr_javadoccomment">     * @return Alias</em>
-<a class="jxr_linenumber" name="L188" href="#L188">188</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L189" href="#L189">189</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> String clean(<strong class="jxr_keyword">final</strong> String friend) {
-<a class="jxr_linenumber" name="L190" href="#L190">190</a>         <strong class="jxr_keyword">final</strong> String alias = StringUtils.strip(friend, <span class="jxr_string">" @\n\t\r"</span>);
-<a class="jxr_linenumber" name="L191" href="#L191">191</a>         <strong class="jxr_keyword">if</strong> (alias.isEmpty()) {
-<a class="jxr_linenumber" name="L192" href="#L192">192</a>             <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> IllegalArgumentException(<span class="jxr_string">"alias can't be empty"</span>);
-<a class="jxr_linenumber" name="L193" href="#L193">193</a>         }
-<a class="jxr_linenumber" name="L194" href="#L194">194</a>         <strong class="jxr_keyword">if</strong> (alias.length() &gt; Tv.HUNDRED) {
-<a class="jxr_linenumber" name="L195" href="#L195">195</a>             <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> IllegalArgumentException(<span class="jxr_string">"alias is too long"</span>);
-<a class="jxr_linenumber" name="L196" href="#L196">196</a>         }
-<a class="jxr_linenumber" name="L197" href="#L197">197</a>         <strong class="jxr_keyword">return</strong> alias;
-<a class="jxr_linenumber" name="L198" href="#L198">198</a>     }
-<a class="jxr_linenumber" name="L199" href="#L199">199</a> 
-<a class="jxr_linenumber" name="L200" href="#L200">200</a> }
+<a class="jxr_linenumber" name="L137" href="#L137">137</a>         Logger.info(<strong class="jxr_keyword">this</strong>, <span class="jxr_string">"@%s invited to #%s"</span>, friend, <strong class="jxr_keyword">this</strong>.bout().getN());
+<a class="jxr_linenumber" name="L138" href="#L138">138</a>     }
+<a class="jxr_linenumber" name="L139" href="#L139">139</a> 
+<a class="jxr_linenumber" name="L140" href="#L140">140</a>     @Override
+<a class="jxr_linenumber" name="L141" href="#L141">141</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> kick(<strong class="jxr_keyword">final</strong> String friend) <strong class="jxr_keyword">throws</strong> IOException {
+<a class="jxr_linenumber" name="L142" href="#L142">142</a>         <strong class="jxr_keyword">final</strong> String alias = DyFriends.clean(friend);
+<a class="jxr_linenumber" name="L143" href="#L143">143</a>         <strong class="jxr_keyword">final</strong> Iterator&lt;Item&gt; items = <strong class="jxr_keyword">this</strong>.region.table(DyFriends.TBL).frame()
+<a class="jxr_linenumber" name="L144" href="#L144">144</a>             .through(<strong class="jxr_keyword">new</strong> QueryValve())
+<a class="jxr_linenumber" name="L145" href="#L145">145</a>             .where(DyFriends.HASH, Conditions.equalTo(<strong class="jxr_keyword">this</strong>.bout()))
+<a class="jxr_linenumber" name="L146" href="#L146">146</a>             .where(DyFriends.RANGE, alias)
+<a class="jxr_linenumber" name="L147" href="#L147">147</a>             .iterator();
+<a class="jxr_linenumber" name="L148" href="#L148">148</a>         <strong class="jxr_keyword">if</strong> (!items.hasNext()) {
+<a class="jxr_linenumber" name="L149" href="#L149">149</a>             <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> Friends.UnknownAliasException(
+<a class="jxr_linenumber" name="L150" href="#L150">150</a>                 String.format(<span class="jxr_string">"alias '%s' is not in the bout"</span>, friend)
+<a class="jxr_linenumber" name="L151" href="#L151">151</a>             );
+<a class="jxr_linenumber" name="L152" href="#L152">152</a>         }
+<a class="jxr_linenumber" name="L153" href="#L153">153</a>         items.next();
+<a class="jxr_linenumber" name="L154" href="#L154">154</a>         items.remove();
+<a class="jxr_linenumber" name="L155" href="#L155">155</a>         Logger.info(<strong class="jxr_keyword">this</strong>, <span class="jxr_string">"@%s kicked off #%s"</span>, friend, <strong class="jxr_keyword">this</strong>.bout().getN());
+<a class="jxr_linenumber" name="L156" href="#L156">156</a>     }
+<a class="jxr_linenumber" name="L157" href="#L157">157</a> 
+<a class="jxr_linenumber" name="L158" href="#L158">158</a>     @Override
+<a class="jxr_linenumber" name="L159" href="#L159">159</a>     <strong class="jxr_keyword">public</strong> Iterable&lt;Friend&gt; iterate() <strong class="jxr_keyword">throws</strong> IOException {
+<a class="jxr_linenumber" name="L160" href="#L160">160</a>         <strong class="jxr_keyword">return</strong> Iterables.transform(
+<a class="jxr_linenumber" name="L161" href="#L161">161</a>             <strong class="jxr_keyword">this</strong>.region.table(DyFriends.TBL)
+<a class="jxr_linenumber" name="L162" href="#L162">162</a>                 .frame()
+<a class="jxr_linenumber" name="L163" href="#L163">163</a>                 .through(<strong class="jxr_keyword">new</strong> QueryValve())
+<a class="jxr_linenumber" name="L164" href="#L164">164</a>                 .where(DyFriends.HASH, Conditions.equalTo(<strong class="jxr_keyword">this</strong>.bout())),
+<a class="jxr_linenumber" name="L165" href="#L165">165</a>             <strong class="jxr_keyword">new</strong> Function&lt;Item, Friend&gt;() {
+<a class="jxr_linenumber" name="L166" href="#L166">166</a>                 @Override
+<a class="jxr_linenumber" name="L167" href="#L167">167</a>                 <strong class="jxr_keyword">public</strong> <a href="../../../com/netbout/spi/Friend.html">Friend</a> apply(<strong class="jxr_keyword">final</strong> Item input) {
+<a class="jxr_linenumber" name="L168" href="#L168">168</a>                     <strong class="jxr_keyword">try</strong> {
+<a class="jxr_linenumber" name="L169" href="#L169">169</a>                         <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> <a href="../../../com/netbout/dynamo/DyFriend.html">DyFriend</a>(
+<a class="jxr_linenumber" name="L170" href="#L170">170</a>                             DyFriends.<strong class="jxr_keyword">this</strong>.region,
+<a class="jxr_linenumber" name="L171" href="#L171">171</a>                             input.get(DyFriends.RANGE).getS()
+<a class="jxr_linenumber" name="L172" href="#L172">172</a>                         );
+<a class="jxr_linenumber" name="L173" href="#L173">173</a>                     } <strong class="jxr_keyword">catch</strong> (<strong class="jxr_keyword">final</strong> IOException ex) {
+<a class="jxr_linenumber" name="L174" href="#L174">174</a>                         <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> IllegalStateException(ex);
+<a class="jxr_linenumber" name="L175" href="#L175">175</a>                     }
+<a class="jxr_linenumber" name="L176" href="#L176">176</a>                 }
+<a class="jxr_linenumber" name="L177" href="#L177">177</a>             }
+<a class="jxr_linenumber" name="L178" href="#L178">178</a>         );
+<a class="jxr_linenumber" name="L179" href="#L179">179</a>     }
+<a class="jxr_linenumber" name="L180" href="#L180">180</a> 
+<a class="jxr_linenumber" name="L181" href="#L181">181</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L182" href="#L182">182</a> <em class="jxr_javadoccomment">     * The bout we're in.</em>
+<a class="jxr_linenumber" name="L183" href="#L183">183</a> <em class="jxr_javadoccomment">     * @return Bout number</em>
+<a class="jxr_linenumber" name="L184" href="#L184">184</a> <em class="jxr_javadoccomment">     * @throws IOException If fails</em>
+<a class="jxr_linenumber" name="L185" href="#L185">185</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="L186" href="#L186">186</a>     <strong class="jxr_keyword">private</strong> AttributeValue bout() <strong class="jxr_keyword">throws</strong> IOException {
+<a class="jxr_linenumber" name="L187" href="#L187">187</a>         <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">this</strong>.item.get(DyFriends.HASH);
+<a class="jxr_linenumber" name="L188" href="#L188">188</a>     }
+<a class="jxr_linenumber" name="L189" href="#L189">189</a> 
+<a class="jxr_linenumber" name="L190" href="#L190">190</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L191" href="#L191">191</a> <em class="jxr_javadoccomment">     * Clean alias.</em>
+<a class="jxr_linenumber" name="L192" href="#L192">192</a> <em class="jxr_javadoccomment">     * @param friend Friend name</em>
+<a class="jxr_linenumber" name="L193" href="#L193">193</a> <em class="jxr_javadoccomment">     * @return Alias</em>
+<a class="jxr_linenumber" name="L194" href="#L194">194</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="L195" href="#L195">195</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> String clean(<strong class="jxr_keyword">final</strong> String friend) {
+<a class="jxr_linenumber" name="L196" href="#L196">196</a>         <strong class="jxr_keyword">final</strong> String alias = StringUtils.strip(friend, <span class="jxr_string">" @\n\t\r"</span>);
+<a class="jxr_linenumber" name="L197" href="#L197">197</a>         <strong class="jxr_keyword">if</strong> (alias.isEmpty()) {
+<a class="jxr_linenumber" name="L198" href="#L198">198</a>             <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> IllegalArgumentException(<span class="jxr_string">"alias can't be empty"</span>);
+<a class="jxr_linenumber" name="L199" href="#L199">199</a>         }
+<a class="jxr_linenumber" name="L200" href="#L200">200</a>         <strong class="jxr_keyword">if</strong> (alias.length() &gt; Tv.HUNDRED) {
+<a class="jxr_linenumber" name="L201" href="#L201">201</a>             <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> IllegalArgumentException(<span class="jxr_string">"alias is too long"</span>);
+<a class="jxr_linenumber" name="L202" href="#L202">202</a>         }
+<a class="jxr_linenumber" name="L203" href="#L203">203</a>         <strong class="jxr_keyword">return</strong> alias;
+<a class="jxr_linenumber" name="L204" href="#L204">204</a>     }
+<a class="jxr_linenumber" name="L205" href="#L205">205</a> 
+<a class="jxr_linenumber" name="L206" href="#L206">206</a> }
 </pre>
 <hr/>
 <div id="footer">Copyright &#169; 2009&#x2013;2015 <a href="http://www.netbout.com">Netbout Inc.</a>. All rights reserved.</div>

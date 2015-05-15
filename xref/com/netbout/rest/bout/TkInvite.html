@@ -79,7 +79,7 @@
 <a class="jxr_linenumber" name="L71" href="#L71">71</a>              .user().aliases().check(name);
 <a class="jxr_linenumber" name="L72" href="#L72">72</a>          <strong class="jxr_keyword">if</strong> (check.isEmpty()) {
 <a class="jxr_linenumber" name="L73" href="#L73">73</a>              <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> <a href="../../../../com/netbout/rest/RsFailure.html">RsFailure</a>(
-<a class="jxr_linenumber" name="L74" href="#L74">74</a>                  String.format(<span class="jxr_string">"incorrect alias '%s', try again"</span>, name)
+<a class="jxr_linenumber" name="L74" href="#L74">74</a>                  String.format(<span class="jxr_string">"incorrect alias \&quot;%s\&quot;, try again"</span>, name)
 <a class="jxr_linenumber" name="L75" href="#L75">75</a>              );
 <a class="jxr_linenumber" name="L76" href="#L76">76</a>          }
 <a class="jxr_linenumber" name="L77" href="#L77">77</a>          <strong class="jxr_keyword">final</strong> <a href="../../../../com/netbout/spi/Bout.html">Bout</a> bout = <strong class="jxr_keyword">new</strong> <a href="../../../../com/netbout/rest/bout/RqBout.html">RqBout</a>(<strong class="jxr_keyword">this</strong>.base, req).bout();
@@ -91,8 +91,8 @@
 <a class="jxr_linenumber" name="L83" href="#L83">83</a>          <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> RsForward(
 <a class="jxr_linenumber" name="L84" href="#L84">84</a>              <strong class="jxr_keyword">new</strong> RsFlash(
 <a class="jxr_linenumber" name="L85" href="#L85">85</a>                  String.format(
-<a class="jxr_linenumber" name="L86" href="#L86">86</a>                      <span class="jxr_string">"new person invited to the bout #%d"</span>,
-<a class="jxr_linenumber" name="L87" href="#L87">87</a>                      bout.number()
+<a class="jxr_linenumber" name="L86" href="#L86">86</a>                      <span class="jxr_string">"\&quot;%s\&quot; invited to the bout #%d"</span>,
+<a class="jxr_linenumber" name="L87" href="#L87">87</a>                      name, bout.number()
 <a class="jxr_linenumber" name="L88" href="#L88">88</a>                  ),
 <a class="jxr_linenumber" name="L89" href="#L89">89</a>                  Level.INFO
 <a class="jxr_linenumber" name="L90" href="#L90">90</a>              )
