@@ -227,8 +227,11 @@ final class DyAttachment implements Attachment {
                 .with(DyAttachments.ATTR_ETAG, etag);
             this.item.put(updates);
             this.updated();
+            Logger.info(
+                this, "attachment %s uploaded into #%d by @%s",
+                this.name(), this.bout(), this.self
+            );
         }
-        Logger.info(this, "attachment %s uploaded", this.name());
     }
 
     /**
