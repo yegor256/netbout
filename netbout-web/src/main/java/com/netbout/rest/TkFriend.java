@@ -81,13 +81,13 @@ public final class TkFriend implements TkRegex {
         final Iterable<Friend> opts = user.friends(alias);
         if (Iterables.isEmpty(opts)) {
             throw new RsFailure(
-                String.format("alias '%s' not found", alias)
+                String.format("alias \"%s\" not found", alias)
             );
         }
         final Friend friend = opts.iterator().next();
         if (!friend.alias().equals(alias)) {
             throw new RsFailure(
-                String.format("alias '%s' is not found", alias)
+                String.format("alias \"%s\" is not found", alias)
             );
         }
         final byte[] img = new JdkRequest(friend.photo())

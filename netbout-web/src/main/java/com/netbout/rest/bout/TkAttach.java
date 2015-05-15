@@ -89,14 +89,14 @@ final class TkAttach implements Take {
         final Bout bout = new RqBout(this.base, req).bout();
         final StringBuilder msg = new StringBuilder(Tv.HUNDRED);
         if (new Attachments.Search(bout.attachments()).exists(name)) {
-            msg.append(String.format("attachment '%s' overwritten", name));
+            msg.append(String.format("attachment \"%s\" overwritten", name));
         } else {
             try {
                 bout.attachments().create(name);
             } catch (final Attachments.InvalidNameException ex) {
                 throw new RsFailure(ex);
             }
-            msg.append(String.format("attachment '%s' uploaded", name));
+            msg.append(String.format("attachment \"%s\" uploaded", name));
         }
         final String ctype = TkAttach.ctype(temp);
         msg.append(" (").append(temp.length())

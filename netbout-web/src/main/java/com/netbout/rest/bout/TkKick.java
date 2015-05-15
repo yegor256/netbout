@@ -74,7 +74,7 @@ final class TkKick implements Take {
         throw new RsForward(
             new RsFlash(
                 String.format(
-                    "you kicked '%s' off this bout #%d",
+                    "you kicked \"%s\" off this bout #%d",
                     name, bout.number()
                 )
             )

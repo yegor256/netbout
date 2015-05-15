@@ -73,7 +73,7 @@ final class TkSaveEmail implements Take {
         return new RsForward(
             new RsFlash(
                 String.format(
-                    "email changed to '%s'",
+                    "email changed to \"%s\"",
                     email
                 )
             )

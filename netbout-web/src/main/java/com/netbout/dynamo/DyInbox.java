@@ -164,6 +164,10 @@ final class DyInbox implements Inbox {
     }
 
     @Override
+    @Loggable(
+        value = Loggable.DEBUG,
+        ignore = Inbox.BoutNotFoundException.class
+    )
     public Bout bout(final long number) throws Inbox.BoutNotFoundException {
         final Iterator<Item> items = this.region.table(DyFriends.TBL)
             .frame()

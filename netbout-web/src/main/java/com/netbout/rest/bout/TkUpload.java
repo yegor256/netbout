@@ -72,7 +72,7 @@ final class TkUpload implements Take {
         return new RsForward(
             new RsFlash(
                 String.format(
-                    "attachment '%s' uploaded (ctype=%s, etag=%s)",
+                    "attachment \"%s\" uploaded (ctype=%s, etag=%s)",
                     name, ctype, etag
                 )
             )

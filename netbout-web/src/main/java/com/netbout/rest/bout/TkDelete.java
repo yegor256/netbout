@@ -72,7 +72,7 @@ final class TkDelete implements Take {
             throw new RsFailure(ex);
         }
         throw new RsForward(
-            new RsFlash(String.format("attachment '%s' deleted", name))
+            new RsFlash(String.format("attachment \"%s\" deleted", name))
         );
     }
 

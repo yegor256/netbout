@@ -82,13 +82,17 @@ final class EmInbox implements Inbox {
     }
 
     @Override
+    @Loggable(
+        value = Loggable.DEBUG,
+        ignore = Inbox.BoutNotFoundException.class
+    )
     public Bout bout(final long number) throws Inbox.BoutNotFoundException {
         return new EmBout(this.origin.bout(number), this.postman);
     }
 
     @Override
     public Pageable<Bout> jump(final long number) throws IOException {
-        return new EmPageable<Bout>(this.origin.jump(number), this.postman);
+        return new EmPageable<>(this.origin.jump(number), this.postman);
     }
 
     @Override

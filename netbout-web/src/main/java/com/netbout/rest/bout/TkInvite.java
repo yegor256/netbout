@@ -71,7 +71,7 @@ final class TkInvite implements Take {
             .user().aliases().check(name);
         if (check.isEmpty()) {
             throw new RsFailure(
-                String.format("incorrect alias '%s', try again", name)
+                String.format("incorrect alias \"%s\", try again", name)
             );
         }
         final Bout bout = new RqBout(this.base, req).bout();
@@ -83,8 +83,8 @@ final class TkInvite implements Take {
         throw new RsForward(
             new RsFlash(
                 String.format(
-                    "new person invited to the bout #%d",
-                    bout.number()
+                    "\"%s\" invited to the bout #%d",
+                    name, bout.number()
                 ),
                 Level.INFO
             )

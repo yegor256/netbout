@@ -67,7 +67,7 @@ final class TkRegister implements Take {
         new RqAlias(this.base, req).user().aliases().add(alias);
         return new RsForward(
             new RsFlash(
-                String.format("your alias '%s' was registered", alias),
+                String.format("your alias \"%s\" was registered", alias),
                 Level.INFO
             )
         );

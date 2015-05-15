@@ -80,6 +80,10 @@ final class CdInbox implements Inbox {
 
     @Override
     @Cacheable(lifetime = Tv.FIVE, unit = TimeUnit.HOURS)
+    @Loggable(
+        value = Loggable.DEBUG,
+        ignore = Inbox.BoutNotFoundException.class
+    )
     public Bout bout(final long number) throws Inbox.BoutNotFoundException {
         return new CdBout(this.origin.bout(number));
     }

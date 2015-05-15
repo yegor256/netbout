@@ -72,7 +72,7 @@ final class TkCreate implements Take {
             throw new RsFailure(ex);
         }
         return new RsForward(
-            new RsFlash(String.format("attachment '%s' created", name))
+            new RsFlash(String.format("attachment \"%s\" created", name))
         );
     }
 
