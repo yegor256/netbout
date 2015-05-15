@@ -188,22 +188,30 @@ final class DyAttachment implements Attachment {
     public void write(final InputStream stream, final String ctype,
         final String etag) throws IOException {
         if (etag.isEmpty()) {
-            throw new Attachment.BrokenContentException("etag can't be empty");
+            throw new Attachment.BrokenContentException(
+                "etag can't be empty"
+            );
         }
         if (etag.length() > 2 * Tv.HUNDRED) {
-            throw new Attachment.BrokenContentException("etag is too big");
+            throw new Attachment.BrokenContentException(
+                "etag is too big, 200 bytes maximum is allowed"
+            );
         }
         if (ctype.isEmpty()) {
-            throw new Attachment.BrokenContentException("ctype is empty");
+            throw new Attachment.BrokenContentException(
+                "ctype is empty"
+            );
         }
         if (ctype.length() > Tv.HUNDRED) {
-            throw new Attachment.BrokenContentException("ctype is too long");
+            throw new Attachment.BrokenContentException(
+                "ctype is too long, 100 bytes maximum allowed"
+            );
         }
         final byte[] data = IOUtils.toByteArray(stream);
         if (data.length == 0) {
             throw new Attachment.BrokenContentException(
                 String.format(
-                    "content of attachment '%s' can't be empty",
+                    "content of attachment \"%s\" can't be empty",
                     this.name()
                 )
             );
