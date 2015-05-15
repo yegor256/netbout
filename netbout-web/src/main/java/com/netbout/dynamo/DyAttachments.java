@@ -27,7 +27,6 @@
 package com.netbout.dynamo;
 
 import com.google.common.base.Function;
-import com.google.common.base.Predicates;
 import com.google.common.collect.Iterables;
 import com.jcabi.aspects.Immutable;
 import com.jcabi.aspects.Loggable;
@@ -214,20 +213,29 @@ final class DyAttachments implements Attachments {
     }
 
     @Override
-    public void delete(final String name) {
+    public void delete(final String name) throws IOException {
         if (name.isEmpty()) {
-            throw new IllegalArgumentException("name can't be empty");
+            throw new Attachments.InvalidNameException(
+                "name can't be empty"
+            );
         }
         if (name.length() > Tv.HUNDRED) {
-            throw new IllegalArgumentException("name is too long");
+            throw new Attachments.InvalidNameException(
+                String.format("name is too long: %s", name)
+            );
         }
-        Iterables.removeIf(
-            this.region.table(DyAttachments.TBL)
-                .frame()
-                .where(DyAttachments.HASH, Conditions.equalTo(this.bout))
-                .where(DyAttachments.RANGE, name),
-            Predicates.alwaysTrue()
-        );
+        final Iterator<Item> items = this.region.table(DyAttachments.TBL)
+            .frame()
+            .where(DyAttachments.HASH, Conditions.equalTo(this.bout))
+            .where(DyAttachments.RANGE, name)
+            .iterator();
+        if (!items.hasNext()) {
+            throw new Attachments.InvalidNameException(
+                String.format("attachment not found: %s", name)
+            );
+        }
+        items.next();
+        items.remove();
     }
 
 }
