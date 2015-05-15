@@ -33,7 +33,11 @@ import com.jcabi.jdbc.SingleOutcome;
 import com.netbout.spi.Message;
 import java.io.IOException;
 import java.sql.SQLException;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
@@ -84,16 +88,19 @@ final class MkMessage implements Message {
 
     @Override
     public Date date() throws IOException {
+        final DateFormat format = new SimpleDateFormat(
+            "yyyy-MM-DD HH:mm:ss.sss", Locale.ENGLISH
+        );
         try {
-            return new Date(
+            return format.parse(
                 new JdbcSession(this.sql.source())
                     // @checkstyle LineLength (1 line)
                     .sql("SELECT date FROM message WHERE bout = ? AND number = ?")
                     .set(this.bout)
                     .set(this.num)
-                    .select(new SingleOutcome<Long>(Long.class))
+                    .select(new SingleOutcome<>(String.class))
             );
-        } catch (final SQLException ex) {
+        } catch (final SQLException | ParseException ex) {
             throw new IOException(ex);
         }
     }

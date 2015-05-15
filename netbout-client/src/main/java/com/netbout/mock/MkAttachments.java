@@ -91,10 +91,12 @@ final class MkAttachments implements Attachments {
         try {
             new JdbcSession(this.sql.source())
                 // @checkstyle LineLength (1 line)
-                .sql("INSERT INTO attachment (name, bout, author) VALUES (?, ?, ?)")
+                .sql("INSERT INTO attachment (name, bout, author, ctype, etag) VALUES (?, ?, ?, ?, ?)")
                 .set(name)
                 .set(this.bout)
                 .set(this.self)
+                .set("text/plain")
+                .set("000")
                 .insert(Outcome.VOID);
         } catch (final SQLException ex) {
             throw new IOException(ex);

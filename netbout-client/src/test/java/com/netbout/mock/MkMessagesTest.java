@@ -26,46 +26,38 @@
  */
 package com.netbout.mock;
 
-import com.netbout.spi.Attachment;
-import com.netbout.spi.Attachments;
 import com.netbout.spi.Bout;
-import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang3.CharEncoding;
+import com.netbout.spi.Message;
+import com.netbout.spi.Messages;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;
 
 /**
- * Test case for {@link MkAttachments}.
+ * Test case for {@link MkMessages}.
  * @author Yegor Bugayenko (yegor@teamed.io)
  * @version $Id$
- * @since 2.4
+ * @since 2.15
  */
-public final class MkAttachmentsTest {
+public final class MkMessagesTest {
 
     /**
-     * MkAttachments can upload and download attachments.
+     * MkMessages can post and read messages.
      * @throws Exception If there is some problem inside
      */
     @Test
-    public void uploadsAndDownloads() throws Exception {
+    public void postsAndReadsMessages() throws Exception {
         final Bout bout = new MkBase().randomBout();
-        final Attachments attachments = bout.attachments();
-        final String name = "test-name";
-        attachments.create(name);
-        final Attachment attachment = attachments.get(name);
-        attachment.write(
-            IOUtils.toInputStream("hey \u20ac", CharEncoding.UTF_8),
-            "text/plain",
-            Long.toString(System.currentTimeMillis())
-        );
+        final Messages messages = bout.messages();
+        messages.post("how are you?");
         MatcherAssert.assertThat(
-            IOUtils.toString(attachment.read(), CharEncoding.UTF_8),
-            Matchers.containsString("\u20ac")
+            messages.iterate(),
+            Matchers.<Message>iterableWithSize(1)
         );
+        final Message message = messages.iterate().iterator().next();
         MatcherAssert.assertThat(
-            attachment.ctype(),
-            Matchers.containsString("/plain")
+            message.date(),
+            Matchers.notNullValue()
         );
     }
 

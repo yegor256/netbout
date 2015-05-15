@@ -68,7 +68,7 @@ final class H2Sql implements Sql {
             "CREATE TABLE alias (name VARCHAR, urn VARCHAR, photo VARCHAR, locale VARCHAR, email VARCHAR)",
             "CREATE TABLE bout (number BIGINT AUTO_INCREMENT, title VARCHAR, date TIMESTAMP DEFAULT CURRENT_TIMESTAMP)",
             "CREATE TABLE message (number BIGINT AUTO_INCREMENT, bout BIGINT, text VARCHAR, author VARCHAR, date TIMESTAMP DEFAULT CURRENT_TIMESTAMP)",
-            "CREATE TABLE attachment (name VARCHAR, bout BIGINT, data VARCHAR, author VARCHAR)",
+            "CREATE TABLE attachment (name VARCHAR, bout BIGINT, data VARCHAR, author VARCHAR, ctype VARCHAR, etag VARCHAR)",
             "CREATE TABLE friend (alias VARCHAR, bout BIGINT)",
         };
         final JdbcSession session = new JdbcSession(this.source());

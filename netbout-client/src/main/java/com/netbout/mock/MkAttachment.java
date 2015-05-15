@@ -92,7 +92,7 @@ final class MkAttachment implements Attachment {
                 .sql("SELECT ctype FROM attachment WHERE bout = ? AND name = ?")
                 .set(this.bout)
                 .set(this.label)
-                .select(new SingleOutcome<String>(String.class));
+                .select(new SingleOutcome<>(String.class));
         } catch (final SQLException ex) {
             throw new IOException(ex);
         }
@@ -100,12 +100,20 @@ final class MkAttachment implements Attachment {
 
     @Override
     public String etag() throws IOException {
-        throw new UnsupportedOperationException("#etag()");
+        try {
+            return new JdbcSession(this.sql.source())
+                .sql("SELECT etag FROM attachment WHERE bout = ? AND name = ?")
+                .set(this.bout)
+                .set(this.label)
+                .select(new SingleOutcome<>(String.class));
+        } catch (final SQLException ex) {
+            throw new IOException(ex);
+        }
     }
 
     @Override
-    public boolean unseen() throws IOException {
-        throw new UnsupportedOperationException("#unseen()");
+    public boolean unseen() {
+        return false;
     }
 
     @Override
@@ -131,8 +139,10 @@ final class MkAttachment implements Attachment {
         try {
             new JdbcSession(this.sql.source())
                 // @checkstyle LineLength (1 line)
-                .sql("UPDATE attachment SET data = ? WHERE bout = ? AND name = ?")
+                .sql("UPDATE attachment SET data = ?, ctype = ?, etag = ? WHERE bout = ? AND name = ?")
                 .set(IOUtils.toString(stream, CharEncoding.UTF_8))
+                .set(ctype)
+                .set(etag)
                 .set(this.bout)
                 .set(this.label)
                 .update(Outcome.VOID);

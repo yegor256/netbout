@@ -77,12 +77,13 @@ public final class TkIndexTest {
             ),
             XhtmlMatchers.hasXPaths(
                 "/page/bout[number=1]",
-                "/page/bout[title='untitled]",
+                "/page/bout[title='untitled']",
                 "/page/bout[unread=0]",
                 "/page/bout/friends/friend[alias='jeff']",
                 "/page/bout/friends/friend/links/link[@rel='photo']",
                 "/page/bout/friends/friend/links/link[@rel='kick']",
-                "/page/bout/attachments/attachment/links/link[@rel='kick']"
+                "/page/bout/attachments/attachment/links/link[@rel='delete']",
+                "/page/bout/messages/message[text='hello, world!']"
             )
         );
     }
