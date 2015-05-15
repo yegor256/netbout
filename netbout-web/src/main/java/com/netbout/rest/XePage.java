@@ -85,7 +85,6 @@ public final class XePage extends XeWrap {
             "page",
             new XeMillis(false),
             new XeChain(src),
-            new XeMillis(true),
             new XeDate(),
             new XeSLA(),
             new XeLinkHome(req),
@@ -107,7 +106,8 @@ public final class XePage extends XeWrap {
                 new XeAppend("name", Manifests.read("Netbout-Version")),
                 new XeAppend("rev", Manifests.read("Netbout-Revision")),
                 new XeAppend("date", Manifests.read("Netbout-Date"))
-            )
+            ),
+            new XeMillis(true)
         );
     }
 
