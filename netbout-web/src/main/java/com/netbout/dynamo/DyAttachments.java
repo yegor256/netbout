@@ -143,7 +143,7 @@ final class DyAttachments implements Attachments {
             .iterator();
         if (!items.hasNext()) {
             throw new Attachments.NotFoundException(
-                String.format("attachment '%s' not found", name)
+                String.format("attachment \"%s\" not found", name)
             );
         }
         return new DyAttachment(this.region, items.next(), this.self);
@@ -199,7 +199,7 @@ final class DyAttachments implements Attachments {
     public void create(final String name) throws IOException {
         if (!name.matches("[a-zA-Z\\.\\-0-9]{3,100}")) {
             throw new Attachments.InvalidNameException(
-                String.format("invalid attachment name '%s'", name)
+                String.format("invalid attachment name \"%s\"", name)
             );
         }
         this.region.table(DyAttachments.TBL).put(
@@ -218,22 +218,26 @@ final class DyAttachments implements Attachments {
     public void delete(final String name) throws IOException {
         if (name.isEmpty()) {
             throw new Attachments.InvalidNameException(
-                "name can't be empty"
+                "attachment name can't be empty"
             );
         }
         if (name.length() > Tv.HUNDRED) {
             throw new Attachments.InvalidNameException(
-                String.format("name is too long: %s", name)
+                String.format("attachment name \"%s\" is too long", name)
             );
         }
         final Iterator<Item> items = this.region.table(DyAttachments.TBL)
             .frame()
+            .through(new QueryValve().withLimit(1))
             .where(DyAttachments.HASH, Conditions.equalTo(this.bout))
             .where(DyAttachments.RANGE, name)
             .iterator();
         if (!items.hasNext()) {
             throw new Attachments.InvalidNameException(
-                String.format("attachment not found: %s", name)
+                String.format(
+                    "attachment \"%s\" not found, can't delete",
+                    name
+                )
             );
         }
         items.next();
