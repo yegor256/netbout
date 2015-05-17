@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <!--
- * Copyright (c) 2009-2014, netbout.com
+ * Copyright (c) 2009-2015, netbout.com
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
