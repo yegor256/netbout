@@ -3,7 +3,7 @@
 [![Made By Teamed.io](http://img.teamed.io/btn.svg)](http://www.teamed.io)
 
 [![Build Status](https://travis-ci.org/yegor256/netbout.svg?branch=master)](https://travis-ci.org/yegor256/netbout)
-[![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.yegor256/netbout/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.yegor256/netbout)
+[![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.netbout/netbout/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.netbout/netbout)
 
 Netbout.com is a communication platform that enables smoothless integration
 of humans and software agents in a conversation-centered environment.
