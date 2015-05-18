@@ -133,7 +133,9 @@
                     <xsl:text> </xsl:text>
                     <xsl:value-of select="$TEXTS/said"/>
                     <xsl:text> </xsl:text>
-                    <xsl:value-of select="timeago"/>
+                    <span title="{date}">
+                        <xsl:value-of select="timeago"/>
+                    </span>
                 </div>
                 <div class="text">
                     <xsl:value-of select="html" disable-output-escaping="yes"/>
