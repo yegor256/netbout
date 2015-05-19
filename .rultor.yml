@@ -28,7 +28,12 @@ merge:
     mvn clean
     pdd --source=$(pwd) --verbose --file=/dev/null
   commanders:
-  - yegor256
+  - carlosmiranda
+  - dmzaytsev
+  - ggajos
+  - krzyk
+  - longtimeago
+  - pinaf
 release:
   script: |-
     mvn versions:set "-DnewVersion=${tag}"
