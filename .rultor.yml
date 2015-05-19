@@ -21,6 +21,7 @@ deploy:
     pdd --source=$(pwd) --verbose --file=netbout.xml
     s3cmd --no-progress put netbout.xml --config=../s3cfg s3://pdd.teamed.io/netbout.xml
   commanders:
+  - dmzaytsev
   - yegor256
 merge:
   script: |
