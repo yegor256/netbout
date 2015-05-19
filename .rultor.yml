@@ -59,6 +59,7 @@ release:
     curl -f --connect-timeout 15 --retry 5 --retry-delay 30 http://www.netbout.com
     mvn clean site-deploy -Psite --errors --settings ../settings.xml --batch-mode
   commanders:
+  - dmzaytsev
   - yegor256
 architect:
 - dmzaytsev
