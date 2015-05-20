@@ -86,7 +86,7 @@ final class EmMessages implements Messages {
      * @param bot Bout we're in
      * @checkstyle ParameterNumberCheck (4 lines)
      */
-    EmMessages(final Messages org, final String slf,
+    EmMessages(final Messages org, @NotNull final String slf,
         final Postman pst, final Bout bot) {
         this.origin = org;
         this.self = slf;
@@ -98,7 +98,7 @@ final class EmMessages implements Messages {
     public void post(final String text) throws IOException {
         this.origin.post(text);
         for (final Friend friend : this.bout.friends().iterate()) {
-            if (friend.email().isEmpty() || this.self == friend.alias()) {
+            if (friend.email().isEmpty() || this.self.equals(friend.alias())) {
                 continue;
             }
             this.email(friend, text);
