@@ -30,6 +30,7 @@ merge:
     pdd --source=$(pwd) --verbose --file=/dev/null
   commanders:
   - carlosmiranda
+  - darkled
   - dmzaytsev
   - ggajos
   - krzyk
