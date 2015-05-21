@@ -79,10 +79,12 @@ final class MkInbox implements Inbox {
     @Override
     public long start() throws IOException {
         try {
-            return new JdbcSession(this.sql.source())
+            final Long number = new JdbcSession(this.sql.source())
                 .sql("INSERT INTO bout (title) VALUES (?)")
                 .set("untitled")
                 .insert(new SingleOutcome<Long>(Long.class));
+            this.bout(number).friends().invite(this.self);
+            return number;
         } catch (final SQLException ex) {
             throw new IOException(ex);
         }

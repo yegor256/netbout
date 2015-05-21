@@ -58,7 +58,6 @@ public final class EmAliasTest {
         final MkBase base = new MkBase();
         final Alias alias = new EmAlias(base.randomAlias(), postman);
         final Bout bout = alias.inbox().bout(alias.inbox().start());
-        bout.friends().invite(base.randomAlias().name());
         bout.messages().post("how are you?");
         final ArgumentCaptor<Envelope> captor =
             ArgumentCaptor.forClass(Envelope.class);
