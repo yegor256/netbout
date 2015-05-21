@@ -27,12 +27,18 @@
 package com.netbout.rest;
 
 import com.netbout.spi.Base;
+import com.netbout.spi.Bout;
+import com.netbout.spi.Friends;
+import com.netbout.spi.Inbox;
+import com.netbout.spi.Messages;
 import java.io.IOException;
+import java.util.Iterator;
 import org.takes.Request;
 import org.takes.Response;
 import org.takes.Take;
 import org.takes.facets.flash.RsFlash;
 import org.takes.facets.forward.RsForward;
+import org.takes.misc.Href;
 import org.takes.rq.RqHref;
 
 /**
@@ -59,11 +65,34 @@ public final class TkStart implements Take {
 
     @Override
     public Response act(final Request req) throws IOException {
-        final long number = new RqAlias(this.base, req).alias().inbox().start();
+        final Inbox inbox = new RqAlias(this.base, req).alias().inbox();
+        final long number = inbox.start();
+        final Bout bout = inbox.bout(number);
+        final StringBuilder msg = new StringBuilder(
+            String.format("new bout #%d started", number)
+        );
+        final Href href = new RqHref.Base(req).href();
+        final Iterator<String> invite = href.param("invite").iterator();
+        while (invite.hasNext()) {
+            final String friend = invite.next();
+            try {
+                bout.friends().invite(friend);
+            } catch (final Friends.UnknownAliasException ex) {
+                throw new RsFailure(ex);
+            }
+            msg.append(String.format(", \"%s\" invited", friend));
+        }
+        final Iterator<String> post = href.param("post").iterator();
+        if (post.hasNext()) {
+            try {
+                bout.messages().post(post.next());
+            } catch (final Messages.BrokenPostException ex) {
+                throw new RsFailure(ex);
+            }
+            msg.append(", message posted");
+        }
         throw new RsForward(
-            new RsFlash(
-                String.format("new bout #%d started", number)
-            ),
+            new RsFlash(msg.toString()),
             new RqHref.Smart(new RqHref.Base(req)).home().path("b").path(
                 Long.toString(number)
             )
