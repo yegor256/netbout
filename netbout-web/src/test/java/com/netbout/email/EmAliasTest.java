@@ -33,9 +33,11 @@ import com.netbout.spi.Alias;
 import com.netbout.spi.Bout;
 import java.io.ByteArrayOutputStream;
 import javax.mail.Message;
+import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMultipart;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
@@ -59,7 +61,7 @@ public final class EmAliasTest {
         final Alias alias = new EmAlias(base.randomAlias(), postman);
         final Bout bout = alias.inbox().bout(alias.inbox().start());
         bout.friends().invite(base.randomAlias().name());
-        bout.messages().post("how are you?");
+        bout.messages().post("hello");
         final ArgumentCaptor<Envelope> captor =
             ArgumentCaptor.forClass(Envelope.class);
         Mockito.verify(postman).send(captor.capture());
@@ -71,6 +73,37 @@ public final class EmAliasTest {
         MimeMultipart.class.cast(msg.getContent()).writeTo(baos);
         MatcherAssert.assertThat(
             baos.toString(), Matchers.containsString("how are you")
+        );
+    }
+
+    /**
+     * EmAlias doesn't send mail to the author.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    @Ignore
+    public void doesNotSendMailToAuthor() throws Exception {
+        final Postman postman = Mockito.mock(Postman.class);
+        final MkBase base = new MkBase();
+        final Alias author = new EmAlias(base.randomAlias(), postman);
+        final Alias friend = new EmAlias(base.randomAlias(), postman);
+        final Bout bout = author.inbox().bout(author.inbox().start());
+        bout.friends().invite(author.name());
+        bout.friends().invite(friend.name());
+        bout.messages().post("how are you?");
+        final ArgumentCaptor<Envelope> captor =
+            ArgumentCaptor.forClass(Envelope.class);
+        Mockito.verify(postman, Mockito.times(1)).send(captor.capture());
+        final Message msg = captor.getValue().unwrap();
+        MatcherAssert.assertThat(
+            msg.getAllRecipients().length,
+            Matchers.is(1)
+        );
+        final InternetAddress recipientAddress =
+            (InternetAddress) msg.getAllRecipients()[0];
+        MatcherAssert.assertThat(
+            recipientAddress.getAddress(),
+            Matchers.is(friend.email())
         );
     }
 
