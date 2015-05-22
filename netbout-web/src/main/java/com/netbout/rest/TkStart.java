@@ -28,6 +28,7 @@ package com.netbout.rest;
 
 import com.netbout.spi.Base;
 import com.netbout.spi.Bout;
+import com.netbout.spi.Friend;
 import com.netbout.spi.Friends;
 import com.netbout.spi.Inbox;
 import com.netbout.spi.Messages;
@@ -78,6 +79,7 @@ public final class TkStart implements Take {
             try {
                 bout.friends().invite(friend);
             } catch (final Friends.UnknownAliasException ex) {
+                this.discard(bout);
                 throw new RsFailure(ex);
             }
             msg.append(String.format(", \"%s\" invited", friend));
@@ -87,6 +89,7 @@ public final class TkStart implements Take {
             try {
                 bout.messages().post(post.next());
             } catch (final Messages.BrokenPostException ex) {
+                this.discard(bout);
                 throw new RsFailure(ex);
             }
             msg.append(", message posted");
@@ -99,4 +102,14 @@ public final class TkStart implements Take {
         );
     }
 
+    /**
+     * Remove all friends from a bout.
+     * @param bout Bout
+     * @throws IOException If there is some problem inside
+     */
+    private void discard(final Bout bout) throws IOException {
+        for (final Friend member : bout.friends().iterate()) {
+            bout.friends().kick(member.alias());
+        }
+    }
 }
