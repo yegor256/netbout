@@ -63,10 +63,6 @@ final class EmMessages implements Messages {
     private final transient Messages origin;
 
     /**
-     * Author's name.
-     */
-    private final transient String author;
-    /**
      * Postman.
      */
     private final transient Postman postman;
@@ -77,18 +73,24 @@ final class EmMessages implements Messages {
     private final transient Bout bout;
 
     /**
+     * Self alias.
+     */
+    private final transient String self;
+
+    /**
      * Public ctor.
      * @param org Origin
-     * @param auth Author's name
      * @param pst Postman
      * @param bot Bout we're in
+     * @param slf Self alias
+     * @checkstyle ParameterNumberCheck (4 lines)
      */
-    EmMessages(final Messages org, final String auth,
-        final Postman pst, final Bout bot) {
+    EmMessages(final Messages org, final Postman pst,
+        final Bout bot, final String slf) {
         this.origin = org;
-        this.author = auth;
         this.postman = pst;
         this.bout = bot;
+        this.self = slf;
     }
 
     @Override
@@ -96,7 +98,7 @@ final class EmMessages implements Messages {
         this.origin.post(text);
         for (final Friend friend : this.bout.friends().iterate()) {
             if (friend.email().isEmpty()
-                || friend.alias().equals(this.author)) {
+                || friend.alias().equals(this.self)) {
                 continue;
             }
             this.email(friend, text);
@@ -112,8 +114,7 @@ final class EmMessages implements Messages {
     public Pageable<Message> jump(final long num) throws IOException {
         return new EmPageable<Message>(
             this.origin.jump(num),
-            this.author,
-            this.postman
+            this.postman, this.self
         );
     }
 
