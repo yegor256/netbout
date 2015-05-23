@@ -37,7 +37,6 @@ import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMultipart;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
@@ -61,7 +60,7 @@ public final class EmAliasTest {
         final Alias alias = new EmAlias(base.randomAlias(), postman);
         final Bout bout = alias.inbox().bout(alias.inbox().start());
         bout.friends().invite(base.randomAlias().name());
-        bout.messages().post("hello");
+        bout.messages().post("how are you?");
         final ArgumentCaptor<Envelope> captor =
             ArgumentCaptor.forClass(Envelope.class);
         Mockito.verify(postman).send(captor.capture());
@@ -81,7 +80,6 @@ public final class EmAliasTest {
      * @throws Exception If there is some problem inside
      */
     @Test
-    @Ignore
     public void doesNotSendMailToAuthor() throws Exception {
         final Postman postman = Mockito.mock(Postman.class);
         final MkBase base = new MkBase();
@@ -90,7 +88,7 @@ public final class EmAliasTest {
         final Bout bout = author.inbox().bout(author.inbox().start());
         bout.friends().invite(author.name());
         bout.friends().invite(friend.name());
-        bout.messages().post("how are you?");
+        bout.messages().post("hello");
         final ArgumentCaptor<Envelope> captor =
             ArgumentCaptor.forClass(Envelope.class);
         Mockito.verify(postman, Mockito.times(1)).send(captor.capture());

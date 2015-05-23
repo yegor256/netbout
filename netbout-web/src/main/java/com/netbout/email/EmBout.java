@@ -57,6 +57,10 @@ final class EmBout implements Bout {
     private final transient Bout origin;
 
     /**
+     * Author's name.
+     */
+    private final transient String author;
+    /**
      * Postman.
      */
     private final transient Postman postman;
@@ -64,10 +68,12 @@ final class EmBout implements Bout {
     /**
      * Public ctor.
      * @param org Origin
+     * @param auth Author's name
      * @param pst Postman
      */
-    EmBout(final Bout org, final Postman pst) {
+    EmBout(final Bout org, final String auth, final Postman pst) {
         this.origin = org;
+        this.author = auth;
         this.postman = pst;
     }
 
@@ -100,6 +106,7 @@ final class EmBout implements Bout {
     public Messages messages() throws IOException {
         return new EmMessages(
             this.origin.messages(),
+            this.author,
             this.postman,
             this
         );

@@ -63,6 +63,10 @@ final class EmMessages implements Messages {
     private final transient Messages origin;
 
     /**
+     * Author's name.
+     */
+    private final transient String author;
+    /**
      * Postman.
      */
     private final transient Postman postman;
@@ -75,11 +79,14 @@ final class EmMessages implements Messages {
     /**
      * Public ctor.
      * @param org Origin
+     * @param auth Author's name
      * @param pst Postman
      * @param bot Bout we're in
      */
-    EmMessages(final Messages org, final Postman pst, final Bout bot) {
+    EmMessages(final Messages org, final String auth,
+        final Postman pst, final Bout bot) {
         this.origin = org;
+        this.author = auth;
         this.postman = pst;
         this.bout = bot;
     }
@@ -88,7 +95,8 @@ final class EmMessages implements Messages {
     public void post(final String text) throws IOException {
         this.origin.post(text);
         for (final Friend friend : this.bout.friends().iterate()) {
-            if (friend.email().isEmpty()) {
+            if (friend.email().isEmpty()
+                || friend.alias().equals(this.author)) {
                 continue;
             }
             this.email(friend, text);
@@ -102,7 +110,11 @@ final class EmMessages implements Messages {
 
     @Override
     public Pageable<Message> jump(final long num) throws IOException {
-        return new EmPageable<Message>(this.origin.jump(num), this.postman);
+        return new EmPageable<Message>(
+            this.origin.jump(num),
+            this.author,
+            this.postman
+        );
     }
 
     @Override
