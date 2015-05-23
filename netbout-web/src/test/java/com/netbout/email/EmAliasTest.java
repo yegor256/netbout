@@ -80,6 +80,7 @@ public final class EmAliasTest {
      * @throws Exception If there is some problem inside
      */
     @Test
+    @SuppressWarnings("unchecked")
     public void doesNotSendMailToAuthor() throws Exception {
         final Postman postman = Mockito.mock(Postman.class);
         final MkBase base = new MkBase();
@@ -94,15 +95,12 @@ public final class EmAliasTest {
         Mockito.verify(postman, Mockito.times(1)).send(captor.capture());
         final Message msg = captor.getValue().unwrap();
         MatcherAssert.assertThat(
-            msg.getAllRecipients().length,
-            Matchers.is(1)
-        );
-        final InternetAddress recipientAddress =
-            (InternetAddress) msg.getAllRecipients()[0];
-        MatcherAssert.assertThat(
-            recipientAddress.getAddress(),
-            Matchers.is(friend.email())
+            (InternetAddress[]) msg.getAllRecipients(),
+            Matchers.is(
+                Matchers.array(
+                    Matchers.equalTo(new InternetAddress(friend.email()))
+                )
+            )
         );
     }
-
 }
