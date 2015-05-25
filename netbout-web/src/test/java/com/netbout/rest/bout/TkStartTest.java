@@ -52,9 +52,9 @@ import org.takes.rs.RsPrint;
  * @author Ivan Inozemtsev (ivan.inozemtsev@gmail.com)
  * @version $Id$
  * @todo #610:30min Test case for negative scenario of TkStart
- * should be added, e.g. when a friend is not found, the error
- * should be reported correctly and bout creation should be
- * discarded.
+ *  should be added, e.g. when a friend is not found, the error
+ *  should be reported correctly and bout creation should be
+ *  discarded.
  * @since 2.15
  * @checkstyle ClassDataAbstractionCouplingCheck (500 lines)
  */
