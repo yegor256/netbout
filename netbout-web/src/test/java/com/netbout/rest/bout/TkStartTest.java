@@ -38,6 +38,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.takes.facets.forward.TkForward;
 import org.takes.rq.RqFake;
@@ -97,6 +98,18 @@ public final class TkStartTest {
             bout.friends().iterate().iterator().next().alias(),
             Matchers.equalTo(frank)
         );
+    }
+
+    /**
+     * TkStart can remove all friends from a bout when some of invitees
+     * is not found.
+     * @throws Exception If there is some problem inside
+     * @todo #610 negative test is not implemented
+     */
+    @Test
+    @Ignore
+    public void discardsBoutWhenFriendNotFound() throws Exception {
+        // Avoid PMD.UncommentedEmptyMethod
     }
 
 }
