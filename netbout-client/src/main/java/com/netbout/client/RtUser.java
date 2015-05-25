@@ -64,7 +64,7 @@ public final class RtUser implements User {
      * @param token Authentication token
      */
     public RtUser(@NotNull final String token) {
-        this(URI.create("http://localhost:8080"), token);
+        this(URI.create("http://www.netbout.com"), token);
     }
 
     /**
