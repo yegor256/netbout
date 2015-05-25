@@ -26,19 +26,22 @@
  */
 package com.netbout.rest.bout;
 
+import com.google.common.base.Function;
+import com.google.common.collect.Iterables;
 import com.jcabi.urn.URN;
 import com.netbout.mock.MkBase;
 import com.netbout.rest.RqWithTester;
 import com.netbout.rest.TkStart;
 import com.netbout.spi.Alias;
 import com.netbout.spi.Bout;
+import com.netbout.spi.Friend;
 import com.netbout.spi.Message;
 import com.netbout.spi.User;
+import java.io.IOException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.takes.facets.forward.TkForward;
 import org.takes.rq.RqFake;
@@ -48,7 +51,12 @@ import org.takes.rs.RsPrint;
  * Test case for {@link TkStart}.
  * @author Ivan Inozemtsev (ivan.inozemtsev@gmail.com)
  * @version $Id$
+ * @todo #610:30min Test case for negative scenario of TkStart
+ * should be added, e.g. when a friend is not found, the error
+ * should be reported correctly and bout creation should be
+ * discarded.
  * @since 2.15
+ * @checkstyle ClassDataAbstractionCouplingCheck (500 lines)
  */
 public final class TkStartTest {
 
@@ -62,11 +70,12 @@ public final class TkStartTest {
         final MkBase base = new MkBase();
         final URN urn = new URN("urn:test:1");
         final User user = base.user(urn);
-        final String jeff = "Jeff";
-        user.aliases().add(jeff);
-        final String frank = "Frank";
-        final User friend = base.user(new URN("urn:test:2"));
-        friend.aliases().add(frank);
+        final String name = "Jeff";
+        user.aliases().add(name);
+        final Alias[] friends = new Alias[] {
+            base.randomAlias(),
+            base.randomAlias(),
+        };
         final String post = "message";
         final String head = new RsPrint(
             new TkForward(new TkStart(base)).act(
@@ -75,9 +84,10 @@ public final class TkStartTest {
                     new RqFake(
                         "GET",
                         String.format(
-                            "/start?post=%s&invite=%s",
+                            "/start?post=%s&invite=%s&invite=%s",
                             post,
-                            frank
+                            friends[0].name(),
+                            friends[1].name()
                         )
                     )
                 )
@@ -88,28 +98,26 @@ public final class TkStartTest {
             Pattern.MULTILINE
         ).matcher(head);
         MatcherAssert.assertThat("Location header is correct", matcher.find());
-        final long number = Long.parseLong(matcher.group(1));
-        final Alias alias = user.aliases().iterate().iterator().next();
-        final Bout bout = alias.inbox().bout(number);
+        final Bout bout = user.aliases().iterate().iterator().next().inbox()
+            .bout(Long.parseLong(matcher.group(1)));
         final Message message = bout.messages().iterate().iterator().next();
-        MatcherAssert.assertThat(message.author(), Matchers.equalTo(jeff));
+        MatcherAssert.assertThat(message.author(), Matchers.equalTo(name));
         MatcherAssert.assertThat(message.text(), Matchers.equalTo(post));
         MatcherAssert.assertThat(
-            bout.friends().iterate().iterator().next().alias(),
-            Matchers.equalTo(frank)
+            Iterables.transform(
+                bout.friends().iterate(),
+                new Function<Friend, String>() {
+                    @Override
+                    public String apply(final Friend friend) {
+                        try {
+                            return friend.alias();
+                        } catch (final IOException ex) {
+                            throw new IllegalStateException(ex);
+                        }
+                    }
+                }
+            ),
+            Matchers.containsInAnyOrder(friends[0].name(), friends[1].name())
         );
     }
-
-    /**
-     * TkStart can remove all friends from a bout when some of invitees
-     * is not found.
-     * @throws Exception If there is some problem inside
-     * @todo #610 negative test is not implemented
-     */
-    @Test
-    @Ignore
-    public void discardsBoutWhenFriendNotFound() throws Exception {
-        // Avoid PMD.UncommentedEmptyMethod
-    }
-
 }
