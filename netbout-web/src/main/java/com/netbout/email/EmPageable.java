@@ -62,18 +62,28 @@ final class EmPageable<T> implements Pageable<T> {
     private final transient Postman postman;
 
     /**
+     * Self alias.
+     */
+    private final transient String self;
+
+    /**
      * Public ctor.
      * @param org Origin
      * @param pst Postman
+     * @param slf Self alias
      */
-    EmPageable(final Pageable<T> org, final Postman pst) {
+    EmPageable(final Pageable<T> org, final Postman pst, final String slf) {
         this.origin = org;
         this.postman = pst;
+        this.self = slf;
     }
 
     @Override
     public Pageable<T> jump(final long number) throws IOException {
-        return new EmPageable<T>(this.origin.jump(number), this.postman);
+        return new EmPageable<T>(
+            this.origin.jump(number),
+            this.postman, this.self
+        );
     }
 
     @Override
@@ -90,7 +100,7 @@ final class EmPageable<T> implements Pageable<T> {
                     } else {
                         result = new EmBout(
                             Bout.class.cast(input),
-                            EmPageable.this.postman
+                            EmPageable.this.postman, EmPageable.this.self
                         );
                     }
                     return (T) result;

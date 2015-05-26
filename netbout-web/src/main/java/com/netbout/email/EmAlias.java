@@ -113,6 +113,6 @@ final class EmAlias implements Alias {
 
     @Override
     public Inbox inbox() throws IOException {
-        return new EmInbox(this.origin.inbox(), this.postman);
+        return new EmInbox(this.origin.inbox(), this.postman, this.name());
     }
 }

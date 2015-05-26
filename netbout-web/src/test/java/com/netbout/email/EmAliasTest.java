@@ -33,6 +33,7 @@ import com.netbout.spi.Alias;
 import com.netbout.spi.Bout;
 import java.io.ByteArrayOutputStream;
 import javax.mail.Message;
+import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMultipart;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
@@ -73,4 +74,32 @@ public final class EmAliasTest {
         );
     }
 
+    /**
+     * EmAlias doesn't send mail to the author.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    @SuppressWarnings("unchecked")
+    public void doesNotSendMailToAuthor() throws Exception {
+        final Postman postman = Mockito.mock(Postman.class);
+        final MkBase base = new MkBase();
+        final Alias author = new EmAlias(base.randomAlias(), postman);
+        final Alias friend = new EmAlias(base.randomAlias(), postman);
+        final Bout bout = author.inbox().bout(author.inbox().start());
+        bout.friends().invite(author.name());
+        bout.friends().invite(friend.name());
+        bout.messages().post("hello");
+        final ArgumentCaptor<Envelope> captor =
+            ArgumentCaptor.forClass(Envelope.class);
+        Mockito.verify(postman, Mockito.times(1)).send(captor.capture());
+        final Message msg = captor.getValue().unwrap();
+        MatcherAssert.assertThat(
+            (InternetAddress[]) msg.getAllRecipients(),
+            Matchers.is(
+                Matchers.array(
+                    Matchers.equalTo(new InternetAddress(friend.email()))
+                )
+            )
+        );
+    }
 }

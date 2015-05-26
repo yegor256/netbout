@@ -110,7 +110,9 @@ public final class MarkdownTest {
         for (final String[] pair : texts) {
             MatcherAssert.assertThat(
                 new Markdown(pair[0]).html().trim(),
-                Matchers.equalTo(pair[1])
+                Matchers.equalTo(
+                    pair[1].replace("\n", System.getProperty("line.separator"))
+                )
             );
         }
     }

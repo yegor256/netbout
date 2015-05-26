@@ -62,12 +62,19 @@ final class EmInbox implements Inbox {
     private final transient Postman postman;
 
     /**
+     * Self alias.
+     */
+    private final transient String self;
+
+    /**
      * Public ctor.
      * @param org Origin
      * @param pst Postman
+     * @param slf Self alias
      */
-    EmInbox(final Inbox org, final Postman pst) {
+    EmInbox(final Inbox org, final Postman pst, final String slf) {
         this.origin = org;
+        this.self = slf;
         this.postman = pst;
     }
 
@@ -87,12 +94,15 @@ final class EmInbox implements Inbox {
         ignore = Inbox.BoutNotFoundException.class
     )
     public Bout bout(final long number) throws Inbox.BoutNotFoundException {
-        return new EmBout(this.origin.bout(number), this.postman);
+        return new EmBout(this.origin.bout(number), this.postman, this.self);
     }
 
     @Override
     public Pageable<Bout> jump(final long number) throws IOException {
-        return new EmPageable<>(this.origin.jump(number), this.postman);
+        return new EmPageable<>(
+            this.origin.jump(number),
+            this.postman, this.self
+        );
     }
 
     @Override
@@ -102,7 +112,10 @@ final class EmInbox implements Inbox {
             new Function<Bout, Bout>() {
                 @Override
                 public Bout apply(final Bout input) {
-                    return new EmBout(input, EmInbox.this.postman);
+                    return new EmBout(
+                        input,
+                        EmInbox.this.postman, EmInbox.this.self
+                    );
                 }
             }
         );
