@@ -117,7 +117,11 @@ public final class TkStartTest {
                     }
                 }
             ),
-            Matchers.containsInAnyOrder(friends[0].name(), friends[1].name())
+            Matchers.containsInAnyOrder(
+                friends[0].name(),
+                friends[1].name(),
+                name
+            )
         );
     }
 }
