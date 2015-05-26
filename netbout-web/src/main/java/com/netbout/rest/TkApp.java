@@ -36,6 +36,8 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.regex.Pattern;
+import org.takes.Request;
+import org.takes.Response;
 import org.takes.Take;
 import org.takes.facets.auth.PsByFlag;
 import org.takes.facets.flash.TkFlash;
@@ -47,6 +49,7 @@ import org.takes.facets.fork.FkParams;
 import org.takes.facets.fork.FkRegex;
 import org.takes.facets.fork.TkFork;
 import org.takes.facets.forward.TkForward;
+import org.takes.rq.RqHref;
 import org.takes.rs.RsRedirect;
 import org.takes.tk.TkClasspath;
 import org.takes.tk.TkFiles;
@@ -168,7 +171,19 @@ public final class TkApp extends TkWrap {
             new FkRegex("/favicon.ico", new TkFavicon()),
             new FkAnonymous(
                 new TkFork(
-                    new FkRegex("/", new TkHome(base))
+                    new FkRegex("/", new TkHome(base)),
+                    new FkFixed(
+                        new Take() {
+                            @Override
+                            public Response act(final Request req)
+                                throws IOException {
+                                return new RsReturn(
+                                    new RsRedirect("/"),
+                                    new RqHref.Base(req).href().bare()
+                                );
+                            }
+                        }
+                    )
                 )
             ),
             new FkAuthenticated(
@@ -176,7 +191,7 @@ public final class TkApp extends TkWrap {
                     new FkRegistered(
                         base,
                         new TkFork(
-                            new FkRegex("/", new TkInbox(base)),
+                            new FkRegex("/", new TkReturn(new TkInbox(base))),
                             new FkRegex("/start", new TkStart(base)),
                             new FkRegex("/b/.*", new TkBout(base)),
                             new FkRegex("/acc/.*", new TkAccount(base)),
