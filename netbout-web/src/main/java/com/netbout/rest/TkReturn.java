@@ -27,6 +27,8 @@
 package com.netbout.rest;
 
 import java.io.IOException;
+import java.net.URLDecoder;
+import java.nio.charset.Charset;
 import java.util.Iterator;
 import lombok.EqualsAndHashCode;
 import org.takes.Request;
@@ -83,7 +85,12 @@ final class TkReturn implements Take {
         final Response response;
         if (values.hasNext()) {
             response = new RsWithCookie(
-                new RsRedirect(values.next()),
+                new RsRedirect(
+                    URLDecoder.decode(
+                        values.next(),
+                        Charset.defaultCharset().name()
+                    )
+                ),
                 this.cookie,
                 ""
             );

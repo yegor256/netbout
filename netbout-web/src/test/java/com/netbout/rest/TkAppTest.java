@@ -29,6 +29,8 @@ package com.netbout.rest;
 import com.jcabi.urn.URN;
 import com.netbout.mock.MkBase;
 import java.net.HttpURLConnection;
+import java.net.URLEncoder;
+import java.nio.charset.Charset;
 import java.util.regex.Pattern;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
@@ -126,7 +128,7 @@ public final class TkAppTest {
             // @checkstyle MultipleStringLiteralsCheck (1 line)
             "Incorrect Set-Cookie header",
             Pattern.compile(
-                "^Set-Cookie: RsReturn=.*%2Fwhatever;Expires=.*$",
+                "^Set-Cookie: RsReturn=.*%2Fwhatever;Path=/;Expires=.*$",
                 Pattern.MULTILINE
             ).matcher(head).find()
         );
@@ -139,11 +141,15 @@ public final class TkAppTest {
      */
     @Test
     public void redirectsToReturnCookie() throws Exception {
+        final String loc = "http://example.com/whatever";
         final String head = new RsPrint(
             new TkApp(new MkBase()).act(
                 new RqWithHeader(
                     new RqWithTester(new URN("urn:test:1")),
-                    "Cookie: RsReturn=http://example.com/whatever"
+                    String.format(
+                        "Cookie: RsReturn=%s",
+                        URLEncoder.encode(loc, Charset.defaultCharset().name())
+                    )
                 )
             )
         ).printHead();

@@ -68,6 +68,7 @@ public final class RsReturn extends RsWrap {
                 res,
                 cookie,
                 URLEncoder.encode(loc, Charset.defaultCharset().name()),
+                "Path=/",
                 String.format(
                     Locale.ENGLISH,
                     "Expires=%1$ta, %1$td %1$tb %1$tY %1$tT GMT",
