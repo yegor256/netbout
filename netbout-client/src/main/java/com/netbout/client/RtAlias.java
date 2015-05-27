@@ -29,10 +29,13 @@ package com.netbout.client;
 import com.jcabi.aspects.Immutable;
 import com.jcabi.aspects.Loggable;
 import com.jcabi.http.Request;
+import com.jcabi.http.response.RestResponse;
 import com.jcabi.http.response.XmlResponse;
+import com.jcabi.log.Logger;
 import com.netbout.spi.Alias;
 import com.netbout.spi.Inbox;
 import java.io.IOException;
+import java.net.HttpURLConnection;
 import java.net.URI;
 import java.util.Locale;
 import lombok.EqualsAndHashCode;
@@ -103,13 +106,28 @@ final class RtAlias implements Alias {
     }
 
     @Override
-    public String email() {
-        throw new UnsupportedOperationException("#email() not implemented");
+    public String email() throws IOException {
+        return this.request.fetch()
+            .as(XmlResponse.class)
+            .xml()
+            .xpath("/page/alias/email/text()")
+            .get(0);
     }
 
     @Override
-    public void email(final String email) {
-        throw new UnsupportedOperationException("#email()");
+    public void email(final String email) throws IOException {
+        this.request.fetch()
+            .as(RestResponse.class)
+            .assertStatus(HttpURLConnection.HTTP_OK)
+            .as(XmlResponse.class)
+            .rel("/page/links/link[@rel='account']/@href")
+            .fetch()
+            .as(XmlResponse.class)
+            .rel("/page/links/link[@rel='save-email']/@href")
+            .method(Request.POST)
+            .body().formParam("email", email).back()
+            .fetch();
+        Logger.info(this, "email changed");
     }
 
     @Override
