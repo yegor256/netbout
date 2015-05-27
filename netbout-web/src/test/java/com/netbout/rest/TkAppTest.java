@@ -96,9 +96,10 @@ public final class TkAppTest {
     /**
      * TkApp can redirect unauthenticated users to login page
      * and store return location in RsReturn cookie.
-     * @todo #609:30min Currently there is no way to send unauthorized
-     *  request from a test, as there is a PsFake(TkAppAuth.TESTING)
-     *  in TkAppAuth, hence all requests are authorized.
+     * @todo #609:30min We need to be able to send anonymous requests
+     *  from tests to verify correct TkApp behavior for anonymous users.
+     *  But now all requests from tests are authorized because of
+     *  PsFake(TkAppAuth.TESTING) in TkAppAuth.
      * @throws Exception If there is some problem inside
      */
     @Test
