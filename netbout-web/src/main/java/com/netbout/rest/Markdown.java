@@ -74,7 +74,7 @@ public final class Markdown {
      * @return The HTML
      * @link https://github.com/sirthias/pegdown/issues/136
      */
-    @RetryOnFailure(verbose = false)
+    @RetryOnFailure(verbose = true)
     public String html() {
         synchronized (Markdown.TIDY) {
             return Markdown.clean(
