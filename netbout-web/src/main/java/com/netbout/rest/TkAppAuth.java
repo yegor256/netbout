@@ -74,15 +74,25 @@ final class TkAppAuth extends TkWrap {
      * @param take Take
      */
     TkAppAuth(final Take take) {
-        super(TkAppAuth.make(take));
+        this(take, new PsFake(TkAppAuth.TESTING));
+    }
+
+    /**
+     * Ctor.
+     * @param take Take
+     * @param pass Last Pass on Chain
+     */
+    TkAppAuth(final Take take, final Pass pass) {
+        super(TkAppAuth.make(take, pass));
     }
 
     /**
      * Authenticated.
      * @param take Take
+     * @param pass Last Pass on Chain
      * @return Authenticated take
      */
-    private static Take make(final Take take) {
+    private static Take make(final Take take, final Pass pass) {
         return new TkAuth(
             take,
             new PsChain(
@@ -128,7 +138,7 @@ final class TkAppAuth extends TkWrap {
                         )
                     )
                 ),
-                new PsFake(TkAppAuth.TESTING)
+                pass
             )
         );
     }

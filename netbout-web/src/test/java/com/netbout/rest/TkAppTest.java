@@ -32,9 +32,10 @@ import java.net.HttpURLConnection;
 import java.util.regex.Pattern;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.takes.Take;
+import org.takes.facets.auth.Identity;
+import org.takes.facets.auth.PsFixed;
 import org.takes.facets.hamcrest.HmRsStatus;
 import org.takes.rq.RqFake;
 import org.takes.rq.RqMethod;
@@ -96,17 +97,15 @@ public final class TkAppTest {
     /**
      * TkApp can redirect unauthenticated users to login page
      * and store return location in RsReturn cookie.
-     * @todo #609:30min We need to be able to send anonymous requests
-     *  from tests to verify correct TkApp behavior for anonymous users.
-     *  But now all requests from tests are authorized because of
-     *  PsFake(TkAppAuth.TESTING) in TkAppAuth.
      * @throws Exception If there is some problem inside
      */
     @Test
-    @Ignore
     public void redirectsToLoginAndSetsCookie() throws Exception {
         final String head = new RsPrint(
-            new TkApp(new MkBase()).act(new RqFake(RqMethod.GET, "/whatever"))
+            new TkApp(
+                new MkBase(),
+                new PsFixed(Identity.ANONYMOUS)
+            ).act(new RqFake(RqMethod.GET, "/whatever"))
         ).printHead();
         MatcherAssert.assertThat(
             // @checkstyle MultipleStringLiteralsCheck (2 lines)

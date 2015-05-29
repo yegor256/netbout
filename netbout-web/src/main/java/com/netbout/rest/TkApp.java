@@ -39,7 +39,9 @@ import java.util.regex.Pattern;
 import org.takes.Request;
 import org.takes.Response;
 import org.takes.Take;
+import org.takes.facets.auth.Pass;
 import org.takes.facets.auth.PsByFlag;
+import org.takes.facets.auth.PsEmpty;
 import org.takes.facets.flash.TkFlash;
 import org.takes.facets.fork.FkAnonymous;
 import org.takes.facets.fork.FkAuthenticated;
@@ -90,16 +92,28 @@ public final class TkApp extends TkWrap {
      * @throws IOException If fails
      */
     public TkApp(final Base base) throws IOException {
-        super(TkApp.make(base));
+        this(base, new PsEmpty());
     }
 
     /**
      * Ctor.
      * @param base Base
+     * @param pass Last Pass to be executed
+     * @throws IOException If fails
+     */
+    public TkApp(final Base base, final Pass pass) throws IOException {
+        super(TkApp.make(base, pass));
+    }
+
+    /**
+     * Ctor.
+     * @param base Base
+     * @param pass Last Pass to be executed by the TkAppAuth
      * @return Take
      * @throws IOException If fails
      */
-    private static Take make(final Base base) throws IOException {
+    private static Take make(final Base base, final Pass pass)
+        throws IOException {
         if (!"UTF-8".equals(Charset.defaultCharset().name())) {
             throw new IllegalStateException(
                 String.format(
@@ -107,16 +121,23 @@ public final class TkApp extends TkWrap {
                 )
             );
         }
+        TkAppAuth appAuth;
+        if (pass instanceof PsEmpty) {
+            appAuth = new TkAppAuth(
+                TkApp.regex(base)
+            );
+        } else {
+            appAuth = new TkAppAuth(
+                TkApp.regex(base),
+                pass
+            );
+        }
         return new TkWithHeaders(
             new TkVersioned(
                 new TkMeasured(
                     new TkFlash(
                         new TkAppFallback(
-                            new TkForward(
-                                new TkAppAuth(
-                                    TkApp.regex(base)
-                                )
-                            )
+                            new TkForward(appAuth)
                         )
                     )
                 )
