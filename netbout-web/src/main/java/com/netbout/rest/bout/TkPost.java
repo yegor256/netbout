@@ -27,9 +27,9 @@
 package com.netbout.rest.bout;
 
 import com.netbout.rest.RsFailure;
-import com.netbout.spi.Attachments;
 import com.netbout.spi.Base;
 import com.netbout.spi.Bout;
+import com.netbout.spi.Messages;
 import java.io.IOException;
 import org.takes.Request;
 import org.takes.Response;
@@ -69,7 +69,7 @@ final class TkPost implements Take {
                     new RqForm.Base(req)
                 ).single("text")
             );
-        } catch (final Attachments.InvalidNameException ex) {
+        } catch (final Messages.BrokenPostException ex) {
             throw new RsFailure(ex);
         }
         throw new RsForward(
