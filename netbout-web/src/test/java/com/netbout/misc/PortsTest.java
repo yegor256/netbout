@@ -24,12 +24,49 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
+package com.netbout.misc;
+
+import org.hamcrest.MatcherAssert;
+import org.hamcrest.Matchers;
+import org.junit.Test;
 
 /**
- * Misc.
+ * Test case for {@link Ports}.
  *
  * @author Endrigo Antonini (teamed@endrigo.com.br)
  * @version $Id$
  * @since 2.14.17
  */
-package com.netbout.misc;
+public final class PortsTest {
+
+    /**
+     * Check if generates a random number and doesn't duplicate port with
+     * different Ports instance.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void checkDifferentNumbersWithDifferentPorts() throws Exception {
+        final int porta = new Ports().allocate();
+        final int portb = new Ports().allocate();
+        final int portc = new Ports().allocate();
+        MatcherAssert.assertThat(porta, Matchers.not(portb));
+        MatcherAssert.assertThat(porta, Matchers.not(portc));
+        MatcherAssert.assertThat(portb, Matchers.not(portc));
+    }
+
+    /**
+     * Check if generates a random number and doesn't duplicate port with
+     * same Ports instance.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void checkDifferentNumbersWithSamePorts() throws Exception {
+        final Ports ports = new Ports();
+        final int porta = ports.allocate();
+        final int portb = ports.allocate();
+        final int portc = ports.allocate();
+        MatcherAssert.assertThat(porta, Matchers.not(portb));
+        MatcherAssert.assertThat(porta, Matchers.not(portc));
+        MatcherAssert.assertThat(portb, Matchers.not(portc));
+    }
+}

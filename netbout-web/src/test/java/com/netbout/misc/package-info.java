@@ -26,7 +26,7 @@
  */
 
 /**
- * Misc.
+ * Misc test.
  *
  * @author Endrigo Antonini (teamed@endrigo.com.br)
  * @version $Id$
