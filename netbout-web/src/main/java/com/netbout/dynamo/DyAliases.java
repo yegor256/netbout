@@ -129,7 +129,7 @@ final class DyAliases implements Aliases {
                 answer = "";
             }
         } else {
-            answer = "only English letters and numbers are accepted";
+            answer = "only lower case English letters and numbers are accepted";
         }
         return answer;
     }
