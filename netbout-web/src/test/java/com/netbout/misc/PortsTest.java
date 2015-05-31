@@ -40,12 +40,12 @@ import org.junit.Test;
 public final class PortsTest {
 
     /**
-     * Check if generates a random number and doesn't duplicate port with
-     * different Ports instance.
+     * Ports can generate different port numbers. Checking if it doesn't
+     * duplicate any port number using different Ports instance.
      * @throws Exception If there is some problem inside
      */
     @Test
-    public void checkDifferentNumbersWithDifferentPorts() throws Exception {
+    public void allocatesDifferentNumbersWithDifferentPorts() throws Exception {
         final int porta = new Ports().allocate();
         final int portb = new Ports().allocate();
         final int portc = new Ports().allocate();
@@ -55,12 +55,12 @@ public final class PortsTest {
     }
 
     /**
-     * Check if generates a random number and doesn't duplicate port with
-     * same Ports instance.
+     * Ports can generate different port numbers. Checking if it doesn't
+     * duplicate any port number using same Ports instance.
      * @throws Exception If there is some problem inside
      */
     @Test
-    public void checkDifferentNumbersWithSamePorts() throws Exception {
+    public void allocatesDifferentNumbersWithSamePorts() throws Exception {
         final Ports ports = new Ports();
         final int porta = ports.allocate();
         final int portb = ports.allocate();
