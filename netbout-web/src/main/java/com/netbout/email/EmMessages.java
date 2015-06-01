@@ -152,7 +152,8 @@ final class EmMessages implements Messages {
                                 "http://www.netbout.com/b/%d</p>",
                                 this.bout.number()
                             ),
-                            "</p>"
+                            "</p>",
+                            new GmailViewAction(this.bout.number()).html()
                         )
                     )
                 )
