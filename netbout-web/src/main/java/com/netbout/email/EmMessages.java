@@ -151,20 +151,12 @@ final class EmMessages implements Messages {
                             String.format(
                                 "http://www.netbout.com/b/%d#%d",
                                 this.bout.number(),
-                                this.generateRandomId()
+                                System.nanoTime()
                             ),
                             "</p>"
                         )
                     )
                 )
         );
-    }
-
-    /**
-     * Generates a random integer.
-     * @return Random integer.
-     */
-    private int generateRandomId() {
-        return (int) (Math.random() * Integer.MAX_VALUE);
     }
 }
