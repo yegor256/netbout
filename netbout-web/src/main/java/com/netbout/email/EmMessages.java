@@ -149,8 +149,9 @@ final class EmMessages implements Messages {
                             new Markdown(text).html(),
                             "<p>--<br/>to reply click here: ",
                             String.format(
-                                "http://www.netbout.com/b/%d</p>",
-                                this.bout.number()
+                                "http://www.netbout.com/b/%d#%d",
+                                this.bout.number(),
+                                this.generateRandomId()
                             ),
                             "</p>"
                         )
@@ -159,4 +160,11 @@ final class EmMessages implements Messages {
         );
     }
 
+    /**
+     * Generates a random integer.
+     * @return Random integer.
+     */
+    private int generateRandomId() {
+        return (int) (Math.random() * Integer.MAX_VALUE);
+    }
 }
