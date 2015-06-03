@@ -153,7 +153,7 @@ final class EmMessages implements Messages {
                                 this.bout.number()
                             ),
                             "</p>",
-                            new GmailViewAction(this.bout.number()).html()
+                            new GmailViewAction(this.bout.number()).xml()
                         )
                     )
                 )

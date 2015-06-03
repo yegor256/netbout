@@ -26,6 +26,10 @@
  */
 package com.netbout.email;
 
+import org.xembly.Directives;
+import org.xembly.ImpossibleModificationException;
+import org.xembly.Xembler;
+
 /**
  * Integrates with Gmail's View Actions.
  * @author Matteo Barbieri (barbieri.matteo@gmail.com)
@@ -47,27 +51,32 @@ final class GmailViewAction {
     }
 
     /**
-     * Returns the HTML for Gmail ViewAction.
-     * @return The HTML
-     * @checkstyle LineLength (15 lines)
+     * Returns the XML section for Gmail ViewAction.
+     * @return The XML
+     * @checkstyle LineLength (20 lines)
+     * @checkstyle MultipleStringLiteralsCheck (25 lines)
      */
-    @SuppressWarnings("PMD.ConsecutiveLiteralAppends")
-    public String html() {
-        final StringBuilder html = new StringBuilder(540);
-        html.append("<div itemscope itemtype=\"http://schema.org/EmailMessage\">")
-            .append("  <meta itemprop=\"description\" content=\"View Bout\"/>")
-            .append("  <div itemprop=\"potentialAction\" itemscope itemtype=\"http://schema.org/ViewAction\">")
-            .append("    <link itemprop=\"target\" href=\"http://www.netbout.com/b/%d\"/>")
-            .append("    <meta itemprop=\"name\" content=\"View Bout\"/>")
-            .append("  </div>")
-            .append(" <div itemprop=\"publisher\" itemscope itemtype=\"http://schema.org/Organization\">")
-            .append("  <meta itemprop=\"name\" content=\"Netbout\"/>")
-            .append("  <link itemprop=\"url\" href=\"http://www.netbout.com/\"/>")
-            .append(" </div>")
-            .append("</div>");
-        return String.format(
-            html.toString(),
-            this.number
-        );
+    @SuppressWarnings("PMD.AvoidDuplicateLiterals")
+    public String xml() {
+        try {
+            return new Xembler(
+                new Directives()
+                    .add("div")
+                    .attr("itemscope", "")
+                    .attr("itemtype", "http://schema.org/EmailMessage")
+                    .add("meta").attr("itemprop", "description").attr("content", "View Bout").up()
+                    .add("div").attr("itemprop", "potentialAction").attr("itemscope", "")
+                    .attr("itemtype", "http://schema.org/ViewAction")
+                    .add("link").attr("itemprop", "target")
+                    .attr("href", String.format("http://www.netbout.com/b/%d", this.number)).up()
+                    .add("meta").attr("itemprop", "name").attr("content", "View Bout").up().up()
+                    .add("div").attr("itemprop", "publisher").attr("itemscope", "")
+                    .attr("itemtype", "http://schema.org/Organization")
+                    .add("meta").attr("itemprop", "name").attr("content", "Netbout").up()
+                    .add("link").attr("itemprop", "url").attr("href", "http://www.netbout.com")
+            ).xml();
+        } catch (final ImpossibleModificationException ex) {
+            throw new IllegalStateException(ex);
+        }
     }
 }

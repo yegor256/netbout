@@ -69,7 +69,7 @@ public final class EmMessagesITCase {
             baos.toString(), Matchers.containsString(
                 String.format(
                     // @checkstyle LineLength (1 line)
-                    "<link itemprop=\"target\" href=\"http://www.netbout.com/b/%d\"/>",
+                    "<link href=\"http://www.netbout.com/b/%d\" itemprop=\"target\"/>",
                     bout.number()
                 )
             )
