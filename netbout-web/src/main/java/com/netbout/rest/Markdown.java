@@ -33,6 +33,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.logging.Level;
+import java.util.regex.Pattern;
 import javax.validation.constraints.NotNull;
 import org.apache.commons.codec.CharEncoding;
 import org.apache.commons.io.IOUtils;
@@ -57,6 +58,24 @@ public final class Markdown {
     private static final Tidy TIDY = Markdown.makeTidy();
 
     /**
+     * Plain link detection pattern.
+     * The regex consists of the following parts:
+     * <ul>
+     * <li>Negative lookbehind to determine we skip properly formatted
+     * links (e.g. [foo](http://bar))</li>
+     * <li>Scheme prefix followed by arbitrary number of URL-valid
+     * characters</li>
+     * <li>Last character &ndash; URL-valid characters with exclusion of common
+     * punctuation like dot, comma, question mark, exclamation mark, semicolon,
+     * colon, and parentheses</li>
+     * </ul>
+     */
+    private static final Pattern LINK = Pattern.compile(
+        // @checkstyle LineLength (1 line)
+        "(?<!(\\]\\())(https?://[a-zA-Z0-9-._~:/\\?#\\[\\]\\(\\)@!$&'*+,;=%]+[a-zA-Z0-9-_~/#\\[\\]@$&'*+=%])"
+    );
+
+    /**
      * The source text.
      */
     private final transient String text;
@@ -78,7 +97,9 @@ public final class Markdown {
     public String html() {
         synchronized (Markdown.TIDY) {
             return Markdown.clean(
-                new PegDownProcessor().markdownToHtml(this.text)
+                new PegDownProcessor().markdownToHtml(
+                    Markdown.formatLinks(this.text)
+                )
             );
         }
     }
@@ -133,4 +154,12 @@ public final class Markdown {
         return tidy;
     }
 
+    /**
+     * Replace plain links with Markdown syntax.
+     * @param txt Text to find links in
+     * @return Text with Markdown-formatted links
+     */
+    private static String formatLinks(final String txt) {
+        return LINK.matcher(txt).replaceAll("[$2]($2)");
+    }
 }

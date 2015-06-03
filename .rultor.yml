@@ -13,13 +13,16 @@ install: |
   export LC_ALL=en_US.UTF-8
   export LANG=en_US.UTF-8
   export LANGUAGE=en_US.UTF-8
-  sudo gem install pdd
+  sudo gem install --no-ri --no-rdoc pdd
+  sudo gem install --no-ri --no-rdoc est
 deploy:
   script: |
     mvn clean deploy -Pqulice --errors --settings ../settings.xml
     mvn clean
     pdd --source=$(pwd) --verbose --file=netbout.xml
     s3cmd --no-progress put netbout.xml --config=../s3cfg s3://pdd.teamed.io/netbout.xml
+    est --dir=./est --verbose --file=netbout.xml --format=xml
+    s3cmd --no-progress put netbout.xml --config=../s3cfg s3://est.teamed.io/netbout.xml
   commanders:
   - dmzaytsev
   - yegor256
@@ -28,6 +31,7 @@ merge:
     mvn clean install -Pqulice --errors --settings ../settings.xml
     mvn clean
     pdd --source=$(pwd) --verbose --file=/dev/null
+    est --dir=est --file=/dev/null
   commanders:
   - caarlos0
   - carlosmiranda
@@ -65,4 +69,5 @@ release:
   - yegor256
 architect:
 - dmzaytsev
+- yegor256
 - karato
