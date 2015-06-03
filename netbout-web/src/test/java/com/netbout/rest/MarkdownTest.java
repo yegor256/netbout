@@ -111,6 +111,7 @@ public final class MarkdownTest {
             MatcherAssert.assertThat(
                 new Markdown(pair[0]).html().trim(),
                 Matchers.equalTo(
+                    // @checkstyle MultipleStringLiteralsCheck (1 line)
                     pair[1].replace("\n", System.getProperty("line.separator"))
                 )
             );
@@ -155,4 +156,44 @@ public final class MarkdownTest {
         );
     }
 
+    /**
+     * Markdown can detect plain text links and produce HTML
+     * with links wrapped correctly.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
+    public void detectsLinks() throws Exception {
+        final String[][] texts = {
+            new String[] {
+                "http://foo.com",
+                "<p>\n  <a href=\"http://foo.com\">http://foo.com</a>\n</p>",
+            },
+            new String[] {
+                "(http://foo?com)",
+                "<p>(\n<a href=\"http://foo?com\">http://foo?com</a>)</p>",
+            },
+            new String[] {
+                "(http://foo#com)",
+                "<p>(\n<a href=\"http://foo#com\">http://foo#com</a>)</p>",
+            },
+            new String[] {
+                "(https://a?b=c)",
+                "<p>(\n<a href=\"https://a?b=c\">https://a?b=c</a>)</p>",
+            },
+            new String[] {
+                "[foo](http://foo)",
+                "<p>\n  <a href=\"http://foo\">foo</a>\n</p>",
+            },
+        };
+        for (final String[] pair : texts) {
+            MatcherAssert.assertThat(
+                new Markdown(pair[0]).html().trim(),
+                Matchers.equalTo(
+                    // @checkstyle MultipleStringLiteralsCheck (1 line)
+                    pair[1].replace("\n", System.getProperty("line.separator"))
+                )
+            );
+        }
+    }
 }
