@@ -185,6 +185,14 @@ public final class MarkdownTest {
                 "[foo](http://foo)",
                 "<p>\n  <a href=\"http://foo\">foo</a>\n</p>",
             },
+            new String[] {
+                "[http://bar.com](http://bar.com)",
+                "<p>\n  <a href=\"http://bar.com\">http://bar.com</a>\n</p>",
+            },
+            new String[] {
+                "[http://googl.com]",
+                "<p>[\n<a href=\"http://googl.com\">http://googl.com</a>]</p>",
+            },
         };
         for (final String[] pair : texts) {
             MatcherAssert.assertThat(
