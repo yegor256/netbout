@@ -41,7 +41,6 @@ import org.takes.Response;
 import org.takes.Take;
 import org.takes.facets.auth.Pass;
 import org.takes.facets.auth.PsByFlag;
-import org.takes.facets.auth.PsEmpty;
 import org.takes.facets.flash.TkFlash;
 import org.takes.facets.fork.FkAnonymous;
 import org.takes.facets.fork.FkAuthenticated;
@@ -51,6 +50,7 @@ import org.takes.facets.fork.FkParams;
 import org.takes.facets.fork.FkRegex;
 import org.takes.facets.fork.TkFork;
 import org.takes.facets.forward.TkForward;
+import org.takes.misc.Opt;
 import org.takes.rq.RqHref;
 import org.takes.rs.RsRedirect;
 import org.takes.tk.TkClasspath;
@@ -92,7 +92,7 @@ public final class TkApp extends TkWrap {
      * @throws IOException If fails
      */
     public TkApp(final Base base) throws IOException {
-        this(base, new PsEmpty());
+        this(base, new Opt.Empty<Pass>());
     }
 
     /**
@@ -101,7 +101,7 @@ public final class TkApp extends TkWrap {
      * @param pass Last Pass to be executed
      * @throws IOException If fails
      */
-    public TkApp(final Base base, final Pass pass) throws IOException {
+    public TkApp(final Base base, final Opt<Pass> pass) throws IOException {
         super(TkApp.make(base, pass));
     }
 
@@ -112,7 +112,7 @@ public final class TkApp extends TkWrap {
      * @return Take
      * @throws IOException If fails
      */
-    private static Take make(final Base base, final Pass pass)
+    private static Take make(final Base base, final Opt<Pass> pass)
         throws IOException {
         if (!"UTF-8".equals(Charset.defaultCharset().name())) {
             throw new IllegalStateException(
@@ -121,15 +121,15 @@ public final class TkApp extends TkWrap {
                 )
             );
         }
-        TkAppAuth appAuth;
-        if (pass instanceof PsEmpty) {
-            appAuth = new TkAppAuth(
-                TkApp.regex(base)
+        TkAppAuth auth;
+        if (pass.has()) {
+            auth = new TkAppAuth(
+                TkApp.regex(base),
+                pass.get()
             );
         } else {
-            appAuth = new TkAppAuth(
-                TkApp.regex(base),
-                pass
+            auth = new TkAppAuth(
+                TkApp.regex(base)
             );
         }
         return new TkWithHeaders(
@@ -137,7 +137,7 @@ public final class TkApp extends TkWrap {
                 new TkMeasured(
                     new TkFlash(
                         new TkAppFallback(
-                            new TkForward(appAuth)
+                            new TkForward(auth)
                         )
                     )
                 )

@@ -35,8 +35,10 @@ import org.hamcrest.Matchers;
 import org.junit.Test;
 import org.takes.Take;
 import org.takes.facets.auth.Identity;
+import org.takes.facets.auth.Pass;
 import org.takes.facets.auth.PsFixed;
 import org.takes.facets.hamcrest.HmRsStatus;
+import org.takes.misc.Opt;
 import org.takes.rq.RqFake;
 import org.takes.rq.RqMethod;
 import org.takes.rq.RqWithHeader;
@@ -104,7 +106,9 @@ public final class TkAppTest {
         final String head = new RsPrint(
             new TkApp(
                 new MkBase(),
-                new PsFixed(Identity.ANONYMOUS)
+                new Opt.Single<Pass>(
+                    new PsFixed(Identity.ANONYMOUS)
+                )
             ).act(new RqFake(RqMethod.GET, "/whatever"))
         ).printHead();
         MatcherAssert.assertThat(
