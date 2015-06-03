@@ -149,11 +149,14 @@ final class EmMessages implements Messages {
                             new Markdown(text).html(),
                             "<p>--<br/>to reply click here: ",
                             String.format(
-                                "http://www.netbout.com/b/%d#%d",
-                                this.bout.number(),
-                                System.nanoTime()
+                                "http://www.netbout.com/b/%d",
+                                this.bout.number()
                             ),
-                            "</p>"
+                            "</p><p style=\"color:#C8C8C8;font-size:2px;\">",
+                            String.format(
+                                "%d</p>",
+                                System.nanoTime()
+                            )
                         )
                     )
                 )
