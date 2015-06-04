@@ -153,6 +153,7 @@ public final class Markdown {
      */
     private static String formatLinks(final String txt) {
         final String marker = "](";
+        final String html = "=\"";
         final StringBuilder result = new StringBuilder();
         final Matcher matcher = LINK.matcher(txt);
         int start = 0;
@@ -167,7 +168,8 @@ public final class Markdown {
                 Math.min(txt.length(), matcher.end() + 2)
             );
             final String uri = matcher.group();
-            if (marker.equals(suffix) || marker.equals(prefix)) {
+            if (marker.equals(suffix) || marker.equals(prefix)
+                || html.equals(prefix)) {
                 result.append(uri);
             } else {
                 result.append(String.format("[%1$s](%1$s)", uri));
