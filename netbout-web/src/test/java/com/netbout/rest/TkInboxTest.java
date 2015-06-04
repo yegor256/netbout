@@ -54,7 +54,7 @@ public final class TkInboxTest {
      * @throws Exception If there is some problem inside
      */
     @Test
-    public void kickAnUser() throws Exception {
+    public void kicksAnUser() throws Exception {
         final String alias = "test";
         final String urn = "urn:test:1";
         final MkBase base = new MkBase();
