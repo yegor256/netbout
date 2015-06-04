@@ -50,6 +50,8 @@ import org.takes.facets.fork.FkParams;
 import org.takes.facets.fork.FkRegex;
 import org.takes.facets.fork.TkFork;
 import org.takes.facets.forward.TkForward;
+import org.takes.facets.ret.RsReturn;
+import org.takes.facets.ret.TkReturn;
 import org.takes.misc.Opt;
 import org.takes.rq.RqHref;
 import org.takes.rs.RsRedirect;
