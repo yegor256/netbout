@@ -69,6 +69,8 @@ final class GmailViewAction {
                     .attr("itemtype", "http://schema.org/ViewAction")
                     .add("link").attr("itemprop", "target")
                     .attr("href", String.format("http://www.netbout.com/b/%d", this.number)).up()
+                    .add("link").attr("itemprop", "url")
+                    .attr("href", String.format("http://www.netbout.com/b/%d", this.number)).up()
                     .add("meta").attr("itemprop", "name").attr("content", "View Bout").up().up()
                     .add("div").attr("itemprop", "publisher").attr("itemscope", "")
                     .attr("itemtype", "http://schema.org/Organization")
