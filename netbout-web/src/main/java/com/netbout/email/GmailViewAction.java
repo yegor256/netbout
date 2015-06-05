@@ -53,8 +53,7 @@ final class GmailViewAction {
     /**
      * Returns the XML section for Gmail ViewAction.
      * @return The XML
-     * @checkstyle LineLength (20 lines)
-     * @checkstyle MultipleStringLiteralsCheck (25 lines)
+     * @checkstyle MultipleStringLiteralsCheck (45 lines)
      */
     @SuppressWarnings("PMD.AvoidDuplicateLiterals")
     public String xml() {
@@ -64,18 +63,40 @@ final class GmailViewAction {
                     .add("div")
                     .attr("itemscope", "")
                     .attr("itemtype", "http://schema.org/EmailMessage")
-                    .add("meta").attr("itemprop", "description").attr("content", "View Bout").up()
-                    .add("div").attr("itemprop", "potentialAction").attr("itemscope", "")
+                    .add("meta")
+                    .attr("itemprop", "description")
+                    .attr("content", "View Bout").up()
+                    .add("div")
+                    .attr("itemprop", "potentialAction")
+                    .attr("itemscope", "")
                     .attr("itemtype", "http://schema.org/ViewAction")
                     .add("link").attr("itemprop", "target")
-                    .attr("href", String.format("http://www.netbout.com/b/%d", this.number)).up()
+                    .attr(
+                        "href",
+                        String.format(
+                            "http://www.netbout.com/b/%d", this.number
+                        )
+                    ).up()
                     .add("link").attr("itemprop", "url")
-                    .attr("href", String.format("http://www.netbout.com/b/%d", this.number)).up()
-                    .add("meta").attr("itemprop", "name").attr("content", "View Bout").up().up()
-                    .add("div").attr("itemprop", "publisher").attr("itemscope", "")
+                    .attr(
+                        "href",
+                        String.format(
+                            "http://www.netbout.com/b/%d", this.number
+                        )
+                    ).up()
+                    .add("meta")
+                    .attr("itemprop", "name")
+                    .attr("content", "View Bout").up().up()
+                    .add("div")
+                    .attr("itemprop", "publisher")
+                    .attr("itemscope", "")
                     .attr("itemtype", "http://schema.org/Organization")
-                    .add("meta").attr("itemprop", "name").attr("content", "Netbout").up()
-                    .add("link").attr("itemprop", "url").attr("href", "http://www.netbout.com")
+                    .add("meta")
+                    .attr("itemprop", "name")
+                    .attr("content", "Netbout").up()
+                    .add("link")
+                    .attr("itemprop", "url")
+                    .attr("href", "http://www.netbout.com")
             ).xml();
         } catch (final ImpossibleModificationException ex) {
             throw new IllegalStateException(ex);
