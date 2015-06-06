@@ -28,9 +28,6 @@ package com.netbout.rest;
 
 import com.jcabi.manifests.Manifests;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
 import org.takes.Request;
 import org.takes.Response;
 import org.takes.Take;
@@ -150,14 +147,17 @@ final class TkAppAuth extends TkWrap {
     private static final class FakePass implements Pass {
         @Override
         public Opt<Identity> enter(final Request req) throws IOException {
+            final Opt<Identity> identity;
             if (TkAppAuth.TESTING) {
-                return new Opt.Single<Identity>(
+                identity = new Opt.Single<Identity>(
                     new Identity.Simple(
                         new RqHref.Smart(new RqHref.Base(req)).single("urn")
                     )
                 );
+            } else {
+                identity = new Opt.Empty<>();
             }
-            return new Opt.Empty<>();
+            return identity;
         }
 
         @Override
