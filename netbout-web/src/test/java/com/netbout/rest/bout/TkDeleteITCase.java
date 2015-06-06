@@ -53,7 +53,7 @@ public final class TkDeleteITCase {
     /**
      * TkDelete can delete an attachment.
      * @throws Exception If there is some problem inside
-     * @todo This test is failing after upgrading to Takes 0.20. See #669
+     * @todo #662 This test is failing after upgrading to Takes 0.20. See #669
      */
     @Test
     @Ignore

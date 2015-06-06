@@ -58,7 +58,7 @@ public final class TkBoutITCase {
     /**
      * TkBout can upload and download attachments.
      * @throws Exception If there is some problem inside
-     * @todo This test is failing after upgrading to Takes 0.20. See #669
+     * @todo #662 This test is failing after upgrading to Takes 0.20. See #669
      */
     @Test
     @Ignore
