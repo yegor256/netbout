@@ -96,6 +96,18 @@ final class CdBout implements Bout {
     }
 
     @Override
+    @Cacheable(lifetime = Tv.FIVE, unit = TimeUnit.HOURS)
+    public boolean subscription() throws IOException {
+        return this.origin.subscription();
+    }
+
+    @Override
+    @Cacheable.FlushBefore
+    public void subscribe(final boolean subs) throws IOException {
+        this.origin.subscribe(subs);
+    }
+
+    @Override
     public Messages messages() throws IOException {
         return new CdMessages(this.origin.messages());
     }

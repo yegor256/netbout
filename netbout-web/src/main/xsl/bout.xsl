@@ -73,6 +73,16 @@
                     <xsl:with-param name="length" select="50"/>
                 </xsl:call-template>
             </span>
+            <a href="{/page/links/link[@rel='subscribe']/@href}">
+                <xsl:choose>
+                    <xsl:when test="subscription='true'">
+                        <i class="fa fa-bell-o"></i>
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <i class="fa fa-bell-slash-o"></i>
+                    </xsl:otherwise>
+                </xsl:choose>
+            </a>
         </h1>
         <div class="top2">
             <xsl:apply-templates select="friends"/>

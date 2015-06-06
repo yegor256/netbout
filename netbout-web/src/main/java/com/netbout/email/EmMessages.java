@@ -93,6 +93,13 @@ final class EmMessages implements Messages {
         this.self = slf;
     }
 
+    /**
+     * Post a new message.
+     * @param text The text of the new message
+     * @throws IOException If fails
+     * @todo #547:30min/DEV Send email if friend subscribed to bout.
+     *  Friend should be filtered before send email by subscription
+     */
     @Override
     public void post(final String text) throws IOException {
         this.origin.post(text);

@@ -129,6 +129,31 @@ final class MkBout implements Bout {
     }
 
     @Override
+    public boolean subscription() throws IOException {
+        try {
+            return new JdbcSession(this.sql.source())
+                .sql("SELECT subscription FROM bout WHERE number = ?")
+                .set(this.bout)
+                .select(new SingleOutcome<Boolean>(Boolean.class));
+        } catch (final SQLException ex) {
+            throw new IOException(ex);
+        }
+    }
+
+    @Override
+    public void subscribe(final boolean subs) throws IOException {
+        try {
+            new JdbcSession(this.sql.source())
+                .sql("UPDATE bout SET subscription = ? WHERE number = ?")
+                .set(subs)
+                .set(this.bout)
+                .update(Outcome.VOID);
+        } catch (final SQLException ex) {
+            throw new IOException(ex);
+        }
+    }
+
+    @Override
     public Messages messages() {
         return new MkMessages(this.sql, this.bout, this.self);
     }
