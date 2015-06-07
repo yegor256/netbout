@@ -155,7 +155,7 @@ public final class Markdown {
         final String marker = "](";
         final String html = "=\"";
         final StringBuilder result = new StringBuilder();
-        final Matcher matcher = LINK.matcher(txt);
+        final Matcher matcher = Markdown.LINK.matcher(txt);
         int start = 0;
         while (matcher.find(start)) {
             result.append(txt.substring(start, matcher.start()));
