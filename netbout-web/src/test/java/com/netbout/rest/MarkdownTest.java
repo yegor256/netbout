@@ -166,6 +166,10 @@ public final class MarkdownTest {
     public void detectsLinks() throws Exception {
         final String[][] texts = {
             new String[] {
+                "<a href=\"http://_google_.com\">g</a>",
+                "<p>\n  <a href=\"http://_google_.com\">g</a>\n</p>",
+            },
+            new String[] {
                 "http://foo.com",
                 "<p>\n  <a href=\"http://foo.com\">http://foo.com</a>\n</p>",
             },
@@ -184,6 +188,18 @@ public final class MarkdownTest {
             new String[] {
                 "[foo](http://foo)",
                 "<p>\n  <a href=\"http://foo\">foo</a>\n</p>",
+            },
+            new String[] {
+                "[http://bar.com](http://bar.com)",
+                "<p>\n  <a href=\"http://bar.com\">http://bar.com</a>\n</p>",
+            },
+            new String[] {
+                "[http://googl.com]",
+                "<p>[\n<a href=\"http://googl.com\">http://googl.com</a>]</p>",
+            },
+            new String[] {
+                "[google](http://www.google.com)",
+                "<p>\n  <a href=\"http://www.google.com\">google</a>\n</p>",
             },
         };
         for (final String[] pair : texts) {
