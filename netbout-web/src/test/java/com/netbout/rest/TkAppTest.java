@@ -34,7 +34,6 @@ import java.nio.charset.Charset;
 import java.util.regex.Pattern;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.takes.Take;
 import org.takes.facets.auth.Identity;
@@ -144,7 +143,6 @@ public final class TkAppTest {
      * @throws Exception If there is some problem inside
      */
     @Test
-    @Ignore
     public void redirectsToReturnCookie() throws Exception {
         final String loc = "http://example.com/whatever";
         final String head = new RsPrint(
@@ -176,7 +174,7 @@ public final class TkAppTest {
             // @checkstyle MultipleStringLiteralsCheck (1 line)
             "Incorrect Set-Cookie header",
             Pattern.compile(
-                "^Set-Cookie: RsReturn=$",
+                "^Set-Cookie: RsReturn=,",
                 Pattern.MULTILINE
             ).matcher(head).find()
         );
