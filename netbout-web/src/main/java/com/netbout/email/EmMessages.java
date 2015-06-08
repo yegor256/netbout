@@ -156,7 +156,8 @@ final class EmMessages implements Messages {
                             String.format(
                                 "%d</p>",
                                 System.nanoTime()
-                            )
+                            ),
+                            new GmailViewAction(this.bout.number()).xml()
                         )
                     )
                 )
