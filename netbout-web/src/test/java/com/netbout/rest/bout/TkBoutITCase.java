@@ -40,7 +40,6 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.CharEncoding;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
-import org.junit.Ignore;
 import org.junit.Test;
 
 /**
@@ -58,10 +57,8 @@ public final class TkBoutITCase {
     /**
      * TkBout can upload and download attachments.
      * @throws Exception If there is some problem inside
-     * @todo #662 This test is failing after upgrading to Takes 0.20. See #669
      */
     @Test
-    @Ignore
     public void uploadsAndDownloadsAttachments() throws Exception {
         final User user = new RtUser(URI.create(TkBoutITCase.HOME), "");
         final Alias alias = user.aliases().iterate().iterator().next();

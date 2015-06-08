@@ -14,9 +14,8 @@ casper.test.begin(
                     }
                 ).then(
                     function() {
-                        //@todo #662 This test is failing after upgrading to Takes 0.20. See #669
-                        //test.assertHttpStatus(200, 'home page');
-                        //test.assertExists('li.bout');
+                        test.assertHttpStatus(200, 'home page');
+                        test.assertExists('li.bout');
                     }
                 )
             }
