@@ -47,14 +47,14 @@ import org.junit.Test;
 public final class EmCatchTest {
 
     /**
-     * EmCatch should read inbox periodically and call Action.run.
+     * EmCatch can periodically read inbox and call Action.run.
      * @throws Exception If there is some problem inside
      */
     @Test
-    public void readInboxPeriodically() throws Exception {
-        final GreenMail greenMail = new GreenMail(ServerSetupTest.POP3);
-        greenMail.start();
-        final ServerSetup serverSetup = greenMail.getPop3().getServerSetup();
+    public void readsInboxPeriodically() throws Exception {
+        final GreenMail mail = new GreenMail(ServerSetupTest.POP3);
+        mail.start();
+        final ServerSetup setup = mail.getPop3().getServerSetup();
         final String mailUser = "to";
         // @checkstyle MagicNumberCheck (1 line)
         final String from = "from@localhost.com";
@@ -63,7 +63,7 @@ public final class EmCatchTest {
         final String password = "soooosecret";
         final String subject = GreenMailUtil.random();
         final String body = GreenMailUtil.random();
-        final GreenMailUser user = greenMail.setUser(mailUser, password);
+        final GreenMailUser user = mail.setUser(mailUser, password);
         new EmCatch(
             // @checkstyle AnonInnerLengthCheck (22 lines)
             new EmCatch.Action() {
@@ -90,8 +90,8 @@ public final class EmCatchTest {
             },
             mailUser,
             password,
-            serverSetup.getBindAddress(),
-            serverSetup.getPort(),
+            setup.getBindAddress(),
+            setup.getPort(),
             // @checkstyle MagicNumberCheck (1 line)
             500L
         );
@@ -100,16 +100,16 @@ public final class EmCatchTest {
             from,
             subject,
             body,
-            serverSetup
+            setup
         );
         user.deliver(message);
         MatcherAssert.assertThat(
-            greenMail.getReceivedMessages().length,
+            mail.getReceivedMessages().length,
             Matchers.equalTo(1)
         );
         // @checkstyle MagicNumberCheck (1 line)
         Thread.sleep(1000);
-        greenMail.stop();
+        mail.stop();
     }
 
 }

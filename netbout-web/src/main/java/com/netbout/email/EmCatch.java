@@ -28,6 +28,7 @@ package com.netbout.email;
 
 import com.jcabi.aspects.Immutable;
 import com.jcabi.aspects.Loggable;
+import com.jcabi.log.Logger;
 import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 import javax.mail.Flags;
@@ -43,7 +44,8 @@ import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
 /**
- * Email Catch.
+ * Email monitors an email account periodically
+ * through a daemon thread.
  * @author Erim Erturk (erimerturk@gmail.com)
  * @version $Id$
  * @since 2.15
@@ -53,6 +55,10 @@ import lombok.ToString;
 @ToString(of = { "action", "user", "password" })
 @EqualsAndHashCode(of = { "action", "user", "password" })
 final class EmCatch {
+    /**
+     * Max sleep time of thread.
+     */
+    private static final long MAX_SLEEP_TIME = 24 * 60 * 60 * 1000;
     /**
      * Action.
      */
@@ -80,12 +86,12 @@ final class EmCatch {
      * @param pass Email password
      * @param hst Email server host
      * @param prt Email server port
-     * @param period Email server check period
+     * @param prd Email server check period in milliseconds
      * @checkstyle ParameterNumberCheck (3 lines)
      */
     @SuppressWarnings("PMD.DoNotUseThreads")
     EmCatch(final Action act, final String usr, final String pass,
-            final String hst, final int prt, final long period) {
+            final String hst, final int prt, final long prd) {
         this.action = act;
         this.user = usr;
         this.password = pass;
@@ -95,13 +101,18 @@ final class EmCatch {
             new Runnable() {
                 @Override
                 public void run() {
+                    long period = prd;
                     while (true) {
-                        EmCatch.this.check();
                         try {
+                            EmCatch.this.check();
                             TimeUnit.SECONDS.sleep(period);
-                        } catch (final InterruptedException ex) {
-                            Thread.currentThread().interrupt();
-                            throw new IllegalStateException(ex);
+                            period = prd;
+                        // @checkstyle LineLength (1 lines)
+                        } catch (final InterruptedException | MessagingException ex) {
+                            Logger.error(this, "%[exception]s", ex);
+                            if (period < MAX_SLEEP_TIME) {
+                                period = period * 2;
+                            }
                         }
                     }
                 }
@@ -112,12 +123,15 @@ final class EmCatch {
     }
     /**
      * Read unread mail and persist new bout message.
+     * @throws MessagingException If fails
      */
-    private void check() {
+    private void check() throws MessagingException {
+        Store store = null;
+        Folder inbox = null;
         try {
             final Properties props = new Properties();
             final Session session = Session.getInstance(props);
-            final URLName urlName = new URLName(
+            final URLName url = new URLName(
                 "pop3",
                 this.host,
                 this.port,
@@ -125,24 +139,26 @@ final class EmCatch {
                 this.user,
                 this.password
             );
-            final Store store = session.getStore(urlName);
+            store = session.getStore(url);
             store.connect();
-            final Folder inbox = store.getFolder("inbox");
+            inbox = store.getFolder("inbox");
             inbox.open(Folder.READ_WRITE);
-            final FlagTerm unseen = new FlagTerm(
-                new Flags(Flags.Flag.SEEN),
-                false
-            );
-            final Message[] messages = inbox.search(unseen);
-            for (final Message each : messages) {
-                this.action.run(each);
+            // @checkstyle LineLength (1 lines)
+            final FlagTerm unseen = new FlagTerm(new Flags(Flags.Flag.SEEN), false);
+            for (final Message msg : inbox.search(unseen)) {
+                this.action.run(msg);
             }
             inbox.close(true);
             store.close();
         } catch (final NoSuchProviderException ex) {
             throw new IllegalStateException(ex);
-        } catch (final MessagingException ex) {
-            throw new IllegalStateException(ex);
+        } finally {
+            if (inbox != null) {
+                inbox.close(true);
+            }
+            if (store != null) {
+                store.close();
+            }
         }
     }
 
