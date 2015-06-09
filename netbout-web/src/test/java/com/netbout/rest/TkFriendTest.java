@@ -59,10 +59,10 @@ public final class TkFriendTest {
         MatcherAssert.assertThat(
             new RsPrint(
                 new TkFriend(base).act(
-                        new RqRegex.Fake(
-                                new RqWithAuth(urn),
-                                "(.*)", alias
-                        )
+                    new RqRegex.Fake(
+                        new RqWithAuth(urn),
+                        "(.*)", alias
+                    )
                 )
             ),
             Matchers.notNullValue()
