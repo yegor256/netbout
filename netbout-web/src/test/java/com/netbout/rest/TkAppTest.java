@@ -174,7 +174,7 @@ public final class TkAppTest {
             // @checkstyle MultipleStringLiteralsCheck (1 line)
             "Incorrect Set-Cookie header",
             Pattern.compile(
-                "^Set-Cookie: RsReturn=$",
+                "^Set-Cookie: RsReturn=,",
                 Pattern.MULTILINE
             ).matcher(head).find()
         );
