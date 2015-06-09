@@ -26,12 +26,11 @@
  */
 package com.netbout.rest;
 
+import com.netbout.mock.MkBase;
 import java.net.HttpURLConnection;
 import java.net.URLEncoder;
 import java.nio.charset.Charset;
 import java.util.regex.Pattern;
-
-import com.netbout.mock.MkBase;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;

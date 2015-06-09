@@ -31,6 +31,8 @@ import com.netbout.spi.Alias;
 import com.netbout.spi.Aliases;
 import com.netbout.spi.Base;
 import com.netbout.spi.User;
+import java.io.IOException;
+import java.net.HttpURLConnection;
 import lombok.EqualsAndHashCode;
 import org.takes.Request;
 import org.takes.facets.auth.Identity;
@@ -38,9 +40,6 @@ import org.takes.facets.auth.RqAuth;
 import org.takes.facets.forward.RsFailure;
 import org.takes.facets.forward.RsForward;
 import org.takes.rq.RqWrap;
-
-import java.io.IOException;
-import java.net.HttpURLConnection;
 
 /**
  * User and alias retriever from request.

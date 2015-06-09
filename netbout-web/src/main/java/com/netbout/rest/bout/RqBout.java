@@ -32,15 +32,14 @@ import com.netbout.spi.Base;
 import com.netbout.spi.Bout;
 import com.netbout.spi.Friends;
 import com.netbout.spi.Inbox;
+import java.io.IOException;
+import java.net.HttpURLConnection;
 import lombok.EqualsAndHashCode;
 import org.takes.HttpException;
 import org.takes.Request;
 import org.takes.facets.forward.RsFailure;
 import org.takes.rq.RqHeaders;
 import org.takes.rq.RqWrap;
-
-import java.io.IOException;
-import java.net.HttpURLConnection;
 
 /**
  * Retrieves bout from request.

@@ -30,6 +30,8 @@ import com.netbout.rest.RqAlias;
 import com.netbout.spi.Base;
 import com.netbout.spi.Bout;
 import com.netbout.spi.Friends;
+import java.io.IOException;
+import java.util.logging.Level;
 import org.takes.Request;
 import org.takes.Response;
 import org.takes.Take;
@@ -37,9 +39,6 @@ import org.takes.facets.flash.RsFlash;
 import org.takes.facets.forward.RsFailure;
 import org.takes.facets.forward.RsForward;
 import org.takes.rq.RqForm;
-
-import java.io.IOException;
-import java.util.logging.Level;
 
 /**
  * Invite a friend to the bout.

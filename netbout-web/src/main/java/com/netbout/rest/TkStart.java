@@ -32,6 +32,8 @@ import com.netbout.spi.Friend;
 import com.netbout.spi.Friends;
 import com.netbout.spi.Inbox;
 import com.netbout.spi.Messages;
+import java.io.IOException;
+import java.util.Iterator;
 import org.takes.Request;
 import org.takes.Response;
 import org.takes.Take;
@@ -40,9 +42,6 @@ import org.takes.facets.forward.RsFailure;
 import org.takes.facets.forward.RsForward;
 import org.takes.misc.Href;
 import org.takes.rq.RqHref;
-
-import java.io.IOException;
-import java.util.Iterator;
 
 /**
  * Start.

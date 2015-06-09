@@ -37,14 +37,7 @@ import com.jcabi.http.wire.RetryWire;
 import com.netbout.spi.Base;
 import com.netbout.spi.Friend;
 import com.netbout.spi.User;
-import org.takes.Response;
-import org.takes.facets.fork.RqRegex;
-import org.takes.facets.fork.TkRegex;
-import org.takes.facets.forward.RsFailure;
-import org.takes.rs.RsFluent;
-
-import javax.imageio.ImageIO;
-import java.awt.*;
+import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -52,6 +45,12 @@ import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.concurrent.TimeUnit;
+import javax.imageio.ImageIO;
+import org.takes.Response;
+import org.takes.facets.fork.RqRegex;
+import org.takes.facets.fork.TkRegex;
+import org.takes.facets.forward.RsFailure;
+import org.takes.rs.RsFluent;
 
 /**
  * Friend.
