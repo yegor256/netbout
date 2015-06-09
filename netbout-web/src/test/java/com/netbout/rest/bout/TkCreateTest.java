@@ -28,12 +28,12 @@ package com.netbout.rest.bout;
 
 import com.jcabi.urn.URN;
 import com.netbout.mock.MkBase;
-import com.netbout.rest.RqWithTester;
 import com.netbout.spi.Alias;
 import com.netbout.spi.User;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;
+import org.takes.facets.auth.RqWithAuth;
 import org.takes.rq.RqFake;
 
 /**
@@ -51,14 +51,14 @@ public final class TkCreateTest {
     @Test
     public void createsAttachments() throws Exception {
         final MkBase base = new MkBase();
-        final URN urn = new URN("urn:test:1");
-        final User user = base.user(urn);
+        final String urn = "urn:test:1";
+        final User user = base.user(new URN(urn));
         user.aliases().add("jeff");
         final Alias alias = user.aliases().iterate().iterator().next();
         final long bout = alias.inbox().start();
         alias.inbox().bout(bout).friends().invite(alias.name());
         new FkBout(".*", new TkCreate(base)).route(
-            new RqWithTester(
+            new RqWithAuth(
                 urn,
                 new RqFake(
                     "GET",

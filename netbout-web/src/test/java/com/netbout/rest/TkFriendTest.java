@@ -33,6 +33,7 @@ import com.netbout.spi.User;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;
+import org.takes.facets.auth.RqWithAuth;
 import org.takes.facets.fork.RqRegex;
 import org.takes.rs.RsPrint;
 
@@ -52,16 +53,16 @@ public final class TkFriendTest {
     public void buildsPngImage() throws Exception {
         final Base base = new MkBase();
         final String alias = "test";
-        final URN urn = new URN("urn:test:1");
-        final User user = base.user(urn);
+        final String urn = "urn:test:1";
+        final User user = base.user(new URN(urn));
         user.aliases().add(alias);
         MatcherAssert.assertThat(
             new RsPrint(
                 new TkFriend(base).act(
-                    new RqRegex.Fake(
-                        new RqWithTester(urn),
-                        "(.*)", alias
-                    )
+                        new RqRegex.Fake(
+                                new RqWithAuth(urn),
+                                "(.*)", alias
+                        )
                 )
             ),
             Matchers.notNullValue()

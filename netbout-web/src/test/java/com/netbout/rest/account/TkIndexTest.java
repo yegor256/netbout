@@ -29,10 +29,10 @@ package com.netbout.rest.account;
 import com.jcabi.matchers.XhtmlMatchers;
 import com.jcabi.urn.URN;
 import com.netbout.mock.MkBase;
-import com.netbout.rest.RqWithTester;
 import com.netbout.spi.Base;
 import org.hamcrest.MatcherAssert;
 import org.junit.Test;
+import org.takes.facets.auth.RqWithAuth;
 import org.takes.rs.RsPrint;
 
 /**
@@ -51,11 +51,11 @@ public final class TkIndexTest {
     public void rendersPage() throws Exception {
         final Base base = new MkBase();
         final String alias = "test";
-        final URN urn = URN.create("urn:test:1");
-        base.user(urn).aliases().add(alias);
+        final String urn = "urn:test:1";
+        base.user(URN.create(urn)).aliases().add(alias);
         MatcherAssert.assertThat(
             new RsPrint(
-                new TkIndex(base).act(new RqWithTester(urn))
+                new TkIndex(base).act(new RqWithAuth(urn))
             ).printBody(),
             XhtmlMatchers.hasXPaths(
                 "/page/alias/email",

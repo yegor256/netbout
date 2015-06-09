@@ -26,23 +26,24 @@
  */
 package com.netbout.rest.bout;
 
+import java.io.IOException;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import com.google.common.base.Function;
 import com.google.common.collect.Iterables;
 import com.jcabi.urn.URN;
 import com.netbout.mock.MkBase;
-import com.netbout.rest.RqWithTester;
 import com.netbout.rest.TkStart;
 import com.netbout.spi.Alias;
 import com.netbout.spi.Bout;
 import com.netbout.spi.Friend;
 import com.netbout.spi.Message;
 import com.netbout.spi.User;
-import java.io.IOException;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;
+import org.takes.facets.auth.RqWithAuth;
 import org.takes.facets.forward.TkForward;
 import org.takes.rq.RqFake;
 import org.takes.rs.RsPrint;
@@ -68,8 +69,8 @@ public final class TkStartTest {
     @Test
     public void postsMessageAndInvitesFriends() throws Exception {
         final MkBase base = new MkBase();
-        final URN urn = new URN("urn:test:1");
-        final User user = base.user(urn);
+        final String urn = "urn:test:1";
+        final User user = base.user(new URN(urn));
         final String name = "Jeff";
         user.aliases().add(name);
         final Alias[] friends = new Alias[] {
@@ -79,7 +80,7 @@ public final class TkStartTest {
         final String post = "message";
         final String head = new RsPrint(
             new TkForward(new TkStart(base)).act(
-                new RqWithTester(
+                new RqWithAuth(
                     urn,
                     new RqFake(
                         "GET",
