@@ -132,8 +132,10 @@ final class MkBout implements Bout {
     public boolean subscription() throws IOException {
         try {
             return new JdbcSession(this.sql.source())
-                .sql("SELECT subscription FROM bout WHERE number = ?")
+                // @checkstyle LineLength (1 lines)
+                .sql("SELECT subscription FROM friend WHERE bout = ? and alias = ?")
                 .set(this.bout)
+                .set(this.self)
                 .select(new SingleOutcome<Boolean>(Boolean.class));
         } catch (final SQLException ex) {
             throw new IOException(ex);
@@ -144,9 +146,11 @@ final class MkBout implements Bout {
     public void subscribe(final boolean subs) throws IOException {
         try {
             new JdbcSession(this.sql.source())
-                .sql("UPDATE bout SET subscription = ? WHERE number = ?")
+                // @checkstyle LineLength (1 lines)
+                .sql("UPDATE friend SET subscription = ? WHERE bout = ? and alias = ?")
                 .set(subs)
                 .set(this.bout)
+                .set(this.self)
                 .update(Outcome.VOID);
         } catch (final SQLException ex) {
             throw new IOException(ex);

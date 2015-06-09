@@ -132,7 +132,12 @@ final class DyBout implements Bout {
         this.item.put(
             new AttributeUpdates().with(DyFriends.ATTR_SUBSCRIPTION, subs)
         );
-        Logger.info(this, "bout #%d subscribe to \"%s\"", this.number(), subs);
+        Logger.info(
+            this, "bout #%d subscribe to \"%s\" by %s",
+            this.number(),
+            subs,
+            this.self
+        );
     }
 
     @Override

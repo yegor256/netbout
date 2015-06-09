@@ -66,10 +66,10 @@ final class H2Sql implements Sql {
         final String[] stmts = {
             // @checkstyle LineLength (5 lines)
             "CREATE TABLE alias (name VARCHAR, urn VARCHAR, photo VARCHAR, locale VARCHAR, email VARCHAR)",
-            "CREATE TABLE bout (number BIGINT AUTO_INCREMENT, title VARCHAR, date TIMESTAMP DEFAULT CURRENT_TIMESTAMP, subscription INTEGER)",
+            "CREATE TABLE bout (number BIGINT AUTO_INCREMENT, title VARCHAR, date TIMESTAMP DEFAULT CURRENT_TIMESTAMP)",
             "CREATE TABLE message (number BIGINT AUTO_INCREMENT, bout BIGINT, text VARCHAR, author VARCHAR, date TIMESTAMP DEFAULT CURRENT_TIMESTAMP)",
             "CREATE TABLE attachment (name VARCHAR, bout BIGINT, data VARCHAR, author VARCHAR, ctype VARCHAR, etag VARCHAR)",
-            "CREATE TABLE friend (alias VARCHAR, bout BIGINT)",
+            "CREATE TABLE friend (alias VARCHAR, bout BIGINT, subscription INTEGER )",
         };
         final JdbcSession session = new JdbcSession(this.source());
         for (final String stmt : stmts) {

@@ -32,7 +32,6 @@ import com.netbout.spi.Bout;
 import com.netbout.spi.Inbox;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
-import org.junit.Assert;
 import org.junit.Test;
 
 /**
@@ -75,7 +74,10 @@ public final class DyBoutITCase {
         final Inbox inbox = aliases.iterate().iterator().next().inbox();
         final Bout bout = inbox.bout(inbox.start());
         bout.subscribe(false);
-        Assert.assertFalse(bout.subscription());
+        MatcherAssert.assertThat(
+            bout.subscription(),
+            Matchers.equalTo(false)
+        );
     }
 
 }
