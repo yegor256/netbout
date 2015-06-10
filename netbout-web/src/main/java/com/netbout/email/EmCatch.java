@@ -44,7 +44,7 @@ import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
 /**
- * Email monitors an email account periodically
+ * Monitors an email account periodically
  * through a daemon thread.
  * @author Erim Erturk (erimerturk@gmail.com)
  * @version $Id$
@@ -58,7 +58,7 @@ final class EmCatch {
     /**
      * Max sleep time of thread.
      */
-    private static final long MAX_SLEEP_TIME = 24 * 60 * 60 * 1000;
+    private static final long MAX_SLEEP_TIME = TimeUnit.HOURS.toMillis(24L);
     /**
      * Action.
      */
@@ -98,19 +98,22 @@ final class EmCatch {
         this.host = hst;
         this.port = prt;
         final Thread monitor = new Thread(
+            // @checkstyle AnonInnerLengthCheck (21 lines)
             new Runnable() {
                 @Override
                 public void run() {
                     long period = prd;
                     while (true) {
                         try {
-                            EmCatch.this.check();
                             TimeUnit.SECONDS.sleep(period);
+                            EmCatch.this.check();
                             period = prd;
-                        // @checkstyle LineLength (1 lines)
-                        } catch (final InterruptedException | MessagingException ex) {
+                        } catch (final InterruptedException ex) {
+                            Thread.currentThread().interrupt();
+                            throw new IllegalStateException(ex);
+                        } catch (final MessagingException ex) {
                             Logger.error(this, "%[exception]s", ex);
-                            if (period < MAX_SLEEP_TIME) {
+                            if (period * 2 < EmCatch.MAX_SLEEP_TIME) {
                                 period = period * 2;
                             }
                         }
@@ -142,23 +145,22 @@ final class EmCatch {
             store = session.getStore(url);
             store.connect();
             inbox = store.getFolder("inbox");
+            if (!inbox.exists()) {
+                throw new IllegalStateException("inbox folder not exist!");
+            }
             inbox.open(Folder.READ_WRITE);
-            // @checkstyle LineLength (1 lines)
-            final FlagTerm unseen = new FlagTerm(new Flags(Flags.Flag.SEEN), false);
+            final FlagTerm unseen = new FlagTerm(
+                new Flags(Flags.Flag.SEEN),
+                false
+            );
             for (final Message msg : inbox.search(unseen)) {
                 this.action.run(msg);
             }
-            inbox.close(true);
-            store.close();
         } catch (final NoSuchProviderException ex) {
             throw new IllegalStateException(ex);
         } finally {
-            if (inbox != null) {
-                inbox.close(true);
-            }
-            if (store != null) {
-                store.close();
-            }
+            inbox.close(true);
+            store.close();
         }
     }
 
