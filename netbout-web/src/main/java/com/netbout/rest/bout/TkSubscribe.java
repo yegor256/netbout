@@ -26,47 +26,51 @@
  */
 package com.netbout.rest.bout;
 
+import com.netbout.rest.RsFailure;
+import com.netbout.spi.Attachments;
 import com.netbout.spi.Base;
+import com.netbout.spi.Bout;
+import java.io.IOException;
+import org.takes.Request;
+import org.takes.Response;
 import org.takes.Take;
-import org.takes.facets.fork.TkFork;
-import org.takes.tk.TkWrap;
+import org.takes.facets.flash.RsFlash;
+import org.takes.facets.forward.RsForward;
 
 /**
- * Bout.
+ * Subscribe bout.
  *
- * @author Yegor Bugayenko (yegor@teamed.io)
+ * @author Erim Erturk (erimerturk@gmail.com)
  * @version $Id$
- * @since 2.14
- * @checkstyle ClassDataAbstractionCouplingCheck (500 lines)
+ * @since 2.15
  */
-public final class TkBout extends TkWrap {
+final class TkSubscribe implements Take {
+
+    /**
+     * Base.
+     */
+    private final transient Base base;
 
     /**
      * Ctor.
-     * @param base Base
+     * @param bse Base
      */
-    public TkBout(final Base base) {
-        super(TkBout.make(base));
+    TkSubscribe(final Base bse) {
+        this.base = bse;
     }
 
-    /**
-     * Ctor.
-     * @param base Base
-     * @return Take
-     */
-    private static Take make(final Base base) {
-        return new TkFork(
-            new FkBout("", new TkIndex(base)),
-            new FkBout("/attach", new TkAttach(base)),
-            new FkBout("/upload", new TkUpload(base)),
-            new FkBout("/download", new TkDownload(base)),
-            new FkBout("/rename", new TkRename(base)),
-            new FkBout("/create", new TkCreate(base)),
-            new FkBout("/delete", new TkDelete(base)),
-            new FkBout("/post", new TkPost(base)),
-            new FkBout("/invite", new TkInvite(base)),
-            new FkBout("/kick", new TkKick(base)),
-            new FkBout("/subscribe", new TkSubscribe(base))
+    @Override
+    public Response act(final Request req) throws IOException {
+        final Bout bout = new RqBout(this.base, req).bout();
+        try {
+            bout.subscribe(!bout.subscription());
+        } catch (final Attachments.InvalidNameException ex) {
+            throw new RsFailure(ex);
+        }
+        throw new RsForward(
+            new RsFlash(
+                String.format("bout #%d subscription changed", bout.number())
+            )
         );
     }
 

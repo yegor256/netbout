@@ -121,6 +121,30 @@ final class DyBout implements Bout {
     }
 
     @Override
+    public boolean subscription() throws IOException {
+        boolean subs = true;
+        if (this.item.has(DyFriends.ATTR_SUBSCRIPTION)) {
+            subs = Boolean.parseBoolean(
+                this.item.get(DyFriends.ATTR_SUBSCRIPTION).getS()
+            );
+        }
+        return subs;
+    }
+
+    @Override
+    public void subscribe(final boolean subs) throws IOException {
+        this.item.put(
+            new AttributeUpdates().with(DyFriends.ATTR_SUBSCRIPTION, subs)
+        );
+        Logger.info(
+            this, "bout #%d subscribe to \"%s\" by %s",
+            this.number(),
+            subs,
+            this.self
+        );
+    }
+
+    @Override
     public Messages messages() throws IOException {
         return new DyMessages(this.region, this.number(), this.self);
     }

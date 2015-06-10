@@ -61,4 +61,23 @@ public final class DyBoutITCase {
         );
     }
 
+    /**
+     * DyBout can change subscription to a bout.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void changesSubscriptionBout() throws Exception {
+        final String alias = "maxi";
+        final Aliases aliases =
+            new DyBase().user(new URN("urn:test:1890")).aliases();
+        aliases.add(alias);
+        final Inbox inbox = aliases.iterate().iterator().next().inbox();
+        final Bout bout = inbox.bout(inbox.start());
+        bout.subscribe(false);
+        MatcherAssert.assertThat(
+            bout.subscription(),
+            Matchers.equalTo(false)
+        );
+    }
+
 }

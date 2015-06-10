@@ -104,6 +104,16 @@ final class EmBout implements Bout {
     }
 
     @Override
+    public boolean subscription() throws IOException {
+        return this.origin.subscription();
+    }
+
+    @Override
+    public void subscribe(final boolean subs) throws IOException {
+        this.origin.subscribe(subs);
+    }
+
+    @Override
     public Messages messages() throws IOException {
         return new EmMessages(
             this.origin.messages(),

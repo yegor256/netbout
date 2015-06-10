@@ -96,6 +96,9 @@ final class TkIndex implements Take {
                         .add("title").set(bout.title()).up()
                         .add("unread")
                         .set(Long.toString(bout.messages().unread()))
+                        .up()
+                        .add("subscription")
+                        .set(String.valueOf(bout.subscription()))
                 ),
                 new XeAppend(
                     "friends",
@@ -145,7 +148,8 @@ final class TkIndex implements Take {
             new XeLink("invite", home.path("invite")),
             new XeLink("upload", home.path("upload")),
             new XeLink("create", home.path("create")),
-            new XeLink("attach", home.path("attach"))
+            new XeLink("attach", home.path("attach")),
+            new XeLink("subscribe", home.path("subscribe"))
         );
     }
 
