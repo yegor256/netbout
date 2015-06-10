@@ -80,6 +80,10 @@ final class EmCatch {
      */
     private final transient int port;
     /**
+     * Email server check period in milliseconds.
+     */
+    private final transient long period;
+    /**
      * Ctor.
      * @param act Email message handler
      * @param usr Email login key
@@ -97,32 +101,38 @@ final class EmCatch {
         this.password = pass;
         this.host = hst;
         this.port = prt;
+        this.period = prd;
         final Thread monitor = new Thread(
-            // @checkstyle AnonInnerLengthCheck (21 lines)
             new Runnable() {
                 @Override
                 public void run() {
-                    long period = prd;
-                    while (true) {
-                        try {
-                            TimeUnit.SECONDS.sleep(period);
-                            EmCatch.this.check();
-                            period = prd;
-                        } catch (final InterruptedException ex) {
-                            Thread.currentThread().interrupt();
-                            throw new IllegalStateException(ex);
-                        } catch (final MessagingException ex) {
-                            Logger.error(this, "%[exception]s", ex);
-                            if (period * 2 < EmCatch.MAX_SLEEP_TIME) {
-                                period = period * 2;
-                            }
-                        }
-                    }
+                    EmCatch.this.mailCheckRunner();
                 }
             }
         );
         monitor.setDaemon(true);
         monitor.start();
+    }
+    /**
+     * Read unread mail and persist new bout message periodically.
+     */
+    private void mailCheckRunner() {
+        long prd = this.period;
+        while (true) {
+            try {
+                TimeUnit.SECONDS.sleep(this.period);
+                EmCatch.this.check();
+                prd = this.period;
+            } catch (final InterruptedException ex) {
+                Thread.currentThread().interrupt();
+                throw new IllegalStateException(ex);
+            } catch (final MessagingException ex) {
+                Logger.error(this, "%[exception]s", ex);
+                if (prd * 2 < EmCatch.MAX_SLEEP_TIME) {
+                    prd = prd * 2;
+                }
+            }
+        }
     }
     /**
      * Read unread mail and persist new bout message.
