@@ -121,14 +121,14 @@ final class DyBout implements Bout {
     }
 
     @Override
-    @SuppressWarnings("PMD.OnlyOneReturn")
     public boolean subscription() throws IOException {
+        boolean subs = true;
         if (this.item.has(DyFriends.ATTR_SUBSCRIPTION)) {
-            return Boolean.parseBoolean(
+            subs = Boolean.parseBoolean(
                 this.item.get(DyFriends.ATTR_SUBSCRIPTION).getS()
             );
         }
-        return true;
+        return subs;
     }
 
     @Override
