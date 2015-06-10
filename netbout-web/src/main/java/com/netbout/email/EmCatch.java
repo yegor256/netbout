@@ -106,7 +106,7 @@ final class EmCatch {
             new Runnable() {
                 @Override
                 public void run() {
-                    EmCatch.this.mailCheckRunner();
+                    EmCatch.this.mainLoop();
                 }
             }
         );
@@ -114,9 +114,10 @@ final class EmCatch {
         monitor.start();
     }
     /**
-     * Read unread mail and persist new bout message periodically.
+     * Main loop of the daemon thread. Fetches unread mail and persists
+     * new bout message periodically
      */
-    private void mailCheckRunner() {
+    private void mainLoop() {
         long prd = this.period;
         while (true) {
             try {
