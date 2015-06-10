@@ -206,3 +206,14 @@ $width: 750px;
   font-weight: normal;
   text-align: left;
 }
+
+#snapshot {
+  position: fixed;
+  right: 0;
+  top: 5em;
+  background: $color-red;
+  padding: $em;
+  color: white;
+  font-weight: bolder;
+  font-size: 2 * $em;
+}

@@ -54,6 +54,11 @@
                 <xsl:apply-templates select="." mode="head"/>
             </head>
             <body>
+                <xsl:if test="contains(version/name,'SNAPSHOT')">
+                    <aside id="snapshot">
+                        <xsl:value-of select="version/name"/>
+                    </aside>
+                </xsl:if>
                 <xsl:apply-templates select="version"/>
                 <div class="cap">
                     <div class="incap">
