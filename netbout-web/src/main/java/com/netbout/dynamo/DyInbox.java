@@ -239,7 +239,7 @@ final class DyInbox implements Inbox {
     @Override
     public Iterable<Bout> search(final String term) throws IOException {
         final List<Bout> result = new ArrayList<>(16);
-        for (final Bout bout: this.iterate()) {
+        for (final Bout bout : this.iterate()) {
             if (bout.messages().search(term).iterator().hasNext()) {
                 result.add(bout);
             }
