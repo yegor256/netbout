@@ -82,7 +82,7 @@ final class MkFriends implements Friends {
                 .sql("INSERT INTO friend (bout, alias, subscription) VALUES (?, ?, ?)")
                 .set(this.bout)
                 .set(friend)
-                .set(1)
+                .set(true)
                 .insert(Outcome.VOID);
         } catch (final SQLException ex) {
             throw new IOException(ex);

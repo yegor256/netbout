@@ -147,8 +147,9 @@ final class RtBout implements Bout {
         );
     }
 
-    // @todo #682:30min/DEV Implement getting
-    // subscription status by alias using with REST call
+    // @todo #682:30min/DEV Implement getting subscription by alias.
+    // Should return subscription status for current boat,
+    // passing friend alias value using REST call.
     @Override
     public boolean subscription(final String alias) throws IOException {
         throw new UnsupportedOperationException("#subscription(alias)");
