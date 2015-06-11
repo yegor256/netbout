@@ -172,7 +172,7 @@ final class TkInbox implements Take {
                 "kick",
                 new Href("/b")
                     .path(bout.number())
-                    .path("/kick")
+                    .path("kick")
                     .with("name", friend.alias())
             )
         );

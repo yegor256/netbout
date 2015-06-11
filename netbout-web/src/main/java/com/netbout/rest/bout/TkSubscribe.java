@@ -27,25 +27,24 @@
 package com.netbout.rest.bout;
 
 import com.netbout.rest.RsFailure;
+import com.netbout.spi.Attachments;
 import com.netbout.spi.Base;
 import com.netbout.spi.Bout;
-import com.netbout.spi.Messages;
 import java.io.IOException;
 import org.takes.Request;
 import org.takes.Response;
 import org.takes.Take;
 import org.takes.facets.flash.RsFlash;
 import org.takes.facets.forward.RsForward;
-import org.takes.rq.RqForm;
 
 /**
- * Post a message.
+ * Subscribe bout.
  *
- * @author Yegor Bugayenko (yegor@teamed.io)
+ * @author Erim Erturk (erimerturk@gmail.com)
  * @version $Id$
- * @since 2.14
+ * @since 2.15
  */
-final class TkPost implements Take {
+final class TkSubscribe implements Take {
 
     /**
      * Base.
@@ -56,7 +55,7 @@ final class TkPost implements Take {
      * Ctor.
      * @param bse Base
      */
-    TkPost(final Base bse) {
+    TkSubscribe(final Base bse) {
         this.base = bse;
     }
 
@@ -64,20 +63,13 @@ final class TkPost implements Take {
     public Response act(final Request req) throws IOException {
         final Bout bout = new RqBout(this.base, req).bout();
         try {
-            bout.messages().post(
-                new RqForm.Smart(
-                    new RqForm.Base(req)
-                ).single("text")
-            );
-        } catch (final Messages.BrokenPostException ex) {
+            bout.subscribe(!bout.subscription());
+        } catch (final Attachments.InvalidNameException ex) {
             throw new RsFailure(ex);
         }
         throw new RsForward(
             new RsFlash(
-                String.format(
-                    "message posted to the bout #%d",
-                    bout.number()
-                )
+                String.format("bout #%d subscription changed", bout.number())
             )
         );
     }

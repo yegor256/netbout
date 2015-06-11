@@ -28,9 +28,6 @@ package com.netbout.rest;
 
 import com.jcabi.manifests.Manifests;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
 import org.takes.Request;
 import org.takes.Response;
 import org.takes.Take;
@@ -50,6 +47,7 @@ import org.takes.facets.auth.codecs.CcXOR;
 import org.takes.facets.auth.social.PsFacebook;
 import org.takes.facets.auth.social.PsGithub;
 import org.takes.facets.auth.social.PsGoogle;
+import org.takes.misc.Opt;
 import org.takes.rq.RqHref;
 import org.takes.tk.TkWrap;
 
@@ -74,15 +72,25 @@ final class TkAppAuth extends TkWrap {
      * @param take Take
      */
     TkAppAuth(final Take take) {
-        super(TkAppAuth.make(take));
+        this(take, new PsFake(TkAppAuth.TESTING));
+    }
+
+    /**
+     * Ctor.
+     * @param take Take
+     * @param pass Last Pass on Chain
+     */
+    TkAppAuth(final Take take, final Pass pass) {
+        super(TkAppAuth.make(take, pass));
     }
 
     /**
      * Authenticated.
      * @param take Take
+     * @param pass Last Pass on Chain
      * @return Authenticated take
      */
-    private static Take make(final Take take) {
+    private static Take make(final Take take, final Pass pass) {
         return new TkAuth(
             take,
             new PsChain(
@@ -128,7 +136,7 @@ final class TkAppAuth extends TkWrap {
                         )
                     )
                 ),
-                new PsFake(TkAppAuth.TESTING)
+                pass
             )
         );
     }
@@ -138,17 +146,20 @@ final class TkAppAuth extends TkWrap {
      */
     private static final class FakePass implements Pass {
         @Override
-        public Iterator<Identity> enter(final Request req) throws IOException {
-            final Collection<Identity> user = new ArrayList<>(1);
+        public Opt<Identity> enter(final Request req) throws IOException {
+            final Opt<Identity> identity;
             if (TkAppAuth.TESTING) {
-                user.add(
+                identity = new Opt.Single<Identity>(
                     new Identity.Simple(
                         new RqHref.Smart(new RqHref.Base(req)).single("urn")
                     )
                 );
+            } else {
+                identity = new Opt.Empty<>();
             }
-            return user.iterator();
+            return identity;
         }
+
         @Override
         public Response exit(final Response response, final Identity identity) {
             return response;

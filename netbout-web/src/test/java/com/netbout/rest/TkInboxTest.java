@@ -24,60 +24,60 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.dynamo;
+package com.netbout.rest;
 
 import com.jcabi.urn.URN;
-import com.netbout.spi.Aliases;
+import com.netbout.mock.MkBase;
 import com.netbout.spi.Bout;
-import com.netbout.spi.Inbox;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;
+import org.takes.facets.auth.Identity;
+import org.takes.facets.auth.PsFixed;
+import org.takes.facets.auth.TkAuth;
+import org.takes.rq.RqFake;
+import org.takes.rq.RqMethod;
+import org.takes.rs.RsPrint;
 
 /**
- * Integration case for {@link DyBout}.
- * @author Yegor Bugayenko (yegor@teamed.io)
+ * Test case for {@link TkInbox}.
+ * @author Endrigo Antonini (teamed@endrigo.com.br)
  * @version $Id$
+ * @since 2.14.17
+ * @checkstyle ClassDataAbstractionCouplingCheck (100 lines)
+ *
  */
-public final class DyBoutITCase {
+public final class TkInboxTest {
 
     /**
-     * DyBout can rename a bout.
+     * TkInbox can kick an User.
      * @throws Exception If there is some problem inside
      */
     @Test
-    public void renamesBout() throws Exception {
-        final String alias = "sandra";
-        final Aliases aliases =
-            new DyBase().user(new URN("urn:test:890")).aliases();
-        aliases.add(alias);
-        final Inbox inbox = aliases.iterate().iterator().next().inbox();
-        final Bout bout = inbox.bout(inbox.start());
-        final String title = "some title \u20ac";
-        bout.rename(title);
+    public void kicksAnUser() throws Exception {
+        final String alias = "test";
+        final String urn = "urn:test:1";
+        final MkBase base = new MkBase();
+        final Bout bout = base.randomBout();
+        base.user(new URN(urn)).aliases().add(alias);
+        bout.friends().invite(alias);
         MatcherAssert.assertThat(
-            bout.title(),
-            Matchers.equalTo(title)
+            new RsPrint(
+                new TkAuth(
+                    new TkApp(base),
+                    new PsFixed(new Identity.Simple(urn))
+                ).act(
+                    new RqFake(
+                        RqMethod.GET,
+                        String.format(
+                            "/b/%d/kick?name=%s",
+                            bout.number(),
+                            alias
+                        )
+                    )
+                )
+            ).printHead(),
+            Matchers.containsString("you+kicked")
         );
     }
-
-    /**
-     * DyBout can change subscription to a bout.
-     * @throws Exception If there is some problem inside
-     */
-    @Test
-    public void changesSubscriptionBout() throws Exception {
-        final String alias = "maxi";
-        final Aliases aliases =
-            new DyBase().user(new URN("urn:test:1890")).aliases();
-        aliases.add(alias);
-        final Inbox inbox = aliases.iterate().iterator().next().inbox();
-        final Bout bout = inbox.bout(inbox.start());
-        bout.subscribe(false);
-        MatcherAssert.assertThat(
-            bout.subscription(),
-            Matchers.equalTo(false)
-        );
-    }
-
 }

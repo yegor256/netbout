@@ -24,60 +24,49 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.dynamo;
+package com.netbout.misc;
 
-import com.jcabi.urn.URN;
-import com.netbout.spi.Aliases;
-import com.netbout.spi.Bout;
-import com.netbout.spi.Inbox;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;
 
 /**
- * Integration case for {@link DyBout}.
- * @author Yegor Bugayenko (yegor@teamed.io)
+ * Test case for {@link Ports}.
+ *
+ * @author Endrigo Antonini (teamed@endrigo.com.br)
  * @version $Id$
+ * @since 2.14.17
  */
-public final class DyBoutITCase {
+public final class PortsTest {
 
     /**
-     * DyBout can rename a bout.
+     * Ports can generate different port numbers. Checking if it doesn't
+     * duplicate any port number using different Ports instance.
      * @throws Exception If there is some problem inside
      */
     @Test
-    public void renamesBout() throws Exception {
-        final String alias = "sandra";
-        final Aliases aliases =
-            new DyBase().user(new URN("urn:test:890")).aliases();
-        aliases.add(alias);
-        final Inbox inbox = aliases.iterate().iterator().next().inbox();
-        final Bout bout = inbox.bout(inbox.start());
-        final String title = "some title \u20ac";
-        bout.rename(title);
-        MatcherAssert.assertThat(
-            bout.title(),
-            Matchers.equalTo(title)
-        );
+    public void allocatesDifferentNumbersWithDifferentPorts() throws Exception {
+        final int porta = new Ports().allocate();
+        final int portb = new Ports().allocate();
+        final int portc = new Ports().allocate();
+        MatcherAssert.assertThat(porta, Matchers.not(portb));
+        MatcherAssert.assertThat(porta, Matchers.not(portc));
+        MatcherAssert.assertThat(portb, Matchers.not(portc));
     }
 
     /**
-     * DyBout can change subscription to a bout.
+     * Ports can generate different port numbers. Checking if it doesn't
+     * duplicate any port number using same Ports instance.
      * @throws Exception If there is some problem inside
      */
     @Test
-    public void changesSubscriptionBout() throws Exception {
-        final String alias = "maxi";
-        final Aliases aliases =
-            new DyBase().user(new URN("urn:test:1890")).aliases();
-        aliases.add(alias);
-        final Inbox inbox = aliases.iterate().iterator().next().inbox();
-        final Bout bout = inbox.bout(inbox.start());
-        bout.subscribe(false);
-        MatcherAssert.assertThat(
-            bout.subscription(),
-            Matchers.equalTo(false)
-        );
+    public void allocatesDifferentNumbersWithSamePorts() throws Exception {
+        final Ports ports = new Ports();
+        final int porta = ports.allocate();
+        final int portb = ports.allocate();
+        final int portc = ports.allocate();
+        MatcherAssert.assertThat(porta, Matchers.not(portb));
+        MatcherAssert.assertThat(porta, Matchers.not(portc));
+        MatcherAssert.assertThat(portb, Matchers.not(portc));
     }
-
 }

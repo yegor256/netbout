@@ -24,60 +24,55 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.dynamo;
+package com.netbout.email;
 
-import com.jcabi.urn.URN;
-import com.netbout.spi.Aliases;
+import com.jcabi.email.Envelope;
+import com.jcabi.email.Postman;
+import com.netbout.mock.MkBase;
+import com.netbout.spi.Alias;
 import com.netbout.spi.Bout;
-import com.netbout.spi.Inbox;
+import java.io.ByteArrayOutputStream;
+import javax.mail.Message;
+import javax.mail.internet.MimeMultipart;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Mockito;
 
 /**
- * Integration case for {@link DyBout}.
- * @author Yegor Bugayenko (yegor@teamed.io)
+ * Integration case for {@link EmMessages}.
+ * @author Matteo Barbieri (barbieri.matteo@gmail.com)
  * @version $Id$
  */
-public final class DyBoutITCase {
+public final class EmMessagesITCase {
 
     /**
-     * DyBout can rename a bout.
+     * EmMessages can send an email containing Gmail ViewAction code.
      * @throws Exception If there is some problem inside
      */
     @Test
-    public void renamesBout() throws Exception {
-        final String alias = "sandra";
-        final Aliases aliases =
-            new DyBase().user(new URN("urn:test:890")).aliases();
-        aliases.add(alias);
-        final Inbox inbox = aliases.iterate().iterator().next().inbox();
-        final Bout bout = inbox.bout(inbox.start());
-        final String title = "some title \u20ac";
-        bout.rename(title);
+    public void mailContainsGmailViewActionCode() throws Exception {
+        final Postman postman = Mockito.mock(Postman.class);
+        final MkBase base = new MkBase();
+        final Alias alias = new EmAlias(base.randomAlias(), postman);
+        final Bout bout = alias.inbox().bout(alias.inbox().start());
+        bout.friends().invite(base.randomAlias().name());
+        bout.messages().post("Are you using GMail?");
+        final ArgumentCaptor<Envelope> captor =
+            ArgumentCaptor.forClass(Envelope.class);
+        Mockito.verify(postman).send(captor.capture());
+        final Message msg = captor.getValue().unwrap();
+        final ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        MimeMultipart.class.cast(msg.getContent()).writeTo(baos);
         MatcherAssert.assertThat(
-            bout.title(),
-            Matchers.equalTo(title)
+            baos.toString(), Matchers.containsString(
+                String.format(
+                    // @checkstyle LineLength (1 line)
+                    "<link href=\"http://www.netbout.com/b/%d\" itemprop=\"target\"/>",
+                    bout.number()
+                )
+            )
         );
     }
-
-    /**
-     * DyBout can change subscription to a bout.
-     * @throws Exception If there is some problem inside
-     */
-    @Test
-    public void changesSubscriptionBout() throws Exception {
-        final String alias = "maxi";
-        final Aliases aliases =
-            new DyBase().user(new URN("urn:test:1890")).aliases();
-        aliases.add(alias);
-        final Inbox inbox = aliases.iterate().iterator().next().inbox();
-        final Bout bout = inbox.bout(inbox.start());
-        bout.subscribe(false);
-        MatcherAssert.assertThat(
-            bout.subscription(),
-            Matchers.equalTo(false)
-        );
-    }
-
 }

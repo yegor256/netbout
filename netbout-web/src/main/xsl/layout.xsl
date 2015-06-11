@@ -51,9 +51,15 @@
                 </script>
                 <link rel="stylesheet" type="text/css" media="all" href="/css/style.css?{version/name}"/>
                 <link rel="shortcut icon" type="image/png" href="{links/link[@rel='favicon']/@href}"/>
+                <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css"/>
                 <xsl:apply-templates select="." mode="head"/>
             </head>
             <body>
+                <xsl:if test="contains(version/name,'SNAPSHOT')">
+                    <aside id="snapshot">
+                        <xsl:value-of select="version/name"/>
+                    </aside>
+                </xsl:if>
                 <xsl:apply-templates select="version"/>
                 <div class="cap">
                     <div class="incap">

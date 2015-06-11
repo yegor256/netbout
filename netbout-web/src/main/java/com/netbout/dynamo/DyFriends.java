@@ -85,6 +85,11 @@ final class DyFriends implements Friends {
     public static final String ATTR_TITLE = "title";
 
     /**
+     * Subscription of the bout.
+     */
+    public static final String ATTR_SUBSCRIPTION = "subscription";
+
+    /**
      * Updated attribute.
      */
     public static final String ATTR_UPDATED = "updated";
@@ -132,6 +137,7 @@ final class DyFriends implements Friends {
                 .with(DyFriends.HASH, this.bout())
                 .with(DyFriends.RANGE, alias)
                 .with(DyFriends.ATTR_TITLE, this.item.get(DyFriends.ATTR_TITLE))
+                .with(DyFriends.ATTR_SUBSCRIPTION, true)
                 .with(DyFriends.ATTR_UPDATED, System.currentTimeMillis())
         );
         Logger.info(this, "@%s invited to #%s", friend, this.bout().getN());

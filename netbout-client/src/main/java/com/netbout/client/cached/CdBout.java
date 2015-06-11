@@ -96,6 +96,18 @@ public final class CdBout implements Bout {
 
     @Override
     @Cacheable
+    public boolean subscription() throws IOException {
+        return this.origin.subscription();
+    }
+
+    @Override
+    @Cacheable.FlushBefore
+    public void subscribe(final boolean subs) throws IOException {
+        this.origin.subscribe(subs);
+    }
+
+    @Override
+    @Cacheable
     public Messages messages() throws IOException {
         return new CdMessages(this.origin.messages());
     }

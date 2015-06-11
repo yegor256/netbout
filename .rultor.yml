@@ -1,5 +1,6 @@
 assets:
   settings.xml: yegor256/home#assets/netbout/settings.xml
+  settings-snapshot.xml: yegor256/home#assets/netbout/settings-snapshot.xml
   pubring.gpg: yegor256/home#assets/pubring.gpg
   secring.gpg: yegor256/home#assets/secring.gpg
   id_rsa: yegor256/home#assets/heroku-key
@@ -13,13 +14,26 @@ install: |
   export LC_ALL=en_US.UTF-8
   export LANG=en_US.UTF-8
   export LANGUAGE=en_US.UTF-8
-  sudo gem install pdd
+  sudo gem install --no-ri --no-rdoc pdd
+  sudo gem install --no-ri --no-rdoc est
+  mkdir ~/.ssh
+  mv ../id_rsa ../id_rsa.pub ~/.ssh
+  chmod -R 600 ~/.ssh/*
+  echo -e "Host *\n  StrictHostKeyChecking no\n  UserKnownHostsFile=/dev/null" > ~/.ssh/config
 deploy:
   script: |
     mvn clean deploy -Pqulice --errors --settings ../settings.xml
+    git remote add heroku git@heroku.com:netbout-snapshot.git
+    cp ../settings-snapshot.xml settings.xml
+    git add settings.xml
+    git commit -m 'settings.xml'
+    git push -f heroku $(git symbolic-ref --short HEAD):master
+    git reset HEAD~1
     mvn clean
     pdd --source=$(pwd) --verbose --file=netbout.xml
     s3cmd --no-progress put netbout.xml --config=../s3cfg s3://pdd.teamed.io/netbout.xml
+    est --dir=./est --verbose --file=netbout.xml --format=xml
+    s3cmd --no-progress put netbout.xml --config=../s3cfg s3://est.teamed.io/netbout.xml
   commanders:
   - dmzaytsev
   - yegor256
@@ -28,6 +42,7 @@ merge:
     mvn clean install -Pqulice --errors --settings ../settings.xml
     mvn clean
     pdd --source=$(pwd) --verbose --file=/dev/null
+    est --dir=est --file=/dev/null
   commanders:
   - caarlos0
   - carlosmiranda
@@ -41,19 +56,15 @@ release:
   script: |-
     mvn versions:set "-DnewVersion=${tag}"
     git commit -am "${tag}"
-    cp ../settings.xml settings.xml
     mvn clean deploy -Pqulice -Psonatype -Pnetbout --errors --batch-mode --settings ../settings.xml
     git remote add heroku git@heroku.com:netbout.git
-    mkdir ~/.ssh
-    mv ../id_rsa ../id_rsa.pub ~/.ssh
-    chmod -R 600 ~/.ssh/*
-    echo -e "Host *\n  StrictHostKeyChecking no\n  UserKnownHostsFile=/dev/null" > ~/.ssh/config
     build=$(git rev-parse --short HEAD)
     sed -i "s/BUILD/${build}/g" netbout-web/src/main/resources/META-INF/MANIFEST.MF
     sed -i "s/BUILD/${build}/g" netbout-web/src/main/resources/log4j.properties
     git add netbout-web/src/main/resources/META-INF/MANIFEST.MF
     git add netbout-web/src/main/resources/log4j.properties
     git commit -m 'build number set'
+    cp ../settings.xml settings.xml
     git add settings.xml
     git commit -m 'settings.xml'
     git push -f heroku $(git symbolic-ref --short HEAD):master
@@ -65,4 +76,5 @@ release:
   - yegor256
 architect:
 - dmzaytsev
+- yegor256
 - karato

@@ -93,6 +93,8 @@ final class EmMessages implements Messages {
         this.self = slf;
     }
 
+     // @todo #547:30min/DEV Send email if friend subscribed to bout.
+     //  Friend should be filtered before send email by subscription
     @Override
     public void post(final String text) throws IOException {
         this.origin.post(text);
@@ -149,14 +151,18 @@ final class EmMessages implements Messages {
                             new Markdown(text).html(),
                             "<p>--<br/>to reply click here: ",
                             String.format(
-                                "http://www.netbout.com/b/%d</p>",
+                                "http://www.netbout.com/b/%d",
                                 this.bout.number()
                             ),
-                            "</p>"
+                            "</p><p style=\"color:#C8C8C8;font-size:2px;\">",
+                            String.format(
+                                "%d</p>",
+                                System.nanoTime()
+                            ),
+                            new GmailViewAction(this.bout.number()).xml()
                         )
                     )
                 )
         );
     }
-
 }

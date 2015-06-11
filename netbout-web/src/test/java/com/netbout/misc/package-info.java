@@ -24,62 +24,12 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.rest.bout;
-
-import com.netbout.rest.RsFailure;
-import com.netbout.spi.Base;
-import com.netbout.spi.Bout;
-import com.netbout.spi.Messages;
-import java.io.IOException;
-import org.takes.Request;
-import org.takes.Response;
-import org.takes.Take;
-import org.takes.facets.flash.RsFlash;
-import org.takes.facets.forward.RsForward;
-import org.takes.rq.RqForm;
 
 /**
- * Post a message.
+ * Misc test.
  *
- * @author Yegor Bugayenko (yegor@teamed.io)
+ * @author Endrigo Antonini (teamed@endrigo.com.br)
  * @version $Id$
- * @since 2.14
+ * @since 2.14.17
  */
-final class TkPost implements Take {
-
-    /**
-     * Base.
-     */
-    private final transient Base base;
-
-    /**
-     * Ctor.
-     * @param bse Base
-     */
-    TkPost(final Base bse) {
-        this.base = bse;
-    }
-
-    @Override
-    public Response act(final Request req) throws IOException {
-        final Bout bout = new RqBout(this.base, req).bout();
-        try {
-            bout.messages().post(
-                new RqForm.Smart(
-                    new RqForm.Base(req)
-                ).single("text")
-            );
-        } catch (final Messages.BrokenPostException ex) {
-            throw new RsFailure(ex);
-        }
-        throw new RsForward(
-            new RsFlash(
-                String.format(
-                    "message posted to the bout #%d",
-                    bout.number()
-                )
-            )
-        );
-    }
-
-}
+package com.netbout.misc;

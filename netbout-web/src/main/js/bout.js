@@ -35,6 +35,18 @@ function escapeHTML(txt) {
     .replace(/>/g, '&gt;');
 }
 
+$.fn.preventDoubleSubmission = function() {
+  $(this).on('submit',function(e){
+    var $form = $(this);
+    if ($form.data('submitted') === true) {
+      e.preventDefault();
+    } else {
+      $form.data('submitted', true);
+    }
+  });
+  return this;
+};
+
 $(document).ready(
   function () {
     "use strict";
@@ -103,6 +115,7 @@ $(document).ready(
         }
       }
     );
+    $('form').preventDoubleSubmission();
   }
 );
 
