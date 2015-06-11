@@ -50,7 +50,9 @@ import org.xembly.Directives;
 
 /**
  * Index.
- *
+ * @todo #603:30min Bout page should also display search box
+ *  so that user can search for text in messages. See Messages#search
+ *  method for details.
  * @author Yegor Bugayenko (yegor@teamed.io)
  * @version $Id$
  * @since 2.14

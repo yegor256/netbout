@@ -109,4 +109,21 @@ public final class ReMessages implements Messages {
             }
         );
     }
+
+    @Override
+    @RetryOnFailure(
+        verbose = false, attempts = Tv.TWENTY,
+        delay = Tv.FIVE, unit = TimeUnit.SECONDS
+    )
+    public Iterable<Message> search(final String term) throws IOException {
+        return Iterables.transform(
+            this.origin.search(term),
+            new Function<Message, Message>() {
+                @Override
+                public Message apply(final Message message) {
+                    return new ReMessage(message);
+                }
+            }
+        );
+    }
 }

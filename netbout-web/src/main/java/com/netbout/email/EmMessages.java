@@ -125,6 +125,11 @@ final class EmMessages implements Messages {
         return this.origin.iterate();
     }
 
+    @Override
+    public Iterable<Message> search(final String term) throws IOException {
+        return this.origin.search(term);
+    }
+
     /**
      * Send an email.
      * @param friend Friend to send to

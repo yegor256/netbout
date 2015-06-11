@@ -57,6 +57,8 @@ import com.netbout.spi.Message;
 import com.netbout.spi.Messages;
 import com.netbout.spi.Pageable;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 import org.apache.commons.lang3.StringUtils;
@@ -73,7 +75,7 @@ import org.apache.commons.lang3.StringUtils;
 @Loggable(Loggable.DEBUG)
 @ToString(of = "bout")
 @EqualsAndHashCode(of = { "counter", "region", "bout", "self", "start" })
-@SuppressWarnings("PMD.ExcessiveImports")
+@SuppressWarnings({ "PMD.TooManyMethods", "PMD.ExcessiveImports" })
 final class DyMessages implements Messages {
 
     /**
@@ -250,6 +252,17 @@ final class DyMessages implements Messages {
                 }
             }
         );
+    }
+
+    @Override
+    public Iterable<Message> search(final String term) throws IOException {
+        final List<Message> result = new ArrayList<>(16);
+        for (final Message message : this.iterate()) {
+            if (message.text().contains(term)) {
+                result.add(message);
+            }
+        }
+        return result;
     }
 
     /**

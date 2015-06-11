@@ -51,7 +51,9 @@ import com.netbout.spi.Bout;
 import com.netbout.spi.Inbox;
 import com.netbout.spi.Pageable;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
@@ -67,6 +69,7 @@ import lombok.ToString;
 @Loggable(Loggable.DEBUG)
 @ToString(of = "self")
 @EqualsAndHashCode(of = { "counter", "region", "self", "since" })
+@SuppressWarnings({ "PMD.TooManyMethods", "PMD.ExcessiveImports" })
 final class DyInbox implements Inbox {
 
     /**
@@ -231,6 +234,17 @@ final class DyInbox implements Inbox {
                 }
             }
         );
+    }
+
+    @Override
+    public Iterable<Bout> search(final String term) throws IOException {
+        final List<Bout> result = new ArrayList<>(16);
+        for (final Bout bout: this.iterate()) {
+            if (bout.messages().search(term).iterator().hasNext()) {
+                result.add(bout);
+            }
+        }
+        return result;
     }
 
     /**

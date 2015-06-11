@@ -119,4 +119,9 @@ final class RtInbox implements Inbox {
             }
         };
     }
+
+    @Override
+    public Iterable<Bout> search(final String term) throws IOException {
+        throw new UnsupportedOperationException("#search()");
+    }
 }

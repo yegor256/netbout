@@ -99,4 +99,9 @@ final class RtMessages implements Messages {
             }
         };
     }
+
+    @Override
+    public Iterable<Message> search(final String term) throws IOException {
+        throw new UnsupportedOperationException("#search()");
+    }
 }
