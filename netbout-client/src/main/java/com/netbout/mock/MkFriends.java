@@ -78,9 +78,11 @@ final class MkFriends implements Friends {
     public void invite(final String friend) throws IOException {
         try {
             new JdbcSession(this.sql.source())
-                .sql("INSERT INTO friend (bout, alias) VALUES (?, ?)")
+                // @checkstyle LineLength (1 line)
+                .sql("INSERT INTO friend (bout, alias, subscription) VALUES (?, ?, ?)")
                 .set(this.bout)
                 .set(friend)
+                .set(1)
                 .insert(Outcome.VOID);
         } catch (final SQLException ex) {
             throw new IOException(ex);

@@ -93,14 +93,13 @@ final class EmMessages implements Messages {
         this.self = slf;
     }
 
-     // @todo #547:30min/DEV Send email if friend subscribed to bout.
-     //  Friend should be filtered before send email by subscription
     @Override
     public void post(final String text) throws IOException {
         this.origin.post(text);
         for (final Friend friend : this.bout.friends().iterate()) {
             if (friend.email().isEmpty()
-                || friend.alias().equals(this.self)) {
+                || friend.alias().equals(this.self)
+                || !this.bout.subscription(friend.alias())) {
                 continue;
             }
             this.email(friend, text);

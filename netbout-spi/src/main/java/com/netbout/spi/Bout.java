@@ -86,6 +86,14 @@ public interface Bout {
     boolean subscription() throws IOException;
 
     /**
+     * Get subscription by alias.
+     * @param alias Alias to get subscription for
+     * @return Subscription status
+     * @throws IOException If fails
+     */
+    boolean subscription(String alias) throws IOException;
+
+    /**
      * Set subscription.
      * @param subs The subscription type of the bout
      * @throws IOException If fails
@@ -178,6 +186,10 @@ public interface Bout {
         @Override
         public boolean subscription() throws IOException {
             return this.origin.subscription();
+        }
+        @Override
+        public boolean subscription(final String alias) throws IOException {
+            return this.origin.subscription(alias);
         }
     }
 

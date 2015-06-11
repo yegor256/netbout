@@ -147,6 +147,13 @@ final class RtBout implements Bout {
         );
     }
 
+    // @todo #682:30min/DEV Implement getting
+    // subscription status by alias using with REST call
+    @Override
+    public boolean subscription(final String alias) throws IOException {
+        throw new UnsupportedOperationException("#subscription(alias)");
+    }
+
     @Override
     public void subscribe(final boolean subs) throws IOException {
         this.request.fetch()
