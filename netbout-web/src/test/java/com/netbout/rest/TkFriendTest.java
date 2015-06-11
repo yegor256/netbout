@@ -29,7 +29,6 @@ package com.netbout.rest;
 import com.jcabi.urn.URN;
 import com.netbout.mock.MkBase;
 import com.netbout.spi.Base;
-import com.netbout.spi.User;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;
@@ -54,8 +53,7 @@ public final class TkFriendTest {
         final Base base = new MkBase();
         final String alias = "test";
         final String urn = "urn:test:1";
-        final User user = base.user(new URN(urn));
-        user.aliases().add(alias);
+        base.user(new URN(urn)).aliases().add(alias);
         MatcherAssert.assertThat(
             new RsPrint(
                 new TkFriend(base).act(
