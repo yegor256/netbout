@@ -53,6 +53,7 @@ import org.apache.commons.lang3.time.DateFormatUtils;
 @Immutable
 @Loggable(Loggable.DEBUG)
 @EqualsAndHashCode(of = { "num", "request" })
+@SuppressWarnings("PMD.TooManyMethods")
 final class RtBout implements Bout {
 
     /**
@@ -131,6 +132,33 @@ final class RtBout implements Bout {
             .as(RestResponse.class)
             .assertStatus(HttpURLConnection.HTTP_SEE_OTHER);
         Logger.info(this, "bout #%d renamed", this.num);
+    }
+
+    @Override
+    public boolean subscription() throws IOException {
+        return Boolean.valueOf(
+            this.request.fetch()
+                .as(RestResponse.class)
+                .assertStatus(HttpURLConnection.HTTP_OK)
+                .as(XmlResponse.class)
+                .xml()
+                .xpath("/page/bout/subscription/text()")
+                .get(0)
+        );
+    }
+
+    @Override
+    public void subscribe(final boolean subs) throws IOException {
+        this.request.fetch()
+            .as(RestResponse.class)
+            .assertStatus(HttpURLConnection.HTTP_OK)
+            .as(XmlResponse.class)
+            .rel("/page/links/link[@rel='subscribe']/@href")
+            .method(Request.GET)
+            .fetch()
+            .as(RestResponse.class)
+            .assertStatus(HttpURLConnection.HTTP_SEE_OTHER);
+        Logger.info(this, "bout #%d subscription changed", this.num);
     }
 
     @Override

@@ -116,6 +116,24 @@ public final class ReBout implements Bout {
         verbose = false, attempts = Tv.TWENTY,
         delay = Tv.FIVE, unit = TimeUnit.SECONDS
     )
+    public boolean subscription() throws IOException {
+        return this.origin.subscription();
+    }
+
+    @Override
+    @RetryOnFailure(
+        verbose = false, attempts = Tv.TWENTY,
+        delay = Tv.FIVE, unit = TimeUnit.SECONDS
+    )
+    public void subscribe(final boolean subs) throws IOException {
+        this.origin.subscribe(subs);
+    }
+
+    @Override
+    @RetryOnFailure(
+        verbose = false, attempts = Tv.TWENTY,
+        delay = Tv.FIVE, unit = TimeUnit.SECONDS
+    )
     public Messages messages() throws IOException {
         return new ReMessages(this.origin.messages());
     }

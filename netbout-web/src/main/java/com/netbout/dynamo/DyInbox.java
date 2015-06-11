@@ -122,6 +122,7 @@ final class DyInbox implements Inbox {
             new Attributes()
                 .with(DyFriends.RANGE, this.self)
                 .with(DyFriends.HASH, number)
+                .with(DyFriends.ATTR_SUBSCRIPTION, true)
                 .with(DyFriends.ATTR_UPDATED, System.currentTimeMillis())
                 .with(DyFriends.ATTR_TITLE, "untitled")
         );
