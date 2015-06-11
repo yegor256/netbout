@@ -58,7 +58,7 @@ final class EmCatch {
     /**
      * Max sleep time of thread.
      */
-    private static final long MAX_SLEEP_TIME = TimeUnit.HOURS.toMillis(24L);
+    private static final long MAX_SLEEP_TIME = TimeUnit.HOURS.toMillis(1L);
     /**
      * Action.
      */

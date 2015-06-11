@@ -30,7 +30,7 @@ import com.icegreen.greenmail.user.GreenMailUser;
 import com.icegreen.greenmail.util.GreenMail;
 import com.icegreen.greenmail.util.GreenMailUtil;
 import com.icegreen.greenmail.util.ServerSetup;
-import com.icegreen.greenmail.util.ServerSetupTest;
+import com.netbout.misc.Ports;
 import javax.mail.Message;
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
@@ -52,7 +52,10 @@ public final class EmCatchTest {
      */
     @Test
     public void readsInboxPeriodically() throws Exception {
-        final GreenMail mail = new GreenMail(ServerSetupTest.POP3);
+        final Ports ports = new Ports();
+        final GreenMail mail = new GreenMail(
+            new ServerSetup(ports.allocate(), null, "pop3")
+        );
         mail.start();
         final ServerSetup setup = mail.getPop3().getServerSetup();
         final String mailUser = "to";
@@ -109,6 +112,7 @@ public final class EmCatchTest {
         );
         // @checkstyle MagicNumberCheck (1 line)
         Thread.sleep(1000);
+        ports.release(setup.getPort());
         mail.stop();
     }
 
