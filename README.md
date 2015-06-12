@@ -10,6 +10,22 @@ of humans and software agents in a conversation-centered environment.
 
 Try it at [www.netbout.com](http://www.netbout.com).
 
+## Functionality
+
+A user is able to login, using one of the following social/federated methods: Facebook, Google+ and Github.
+A user is able to logout.
+
+When user logs in for the first time, he must create a new "alias" inside Netbout. The system checks
+the validity of the alias and makes sure each alias is unique in the entire system.
+
+A user can start a new "bout", which is a conversation between a few users.
+
+A user can post a message to a bout and read all other messages, posted by other users, in reverse chronological order (the most recent messages on the top).
+
+A user can invite other users to the bout, knowing just their aliases.
+
+A user can attach a file to a bout. Any attached file can be deleted. A user can download any attached file.
+
 ## How to contribute?
 
 Fork the repository, make changes, submit a pull request.
