@@ -29,10 +29,10 @@ package com.netbout.rest;
 import com.jcabi.urn.URN;
 import com.netbout.mock.MkBase;
 import com.netbout.spi.Base;
-import com.netbout.spi.User;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;
+import org.takes.facets.auth.RqWithAuth;
 import org.takes.facets.fork.RqRegex;
 import org.takes.rs.RsPrint;
 
@@ -52,14 +52,13 @@ public final class TkFriendTest {
     public void buildsPngImage() throws Exception {
         final Base base = new MkBase();
         final String alias = "test";
-        final URN urn = new URN("urn:test:1");
-        final User user = base.user(urn);
-        user.aliases().add(alias);
+        final String urn = "urn:test:1";
+        base.user(new URN(urn)).aliases().add(alias);
         MatcherAssert.assertThat(
             new RsPrint(
                 new TkFriend(base).act(
                     new RqRegex.Fake(
-                        new RqWithTester(urn),
+                        new RqWithAuth(urn),
                         "(.*)", alias
                     )
                 )

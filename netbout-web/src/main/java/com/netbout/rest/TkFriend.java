@@ -49,6 +49,7 @@ import javax.imageio.ImageIO;
 import org.takes.Response;
 import org.takes.facets.fork.RqRegex;
 import org.takes.facets.fork.TkRegex;
+import org.takes.facets.forward.RsFailure;
 import org.takes.rs.RsFluent;
 
 /**

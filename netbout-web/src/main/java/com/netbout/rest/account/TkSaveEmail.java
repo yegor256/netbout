@@ -27,7 +27,6 @@
 package com.netbout.rest.account;
 
 import com.netbout.rest.RqAlias;
-import com.netbout.rest.RsFailure;
 import com.netbout.spi.Alias;
 import com.netbout.spi.Base;
 import java.io.IOException;
@@ -35,6 +34,7 @@ import org.takes.Request;
 import org.takes.Response;
 import org.takes.Take;
 import org.takes.facets.flash.RsFlash;
+import org.takes.facets.forward.RsFailure;
 import org.takes.facets.forward.RsForward;
 import org.takes.rq.RqForm;
 

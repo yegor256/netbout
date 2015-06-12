@@ -26,7 +26,6 @@
  */
 package com.netbout.rest;
 
-import com.jcabi.urn.URN;
 import com.netbout.mock.MkBase;
 import java.net.HttpURLConnection;
 import java.net.URLEncoder;
@@ -39,6 +38,7 @@ import org.takes.Take;
 import org.takes.facets.auth.Identity;
 import org.takes.facets.auth.Pass;
 import org.takes.facets.auth.PsFixed;
+import org.takes.facets.auth.RqWithAuth;
 import org.takes.facets.hamcrest.HmRsStatus;
 import org.takes.misc.Opt;
 import org.takes.rq.RqFake;
@@ -148,7 +148,7 @@ public final class TkAppTest {
         final String head = new RsPrint(
             new TkApp(new MkBase()).act(
                 new RqWithHeader(
-                    new RqWithTester(new URN("urn:test:1")),
+                    new RqWithAuth("urn:test:1"),
                     String.format(
                         "Cookie: RsReturn=%s",
                         URLEncoder.encode(loc, Charset.defaultCharset().name())
