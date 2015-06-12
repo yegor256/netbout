@@ -10,6 +10,8 @@ of humans and software agents in a conversation-centered environment.
 
 Try it at [www.netbout.com](http://www.netbout.com).
 
+The original idea behind Netbout is explained in USPTO patent application [US 12/943,022](https://www.google.com/patents/US20120117164).
+
 ## Functionality
 
 A user is able to login, using one of the following social/federated methods: Facebook, Google+ and Github.
