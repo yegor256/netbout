@@ -37,6 +37,12 @@ and [non-functional](http://en.wikipedia.org/wiki/Non-functional_requirement)
 problems in the system. Each bug you
 find, report in [a new Github issue](https://github.com/yegor256/netbout/issues/new).
 
+Please, read these articles before starting to test and report bugs:
+[Five Principles of Bug Tracking](http://www.yegor256.com/2014/11/24/principles-of-bug-tracking.html),
+[Bugs Are Welcome](http://www.yegor256.com/2014/04/13/bugs-are-welcome.html),
+and
+[Wikipedia's Definition of a Software Bug Is Wrong](http://www.yegor256.com/2015/06/11/wikipedia-bug-definition.html).
+
 ## How to contribute?
 
 If you're a software developer and want to contribute to 
