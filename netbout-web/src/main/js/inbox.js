@@ -53,9 +53,9 @@ $(document).ready(
               success: function (data) {
                 var appendix = '<ul class="bouts">',
                     $data = $(data),
-                    asXml = $data.find('bout'),
-                    asHtml = $data.find('#bouts'),
-                    bouts = asHtml.find('.bouts');
+                    xml = $data.find('bout'),
+                    html = $data.find('#bouts'),
+                    bouts = html.find('.bouts');
                 more = '';
                 function boutToHtml($bout, unread, unseen) {
                   return [
@@ -92,11 +92,11 @@ $(document).ready(
                   } else {
                     $tail.html('<div id="tail"/>');
                   }
-                  $box.attr('data-more', asHtml.attr('data-more'));
+                  $box.attr('data-more', html.attr('data-more'));
                 }
 
                 function boutsToHtml() {
-                  asXml.each(
+                  xml.each(
                       function (idx, bout) {
                         var $bout = $(bout),
                             unread = parseInt($bout.find('unread').text(), 10),
@@ -112,9 +112,9 @@ $(document).ready(
                   $box.attr('data-more', more);
                 }
 
-                if (asXml.length > 0) {
+                if (xml.length > 0) {
                   boutsToHtml();
-                }else if (asHtml.length > 0) {
+                }else if (html.length > 0) {
                   boutsHtmlToHtml();
                 }
               },

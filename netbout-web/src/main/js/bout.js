@@ -71,8 +71,8 @@ $(document).ready(
               success: function (data) {
                 var appendix = '',
                     $data = $(data),
-                    asXml = $data.find('message'),
-                    asHtml = $data.find('#messages');
+                    xml = $data.find('message'),
+                    html = $data.find('#messages');
                 more = '';
                 function msgXmlToHtml($msg) {
                   return [
@@ -91,7 +91,7 @@ $(document).ready(
                   ].join('');
                 }
                 function msgsXmlToHtml() {
-                  asXml.each(
+                  xml.each(
                       function (idx, msg) {
                         var $msg = $(msg);
                         appendix += msgXmlToHtml($msg);
@@ -103,7 +103,7 @@ $(document).ready(
                   $box.attr('data-more', more);
                 }
                 function msgsHtmlToHtml() {
-                  asHtml.find('.message').each(
+                  html.find('.message').each(
                       function (idx, line) {
                         var $msg = $(line),
                             msg = $('<div class="message"></div>');
@@ -117,11 +117,11 @@ $(document).ready(
                   );
                   $tail.removeAttr('id');
                   $tail.html(appendix + '<div id="tail"/>');
-                  $box.attr('data-more', asHtml.attr('data-more'));
+                  $box.attr('data-more', html.attr('data-more'));
                 }
-                if (asXml.length > 0) {
+                if (xml.length > 0) {
                   msgsXmlToHtml();
-                }else if (asHtml.length > 0) {
+                }else if (html.length > 0) {
                   msgsHtmlToHtml();
                 }
               },
