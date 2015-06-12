@@ -28,9 +28,19 @@ A user can invite other users to the bout, knowing just their aliases.
 
 A user can attach a file to a bout. Any attached file can be deleted. A user can download any attached file.
 
+## How to test?
+
+If you're a manual tester and want to contribute to a project, please
+login to Netbout.com, create an account and do whatever you think is reasonable
+to reveal [functional](http://en.wikipedia.org/wiki/Functional_requirement) 
+and [non-functional](http://en.wikipedia.org/wiki/Non-functional_requirement) 
+problems in the system. Each bug you
+find, report in [a new Github issue](https://github.com/yegor256/netbout/issues/new).
+
 ## How to contribute?
 
-Fork the repository, make changes, submit a pull request.
+If you're a software developer and want to contribute to 
+the project, please fork the repository, make changes, and submit a pull request.
 We promise to review your changes same day and apply to
 the `master` branch, if they look correct.
 
