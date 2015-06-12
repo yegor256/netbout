@@ -52,6 +52,7 @@ import lombok.ToString;
 @ToString
 @Loggable(Loggable.DEBUG)
 @EqualsAndHashCode(of = { "sql", "bout", "self" })
+@SuppressWarnings("PMD.TooManyMethods")
 final class MkBout implements Bout {
 
     /**
@@ -130,12 +131,17 @@ final class MkBout implements Bout {
 
     @Override
     public boolean subscription() throws IOException {
+        return this.subscription(this.self);
+    }
+
+    @Override
+    public boolean subscription(final String alias) throws IOException {
         try {
             return new JdbcSession(this.sql.source())
                 // @checkstyle LineLength (1 lines)
                 .sql("SELECT subscription FROM friend WHERE bout = ? and alias = ?")
                 .set(this.bout)
-                .set(this.self)
+                .set(alias)
                 .select(new SingleOutcome<Boolean>(Boolean.class));
         } catch (final SQLException ex) {
             throw new IOException(ex);

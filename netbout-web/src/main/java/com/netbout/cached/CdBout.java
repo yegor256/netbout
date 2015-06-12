@@ -51,6 +51,7 @@ import lombok.ToString;
 @Loggable(Loggable.DEBUG)
 @ToString(of = "origin")
 @EqualsAndHashCode(of = "origin")
+@SuppressWarnings("PMD.TooManyMethods")
 final class CdBout implements Bout {
 
     /**
@@ -99,6 +100,12 @@ final class CdBout implements Bout {
     @Cacheable(lifetime = Tv.FIVE, unit = TimeUnit.HOURS)
     public boolean subscription() throws IOException {
         return this.origin.subscription();
+    }
+
+    @Override
+    @Cacheable(lifetime = Tv.FIVE, unit = TimeUnit.HOURS)
+    public boolean subscription(final String alias) throws IOException {
+        return this.origin.subscription(alias);
     }
 
     @Override

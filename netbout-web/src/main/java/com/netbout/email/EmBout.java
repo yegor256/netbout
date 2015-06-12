@@ -49,6 +49,7 @@ import lombok.ToString;
 @Loggable(Loggable.DEBUG)
 @ToString(of = "origin")
 @EqualsAndHashCode(of = "origin")
+@SuppressWarnings("PMD.TooManyMethods")
 final class EmBout implements Bout {
 
     /**
@@ -106,6 +107,11 @@ final class EmBout implements Bout {
     @Override
     public boolean subscription() throws IOException {
         return this.origin.subscription();
+    }
+
+    @Override
+    public boolean subscription(final String alias) throws IOException {
+        return this.origin.subscription(alias);
     }
 
     @Override
