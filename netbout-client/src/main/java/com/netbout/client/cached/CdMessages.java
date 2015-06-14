@@ -95,6 +95,7 @@ public final class CdMessages implements Messages {
     }
 
     @Override
+    @Cacheable.FlushBefore
     public Iterable<Message> search(final String term) throws IOException {
         return Iterables.transform(
             this.origin.search(term),
