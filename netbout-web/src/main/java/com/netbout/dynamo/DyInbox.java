@@ -59,7 +59,7 @@ import lombok.ToString;
 
 /**
  * Dynamo inbox.
- * @todo #603:30min Refactor this class to avoid suppressing of
+ * @todo #603:30min Refactor DyInbox class to avoid suppressing of
  *  PMD.TooManyMethods and PMD.ExcessiveImports warnings. for example
  *  there are some private static methods there, those could be easily
  *  extracted.
