@@ -102,6 +102,19 @@ final class CdMessages implements Messages {
         );
     }
 
+    @Override
+    public Iterable<Message> search(final String term) throws IOException {
+        this.flag.touch();
+        return Iterables.transform(
+            this.origin.search(term),
+            new Function<Message, Message>() {
+                @Override
+                public Message apply(final Message input) {
+                    return new CdMessage(input);
+                }
+            }
+        );
+    }
     /**
      * Flag of read/unread.
      * @since 2.6

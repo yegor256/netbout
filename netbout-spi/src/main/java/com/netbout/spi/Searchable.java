@@ -30,49 +30,20 @@ import com.jcabi.aspects.Immutable;
 import java.io.IOException;
 
 /**
- * Bout messages.
+ * Searchable.
  *
- * @author Yegor Bugayenko (yegor@teamed.io)
+ * @author Ivan Inozemtsev (ivan.inozemtsev@gmail.com)
  * @version $Id$
- * @since 2.0
+ * @since 2.15.2
  */
 @Immutable
-public interface Messages extends Pageable<Message>, Searchable<Message> {
-
+public interface Searchable<T> {
     /**
-     * Page size.
-     */
-    int PAGE = 16;
-
-    /**
-     * Post a new message.
-     * @param text The text of the new message
+     * Find items matching the search term.
+     * @param term String to search
+     * @return Items matching the search term
      * @throws IOException If fails
      */
-    void post(String text) throws IOException;
-
-    /**
-     * How many unread messages are there?
-     * @return Number of them
-     * @throws IOException If fails
-     */
-    long unread() throws IOException;
-
-    /**
-     * Message content is not valid.
-     */
-    final class BrokenPostException extends IOException {
-        /**
-         * Serialization marker.
-         */
-        private static final long serialVersionUID = -6379382623897037014L;
-        /**
-         * Ctor.
-         * @param cause Cause of the problem
-         */
-        public BrokenPostException(final String cause) {
-            super(cause);
-        }
-    }
+    Iterable<T> search(String term) throws IOException;
 
 }

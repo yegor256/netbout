@@ -49,6 +49,35 @@ import org.junit.Test;
  * @version $Id$
  */
 public final class DyInboxITCase {
+    /**
+     * DyInbox can search text in bouts.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void searchesInBouts() throws Exception {
+        final String alias = "alias";
+        final Aliases aliases =
+            new DyBase().user(new URN("urn:test:88314")).aliases();
+        aliases.add(alias);
+        final Inbox inbox = aliases.iterate().iterator().next().inbox();
+        final Bout first = inbox.bout(inbox.start());
+        final Bout second = inbox.bout(inbox.start());
+        first.messages().post("hello");
+        second.messages().post("world");
+        final Iterator<Bout> result = inbox.search("ell").iterator();
+        MatcherAssert.assertThat(
+            "search result is empty",
+            result.hasNext()
+        );
+        MatcherAssert.assertThat(
+            result.next().number(),
+            Matchers.equalTo(first.number())
+        );
+        MatcherAssert.assertThat(
+            "more results than expected",
+            !result.hasNext()
+        );
+    }
 
     /**
      * DyInbox can list bouts and create.

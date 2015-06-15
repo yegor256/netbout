@@ -97,4 +97,35 @@ public final class DyMessagesITCase {
         MatcherAssert.assertThat(found, Matchers.equalTo(total));
     }
 
+    /**
+     * DyMessages can search for text in messages.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void searchesInMessages() throws Exception {
+        final String alias = "frol";
+        final Aliases aliases =
+            new DyBase().user(new URN("urn:test:8831415")).aliases();
+        aliases.add(alias);
+        final Inbox inbox = aliases.iterate().iterator().next().inbox();
+        final Bout bout = inbox.bout(inbox.start());
+        bout.messages().post("hello");
+        // @checkstyle MultipleStringLiteralsCheck (1 line)
+        bout.messages().post("world");
+        bout.messages().post("foo");
+        final Iterator<Message> result = bout.messages().search("r").iterator();
+        MatcherAssert.assertThat(
+            "search result is empty",
+            result.hasNext()
+        );
+        MatcherAssert.assertThat(
+            result.next().text(),
+            // @checkstyle MultipleStringLiteralsCheck (1 line)
+            Matchers.equalTo("world")
+        );
+        MatcherAssert.assertThat(
+            "more results than expected",
+            !result.hasNext()
+        );
+    }
 }

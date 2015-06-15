@@ -37,8 +37,10 @@ import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedList;
+import java.util.List;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
@@ -136,5 +138,16 @@ final class MkMessages implements Messages {
         } catch (final SQLException ex) {
             throw new IOException(ex);
         }
+    }
+
+    @Override
+    public Iterable<Message> search(final String term) throws IOException {
+        final List<Message> result = new ArrayList<>(16);
+        for (final Message message : this.iterate()) {
+            if (message.text().contains(term)) {
+                result.add(message);
+            }
+        }
+        return result;
     }
 }

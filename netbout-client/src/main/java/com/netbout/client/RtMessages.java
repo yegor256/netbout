@@ -37,7 +37,9 @@ import com.netbout.spi.Messages;
 import com.netbout.spi.Pageable;
 import java.io.IOException;
 import java.net.HttpURLConnection;
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
@@ -98,5 +100,16 @@ final class RtMessages implements Messages {
                 return new RtMessageIterator(RtMessages.this.request);
             }
         };
+    }
+
+    @Override
+    public Iterable<Message> search(final String term) throws IOException {
+        final List<Message> result = new ArrayList<>(16);
+        for (final Message message : this.iterate()) {
+            if (message.text().contains(term)) {
+                result.add(message);
+            }
+        }
+        return result;
     }
 }
