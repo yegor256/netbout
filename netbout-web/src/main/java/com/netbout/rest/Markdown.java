@@ -90,7 +90,7 @@ public final class Markdown {
                 new PegDownProcessor().markdownToHtml(
                     Markdown.formatLinks(this.text)
                 )
-            );
+            ).replaceAll("(</a>)(\\w)", "$1 $2");
         }
     }
 

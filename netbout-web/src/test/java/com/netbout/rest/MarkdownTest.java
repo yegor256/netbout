@@ -39,6 +39,26 @@ import org.junit.Test;
 public final class MarkdownTest {
 
     /**
+     * Markdown can handle whitespace after links.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void handleWithespaceAfterLinks() throws Exception {
+        MatcherAssert.assertThat(
+            new Markdown(
+                "Hi [google](http://www.google.com) how are you?"
+            ).html(),
+            Matchers.allOf(
+                Matchers.equalTo(
+                    // @checkstyle LineLengthCheck (1 line)
+                    "<p>Hi \n<a href=\"http://www.google.com\">google</a> how are you?</p>\n"
+                ),
+                Matchers.not(Matchers.containsString("</a>how"))
+            )
+        );
+    }
+
+    /**
      * Markdown can format a text to HTML.
      * @throws Exception If there is some problem inside
      */
