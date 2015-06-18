@@ -49,8 +49,7 @@ public final class MkUserTest {
      */
     @Test
     public void findsAlias() throws Exception {
-        final Base base = new MkBase();
-        final User user = base.user(new URN("urn:test:9989"));
+        final User user = new MkBase().user(new URN("urn:test:9989"));
         final String alias = "test-me";
         user.aliases().add(alias);
         MatcherAssert.assertThat(
