@@ -28,7 +28,6 @@ package com.netbout.mock;
 
 import com.jcabi.urn.URN;
 import com.netbout.spi.Alias;
-import com.netbout.spi.Base;
 import com.netbout.spi.Friend;
 import com.netbout.spi.User;
 import org.hamcrest.MatcherAssert;
