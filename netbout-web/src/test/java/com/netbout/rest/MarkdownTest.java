@@ -43,17 +43,14 @@ public final class MarkdownTest {
      * @throws Exception If there is some problem inside
      */
     @Test
-    public void handleWithespaceAfterLinks() throws Exception {
+    public void handlesWhitespaceAfterLinks() throws Exception {
         MatcherAssert.assertThat(
             new Markdown(
                 "Hi [google](http://www.google.com) how are you?"
             ).html(),
-            Matchers.allOf(
-                Matchers.equalTo(
-                    // @checkstyle LineLengthCheck (1 line)
-                    "<p>Hi \n<a href=\"http://www.google.com\">google</a> how are you?</p>\n"
-                ),
-                Matchers.not(Matchers.containsString("</a>how"))
+            Matchers.equalTo(
+                // @checkstyle LineLengthCheck (1 line)
+                "<p>Hi \n<a href=\"http://www.google.com\">google</a> how are you?</p>\n"
             )
         );
     }

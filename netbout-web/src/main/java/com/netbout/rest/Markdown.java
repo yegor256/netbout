@@ -54,6 +54,14 @@ import org.w3c.tidy.Tidy;
 public final class Markdown {
 
     /**
+     * Pattern to look for a missing whitespace between the end of link and the
+     * next word.
+     */
+    private static final Pattern LINK_WHITESPACE = Pattern.compile(
+        "(</a>)(\\w)"
+    );
+
+    /**
      * Tidy.
      */
     private static final Tidy TIDY = Markdown.makeTidy();
@@ -86,11 +94,13 @@ public final class Markdown {
     @RetryOnFailure(verbose = true)
     public String html() {
         synchronized (Markdown.TIDY) {
-            return Markdown.clean(
-                new PegDownProcessor().markdownToHtml(
-                    Markdown.formatLinks(this.text)
+            return LINK_WHITESPACE.matcher(
+                Markdown.clean(
+                    new PegDownProcessor().markdownToHtml(
+                        Markdown.formatLinks(this.text)
+                    )
                 )
-            ).replaceAll("(</a>)(\\w)", "$1 $2");
+            ).replaceAll("$1 $2");
         }
     }
 
