@@ -20,3 +20,6 @@ Netbout-SmtpHost: localhost
 Netbout-SmtpPort: 2525
 Netbout-SmtpUser: test
 Netbout-SmtpPassword: test
+Netbout-Basic-Realm: testrealm
+Netbout-Basic-User: testuser
+Netbout-Basic-Pwd: testpassword
