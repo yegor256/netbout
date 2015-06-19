@@ -143,9 +143,11 @@
                     <xsl:text> </xsl:text>
                     <xsl:value-of select="$TEXTS/said"/>
                     <xsl:text> </xsl:text>
-                    <span title="{date}">
-                        <xsl:value-of select="timeago"/>
-                    </span>
+                    <a href="{/page/links/link[@rel='self']/@href}#msg{$msg/number}">
+                        <span title="{date}">
+                            <xsl:value-of select="timeago"/>
+                        </span>
+                    </a>
                 </div>
                 <div class="text">
                     <xsl:value-of select="html" disable-output-escaping="yes"/>
