@@ -39,7 +39,7 @@ import org.takes.rs.RsEmpty;
  * Test case for {@link com.netbout.rest.PsTwice}.
  * @author Eugene Kondrashev (eugene.kondrashev@gmai.com)
  * @version $Id$
- * @since 2.15.1
+ * @since 2.16
  */
 public final class PsTwiceTest {
 

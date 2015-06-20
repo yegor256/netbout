@@ -35,11 +35,11 @@ import org.takes.misc.Opt;
 
 /**
  * Sequentially tries first and second Pass instances. Identity of a second
- * identity is returned if first passes. Empty identity is returned otherwise.
+ * Pass is returned if first passes. Empty identity is returned otherwise.
  *
  * @author Eugene Kondrashev (eugene.kondreashev@gmail.com)
  * @version $Id$
- * @since 2.15.1
+ * @since 2.16
  */
 public final class PsTwice implements Pass {
 
