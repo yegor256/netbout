@@ -42,6 +42,9 @@
             <xsl:text>: </xsl:text>
             <xsl:value-of select="bout/title"/>
         </title>
+        <script src="/js/jqueryTextcomplete.js?{version/name}">
+            <xsl:text> </xsl:text>
+        </script>
         <script src="/js/friends.js?{version/name}">
             <xsl:text> </xsl:text>
             <!-- this is for W3C compliance -->
@@ -50,6 +53,7 @@
             <xsl:text> </xsl:text>
             <!-- this is for W3C compliance -->
         </script>
+        <link rel="stylesheet" type="text/css" media="all" href="/css/jqueryTextcomplete.css?{version/name}"/>
     </xsl:template>
     <xsl:template match="page" mode="body">
         <xsl:apply-templates select="bout"/>
