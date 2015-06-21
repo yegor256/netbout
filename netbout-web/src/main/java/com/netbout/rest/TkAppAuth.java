@@ -97,6 +97,8 @@ final class TkAppAuth extends TkWrap {
      *  Manifests.read("Netbout-Basic-User"),
      *  Manifests.read("Netbout-Basic-Pwd")))
      *  But PsBasic.Default like class is currently missing. See takes #349.
+     *  It is also needed to be able to switch on/off BasicAuth e.g.
+     *  by via change the manifest entry "Netbout-Basic":true/false.
      */
     private static Take make(final Take take, final Pass pass) {
         return new TkAuth(
