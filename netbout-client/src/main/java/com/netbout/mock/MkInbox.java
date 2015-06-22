@@ -38,8 +38,10 @@ import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedList;
+import java.util.List;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
@@ -147,5 +149,16 @@ final class MkInbox implements Inbox {
         } catch (final SQLException ex) {
             throw new IOException(ex);
         }
+    }
+
+    @Override
+    public Iterable<Bout> search(final String term) throws IOException {
+        final List<Bout> result = new ArrayList<>(16);
+        for (final Bout bout : this.iterate()) {
+            if (bout.messages().search(term).iterator().hasNext()) {
+                result.add(bout);
+            }
+        }
+        return result;
     }
 }

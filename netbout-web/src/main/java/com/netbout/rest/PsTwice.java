@@ -26,49 +26,55 @@
  */
 package com.netbout.rest;
 
-import java.io.UnsupportedEncodingException;
-import java.net.HttpURLConnection;
-import org.takes.facets.flash.RsFlash;
-import org.takes.facets.forward.RsForward;
+import java.io.IOException;
+import org.takes.Request;
+import org.takes.Response;
+import org.takes.facets.auth.Identity;
+import org.takes.facets.auth.Pass;
+import org.takes.misc.Opt;
 
 /**
- * Failure.
+ * Sequentially tries first and second Pass instances. Identity of a second
+ * Pass is returned if first passes. Empty identity is returned otherwise.
  *
- * @author Yegor Bugayenko (yegor@teamed.io)
+ * @author Eugene Kondrashev (eugene.kondreashev@gmail.com)
  * @version $Id$
- * @since 2.14
+ * @since 2.16
  */
-public final class RsFailure extends RsForward {
+public final class PsTwice implements Pass {
 
     /**
-     * Serialization marker.
+     * First Pass to check.
      */
-    private static final long serialVersionUID = 396488574468386488L;
+    private final transient Pass fst;
 
     /**
-     * Ctor.
-     * @param cause Cause
-     * @throws UnsupportedEncodingException If fails
+     * Second Pass to check.
      */
-    public RsFailure(final Throwable cause)
-        throws UnsupportedEncodingException {
-        super(
-            new RsFlash(cause),
-            HttpURLConnection.HTTP_MOVED_PERM
-        );
-    }
+    private final transient Pass snd;
 
     /**
      * Ctor.
-     * @param cause Cause
-     * @throws UnsupportedEncodingException If fails
+     * @param first Pass to enter
+     * @param second Pass to enter if previous succeeded
      */
-    public RsFailure(final String cause)
-        throws UnsupportedEncodingException {
-        super(
-            new RsFlash(cause),
-            HttpURLConnection.HTTP_MOVED_PERM
-        );
+    public PsTwice(final Pass first, final Pass second) {
+        this.fst = first;
+        this.snd = second;
     }
 
+    @Override
+    public Opt<Identity> enter(final Request req) throws IOException {
+        Opt<Identity> user = new Opt.Empty<Identity>();
+        if (this.fst.enter(req).has()) {
+            user = this.snd.enter(req);
+        }
+        return user;
+    }
+
+    @Override
+    public Response exit(final Response response,
+            final Identity identity) throws IOException {
+        return this.snd.exit(response, identity);
+    }
 }

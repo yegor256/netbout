@@ -51,6 +51,7 @@ import lombok.ToString;
 @ToString(includeFieldNames = false)
 @Loggable(Loggable.DEBUG)
 @EqualsAndHashCode(of = "origin")
+@SuppressWarnings("PMD.TooManyMethods")
 public final class ReBout implements Bout {
 
     /**
@@ -109,6 +110,33 @@ public final class ReBout implements Bout {
     )
     public void rename(final String text) throws IOException {
         this.origin.rename(text);
+    }
+
+    @Override
+    @RetryOnFailure(
+        verbose = false, attempts = Tv.TWENTY,
+        delay = Tv.FIVE, unit = TimeUnit.SECONDS
+    )
+    public boolean subscription() throws IOException {
+        return this.origin.subscription();
+    }
+
+    @Override
+    @RetryOnFailure(
+        verbose = false, attempts = Tv.TWENTY,
+        delay = Tv.FIVE, unit = TimeUnit.SECONDS
+    )
+    public boolean subscription(final String alias) throws IOException {
+        return this.origin.subscription(alias);
+    }
+
+    @Override
+    @RetryOnFailure(
+        verbose = false, attempts = Tv.TWENTY,
+        delay = Tv.FIVE, unit = TimeUnit.SECONDS
+    )
+    public void subscribe(final boolean subs) throws IOException {
+        this.origin.subscribe(subs);
     }
 
     @Override

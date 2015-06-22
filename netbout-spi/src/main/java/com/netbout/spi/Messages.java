@@ -37,7 +37,7 @@ import java.io.IOException;
  * @since 2.0
  */
 @Immutable
-public interface Messages extends Pageable<Message> {
+public interface Messages extends Pageable<Message>, Searchable<Message> {
 
     /**
      * Page size.

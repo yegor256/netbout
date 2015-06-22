@@ -24,46 +24,53 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.rest;
+package com.netbout.rest.bout;
 
-import com.jcabi.urn.URN;
-import com.netbout.mock.MkBase;
+import com.netbout.spi.Attachments;
 import com.netbout.spi.Base;
-import org.hamcrest.MatcherAssert;
-import org.hamcrest.Matchers;
-import org.junit.Test;
-import org.takes.facets.auth.RqWithAuth;
-import org.takes.facets.fork.RqRegex;
-import org.takes.rs.RsPrint;
+import com.netbout.spi.Bout;
+import java.io.IOException;
+import org.takes.Request;
+import org.takes.Response;
+import org.takes.Take;
+import org.takes.facets.flash.RsFlash;
+import org.takes.facets.forward.RsFailure;
+import org.takes.facets.forward.RsForward;
 
 /**
- * Test case for {@link TkFriend}.
- * @author Yegor Bugayenko (yegor@teamed.io)
+ * Subscribe bout.
+ *
+ * @author Erim Erturk (erimerturk@gmail.com)
  * @version $Id$
- * @since 2.14
+ * @since 2.15
  */
-public final class TkFriendTest {
+final class TkSubscribe implements Take {
 
     /**
-     * TkFriend can build a PNG image.
-     * @throws Exception If there is some problem inside
+     * Base.
      */
-    @Test
-    public void buildsPngImage() throws Exception {
-        final Base base = new MkBase();
-        final String alias = "test";
-        final String urn = "urn:test:1";
-        base.user(new URN(urn)).aliases().add(alias);
-        MatcherAssert.assertThat(
-            new RsPrint(
-                new TkFriend(base).act(
-                    new RqRegex.Fake(
-                        new RqWithAuth(urn),
-                        "(.*)", alias
-                    )
-                )
-            ),
-            Matchers.notNullValue()
+    private final transient Base base;
+
+    /**
+     * Ctor.
+     * @param bse Base
+     */
+    TkSubscribe(final Base bse) {
+        this.base = bse;
+    }
+
+    @Override
+    public Response act(final Request req) throws IOException {
+        final Bout bout = new RqBout(this.base, req).bout();
+        try {
+            bout.subscribe(!bout.subscription());
+        } catch (final Attachments.InvalidNameException ex) {
+            throw new RsFailure(ex);
+        }
+        throw new RsForward(
+            new RsFlash(
+                String.format("bout #%d subscription changed", bout.number())
+            )
         );
     }
 

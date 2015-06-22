@@ -105,4 +105,17 @@ final class CdInbox implements Inbox {
             }
         );
     }
+
+    @Override
+    public Iterable<Bout> search(final String term) throws IOException {
+        return Iterables.transform(
+            this.origin.search(term),
+            new Function<Bout, Bout>() {
+                @Override
+                public Bout apply(final Bout input) {
+                    return new CdBout(input);
+                }
+            }
+        );
+    }
 }

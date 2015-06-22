@@ -24,66 +24,26 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.rest;
+package com.netbout.spi;
 
-import com.jcabi.urn.URN;
+import com.jcabi.aspects.Immutable;
 import java.io.IOException;
-import lombok.EqualsAndHashCode;
-import org.takes.Request;
-import org.takes.facets.auth.Identity;
-import org.takes.facets.auth.TkAuth;
-import org.takes.facets.auth.codecs.CcPlain;
-import org.takes.rq.RqFake;
-import org.takes.rq.RqWithHeader;
-import org.takes.rq.RqWrap;
 
 /**
- * Request with tester on board.
+ * Searchable.
  *
- * @author Yegor Bugayenko (yegor@teamed.io)
+ * @author Ivan Inozemtsev (ivan.inozemtsev@gmail.com)
  * @version $Id$
- * @since 2.14
- * @checkstyle ClassDataAbstractionCouplingCheck (500 lines)
+ * @since 2.15.2
  */
-@EqualsAndHashCode(callSuper = true)
-public final class RqWithTester extends RqWrap {
-
+@Immutable
+public interface Searchable<T> {
     /**
-     * Ctor.
-     * @param urn URN of the tester
+     * Find items matching the search term.
+     * @param term String to search
+     * @return Items matching the search term
      * @throws IOException If fails
      */
-    public RqWithTester(final URN urn) throws IOException {
-        this(urn, new RqFake());
-    }
+    Iterable<T> search(String term) throws IOException;
 
-    /**
-     * Ctor.
-     * @param urn URN of the tester
-     * @param req Request
-     * @throws IOException If fails
-     */
-    public RqWithTester(final URN urn, final Request req) throws IOException {
-        super(RqWithTester.make(urn, req));
-    }
-
-    /**
-     * Ctor.
-     * @param urn URN of the tester
-     * @param req Request
-     * @return Request
-     * @throws IOException If fails
-     */
-    private static Request make(final URN urn, final Request req)
-        throws IOException {
-        return new RqWithHeader(
-            req,
-            TkAuth.class.getSimpleName(),
-            new String(
-                new CcPlain().encode(
-                    new Identity.Simple(urn.toString())
-                )
-            )
-        );
-    }
 }

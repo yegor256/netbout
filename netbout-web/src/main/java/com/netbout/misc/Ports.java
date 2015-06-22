@@ -41,7 +41,7 @@ import java.util.concurrent.ConcurrentSkipListSet;
  * @since 2.14.17
  * @checkstyle ClassDataAbstractionCouplingCheck (500 lines)
  */
-final class Ports {
+public final class Ports {
 
     /**
      * Already assigned ports.

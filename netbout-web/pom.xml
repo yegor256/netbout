@@ -48,7 +48,7 @@
         <dependency>
             <groupId>org.takes</groupId>
             <artifactId>takes</artifactId>
-            <version>0.20.2</version>
+            <version>0.20.3</version>
         </dependency>
         <dependency>
             <groupId>com.jcabi.incubator</groupId>
@@ -253,6 +253,12 @@
             <version>9.1.0.8</version>
             <classifier>dom</classifier>
             <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.icegreen</groupId>
+            <artifactId>greenmail</artifactId>
+            <version>1.4.1</version>
+            <scope>test</scope>
         </dependency>
     </dependencies>
     <build>

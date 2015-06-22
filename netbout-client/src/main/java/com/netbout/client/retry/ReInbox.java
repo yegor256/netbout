@@ -118,4 +118,21 @@ public final class ReInbox implements Inbox {
             }
         );
     }
+
+    @Override
+    @RetryOnFailure(
+        verbose = false, attempts = Tv.TWENTY,
+        delay = Tv.FIVE, unit = TimeUnit.SECONDS
+    )
+    public Iterable<Bout> search(final String term) throws IOException {
+        return Iterables.transform(
+            this.origin.search(term),
+            new Function<Bout, Bout>() {
+                @Override
+                public Bout apply(final Bout bout) {
+                    return new ReBout(bout);
+                }
+            }
+        );
+    }
 }

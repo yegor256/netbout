@@ -37,7 +37,7 @@ import java.io.IOException;
  * @since 2.0
  */
 @Immutable
-public interface Inbox extends Pageable<Bout> {
+public interface Inbox extends Pageable<Bout>, Searchable<Bout> {
 
     /**
      * Page size.

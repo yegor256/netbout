@@ -27,7 +27,6 @@
 package com.netbout.rest.bout;
 
 import com.netbout.rest.RqAlias;
-import com.netbout.rest.RsFailure;
 import com.netbout.spi.Alias;
 import com.netbout.spi.Base;
 import com.netbout.spi.Bout;
@@ -38,6 +37,7 @@ import java.net.HttpURLConnection;
 import lombok.EqualsAndHashCode;
 import org.takes.HttpException;
 import org.takes.Request;
+import org.takes.facets.forward.RsFailure;
 import org.takes.rq.RqHeaders;
 import org.takes.rq.RqWrap;
 

@@ -49,6 +49,7 @@ import lombok.ToString;
 @ToString(includeFieldNames = false)
 @Loggable(Loggable.DEBUG)
 @EqualsAndHashCode(of = "origin")
+@SuppressWarnings("PMD.TooManyMethods")
 public final class CdBout implements Bout {
 
     /**
@@ -92,6 +93,24 @@ public final class CdBout implements Bout {
     @Cacheable.FlushBefore
     public void rename(final String text) throws IOException {
         this.origin.rename(text);
+    }
+
+    @Override
+    @Cacheable
+    public boolean subscription() throws IOException {
+        return this.origin.subscription();
+    }
+
+    @Override
+    @Cacheable
+    public boolean subscription(final String alias) throws IOException {
+        return this.origin.subscription(alias);
+    }
+
+    @Override
+    @Cacheable.FlushBefore
+    public void subscribe(final boolean subs) throws IOException {
+        this.origin.subscribe(subs);
     }
 
     @Override

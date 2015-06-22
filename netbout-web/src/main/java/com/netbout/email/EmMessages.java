@@ -98,7 +98,8 @@ final class EmMessages implements Messages {
         this.origin.post(text);
         for (final Friend friend : this.bout.friends().iterate()) {
             if (friend.email().isEmpty()
-                || friend.alias().equals(this.self)) {
+                || friend.alias().equals(this.self)
+                || !this.bout.subscription(friend.alias())) {
                 continue;
             }
             this.email(friend, text);
@@ -121,6 +122,11 @@ final class EmMessages implements Messages {
     @Override
     public Iterable<Message> iterate() throws IOException {
         return this.origin.iterate();
+    }
+
+    @Override
+    public Iterable<Message> search(final String term) throws IOException {
+        return this.origin.search(term);
     }
 
     /**

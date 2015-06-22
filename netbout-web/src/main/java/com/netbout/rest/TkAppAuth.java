@@ -89,54 +89,67 @@ final class TkAppAuth extends TkWrap {
      * @param take Take
      * @param pass Last Pass on Chain
      * @return Authenticated take
+     * @todo #685:30m/DEV Need to implement PsBasic.Entry.
+     *  PsFake usage should be changed to
+     *  PsBasic(
+     *  Manifests.read("Netbout-Basic-Realm"),
+     *  new PsBasic.Default(
+     *  Manifests.read("Netbout-Basic-User"),
+     *  Manifests.read("Netbout-Basic-Pwd")))
+     *  But PsBasic.Default like class is currently missing. See takes #349.
+     *  It is also needed to be able to switch on/off BasicAuth e.g.
+     *  by via change the manifest entry "Netbout-Basic":true/false.
      */
     private static Take make(final Take take, final Pass pass) {
         return new TkAuth(
             take,
-            new PsChain(
-                new PsByFlag(
-                    new PsByFlag.Pair(
-                        PsGithub.class.getSimpleName(),
-                        new PsGithub(
-                            Manifests.read("Netbout-GithubId"),
-                            Manifests.read("Netbout-GithubSecret")
+            new PsTwice(
+                new PsFake(true),
+                new PsChain(
+                    new PsByFlag(
+                        new PsByFlag.Pair(
+                            PsGithub.class.getSimpleName(),
+                            new PsGithub(
+                                Manifests.read("Netbout-GithubId"),
+                                Manifests.read("Netbout-GithubSecret")
+                            )
+                        ),
+                        new PsByFlag.Pair(
+                            PsFacebook.class.getSimpleName(),
+                            new PsFacebook(
+                                Manifests.read("Netbout-FbId"),
+                                Manifests.read("Netbout-FbSecret")
+                            )
+                        ),
+                        new PsByFlag.Pair(
+                            PsGoogle.class.getSimpleName(),
+                            new PsGoogle(
+                                Manifests.read("Netbout-GoogleId"),
+                                Manifests.read("Netbout-GoogleSecret"),
+                                "http://www.netbout.com/?PsByFlag=PsGoogle"
+                            )
+                        ),
+                        new PsByFlag.Pair(
+                            "fake-user",
+                            new TkAppAuth.FakePass()
+                        ),
+                        new PsByFlag.Pair(
+                            PsLogout.class.getSimpleName(),
+                            new PsLogout()
                         )
                     ),
-                    new PsByFlag.Pair(
-                        PsFacebook.class.getSimpleName(),
-                        new PsFacebook(
-                            Manifests.read("Netbout-FbId"),
-                            Manifests.read("Netbout-FbSecret")
-                        )
-                    ),
-                    new PsByFlag.Pair(
-                        PsGoogle.class.getSimpleName(),
-                        new PsGoogle(
-                            Manifests.read("Netbout-GoogleId"),
-                            Manifests.read("Netbout-GoogleSecret"),
-                            "http://www.netbout.com/?PsByFlag=PsGoogle"
-                        )
-                    ),
-                    new PsByFlag.Pair(
-                        "fake-user",
-                        new TkAppAuth.FakePass()
-                    ),
-                    new PsByFlag.Pair(
-                        PsLogout.class.getSimpleName(),
-                        new PsLogout()
-                    )
-                ),
-                new PsCookie(
-                    new CcSafe(
-                        new CcHex(
-                            new CcXOR(
-                                new CcSalted(new CcCompact()),
-                                Manifests.read("Netbout-SecurityKey")
+                    new PsCookie(
+                        new CcSafe(
+                            new CcHex(
+                                new CcXOR(
+                                    new CcSalted(new CcCompact()),
+                                    Manifests.read("Netbout-SecurityKey")
+                                )
                             )
                         )
-                    )
-                ),
-                pass
+                    ),
+                    pass
+                )
             )
         );
     }

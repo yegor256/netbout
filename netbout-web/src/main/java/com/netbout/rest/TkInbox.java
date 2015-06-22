@@ -47,7 +47,9 @@ import org.xembly.Directives;
 
 /**
  * Index.
- *
+ * @todo #603:30min Index page should also display search box
+ *  so that user can search for bouts containing text. See Inbox#search
+ *  method for details.
  * @author Yegor Bugayenko (yegor@teamed.io)
  * @version $Id$
  * @since 2.14

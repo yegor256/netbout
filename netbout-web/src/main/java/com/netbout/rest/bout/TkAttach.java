@@ -27,7 +27,6 @@
 package com.netbout.rest.bout;
 
 import com.jcabi.aspects.Tv;
-import com.netbout.rest.RsFailure;
 import com.netbout.spi.Attachment;
 import com.netbout.spi.Attachments;
 import com.netbout.spi.Base;
@@ -45,6 +44,7 @@ import org.takes.Request;
 import org.takes.Response;
 import org.takes.Take;
 import org.takes.facets.flash.RsFlash;
+import org.takes.facets.forward.RsFailure;
 import org.takes.facets.forward.RsForward;
 import org.takes.rq.RqMultipart;
 import org.takes.rq.RqPrint;

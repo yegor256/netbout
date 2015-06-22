@@ -35,6 +35,8 @@ import com.netbout.spi.Bout;
 import com.netbout.spi.Inbox;
 import com.netbout.spi.Pageable;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
@@ -119,5 +121,16 @@ final class EmInbox implements Inbox {
                 }
             }
         );
+    }
+
+    @Override
+    public Iterable<Bout> search(final String term) throws IOException {
+        final List<Bout> result = new ArrayList<>(16);
+        for (final Bout bout : this.iterate()) {
+            if (bout.messages().search(term).iterator().hasNext()) {
+                result.add(bout);
+            }
+        }
+        return result;
     }
 }

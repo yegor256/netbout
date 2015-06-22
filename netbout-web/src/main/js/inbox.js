@@ -51,48 +51,72 @@ $(document).ready(
               dataType: 'xml',
               method: 'GET',
               success: function (data) {
-                var appendix = '<ul class="bouts">';
+                var appendix = '<ul class="bouts">',
+                    $data = $(data),
+                    xml = $data.find('bout'),
+                    html = $data.find('#bouts'),
+                    bouts = html.find('.bouts');
                 more = '';
-                $(data).find('bout').each(
-                  function (idx, bout) {
-                    var $bout = $(bout),
-                      unread = parseInt($bout.find('unread').text(), 10),
-                      unseen = parseInt($bout.find('unseen').text(), 10);
-                    appendix += [
-                      '<li class="bout" id="bout',
-                      $bout.find('number').text(),
-                      '"><h1 class="bout"><span class="num',
-                      (unread === 0 && unseen === 0 ? '' : ' unread'),
-                      '">#',
-                      $bout.find('number').text(),
-                      '</span><a class="title" href="',
-                      $bout.find('link[rel="open"]').attr('href'),
-                      '">',
-                      escapeHTML($bout.find('title').text()),
-                      '</a>',
-                      (unread === 0 ? '' : '<span class="unread">' + unread + '</span>'),
-                      '</h1><div class="friends">'
-                    ].join('');
-                    $bout.find('friend').each(
-                      function (idx, friend) {
-                        var $friend = $(friend), shift = 57 * idx;
-                        appendix += [
-                          '<div class="friend" style="left:',
-                          shift + 'px;"><img alt="',
-                          escapeHTML($friend.find('alias').text()),
-                          '" src="',
-                          $friend.find('link[rel="photo"]').attr('href'),
-                          '"/></div>'
-                        ].join('');
-                      }
-                    );
-                    appendix += '</div></li>';
-                    more = $bout.find('link[rel="more"]').attr('href');
+                function boutToHtml($bout, unread, unseen) {
+                  return [
+                    '<li class="bout" id="bout',
+                    $bout.find('number').text(),
+                    '"><h1 class="bout"><span class="num',
+                    (unread === 0 && unseen === 0 ? '' : ' unread'),
+                    '">#',
+                    $bout.find('number').text(),
+                    '</span><a class="title" href="',
+                    $bout.find('link[rel="open"]').attr('href'),
+                    '">',
+                    escapeHTML($bout.find('title').text()),
+                    '</a>',
+                    (unread === 0 ? '' : '<span class="unread">' + unread + '</span>'),
+                    '</h1><div class="friends">'
+                  ].join('');
+                }
+                function friendToHtml(idx, friend) {
+                  var $friend = $(friend), shift = 57 * idx;
+                  appendix += [
+                    '<div class="friend" style="left:',
+                    shift + 'px;"><img alt="',
+                    escapeHTML($friend.find('alias').text()),
+                    '" src="',
+                    $friend.find('link[rel="photo"]').attr('href'),
+                    '"/></div>'
+                  ].join('');
+                }
+                function boutsHtmlToHtml() {
+                  $tail.removeAttr('id');
+                  if (bouts.html()) {
+                    $tail.html(bouts.html() + '<div id="tail"/>');
+                  } else {
+                    $tail.html('<div id="tail"/>');
                   }
-                );
-                $tail.removeAttr('id');
-                $tail.html(appendix + '</ul><div id="tail"/>');
-                $box.attr('data-more', more);
+                  $box.attr('data-more', html.attr('data-more'));
+                }
+
+                function boutsToHtml() {
+                  xml.each(
+                      function (idx, bout) {
+                        var $bout = $(bout),
+                            unread = parseInt($bout.find('unread').text(), 10),
+                            unseen = parseInt($bout.find('unseen').text(), 10);
+                        appendix += boutToHtml($bout, unread, unseen);
+                        $bout.find('friend').each(friendToHtml);
+                        appendix += '</div></li>';
+                        more = $bout.find('link[rel="more"]').attr('href');
+                      }
+                  );
+                  $tail.removeAttr('id');
+                  $tail.html(appendix + '</ul><div id="tail"/>');
+                  $box.attr('data-more', more);
+                }
+
+                if (xml.length > 0) {
+                  boutsToHtml();
+                }else if (html.length > 0) {
+                  boutsHtmlToHtml();
+                }
               },
               error: function () {
                 $tail.html('Oops, an error :( Please, try to reload the page');

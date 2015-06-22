@@ -30,7 +30,9 @@ import com.jcabi.aspects.Immutable;
 import com.jcabi.aspects.Loggable;
 import com.jcabi.aspects.Tv;
 import com.jcabi.dynamo.AttributeUpdates;
+import com.jcabi.dynamo.Conditions;
 import com.jcabi.dynamo.Item;
+import com.jcabi.dynamo.QueryValve;
 import com.jcabi.dynamo.Region;
 import com.jcabi.log.Logger;
 import com.netbout.spi.Attachments;
@@ -39,6 +41,7 @@ import com.netbout.spi.Friends;
 import com.netbout.spi.Messages;
 import java.io.IOException;
 import java.util.Date;
+import java.util.Iterator;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
@@ -53,6 +56,7 @@ import lombok.ToString;
 @Loggable(Loggable.DEBUG)
 @ToString(of = "self")
 @EqualsAndHashCode(of = { "region", "item", "self" })
+@SuppressWarnings("PMD.TooManyMethods")
 final class DyBout implements Bout {
 
     /**
@@ -118,6 +122,52 @@ final class DyBout implements Bout {
             new AttributeUpdates().with(DyFriends.ATTR_TITLE, text)
         );
         Logger.info(this, "bout #%d renamed to \"%s\"", this.number(), text);
+    }
+
+    @Override
+    public boolean subscription() throws IOException {
+        boolean subs = true;
+        if (this.item.has(DyFriends.ATTR_SUBSCRIPTION)) {
+            subs = Boolean.parseBoolean(
+                this.item.get(DyFriends.ATTR_SUBSCRIPTION).getS()
+            );
+        }
+        return subs;
+    }
+
+    @Override
+    public boolean subscription(final String alias) throws IOException {
+        final QueryValve thr = new QueryValve()
+            .withLimit(1)
+            .withAttributesToGet(DyFriends.ATTR_SUBSCRIPTION);
+        final Iterator<Item> items = this.region.table(DyFriends.TBL).frame()
+            .where(DyFriends.RANGE, alias)
+            .where(DyFriends.HASH, Conditions.equalTo(this.number()))
+            .through(thr)
+            .iterator();
+        boolean subs = true;
+        if (items.hasNext()) {
+            final Item itm = items.next();
+            if (itm.has(DyFriends.ATTR_SUBSCRIPTION)) {
+                subs = Boolean.parseBoolean(
+                    itm.get(DyFriends.ATTR_SUBSCRIPTION).getS()
+                );
+            }
+        }
+        return subs;
+    }
+
+    @Override
+    public void subscribe(final boolean subs) throws IOException {
+        this.item.put(
+            new AttributeUpdates().with(DyFriends.ATTR_SUBSCRIPTION, subs)
+        );
+        Logger.info(
+            this, "bout #%d subscribe to \"%s\" by %s",
+            this.number(),
+            subs,
+            this.self
+        );
     }
 
     @Override

@@ -28,7 +28,6 @@ package com.netbout.mock;
 
 import com.jcabi.urn.URN;
 import com.netbout.spi.Alias;
-import com.netbout.spi.Base;
 import com.netbout.spi.Friend;
 import com.netbout.spi.User;
 import org.hamcrest.MatcherAssert;
@@ -49,8 +48,7 @@ public final class MkUserTest {
      */
     @Test
     public void findsAlias() throws Exception {
-        final Base base = new MkBase();
-        final User user = base.user(new URN("urn:test:9989"));
+        final User user = new MkBase().user(new URN("urn:test:9989"));
         final String alias = "test-me";
         user.aliases().add(alias);
         MatcherAssert.assertThat(

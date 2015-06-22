@@ -79,6 +79,28 @@ public interface Bout {
     void rename(String text) throws IOException;
 
     /**
+     * Get subscription.
+     * @return Subscription status
+     * @throws IOException If fails
+     */
+    boolean subscription() throws IOException;
+
+    /**
+     * Get subscription by alias.
+     * @param alias Alias to get subscription for
+     * @return Subscription status
+     * @throws IOException If fails
+     */
+    boolean subscription(String alias) throws IOException;
+
+    /**
+     * Set subscription.
+     * @param subs The subscription type of the bout
+     * @throws IOException If fails
+     */
+    void subscribe(boolean subs) throws IOException;
+
+    /**
      * Get bout messages.
      * @return Messages
      * @throws IOException If fails
@@ -146,6 +168,10 @@ public interface Bout {
             throw new UnsupportedOperationException("#rename()");
         }
         @Override
+        public void subscribe(final boolean subs) throws IOException {
+            throw new UnsupportedOperationException("#subscribe()");
+        }
+        @Override
         public Messages messages() throws IOException {
             return this.origin.messages();
         }
@@ -156,6 +182,14 @@ public interface Bout {
         @Override
         public Attachments attachments() throws IOException {
             return this.origin.attachments();
+        }
+        @Override
+        public boolean subscription() throws IOException {
+            return this.origin.subscription();
+        }
+        @Override
+        public boolean subscription(final String alias) throws IOException {
+            return this.origin.subscription(alias);
         }
     }
 
