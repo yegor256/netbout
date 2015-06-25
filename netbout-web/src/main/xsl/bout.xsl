@@ -53,7 +53,6 @@
             <xsl:text> </xsl:text>
             <!-- this is for W3C compliance -->
         </script>
-        <link rel="stylesheet" type="text/css" media="all" href="/css/jqueryTextcomplete.css?{version/name}"/>
     </xsl:template>
     <xsl:template match="page" mode="body">
         <xsl:apply-templates select="bout"/>
