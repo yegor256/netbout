@@ -88,7 +88,7 @@ public final class MkBase implements Base {
      * @throws IOException If fails
      */
     public Alias randomAlias() throws IOException {
-        return alias(
+        return this.alias(
             String.format(
                 "alias%d", MkBase.RANDOM.nextInt(Integer.MAX_VALUE)
             )
@@ -112,11 +112,12 @@ public final class MkBase implements Base {
     }
     /**
      * Create alias.
+     * @param name Name of the alias
      * @return Alias
      * @throws IOException If fails
      */
     public Alias alias(final String name) throws IOException {
-        final User user = user(
+        final User user = this.user(
             URN.create(
                 String.format(
                     "urn:test:%d",
