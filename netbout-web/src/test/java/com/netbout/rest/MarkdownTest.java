@@ -49,8 +49,10 @@ public final class MarkdownTest {
                 "Hi [google](http://www.google.com) how are you?"
             ).html(),
             Matchers.equalTo(
-                // @checkstyle LineLengthCheck (1 line)
-                "<p>Hi \n<a href=\"http://www.google.com\">google</a> how are you?</p>\n"
+                MarkdownTest.replaceNewLine(
+                    // @checkstyle LineLengthCheck (1 line)
+                    "<p>Hi \n<a href=\"http://www.google.com\">google</a> how are you?</p>\n"
+                )
             )
         );
     }
@@ -223,10 +225,18 @@ public final class MarkdownTest {
             MatcherAssert.assertThat(
                 new Markdown(pair[0]).html().trim(),
                 Matchers.equalTo(
-                    // @checkstyle MultipleStringLiteralsCheck (1 line)
-                    pair[1].replace("\n", System.getProperty("line.separator"))
+                    MarkdownTest.replaceNewLine(pair[1])
                 )
             );
         }
+    }
+
+    /**
+     * Replace '\n' to the platform line separator.
+     * @param source Source string
+     * @return Changed string
+     */
+    private static String replaceNewLine(final String source) {
+        return   source.replace("\n", System.getProperty("line.separator"));
     }
 }

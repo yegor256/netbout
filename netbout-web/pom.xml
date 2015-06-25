@@ -40,6 +40,9 @@
     <artifactId>netbout-web</artifactId>
     <name>netbout-web</name>
     <packaging>jar</packaging>
+    <properties>
+        <casper.executable>${project.build.directory}/casperjs-install/bin/casperjs</casper.executable>
+    </properties>
     <dependencies>
         <dependency>
             <groupId>org.projectlombok</groupId>
@@ -490,7 +493,7 @@
                                     <goal>exec</goal>
                                 </goals>
                                 <configuration>
-                                    <executable>${project.build.directory}/casperjs-install/bin/casperjs</executable>
+                                    <executable>${casper.executable}</executable>
                                     <workingDirectory>${basedir}</workingDirectory>
                                     <arguments>
                                         <argument>test</argument>
@@ -684,6 +687,18 @@
                     </plugin>
                 </plugins>
             </build>
+        </profile>
+        <profile>
+            <id>casper-executable-win</id>
+            <activation>
+                <activeByDefault>false</activeByDefault>
+                <os>
+                    <family>Windows</family>
+                </os>
+            </activation>
+            <properties>
+                <casper.executable>${project.build.directory}/casperjs-install/bin/casperjs.exe</casper.executable>
+            </properties>
         </profile>
     </profiles>
 </project>
