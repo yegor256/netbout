@@ -26,9 +26,13 @@
  */
 package com.netbout.mock;
 
+import com.jcabi.urn.URN;
+import com.netbout.spi.Alias;
+import com.netbout.spi.Aliases;
 import com.netbout.spi.Bout;
 import com.netbout.spi.Friend;
 import java.io.IOException;
+import java.security.SecureRandom;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;
@@ -46,12 +50,25 @@ public class MkInboxTest {
      */
     @Test
     public final void testStart() throws IOException {
-        final String alias = "current-name";
-        final MkInbox inbox = new MkInbox(new H2Sql(), alias);
+        final String name = "current-name";
+        final Sql sql = new H2Sql();
+        final Aliases aliases = new MkUser(
+            sql,
+            URN.create(
+                String.format(
+                    "urn:test:%d",
+                    new SecureRandom().nextInt(Integer.MAX_VALUE)
+                )
+            )
+        ).aliases();
+        aliases.add(name);
+        final Alias alias = aliases.iterate().iterator().next();
+        alias.email(String.format("%s@example.com", alias.name()));
+        final MkInbox inbox = new MkInbox(sql, name);
         final Bout bout = inbox.bout(inbox.start());
         MatcherAssert.assertThat(
             bout.friends().iterate(),
-            Matchers.hasItem(new Friend.HasAlias(Matchers.is(alias)))
+            Matchers.hasItem(new Friend.HasAlias(Matchers.is(name)))
         );
     }
 }

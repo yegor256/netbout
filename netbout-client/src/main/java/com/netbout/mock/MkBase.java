@@ -88,23 +88,11 @@ public final class MkBase implements Base {
      * @throws IOException If fails
      */
     public Alias randomAlias() throws IOException {
-        final User user = this.user(
-            URN.create(
-                String.format(
-                    "urn:test:%d",
-                    MkBase.RANDOM.nextInt(Integer.MAX_VALUE)
-                )
-            )
-        );
-        final Aliases aliases = user.aliases();
-        aliases.add(
+        return alias(
             String.format(
                 "alias%d", MkBase.RANDOM.nextInt(Integer.MAX_VALUE)
             )
         );
-        final Alias alias = aliases.iterate().iterator().next();
-        alias.email(String.format("%s@example.com", alias.name()));
-        return alias;
     }
 
     /**
@@ -121,6 +109,26 @@ public final class MkBase implements Base {
             )
         );
         return bout;
+    }
+    /**
+     * Create alias.
+     * @return Alias
+     * @throws IOException If fails
+     */
+    public Alias alias(final String name) throws IOException {
+        final User user = user(
+            URN.create(
+                String.format(
+                    "urn:test:%d",
+                    new SecureRandom().nextInt(Integer.MAX_VALUE)
+                )
+            )
+        );
+        final Aliases aliases = user.aliases();
+        aliases.add(name);
+        final Alias alias = aliases.iterate().iterator().next();
+        alias.email(String.format("%s@example.com", alias.name()));
+        return alias;
     }
 
 }
