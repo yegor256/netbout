@@ -121,7 +121,7 @@ public final class MkBase implements Base {
             URN.create(
                 String.format(
                     "urn:test:%d",
-                    new SecureRandom().nextInt(Integer.MAX_VALUE)
+                    MkBase.RANDOM.nextInt(Integer.MAX_VALUE)
                 )
             )
         );
