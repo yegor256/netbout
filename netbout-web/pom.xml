@@ -676,13 +676,6 @@
                                 <exclude>checkstyle:/src/main/scss/.*</exclude>
                                 <exclude>checkstyle:/src/test/casperjs/.*</exclude>
                                 <exclude>checkstyle:/src/main/js/.*</exclude>
-                                <!-- @todo #606 The line below should be removed because
-                                it's excluding ALL js files from checking. Before doing that,
-                                the jqueryTextcomplete.js file should also be removed as it is
-                                a third party library, and downloaded from its website
-                                (https://github.com/yuku-t/jquery-textcomplete/) by Bower.
-                                Refer to #712 for suggestions on how to do it. -->
-                                <exclude>jslint:.*</exclude>
                                 <exclude>findbugs:.*</exclude>
                                 <exclude>xml:/src/main/resources/lang/.*</exclude>
                                 <exclude>duplicatefinder:.*</exclude>
