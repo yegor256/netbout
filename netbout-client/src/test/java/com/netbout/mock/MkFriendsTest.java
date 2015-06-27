@@ -50,11 +50,9 @@ public final class MkFriendsTest {
         final MkBase base = new MkBase();
         final Bout bout = base.randomBout();
         final Friends friends = bout.friends();
-        final String friend = base.randomBout().friends().iterate().iterator()
-            .next().alias();
+        final String friend = base.randomAlias().name();
         friends.invite(friend);
-        final String someone = base.randomBout().friends().iterate().iterator()
-            .next().alias();
+        final String someone = base.randomAlias().name();
         friends.invite(someone);
         friends.kick(friend);
         MatcherAssert.assertThat(
