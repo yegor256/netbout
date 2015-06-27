@@ -36,6 +36,7 @@ import com.netbout.spi.Inbox;
 import com.netbout.spi.Message;
 import com.netbout.spi.Messages;
 import java.io.IOException;
+import org.apache.commons.lang3.StringUtils;
 import org.takes.Request;
 import org.takes.Response;
 import org.takes.Take;
@@ -50,9 +51,6 @@ import org.xembly.Directives;
 
 /**
  * Index.
- * @todo #603:30min Bout page should also display search box
- *  so that user can search for text in messages. See Messages#search
- *  method for details.
  * @author Yegor Bugayenko (yegor@teamed.io)
  * @version $Id$
  * @since 2.14
@@ -76,11 +74,8 @@ final class TkIndex implements Take {
 
     @Override
     public Response act(final Request req) throws IOException {
-        final long start = Long.parseLong(
-            new RqHref.Smart(new RqHref.Base(req)).single(
-                "start",
-                Long.toString(Inbox.NEVER)
-            )
+        final String query = new RqHref.Smart(new RqHref.Base(req)).single(
+            "q", ""
         );
         final Bout bout = new RqBout(this.base, req).bout();
         final Href home = new Href("/b").path(bout.number());
@@ -131,10 +126,7 @@ final class TkIndex implements Take {
                 new XeAppend(
                     "messages",
                     new XeTransform<>(
-                        Iterables.limit(
-                            bout.messages().jump(start).iterate(),
-                            Messages.PAGE
-                        ),
+                        this.messages(bout, req, query),
                         new XeTransform.Func<Message>() {
                             @Override
                             public XeSource transform(final Message msg)
@@ -145,14 +137,43 @@ final class TkIndex implements Take {
                     )
                 )
             ),
+            new XeAppend("query", query),
             new XeLink("post", home.path("post")),
             new XeLink("rename", home.path("rename")),
             new XeLink("invite", home.path("invite")),
+            new XeLink("search", home.path("search")),
             new XeLink("upload", home.path("upload")),
             new XeLink("create", home.path("create")),
             new XeLink("attach", home.path("attach")),
             new XeLink("subscribe", home.path("subscribe"))
         );
+    }
+    /**
+     * Returns searched or paginated messages.
+     * @param bout Bout
+     * @param req Request to use
+     * @param query Search term
+     * @return Messages
+     * @throws IOException If fails
+     */
+    private Iterable<Message> messages(final Bout bout, final Request req,
+        final String query) throws IOException {
+        final Iterable<Message> messages;
+        if (StringUtils.isBlank(query)) {
+            final long start = Long.parseLong(
+                new RqHref.Smart(new RqHref.Base(req)).single(
+                    "start",
+                    Long.toString(Inbox.NEVER)
+                )
+            );
+            messages = Iterables.limit(
+                bout.messages().jump(start).iterate(),
+                Messages.PAGE
+            );
+        } else {
+            messages = bout.messages().search(query);
+        }
+        return messages;
     }
 
 }

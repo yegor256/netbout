@@ -49,6 +49,7 @@ public final class TkIndexTest {
     /**
      * TkIndex can render bout page.
      * @throws Exception If there is some problem inside
+     * @checkstyle MultipleStringLiteralsCheck (76 lines)
      */
     @Test
     public void rendersBoutPage() throws Exception {
@@ -84,6 +85,51 @@ public final class TkIndexTest {
                 "/page/bout/friends/friend/links/link[@rel='kick']",
                 "/page/bout/attachments/attachment/links/link[@rel='delete']",
                 "/page/bout/messages/message[text='hello, world!']"
+            )
+        );
+    }
+    /**
+     * TkIndex can search bout messages.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void searchesMessages() throws Exception {
+        final MkBase base = new MkBase();
+        final String urn = "urn:test:99";
+        final User user = base.user(new URN(urn));
+        user.aliases().add("test-user");
+        final Alias alias = user.aliases().iterate().iterator().next();
+        final Bout bout = alias.inbox().bout(alias.inbox().start());
+        bout.messages().post("test1");
+        bout.messages().post("test2");
+        bout.messages().post("fest");
+        bout.friends().invite(alias.name());
+        MatcherAssert.assertThat(
+            XhtmlMatchers.xhtml(
+                new RsPrint(
+                    new FkBout(".*", new TkIndex(base)).route(
+                        new RqWithAuth(
+                            urn,
+                            new RqFake(
+                                "GET",
+                                String.format(
+                                    "/b/%d/search?q=test",
+                                    bout.number()
+                                )
+                            )
+                        )
+                    ).get()
+                ).printBody()
+            ),
+            XhtmlMatchers.hasXPaths(
+                "/page/bout[number=1]",
+                "/page/bout[title='untitled']",
+                "/page/bout[unread=0]",
+                "/page/bout/friends/friend[alias='test-user']",
+                "/page/bout/friends/friend/links/link[@rel='photo']",
+                "/page/bout/friends/friend/links/link[@rel='kick']",
+                "/page/bout/messages/message[text='test2']",
+                "/page/bout/messages/message[text='test1']"
             )
         );
     }
