@@ -24,42 +24,57 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.mock;
+package com.netbout.rest;
 
-import com.jcabi.urn.URN;
-import com.netbout.spi.Alias;
-import com.netbout.spi.Friend;
-import com.netbout.spi.User;
-import org.hamcrest.MatcherAssert;
-import org.hamcrest.Matchers;
-import org.junit.Test;
+import java.io.IOException;
+import org.takes.Request;
+import org.takes.Response;
+import org.takes.facets.auth.Identity;
+import org.takes.facets.auth.Pass;
+import org.takes.misc.Opt;
 
 /**
- * Test case for {@link MkUser}.
- * @author Yegor Bugayenko (yegor@teamed.io)
+ * Sequentially tries first and second Pass instances. Identity of a second
+ * Pass is returned if first passes. Empty identity is returned otherwise.
+ *
+ * @author Eugene Kondrashev (eugene.kondreashev@gmail.com)
  * @version $Id$
- * @since 2.11.4
+ * @since 2.16
  */
-public final class MkUserTest {
+public final class PsTwice implements Pass {
 
     /**
-     * MkUser can find an alias.
-     * @throws Exception If there is some problem inside
+     * First Pass to check.
      */
-    @Test
-    public void findsAlias() throws Exception {
-        final User user = new MkBase().user(new URN("urn:test:9989"));
-        final String alias = "test-me";
-        user.aliases().add(alias);
-        MatcherAssert.assertThat(
-            user.friends(alias),
-            Matchers.<Friend>iterableWithSize(1)
-        );
-        final Friend friend = user.friends(alias).iterator().next();
-        MatcherAssert.assertThat(
-            friend.photo(),
-            Matchers.equalTo(Alias.BLANK)
-        );
+    private final transient Pass fst;
+
+    /**
+     * Second Pass to check.
+     */
+    private final transient Pass snd;
+
+    /**
+     * Ctor.
+     * @param first Pass to enter
+     * @param second Pass to enter if previous succeeded
+     */
+    public PsTwice(final Pass first, final Pass second) {
+        this.fst = first;
+        this.snd = second;
     }
 
+    @Override
+    public Opt<Identity> enter(final Request req) throws IOException {
+        Opt<Identity> user = new Opt.Empty<Identity>();
+        if (this.fst.enter(req).has()) {
+            user = this.snd.enter(req);
+        }
+        return user;
+    }
+
+    @Override
+    public Response exit(final Response response,
+            final Identity identity) throws IOException {
+        return this.snd.exit(response, identity);
+    }
 }

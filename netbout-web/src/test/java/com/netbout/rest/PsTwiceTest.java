@@ -24,42 +24,68 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.mock;
+package com.netbout.rest;
 
-import com.jcabi.urn.URN;
-import com.netbout.spi.Alias;
-import com.netbout.spi.Friend;
-import com.netbout.spi.User;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;
+import org.takes.facets.auth.Identity;
+import org.takes.facets.auth.PsFake;
+import org.takes.facets.auth.PsLogout;
+import org.takes.rq.RqFake;
+import org.takes.rs.RsEmpty;
 
 /**
- * Test case for {@link MkUser}.
- * @author Yegor Bugayenko (yegor@teamed.io)
+ * Test case for {@link com.netbout.rest.PsTwice}.
+ * @author Eugene Kondrashev (eugene.kondrashev@gmai.com)
  * @version $Id$
- * @since 2.11.4
+ * @since 2.16
  */
-public final class MkUserTest {
+public final class PsTwiceTest {
 
     /**
-     * MkUser can find an alias.
-     * @throws Exception If there is some problem inside
+     * PsTwice can return second identity.
+     * @throws Exception if some problems inside
      */
     @Test
-    public void findsAlias() throws Exception {
-        final User user = new MkBase().user(new URN("urn:test:9989"));
-        final String alias = "test-me";
-        user.aliases().add(alias);
+    public void returnsSecondIdentity() throws Exception {
         MatcherAssert.assertThat(
-            user.friends(alias),
-            Matchers.<Friend>iterableWithSize(1)
-        );
-        final Friend friend = user.friends(alias).iterator().next();
-        MatcherAssert.assertThat(
-            friend.photo(),
-            Matchers.equalTo(Alias.BLANK)
+            new PsTwice(
+                new PsFake(true),
+                new PsLogout()
+            ).enter(new RqFake()).get(),
+            Matchers.is(Identity.ANONYMOUS)
         );
     }
 
+    /**
+     * PsTwice can return empty identity.
+     * @throws Exception if some problems inside
+     */
+    @Test
+    public void returnsEmptyIdentity() throws Exception {
+        MatcherAssert.assertThat(
+            new PsTwice(
+                new PsFake(false),
+                new PsLogout()
+            ).enter(new RqFake()).has(),
+            Matchers.equalTo(false)
+        );
+    }
+
+    /**
+     * PsTwice can return correct response on exit.
+     * @throws Exception if some problems inside
+     */
+    @Test
+    public void returnsCorrectResponseOnExit() throws Exception {
+        MatcherAssert.assertThat(
+            new PsTwice(
+                new PsFake(true),
+                new PsLogout()
+            ).exit(new RsEmpty(), Identity.ANONYMOUS)
+                .head().iterator().next(),
+            Matchers.containsString("HTTP/1.1 200 O")
+        );
+    }
 }

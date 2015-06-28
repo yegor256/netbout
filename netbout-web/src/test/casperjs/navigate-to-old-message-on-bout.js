@@ -67,8 +67,6 @@ casper.test.begin(
                 msgURL = boutURL + '#' + msgId;
                 if (!msgId) {
                     this.die('Message was not inserted.');
-                } else {
-                  console.log("ENDRIGO!!!!");
                 }
                 casper.eachThen(repeat,
                     function(count) {

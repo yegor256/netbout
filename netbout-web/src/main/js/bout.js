@@ -176,6 +176,27 @@ $(document).ready(
       }
     );
     $('form').preventDoubleSubmission();
+    $('#text').textcomplete(
+      [
+        {
+          match: /(^|\s)@(\w*)$/,
+          search: function (term, callback) {
+            callback($.map($('.friends .friend img'),
+              function(el) {
+                return $(el).attr('alt');
+              }
+            ));
+          },
+          replace: function (value) {
+            return '$1@' + value + ' ';
+          },
+          cache: true
+          }
+      ],
+      {
+        maxCount: 10,
+        debounce: 0 }
+      );
     scrollOrLoad(1);
   }
 );

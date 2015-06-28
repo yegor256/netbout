@@ -39,6 +39,25 @@ import org.junit.Test;
 public final class MarkdownTest {
 
     /**
+     * Markdown can handle whitespace after links.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void handlesWhitespaceAfterLinks() throws Exception {
+        MatcherAssert.assertThat(
+            new Markdown(
+                "Hi [google](http://www.google.com) how are you?"
+            ).html(),
+            Matchers.equalTo(
+                MarkdownTest.replaceNewLine(
+                    // @checkstyle LineLengthCheck (1 line)
+                    "<p>Hi \n<a href=\"http://www.google.com\">google</a> how are you?</p>\n"
+                )
+            )
+        );
+    }
+
+    /**
      * Markdown can format a text to HTML.
      * @throws Exception If there is some problem inside
      */
@@ -206,10 +225,18 @@ public final class MarkdownTest {
             MatcherAssert.assertThat(
                 new Markdown(pair[0]).html().trim(),
                 Matchers.equalTo(
-                    // @checkstyle MultipleStringLiteralsCheck (1 line)
-                    pair[1].replace("\n", System.getProperty("line.separator"))
+                    MarkdownTest.replaceNewLine(pair[1])
                 )
             );
         }
+    }
+
+    /**
+     * Replace '\n' to the platform line separator.
+     * @param source Source string
+     * @return Changed string
+     */
+    private static String replaceNewLine(final String source) {
+        return   source.replace("\n", System.getProperty("line.separator"));
     }
 }
