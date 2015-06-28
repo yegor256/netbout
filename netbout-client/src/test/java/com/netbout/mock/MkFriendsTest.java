@@ -47,11 +47,13 @@ public final class MkFriendsTest {
      */
     @Test
     public void invitesAndKicks() throws Exception {
-        final Bout bout = new MkBase().randomBout();
+        final MkBase base = new MkBase();
+        final Bout bout = base.randomBout();
         final Friends friends = bout.friends();
-        final String friend = "test-name";
+        final String friend = base.randomAlias().name();
         friends.invite(friend);
-        friends.invite("someone-else");
+        final String someone = base.randomAlias().name();
+        friends.invite(someone);
         friends.kick(friend);
         MatcherAssert.assertThat(
             friends.iterate(),
@@ -59,6 +61,14 @@ public final class MkFriendsTest {
                 Matchers.hasItem(new Friend.HasAlias(Matchers.is(friend)))
             )
         );
+    }
+    /**
+     * MkFriends can invite and kick.
+     * @throws Exception If there is some problem inside
+     */
+    @Test(expected = Friends.UnknownAliasException.class)
+    public void inviteFailsOnUnknownAlias() throws Exception {
+        new MkBase().randomBout().friends().invite("NoSuchFriend");
     }
 
 }

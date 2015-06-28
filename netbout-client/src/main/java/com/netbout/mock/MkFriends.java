@@ -77,6 +77,15 @@ final class MkFriends implements Friends {
     @Override
     public void invite(final String friend) throws IOException {
         try {
+            final boolean exists = new JdbcSession(this.sql.source())
+                .sql("SELECT name FROM alias WHERE name = ?")
+                .set(friend)
+                .select(Outcome.NOT_EMPTY);
+            if (!exists) {
+                throw new Friends.UnknownAliasException(
+                    String.format("alias '%s' doesn't exist", friend)
+                );
+            }
             new JdbcSession(this.sql.source())
                 // @checkstyle LineLength (1 line)
                 .sql("INSERT INTO friend (bout, alias, subscription) VALUES (?, ?, ?)")
