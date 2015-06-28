@@ -123,6 +123,8 @@ function readMore(retFunction) {
           if (typeof retFunction !== 'undefined') {
             retFunction(html.length);
           }
+        } else {
+          retFunction(0);
         }
       },
       error: function () {
@@ -139,6 +141,8 @@ function scrollOrLoad(amountRecords) {
     $(window).scrollTop($(location.hash.trim()).offset().top);
   } else if (location.hash.trim() && amountRecords > 0) {
     readMore(scrollOrLoad);
+  } else {
+    $(window).scrollTop($(location.hash.trim()).offset().top);
   }
 }
 
