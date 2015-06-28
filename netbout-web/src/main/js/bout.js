@@ -138,10 +138,10 @@ function scrollOrLoad(amountRecords) {
   if (location.hash.trim() && $(location.hash.trim()).length >= 1 &&
       ($(location.hash.trim()).offset().top <
       $(document).height() - $(window).height() - 600)) {
-    // @todo #643 System should highlights a message when accessing it through
-    //  message's permalink. This must be implemented on a different method
-    //  and must be called over here and on the `else` statement of the same
-    //  `if else` block.
+    // @todo #643:30min/DEV System should highlights a message when accessing it
+    //  through message's permalink. This must be implemented on a different
+    //  method and must be called over here and on the `else` statement of the
+    //  same `if else` block.
     $(window).scrollTop($(location.hash.trim()).offset().top);
   } else if (location.hash.trim() && amountRecords > 0) {
     readMore(scrollOrLoad);
