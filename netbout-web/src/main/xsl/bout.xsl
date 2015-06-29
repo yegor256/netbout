@@ -103,7 +103,7 @@
         <xsl:apply-templates select="attachments"/>
         <xsl:apply-templates select="attachments/attachment[html]" mode="page"/>
         <div class="post">
-            <form method="post" action="{/page/links/link[@rel='post']/@href}">
+            <form id="post-message" method="post" action="{/page/links/link[@rel='post']/@href}">
                 <fieldset>
                     <label for="text">
                         <xsl:text> </xsl:text>
@@ -152,9 +152,11 @@
                     <xsl:text> </xsl:text>
                     <xsl:value-of select="$TEXTS/said"/>
                     <xsl:text> </xsl:text>
-                    <span title="{date}">
-                        <xsl:value-of select="timeago"/>
-                    </span>
+                    <a href="{/page/links/link[@rel='self']/@href}#msg{$msg/number}">
+                        <span title="{date}">
+                            <xsl:value-of select="timeago"/>
+                        </span>
+                    </a>
                 </div>
                 <div class="text">
                     <xsl:value-of select="html" disable-output-escaping="yes"/>

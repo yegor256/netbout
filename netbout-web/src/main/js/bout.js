@@ -47,6 +47,109 @@ $.fn.preventDoubleSubmission = function() {
   return this;
 };
 
+function readMore(retFunction) {
+  var $box = $('#messages'), $tail = $('#tail'), more = $box.attr('data-more');
+  $box.removeAttr('data-more', '');
+  $tail.show();
+  $.ajax(
+    {
+      url: more,
+      cache: false,
+      dataType: 'xml',
+      method: 'GET',
+      success: function (data) {
+        var appendix = '',
+            $data = $(data),
+            xml = $data.find('message'),
+            html = $data.find('#messages');
+        more = '';
+        function msgXmlToHtml($msg) {
+          return [
+            '<div class="message" id="msg',
+            $msg.find('number').text(),
+            '"><div class="left"><img class="photo" src="',
+            $msg.find('link[rel="photo"]').attr('href'),
+            '"/>',
+            '</div><div class="right"><div class="meta"><strong>',
+            escapeHTML($msg.find('author').text()),
+            '</strong> said <a href="',
+            location.origin,
+            location.pathname,
+            '#msg',
+            $msg.find('number').text(),
+            '">',
+            escapeHTML($msg.find('timeago').text()),
+            '</a> </div><div class="text">',
+            $msg.find('html').text(),
+            '</div></div></div>'
+          ].join('');
+        }
+        function msgsXmlToHtml() {
+          xml.each(
+              function (idx, msg) {
+                var $msg = $(msg);
+                appendix += msgXmlToHtml($msg);
+                more = $msg.find('link[rel="more"]').attr('href');
+              }
+          );
+          $tail.removeAttr('id');
+          $tail.html(appendix + '<div id="tail"/>');
+          $box.attr('data-more', more);
+        }
+        function msgsHtmlToHtml() {
+          html.find('.message').each(
+              function (idx, line) {
+                var $msg = $(line),
+                    msg = $('<div class="message"></div>');
+                msg.attr('id', $msg.attr('id'));
+                msg.append($msg.find('.left'));
+                msg.append($msg.find('.right'));
+                appendix += [
+                  $('<div></div>').append(msg).html()
+                ].join('');
+              }
+          );
+          $tail.removeAttr('id');
+          $tail.html(appendix + '<div id="tail"/>');
+          $box.attr('data-more', html.attr('data-more'));
+        }
+        if (xml.length > 0) {
+          msgsXmlToHtml();
+          if (typeof retFunction !== 'undefined') {
+            retFunction(xml.length);
+          }
+        }else if (html.length > 0) {
+          msgsHtmlToHtml();
+          if (typeof retFunction !== 'undefined') {
+            retFunction(html.length);
+          }
+        } else {
+          retFunction(0);
+        }
+      },
+      error: function () {
+        $tail.html('Oops, an error :( Please, try to reload the page');
+      }
+    }
+  );
+}
+
+function scrollOrLoad(amountRecords) {
+  if (location.hash.trim() && $(location.hash.trim()).length >= 1 &&
+      ($(location.hash.trim()).offset().top <
+      $(document).height() - $(window).height() - 600)) {
+    // @todo #643:30min/DEV System should highlights a message when accessing it
+    //  through message's permalink. This must be implemented on a different
+    //  method and must be called over here and on the `else` statement of the
+    //  same `if else` block.
+    $(window).scrollTop($(location.hash.trim()).offset().top);
+  } else if (location.hash.trim() && amountRecords > 0) {
+    readMore(scrollOrLoad);
+  } else {
+    $(window).scrollTop($(location.hash.trim()).offset().top);
+  }
+}
+
 $(document).ready(
   function () {
     "use strict";
@@ -72,76 +175,7 @@ $(document).ready(
       function () {
         var $box = $('#messages'), $tail = $('#tail'), more = $box.attr('data-more');
         if ($(window).scrollTop() >= $(document).height() - $(window).height() - 600 && more) {
-          $box.removeAttr('data-more', '');
-          $tail.show();
-          $.ajax(
-            {
-              url: more,
-              cache: false,
-              dataType: 'xml',
-              method: 'GET',
-              success: function (data) {
-                var appendix = '',
-                    $data = $(data),
-                    xml = $data.find('message'),
-                    html = $data.find('#messages');
-                more = '';
-                function msgXmlToHtml($msg) {
-                  return [
-                    '<div class="message" id="msg',
-                    $msg.find('number').text(),
-                    '"><div class="left"><img class="photo" src="',
-                    $msg.find('link[rel="photo"]').attr('href'),
-                    '"/>',
-                    '</div><div class="right"><div class="meta"><strong>',
-                    escapeHTML($msg.find('author').text()),
-                    '</strong> said ',
-                    escapeHTML($msg.find('timeago').text()),
-                    '</div><div class="text">',
-                    $msg.find('html').text(),
-                    '</div></div></div>'
-                  ].join('');
-                }
-                function msgsXmlToHtml() {
-                  xml.each(
-                      function (idx, msg) {
-                        var $msg = $(msg);
-                        appendix += msgXmlToHtml($msg);
-                        more = $msg.find('link[rel="more"]').attr('href');
-                      }
-                  );
-                  $tail.removeAttr('id');
-                  $tail.html(appendix + '<div id="tail"/>');
-                  $box.attr('data-more', more);
-                }
-                function msgsHtmlToHtml() {
-                  html.find('.message').each(
-                      function (idx, line) {
-                        var $msg = $(line),
-                            msg = $('<div class="message"></div>');
-                        msg.attr('id', $msg.attr('id'));
-                        msg.append($msg.find('.left'));
-                        msg.append($msg.find('.right'));
-                        appendix += [
-                          $('<div></div>').append(msg).html()
-                        ].join('');
-                      }
-                  );
-                  $tail.removeAttr('id');
-                  $tail.html(appendix + '<div id="tail"/>');
-                  $box.attr('data-more', html.attr('data-more'));
-                }
-                if (xml.length > 0) {
-                  msgsXmlToHtml();
-                }else if (html.length > 0) {
-                  msgsHtmlToHtml();
-                }
-              },
-              error: function () {
-                $tail.html('Oops, an error :( Please, try to reload the page');
-              }
-            }
-          );
+          readMore();
         }
       }
     );
@@ -167,6 +201,7 @@ $(document).ready(
         maxCount: 10,
         debounce: 0 }
       );
+    scrollOrLoad(1);
   }
 );
 
