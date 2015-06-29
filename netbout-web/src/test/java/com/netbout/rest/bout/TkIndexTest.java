@@ -49,7 +49,6 @@ public final class TkIndexTest {
     /**
      * TkIndex can render bout page.
      * @throws Exception If there is some problem inside
-     * @checkstyle MultipleStringLiteralsCheck (76 lines)
      */
     @Test
     public void rendersBoutPage() throws Exception {
@@ -65,10 +64,12 @@ public final class TkIndexTest {
         MatcherAssert.assertThat(
             XhtmlMatchers.xhtml(
                 new RsPrint(
+                    // @checkstyle MultipleStringLiteralsCheck (1 line)
                     new FkBout(".*", new TkIndex(base)).route(
                         new RqWithAuth(
                             urn,
                             new RqFake(
+                                // @checkstyle MultipleStringLiteralsCheck (1 line)
                                 "GET",
                                 String.format("/b/%d", bout.number())
                             )
@@ -97,7 +98,7 @@ public final class TkIndexTest {
         final MkBase base = new MkBase();
         final String urn = "urn:test:99";
         final User user = base.user(new URN(urn));
-        user.aliases().add("test-user");
+        user.aliases().add("test-search-user");
         final Alias alias = user.aliases().iterate().iterator().next();
         final Bout bout = alias.inbox().bout(alias.inbox().start());
         bout.messages().post("test1");
@@ -107,10 +108,12 @@ public final class TkIndexTest {
         MatcherAssert.assertThat(
             XhtmlMatchers.xhtml(
                 new RsPrint(
+                    // @checkstyle MultipleStringLiteralsCheck (1 line)
                     new FkBout(".*", new TkIndex(base)).route(
                         new RqWithAuth(
                             urn,
                             new RqFake(
+                                // @checkstyle MultipleStringLiteralsCheck (1 line)
                                 "GET",
                                 String.format(
                                     "/b/%d/search?q=test",
@@ -122,12 +125,7 @@ public final class TkIndexTest {
                 ).printBody()
             ),
             XhtmlMatchers.hasXPaths(
-                "/page/bout[number=1]",
-                "/page/bout[title='untitled']",
-                "/page/bout[unread=0]",
-                "/page/bout/friends/friend[alias='test-user']",
-                "/page/bout/friends/friend/links/link[@rel='photo']",
-                "/page/bout/friends/friend/links/link[@rel='kick']",
+                "/page/bout/friends/friend[alias='test-search-user']",
                 "/page/bout/messages/message[text='test2']",
                 "/page/bout/messages/message[text='test1']"
             )
