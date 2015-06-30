@@ -36,6 +36,7 @@ import org.hamcrest.MatcherAssert;
 import org.junit.Test;
 import org.takes.facets.auth.RqWithAuth;
 import org.takes.rq.RqFake;
+import org.takes.rq.RqMethod;
 import org.takes.rs.RsPrint;
 
 /**
@@ -45,6 +46,10 @@ import org.takes.rs.RsPrint;
  * @since 2.15
  */
 public final class TkIndexTest {
+    /**
+     * Bout fork regex.
+     */
+    private static final String REGEX = ".*";
 
     /**
      * TkIndex can render bout page.
@@ -64,13 +69,11 @@ public final class TkIndexTest {
         MatcherAssert.assertThat(
             XhtmlMatchers.xhtml(
                 new RsPrint(
-                    // @checkstyle MultipleStringLiteralsCheck (1 line)
-                    new FkBout(".*", new TkIndex(base)).route(
+                    new FkBout(TkIndexTest.REGEX, new TkIndex(base)).route(
                         new RqWithAuth(
                             urn,
                             new RqFake(
-                                // @checkstyle MultipleStringLiteralsCheck (1 line)
-                                "GET",
+                                RqMethod.GET,
                                 String.format("/b/%d", bout.number())
                             )
                         )
@@ -108,13 +111,11 @@ public final class TkIndexTest {
         MatcherAssert.assertThat(
             XhtmlMatchers.xhtml(
                 new RsPrint(
-                    // @checkstyle MultipleStringLiteralsCheck (1 line)
-                    new FkBout(".*", new TkIndex(base)).route(
+                    new FkBout(TkIndexTest.REGEX, new TkIndex(base)).route(
                         new RqWithAuth(
                             urn,
                             new RqFake(
-                                // @checkstyle MultipleStringLiteralsCheck (1 line)
-                                "GET",
+                                RqMethod.GET,
                                 String.format(
                                     "/b/%d/search?q=test",
                                     bout.number()
