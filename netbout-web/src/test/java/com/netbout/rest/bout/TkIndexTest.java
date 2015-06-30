@@ -36,6 +36,7 @@ import org.hamcrest.MatcherAssert;
 import org.junit.Test;
 import org.takes.facets.auth.RqWithAuth;
 import org.takes.rq.RqFake;
+import org.takes.rq.RqMethod;
 import org.takes.rs.RsPrint;
 
 /**
@@ -45,6 +46,10 @@ import org.takes.rs.RsPrint;
  * @since 2.15
  */
 public final class TkIndexTest {
+    /**
+     * Bout fork regex.
+     */
+    private static final String REGEX = ".*";
 
     /**
      * TkIndex can render bout page.
@@ -64,11 +69,11 @@ public final class TkIndexTest {
         MatcherAssert.assertThat(
             XhtmlMatchers.xhtml(
                 new RsPrint(
-                    new FkBout(".*", new TkIndex(base)).route(
+                    new FkBout(TkIndexTest.REGEX, new TkIndex(base)).route(
                         new RqWithAuth(
                             urn,
                             new RqFake(
-                                "GET",
+                                RqMethod.GET,
                                 String.format("/b/%d", bout.number())
                             )
                         )
@@ -84,6 +89,46 @@ public final class TkIndexTest {
                 "/page/bout/friends/friend/links/link[@rel='kick']",
                 "/page/bout/attachments/attachment/links/link[@rel='delete']",
                 "/page/bout/messages/message[text='hello, world!']"
+            )
+        );
+    }
+    /**
+     * TkIndex can search bout messages.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void searchesMessages() throws Exception {
+        final MkBase base = new MkBase();
+        final String urn = "urn:test:99";
+        final User user = base.user(new URN(urn));
+        user.aliases().add("test-search-user");
+        final Alias alias = user.aliases().iterate().iterator().next();
+        final Bout bout = alias.inbox().bout(alias.inbox().start());
+        bout.messages().post("test1");
+        bout.messages().post("test2");
+        bout.messages().post("fest");
+        bout.friends().invite(alias.name());
+        MatcherAssert.assertThat(
+            XhtmlMatchers.xhtml(
+                new RsPrint(
+                    new FkBout(TkIndexTest.REGEX, new TkIndex(base)).route(
+                        new RqWithAuth(
+                            urn,
+                            new RqFake(
+                                RqMethod.GET,
+                                String.format(
+                                    "/b/%d/search?q=test",
+                                    bout.number()
+                                )
+                            )
+                        )
+                    ).get()
+                ).printBody()
+            ),
+            XhtmlMatchers.hasXPaths(
+                "/page/bout/friends/friend[alias='test-search-user']",
+                "/page/bout/messages/message[text='test2']",
+                "/page/bout/messages/message[text='test1']"
             )
         );
     }
