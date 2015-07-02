@@ -24,52 +24,64 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.rest.bout;
 
-import com.netbout.spi.Base;
-import org.takes.Take;
-import org.takes.facets.fork.TkFork;
-import org.takes.tk.TkWrap;
-
-/**
- * Bout.
- *
- * @author Yegor Bugayenko (yegor@teamed.io)
- * @version $Id$
- * @since 2.14
- * @checkstyle ClassDataAbstractionCouplingCheck (500 lines)
- */
-public final class TkBout extends TkWrap {
-
-    /**
-     * Ctor.
-     * @param base Base
-     */
-    public TkBout(final Base base) {
-        super(TkBout.make(base));
+.tabs {
+  background-color: #fff;
+  border: 1px solid #dadbd9;
+  position: relative;
+  .tab-panel {
+    display: none;
+    margin-top: 10px;
+    padding: 0px 10px 0px;
+    &.active {
+      display: block;
     }
-
-    /**
-     * Ctor.
-     * @param base Base
-     * @return Take
-     */
-    private static Take make(final Base base) {
-        return new TkFork(
-            new FkBout("", new TkIndex(base)),
-            new FkBout("/attach", new TkAttach(base)),
-            new FkBout("/upload", new TkUpload(base)),
-            new FkBout("/download", new TkDownload(base)),
-            new FkBout("/rename", new TkRename(base)),
-            new FkBout("/create", new TkCreate(base)),
-            new FkBout("/delete", new TkDelete(base)),
-            new FkBout("/post", new TkPost(base)),
-            new FkBout("/preview", new TkPreview()),
-            new FkBout("/invite", new TkInvite(base)),
-            new FkBout("/kick", new TkKick(base)),
-            new FkBout("/subscribe", new TkSubscribe(base)),
-            new FkBout("/search", new TkIndex(base))
-        );
+  }
+  .tabnav {
+    background-color: #f3f3f1;
+    border-bottom: 1px solid #ddd;
+    .tabnav-tabs {
+      padding: 6px 10px 0;
+      margin-bottom: -1px;
+      a {
+        color: #666;
+        display: inline-block;
+        font-size: 14px;
+        padding: 8px 12px;
+        line-height: 20px;
+        text-decoration: none;
+        border: 1px solid transparent;
+        border-bottom: 0;
+        &.active {
+          background-color: #fff;
+          border-color: #ddd;
+          border-radius: 3px 3px 0 0;
+          color: #333;
+        }
+      }
     }
-
+  }
 }
+.previewable-content {
+  content: 'B';
+  form {
+    content: 'F';
+    textarea {
+      height: 150px;
+    }
+    .form-submit {
+      padding: 0px 0px 10px;
+      margin-left: 10px;
+    }
+  }
+  .preview {
+    content: 'H';
+    .content {
+      content: 'I';
+    }
+  }
+  .tab-panel {
+    min-height: 150px;
+  }
+}
+

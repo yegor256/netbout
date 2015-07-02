@@ -26,49 +26,31 @@
  */
 package com.netbout.rest.bout;
 
-import com.netbout.spi.Base;
+import com.netbout.rest.Markdown;
+import java.io.IOException;
+import org.takes.Request;
+import org.takes.Response;
 import org.takes.Take;
-import org.takes.facets.fork.TkFork;
-import org.takes.tk.TkWrap;
+import org.takes.rq.RqForm;
+import org.takes.rs.RsHTML;
 
 /**
- * Bout.
+ * Post a message.
  *
- * @author Yegor Bugayenko (yegor@teamed.io)
+ * @author Endrigo Antonini (teamed@endrigo.com.br)
  * @version $Id$
- * @since 2.14
- * @checkstyle ClassDataAbstractionCouplingCheck (500 lines)
+ * @since 2.15.2
  */
-public final class TkBout extends TkWrap {
+final class TkPreview  implements Take {
 
-    /**
-     * Ctor.
-     * @param base Base
-     */
-    public TkBout(final Base base) {
-        super(TkBout.make(base));
-    }
-
-    /**
-     * Ctor.
-     * @param base Base
-     * @return Take
-     */
-    private static Take make(final Base base) {
-        return new TkFork(
-            new FkBout("", new TkIndex(base)),
-            new FkBout("/attach", new TkAttach(base)),
-            new FkBout("/upload", new TkUpload(base)),
-            new FkBout("/download", new TkDownload(base)),
-            new FkBout("/rename", new TkRename(base)),
-            new FkBout("/create", new TkCreate(base)),
-            new FkBout("/delete", new TkDelete(base)),
-            new FkBout("/post", new TkPost(base)),
-            new FkBout("/preview", new TkPreview()),
-            new FkBout("/invite", new TkInvite(base)),
-            new FkBout("/kick", new TkKick(base)),
-            new FkBout("/subscribe", new TkSubscribe(base)),
-            new FkBout("/search", new TkIndex(base))
+    @Override
+    public Response act(final Request req) throws IOException {
+        return new RsHTML(
+            new Markdown(
+                new RqForm.Smart(
+                    new RqForm.Base(req)
+                ).single("text", "")
+            ).html()
         );
     }
 

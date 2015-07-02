@@ -139,6 +139,7 @@ final class TkIndex implements Take {
             ),
             new XeAppend("query", query),
             new XeLink("post", home.path("post")),
+            new XeLink("preview", home.path("preview")),
             new XeLink("rename", home.path("rename")),
             new XeLink("invite", home.path("invite")),
             new XeLink("search", home.path("search")),

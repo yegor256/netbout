@@ -102,15 +102,29 @@
         </div>
         <xsl:apply-templates select="attachments"/>
         <xsl:apply-templates select="attachments/attachment[html]" mode="page"/>
-        <div class="post">
+        <div id="tabs" class="tabs previewable-content">
+            <div class="tabnav">
+                <nav class="tabnav-tabs">
+                    <a id="write-link" href="#tab-post" class="active">Write</a>
+                    <a id="preview-link" data-preview="{/page/links/link[@rel='preview']/@href}" href="#preview">Preview</a>
+                </nav>
+            </div>
             <form id="post-message" method="post" action="{/page/links/link[@rel='post']/@href}">
-                <fieldset>
-                    <label for="text">
-                        <xsl:text> </xsl:text>
-                    </label>
-                    <textarea name="text" cols="80" rows="5" id="text">
-                        <xsl:text> </xsl:text>
-                    </textarea>
+                <div id="tab-post" class="tab-panel active post">
+                    <fieldset>
+                        <label for="text">
+                            <xsl:text> </xsl:text>
+                        </label>
+                        <textarea name="text" cols="80" rows="5" id="text">
+                            <xsl:text> </xsl:text>
+                        </textarea>
+                    </fieldset>
+                </div>
+                <div id="tab-preview" class="tab-panel preview">
+                    <div class="content">
+                    </div>
+                </div>
+                <fieldset class="form-submit">
                     <label for="submit">
                         <xsl:text> </xsl:text>
                     </label>

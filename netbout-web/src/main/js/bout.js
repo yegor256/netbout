@@ -47,6 +47,27 @@ $.fn.preventDoubleSubmission = function() {
   return this;
 };
 
+function previewContent() {
+  var $preview = $('#preview-link'), url = $preview.attr('data-preview'),
+    $content = $('#tab-preview .content'), $form = $('#post-message');
+  $.ajax(
+    {
+      url: url,
+      cache: false,
+      data: $form.serialize(),
+      dataType: 'html',
+      method: 'POST',
+      success: function (data) {
+        $content.html(data);
+      },
+      error: function (error) {
+        $content.html('Oops, an error :( Please, try to reload the page');
+      }
+    }
+  );
+}
+
+
 function readMore(retFunction) {
   var $box = $('#messages'), $tail = $('#tail'), more = $box.attr('data-more');
   $box.removeAttr('data-more', '');
@@ -202,6 +223,27 @@ $(document).ready(
         debounce: 0 }
       );
     scrollOrLoad(1);
+    $("#write-link").on(
+      "click",
+      function(event) {
+        $("#write-link").addClass("active");
+        $("#preview-link").removeClass("active");
+        $("#tab-post").addClass("active");
+        $("#tab-preview").removeClass("active");
+        return false;
+      }
+    );
+    $("#preview-link").on(
+        "click",
+        function(event) {
+          $("#write-link").removeClass("active");
+          $("#preview-link").addClass("active");
+          $("#tab-post").removeClass("active");
+          $("#tab-preview").addClass("active");
+          previewContent();
+          return false;
+        }
+    );
   }
 );
 
