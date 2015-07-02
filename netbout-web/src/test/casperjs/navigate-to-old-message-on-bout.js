@@ -119,6 +119,41 @@ casper.test.begin(
                 );
             }
         );
+        casper.then(
+            function(response) {
+                this.open(
+                    msgURL,
+                    {
+                      method: 'GET',
+                      headers: {
+                        'Accept': 'text/html'
+                      }
+                    }
+                );
+            }
+        );
+        casper.then(
+            function(response) {
+                casper.log(response.url,"error");
+                var msgIds = this.getElementsAttribute(
+                    "#messages .message",
+                    "id"
+                );
+                var lastId = null;
+                for (var i = 0; i < msgIds.length; i++) {
+                    id = parseInt(msgIds[i].substring(3));
+                    if (!lastId) {
+                        lastId = id;
+                    } else {
+                        test.assert(
+                            (lastId > id),
+                            "It was loaded an older message before a new one."
+                        );
+                    }
+                    lastId = id;
+                }
+            }
+        );
         casper.run(
             function () {
                 test.done();

@@ -135,18 +135,21 @@ function readMore(retFunction) {
 }
 
 function scrollOrLoad(amountRecords) {
-  if (location.hash.trim() && $(location.hash.trim()).length >= 1 &&
-      ($(location.hash.trim()).offset().top <
-      $(document).height() - $(window).height() - 600)) {
-    // @todo #643:30min/DEV System should highlights a message when accessing it
-    //  through message's permalink. This must be implemented on a different
-    //  method and must be called over here and on the `else` statement of the
-    //  same `if else` block.
-    $(window).scrollTop($(location.hash.trim()).offset().top);
-  } else if (location.hash.trim() && amountRecords > 0) {
-    readMore(scrollOrLoad);
-  } else {
-    $(window).scrollTop($(location.hash.trim()).offset().top);
+  if (location.hash.trim()) {
+    var msgId = location.hash.trim();
+    if ($(msgId).length >= 1 &&
+        ($(msgId).offset().top <
+            $(document).height() - $(window).height() - 600)) {
+      // @todo #643:30min/DEV System should highlights a message when accessing it
+      //  through message's permalink. This must be implemented on a different
+      //  method and must be called over here and on the `else` statement of the
+      //  same `if else` block.
+      $(window).scrollTop($(msgId).offset().top);
+    } else if (amountRecords > 0) {
+      readMore(scrollOrLoad);
+    } else if ($(msgId).length >= 1) {
+      $(window).scrollTop($(msgId).offset().top);
+    }
   }
 }
 
