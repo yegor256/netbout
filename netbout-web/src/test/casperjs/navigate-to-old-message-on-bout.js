@@ -135,22 +135,29 @@ casper.test.begin(
         casper.then(
             function(response) {
                 casper.log(response.url,"error");
-                var msgIds = this.getElementsAttribute(
-                    "#messages .message",
-                    "id"
+                var dates = this.getElementsAttribute(
+                    "#messages .message a span",
+                    "title"
                 );
-                var lastId = null;
-                for (var i = 0; i < msgIds.length; i++) {
-                    id = parseInt(msgIds[i].substring(3));
-                    if (!lastId) {
-                        lastId = id;
+                var lastDate = null;
+                for (var i = 0; i < dates.length; i++) {
+                    date = Date.parse(dates[i]);
+                    if (!lastDate) {
+                        this.echo(
+                            "Start compare variable: " + date + " timestamp"
+                        );
+                        lastDate = date;
                     } else {
+                        this.echo(
+                            "Compare current with previous timetamp: " +
+                            lastDate + " >= " + date
+                        );
                         test.assert(
-                            (lastId > id),
+                            (lastDate >= date),
                             "It was loaded an older message before a new one."
                         );
                     }
-                    lastId = id;
+                    lastDate = date;
                 }
             }
         );
