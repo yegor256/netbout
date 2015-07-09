@@ -147,7 +147,8 @@ casper.test.begin(
                     } else {
                         test.assert(
                             (lastDate >= date),
-                            "It was loaded an older message before a new one."
+                            "An older message was loaded before a newer" +
+                            " message."
                         );
                     }
                     lastDate = date;
