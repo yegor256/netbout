@@ -143,15 +143,8 @@ casper.test.begin(
                 for (var i = 0; i < dates.length; i++) {
                     date = Date.parse(dates[i]);
                     if (!lastDate) {
-                        this.echo(
-                            "Start compare variable: " + date + " timestamp"
-                        );
                         lastDate = date;
                     } else {
-                        this.echo(
-                            "Compare current with previous timetamp: " +
-                            lastDate + " >= " + date
-                        );
                         test.assert(
                             (lastDate >= date),
                             "It was loaded an older message before a new one."
