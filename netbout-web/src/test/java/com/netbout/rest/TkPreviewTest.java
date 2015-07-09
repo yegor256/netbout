@@ -45,7 +45,6 @@ import org.takes.rs.RsPrint;
  * @version $Id$
  * @since 2.15.2
  * @checkstyle ClassDataAbstractionCouplingCheck (100 lines)
- *
  */
 public final class TkPreviewTest {
 
