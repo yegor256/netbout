@@ -81,6 +81,7 @@ function readMore(retFunction) {
       success: function (data) {
         var appendix = '',
             $data = $(data),
+            size = 0,
             xml = $data.find('message'),
             html = $data.find('#messages');
         more = '';
@@ -118,8 +119,10 @@ function readMore(retFunction) {
           $box.attr('data-more', more);
         }
         function msgsHtmlToHtml() {
+          var added = 0;
           html.find('.message').each(
               function (idx, line) {
+                added++;
                 var $msg = $(line),
                     msg = $('<div class="message"></div>');
                 msg.attr('id', $msg.attr('id'));
@@ -133,6 +136,7 @@ function readMore(retFunction) {
           $tail.removeAttr('id');
           $tail.html(appendix + '<div id="tail"/>');
           $box.attr('data-more', html.attr('data-more'));
+          return added;
         }
         if (xml.length > 0) {
           msgsXmlToHtml();
@@ -140,11 +144,11 @@ function readMore(retFunction) {
             retFunction(xml.length);
           }
         }else if (html.length > 0) {
-          msgsHtmlToHtml();
+          size = msgsHtmlToHtml();
           if (typeof retFunction !== 'undefined') {
-            retFunction(html.length);
+            retFunction(size);
           }
-        } else {
+        } else if (typeof retFunction !== 'undefined') {
           retFunction(0);
         }
       },
