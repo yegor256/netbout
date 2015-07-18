@@ -162,6 +162,20 @@ public final class MarkdownTest {
     }
 
     /**
+     * Markdown can break a single line.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void breakSingleLine() throws Exception {
+        MatcherAssert.assertThat(
+            new Markdown("line1\nline2\n\nline3").html().trim(),
+            Matchers.equalTo(
+                "<p>line1\n<br />\nline2</p>\n<p>line3</p>"
+            )
+        );
+    }
+
+    /**
      * Markdown can leave DIV untouched.
      * @throws Exception If there is some problem inside
      */
