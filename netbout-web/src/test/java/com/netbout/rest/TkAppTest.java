@@ -70,6 +70,22 @@ public final class TkAppTest {
     }
 
     /**
+     * TkApp can render search page.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void rendersSearchPage() throws Exception {
+        MatcherAssert.assertThat(
+            new TkApp(new MkBase()).act(
+                new RqFake(RqMethod.GET, "/search?q=fest")
+            ),
+            new HmRsStatus(
+                Matchers.equalTo(HttpURLConnection.HTTP_OK)
+            )
+        );
+    }
+
+    /**
      * TkApp can render front page.
      * @throws Exception If there is some problem inside
      */
