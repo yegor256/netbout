@@ -166,7 +166,7 @@ public final class MarkdownTest {
      * @throws Exception If there is some problem inside
      */
     @Test
-    public void breakSingleLine() throws Exception {
+    public void breaksSingleLine() throws Exception {
         MatcherAssert.assertThat(
             new Markdown("line1\nline2\n\nline3").html().trim(),
             Matchers.equalTo(
