@@ -37,7 +37,11 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.net.URLDecoder;
 import java.util.Collection;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import org.apache.commons.codec.CharEncoding;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.takes.Request;
@@ -46,8 +50,8 @@ import org.takes.Take;
 import org.takes.facets.flash.RsFlash;
 import org.takes.facets.forward.RsFailure;
 import org.takes.facets.forward.RsForward;
+import org.takes.rq.RqHeaders;
 import org.takes.rq.RqMultipart;
-import org.takes.rq.RqPrint;
 
 /**
  * Attach.
@@ -58,6 +62,18 @@ import org.takes.rq.RqPrint;
  * @checkstyle ClassDataAbstractionCouplingCheck (500 lines)
  */
 final class TkAttach implements Take {
+
+    /**
+     * Pattern to look for file name.
+     */
+    private static final Pattern FILE_NAME_PATTERN = Pattern.compile(
+            "(.*)(name=\"file\")(.*)(filename=\"(.*)\")(.*)"
+    );
+
+    /**
+     * Position of the filename on the RegEx pattern.
+     */
+    private static final int FILE_NAME_POS = 5;
 
     /**
      * Base.
@@ -80,12 +96,23 @@ final class TkAttach implements Take {
 
     @Override
     public Response act(final Request req) throws IOException {
-        final RqMultipart.Smart multi = new RqMultipart.Smart(
+        final Request file = new RqMultipart.Smart(
             new RqMultipart.Base(req)
+        ).single("file");
+        final Matcher matcher = FILE_NAME_PATTERN.matcher(
+            new RqHeaders.Smart(
+                new RqHeaders.Base(file)
+            ).single("Content-Disposition")
         );
-        final String name = new RqPrint(multi.single("name")).printBody();
+        if (!matcher.find()) {
+            throw new RsFailure("Filename was not provided");
+        }
+        final String name = URLDecoder.decode(
+            matcher.group(FILE_NAME_POS),
+            CharEncoding.UTF_8
+        );
         final File temp = File.createTempFile("netbout", "bin");
-        IOUtils.copy(multi.single("file").body(), new FileOutputStream(temp));
+        IOUtils.copy(file.body(), new FileOutputStream(temp));
         final Bout bout = new RqBout(this.base, req).bout();
         final StringBuilder msg = new StringBuilder(Tv.HUNDRED);
         if (new Attachments.Search(bout.attachments()).exists(name)) {
