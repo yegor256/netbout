@@ -94,6 +94,7 @@ final class TkInbox implements Take {
     private Iterable<XeSource> bouts(final Request req, final String query)
         throws IOException {
         final Iterable<Bout> bouts;
+        final Inbox inbox = new RqAlias(this.base, req).alias().inbox();
         if (StringUtils.isBlank(query)) {
             long since = Inbox.NEVER;
             final Iterator<String> param = new RqHref.Base(req).href()
@@ -101,12 +102,9 @@ final class TkInbox implements Take {
             if (param.hasNext()) {
                 since = Long.parseLong(param.next());
             }
-            bouts = Iterables.limit(new RqAlias(this.base, req).alias().inbox()
-                    .jump(since).iterate(),
-                Inbox.PAGE
-            );
+            bouts = Iterables.limit(inbox.jump(since).iterate(), Inbox.PAGE);
         } else {
-            bouts = new RqAlias(this.base, req).alias().inbox().search(query);
+            bouts = inbox.search(query);
         }
         return new XeTransform<>(
             bouts,
