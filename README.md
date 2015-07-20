@@ -68,10 +68,10 @@ In a minute the site is ready at `http://localhost:8080`
 
 ### Integration tests
 
-It is highly recommended to run integration tests to guarantee that your changes didn't broke any other part of the system.
-Execute the following steps to execute integration tests:
+It is highly recommended to run integration tests to guarantee that your changes will not break any other part of the system.
+Follow these steps to execute integration tests:
 
-1. Open your browser and its browser's console and go to network view;
+1. Open your browser's console and go to network view;
 1. Access [Netbout's](http://www.netbout.com/) website and log in (if you are not);
 1. On network monitor of your browser, select the connection that requested main page www.netbout.com.
 1. On that request, search for the response headers.
