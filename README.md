@@ -56,6 +56,8 @@ Please run Maven (3.1 or higher!) build before submitting a pull request:
 $ mvn clean install -Pqulice
 ```
 
+### Run locally and test it
+
 Want to run it locally? Simple as that:
 
 ```
@@ -63,3 +65,20 @@ $ mvn clean install -Phit-refresh -Dport=8080
 ```
 
 In a minute the site is ready at `http://localhost:8080`
+
+### Integration tests
+
+It is highly recommended to run integration tests to guarantee that your changes will not break any other part of the system.
+Follow these steps to execute integration tests:
+
+1. Open your browser's console and go to network view;
+1. Access [Netbout's](http://www.netbout.com/) website and log in (if you are not);
+1. On network monitor of your browser, select the connection that requested main page www.netbout.com.
+1. On that request, search for the response headers.
+1. You will find a key named `Set-Cookie` on that response.
+1. The value of that header, contains a lot of other `key values` content. Search for content of `PsCookie` variable and copy that content.
+1. Go back to you console and run the following code, replacing the `${cookie_value}` for the content that you copied from `PsCookie`:
+
+  ```
+  $ mvn clean install -Dnetbout.token=${cookie_value}
+  ```
