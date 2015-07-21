@@ -33,6 +33,7 @@ import com.netbout.spi.Friend;
 import com.netbout.spi.Inbox;
 import java.io.IOException;
 import java.util.Iterator;
+import org.apache.commons.lang3.StringUtils;
 import org.takes.Request;
 import org.takes.Response;
 import org.takes.Take;
@@ -47,9 +48,6 @@ import org.xembly.Directives;
 
 /**
  * Index.
- * @todo #603:30min Index page should also display search box
- *  so that user can search for bouts containing text. See Inbox#search
- *  method for details.
  * @author Yegor Bugayenko (yegor@teamed.io)
  * @version $Id$
  * @since 2.14
@@ -73,33 +71,43 @@ final class TkInbox implements Take {
 
     @Override
     public Response act(final Request req) throws IOException {
+        final String query = new RqHref.Smart(new RqHref.Base(req)).single(
+            "q", ""
+        );
         return new RsPage(
             "/xsl/inbox.xsl",
             this.base,
             req,
-            new XeAppend("bouts", this.bouts(req))
+            new XeAppend("bouts", this.bouts(req, query)),
+            new XeAppend("query", query),
+            new XeLink("search", new Href("/search"))
         );
     }
 
     /**
-     * All bouts in the inbox.
+     * Returns searched or paginated bouts in the inbox.
      * @param req Request
+     * @param query Search term
      * @return Bouts
      * @throws IOException If fails
      */
-    private Iterable<XeSource> bouts(final Request req) throws IOException {
-        long since = Inbox.NEVER;
-        final Iterator<String> param = new RqHref.Base(req).href()
-            .param("since").iterator();
-        if (param.hasNext()) {
-            since = Long.parseLong(param.next());
+    private Iterable<XeSource> bouts(final Request req, final String query)
+        throws IOException {
+        final Iterable<Bout> bouts;
+        final Inbox inbox = new RqAlias(this.base, req).alias().inbox();
+        if (StringUtils.isBlank(query)) {
+            long since = Inbox.NEVER;
+            final Iterator<String> param = new RqHref.Base(req).href()
+                .param("since").iterator();
+            if (param.hasNext()) {
+                since = Long.parseLong(param.next());
+            }
+            bouts = inbox.jump(since).iterate();
+        } else {
+            bouts = inbox.search(query);
         }
         return new XeTransform<>(
-            Iterables.limit(
-                new RqAlias(this.base, req).alias()
-                    .inbox().jump(since).iterate(),
-                Inbox.PAGE
-            ),
+            Iterables.limit(bouts, Inbox.PAGE),
             new XeTransform.Func<Bout>() {
                 @Override
                 public XeSource transform(final Bout bout) throws IOException {
