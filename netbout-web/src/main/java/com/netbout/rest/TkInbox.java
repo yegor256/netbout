@@ -102,12 +102,12 @@ final class TkInbox implements Take {
             if (param.hasNext()) {
                 since = Long.parseLong(param.next());
             }
-            bouts = Iterables.limit(inbox.jump(since).iterate(), Inbox.PAGE);
+            bouts = inbox.jump(since).iterate();
         } else {
             bouts = inbox.search(query);
         }
         return new XeTransform<>(
-            bouts,
+            Iterables.limit(bouts, Inbox.PAGE),
             new XeTransform.Func<Bout>() {
                 @Override
                 public XeSource transform(final Bout bout) throws IOException {
