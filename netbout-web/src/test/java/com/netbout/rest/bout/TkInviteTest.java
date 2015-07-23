@@ -52,7 +52,7 @@ public final class TkInviteTest {
      * TkInvite can invite user by email.
      * @throws Exception If there is some problem inside
      */
-    @Test
+    @Test (expected = RsForward.class)
     public void invitesUserByEmail() throws Exception {
         final MkBase base = new MkBase();
         final String urn = "urn:test:1";
@@ -73,7 +73,7 @@ public final class TkInviteTest {
                                 "/b/%d/invite",
                                 bout.number()
                             ),
-                            "name=foo@bar.com"
+                            "name=foo@bar.airforce"
                         )
                     ),
                     "X-Netbout-Bout",
@@ -83,20 +83,9 @@ public final class TkInviteTest {
         } catch (final RsForward ex) {
             MatcherAssert.assertThat(
                 ex.getLocalizedMessage(),
-                Matchers.containsString("foo-bar-com")
+                Matchers.containsString("foo-bar-airforce")
             );
+            throw ex;
         }
-    }
-
-    /**
-     * TkInvite can generate Sha-1.
-     * @throws Exception If there is some problem inside
-     */
-    @Test
-    public void generatesSha() throws Exception {
-        MatcherAssert.assertThat(
-            new TkInvite(new MkBase()).calcSha("test@example.com"),
-            Matchers.equalTo("567159D622FFBB50B11B0EFD307BE358624A26EE")
-        );
     }
 }
