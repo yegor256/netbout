@@ -71,11 +71,6 @@ final class TkAttach implements Take {
     );
 
     /**
-     * Position of the filename on the RegEx pattern.
-     */
-    private static final int FILE_NAME_POS = 5;
-
-    /**
      * Base.
      */
     private final transient Base base;
@@ -108,7 +103,7 @@ final class TkAttach implements Take {
             throw new RsFailure("Filename was not provided");
         }
         final String name = URLDecoder.decode(
-            matcher.group(FILE_NAME_POS),
+            matcher.group(5),
             CharEncoding.UTF_8
         );
         final File temp = File.createTempFile("netbout", "bin");
