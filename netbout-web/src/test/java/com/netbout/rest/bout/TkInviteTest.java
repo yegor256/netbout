@@ -24,63 +24,68 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.rest;
+package com.netbout.rest.bout;
 
 import com.jcabi.urn.URN;
 import com.netbout.mock.MkBase;
+import com.netbout.spi.Alias;
 import com.netbout.spi.Bout;
+import com.netbout.spi.User;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;
-import org.takes.facets.auth.Identity;
-import org.takes.facets.auth.PsFixed;
-import org.takes.facets.auth.TkAuth;
+import org.takes.facets.auth.RqWithAuth;
+import org.takes.facets.forward.RsForward;
 import org.takes.rq.RqFake;
 import org.takes.rq.RqMethod;
-import org.takes.rs.RsPrint;
+import org.takes.rq.RqWithHeader;
 
 /**
- * Test case for {@link TkInbox}.
+ * Test case for {@link TkInvite}.
  * @author Endrigo Antonini (teamed@endrigo.com.br)
  * @version $Id$
- * @todo #704:30min Test case for search bouts of TkInbox
- *  should be added, e.g. response should have filtered
- *  bouts by search term
- * @since 2.14.17
- * @checkstyle ClassDataAbstractionCouplingCheck (100 lines)
- *
+ * @since 2.15.1
  */
-public final class TkInboxTest {
+public final class TkInviteTest {
 
     /**
-     * TkInbox can kick an User.
+     * TkInvite can invite user by email.
      * @throws Exception If there is some problem inside
      */
-    @Test
-    public void kicksAnUser() throws Exception {
-        final String alias = "test";
-        final String urn = "urn:test:1";
+    @Test (expected = RsForward.class)
+    public void invitesUserByEmail() throws Exception {
         final MkBase base = new MkBase();
-        final Bout bout = base.randomBout();
-        base.user(new URN(urn)).aliases().add(alias);
-        bout.friends().invite(alias);
-        MatcherAssert.assertThat(
-            new RsPrint(
-                new TkAuth(
-                    new TkApp(base),
-                    new PsFixed(new Identity.Simple(urn))
-                ).act(
-                    new RqFake(
-                        RqMethod.GET,
-                        String.format(
-                            "/b/%d/kick?name=%s",
-                            bout.number(),
-                            alias
+        final String urn = "urn:test:1";
+        final User user = base.user(new URN(urn));
+        user.aliases().add("jeff");
+        final Alias alias = user.aliases().iterate().iterator().next();
+        final Bout bout = alias.inbox().bout(alias.inbox().start());
+        bout.messages().post("Before invite by email.");
+        bout.friends().invite(alias.name());
+        try {
+            new TkInvite(base).act(
+                new RqWithHeader(
+                    new RqWithAuth(
+                        urn,
+                        new RqFake(
+                            RqMethod.POST,
+                            String.format(
+                                "/b/%d/invite",
+                                bout.number()
+                            ),
+                            "name=foo@bar.airforce"
                         )
-                    )
+                    ),
+                    "X-Netbout-Bout",
+                    Long.toString(bout.number())
                 )
-            ).printHead(),
-            Matchers.containsString("you+kicked")
-        );
+            );
+        } catch (final RsForward ex) {
+            MatcherAssert.assertThat(
+                ex.getLocalizedMessage(),
+                Matchers.containsString("foo-bar-airforce")
+            );
+            throw ex;
+        }
     }
 }

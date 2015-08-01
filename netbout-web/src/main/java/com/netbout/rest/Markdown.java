@@ -38,6 +38,7 @@ import java.util.regex.Pattern;
 import javax.validation.constraints.NotNull;
 import org.apache.commons.codec.CharEncoding;
 import org.apache.commons.io.IOUtils;
+import org.pegdown.Extensions;
 import org.pegdown.PegDownProcessor;
 import org.w3c.tidy.Tidy;
 
@@ -96,7 +97,7 @@ public final class Markdown {
         synchronized (Markdown.TIDY) {
             return LINK_WHITESPACE.matcher(
                 Markdown.clean(
-                    new PegDownProcessor().markdownToHtml(
+                    new PegDownProcessor(Extensions.ALL).markdownToHtml(
                         Markdown.formatLinks(this.text)
                     )
                 )

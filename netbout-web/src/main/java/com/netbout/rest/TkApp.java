@@ -215,6 +215,10 @@ public final class TkApp extends TkWrap {
                         base,
                         new TkFork(
                             new FkRegex("/", new TkReturn(new TkInbox(base))),
+                            new FkRegex(
+                                "/search",
+                                new TkReturn(new TkInbox(base))
+                            ),
                             new FkRegex("/start", new TkStart(base)),
                             new FkRegex("/b/.*", new TkBout(base)),
                             new FkRegex("/acc/.*", new TkAccount(base)),
