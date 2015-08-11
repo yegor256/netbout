@@ -38,7 +38,7 @@ import org.xembly.Xembler;
  * Test case for {@link XeMessage}.
  * @author Dmitry Zaytsev (dmitry.zaytsev@gmail.com)
  * @version $Id$
- * @since 2.16.1
+ * @since 2.16.2
  *
  */
 public final class XeMessageTest {
