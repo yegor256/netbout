@@ -23,3 +23,5 @@ Netbout-SmtpPassword: ${smtp.password}
 Netbout-Basic-Realm: ${basic.realm}
 Netbout-Basic-User: ${basic.user}
 Netbout-Basic-Pwd: ${basic.pwd}
+Netbout-EmCatchSecret: ${emcatch.secret}
+

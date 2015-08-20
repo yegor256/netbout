@@ -97,7 +97,7 @@ public final class EmCatchTest {
             setup.getPort(),
             // @checkstyle MagicNumberCheck (1 line)
             500L
-        );
+        ).start();
         final MimeMessage message = GreenMailUtil.createTextEmail(
             to,
             from,

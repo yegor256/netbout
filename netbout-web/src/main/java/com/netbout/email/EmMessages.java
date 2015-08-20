@@ -134,6 +134,11 @@ final class EmMessages implements Messages {
      * @param friend Friend to send to
      * @param text The text of the new message
      * @throws IOException If fails
+     * @todo #692:30min/DEV Header `Reply-To` should be added to
+     *  an outgoing email. Format is crypt-string@reply.netbout.com
+     *  where crypt-string is user-urn|bout-number
+     *  Use EmCatch.encrypt() to encrypt the string
+     *  see #692 and EmActionTest for additional info
      */
     private void email(final Friend friend, final String text)
         throws IOException {
