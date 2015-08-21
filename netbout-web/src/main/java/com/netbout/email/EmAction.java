@@ -41,7 +41,7 @@ import javax.mail.Multipart;
  *
  * @author Dmitry Zaytsev (dmitry.zaytsev@gmail.com)
  * @version $Id$
- * @since 2.16.3
+ * @since 2.17
  */
 public final class EmAction implements EmCatch.Action {
     /**
@@ -111,7 +111,7 @@ public final class EmAction implements EmCatch.Action {
                 throw new IOException("body is not Multipart");
             }
             final Multipart parts = (Multipart) body;
-            for (int pos = 0; pos < parts.getCount(); pos += 1) {
+            for (int pos = 0; pos < parts.getCount(); ++pos) {
                 final BodyPart part = parts.getBodyPart(pos);
                 if (part.getContentType().startsWith("text/plain")) {
                     return part.getContent().toString();

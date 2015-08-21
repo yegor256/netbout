@@ -43,7 +43,7 @@ import org.junit.Test;
  * Test case for {@link EmAction}.
  * @author Dmitry Zaytsev (dmitry.zaytsev@gmail.com)
  * @version $Id$
- * @since 2.16.3
+ * @since 2.17
  * @checkstyle ClassDataAbstractionCouplingCheck (200 lines)
  */
 public final class EmActionTest {
