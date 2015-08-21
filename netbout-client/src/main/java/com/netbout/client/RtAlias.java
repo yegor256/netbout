@@ -33,6 +33,7 @@ import com.jcabi.http.response.RestResponse;
 import com.jcabi.http.response.XmlResponse;
 import com.jcabi.log.Logger;
 import com.netbout.spi.Alias;
+import com.netbout.spi.Bout;
 import com.netbout.spi.Inbox;
 import java.io.IOException;
 import java.net.HttpURLConnection;
@@ -128,6 +129,12 @@ final class RtAlias implements Alias {
             .body().formParam("email", email).back()
             .fetch();
         Logger.info(this, "email changed");
+    }
+
+    @Override
+    public void email(final String email, final String urn, final Bout bout)
+        throws IOException {
+        throw new UnsupportedOperationException("Not Implemented");
     }
 
     @Override

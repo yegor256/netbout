@@ -32,6 +32,7 @@ import com.jcabi.jdbc.JdbcSession;
 import com.jcabi.jdbc.Outcome;
 import com.jcabi.jdbc.SingleOutcome;
 import com.netbout.spi.Alias;
+import com.netbout.spi.Bout;
 import com.netbout.spi.Inbox;
 import java.io.IOException;
 import java.net.URI;
@@ -142,6 +143,12 @@ final class MkAlias implements Alias {
         } catch (final SQLException ex) {
             throw new IOException(ex);
         }
+    }
+
+    @Override
+    public void email(final String email, final String urn, final Bout bout)
+        throws IOException {
+        this.email(email);
     }
 
     @Override

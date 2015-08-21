@@ -81,9 +81,10 @@ final class TkInvite implements Take {
         final String invite = new RqForm.Smart(
             new RqForm.Base(req)
         ).single("name");
+        final Bout bout = new RqBout(this.base, req).bout();
         final String guest;
         if (MAIL_MASK.matcher(invite).find()) {
-            guest = this.inviteByEmail(invite);
+            guest = this.inviteByEmail(invite, bout);
         } else {
             guest = invite;
         }
@@ -94,7 +95,6 @@ final class TkInvite implements Take {
                 String.format("incorrect alias \"%s\", try again", guest)
             );
         }
-        final Bout bout = new RqBout(this.base, req).bout();
         try {
             bout.friends().invite(guest);
         } catch (final Friends.UnknownAliasException ex) {
@@ -113,7 +113,8 @@ final class TkInvite implements Take {
 
     /**
      * Invite a user to participate on NetBout by email.
-     * @param invite Email.
+     * @param invite Email
+     * @param bout Bout
      * @return Alias.
      * @throws IOException If fails.
      * @todo #602:30min/DEV Invited user should receive an email message with
@@ -123,8 +124,9 @@ final class TkInvite implements Take {
      *  where `invite-key` is the encrypted urn. We can use `CcAES` from Takes
      *  project.
      */
+    @SuppressWarnings("IllegalCatchCheck")
     public String inviteByEmail(@NotNull(message = "Invite can't be NULL")
-        final String invite) throws IOException {
+        final String invite, final Bout bout) throws IOException {
         // @checkstyle MultipleStringLiteralsCheck (1 line)
         final String alias = invite.replace("@", "-").replace(".", "-");
         final String urn = String.format(
@@ -132,9 +134,13 @@ final class TkInvite implements Take {
             DigestUtils.sha1Hex(alias)
         );
         this.base.user(URN.create(urn)).aliases().add(alias);
-        new RqAlias(this.base, new RqWithAuth(urn)).alias().email(invite);
+        try {
+            new RqAlias(this.base, new RqWithAuth(urn)).alias()
+                .email(invite, urn, bout);
+        } catch (final IOException ex) {
+            throw new RsFailure(ex);
+        }
         return alias;
     }
-
 }
 

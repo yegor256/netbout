@@ -33,6 +33,7 @@ import com.jcabi.dynamo.Item;
 import com.jcabi.dynamo.Region;
 import com.jcabi.log.Logger;
 import com.netbout.spi.Alias;
+import com.netbout.spi.Bout;
 import com.netbout.spi.Inbox;
 import java.io.IOException;
 import java.net.URI;
@@ -119,6 +120,11 @@ final class DyAlias implements Alias {
             new AttributeUpdates().with(DyAliases.ATTR_EMAIL, email)
         );
         Logger.info(this, "@%s changed email to %s", this.name(), email);
+    }
+
+    @Override
+    public void email(final String email, final String urn, final Bout bout) {
+        throw new UnsupportedOperationException("Not Implemented");
     }
 
     @Override

@@ -26,18 +26,30 @@
  */
 package com.netbout.email;
 
+import com.amazonaws.util.Base64;
+import com.google.common.base.Joiner;
 import com.jcabi.aspects.Immutable;
 import com.jcabi.aspects.Loggable;
 import com.jcabi.email.Envelope;
 import com.jcabi.email.Postman;
+import com.jcabi.email.enclosure.EnHTML;
+import com.jcabi.email.stamp.StRecipient;
 import com.jcabi.email.stamp.StSender;
+import com.jcabi.email.stamp.StSubject;
+import com.netbout.rest.Markdown;
 import com.netbout.spi.Alias;
+import com.netbout.spi.Bout;
 import com.netbout.spi.Inbox;
 import java.io.IOException;
 import java.net.URI;
+import java.security.NoSuchAlgorithmException;
 import java.util.Locale;
+import javax.crypto.KeyGenerator;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
+import org.takes.facets.auth.Identity;
+import org.takes.facets.auth.codecs.CcAES;
+import org.takes.facets.auth.codecs.Codec;
 
 /**
  * Email Alias.
@@ -45,12 +57,31 @@ import lombok.ToString;
  * @author Yegor Bugayenko (yegor@teamed.io)
  * @version $Id$
  * @since 2.12
+ * @checkstyle ClassDataAbstractionCouplingCheck (200 lines)
  */
 @Immutable
 @Loggable(Loggable.DEBUG)
 @ToString(of = "origin")
 @EqualsAndHashCode(of = "origin")
+@SuppressWarnings("PMD.TooManyMethods")
 final class EmAlias implements Alias {
+
+    /**
+     * Encryption type.
+     *
+     */
+    private static final String ENCRYPTION = "AES";
+
+    /**
+     * Key length.
+     */
+    private static final int KEY_LENGTH = 128;
+
+    /**
+     * Mail content for invited user by email.
+     */
+    private static final String MAIL_CONTENT =
+        "You are invited into the Netbout click on the link to register";
 
     /**
      * Original.
@@ -112,7 +143,88 @@ final class EmAlias implements Alias {
     }
 
     @Override
+    public void email(final String email, final String urn, final Bout bout)
+        throws IOException {
+        this.origin.email(email);
+        this.send(email, urn, bout);
+    }
+
+    @Override
     public Inbox inbox() throws IOException {
         return new EmInbox(this.origin.inbox(), this.postman, this.name());
+    }
+
+    /**
+     * Create invite key by urn using CcAES.
+     * @param urn Urn
+     * @return Encoded urn
+     * @throws IOException if fails
+     */
+    private String encode(final String urn)
+        throws IOException {
+        try {
+            final KeyGenerator generator = KeyGenerator.getInstance(ENCRYPTION);
+            generator.init(KEY_LENGTH);
+            final byte[] key = generator.generateKey().getEncoded();
+            final Codec codec = new CcAES(
+                new Codec() {
+                    @Override
+                    public Identity decode(final byte[] bytes)
+                        throws IOException {
+                        return new Identity.Simple(new String(bytes));
+                    }
+                    @Override
+                    public byte[] encode(final Identity identity)
+                        throws IOException {
+                        return identity.urn().getBytes();
+                    }
+                },
+                key
+            );
+            final byte[] encode = codec.encode(new Identity.Simple(urn));
+            return Base64.encodeAsString(encode);
+        } catch (final NoSuchAlgorithmException ex) {
+            throw new IOException(ex);
+        }
+    }
+
+    /**
+     * Send an email with register link which is like.
+     * http://www.netbout.com/b/<bout_number>?invite=<invite-key>
+     * @param email Email
+     * @param urn Urn
+     * @param bout Bout
+     * @throws IOException if fails
+     */
+    private void send(final String email, final String urn, final Bout bout)
+        throws IOException {
+        this.postman.send(
+            new Envelope.MIME()
+                .with(new StRecipient(email))
+                .with(
+                    new StSubject(
+                        String.format(
+                            "#%d: %s",
+                            bout.number(),
+                            bout.title()
+                        )
+                    )
+                )
+                .with(
+                    new EnHTML(
+                        Joiner.on('\n').join(
+                            new Markdown(MAIL_CONTENT).html(), "<br/>",
+                            String.format(
+                                "http://www.netbout.com/b/%d?invite=%s",
+                                bout.number(),
+                                this.encode(urn)
+                            ),
+                            "<p style=\"color:#C8C8C8;font-size:2px;\">",
+                            String.format("%d</p>", System.nanoTime()),
+                            new GmailViewAction(bout.number()).xml()
+                        )
+                    )
+                )
+        );
     }
 }

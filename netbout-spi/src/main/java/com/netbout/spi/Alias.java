@@ -93,6 +93,15 @@ public interface Alias {
     void email(String email) throws IOException;
 
     /**
+     * Save email and invite to join on Netbout by email.
+     * @param email Email
+     * @param urn Urn
+     * @param bout Bout
+     * @throws IOException if fails
+     */
+    void email(String email, String urn, Bout bout) throws IOException;
+
+    /**
      * Get inbox.
      * @return Inbox
      * @throws IOException If fails

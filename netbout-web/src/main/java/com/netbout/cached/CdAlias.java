@@ -31,6 +31,7 @@ import com.jcabi.aspects.Immutable;
 import com.jcabi.aspects.Loggable;
 import com.jcabi.aspects.Tv;
 import com.netbout.spi.Alias;
+import com.netbout.spi.Bout;
 import com.netbout.spi.Inbox;
 import java.io.IOException;
 import java.net.URI;
@@ -99,6 +100,14 @@ final class CdAlias implements Alias {
     @Cacheable.FlushBefore
     public void email(final String email) throws IOException {
         this.origin.email(email);
+    }
+
+    @Override
+    @Cacheable.FlushBefore
+    public void email(final String email, final String urn,
+        final Bout bout)
+        throws IOException {
+        this.origin.email(email, urn, bout);
     }
 
     @Override
