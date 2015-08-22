@@ -26,7 +26,6 @@
  */
 package com.netbout.email;
 
-import com.amazonaws.util.Base64;
 import com.google.common.base.Joiner;
 import com.jcabi.aspects.Immutable;
 import com.jcabi.aspects.Loggable;
@@ -47,6 +46,7 @@ import java.util.Locale;
 import javax.crypto.KeyGenerator;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
+import org.apache.commons.codec.binary.Base64;
 import org.takes.facets.auth.Identity;
 import org.takes.facets.auth.codecs.CcAES;
 import org.takes.facets.auth.codecs.Codec;
@@ -182,7 +182,7 @@ final class EmAlias implements Alias {
                 key
             );
             final byte[] encode = codec.encode(new Identity.Simple(urn));
-            return Base64.encodeAsString(encode);
+            return Base64.encodeBase64URLSafeString(encode);
         } catch (final NoSuchAlgorithmException ex) {
             throw new IOException(ex);
         }
