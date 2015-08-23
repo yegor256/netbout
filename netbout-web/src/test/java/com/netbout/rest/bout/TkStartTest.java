@@ -37,6 +37,7 @@ import com.netbout.spi.Friend;
 import com.netbout.spi.Message;
 import com.netbout.spi.User;
 import java.io.IOException;
+import java.net.URLEncoder;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.hamcrest.MatcherAssert;
@@ -45,6 +46,7 @@ import org.junit.Test;
 import org.takes.facets.auth.RqWithAuth;
 import org.takes.facets.forward.TkForward;
 import org.takes.rq.RqFake;
+import org.takes.rq.RqMethod;
 import org.takes.rs.RsPrint;
 
 /**
@@ -59,7 +61,13 @@ import org.takes.rs.RsPrint;
  * @checkstyle ClassDataAbstractionCouplingCheck (500 lines)
  */
 public final class TkStartTest {
-
+    /**
+     * Location pattern.
+     */
+    private static final Pattern LOCATION = Pattern.compile(
+        "^Location:.*/b/(\\d+)$",
+        Pattern.MULTILINE
+    );
     /**
      * TkStart can post message and invite friends to
      * newly created bouts.
@@ -82,7 +90,7 @@ public final class TkStartTest {
                 new RqWithAuth(
                     urn,
                     new RqFake(
-                        "GET",
+                        RqMethod.GET,
                         String.format(
                             "/start?post=%s&invite=%s&invite=%s",
                             post,
@@ -93,10 +101,7 @@ public final class TkStartTest {
                 )
             )
         ).printHead();
-        final Matcher matcher = Pattern.compile(
-            "^Location:.*/b/(\\d+)$",
-            Pattern.MULTILINE
-        ).matcher(head);
+        final Matcher matcher = TkStartTest.LOCATION.matcher(head);
         MatcherAssert.assertThat("Location header is correct", matcher.find());
         final Bout bout = user.aliases().iterate().iterator().next().inbox()
             .bout(Long.parseLong(matcher.group(1)));
@@ -122,6 +127,40 @@ public final class TkStartTest {
                 friends[1].name(),
                 name
             )
+        );
+    }
+    /**
+     * TkStart can rename newly created bouts.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void renamesBout() throws Exception {
+        final MkBase base = new MkBase();
+        final String urn = "urn:test:2";
+        final User user = base.user(new URN(urn));
+        user.aliases().add("John");
+        final String name = "let's talk";
+        final String head = new RsPrint(
+            new TkForward(new TkStart(base)).act(
+                new RqWithAuth(
+                    urn,
+                    new RqFake(
+                        RqMethod.GET,
+                        String.format(
+                            "/start?post=message&invite=%s&rename=%s",
+                            base.randomAlias().name(),
+                            URLEncoder.encode(name, "UTF-8")
+                        )
+                    )
+                )
+            )
+        ).printHead();
+        final Matcher matcher = TkStartTest.LOCATION.matcher(head);
+        MatcherAssert.assertThat("Location header is valid", matcher.find());
+        MatcherAssert.assertThat(
+            user.aliases().iterate().iterator().next().inbox()
+            .bout(Long.parseLong(matcher.group(1))).title(),
+            Matchers.equalTo(name)
         );
     }
 }
