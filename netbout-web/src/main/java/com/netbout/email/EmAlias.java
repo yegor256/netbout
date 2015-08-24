@@ -116,7 +116,7 @@ final class EmAlias implements Alias {
     public void email(final String email, final String urn, final Bout bout)
         throws IOException {
         this.origin.email(email);
-        new EmAliasMail(this.postman).send(email, urn, bout);
+        new BoutInviteMail(this.postman).send(email, urn, bout);
     }
 
     @Override

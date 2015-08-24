@@ -47,7 +47,7 @@ import org.takes.facets.auth.codecs.CcAES;
 import org.takes.facets.auth.codecs.Codec;
 
 /**
- * Email Alias Mail Helper.
+ * Bout Invite Email.
  *
  * @author Mesut Ozen (mesutozen36@gmail.com)
  * @version $Id$
@@ -58,7 +58,7 @@ import org.takes.facets.auth.codecs.Codec;
 @Loggable(Loggable.DEBUG)
 @ToString(of = "postman")
 @EqualsAndHashCode(of = "postman")
-final class EmAliasMail {
+final class BoutInviteMail {
 
     /**
      * Encryption type.
@@ -86,7 +86,7 @@ final class EmAliasMail {
      * Public ctor.
      * @param pst Postman
      */
-    EmAliasMail(final Postman pst) {
+    BoutInviteMail(final Postman pst) {
         this.postman = pst;
     }
 

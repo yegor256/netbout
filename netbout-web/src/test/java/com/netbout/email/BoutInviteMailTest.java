@@ -41,16 +41,16 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 
 /**
- * Test case for {@link EmAliasMail}.
+ * Test case for {@link BoutInviteMail}.
  *
  * @author Mesut Ozen (mesutozen36@gmail.com)
  * @version $Id$
  * @since 2.15
  */
-public final class EmAliasMailTest {
+public final class BoutInviteMailTest {
 
     /**
-     * EmAliasMail can send email.
+     * BoutInviteMail can send email.
      * @throws Exception If there is some problem inside
      */
     @Test
@@ -58,13 +58,13 @@ public final class EmAliasMailTest {
         final String content =
             "You are invited into the Netbout click on the link to";
         final Postman postman = Mockito.mock(Postman.class);
-        final EmAliasMail emAliasMail = new EmAliasMail(postman);
+        final BoutInviteMail boutInviteMail = new BoutInviteMail(postman);
         final MkBase base = new MkBase();
         final Alias alias = new EmAlias(base.randomAlias(), postman);
         final String email = "mesutozen36@gmail.com";
         final String urn = "urn:mesutozen36@gmail.com:mesutozen36-gmail-com";
         final Bout bout = alias.inbox().bout(alias.inbox().start());
-        emAliasMail.send(email, urn, bout);
+        boutInviteMail.send(email, urn, bout);
         final ArgumentCaptor<Envelope> captor =
             ArgumentCaptor.forClass(Envelope.class);
         Mockito.verify(postman).send(captor.capture());
