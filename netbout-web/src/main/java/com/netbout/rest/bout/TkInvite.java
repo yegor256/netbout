@@ -124,7 +124,6 @@ final class TkInvite implements Take {
      *  where `invite-key` is the encrypted urn. We can use `CcAES` from Takes
      *  project.
      */
-    @SuppressWarnings("IllegalCatchCheck")
     public String inviteByEmail(@NotNull(message = "Invite can't be NULL")
         final String invite, final Bout bout) throws IOException {
         // @checkstyle MultipleStringLiteralsCheck (1 line)
