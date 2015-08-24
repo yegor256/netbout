@@ -117,12 +117,6 @@ final class TkInvite implements Take {
      * @param bout Bout
      * @return Alias.
      * @throws IOException If fails.
-     * @todo #602:30min/DEV Invited user should receive an email message with
-     *  a text like this 'You are invited into the Netbout click on the link
-     *  to register' and the link should be
-     *  `http://www.netbout.com/b/<bout_number>?invite=<invite-key>`
-     *  where `invite-key` is the encrypted urn. We can use `CcAES` from Takes
-     *  project.
      */
     public String inviteByEmail(@NotNull(message = "Invite can't be NULL")
         final String invite, final Bout bout) throws IOException {

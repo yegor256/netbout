@@ -45,7 +45,7 @@ import org.mockito.Mockito;
  *
  * @author Mesut Ozen (mesutozen36@gmail.com)
  * @version $Id$
- * @since 2.15
+ * @since 2.17
  */
 public final class BoutInviteMailTest {
 

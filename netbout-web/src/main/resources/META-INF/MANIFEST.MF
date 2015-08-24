@@ -24,4 +24,7 @@ Netbout-Basic-Realm: ${basic.realm}
 Netbout-Basic-User: ${basic.user}
 Netbout-Basic-Pwd: ${basic.pwd}
 Netbout-EmCatchSecret: ${emcatch.secret}
+Netbout-Invite-Content: "You are invited into the Netbout click on the link to register"
+Netbout-Invite-Url: "http://www.netbout.com/b/%d?invite=%s"
+Netbout-Invite-Seperator: "<p style=\"color:#C8C8C8;font-size:2px;\">"
 
