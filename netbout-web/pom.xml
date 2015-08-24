@@ -59,7 +59,7 @@
             chunked-body transfer. That situation is described on issue
             https://github.com/yegor256/takes/issues/372. Update to the version
             that implements that requirement of HTTP/1.1 protocol.  -->
-            <version>0.20.3</version>
+            <version>0.23.2</version>
         </dependency>
         <dependency>
             <groupId>com.jcabi.incubator</groupId>
@@ -270,6 +270,18 @@
             <artifactId>greenmail</artifactId>
             <version>1.4.1</version>
             <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.jasypt</groupId>
+            <artifactId>jasypt</artifactId>
+            <version>1.9.2</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.jcabi</groupId>
+            <artifactId>jcabi-immutable</artifactId>
+            <version>1.3</version>
+            <scope>compile</scope>
         </dependency>
     </dependencies>
     <build>

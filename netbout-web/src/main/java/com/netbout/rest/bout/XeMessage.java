@@ -39,6 +39,7 @@ import org.takes.rs.xe.XeLink;
 import org.takes.rs.xe.XeSource;
 import org.takes.rs.xe.XeWrap;
 import org.xembly.Directives;
+import org.xembly.Xembler;
 
 /**
  * Message in Xembly.
@@ -78,9 +79,10 @@ final class XeMessage extends XeWrap {
                     .add("number")
                     .set(Long.toString(msg.number()))
                     .up()
-                    .add("author").set(msg.author()).up()
-                    .add("text").set(msg.text()).up()
-                    .add("html").set(new Markdown(msg.text()).html()).up()
+                    .add("author").set(Xembler.escape(msg.author())).up()
+                    .add("text").set(Xembler.escape(msg.text())).up()
+                    .add("html")
+                    .set(Xembler.escape(new Markdown(msg.text()).html())).up()
                     .add("timeago")
                     .set(new PrettyTime().format(msg.date())).up()
                     .add("date")

@@ -29,6 +29,8 @@ package com.netbout.email;
 import com.jcabi.aspects.Immutable;
 import com.jcabi.aspects.Loggable;
 import com.jcabi.log.Logger;
+import com.jcabi.manifests.Manifests;
+import java.io.IOException;
 import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 import javax.mail.Flags;
@@ -42,6 +44,7 @@ import javax.mail.URLName;
 import javax.mail.search.FlagTerm;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
+import org.jasypt.encryption.pbe.StandardPBEStringEncryptor;
 
 /**
  * Monitors an email account periodically
@@ -55,6 +58,11 @@ import lombok.ToString;
 @ToString(of = { "action", "user", "password" })
 @EqualsAndHashCode(of = { "action", "user", "password" })
 final class EmCatch {
+    /**
+     * Encryptor.
+     */
+    private static final StandardPBEStringEncryptor ENC =
+        new StandardPBEStringEncryptor();
     /**
      * Max sleep time of thread.
      */
@@ -83,6 +91,11 @@ final class EmCatch {
      * Email server check period in milliseconds.
      */
     private final transient long period;
+
+    static {
+        EmCatch.ENC.setPassword(Manifests.read("Netbout-EmCatchSecret"));
+    }
+
     /**
      * Ctor.
      * @param act Email message handler
@@ -93,8 +106,7 @@ final class EmCatch {
      * @param prd Email server check period in milliseconds
      * @checkstyle ParameterNumberCheck (3 lines)
      */
-    @SuppressWarnings("PMD.DoNotUseThreads")
-    EmCatch(final Action act, final String usr, final String pass,
+    public EmCatch(final Action act, final String usr, final String pass,
             final String hst, final int prt, final long prd) {
         this.action = act;
         this.user = usr;
@@ -102,6 +114,13 @@ final class EmCatch {
         this.host = hst;
         this.port = prt;
         this.period = prd;
+    }
+
+    /**
+     * Start the monitoring.
+     */
+    @SuppressWarnings("PMD.DoNotUseThreads")
+    public void start() {
         final Thread monitor = new Thread(
             new Runnable() {
                 @Override
@@ -113,6 +132,27 @@ final class EmCatch {
         monitor.setDaemon(true);
         monitor.start();
     }
+
+    /**
+     * Encrypt text string.
+     * @param text String to encrypt
+     * @return Encrypted string
+     */
+    @SuppressWarnings("PMD.DefaultPackage")
+    static String encrypt(final String text) {
+        return EmCatch.ENC.encrypt(text);
+    }
+
+    /**
+     * Decrypt text string.
+     * @param text String to decrypt
+     * @return Decrypted string
+     */
+    @SuppressWarnings("PMD.DefaultPackage")
+    static String decrypt(final String text) {
+        return EmCatch.ENC.decrypt(text);
+    }
+
     /**
      * Main loop of the daemon thread. Fetches unread mail and persists
      * new bout message periodically
@@ -167,7 +207,7 @@ final class EmCatch {
             for (final Message msg : inbox.search(unseen)) {
                 this.action.run(msg);
             }
-        } catch (final NoSuchProviderException ex) {
+        } catch (final NoSuchProviderException | IOException ex) {
             throw new IllegalStateException(ex);
         } finally {
             inbox.close(true);
@@ -185,15 +225,9 @@ final class EmCatch {
         /**
          * Create bout message from email message.
          * @param msg Bout message as email.
-         * @todo #600:30min/DEV Create bout message using using
-         *  msg values. Msg recipient value will hold boutId info.
-         *  Msg from value will hold bout message creator info.
-         *  Msg content will hold bout message content info.
-         *  This method should get bout info from email and save it
-         *  as bout message. And then change method signature like
-         *  void run(Bout bout, String email, String body);
+         * @throws IOException If fails
          */
-        void run(Message msg);
+        void run(Message msg) throws IOException;
     }
 
 }
