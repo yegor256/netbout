@@ -74,9 +74,8 @@ final class BoutInviteMail {
     private final transient Postman postman;
 
     static {
-        BoutInviteMail.ENC.setPassword(Manifests.read(
-            "Netbout-BoutInviteSecret"
-            )
+        BoutInviteMail.ENC.setPassword(
+            Manifests.read("Netbout-BoutInviteSecret")
         );
     }
 
