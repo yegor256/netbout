@@ -108,13 +108,13 @@ public final class TkStart implements Take {
             final String friend = invite.next();
             try {
                 bout.friends().invite(friend);
+                msg.append(
+                    String.format(", the invitation sent to \"%s\"", friend)
+                );
             } catch (final Friends.UnknownAliasException ex) {
                 this.discard(bout);
                 throw new RsFailure(ex);
             }
-            msg.append(
-                String.format(", the invitation sent to \"%s\"", friend)
-            );
         }
     }
 
