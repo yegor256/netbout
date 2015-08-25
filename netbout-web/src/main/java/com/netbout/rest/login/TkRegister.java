@@ -64,7 +64,7 @@ final class TkRegister implements Take {
      * @param req Request
      * @return Response
      * @throws IOException if fails
-     * @todo #602:30min/Dev During the user registraton if the
+     * @todo #751:30min/Dev During the user registraton if the
      *  invite-key` param presented in the original ticket (destination
      *  url) it should decrypt that value and use it to search for alias.
      *  using that alias, you must update urn and alias to use the alias

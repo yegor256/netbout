@@ -23,6 +23,6 @@ Netbout-SmtpPassword: test
 Netbout-Basic-Realm: testrealm
 Netbout-Basic-User: testuser
 Netbout-Basic-Pwd: testpassword
-Netbout-Invite-Content: "You are invited into the Netbout click on the link to register"
-Netbout-Invite-Url: "http://www.netbout.com/b/%d?invite=%s"
-Netbout-Invite-Seperator: "<p style=\"color:#C8C8C8;font-size:2px;\">"
+Netbout-Site: http://www.netbout.com
+Netbout-BoutInviteSecret: testboutinvitesecret
+

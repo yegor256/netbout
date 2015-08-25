@@ -62,12 +62,22 @@ final class BoutInviteMail {
         new StandardPBEStringEncryptor();
 
     /**
+     * Mail content for invited user by email.
+     */
+    private static final String MAIL_CONTENT =
+        "You are invited into the Netbout click on the link to register";
+
+    /**
+     * Postman.
      * Postman.
      */
     private final transient Postman postman;
 
     static {
-        BoutInviteMail.ENC.setPassword(Manifests.read("Netbout-EmCatchSecret"));
+        BoutInviteMail.ENC.setPassword(Manifests.read(
+            "Netbout-BoutInviteSecret"
+            )
+        );
     }
 
     /**
@@ -103,16 +113,14 @@ final class BoutInviteMail {
                 .with(
                     new EnHTML(
                         Joiner.on('\n').join(
-                            new Markdown(
-                                 Manifests.read("Netbout-Invite-Content")
-                            ).html(),
-                            "<br/>",
-                            String.format(
-                                Manifests.read("Netbout-Invite-Url"),
+                            new Markdown(MAIL_CONTENT).html(), "<br/>",
+                                String.format(
+                                    Manifests.read("Netbout-Site")
+                                        .concat("/b/%d?invite=%s"),
                                 bout.number(),
                                 encrypt(urn)
                             ),
-                            Manifests.read("Netbout-Invite-Seperator"),
+                            "<p style=\"color:#C8C8C8;font-size:2px;\">",
                             String.format("%d</p>", System.nanoTime()),
                             new GmailViewAction(bout.number()).xml()
                         )
