@@ -112,7 +112,9 @@ public final class TkStart implements Take {
                 this.discard(bout);
                 throw new RsFailure(ex);
             }
-            msg.append(String.format(", the invitation sent to \"%s\"", friend));
+            msg.append(
+                String.format(", the invitation sent to \"%s\"", friend)
+            );
         }
     }
 
