@@ -163,4 +163,30 @@ public final class TkStartTest {
             Matchers.equalTo(name)
         );
     }
+
+    /**
+     * TkStart can prevent more then one rename.
+     * @throws Exception If there is some problem inside
+     */
+    @Test(expected = IOException.class)
+    public void preventManyRenameParameters() throws Exception {
+        final MkBase base = new MkBase();
+        final String urn = "urn:test:3";
+        final User user = base.user(new URN(urn));
+        user.aliases().add("Alex");
+        new TkStart(base).act(
+            new RqWithAuth(
+                urn,
+                new RqFake(
+                    RqMethod.GET,
+                    String.format(
+                        "/start?post=message&invite=%s&rename=%s&rename=%s",
+                        base.randomAlias().name(),
+                        "first",
+                        "second"
+                    )
+                )
+            )
+        );
+    }
 }

@@ -112,7 +112,7 @@ public final class TkStart implements Take {
                 this.discard(bout);
                 throw new RsFailure(ex);
             }
-            msg.append(String.format(", \"%s\" invited", friend));
+            msg.append(String.format(", the invitation sent to \"%s\"", friend));
         }
     }
 
@@ -126,7 +126,7 @@ public final class TkStart implements Take {
     private void rename(final Bout bout, final StringBuilder msg,
         final Href href) throws IOException {
         final Iterator<String> rename = href.param("rename").iterator();
-        while (rename.hasNext()) {
+        if (rename.hasNext()) {
             bout.rename(rename.next());
             msg.append(
                 String.format(
@@ -135,6 +135,9 @@ public final class TkStart implements Take {
                     bout.title()
                 )
             );
+        }
+        if (rename.hasNext()) {
+            throw new IOException("Only first rename parameter accepted");
         }
     }
 
