@@ -74,17 +74,8 @@ public final class TkStart implements Take {
             String.format("new bout #%d started", number)
         );
         final Href href = new RqHref.Base(req).href();
-        final Iterator<String> invite = href.param("invite").iterator();
-        while (invite.hasNext()) {
-            final String friend = invite.next();
-            try {
-                bout.friends().invite(friend);
-            } catch (final Friends.UnknownAliasException ex) {
-                this.discard(bout);
-                throw new RsFailure(ex);
-            }
-            msg.append(String.format(", \"%s\" invited", friend));
-        }
+        this.rename(bout, msg, href);
+        this.invite(bout, msg, href);
         final Iterator<String> post = href.param("post").iterator();
         if (post.hasNext()) {
             try {
@@ -101,6 +92,55 @@ public final class TkStart implements Take {
                 Long.toString(number)
             )
         );
+    }
+
+    /**
+     * Invite friend into the bout.
+     * @param bout Bout
+     * @param msg Message
+     * @param href Href
+     * @throws IOException If there is some problem inside
+     */
+    private void invite(final Bout bout, final StringBuilder msg,
+        final Href href) throws IOException {
+        final Iterator<String> invite = href.param("invite").iterator();
+        while (invite.hasNext()) {
+            final String friend = invite.next();
+            try {
+                bout.friends().invite(friend);
+                msg.append(
+                    String.format(", the invitation sent to \"%s\"", friend)
+                );
+            } catch (final Friends.UnknownAliasException ex) {
+                this.discard(bout);
+                throw new RsFailure(ex);
+            }
+        }
+    }
+
+    /**
+     * Rename bout.
+     * @param bout Bout
+     * @param msg Message
+     * @param href Href
+     * @throws IOException If there is some problem inside
+     */
+    private void rename(final Bout bout, final StringBuilder msg,
+        final Href href) throws IOException {
+        final Iterator<String> rename = href.param("rename").iterator();
+        if (rename.hasNext()) {
+            bout.rename(rename.next());
+            msg.append(
+                String.format(
+                    ", bout %d renamed to \"%s\"",
+                    bout.number(),
+                    bout.title()
+                )
+            );
+        }
+        if (rename.hasNext()) {
+            throw new IOException("Only first rename parameter accepted");
+        }
     }
 
     /**
