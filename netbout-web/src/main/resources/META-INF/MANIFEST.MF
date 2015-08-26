@@ -20,6 +20,7 @@ Netbout-SmtpHost: ${smtp.host}
 Netbout-SmtpPort: ${smtp.port}
 Netbout-SmtpUser: ${smtp.user}
 Netbout-SmtpPassword: ${smtp.password}
+Netbout-Basic-On: ${basic.on}
 Netbout-Basic-Realm: ${basic.realm}
 Netbout-Basic-User: ${basic.user}
 Netbout-Basic-Pwd: ${basic.pwd}
