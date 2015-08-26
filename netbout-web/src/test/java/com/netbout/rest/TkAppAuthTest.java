@@ -52,15 +52,14 @@ public final class TkAppAuthTest {
      */
     @Test
     public void skipsBasicAuth() throws Exception {
-        final String text = "zz";
+        final String text = "ww";
         MatcherAssert.assertThat(
             new RsPrint(
                 new TkAppAuth(new TkText(text), new PsFake(true), false).act(
                     new RqFake(RqMethod.GET, "/")
                 )
             ).printBody(),
-            Matchers.equalTo(text)
-        );
+            Matchers.equalTo(text));
     }
 
     /**
