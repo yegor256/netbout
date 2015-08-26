@@ -202,7 +202,7 @@ public final class TkApp extends TkWrap {
                                 throws IOException {
                                 return new RsReturn(
                                     new RsRedirect("/"),
-                                    new RqHref.Base(req).href().bare()
+                                    new RqHref.Base(req).href().toString()
                                 );
                             }
                         }

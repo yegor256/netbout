@@ -127,7 +127,7 @@ public final class TkAppTest {
                 new Opt.Single<Pass>(
                     new PsFixed(Identity.ANONYMOUS)
                 )
-            ).act(new RqFake(RqMethod.GET, "/whatever"))
+            ).act(new RqFake(RqMethod.GET, "/whatever?q=1"))
         ).printHead();
         MatcherAssert.assertThat(
             // @checkstyle MultipleStringLiteralsCheck (2 lines)
@@ -147,7 +147,8 @@ public final class TkAppTest {
             // @checkstyle MultipleStringLiteralsCheck (1 line)
             "Incorrect Set-Cookie header",
             Pattern.compile(
-                "^Set-Cookie: RsReturn=.*%2Fwhatever;Path=/;Expires=.*;$",
+                // @checkstyle LineLengthCheck (1 line)
+                "^Set-Cookie: RsReturn=.*%2Fwhatever%3Fq%3D1;Path=/;Expires=.*;$",
                 Pattern.MULTILINE
             ).matcher(head).find()
         );
