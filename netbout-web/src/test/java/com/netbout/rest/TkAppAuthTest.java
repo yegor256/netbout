@@ -59,7 +59,8 @@ public final class TkAppAuthTest {
                     new RqFake(RqMethod.GET, "/")
                 )
             ).printBody(),
-            Matchers.equalTo(text));
+            Matchers.equalTo(text)
+        );
     }
 
     /**
