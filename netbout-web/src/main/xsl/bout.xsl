@@ -42,13 +42,7 @@
             <xsl:text>: </xsl:text>
             <xsl:value-of select="bout/title"/>
         </title>
-        <!-- @todo #606 The line below should be changed to avoid linking
-             directly to the plugin author's website. Before doing that,
-             we should add the functionality to download third party libraries
-             from their website (like https://github.com/yuku-t/jquery-textcomplete/
-             in this case) by Bower.
-             Refer to #712 for suggestions on how to do it. -->
-        <script src="http://yuku-t.com/jquery-textcomplete/media/javascripts/jquery.textcomplete.js">
+        <script src="/js/thridparty/jquery.textcomplete.min.js?{version/name}">
             <xsl:text> </xsl:text>
         </script>
         <script src="/js/friends.js?{version/name}">
