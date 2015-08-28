@@ -94,7 +94,7 @@ final class TkAppAuth extends TkWrap {
      * Ctor.
      * @param take Take
      * @param pass Last Pass on Chain
-     * @param basic Use Basic Auth
+     * @param basic Use Basic Auth?
      */
     TkAppAuth(final Take take, final Pass pass, final boolean basic) {
         super(TkAppAuth.make(take, pass, basic));
@@ -104,7 +104,7 @@ final class TkAppAuth extends TkWrap {
      * Authenticated.
      * @param take Take
      * @param pass Last Pass on Chain
-     * @param basic Use Basic Auth
+     * @param basic Use Basic Auth?
      * @return Authenticated take
      */
     private static Take make(final Take take, final Pass pass,

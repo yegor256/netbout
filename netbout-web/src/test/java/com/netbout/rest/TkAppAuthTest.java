@@ -114,10 +114,11 @@ public final class TkAppAuthTest {
         final String user,
         final String pass
     ) {
-        final String auth = String.format("%s:%s", user, pass);
-        final String encoded = DatatypeConverter.printBase64Binary(
-            auth.getBytes()
+        return String.format(
+            "Authorization: Basic %s",
+            DatatypeConverter.printBase64Binary(
+                String.format("%s:%s", user, pass).getBytes()
+            )
         );
-        return String.format("Authorization: Basic %s", encoded);
     }
 }
