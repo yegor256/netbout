@@ -55,10 +55,6 @@
         <dependency>
             <groupId>org.takes</groupId>
             <artifactId>takes</artifactId>
-            <!-- @todo #703:30min Current version of Takes doesn't support
-            chunked-body transfer. That situation is described on issue
-            https://github.com/yegor256/takes/issues/372. Update to the version
-            that implements that requirement of HTTP/1.1 protocol.  -->
             <version>0.23.2</version>
         </dependency>
         <dependency>
