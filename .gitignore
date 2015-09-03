@@ -5,3 +5,5 @@ target/
 .project
 .settings
 .DS_Store
+netbout-web/node_modules/
+netbout-web/node/

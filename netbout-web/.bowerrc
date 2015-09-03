@@ -1,0 +1,6 @@
+{
+  "directory": "target/js-tmp",
+  "scripts": {
+	  "postinstall": "sh src/main/bower/postinstall.sh"
+	}
+}

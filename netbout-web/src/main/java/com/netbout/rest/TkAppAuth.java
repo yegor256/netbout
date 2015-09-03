@@ -33,6 +33,7 @@ import org.takes.Response;
 import org.takes.Take;
 import org.takes.facets.auth.Identity;
 import org.takes.facets.auth.Pass;
+import org.takes.facets.auth.PsBasic;
 import org.takes.facets.auth.PsByFlag;
 import org.takes.facets.auth.PsChain;
 import org.takes.facets.auth.PsCookie;
@@ -68,6 +69,12 @@ final class TkAppAuth extends TkWrap {
         Manifests.read("Netbout-DynamoKey").startsWith("AAAA");
 
     /**
+     * BasicAuth is ON?
+     */
+    private static final boolean BASICAUTH =
+        "true".equals(Manifests.read("Netbout-Basic-On"));
+
+    /**
      * Ctor.
      * @param take Take
      */
@@ -81,30 +88,46 @@ final class TkAppAuth extends TkWrap {
      * @param pass Last Pass on Chain
      */
     TkAppAuth(final Take take, final Pass pass) {
-        super(TkAppAuth.make(take, pass));
+        super(TkAppAuth.make(take, pass, TkAppAuth.BASICAUTH));
+    }
+    /**
+     * Ctor.
+     * @param take Take
+     * @param pass Last Pass on Chain
+     * @param basic Use Basic Auth?
+     */
+    TkAppAuth(final Take take, final Pass pass, final boolean basic) {
+        super(TkAppAuth.make(take, pass, basic));
     }
 
     /**
      * Authenticated.
      * @param take Take
      * @param pass Last Pass on Chain
+     * @param basic Use Basic Auth?
      * @return Authenticated take
-     * @todo #685:30m/DEV Need to implement PsBasic.Entry.
-     *  PsFake usage should be changed to
-     *  PsBasic(
-     *  Manifests.read("Netbout-Basic-Realm"),
-     *  new PsBasic.Default(
-     *  Manifests.read("Netbout-Basic-User"),
-     *  Manifests.read("Netbout-Basic-Pwd")))
-     *  But PsBasic.Default like class is currently missing. See takes #349.
-     *  It is also needed to be able to switch on/off BasicAuth e.g.
-     *  by via change the manifest entry "Netbout-Basic":true/false.
      */
-    private static Take make(final Take take, final Pass pass) {
+    private static Take make(final Take take, final Pass pass,
+        final boolean basic) {
+        final Pass auth;
+        if (basic) {
+            auth = new PsBasic(
+                Manifests.read("Netbout-Basic-Realm"),
+                new PsBasic.Default(
+                    String.format(
+                        "%s %s urn:foo:z",
+                        Manifests.read("Netbout-Basic-User"),
+                        Manifests.read("Netbout-Basic-Pwd")
+                    )
+                )
+            );
+        } else {
+            auth = new PsFake(true);
+        }
         return new TkAuth(
             take,
             new PsTwice(
-                new PsFake(true),
+                auth,
                 new PsChain(
                     new PsByFlag(
                         new PsByFlag.Pair(

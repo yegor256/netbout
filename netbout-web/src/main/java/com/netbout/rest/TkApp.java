@@ -178,6 +178,13 @@ public final class TkApp extends TkWrap {
                 )
             ),
             new FkRegex(
+                "/js/thridparty/[a-z.]+\\.(js|map)",
+                new TkWithType(
+                    TkApp.refresh("./netbout-web/src/main/js/thridparty"),
+                    "text/javascript"
+                )
+            ),
+            new FkRegex(
                 "/css/[a-z]+\\.css",
                 new TkWithType(
                     TkApp.refresh("./netbout-web/src/main/scss"),
@@ -202,7 +209,7 @@ public final class TkApp extends TkWrap {
                                 throws IOException {
                                 return new RsReturn(
                                     new RsRedirect("/"),
-                                    new RqHref.Base(req).href().bare()
+                                    new RqHref.Base(req).href().toString()
                                 );
                             }
                         }

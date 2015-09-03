@@ -1,0 +1,11 @@
+{
+  "name": "netbout-web",
+  "version": "2.16.2",
+  "authors": [
+    "Endrigo Antonini <teamed@endrigo.com.br>"
+  ],
+  "license": "NETBOUT",
+  "dependencies": {
+    "jquery-textcomplete": "~0.7.3"
+  }
+}
