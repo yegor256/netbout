@@ -77,7 +77,7 @@ public final class TkStart implements Take {
         this.rename(bout, msg, href);
         this.invite(bout, msg, href);
         final Iterator<String> post = href.param("post").iterator();
-        if (post.hasNext()) {
+        while (post.hasNext()) {
             try {
                 bout.messages().post(post.next());
             } catch (final Messages.BrokenPostException ex) {

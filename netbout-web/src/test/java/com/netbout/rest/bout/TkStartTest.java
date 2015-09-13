@@ -38,6 +38,7 @@ import com.netbout.spi.Message;
 import com.netbout.spi.User;
 import java.io.IOException;
 import java.net.URLEncoder;
+import java.util.Iterator;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.hamcrest.MatcherAssert;
@@ -188,5 +189,54 @@ public final class TkStartTest {
                 )
             )
         );
+    }
+
+    /**
+     * TkStart can handle multiply post parameter.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void handlesMultiplyPost() throws Exception {
+        final MkBase base = new MkBase();
+        final String urn = "urn:test:4";
+        final User user = base.user(new URN(urn));
+        user.aliases().add("Steve");
+        final String[] msgs = new String[] {
+            "message1",
+            "message2",
+        };
+        final String head = new RsPrint(
+            new TkForward(new TkStart(base)).act(
+                new RqWithAuth(
+                    urn,
+                    new RqFake(
+                        RqMethod.GET,
+                        String.format(
+                            "/start?post=%s&post=%s&invite=%s",
+                            msgs[0],
+                            msgs[1],
+                            base.randomAlias().name()
+                        )
+                    )
+                )
+            )
+        ).printHead();
+        final Matcher matcher = TkStartTest.LOCATION.matcher(head);
+        MatcherAssert.assertThat("Loct header is valid", matcher.find());
+        final Bout bout = user.aliases().iterate().iterator().next().inbox()
+            .bout(Long.parseLong(matcher.group(1)));
+        int posted = 0;
+        final Iterator<Message> iterator = bout.messages().iterate().iterator();
+        while (iterator.hasNext()) {
+            final Message message = iterator.next();
+            if (posted < msgs.length) {
+                MatcherAssert.assertThat(
+                    message.text(),
+                    Matchers.equalTo(msgs[posted])
+                );
+            }
+            ++posted;
+        }
+        MatcherAssert.assertThat(posted, Matchers.equalTo(msgs.length));
     }
 }
