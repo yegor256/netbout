@@ -192,11 +192,11 @@ public final class TkStartTest {
     }
 
     /**
-     * TkStart can handle multiply post parameter.
+     * TkStart can handle multiple post parameters.
      * @throws Exception If there is some problem inside
      */
     @Test
-    public void handlesMultiplyPost() throws Exception {
+    public void handlesMultiplePosts() throws Exception {
         final MkBase base = new MkBase();
         final String urn = "urn:test:4";
         final User user = base.user(new URN(urn));
@@ -212,10 +212,9 @@ public final class TkStartTest {
                     new RqFake(
                         RqMethod.GET,
                         String.format(
-                            "/start?post=%s&post=%s&invite=%s",
+                            "/start?post=%s&post=%s",
                             msgs[0],
-                            msgs[1],
-                            base.randomAlias().name()
+                            msgs[1]
                         )
                     )
                 )
