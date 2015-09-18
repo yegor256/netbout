@@ -4,6 +4,7 @@
 
 [![Build Status](https://travis-ci.org/yegor256/netbout.svg?branch=master)](https://travis-ci.org/yegor256/netbout)
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.netbout/netbout/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.netbout/netbout)
+[![Coverage Status](https://coveralls.io/repos/yegor256/netbout/badge.svg?branch=master&service=github)](https://coveralls.io/github/yegor256/netbout?branch=master)
 
 Netbout.com is a communication platform that enables smoothless integration
 of humans and software agents in a conversation-centered environment.
@@ -32,8 +33,8 @@ A user can attach a file to a bout. Any attached file can be deleted. A user can
 
 If you're a manual tester and want to contribute to a project, please
 login to Netbout.com, create an account and do whatever you think is reasonable
-to reveal [functional](http://en.wikipedia.org/wiki/Functional_requirement) 
-and [non-functional](http://en.wikipedia.org/wiki/Non-functional_requirement) 
+to reveal [functional](http://en.wikipedia.org/wiki/Functional_requirement)
+and [non-functional](http://en.wikipedia.org/wiki/Non-functional_requirement)
 problems in the system. Each bug you
 find, report in [a new Github issue](https://github.com/yegor256/netbout/issues/new).
 
@@ -45,7 +46,7 @@ and
 
 ## How to contribute?
 
-If you're a software developer and want to contribute to 
+If you're a software developer and want to contribute to
 the project, please fork the repository, make changes, and submit a pull request.
 We promise to review your changes same day and apply to
 the `master` branch, if they look correct.
