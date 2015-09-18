@@ -49,7 +49,9 @@ public final class NbRule implements TestRule {
      */
     public User get() {
         final String token = System.getProperty("netbout.token");
-        final URI url = URI.create(System.getProperty("netbout.url", "http://www.netbout.com"));
+        final URI url = URI.create(
+            System.getProperty("netbout.url", "http://www.netbout.com")
+        );
         Assume.assumeNotNull(token);
         return new ReUser(new CdUser(new RtUser(url, token)));
     }
