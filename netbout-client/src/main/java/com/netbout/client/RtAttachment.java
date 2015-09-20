@@ -33,6 +33,7 @@ import com.jcabi.http.response.RestResponse;
 import com.jcabi.http.response.XmlResponse;
 import com.jcabi.log.Logger;
 import com.netbout.spi.Attachment;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
@@ -41,7 +42,6 @@ import javax.ws.rs.core.MediaType;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang3.CharEncoding;
 
 /**
  * REST attachment.
@@ -118,14 +118,13 @@ final class RtAttachment implements Attachment {
 
     @Override
     public InputStream read() throws IOException {
-        return IOUtils.toInputStream(
+        return new ByteArrayInputStream(
             this.request.fetch()
                 .as(RestResponse.class)
                 .assertStatus(HttpURLConnection.HTTP_OK)
                 .as(XmlResponse.class)
                 .rel(this.xpath("links/link[@rel='download']/@href"))
-                .fetch().body(),
-            CharEncoding.UTF_8
+                .fetch().binary()
         );
     }
 
@@ -142,7 +141,7 @@ final class RtAttachment implements Attachment {
             .queryParam("ctype", ctype)
             .queryParam("etag", etag)
             .back()
-            .body().set(IOUtils.toString(stream, CharEncoding.UTF_8)).back()
+            .body().set(IOUtils.toByteArray(stream)).back()
             .method(Request.POST)
             .header(
                 HttpHeaders.CONTENT_TYPE,
