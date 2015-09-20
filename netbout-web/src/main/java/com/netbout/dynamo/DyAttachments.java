@@ -199,7 +199,12 @@ final class DyAttachments implements Attachments {
     public void create(final String name) throws IOException {
         if (!name.matches("[a-zA-Z\\.\\-0-9]{3,100}")) {
             throw new Attachments.InvalidNameException(
-                String.format("invalid attachment name \"%s\"", name)
+                String.format(
+                    "invalid attachment name \"%s\". %s%s",
+                    name,
+                    "Attachment name can contains letters in upper ",
+                    "or lower case, numbers, dots, dashes."
+                )
             );
         }
         this.region.table(DyAttachments.TBL).put(
