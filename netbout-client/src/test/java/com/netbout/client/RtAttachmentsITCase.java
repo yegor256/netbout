@@ -32,8 +32,8 @@ import com.netbout.spi.Attachments;
 import com.netbout.spi.Bout;
 import com.netbout.spi.Inbox;
 import com.netbout.spi.User;
+import java.io.ByteArrayInputStream;
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang3.CharEncoding;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Rule;
@@ -68,16 +68,18 @@ public final class RtAttachmentsITCase {
         final String name = "test";
         attachments.create(name);
         final Attachment attachment = attachments.get(name);
+        final byte[] data = new byte[Byte.MAX_VALUE - 1];
+        for (int idx = 0; idx < data.length; ++idx) {
+            data[idx] = (byte) idx;
+        }
         attachment.write(
-            IOUtils.toInputStream(
-                "how are you, \u20ac?", CharEncoding.UTF_8
-            ),
+            new ByteArrayInputStream(data),
             Attachment.MARKDOWN,
             Long.toString(System.currentTimeMillis())
         );
         MatcherAssert.assertThat(
-            IOUtils.toString(attachment.read(), CharEncoding.UTF_8),
-            Matchers.containsString("\u20ac")
+            IOUtils.toByteArray(attachment.read()),
+            Matchers.equalTo(data)
         );
         attachments.delete(name);
     }
