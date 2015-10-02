@@ -29,20 +29,18 @@ package com.netbout.email;
 import com.google.common.base.Joiner;
 import com.jcabi.aspects.Immutable;
 import com.jcabi.aspects.Loggable;
-import com.jcabi.email.Envelope;
 import com.jcabi.email.Postman;
-import com.jcabi.email.enclosure.EnHTML;
-import com.jcabi.email.stamp.StRecipient;
-import com.jcabi.email.stamp.StSubject;
-import com.netbout.rest.Markdown;
 import com.netbout.spi.Bout;
 import com.netbout.spi.Friend;
 import com.netbout.spi.Message;
 import com.netbout.spi.Messages;
 import com.netbout.spi.Pageable;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collection;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
+import org.takes.facets.forward.RsFailure;
 
 /**
  * Email Messages.
@@ -78,6 +76,11 @@ final class EmMessages implements Messages {
     private final transient String self;
 
     /**
+     * EmSender.
+     */
+    private final transient EmSender sender;
+
+    /**
      * Public ctor.
      * @param org Origin
      * @param pst Postman
@@ -91,19 +94,22 @@ final class EmMessages implements Messages {
         this.postman = pst;
         this.bout = bot;
         this.self = slf;
+        this.sender = new EmSender(pst, bot);
     }
 
     @Override
     public void post(final String text) throws IOException {
         this.origin.post(text);
+        final Collection<String> failed = new ArrayList<String>(16);
         for (final Friend friend : this.bout.friends().iterate()) {
             if (friend.email().isEmpty()
                 || friend.alias().equals(this.self)
                 || !this.bout.subscription(friend.alias())) {
                 continue;
             }
-            this.email(friend, text);
+            this.tryEmail(friend, text, failed);
         }
+        this.checkForFailures(failed);
     }
 
     @Override
@@ -130,48 +136,55 @@ final class EmMessages implements Messages {
     }
 
     /**
-     * Send an email.
-     * @param friend Friend to send to
-     * @param text The text of the new message
-     * @throws IOException If fails
-     * @todo #692:30min/DEV Header `Reply-To` should be added to
-     *  an outgoing email. Format is crypt-string@reply.netbout.com
-     *  where crypt-string is user-urn|bout-number
-     *  Use EmCatch.encrypt() to encrypt the string
-     *  see #692 and EmActionTest for additional info
+     * Sends the email and adds the alias to the collection
+     * in case of an email delivery failure.
+     *
+     * @param friend Friend
+     * @param text Message text
+     * @param failed The collection of aliases for which mail delivery has failed
+     * @throws IOException When friend alias cannot be determined
      */
-    private void email(final Friend friend, final String text)
+    private void tryEmail(final Friend friend, final String text,
+        final Collection<String> failed) throws IOException {
+        try {
+            this.sender.email(friend, text);
+        } catch (final IOException exception) {
+            failed.add(friend.alias());
+        }
+    }
+
+    /**
+     * Check email deliveries for failures.
+     *
+     * @param failed The collection of aliases for which email delivery has failed
+     * @throws IOException In case of IO failure
+     */
+    private void checkForFailures(final Collection<String> failed)
         throws IOException {
-        this.postman.send(
-            new Envelope.MIME()
-                .with(new StRecipient(friend.alias(), friend.email()))
-                .with(
-                    new StSubject(
-                        String.format(
-                            "#%d: %s",
-                            this.bout.number(),
-                            this.bout.title()
-                        )
-                    )
-                )
-                .with(
-                    new EnHTML(
-                        Joiner.on('\n').join(
-                            new Markdown(text).html(),
-                            "<p>--<br/>to reply click here: ",
-                            String.format(
-                                "http://www.netbout.com/b/%d",
-                                this.bout.number()
-                            ),
-                            "</p><p style=\"color:#C8C8C8;font-size:2px;\">",
-                            String.format(
-                                "%d</p>",
-                                System.nanoTime()
-                            ),
-                            new GmailViewAction(this.bout.number()).xml()
-                        )
-                    )
-                )
-        );
+        if (!failed.isEmpty()) {
+            final String message = String.format(
+                "Sorry, we were not able to send the notification email to %s.",
+                Joiner.on(", ").join(failed)
+            );
+            throw new RsFailure(new EmailDeliveryException(message));
+        }
+    }
+
+    /**
+     * Thowable when the email could not be delivered.
+     * @see EmMessages#post(String)
+     */
+    final class EmailDeliveryException extends IOException {
+        /**
+         * Serialization marker.
+         */
+        private static final long serialVersionUID = 0x7529FA78EED21470L;
+        /**
+         * Public ctor.
+         * @param message The error message
+         */
+        public EmailDeliveryException(final String message) {
+            super(message);
+        }
     }
 }
