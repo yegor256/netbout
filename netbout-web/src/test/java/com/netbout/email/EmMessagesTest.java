@@ -40,11 +40,12 @@ import org.takes.facets.forward.RsFailure;
  * Test case for {@link EmMessages}.
  * @author Dragan Bozanovic (bozanovicdr@gmail.com)
  * @version $Id$
+ * @since 1.0
  */
 public final class EmMessagesTest {
 
     /**
-     * User-friendly exception is thrown in case of email
+     * Can throw a user-friendly exception in case of email
      * delivery failure.
      * @throws Exception If there is some problem inside
      */

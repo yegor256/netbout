@@ -78,7 +78,7 @@ final class EmMessages implements Messages {
     /**
      * EmSender.
      */
-    private final transient EmSender sender;
+    private final transient EmCourier courier;
 
     /**
      * Public ctor.
@@ -94,7 +94,7 @@ final class EmMessages implements Messages {
         this.postman = pst;
         this.bout = bot;
         this.self = slf;
-        this.sender = new EmSender(pst, bot);
+        this.courier = new EmCourier(pst, bot);
     }
 
     @Override
@@ -107,9 +107,19 @@ final class EmMessages implements Messages {
                 || !this.bout.subscription(friend.alias())) {
                 continue;
             }
-            this.tryEmail(friend, text, failed);
+            try {
+                this.courier.email(friend, text);
+            } catch (final IOException exception) {
+                failed.add(friend.alias());
+            }
         }
-        this.checkForFailures(failed);
+        if (!failed.isEmpty()) {
+            final String message = String.format(
+                "Sorry, we were not able to send the notification email to %s.",
+                Joiner.on(", ").join(failed)
+            );
+            throw new RsFailure(new EmailDeliveryException(message));
+        }
     }
 
     @Override
@@ -133,41 +143,6 @@ final class EmMessages implements Messages {
     @Override
     public Iterable<Message> search(final String term) throws IOException {
         return this.origin.search(term);
-    }
-
-    /**
-     * Sends the email and adds the alias to the collection
-     * in case of an email delivery failure.
-     *
-     * @param friend Friend
-     * @param text Message text
-     * @param failed The collection of aliases for which mail delivery has failed
-     * @throws IOException When friend alias cannot be determined
-     */
-    private void tryEmail(final Friend friend, final String text,
-        final Collection<String> failed) throws IOException {
-        try {
-            this.sender.email(friend, text);
-        } catch (final IOException exception) {
-            failed.add(friend.alias());
-        }
-    }
-
-    /**
-     * Check email deliveries for failures.
-     *
-     * @param failed The collection of aliases for which email delivery has failed
-     * @throws IOException In case of IO failure
-     */
-    private void checkForFailures(final Collection<String> failed)
-        throws IOException {
-        if (!failed.isEmpty()) {
-            final String message = String.format(
-                "Sorry, we were not able to send the notification email to %s.",
-                Joiner.on(", ").join(failed)
-            );
-            throw new RsFailure(new EmailDeliveryException(message));
-        }
     }
 
     /**

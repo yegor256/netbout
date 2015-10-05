@@ -45,11 +45,12 @@ import lombok.ToString;
  *
  * @author Dragan Bozanovic (bozanovicdr@gmail.com)
  * @version $Id$
+ * @since 1.0
  */
 @Immutable
 @Loggable(Loggable.DEBUG)
 @ToString(of = { "postman", "bout" })
-final class EmSender {
+final class EmCourier {
 
     /**
      * Postman.
@@ -66,7 +67,7 @@ final class EmSender {
      * @param pst Postman
      * @param bot Bout we're in
      */
-    public EmSender(final Postman pst, final Bout bot) {
+    public EmCourier(final Postman pst, final Bout bot) {
         this.postman = pst;
         this.bout = bot;
     }
