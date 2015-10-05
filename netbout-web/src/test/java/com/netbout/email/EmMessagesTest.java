@@ -40,7 +40,7 @@ import org.takes.facets.forward.RsFailure;
  * Test case for {@link EmMessages}.
  * @author Dragan Bozanovic (bozanovicdr@gmail.com)
  * @version $Id$
- * @since 1.0
+ * @since 2.18
  */
 public final class EmMessagesTest {
 

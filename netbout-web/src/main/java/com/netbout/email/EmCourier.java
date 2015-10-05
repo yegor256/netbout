@@ -45,7 +45,7 @@ import lombok.ToString;
  *
  * @author Dragan Bozanovic (bozanovicdr@gmail.com)
  * @version $Id$
- * @since 1.0
+ * @since 2.18
  */
 @Immutable
 @Loggable(Loggable.DEBUG)
