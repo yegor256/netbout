@@ -28,10 +28,16 @@ package com.netbout.email;
 
 import com.jcabi.email.Envelope;
 import com.jcabi.email.Postman;
+import com.jcabi.urn.URN;
+import com.netbout.dynamo.DyBase;
 import com.netbout.mock.MkBase;
 import com.netbout.spi.Alias;
+import com.netbout.spi.Aliases;
 import com.netbout.spi.Bout;
+import com.netbout.spi.User;
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.util.List;
 import javax.mail.Message;
 import javax.mail.internet.MimeMultipart;
 import org.hamcrest.MatcherAssert;
@@ -45,6 +51,7 @@ import org.mockito.Mockito;
  * @author Matteo Barbieri (barbieri.matteo@gmail.com)
  * @version $Id$
  */
+@SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
 public final class EmMessagesITCase {
 
     /**
@@ -74,5 +81,74 @@ public final class EmMessagesITCase {
                 )
             )
         );
+    }
+
+    /**
+     * Send mail only to subscribed aliases.
+     * @throws Exception If there is some problem.
+     * @checkstyle ExecutableStatementCountCheck (50 lines)
+     */
+    @Test
+    public void subscribeUnsubscribe() throws Exception {
+        final Postman postman = Mockito.mock(Postman.class);
+        final DyBase base = new DyBase();
+        final Alias alias = new EmAlias(this.getAlias(base, 26, 6), postman);
+        final Bout bout = alias.inbox().bout(alias.inbox().start());
+        final Alias friend = this.getAlias(base, 20, 1);
+        bout.friends().invite(friend.name());
+        final ArgumentCaptor<Envelope> captor =
+            ArgumentCaptor.forClass(Envelope.class);
+        friend.inbox().bout(bout.number()).subscribe(false);
+        final String dontsend = "don't send it";
+        bout.messages().post(dontsend);
+        friend.inbox().bout(bout.number()).subscribe(true);
+        final String send = "send it";
+        bout.messages().post(send);
+        bout.messages().post(send);
+        friend.inbox().bout(bout.number()).subscribe(false);
+        bout.messages().post(dontsend);
+        Mockito.verify(postman, Mockito.times(2)).send(captor.capture());
+        final List<Envelope> messages = captor.getAllValues();
+        for (final Envelope envelope : messages) {
+            final ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            MimeMultipart.class.cast(envelope.unwrap().getContent())
+                .writeTo(baos);
+            MatcherAssert.assertThat(
+                baos.toString(),
+                Matchers.not(Matchers.containsString(dontsend))
+            );
+            MatcherAssert.assertThat(
+                baos.toString(), Matchers.containsString(send)
+            );
+        }
+    }
+
+    /**
+     * Random alias.
+     * @param base Base
+     * @param usernum User number
+     * @param aliasnum Alias number
+     * @return Alias
+     * @throws IOException If fails
+     */
+    private Alias getAlias(final DyBase base,
+            final int usernum, final int aliasnum) throws IOException {
+        final User user = base.user(
+            URN.create(
+                String.format(
+                    "urn:test:%d",
+                    usernum
+                )
+            )
+        );
+        final Aliases aliases = user.aliases();
+        aliases.add(
+            String.format(
+                "alias%d", aliasnum
+            )
+        );
+        final Alias alias = aliases.iterate().iterator().next();
+        alias.email(String.format("%s@example.com", alias.name()));
+        return alias;
     }
 }
