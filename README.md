@@ -5,6 +5,7 @@
 [![Build Status](https://travis-ci.org/yegor256/netbout.svg?branch=master)](https://travis-ci.org/yegor256/netbout)
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.netbout/netbout/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.netbout/netbout)
 [![Coverage Status](https://coveralls.io/repos/yegor256/netbout/badge.svg?branch=master&service=github)](https://coveralls.io/github/yegor256/netbout?branch=master)
+[![Dependencies](https://www.versioneye.com/user/projects/561ac5eca193340f2f001222/badge.svg?style=flat)](https://www.versioneye.com/user/projects/561ac5eca193340f2f001222)
 
 Netbout.com is a communication platform that enables smoothless integration
 of humans and software agents in a conversation-centered environment.
