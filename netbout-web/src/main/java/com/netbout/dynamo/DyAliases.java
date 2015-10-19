@@ -135,7 +135,7 @@ final class DyAliases implements Aliases {
     }
 
     @Override
-    public void add(final String name) throws IOException {
+    public Alias add(final String name) throws IOException {
         if (name.isEmpty()) {
             throw new IllegalArgumentException("alias can't be empty");
         }
@@ -147,7 +147,7 @@ final class DyAliases implements Aliases {
                 String.format("alias '%s' is occupied", name)
             );
         }
-        this.region.table(DyAliases.TBL).put(
+        final Item item = this.region.table(DyAliases.TBL).put(
             new Attributes()
                 .with(DyAliases.ATTR_URN, this.urn)
                 .with(DyAliases.HASH, name)
@@ -155,6 +155,7 @@ final class DyAliases implements Aliases {
                 .with(DyAliases.ATTR_LOCALE, Locale.ENGLISH)
         );
         Logger.info(this, "alias @%s added to %s", name, this.urn);
+        return new  DyAlias(this.region, item);
     }
 
     @Override

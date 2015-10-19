@@ -74,7 +74,7 @@ final class RtAliases implements Aliases {
     }
 
     @Override
-    public void add(final String name) {
+    public Alias add(final String name) {
         throw new UnsupportedOperationException(
             "#add(): not possible to add an alias through API"
         );

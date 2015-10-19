@@ -97,7 +97,7 @@ final class MkAliases implements Aliases {
     }
 
     @Override
-    public void add(final String name) throws IOException {
+    public Alias add(final String name) throws IOException {
         try {
             new JdbcSession(this.sql.source())
                 // @checkstyle LineLength (1 line)
@@ -111,6 +111,7 @@ final class MkAliases implements Aliases {
         } catch (final SQLException ex) {
             throw new IOException(ex);
         }
+        return new MkAlias(this.sql, name);
     }
 
     @Override

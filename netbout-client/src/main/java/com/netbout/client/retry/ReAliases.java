@@ -79,8 +79,8 @@ public final class ReAliases implements Aliases {
         verbose = false, attempts = Tv.TWENTY,
         delay = Tv.FIVE, unit = TimeUnit.SECONDS
     )
-    public void add(final String name) throws IOException {
-        this.origin.add(name);
+    public Alias add(final String name) throws IOException {
+        return this.origin.add(name);
     }
 
     @Override

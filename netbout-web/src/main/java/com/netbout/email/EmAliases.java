@@ -76,8 +76,8 @@ final class EmAliases implements Aliases {
     }
 
     @Override
-    public void add(final String name) throws IOException {
-        this.origin.add(name);
+    public Alias add(final String name) throws IOException {
+        return this.origin.add(name);
     }
 
     @Override

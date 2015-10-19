@@ -50,9 +50,10 @@ public interface Aliases {
     /**
      * Try to assign this new identity to this user.
      * @param name Alias to assign
+     * @return New Alias instance.
      * @throws IOException If fails
      */
-    void add(String name) throws IOException;
+    Alias add(String name) throws IOException;
 
     /**
      * Iterate them all.
