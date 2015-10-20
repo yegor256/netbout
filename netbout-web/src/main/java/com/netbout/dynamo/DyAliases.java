@@ -155,7 +155,7 @@ final class DyAliases implements Aliases {
                 .with(DyAliases.ATTR_LOCALE, Locale.ENGLISH)
         );
         Logger.info(this, "alias @%s added to %s", name, this.urn);
-        return new  DyAlias(this.region, item);
+        return new DyAlias(this.region, item);
     }
 
     @Override
