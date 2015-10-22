@@ -53,34 +53,81 @@ import org.takes.rs.RsPrint;
 public final class TkInboxTest {
 
     /**
+     * Alias used in the tests.
+     */
+    private static final String ALIAS = "test";
+
+    /**
+     * URN of the identity used in the tests.
+     */
+    private static final String URN = "urn:test:1";
+
+    /**
      * TkInbox can kick an User.
      * @throws Exception If there is some problem inside
      */
     @Test
     public void kicksAnUser() throws Exception {
-        final String alias = "test";
-        final String urn = "urn:test:1";
         final MkBase base = new MkBase();
         final Bout bout = base.randomBout();
-        base.user(new URN(urn)).aliases().add(alias);
-        bout.friends().invite(alias);
+        base.user(new URN(URN)).aliases().add(ALIAS);
+        bout.friends().invite(ALIAS);
         MatcherAssert.assertThat(
             new RsPrint(
                 new TkAuth(
                     new TkApp(base),
-                    new PsFixed(new Identity.Simple(urn))
+                    new PsFixed(new Identity.Simple(URN))
                 ).act(
                     new RqFake(
                         RqMethod.GET,
                         String.format(
                             "/b/%d/kick?name=%s",
                             bout.number(),
-                            alias
+                            ALIAS
                         )
                     )
                 )
             ).printHead(),
             Matchers.containsString("you+kicked")
+        );
+    }
+
+    /**
+     * TkInbox can search messages.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void searchesMessages() throws Exception {
+        final MkBase base = new MkBase();
+        final Bout bout = base.randomBout();
+        base.user(new URN(URN)).aliases().add(ALIAS);
+        bout.friends().invite(ALIAS);
+        final String hello = "hello";
+        final String world = "world";
+        bout.messages().post(hello);
+        bout.messages().post(world);
+        final String body = new RsPrint(
+            new TkAuth(
+                    new TkApp(base),
+                    new PsFixed(new Identity.Simple(URN))
+            ).act(
+                new RqFake(
+                    RqMethod.GET,
+                    String.format(
+                        "/b/%d/search?q=%s",
+                        bout.number(),
+                        "r"
+                    )
+                )
+            )
+        ).printBody();
+        MatcherAssert.assertThat(
+            body,
+            Matchers.containsString(world)
+        );
+        MatcherAssert.assertThat(
+            body,
+            Matchers.not(Matchers.containsString(hello))
         );
     }
 }
