@@ -81,9 +81,14 @@ final class MkAttachments implements Attachments {
         this.self = slf;
     }
 
+    /**
+     * {@inheritDoc}
+     * <p>This implementation always returns 0.
+     * @todo #806:30min/DEV Implement this method.
+     */
     @Override
     public int unseen() throws IOException {
-        throw new UnsupportedOperationException("#unseen()");
+        return 0;
     }
 
     @Override

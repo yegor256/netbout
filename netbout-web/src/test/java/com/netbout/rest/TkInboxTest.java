@@ -28,7 +28,9 @@ package com.netbout.rest;
 
 import com.jcabi.urn.URN;
 import com.netbout.mock.MkBase;
+import com.netbout.spi.Aliases;
 import com.netbout.spi.Bout;
+import com.netbout.spi.Inbox;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;
@@ -53,37 +55,29 @@ import org.takes.rs.RsPrint;
 public final class TkInboxTest {
 
     /**
-     * Alias used in the tests.
-     */
-    private static final String ALIAS = "test";
-
-    /**
-     * URN of the identity used in the tests.
-     */
-    private static final String URN = "urn:test:1";
-
-    /**
      * TkInbox can kick an User.
      * @throws Exception If there is some problem inside
      */
     @Test
     public void kicksAnUser() throws Exception {
+        final String alias = "test";
+        final String urn = "urn:test:1";
         final MkBase base = new MkBase();
         final Bout bout = base.randomBout();
-        base.user(new URN(URN)).aliases().add(ALIAS);
-        bout.friends().invite(ALIAS);
+        base.user(new URN(urn)).aliases().add(alias);
+        bout.friends().invite(alias);
         MatcherAssert.assertThat(
             new RsPrint(
                 new TkAuth(
                     new TkApp(base),
-                    new PsFixed(new Identity.Simple(URN))
+                    new PsFixed(new Identity.Simple(urn))
                 ).act(
                     new RqFake(
                         RqMethod.GET,
                         String.format(
                             "/b/%d/kick?name=%s",
                             bout.number(),
-                            ALIAS
+                            alias
                         )
                     )
                 )
@@ -93,29 +87,33 @@ public final class TkInboxTest {
     }
 
     /**
-     * TkInbox can search messages.
+     * TkInbox can search bouts.
      * @throws Exception If there is some problem inside
      */
     @Test
-    public void searchesMessages() throws Exception {
+    public void searchesBouts() throws Exception {
+        final String urn = "urn:test:2";
         final MkBase base = new MkBase();
-        final Bout bout = base.randomBout();
-        base.user(new URN(URN)).aliases().add(ALIAS);
-        bout.friends().invite(ALIAS);
-        final String hello = "hello";
-        final String world = "world";
-        bout.messages().post(hello);
-        bout.messages().post(world);
+        final Aliases aliases = base.user(new URN(urn)).aliases();
+        aliases.add("test2");
+        final Inbox inbox = aliases.iterate().iterator().next().inbox();
+        final Bout firstBout = inbox.bout(inbox.start());
+        final String firstTitle = "bout1 title";
+        firstBout.rename(firstTitle);
+        final Bout secondBout = inbox.bout(inbox.start());
+        final String secondTitle = "bout2 title";
+        secondBout.rename(secondTitle);
+        firstBout.messages().post("hello");
+        secondBout.messages().post("world");
         final String body = new RsPrint(
             new TkAuth(
-                    new TkApp(base),
-                    new PsFixed(new Identity.Simple(URN))
+                    new TkInbox(base),
+                    new PsFixed(new Identity.Simple(urn))
             ).act(
                 new RqFake(
                     RqMethod.GET,
                     String.format(
-                        "/b/%d/search?q=%s",
-                        bout.number(),
+                        "/search?q=%s",
                         "r"
                     )
                 )
@@ -123,11 +121,11 @@ public final class TkInboxTest {
         ).printBody();
         MatcherAssert.assertThat(
             body,
-            Matchers.containsString(world)
+            Matchers.containsString(secondTitle)
         );
         MatcherAssert.assertThat(
             body,
-            Matchers.not(Matchers.containsString(hello))
+            Matchers.not(Matchers.containsString(firstTitle))
         );
     }
 }

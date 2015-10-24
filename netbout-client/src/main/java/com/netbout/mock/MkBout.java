@@ -99,9 +99,14 @@ final class MkBout implements Bout {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     * <p>This implementation always returns the current date.
+     * @todo #805:30min/DEV Implement this method.
+     */
     @Override
     public Date updated() throws IOException {
-        throw new UnsupportedOperationException("#updated()");
+        return new Date();
     }
 
     @Override
