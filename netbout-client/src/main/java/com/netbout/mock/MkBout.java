@@ -101,8 +101,9 @@ final class MkBout implements Bout {
 
     /**
      * {@inheritDoc}
-     * <p>This implementation always returns the current date.
-     * @todo #805:30min/DEV Implement this method.
+     * @todo #806:30min/DEV This method needs to be implemented
+     *  because it is used in tests that read bout properties.
+     *  Currently, this implementation always returns the current date.
      */
     @Override
     public Date updated() throws IOException {

@@ -107,8 +107,8 @@ public final class TkInboxTest {
         secondBout.messages().post("world");
         final String body = new RsPrint(
             new TkAuth(
-                    new TkInbox(base),
-                    new PsFixed(new Identity.Simple(urn))
+                new TkInbox(base),
+                new PsFixed(new Identity.Simple(urn))
             ).act(
                 new RqFake(
                     RqMethod.GET,

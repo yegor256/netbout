@@ -83,8 +83,9 @@ final class MkAttachments implements Attachments {
 
     /**
      * {@inheritDoc}
-     * <p>This implementation always returns 0.
-     * @todo #806:30min/DEV Implement this method.
+     * @todo #806:30min/DEV This method needs to be implemented
+     *  because it is used in tests that read bout properties.
+     *  Currently, this implementation always returns 0.
      */
     @Override
     public int unseen() throws IOException {
