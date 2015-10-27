@@ -28,7 +28,9 @@ package com.netbout.rest;
 
 import com.jcabi.urn.URN;
 import com.netbout.mock.MkBase;
+import com.netbout.spi.Aliases;
 import com.netbout.spi.Bout;
+import com.netbout.spi.Inbox;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;
@@ -81,6 +83,49 @@ public final class TkInboxTest {
                 )
             ).printHead(),
             Matchers.containsString("you+kicked")
+        );
+    }
+
+    /**
+     * TkInbox can search bouts.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void searchesBouts() throws Exception {
+        final String urn = "urn:test:2";
+        final MkBase base = new MkBase();
+        final Aliases aliases = base.user(new URN(urn)).aliases();
+        aliases.add("test2");
+        final Inbox inbox = aliases.iterate().iterator().next().inbox();
+        final Bout firstBout = inbox.bout(inbox.start());
+        final String firstTitle = "bout1 title";
+        firstBout.rename(firstTitle);
+        final Bout secondBout = inbox.bout(inbox.start());
+        final String secondTitle = "bout2 title";
+        secondBout.rename(secondTitle);
+        firstBout.messages().post("hello");
+        secondBout.messages().post("world");
+        final String body = new RsPrint(
+            new TkAuth(
+                new TkInbox(base),
+                new PsFixed(new Identity.Simple(urn))
+            ).act(
+                new RqFake(
+                    RqMethod.GET,
+                    String.format(
+                        "/search?q=%s",
+                        "r"
+                    )
+                )
+            )
+        ).printBody();
+        MatcherAssert.assertThat(
+            body,
+            Matchers.containsString(secondTitle)
+        );
+        MatcherAssert.assertThat(
+            body,
+            Matchers.not(Matchers.containsString(firstTitle))
         );
     }
 }
