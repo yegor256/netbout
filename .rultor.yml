@@ -34,9 +34,6 @@ deploy:
     s3cmd --no-progress put netbout.xml --config=../s3cfg s3://pdd.teamed.io/netbout.xml
     est --dir=./est --verbose --file=netbout.xml --format=xml
     s3cmd --no-progress put netbout.xml --config=../s3cfg s3://est.teamed.io/netbout.xml
-  commanders:
-  - dmzaytsev
-  - yegor256
 merge:
   script: |
     mvn clean install -Pqulice --errors --settings ../settings.xml
