@@ -45,9 +45,6 @@ import org.takes.rs.RsPrint;
  * Test case for {@link TkInbox}.
  * @author Endrigo Antonini (teamed@endrigo.com.br)
  * @version $Id$
- * @todo #704:30min Test case for search bouts of TkInbox
- *  should be added, e.g. response should have filtered
- *  bouts by search term
  * @since 2.14.17
  * @checkstyle ClassDataAbstractionCouplingCheck (100 lines)
  *
