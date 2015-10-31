@@ -44,7 +44,8 @@
                 casper.start(
                     casper.cli.get('home') + page,
                     function () {
-                        test.assertHttpStatus(404, page);
+                        test.assertHttpStatus(200, page);
+                        casper.waitForText('page not found');
                     }
                 );
                 casper.run(

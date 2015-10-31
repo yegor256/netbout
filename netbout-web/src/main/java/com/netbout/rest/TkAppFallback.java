@@ -38,6 +38,7 @@ import org.takes.facets.fallback.FbChain;
 import org.takes.facets.fallback.FbStatus;
 import org.takes.facets.fallback.RqFallback;
 import org.takes.facets.fallback.TkFallback;
+import org.takes.facets.forward.RsFailure;
 import org.takes.misc.Opt;
 import org.takes.rs.RsText;
 import org.takes.rs.RsVelocity;
@@ -63,8 +64,9 @@ final class TkAppFallback extends TkWrap {
     /**
      * Ctor.
      * @param take Take
+     * @throws IOException If fails
      */
-    TkAppFallback(final Take take) {
+    TkAppFallback(final Take take) throws IOException {
         super(TkAppFallback.make(take));
     }
 
@@ -72,17 +74,15 @@ final class TkAppFallback extends TkWrap {
      * Authenticated.
      * @param takes Take
      * @return Authenticated takes
+     * @throws IOException If fails
      */
-    private static Take make(final Take takes) {
+    private static Take make(final Take takes) throws IOException {
         return new TkFallback(
             takes,
             new FbChain(
                 new FbStatus(
                     HttpURLConnection.HTTP_NOT_FOUND,
-                    new RsWithStatus(
-                        new RsText("page not found"),
-                        HttpURLConnection.HTTP_NOT_FOUND
-                    )
+                    new RsFailure("page not found")
                 ),
                 new FbStatus(
                     HttpURLConnection.HTTP_BAD_REQUEST,

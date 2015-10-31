@@ -95,7 +95,7 @@ public final class TkBoutITCase {
             .uri().path("/b/123456789").back()
             .fetch()
             .as(RestResponse.class)
-            .assertStatus(HttpURLConnection.HTTP_NOT_FOUND);
+            .assertStatus(HttpURLConnection.HTTP_MOVED_PERM);
     }
 
 }

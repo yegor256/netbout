@@ -85,7 +85,7 @@ public final class TkAppITCase {
                 .uri().path(page).back()
                 .fetch()
                 .as(RestResponse.class)
-                .assertStatus(HttpURLConnection.HTTP_NOT_FOUND);
+                .assertStatus(HttpURLConnection.HTTP_MOVED_PERM);
         }
     }
 
