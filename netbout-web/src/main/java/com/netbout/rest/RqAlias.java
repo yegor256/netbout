@@ -33,6 +33,7 @@ import com.netbout.spi.Base;
 import com.netbout.spi.User;
 import java.io.IOException;
 import java.net.HttpURLConnection;
+import java.net.URI;
 import lombok.EqualsAndHashCode;
 import org.takes.Request;
 import org.takes.facets.auth.Identity;
@@ -43,11 +44,10 @@ import org.takes.rq.RqWrap;
 
 /**
  * User and alias retriever from request.
- *
  * @author Yegor Bugayenko (yegor@teamed.io)
  * @version $Id$
- * @since 2.14
  * @checkstyle ClassDataAbstractionCouplingCheck (500 lines)
+ * @since 2.14
  */
 @EqualsAndHashCode(callSuper = true)
 public final class RqAlias extends RqWrap {
@@ -102,6 +102,7 @@ public final class RqAlias extends RqWrap {
      * Get alias.
      * @return Alias
      * @throws IOException If fails
+     * @todo
      */
     public Alias alias() throws IOException {
         final Aliases aliases = this.user().aliases();
@@ -111,7 +112,16 @@ public final class RqAlias extends RqWrap {
                 "/login/start"
             );
         }
-        return aliases.iterate().iterator().next();
+        final Alias alias = aliases.iterate().iterator().next();
+        if (alias.photo().equals(Alias.BLANK)) {
+            final Identity identity = new RqAuth(this).identity();
+            if (identity.urn().startsWith("urn:github:")) {
+                alias.photo(URI.create(identity.properties().get("avatar")));
+            } else if (identity.urn().startsWith("urn:facebook:")
+                || identity.urn().startsWith("urn:google:")) {
+                alias.photo(URI.create(identity.properties().get("picture")));
+            }
+        }
+        return alias;
     }
-
 }
