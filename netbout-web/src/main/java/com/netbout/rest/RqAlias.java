@@ -44,10 +44,11 @@ import org.takes.rq.RqWrap;
 
 /**
  * User and alias retriever from request.
+ *
  * @author Yegor Bugayenko (yegor@teamed.io)
  * @version $Id$
- * @checkstyle ClassDataAbstractionCouplingCheck (500 lines)
  * @since 2.14
+ * @checkstyle ClassDataAbstractionCouplingCheck (500 lines)
  */
 @EqualsAndHashCode(callSuper = true)
 public final class RqAlias extends RqWrap {
