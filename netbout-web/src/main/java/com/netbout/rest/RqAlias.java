@@ -102,7 +102,6 @@ public final class RqAlias extends RqWrap {
      * Get alias.
      * @return Alias
      * @throws IOException If fails
-     * @todo
      */
     public Alias alias() throws IOException {
         final Aliases aliases = this.user().aliases();
@@ -113,14 +112,18 @@ public final class RqAlias extends RqWrap {
             );
         }
         final Alias alias = aliases.iterate().iterator().next();
-        if (alias.photo().equals(Alias.BLANK)) {
-            final Identity identity = new RqAuth(this).identity();
-            if (identity.urn().startsWith("urn:github:")) {
-                alias.photo(URI.create(identity.properties().get("avatar")));
-            } else if (identity.urn().startsWith("urn:facebook:")
-                || identity.urn().startsWith("urn:google:")) {
-                alias.photo(URI.create(identity.properties().get("picture")));
-            }
+        final URI photo;
+        final Identity identity = new RqAuth(this).identity();
+        if (identity.urn().startsWith("urn:github:")) {
+            photo = URI.create(identity.properties().get("avatar"));
+        } else if (identity.urn().startsWith("urn:facebook:")
+            || identity.urn().startsWith("urn:google:")) {
+            photo = URI.create(identity.properties().get("picture"));
+        } else {
+            photo = Alias.BLANK;
+        }
+        if (!alias.photo().equals(photo)) {
+            alias.photo(photo);
         }
         return alias;
     }
