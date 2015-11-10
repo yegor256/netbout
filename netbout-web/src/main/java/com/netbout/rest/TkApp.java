@@ -199,6 +199,7 @@ public final class TkApp extends TkWrap {
                 )
             ),
             new FkRegex("/favicon.ico", new TkFavicon()),
+            new FkRegex("/emverify/.*", new TkEmVerify(base)),
             new FkAnonymous(
                 new TkFork(
                     new FkRegex("/", new TkHome(base)),

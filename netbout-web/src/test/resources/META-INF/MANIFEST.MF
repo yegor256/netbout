@@ -26,4 +26,4 @@ Netbout-Basic-User: testuser
 Netbout-Basic-Pwd: testpassword
 Netbout-Site: http://www.netbout.com
 Netbout-BoutInviteSecret: testboutinvitesecret
-
+Netbout-EmailCryptSecret: testemailcryptsecret

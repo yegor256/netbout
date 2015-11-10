@@ -27,4 +27,4 @@ Netbout-Basic-Pwd: ${basic.pwd}
 Netbout-EmCatchSecret: ${emcatch.secret}
 Netbout-Site: ${netbout-site}
 Netbout-BoutInviteSecret: ${boutInvite.secret}
-
+Netbout-EmailCryptSecret: ${emailCrypt.secret}
