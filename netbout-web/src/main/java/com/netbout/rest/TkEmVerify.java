@@ -35,22 +35,21 @@ import java.net.URLDecoder;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.jasypt.encryption.pbe.StandardPBEStringEncryptor;
-import org.takes.Request;
 import org.takes.Response;
-import org.takes.Take;
 import org.takes.facets.flash.RsFlash;
+import org.takes.facets.fork.RqRegex;
+import org.takes.facets.fork.TkRegex;
 import org.takes.facets.forward.RsFailure;
 import org.takes.facets.forward.RsForward;
-import org.takes.rq.RqHref;
 
 /**
  * Verifies email.
  *
  * @author Dragan Bozanovic (bozanovicdr@gmail.com)
  * @version $Id$
- * @since 2.21
+ * @since 2.20
  */
-public final class TkEmVerify implements Take {
+public final class TkEmVerify implements TkRegex {
 
     /**
      * Encryptor.
@@ -83,15 +82,11 @@ public final class TkEmVerify implements Take {
     }
 
     @Override
-    public Response act(final Request req) throws IOException {
+    public Response act(final RqRegex req) throws IOException {
         final String invalid = "verification link not valid";
-        final String path = new RqHref.Base(req).href().toString();
         final Matcher matcher = TkEmVerify.PATTERN.matcher(
             TkEmVerify.ENC.decrypt(
-                URLDecoder.decode(
-                    path.substring(path.lastIndexOf('/') + 1),
-                    "UTF-8"
-                )
+                URLDecoder.decode(req.matcher().group(1), "UTF-8")
             )
         );
         if (!matcher.matches()) {
@@ -104,14 +99,14 @@ public final class TkEmVerify implements Take {
         final String current = alias.email();
         final char excl = '!';
         if (current.indexOf(excl) < 0) {
-            throw new RsFailure("no email verification in progress");
+            throw new RsFailure("no email verification is necessary");
         }
-        final String newEmail = current.substring(current.indexOf(excl) + 1);
+        final String email = current.substring(current.indexOf(excl) + 1);
         // @checkstyle MagicNumber (1 line)
-        if (!matcher.group(3).equals(newEmail)) {
+        if (!matcher.group(3).equals(email)) {
             throw new RsFailure(invalid);
         }
-        alias.email(newEmail);
+        alias.email(email);
         return new RsForward(new RsFlash("email verified"));
     }
 

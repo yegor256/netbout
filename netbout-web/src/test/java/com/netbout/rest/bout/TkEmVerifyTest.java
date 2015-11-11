@@ -37,22 +37,16 @@ import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.jasypt.encryption.pbe.StandardPBEStringEncryptor;
 import org.junit.Test;
+import org.takes.facets.fork.RqRegex;
 import org.takes.facets.forward.RsFailure;
-import org.takes.rq.RqFake;
-import org.takes.rq.RqMethod;
 
 /**
  * Test case for {@link TkEmVerify}.
  * @author Dragan Bozanovic (bozanovicdr@gmail.com)
  * @version $Id$
- * @since 2.21
+ * @since 2.20
  */
 public final class TkEmVerifyTest {
-
-    /**
-     * Path.
-     */
-    private static final String PATH = "/emverify/%s";
 
     /**
      * Encryptor.
@@ -78,13 +72,8 @@ public final class TkEmVerifyTest {
         user.aliases().add("alias1");
         final Alias alias = user.aliases().iterate().iterator().next();
         alias.email("old@example.com!new1@example.com");
-        final String encrypted = TkEmVerifyTest.encode(
-            TkEmVerifyTest.ENC.encrypt("urn:test:1:alias1:new1@example.com")
-        );
         new TkEmVerify(base).act(
-            new RqFake(
-                RqMethod.GET, String.format(TkEmVerifyTest.PATH, encrypted)
-            )
+            request("urn:test:1:alias1:new1@example.com")
         );
         MatcherAssert.assertThat(
             alias.email(),
@@ -105,19 +94,11 @@ public final class TkEmVerifyTest {
         user.aliases().add("alias2");
         final Alias alias = user.aliases().iterate().iterator().next();
         alias.email("old@example.com!new2@example.com");
-        final String encrypted = TkEmVerifyTest.encode(
-            TkEmVerifyTest.ENC.encrypt("urn:test:2:alias2:ab@cd.com")
-        );
-        new TkEmVerify(base).act(
-            new RqFake(
-                RqMethod.GET, String.format(TkEmVerifyTest.PATH, encrypted)
-            )
-        );
+        new TkEmVerify(base).act(request("urn:test:2:alias2:ab@cd.com"));
     }
 
     /**
-     * TkEmVerify can reject verification when none is currently
-     * in progress.
+     * TkEmVerify can reject verification when none necessary.
      * @throws Exception If some problem inside
      */
     @Test(expected = RsFailure.class)
@@ -128,24 +109,22 @@ public final class TkEmVerifyTest {
         user.aliases().add("alias3");
         final Alias alias = user.aliases().iterate().iterator().next();
         alias.email("old@example.com");
-        final String encrypted = TkEmVerifyTest.encode(
-            TkEmVerifyTest.ENC.encrypt("urn:test:3:alias3:new3@example.com")
-        );
         new TkEmVerify(base).act(
-            new RqFake(
-                RqMethod.GET, String.format(TkEmVerifyTest.PATH, encrypted)
-            )
+            request("urn:test:3:alias3:new3@example.com")
         );
     }
 
     /**
-     * Encodes the provided text to be suitable for URL path.
+     * Creates a RqRegex for the provided verification code.
      *
-     * @param text Text to be encoded
-     * @return Encoded text
+     * @param code Verification code
+     * @return RqRegex
      * @throws Exception If some problem inside
      */
-    private static String encode(final String text) throws Exception {
-        return URLEncoder.encode(text, "UTF-8");
+    private static RqRegex request(final String code) throws Exception {
+        return new RqRegex.Fake(
+            "(.*)",
+            URLEncoder.encode(TkEmVerifyTest.ENC.encrypt(code), "UTF-8")
+        );
     }
 }
