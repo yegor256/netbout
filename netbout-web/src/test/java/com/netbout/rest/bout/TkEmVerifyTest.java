@@ -44,7 +44,7 @@ import org.takes.facets.forward.RsFailure;
  * Test case for {@link TkEmVerify}.
  * @author Dragan Bozanovic (bozanovicdr@gmail.com)
  * @version $Id$
- * @since 2.20
+ * @since 2.22
  */
 public final class TkEmVerifyTest {
 
