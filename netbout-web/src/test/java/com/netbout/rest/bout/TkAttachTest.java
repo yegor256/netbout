@@ -29,11 +29,15 @@ package com.netbout.rest.bout;
 import com.jcabi.urn.URN;
 import com.netbout.mock.MkBase;
 import com.netbout.spi.Alias;
+import com.netbout.spi.Bout;
 import com.netbout.spi.User;
 import java.io.ByteArrayInputStream;
+import org.hamcrest.MatcherAssert;
+import org.hamcrest.Matchers;
 import org.junit.Test;
 import org.takes.facets.auth.RqWithAuth;
 import org.takes.facets.forward.RsFailure;
+import org.takes.facets.forward.RsForward;
 import org.takes.rq.RqFake;
 import org.takes.rq.RqLive;
 import org.takes.rq.RqMultipart;
@@ -46,8 +50,53 @@ import org.takes.rq.RqWithHeaders;
  * @version $Id$
  * @since 2.15.1
  * @checkstyle ClassDataAbstractionCouplingCheck (500 lines)
+ * @checkstyle MultipleStringLiteralsCheck (500 lines)
  */
 public final class TkAttachTest {
+
+    /**
+     * TkAttach can send a message to the bout after an
+     * attachment is uploaded.
+     * @throws Exception If there is some problem inside
+     */
+    @Test(expected = RsForward.class)
+    public void sendsMessageToBout() throws Exception {
+        final MkBase base = new MkBase();
+        final String urn = "urn:test:1";
+        final User user = base.user(new URN(urn));
+        user.aliases().add("jeff");
+        final Alias alias = user.aliases().iterate().iterator().next();
+        final long number = alias.inbox().start();
+        final Bout bout = alias.inbox().bout(number);
+        bout.friends().invite(alias.name());
+        final RqWithAuth req = new RqWithAuth(
+            urn,
+            new RqMultipart.Fake(
+                new RqFake(
+                    "POST",
+                    String.format("/b/%d/attach", number)
+                ),
+                new RqWithHeaders(
+                    new RqLive(
+                        new ByteArrayInputStream("content".getBytes())
+                    ),
+                    String.format("POST /b/%d/attach HTTP/1.1", number),
+                    //@checkstyle LineLengthCheck (1 line)
+                    "Content-Disposition: form-data; name=\"file\"; filename=\"some.xml\"",
+                    "Content-Type: application/xml"
+                )
+            )
+        );
+        try {
+            new FkBout(".*", new TkAttach(base)).route(req);
+        } catch (final RsForward rsf) {
+            MatcherAssert.assertThat(
+                bout.messages().iterate().iterator().next().text(),
+                Matchers.containsString("some.xml")
+            );
+            throw rsf;
+        }
+    }
 
     /**
      * TkAttach can ignores wrong request.
