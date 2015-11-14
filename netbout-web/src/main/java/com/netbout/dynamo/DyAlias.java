@@ -113,7 +113,9 @@ final class DyAlias implements Alias {
 
     @Override
     public void email(final String email) throws IOException {
-        if (!email.matches("[a-z_\\.@\\-A-Z0-9]+")) {
+        final String pattern = "[a-z_\\.@\\-A-Z0-9]";
+        if (!email.matches(String.format("%s+", pattern))
+            && !email.matches(String.format("%s*!%s+", pattern, pattern))) {
             throw new Alias.InvalidEmailException(email);
         }
         this.item.put(
@@ -125,6 +127,12 @@ final class DyAlias implements Alias {
     @Override
     public void email(final String email, final String urn, final Bout bout) {
         throw new UnsupportedOperationException("Not Implemented");
+    }
+
+    @Override
+    public void email(final String email, final String link)
+        throws IOException {
+        this.email(email);
     }
 
     @Override

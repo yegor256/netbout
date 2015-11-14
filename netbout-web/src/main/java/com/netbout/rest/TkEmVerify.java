@@ -87,6 +87,7 @@ public final class TkEmVerify implements TkRegex {
         final Matcher matcher = TkEmVerify.PATTERN.matcher(
             TkEmVerify.ENC.decrypt(
                 URLDecoder.decode(req.matcher().group(1), "UTF-8")
+                    .replaceAll(" ", "+")
             )
         );
         if (!matcher.matches()) {

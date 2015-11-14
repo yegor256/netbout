@@ -152,6 +152,12 @@ final class MkAlias implements Alias {
     }
 
     @Override
+    public void email(final String email, final String link)
+        throws IOException {
+        this.email(email);
+    }
+
+    @Override
     public Inbox inbox() throws IOException {
         return new MkInbox(this.sql, this.label);
     }

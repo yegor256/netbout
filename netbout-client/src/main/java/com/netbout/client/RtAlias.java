@@ -138,6 +138,12 @@ final class RtAlias implements Alias {
     }
 
     @Override
+    public void email(final String email, final String link)
+        throws IOException {
+        this.email(email);
+    }
+
+    @Override
     public Inbox inbox() {
         return new RtInbox(this.request);
     }

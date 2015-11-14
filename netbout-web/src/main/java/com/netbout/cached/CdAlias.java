@@ -111,6 +111,12 @@ final class CdAlias implements Alias {
     }
 
     @Override
+    public void email(final String email, final String link)
+        throws IOException {
+        this.origin.email(email, link);
+    }
+
+    @Override
     public Inbox inbox() throws IOException {
         return new CdInbox(this.origin.inbox());
     }

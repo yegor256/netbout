@@ -94,6 +94,12 @@ final class XeAlias extends XeWrap {
      * @throws IOException If fails
      */
     private static XeSource source(final Alias alias) throws IOException {
+        final String email;
+        if (alias.email().contains("!")) {
+            email = alias.email().substring(0, alias.email().indexOf('!'));
+        } else {
+            email = alias.email();
+        }
         return new XeAppend(
             "alias",
             new XeDirectives(
@@ -101,7 +107,7 @@ final class XeAlias extends XeWrap {
                     .add("name").set(alias.name()).up()
                     .add("locale").set(alias.locale().toString()).up()
                     .add("photo").set(alias.photo().toString()).up()
-                    .add("email").set(alias.email())
+                    .add("email").set(email)
             )
         );
     }

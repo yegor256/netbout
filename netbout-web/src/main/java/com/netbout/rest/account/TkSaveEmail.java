@@ -26,17 +26,22 @@
  */
 package com.netbout.rest.account;
 
+import com.jcabi.manifests.Manifests;
 import com.netbout.rest.RqAlias;
 import com.netbout.spi.Alias;
 import com.netbout.spi.Base;
 import java.io.IOException;
+import java.net.URLEncoder;
+import org.jasypt.encryption.pbe.StandardPBEStringEncryptor;
 import org.takes.Request;
 import org.takes.Response;
 import org.takes.Take;
+import org.takes.facets.auth.RqAuth;
 import org.takes.facets.flash.RsFlash;
 import org.takes.facets.forward.RsFailure;
 import org.takes.facets.forward.RsForward;
 import org.takes.rq.RqForm;
+import org.takes.rq.RqHref;
 
 /**
  * User account.
@@ -44,13 +49,29 @@ import org.takes.rq.RqForm;
  * @author Yegor Bugayenko (yegor@teamed.io)
  * @version $Id$
  * @since 2.14
+ * @checkstyle ClassDataAbstractionCouplingCheck (500 lines)
+ * @todo #738 If the email attribute value contains !,
+ *  we should display an exclamation icon with hint that
+ *  the email is not verified yet near the alias name.
  */
 final class TkSaveEmail implements Take {
+
+    /**
+     * Encryptor.
+     */
+    private static final StandardPBEStringEncryptor ENC =
+        new StandardPBEStringEncryptor();
 
     /**
      * Base.
      */
     private final transient Base base;
+
+    static {
+        TkSaveEmail.ENC.setPassword(
+            Manifests.read("Netbout-EmailCryptSecret")
+        );
+    }
 
     /**
      * Ctor.
@@ -65,19 +86,39 @@ final class TkSaveEmail implements Take {
         final String email = new RqForm.Smart(
             new RqForm.Base(req)
         ).single("email");
+        final Alias alias = new RqAlias(this.base, req).alias();
+        final String code = URLEncoder.encode(
+            TkSaveEmail.ENC.encrypt(
+                String.format(
+                    "%s:%s:%s",
+                    new RqAuth(req).identity().urn(), alias.name(), email
+                )
+            ), "UTF-8"
+        );
+        final String link = String.format(
+            "%semverify/%s",
+            new RqHref.Smart(new RqHref.Base(req)).home().bare(), code
+        );
+        final String old;
+        if (alias.email().contains("!")) {
+            old = alias.email().substring(0, alias.email().indexOf('!'));
+        } else {
+            old = alias.email();
+        }
         try {
-            new RqAlias(this.base, req).alias().email(email);
-        } catch (final Alias.InvalidEmailException ex) {
+            alias.email(String.format("%s!%s", old, email), link);
+        } catch (final IOException ex) {
             throw new RsFailure(ex);
         }
         return new RsForward(
             new RsFlash(
                 String.format(
-                    "email changed to \"%s\"",
+                    // @checkstyle StringLiteralsConcatenationCheck (2 lines)
+                    "Email changed to \"%s\". The verification "
+                    + "link sent to this address.",
                     email
                 )
             )
         );
     }
-
 }

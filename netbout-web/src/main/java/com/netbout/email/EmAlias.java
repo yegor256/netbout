@@ -26,11 +26,16 @@
  */
 package com.netbout.email;
 
+import com.google.common.base.Joiner;
 import com.jcabi.aspects.Immutable;
 import com.jcabi.aspects.Loggable;
 import com.jcabi.email.Envelope;
 import com.jcabi.email.Postman;
+import com.jcabi.email.enclosure.EnHTML;
+import com.jcabi.email.stamp.StRecipient;
 import com.jcabi.email.stamp.StSender;
+import com.jcabi.email.stamp.StSubject;
+import com.netbout.rest.Markdown;
 import com.netbout.spi.Alias;
 import com.netbout.spi.Bout;
 import com.netbout.spi.Inbox;
@@ -46,6 +51,7 @@ import lombok.ToString;
  * @author Yegor Bugayenko (yegor@teamed.io)
  * @version $Id$
  * @since 2.12
+ * @checkstyle ClassDataAbstractionCouplingCheck (500 lines)
  */
 @Immutable
 @Loggable(Loggable.DEBUG)
@@ -117,6 +123,48 @@ final class EmAlias implements Alias {
         throws IOException {
         this.origin.email(email);
         new BoutInviteMail(this.postman).send(email, urn, bout);
+    }
+
+    /**
+     * {@inheritDoc}
+     * @todo #738 We need to improve the format and content of the
+     *  verification email. Currently, it only asks the user to verify
+     *  the new email by using the provided verification link. We may add
+     *  some header, footer, note like "Ignore this email if you did not
+     *  change your email address", etc.
+     */
+    @Override
+    public void email(final String email, final String link)
+        throws IOException {
+        this.email(email);
+        try {
+            this.postman.send(
+                new Envelope.MIME()
+                    // @checkstyle IndentationCheck (12 lines)
+                    .with(
+                        new StRecipient(
+                            email.substring(email.indexOf('!') + 1)
+                        )
+                    )
+                    .with(new StSubject("Netbout email verification"))
+                    .with(
+                        new EnHTML(
+                            Joiner.on('\n').join(
+                                new Markdown(
+                                    "Please verify your new email:"
+                                ).html(), "<br/>",
+                                String.format("<a href=%s>%s</a>", link, link)
+                            )
+                        )
+                    )
+            );
+        } catch (final IOException exc) {
+            throw new IOException(
+                // @checkstyle StringLiteralsConcatenationCheck (2 lines)
+                "Sorry we were not able to send the verification link to "
+                + "the new email address.", exc
+            );
+        }
     }
 
     @Override

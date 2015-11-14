@@ -102,6 +102,14 @@ public interface Alias {
     void email(String email, String urn, Bout bout) throws IOException;
 
     /**
+     * Save email and send verification link.
+     * @param email Email to save
+     * @param link Verification link
+     * @throws IOException If fails
+     */
+    void email(String email, String link) throws IOException;
+
+    /**
      * Get inbox.
      * @return Inbox
      * @throws IOException If fails

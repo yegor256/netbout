@@ -132,6 +132,16 @@ public final class ReAlias implements Alias {
 
     @Override
     @RetryOnFailure(
+            verbose = false, attempts = Tv.TWENTY,
+            delay = Tv.FIVE, unit = TimeUnit.SECONDS
+    )
+    public void email(final String email, final String link)
+        throws IOException {
+        this.origin.email(email, link);
+    }
+
+    @Override
+    @RetryOnFailure(
         verbose = false, attempts = Tv.TWENTY,
         delay = Tv.FIVE, unit = TimeUnit.SECONDS
     )

@@ -114,6 +114,9 @@ final class DyFriend implements Friend {
                 email = item.get(DyAliases.ATTR_EMAIL).getS();
             }
         }
+        if (email.contains("!")) {
+            email = email.substring(0, email.indexOf('!'));
+        }
         return email;
     }
 }
