@@ -38,6 +38,7 @@ import com.netbout.spi.Inbox;
 import java.io.IOException;
 import java.net.URI;
 import java.util.Locale;
+import java.util.regex.Pattern;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
@@ -55,6 +56,11 @@ import lombok.ToString;
 final class DyAlias implements Alias {
 
     /**
+     * Valid email pattern.
+     */
+    private static final Pattern MAIL;
+
+    /**
      * Region we're in.
      */
     private final transient Region region;
@@ -63,6 +69,13 @@ final class DyAlias implements Alias {
      * Item we're working with.
      */
     private final transient Item item;
+
+    static {
+        final String valid = "[a-z_\\.@\\-A-Z0-9]";
+        MAIL = Pattern.compile(
+            String.format("%s+|%s*!%s+", valid, valid, valid)
+        );
+    }
 
     /**
      * Ctor.
@@ -113,9 +126,7 @@ final class DyAlias implements Alias {
 
     @Override
     public void email(final String email) throws IOException {
-        final String pattern = "[a-z_\\.@\\-A-Z0-9]";
-        if (!email.matches(String.format("%s+", pattern))
-            && !email.matches(String.format("%s*!%s+", pattern, pattern))) {
+        if (!MAIL.matcher(email).matches()) {
             throw new Alias.InvalidEmailException(email);
         }
         this.item.put(

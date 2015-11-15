@@ -140,13 +140,12 @@ final class EmAlias implements Alias {
         try {
             this.postman.send(
                 new Envelope.MIME()
-                    // @checkstyle IndentationCheck (12 lines)
+                    .with(new StSubject("Netbout email verification"))
                     .with(
                         new StRecipient(
                             email.substring(email.indexOf('!') + 1)
                         )
                     )
-                    .with(new StSubject("Netbout email verification"))
                     .with(
                         new EnHTML(
                             Joiner.on('\n').join(
