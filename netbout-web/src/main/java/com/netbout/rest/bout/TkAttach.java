@@ -94,7 +94,7 @@ final class TkAttach implements Take {
         final Request file = new RqMultipart.Smart(
             new RqMultipart.Base(req)
         ).single("file");
-        final String name = name(file);
+        final String name = this.name(file);
         final File temp = File.createTempFile("netbout", "bin");
         IOUtils.copy(file.body(), new FileOutputStream(temp));
         final Bout bout = new RqBout(this.base, req).bout();
@@ -123,7 +123,7 @@ final class TkAttach implements Take {
         }
         FileUtils.forceDelete(temp);
         bout.messages().post(msg.toString());
-        throw new RsForward(new RsFlash(msg.toString()));
+        return new RsForward(new RsFlash(msg.toString()));
     }
 
     /**
@@ -133,7 +133,7 @@ final class TkAttach implements Take {
      * @throws IOException If fails
      */
     private String name(final Request file) throws IOException {
-        final Matcher matcher = FILE_NAME_PATTERN.matcher(
+        final Matcher matcher = TkAttach.FILE_NAME_PATTERN.matcher(
             new RqHeaders.Smart(
                 new RqHeaders.Base(file)
             ).single("Content-Disposition")
@@ -141,11 +141,8 @@ final class TkAttach implements Take {
         if (!matcher.find()) {
             throw new RsFailure("Filename was not provided");
         }
-        final String name = URLDecoder.decode(
-            matcher.group(5),
-            CharEncoding.UTF_8
-        );
-        return name;
+        // @checkstyle MagicNumberCheck (1 line)
+        return URLDecoder.decode(matcher.group(5), CharEncoding.UTF_8);
     }
 
     /**

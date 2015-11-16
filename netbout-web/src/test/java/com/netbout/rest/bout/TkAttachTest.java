@@ -37,7 +37,6 @@ import org.hamcrest.Matchers;
 import org.junit.Test;
 import org.takes.facets.auth.RqWithAuth;
 import org.takes.facets.forward.RsFailure;
-import org.takes.facets.forward.RsForward;
 import org.takes.rq.RqFake;
 import org.takes.rq.RqLive;
 import org.takes.rq.RqMultipart;
@@ -50,52 +49,50 @@ import org.takes.rq.RqWithHeaders;
  * @version $Id$
  * @since 2.15.1
  * @checkstyle ClassDataAbstractionCouplingCheck (500 lines)
- * @checkstyle MultipleStringLiteralsCheck (500 lines)
  */
 public final class TkAttachTest {
+
+    /**
+     * HTTP POST with URL and protocol.
+     */
+    private static final String POST_URL = "POST /b/%d/attach HTTP/1.1";
 
     /**
      * TkAttach can send a message to the bout after an
      * attachment is uploaded.
      * @throws Exception If there is some problem inside
      */
-    @Test(expected = RsForward.class)
+    @Test
     public void sendsMessageToBout() throws Exception {
         final MkBase base = new MkBase();
         final String urn = "urn:test:1";
         final User user = base.user(new URN(urn));
-        user.aliases().add("jeff");
+        user.aliases().add("jeff1");
         final Alias alias = user.aliases().iterate().iterator().next();
         final long number = alias.inbox().start();
         final Bout bout = alias.inbox().bout(number);
         bout.friends().invite(alias.name());
-        final RqWithAuth req = new RqWithAuth(
-            urn,
-            new RqMultipart.Fake(
-                new RqFake(
-                    "POST",
-                    String.format("/b/%d/attach", number)
-                ),
-                new RqWithHeaders(
-                    new RqLive(
-                        new ByteArrayInputStream("content".getBytes())
-                    ),
-                    String.format("POST /b/%d/attach HTTP/1.1", number),
-                    //@checkstyle LineLengthCheck (1 line)
-                    "Content-Disposition: form-data; name=\"file\"; filename=\"some.xml\"",
-                    "Content-Type: application/xml"
+        new FkBout(".+", new TkAttach(base)).route(
+            new RqWithAuth(
+                urn,
+                new RqMultipart.Fake(
+                    TkAttachTest.fake(number),
+                    new RqWithHeaders(
+                        new RqLive(
+                            new ByteArrayInputStream("content1".getBytes())
+                        ),
+                        String.format(TkAttachTest.POST_URL, number),
+                        //@checkstyle LineLengthCheck (1 line)
+                        "Content-Disposition: form-data; name=\"file\"; filename=\"some.xml\"",
+                        "Content-Type: application/xml"
+                    )
                 )
             )
         );
-        try {
-            new FkBout(".*", new TkAttach(base)).route(req);
-        } catch (final RsForward rsf) {
-            MatcherAssert.assertThat(
-                bout.messages().iterate().iterator().next().text(),
-                Matchers.containsString("some.xml")
-            );
-            throw rsf;
-        }
+        MatcherAssert.assertThat(
+            bout.messages().iterate().iterator().next().text(),
+            Matchers.containsString("attachment \"some.xml\"")
+        );
     }
 
     /**
@@ -105,9 +102,9 @@ public final class TkAttachTest {
     @Test(expected = RsFailure.class)
     public void ignoresWrongRequest() throws Exception {
         final MkBase base = new MkBase();
-        final String urn = "urn:test:1";
+        final String urn = "urn:test:2";
         final User user = base.user(new URN(urn));
-        user.aliases().add("jeff");
+        user.aliases().add("jeff2");
         final Alias alias = user.aliases().iterate().iterator().next();
         final long bout = alias.inbox().start();
         alias.inbox().bout(bout).friends().invite(alias.name());
@@ -115,21 +112,30 @@ public final class TkAttachTest {
             new RqWithAuth(
                 urn,
                 new RqMultipart.Fake(
-                    new RqFake(
-                        "POST",
-                        String.format("/b/%d/attach", bout)
-                    ),
+                    TkAttachTest.fake(bout),
                     new RqWithHeaders(
                         new RqLive(
-                            new ByteArrayInputStream("content".getBytes())
+                            new ByteArrayInputStream("content2".getBytes())
                         ),
-                        String.format("POST /b/%d/attach HTTP/1.1", bout),
+                        String.format(TkAttachTest.POST_URL, bout),
                         //@checkstyle LineLengthCheck (1 line)
                         "Content-Disposition: form-data; name=\"file\"; filenam=\"aBaaPDF.pdf\"",
                         "Content-Type: application/pdf"
                     )
                 )
             )
+        );
+    }
+
+    /**
+     * Creates fake request for the provided bout number.
+     * @param number Bout number
+     * @return Fake request
+     */
+    private static RqFake fake(final long number) {
+        return new RqFake(
+            "POST",
+            String.format("/b/%d/attach", number)
         );
     }
 }
