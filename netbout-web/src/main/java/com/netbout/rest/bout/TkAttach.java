@@ -123,7 +123,7 @@ final class TkAttach implements Take {
         }
         FileUtils.forceDelete(temp);
         bout.messages().post(msg.toString());
-        return new RsForward(new RsFlash(msg.toString()));
+        throw new RsForward(new RsFlash(msg.toString()));
     }
 
     /**

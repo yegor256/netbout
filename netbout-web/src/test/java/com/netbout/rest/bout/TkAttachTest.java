@@ -32,11 +32,14 @@ import com.netbout.spi.Alias;
 import com.netbout.spi.Bout;
 import com.netbout.spi.User;
 import java.io.ByteArrayInputStream;
+import java.net.HttpURLConnection;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;
 import org.takes.facets.auth.RqWithAuth;
 import org.takes.facets.forward.RsFailure;
+import org.takes.facets.forward.RsForward;
+import org.takes.facets.hamcrest.HmRsStatus;
 import org.takes.rq.RqFake;
 import org.takes.rq.RqLive;
 import org.takes.rq.RqMultipart;
@@ -72,23 +75,29 @@ public final class TkAttachTest {
         final long number = alias.inbox().start();
         final Bout bout = alias.inbox().bout(number);
         bout.friends().invite(alias.name());
-        new FkBout(".+", new TkAttach(base)).route(
-            new RqWithAuth(
-                urn,
-                new RqMultipart.Fake(
-                    TkAttachTest.fake(number),
-                    new RqWithHeaders(
-                        new RqLive(
-                            new ByteArrayInputStream("content1".getBytes())
-                        ),
-                        String.format(TkAttachTest.POST_URL, number),
-                        //@checkstyle LineLengthCheck (1 line)
-                        "Content-Disposition: form-data; name=\"file\"; filename=\"some.xml\"",
-                        "Content-Type: application/xml"
-                    )
+        final RqWithAuth request = new RqWithAuth(
+            urn,
+            new RqMultipart.Fake(
+                TkAttachTest.fake(number),
+                new RqWithHeaders(
+                    new RqLive(
+                        new ByteArrayInputStream("content1".getBytes())
+                    ),
+                    String.format(TkAttachTest.POST_URL, number),
+                    //@checkstyle LineLengthCheck (1 line)
+                    "Content-Disposition: form-data; name=\"file\"; filename=\"some.xml\"",
+                    "Content-Type: application/xml"
                 )
             )
         );
+        try {
+            new FkBout(".+", new TkAttach(base)).route(request);
+        } catch (final RsForward response) {
+            MatcherAssert.assertThat(
+                response,
+                new HmRsStatus(HttpURLConnection.HTTP_SEE_OTHER)
+            );
+        }
         MatcherAssert.assertThat(
             bout.messages().iterate().iterator().next().text(),
             Matchers.containsString("attachment \"some.xml\"")
