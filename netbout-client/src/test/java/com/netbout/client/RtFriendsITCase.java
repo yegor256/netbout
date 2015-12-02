@@ -29,6 +29,7 @@ package com.netbout.client;
 import com.netbout.spi.Alias;
 import com.netbout.spi.Bout;
 import com.netbout.spi.Friend;
+import com.netbout.spi.Friends;
 import com.netbout.spi.Inbox;
 import com.netbout.spi.User;
 import org.hamcrest.MatcherAssert;
@@ -74,4 +75,17 @@ public final class RtFriendsITCase {
         );
     }
 
+    /**
+     * RtFriends can make an exception when unknown alias invited.
+     * @throws Exception If there is some problem inside
+     */
+    @Test (expected = Friends.UnknownAliasException.class)
+    public void makesExceptionUnknownInvited() throws Exception {
+        final User user = this.rule.get();
+        final Alias alias = user.aliases().iterate().iterator().next();
+        final Inbox inbox = alias.inbox();
+        final Bout bout = inbox.bout(inbox.start());
+        final String friend = "unknown";
+        bout.friends().invite(friend);
+    }
 }

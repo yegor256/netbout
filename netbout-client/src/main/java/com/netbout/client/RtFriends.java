@@ -55,6 +55,10 @@ import lombok.ToString;
 @Loggable(Loggable.DEBUG)
 @EqualsAndHashCode(of = "request")
 final class RtFriends implements Friends {
+    /**
+     * RsFlash cookie name.
+     */
+    private static final String COOKIE_RS_FLASH = "RsFlash";
 
     /**
      * Request to use.
@@ -71,7 +75,7 @@ final class RtFriends implements Friends {
 
     @Override
     public void invite(final String friend) throws IOException {
-        this.request
+        final RestResponse response = this.request
             .fetch()
             .as(RestResponse.class)
             .assertStatus(HttpURLConnection.HTTP_OK)
@@ -81,8 +85,23 @@ final class RtFriends implements Friends {
             // @checkstyle MultipleStringLiteralsCheck (1 line)
             .body().formParam("name", friend).back()
             .fetch()
-            .as(RestResponse.class)
-            .assertStatus(HttpURLConnection.HTTP_SEE_OTHER);
+            .as(RestResponse.class);
+        if (response.status() == HttpURLConnection.HTTP_MOVED_PERM
+            && response.cookie(RtFriends.COOKIE_RS_FLASH).getValue()
+                .startsWith("incorrect+alias")
+            ) {
+            throw new Friends.UnknownAliasException(
+                response.cookie(RtFriends.COOKIE_RS_FLASH).getValue()
+            );
+        }
+        if (response.status() != HttpURLConnection.HTTP_SEE_OTHER) {
+            throw new IOException(
+                String.format(
+                    "HTTP response status is not equal to %d",
+                    HttpURLConnection.HTTP_SEE_OTHER
+                )
+            );
+        }
         Logger.info(this, "friend '%s' invited", friend);
     }
 
