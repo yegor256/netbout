@@ -61,11 +61,6 @@ final class RtFriends implements Friends {
      */
     private static final String COOKIE_RS_FLASH = "RsFlash";
     /**
-     * Unknown alias flash message.
-     */
-    private static final String UNKNOWN_ALIAS_MSG = "incorrect+alias";
-
-    /**
      * Request to use.
      */
     private final transient Request request;
@@ -93,7 +88,7 @@ final class RtFriends implements Friends {
             .as(RestResponse.class);
         if (response.status() == HttpURLConnection.HTTP_MOVED_PERM
             && response.cookie(RtFriends.COOKIE_RS_FLASH).getValue()
-                .startsWith(RtFriends.UNKNOWN_ALIAS_MSG)
+                .startsWith("incorrect+alias")
             ) {
             throw new Friends.UnknownAliasException(
                 response.cookie(RtFriends.COOKIE_RS_FLASH).getValue()
