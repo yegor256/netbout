@@ -98,13 +98,15 @@ public final class RtFriendsITCase {
     @Test (expected = AssertionError.class)
     public void throwsExceptionIfInvalidToken() throws Exception {
         Assume.assumeNotNull(System.getProperty("netbout.token"));
-        final User user = new RtUser(URI.create(
-            System.getProperty("netbout.url", "http://www.netbout.com")
-        ), "token");
+        final User user = new RtUser(
+            URI.create(
+                System.getProperty("netbout.url", "http://www.netbout.com")
+            ), "token"
+        );
         final Alias alias = user.aliases().iterate().iterator().next();
         final Inbox inbox = alias.inbox();
         final Bout bout = inbox.bout(inbox.start());
-        final String friend = "unknown";
+        final String friend = "bob";
         bout.friends().invite(friend);
     }
 }
