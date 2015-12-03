@@ -64,7 +64,7 @@ public final class RtFriendsITCase {
         final Alias alias = user.aliases().iterate().iterator().next();
         final Inbox inbox = alias.inbox();
         final Bout bout = inbox.bout(inbox.start());
-        final String friend = "alex";
+        final String friend = "dz74";
         bout.friends().invite(friend);
         MatcherAssert.assertThat(
             bout.friends().iterate(),
@@ -109,4 +109,19 @@ public final class RtFriendsITCase {
         final String friend = "bob";
         bout.friends().invite(friend);
     }
+
+    /**
+     * RtFriends can throw an exception if unknown alias kicked.
+     * @throws Exception If there is some problem inside
+     */
+    @Test (expected = Friends.UnknownAliasException.class)
+    public void throwsExceptionIfUnknownAliasKicked() throws Exception {
+        final User user = this.rule.get();
+        final Alias alias = user.aliases().iterate().iterator().next();
+        final Inbox inbox = alias.inbox();
+        final Bout bout = inbox.bout(inbox.start());
+        final String friend = "jim";
+        bout.friends().kick(friend);
+    }
+
 }

@@ -57,9 +57,11 @@ public interface Friends {
     /**
      * Kick him off.
      * @param friend Alias of the friend
+     * @throws Friends.UnknownAliasException If alias doesn't exist
      * @throws IOException If fails
+     * @checkstyle ThrowsCountCheck (2 lines)
      */
-    void kick(String friend) throws IOException;
+    void kick(String friend) throws IOException, Friends.UnknownAliasException;
 
     /**
      * Iterate them all.

@@ -40,6 +40,7 @@ import com.netbout.spi.Friends;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URI;
+import java.util.List;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
@@ -59,6 +60,10 @@ final class RtFriends implements Friends {
      * RsFlash cookie name.
      */
     private static final String COOKIE_RS_FLASH = "RsFlash";
+    /**
+     * Unknown alias flash message.
+     */
+    private static final String UNKNOWN_ALIAS_MSG = "incorrect+alias";
 
     /**
      * Request to use.
@@ -88,7 +93,7 @@ final class RtFriends implements Friends {
             .as(RestResponse.class);
         if (response.status() == HttpURLConnection.HTTP_MOVED_PERM
             && response.cookie(RtFriends.COOKIE_RS_FLASH).getValue()
-                .startsWith("incorrect+alias")
+                .startsWith(RtFriends.UNKNOWN_ALIAS_MSG)
             ) {
             throw new Friends.UnknownAliasException(
                 response.cookie(RtFriends.COOKIE_RS_FLASH).getValue()
@@ -100,19 +105,24 @@ final class RtFriends implements Friends {
 
     @Override
     public void kick(final String friend) throws IOException {
-        this.request
+        final RestResponse response = this.request
             .fetch()
             .as(RestResponse.class)
-            .assertStatus(HttpURLConnection.HTTP_OK)
-            .as(XmlResponse.class)
-            .rel(
+            .assertStatus(HttpURLConnection.HTTP_OK);
+        final List<String> links = response.as(XmlResponse.class)
+            .xml().xpath(
                 String.format(
                     // @checkstyle LineLength (1 line)
                     "/page/bout/friends/friend[alias='%s']/links/link[@rel='kick']/@href",
                     friend
                 )
-            )
-            .uri().queryParam("name", friend).back()
+            );
+        if (links.isEmpty()) {
+            throw new Friends.UnknownAliasException(
+                String.format("Alias %s not found", friend)
+            );
+        }
+        response.jump(URI.create(links.get(0)))
             .fetch()
             .as(RestResponse.class)
             .assertStatus(HttpURLConnection.HTTP_SEE_OTHER);

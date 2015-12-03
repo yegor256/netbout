@@ -74,9 +74,8 @@ public final class ReFriends implements Friends {
 
     @Override
     @RetryOnFailure(
-        verbose = false, attempts = Tv.TWENTY,
-        delay = Tv.FIVE, unit = TimeUnit.SECONDS
-    )
+        verbose = false, attempts = Tv.TWENTY, delay = Tv.FIVE,
+        unit = TimeUnit.SECONDS, ignore = Friends.UnknownAliasException.class)
     public void kick(final String friend) throws IOException {
         this.origin.kick(friend);
     }
