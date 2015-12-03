@@ -48,7 +48,7 @@ public interface Friends {
      * Invite new friend.
      * @param friend Alias of the friend
      * @throws IOException If fails
-     * @throws Friends.UnknownAliasException If alias doesn't exists
+     * @throws Friends.UnknownAliasException If alias doesn't exist
      * @checkstyle ThrowsCountCheck (2 lines)
      */
     void invite(String friend) throws IOException,

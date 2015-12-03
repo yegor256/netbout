@@ -95,7 +95,7 @@ final class RtFriends implements Friends {
             );
         }
         if (response.status() != HttpURLConnection.HTTP_SEE_OTHER) {
-            throw new IOException(
+            throw new AssertionError(
                 String.format(
                     "HTTP response status is not equal to %d",
                     HttpURLConnection.HTTP_SEE_OTHER

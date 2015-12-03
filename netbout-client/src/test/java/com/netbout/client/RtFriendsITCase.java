@@ -32,8 +32,10 @@ import com.netbout.spi.Friend;
 import com.netbout.spi.Friends;
 import com.netbout.spi.Inbox;
 import com.netbout.spi.User;
+import java.net.URI;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
+import org.junit.Assume;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -76,12 +78,29 @@ public final class RtFriendsITCase {
     }
 
     /**
-     * RtFriends can make an exception when unknown alias invited.
+     * RtFriends can throw an exception if unknown alias invited.
      * @throws Exception If there is some problem inside
      */
     @Test (expected = Friends.UnknownAliasException.class)
-    public void makesExceptionUnknownInvited() throws Exception {
+    public void throwsExceptionIfUnknownAliasInvited() throws Exception {
         final User user = this.rule.get();
+        final Alias alias = user.aliases().iterate().iterator().next();
+        final Inbox inbox = alias.inbox();
+        final Bout bout = inbox.bout(inbox.start());
+        final String friend = "unknown";
+        bout.friends().invite(friend);
+    }
+
+    /**
+     * RtFriends can throw an exception if invalid token passed.
+     * @throws Exception If there is some problem inside
+     */
+    @Test (expected = AssertionError.class)
+    public void throwsExceptionIfInvalidToken() throws Exception {
+        Assume.assumeNotNull(System.getProperty("netbout.token"));
+        final User user = new RtUser(URI.create(
+            System.getProperty("netbout.url", "http://www.netbout.com")
+        ), "token");
         final Alias alias = user.aliases().iterate().iterator().next();
         final Inbox inbox = alias.inbox();
         final Bout bout = inbox.bout(inbox.start());
