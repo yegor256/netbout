@@ -94,14 +94,7 @@ final class RtFriends implements Friends {
                 response.cookie(RtFriends.COOKIE_RS_FLASH).getValue()
             );
         }
-        if (response.status() != HttpURLConnection.HTTP_SEE_OTHER) {
-            throw new AssertionError(
-                String.format(
-                    "HTTP response status is not equal to %d",
-                    HttpURLConnection.HTTP_SEE_OTHER
-                )
-            );
-        }
+        response.assertStatus(HttpURLConnection.HTTP_SEE_OTHER);
         Logger.info(this, "friend '%s' invited", friend);
     }
 
