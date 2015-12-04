@@ -118,9 +118,6 @@ public final class RtFriendsITCase {
     public void throwsExceptionIfUnknownAliasKicked() throws Exception {
         final Inbox inbox = this.rule.get().aliases()
             .iterate().iterator().next().inbox();
-        final Bout bout = inbox.bout(inbox.start());
-        final String friend = "jim";
-        bout.friends().kick(friend);
+        inbox.bout(inbox.start()).friends().kick("jim");
     }
-
 }
