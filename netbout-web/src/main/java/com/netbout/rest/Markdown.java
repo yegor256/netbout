@@ -26,168 +26,47 @@
  */
 package com.netbout.rest;
 
-import com.jcabi.aspects.Immutable;
-import com.jcabi.aspects.RetryOnFailure;
-import com.jcabi.log.Logger;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.util.logging.Level;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import javax.validation.constraints.NotNull;
-import org.apache.commons.codec.CharEncoding;
-import org.apache.commons.io.IOUtils;
-import org.pegdown.Extensions;
-import org.pegdown.PegDownProcessor;
-import org.w3c.tidy.Tidy;
 
 /**
  * Text with markdown formatting.
  *
- * <p>The class is immutable and thread-safe.
- *
- * @author Yegor Bugayenko (yegor@teamed.io)
+ * @author Dmitry Zaytsev (dmitry.zaytsev@gmail.com)
  * @version $Id$
+ * @since 2.23
  * @see <a href="Markdown Syntax">http://daringfireball.net/projects/markdown/syntax</a>
+ * @todo #847:30min/DEV MarkdownTxtmark not implemented but has to be.
+ *  This class should be implementation of Markdown using TxtMark.
+ *  See https://github.com/rjeschke/txtmark. Don't forget about unit tests.
  */
-@Immutable
-public final class Markdown {
-
-    /**
-     * Pattern to look for a missing whitespace between the end of link and the
-     * next word.
-     */
-    private static final Pattern LINK_WHITESPACE = Pattern.compile(
-        "(</a>)(\\w)"
-    );
-
-    /**
-     * Tidy.
-     */
-    private static final Tidy TIDY = Markdown.makeTidy();
-
-    /**
-     * Plain link detection pattern.
-     */
-    private static final Pattern LINK = Pattern.compile(
-        "https?://[a-zA-Z0-9-._~:/\\?#@!$&'*+,;=%]+[a-zA-Z0-9-_~/#@$&'*+=%]"
-    );
-
-    /**
-     * The source text.
-     */
-    private final transient String text;
-
-    /**
-     * Public ctor.
-     * @param txt The raw source text, with meta commands
-     */
-    public Markdown(@NotNull final String txt) {
-        this.text = txt;
-    }
-
+public interface Markdown {
     /**
      * Convert it to HTML.
+     * @param txt The raw source text, with meta commands
      * @return The HTML
      * @link https://github.com/sirthias/pegdown/issues/136
      */
-    @RetryOnFailure(verbose = true)
-    public String html() {
-        synchronized (Markdown.TIDY) {
-            return LINK_WHITESPACE.matcher(
-                Markdown.clean(
-                    new PegDownProcessor(Extensions.ALL).markdownToHtml(
-                        Markdown.formatLinks(this.text)
-                    )
-                )
-            ).replaceAll("$1 $2");
-        }
-    }
+    String html(@NotNull String txt);
 
     /**
-     * Clean the XML.
-     * @param xml The XML to clean
-     * @return Clean XML
+     * Default implementation.
      */
-    private static String clean(final String xml) {
-        try {
-            final ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            Markdown.TIDY.parse(
-                IOUtils.toInputStream(xml, CharEncoding.UTF_8),
-                baos
-            );
-            return baos.toString(CharEncoding.UTF_8);
-        } catch (final IOException ex) {
-            throw new IllegalArgumentException(ex);
-        }
-    }
-    /**
-     * Make and return a configured Tidy.
-     * @return The Tidy
-     * @checkstyle ExecutableStatementCountCheck (50 lines)
-     */
-    private static Tidy makeTidy() {
-        final Tidy tidy = new Tidy();
-        tidy.setShowErrors(0);
-        tidy.setErrout(
-            new PrintWriter(Logger.stream(Level.FINE, Markdown.class))
-        );
-        tidy.setUpperCaseTags(false);
-        tidy.setUpperCaseAttrs(false);
-        tidy.setLowerLiterals(false);
-        tidy.setIndentContent(false);
-        tidy.setDropProprietaryAttributes(false);
-        tidy.setBreakBeforeBR(false);
-        tidy.setShowWarnings(true);
-        tidy.setXmlTags(true);
-        tidy.setXmlSpace(false);
-        tidy.setEncloseBlockText(true);
-        tidy.setNumEntities(true);
-        tidy.setDropEmptyParas(true);
-        tidy.setFixBackslash(true);
-        tidy.setFixComments(true);
-        tidy.setInputEncoding(CharEncoding.UTF_8);
-        tidy.setOutputEncoding(CharEncoding.UTF_8);
-        tidy.setSmartIndent(false);
-        tidy.setFixUri(true);
-        tidy.setForceOutput(true);
-        return tidy;
-    }
+    final class Default implements Markdown {
+        /**
+         * Markdown processor.
+         */
+        private final Markdown processor;
 
-    /**
-     * Replace plain links with Markdown syntax. To make sure it doesn't
-     * replace links inside markdown syntax, it makes sure that characters
-     * before and after link do not match to Markdown link syntax.
-     * @param txt Text to find links in
-     * @return Text with Markdown-formatted links
-     */
-    private static String formatLinks(final String txt) {
-        final String marker = "](";
-        final String html = "=\"";
-        final StringBuilder result = new StringBuilder();
-        final Matcher matcher = Markdown.LINK.matcher(txt);
-        int start = 0;
-        while (matcher.find(start)) {
-            result.append(txt.substring(start, matcher.start()));
-            final String prefix = txt.substring(
-                Math.max(0, matcher.start() - 2),
-                matcher.start()
-            );
-            final String suffix = txt.substring(
-                matcher.end(),
-                Math.min(txt.length(), matcher.end() + 2)
-            );
-            final String uri = matcher.group();
-            if (marker.equals(suffix) || marker.equals(prefix)
-                || html.equals(prefix)) {
-                result.append(uri);
-            } else {
-                result.append(String.format("[%1$s](%1$s)", uri));
-            }
-            start = matcher.end();
+        /**
+         * Ctor.
+         */
+        public Default() {
+            this.processor = new MarkdownPegdown();
         }
-        result.append(txt.substring(start));
-        return result.toString();
+
+        @Override
+        public String html(@NotNull final String txt) {
+            return this.processor.html(txt);
+        }
     }
 }

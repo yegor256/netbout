@@ -82,7 +82,11 @@ final class XeMessage extends XeWrap {
                     .add("author").set(Xembler.escape(msg.author())).up()
                     .add("text").set(Xembler.escape(msg.text())).up()
                     .add("html")
-                    .set(Xembler.escape(new Markdown(msg.text()).html())).up()
+                    .set(
+                        Xembler.escape(
+                            new Markdown.Default().html(msg.text())
+                        )
+                    ).up()
                     .add("timeago")
                     .set(new PrettyTime().format(msg.date())).up()
                     .add("date")

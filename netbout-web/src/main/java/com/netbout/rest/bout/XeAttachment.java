@@ -126,12 +126,12 @@ final class XeAttachment extends XeWrap {
                     public Iterable<Directive> toXembly() throws IOException {
                         return new Directives().add("html").set(
                             Xembler.escape(
-                                new Markdown(
+                                new Markdown.Default().html(
                                     IOUtils.toString(
                                         atmt.read(),
                                         CharEncoding.UTF_8
                                     )
-                                ).html()
+                                )
                             )
                         );
                     }
