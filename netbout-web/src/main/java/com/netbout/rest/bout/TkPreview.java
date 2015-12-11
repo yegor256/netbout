@@ -46,12 +46,11 @@ final class TkPreview  implements Take {
     @Override
     public Response act(final Request req) throws IOException {
         return new RsHTML(
-            new Markdown(
+            new Markdown.Default().html(
                 new RqForm.Smart(
                     new RqForm.Base(req)
                 ).single("text", "")
-            ).html()
+            )
         );
     }
-
 }

@@ -100,7 +100,7 @@ final class EmCourier {
                 .with(
                     new EnHTML(
                         Joiner.on('\n').join(
-                            new Markdown(text).html(),
+                            new Markdown.Default().html(text),
                             "<p>--<br/>to reply click here: ",
                             String.format(
                                 "http://www.netbout.com/b/%d",

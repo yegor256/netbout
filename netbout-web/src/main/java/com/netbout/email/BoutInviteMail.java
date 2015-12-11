@@ -112,7 +112,7 @@ final class BoutInviteMail {
                 .with(
                     new EnHTML(
                         Joiner.on('\n').join(
-                            new Markdown(MAIL_CONTENT).html(), "<br/>",
+                            new Markdown.Default().html(MAIL_CONTENT), "<br/>",
                                 String.format(
                                     Manifests.read("Netbout-Site")
                                         .concat("/b/%d?invite=%s"),

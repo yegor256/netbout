@@ -149,9 +149,9 @@ final class EmAlias implements Alias {
                     .with(
                         new EnHTML(
                             Joiner.on('\n').join(
-                                new Markdown(
+                                new Markdown.Default().html(
                                     "Please verify your new email:"
-                                ).html(), "<br/>",
+                                ), "<br/>",
                                 String.format("<a href=%s>%s</a>", link, link)
                             )
                         )
