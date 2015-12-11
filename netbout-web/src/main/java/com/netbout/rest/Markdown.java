@@ -34,9 +34,9 @@ import javax.validation.constraints.NotNull;
  * @author Dmitry Zaytsev (dmitry.zaytsev@gmail.com)
  * @version $Id$
  * @see <a href="Markdown Syntax">http://daringfireball.net/projects/markdown/syntax</a>
- * @todo 847:30min/DEV MarkdownTxtmark not implemented but has to be.
- * This class should be implementation of Markdown using TxtMark.
- * See https://github.com/rjeschke/txtmark. Don't forget about unit tests.
+ * @todo #847:30min/DEV MarkdownTxtmark not implemented but has to be.
+ *  This class should be implementation of Markdown using TxtMark.
+ *  See https://github.com/rjeschke/txtmark. Don't forget about unit tests.
  */
 public interface Markdown {
     /**
