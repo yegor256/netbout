@@ -171,8 +171,19 @@
                         <xsl:with-param name="length" select="25"/>
                     </xsl:call-template>
                 </a>
+                <xsl:if test="alias/newEmail != ''">
+                    <span class="notice">
+                        <xsl:attribute name="title">
+                            <xsl:call-template name="format">
+                                <xsl:with-param name="text" select="'email.not.verified'"/>
+                                <xsl:with-param name="value" select="alias/newEmail"/>
+                            </xsl:call-template>
+                        </xsl:attribute>
+                        !
+                    </span>
+                </xsl:if>
                 <xsl:if test="alias/email = ''">
-                    <span id="notice">
+                    <span class="notice">
                         <xsl:value-of select="$TEXTS/email.empty"/>
                     </span>
                 </xsl:if>
