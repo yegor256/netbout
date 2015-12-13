@@ -1,6 +1,6 @@
 ## Puzzles
 
-There are 12 active puzzles (36 total):
+There are 13 active puzzles (38 total):
 
 
 <del>unknown</del> [`?`](../master/?)<br/>
@@ -39,3 +39,5 @@ There are 12 active puzzles (36 total):
 &nbsp;&nbsp;&nbsp;[<del>738</del>](https://github.com/yegor256/netbout/issues/738) [`?`](../master/?)<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[**738-4d284963**](https://github.com/yegor256/netbout/issues/841) [`EmAlias.java:130-134`](../master/netbout-web/src/main/java/com/netbout/email/EmAlias.java#L130-L134)<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[**738-d76bd177**](https://github.com/yegor256/netbout/issues/842) [`TkSaveEmail.java:53-55`](../master/netbout-web/src/main/java/com/netbout/rest/account/TkSaveEmail.java#L53-L55)<br/>
+[<del>847</del>](https://github.com/yegor256/netbout/issues/847) [`?`](../master/?)<br/>
+&nbsp;&nbsp;&nbsp;[**847-f2a7caae**]() [`Markdown.java:38-40`](../master/netbout-web/src/main/java/com/netbout/rest/Markdown.java#L38-L40)<br/>
