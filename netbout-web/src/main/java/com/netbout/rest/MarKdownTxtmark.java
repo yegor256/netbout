@@ -30,40 +30,16 @@ import javax.validation.constraints.NotNull;
 
 /**
  * Text with markdown formatting.
+ * Using TxtMark markdown processor.
  *
  * @author Dmitry Zaytsev (dmitry.zaytsev@gmail.com)
  * @version $Id$
  * @since 2.23
- * @see <a href="Markdown Syntax">http://daringfireball.net/projects/markdown/syntax</a>
  */
-public interface Markdown {
-    /**
-     * Convert it to HTML.
-     * @param txt The raw source text, with meta commands
-     * @return The HTML
-     * @link https://github.com/sirthias/pegdown/issues/136
-     */
-    String html(@NotNull String txt);
+public final class MarkdownTxtmark implements Markdown {
 
-    /**
-     * Default implementation.
-     */
-    final class Default implements Markdown {
-        /**
-         * Markdown processor.
-         */
-        private final Markdown processor;
-
-        /**
-         * Ctor.
-         */
-        public Default() {
-            this.processor = new MarkdownPegdown();
-        }
-
-        @Override
-        public String html(@NotNull final String txt) {
-            return this.processor.html(txt);
-        }
+    @Override
+    public String html(@NotNull final String txt) {
+        throw new UnsupportedOperationException("not implemented yet");
     }
 }
