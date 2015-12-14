@@ -262,6 +262,7 @@ public final class MarkdownTxtmarkTest {
     @Ignore
     @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
     public void detectsLinks() throws Exception {
+        final String bracket= "(";
         final String[][] texts = {
             new String[] {
                 "<a href=\"http://_google_.com\">g</a>",
@@ -284,21 +285,23 @@ public final class MarkdownTxtmarkTest {
                 "(http://foo?com)",
                 MarkdownTxtmarkTest.join(
                     MarkdownTxtmarkTest.START_PARAGRAPH,
-                    "(",
+                    bracket,
                     "<a href=\"http://foo?com\">http://foo?com</a>)</p>"
                 ),
             },
             new String[] {
                 "(http://foo#com)",
                 MarkdownTxtmarkTest.join(
-                    "<p>(",
+                    MarkdownTxtmarkTest.START_PARAGRAPH,
+                    bracket,
                     "<a href=\"http://foo#com\">http://foo#com</a>)</p>"
                 ),
             },
             new String[] {
                 "(https://a?b=c)",
                 MarkdownTxtmarkTest.join(
-                    "<p>(",
+                    MarkdownTxtmarkTest.START_PARAGRAPH,
+                    bracket,
                     "<a href=\"https://a?b=c\">https://a?b=c</a>)</p>"
                 ),
             },
