@@ -29,7 +29,6 @@ package com.netbout.rest;
 import com.jcabi.matchers.XhtmlMatchers;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
-import org.junit.Ignore;
 import org.junit.Test;
 
 /**
@@ -167,12 +166,13 @@ public final class MarkdownPegdownTest {
      * @throws Exception If there is some problem inside
      */
     @Test
-    @Ignore
     public void breaksSingleLine() throws Exception {
         MatcherAssert.assertThat(
             new MarkdownPegdown("line1\nline2\n\nline3").html().trim(),
             Matchers.equalTo(
-                "<p>line1\n<br />\nline2</p>\n<p>line3</p>"
+                String.format(
+                    "<p>line1%n<br />%nline2</p>%n<p>line3</p>"
+                )
             )
         );
     }
