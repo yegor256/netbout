@@ -47,6 +47,8 @@ import org.junit.Test;
  *
  */
 public final class MarkdownTxtmarkTest {
+    private static final String START_PARAGRAPH = "<p>";
+    private static final String END_PARAGRAPH = "</p>";
     /**
      * MarkdownTxtmark can handle whitespace after links.
      * @throws Exception If there is some problem inside
@@ -60,7 +62,7 @@ public final class MarkdownTxtmarkTest {
             ),
             Matchers.equalTo(
                 MarkdownTxtmarkTest.join(
-                    "<p>Hi ",
+                    "MarkdownTxtmarkTest.START_PARAGRAPHHi ",
                     // @checkstyle LineLengthCheck (1 line)
                     "<a href=\"http://www.google.com\">google</a> how are you?</p>",
                     ""
@@ -81,7 +83,7 @@ public final class MarkdownTxtmarkTest {
                 "**hi**, _dude_!",
                 "",
                 "     b**o",
-                "    ",
+                "     ",
                 "    o**m",
                 ""
             )
@@ -117,7 +119,7 @@ public final class MarkdownTxtmarkTest {
             "__",
             "",
             "**hi there! {{{",
-            MarkdownTxtmarkTest.join("    "," ","      ","     ","")
+            MarkdownTxtmarkTest.join("    ", " ", "      ", "     ", ""),
         };
         for (final String text : texts) {
             MatcherAssert.assertThat(
@@ -148,23 +150,23 @@ public final class MarkdownTxtmarkTest {
                     "<strong>",
                     "  <em>dude</em>",
                     "</strong>!</p>"
-                )
+                ),
             },
             new String[] {
                 "hey, _man_!",
-                MarkdownTxtmarkTest.join("<p>hey, ", "<em>man</em>!</p>")
+                MarkdownTxtmarkTest.join("<p>hey, ", "<em>man</em>!</p>"),
             },
             new String[] {
                 "x: `oops`",
-                MarkdownTxtmarkTest.join("<p>x: ", "<code>oops</code></p>")
+                MarkdownTxtmarkTest.join("<p>x: ", "<code>oops</code></p>"),
             },
             new String[] {
                 "[a](http://foo)",
                 MarkdownTxtmarkTest.join(
-                    "<p>",
+                    MarkdownTxtmarkTest.START_PARAGRAPH,
                     "  <a href=\"http://foo\">a</a>",
-                    "</p>"
-                )
+                    MarkdownTxtmarkTest.END_PARAGRAPH
+                ),
             },
             new String[] {"}}}\n", "<p>}}}</p>"},
         };
@@ -217,7 +219,7 @@ public final class MarkdownTxtmarkTest {
     public void breaksSingleLine() throws Exception {
         MatcherAssert.assertThat(
             new MarkdownTxtmark().html(
-                MarkdownTxtmarkTest.join("line1","line2","","line3").trim()
+                MarkdownTxtmarkTest.join("line1", "line2", "", "line3").trim()
             ),
             Matchers.equalTo(
                 MarkdownTxtmarkTest.join(
@@ -258,15 +260,18 @@ public final class MarkdownTxtmarkTest {
             new String[] {
                 "<a href=\"http://_google_.com\">g</a>",
                 MarkdownTxtmarkTest.join(
-                    "<p>","  <a href=\"http://_google_.com\">g</a>","</p>"
+                    MarkdownTxtmarkTest.START_PARAGRAPH,
+                    "  <a href=\"http://_google_.com\">g</a>",
+                    MarkdownTxtmarkTest.END_PARAGRAPH
                 ),
             },
             new String[] {
                 "http://foo.com",
                 MarkdownTxtmarkTest.join(
-                    "<p>",
+                    MarkdownTxtmarkTest.START_PARAGRAPH,
                     "  ",
-                    "<a href=\"http://foo.com\">http://foo.com</a>","</p>"
+                    "<a href=\"http://foo.com\">http://foo.com</a>",
+                    MarkdownTxtmarkTest.END_PARAGRAPH
                 ),
             },
             new String[] {
@@ -293,15 +298,16 @@ public final class MarkdownTxtmarkTest {
             new String[] {
                 "[foo](http://foo)",
                 MarkdownTxtmarkTest.join(
-                    "<p>",
+                    MarkdownTxtmarkTest.START_PARAGRAPH,
                     "  <a href=\"http://foo\">foo</a>\n</p>"
                 ),
             },
             new String[] {
                 "[http://bar.com](http://bar.com)",
-                MarkdownTxtmarkTest.join("<p>",
+                MarkdownTxtmarkTest.join(
+                    MarkdownTxtmarkTest.START_PARAGRAPH,
                     "  <a href=\"http://bar.com\">http://bar.com</a>",
-                    "</p>"
+                    MarkdownTxtmarkTest.END_PARAGRAPH
                 ),
             },
             new String[] {
@@ -311,10 +317,10 @@ public final class MarkdownTxtmarkTest {
             new String[] {
                 "[google](http://www.google.com)",
                 MarkdownTxtmarkTest.join(
-                    "<p>",
+                    MarkdownTxtmarkTest.START_PARAGRAPH,
                     "  <a href=\"http://www.google.com\">google</a>",
-                    "</p>")
-                ,
+                    MarkdownTxtmarkTest.END_PARAGRAPH
+                ),
             },
         };
         for (final String[] pair : texts) {
@@ -328,7 +334,7 @@ public final class MarkdownTxtmarkTest {
     /**
      * Join string separated by platform line separator.
      * @param elements Strings to join
-     * @return
+     * @return Joined elements
      */
     private static String join(final String ... elements) {
         return StringUtils.join(elements, System.getProperty("line.separator"));
