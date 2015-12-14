@@ -27,6 +27,7 @@
 package com.netbout.rest;
 
 import com.jcabi.matchers.XhtmlMatchers;
+import org.apache.commons.lang3.StringUtils;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Ignore;
@@ -58,9 +59,11 @@ public final class MarkdownTxtmarkTest {
                 "Hi [google](http://www.google.com) how are you?"
             ),
             Matchers.equalTo(
-                MarkdownTxtmarkTest.replaceNewLine(
+                MarkdownTxtmarkTest.join(
+                    "<p>Hi ",
                     // @checkstyle LineLengthCheck (1 line)
-                    "<p>Hi \n<a href=\"http://www.google.com\">google</a> how are you?</p>\n"
+                    "<a href=\"http://www.google.com\">google</a> how are you?</p>",
+                    ""
                 )
             )
         );
@@ -74,7 +77,14 @@ public final class MarkdownTxtmarkTest {
     @Ignore
     public void formatsTextToHtml() throws Exception {
         final String meta = new MarkdownTxtmark().html(
-            "**hi**, _dude_!\r\n\n     b**o\n    \n    \n    o**m\n"
+            MarkdownTxtmarkTest.join(
+                "**hi**, _dude_!",
+                "",
+                "     b**o",
+                "    ",
+                "    o**m",
+                ""
+            )
         );
         MatcherAssert.assertThat(
             String.format("<x>%s</x>", meta),
@@ -83,7 +93,12 @@ public final class MarkdownTxtmarkTest {
                 XhtmlMatchers.hasXPaths(
                     "/x/p/strong[.='hi']",
                     "/x/p/em[.='dude']",
-                    "/x/pre/code[.=' b**o\n\n\no**m\n']"
+                    MarkdownTxtmarkTest.join(
+                        "/x/pre/code[.=' b**o",
+                        "",
+                        "",
+                        "o**m']"
+                    )
                 )
             )
         );
@@ -98,11 +113,11 @@ public final class MarkdownTxtmarkTest {
     @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
     public void handlesBrokenFormattingGracefully() throws Exception {
         final String[] texts = {
-            "**\n ",
+            MarkdownTxtmarkTest.join("**", ""),
             "__",
             "",
             "**hi there! {{{",
-            "    \n  \n      \n     \n",
+            MarkdownTxtmarkTest.join("    "," ","      ","     ","")
         };
         for (final String text : texts) {
             MatcherAssert.assertThat(
@@ -128,23 +143,35 @@ public final class MarkdownTxtmarkTest {
             },
             new String[] {
                 "wazzup, ***dude***!",
-                "<p>wazzup, \n<strong>\n  <em>dude</em>\n</strong>!</p>",
+                MarkdownTxtmarkTest.join(
+                    "<p>wazzup, ",
+                    "<strong>",
+                    "  <em>dude</em>",
+                    "</strong>!</p>"
+                )
             },
-            new String[] {"hey, _man_!", "<p>hey, \n<em>man</em>!</p>"},
-            new String[] {"x: `oops`", "<p>x: \n<code>oops</code></p>"},
+            new String[] {
+                "hey, _man_!",
+                MarkdownTxtmarkTest.join("<p>hey, ", "<em>man</em>!</p>")
+            },
+            new String[] {
+                "x: `oops`",
+                MarkdownTxtmarkTest.join("<p>x: ", "<code>oops</code></p>")
+            },
             new String[] {
                 "[a](http://foo)",
-                "<p>\n  <a href=\"http://foo\">a</a>\n</p>",
+                MarkdownTxtmarkTest.join(
+                    "<p>",
+                    "  <a href=\"http://foo\">a</a>",
+                    "</p>"
+                )
             },
             new String[] {"}}}\n", "<p>}}}</p>"},
         };
         for (final String[] pair : texts) {
             MatcherAssert.assertThat(
                 new MarkdownTxtmark().html(pair[0]).trim(),
-                Matchers.equalTo(
-                    // @checkstyle MultipleStringLiteralsCheck (1 line)
-                    pair[1].replace("\n", System.getProperty("line.separator"))
-                )
+                Matchers.equalTo(pair[1])
             );
         }
     }
@@ -157,7 +184,14 @@ public final class MarkdownTxtmarkTest {
     @Ignore
     public void formatsBulletsToHtml() throws Exception {
         final String meta = new MarkdownTxtmark().html(
-            "my list:\n\n* line one\n* line two\n\nnormal text now"
+            MarkdownTxtmarkTest.join(
+                "my list:",
+                "",
+                "* line one",
+                "* line two",
+                "",
+                "normal text now"
+            )
         );
         MatcherAssert.assertThat(
             String.format("<r>%s</r>", meta),
@@ -182,10 +216,15 @@ public final class MarkdownTxtmarkTest {
     @Ignore
     public void breaksSingleLine() throws Exception {
         MatcherAssert.assertThat(
-            new MarkdownTxtmark().html("line1\nline2\n\nline3").trim(),
+            new MarkdownTxtmark().html(
+                MarkdownTxtmarkTest.join("line1","line2","","line3").trim()
+            ),
             Matchers.equalTo(
-                MarkdownTxtmarkTest.replaceNewLine(
-                    "<p>line1\n<br />\nline2</p>\n<p>line3</p>"
+                MarkdownTxtmarkTest.join(
+                    "<p>line1",
+                    "<br /",
+                    ">line2</p>",
+                    "<p>line3</p>"
                 )
             )
         );
@@ -218,31 +257,52 @@ public final class MarkdownTxtmarkTest {
         final String[][] texts = {
             new String[] {
                 "<a href=\"http://_google_.com\">g</a>",
-                "<p>\n  <a href=\"http://_google_.com\">g</a>\n</p>",
+                MarkdownTxtmarkTest.join(
+                    "<p>","  <a href=\"http://_google_.com\">g</a>","</p>"
+                ),
             },
             new String[] {
                 "http://foo.com",
-                "<p>\n  <a href=\"http://foo.com\">http://foo.com</a>\n</p>",
+                MarkdownTxtmarkTest.join(
+                    "<p>",
+                    "  ",
+                    "<a href=\"http://foo.com\">http://foo.com</a>","</p>"
+                ),
             },
             new String[] {
                 "(http://foo?com)",
-                "<p>(\n<a href=\"http://foo?com\">http://foo?com</a>)</p>",
+                MarkdownTxtmarkTest.join(
+                    "<p>(",
+                    "<a href=\"http://foo?com\">http://foo?com</a>)</p>"
+                ),
             },
             new String[] {
                 "(http://foo#com)",
-                "<p>(\n<a href=\"http://foo#com\">http://foo#com</a>)</p>",
+                MarkdownTxtmarkTest.join(
+                    "<p>(",
+                    "<a href=\"http://foo#com\">http://foo#com</a>)</p>"
+                ),
             },
             new String[] {
                 "(https://a?b=c)",
-                "<p>(\n<a href=\"https://a?b=c\">https://a?b=c</a>)</p>",
+                MarkdownTxtmarkTest.join(
+                    "<p>(",
+                    "<a href=\"https://a?b=c\">https://a?b=c</a>)</p>"
+                ),
             },
             new String[] {
                 "[foo](http://foo)",
-                "<p>\n  <a href=\"http://foo\">foo</a>\n</p>",
+                MarkdownTxtmarkTest.join(
+                    "<p>",
+                    "  <a href=\"http://foo\">foo</a>\n</p>"
+                ),
             },
             new String[] {
                 "[http://bar.com](http://bar.com)",
-                "<p>\n  <a href=\"http://bar.com\">http://bar.com</a>\n</p>",
+                MarkdownTxtmarkTest.join("<p>",
+                    "  <a href=\"http://bar.com\">http://bar.com</a>",
+                    "</p>"
+                ),
             },
             new String[] {
                 "[http://googl.com]",
@@ -250,25 +310,27 @@ public final class MarkdownTxtmarkTest {
             },
             new String[] {
                 "[google](http://www.google.com)",
-                "<p>\n  <a href=\"http://www.google.com\">google</a>\n</p>",
+                MarkdownTxtmarkTest.join(
+                    "<p>",
+                    "  <a href=\"http://www.google.com\">google</a>",
+                    "</p>")
+                ,
             },
         };
         for (final String[] pair : texts) {
             MatcherAssert.assertThat(
                 new MarkdownTxtmark().html(pair[0]).trim(),
-                Matchers.equalTo(
-                    MarkdownTxtmarkTest.replaceNewLine(pair[1])
-                )
+                Matchers.equalTo(pair[1])
             );
         }
     }
 
     /**
-     * Replace '\n' to the platform line separator.
-     * @param source Source string
-     * @return Changed string
+     * Join string separated by platform line separator.
+     * @param elements Strings to join
+     * @return
      */
-    private static String replaceNewLine(final String source) {
-        return   source.replace("\n", System.getProperty("line.separator"));
+    private static String join(final String ... elements) {
+        return StringUtils.join(elements, System.getProperty("line.separator"));
     }
 }
