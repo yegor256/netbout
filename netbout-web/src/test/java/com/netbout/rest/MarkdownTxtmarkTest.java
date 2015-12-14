@@ -47,7 +47,13 @@ import org.junit.Test;
  *
  */
 public final class MarkdownTxtmarkTest {
+    /**
+     * Start of html paragraph.
+     */
     private static final String START_PARAGRAPH = "<p>";
+    /**
+     * End of html paragraph.
+     */
     private static final String END_PARAGRAPH = "</p>";
     /**
      * MarkdownTxtmark can handle whitespace after links.
@@ -83,7 +89,7 @@ public final class MarkdownTxtmarkTest {
                 "**hi**, _dude_!",
                 "",
                 "     b**o",
-                "     ",
+                "       ",
                 "    o**m",
                 ""
             )
@@ -277,7 +283,8 @@ public final class MarkdownTxtmarkTest {
             new String[] {
                 "(http://foo?com)",
                 MarkdownTxtmarkTest.join(
-                    "<p>(",
+                    MarkdownTxtmarkTest.START_PARAGRAPH,
+                    "(",
                     "<a href=\"http://foo?com\">http://foo?com</a>)</p>"
                 ),
             },
