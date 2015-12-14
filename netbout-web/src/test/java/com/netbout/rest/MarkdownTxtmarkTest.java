@@ -262,7 +262,7 @@ public final class MarkdownTxtmarkTest {
     @Ignore
     @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
     public void detectsLinks() throws Exception {
-        final String bracket= "(";
+        final String bracket = "(";
         final String[][] texts = {
             new String[] {
                 "<a href=\"http://_google_.com\">g</a>",
