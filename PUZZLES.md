@@ -1,6 +1,6 @@
 ## Puzzles
 
-There are 13 active puzzles (38 total):
+There are 13 active puzzles (39 total):
 
 
 <del>unknown</del> [`?`](../master/?)<br/>
@@ -40,4 +40,5 @@ There are 13 active puzzles (38 total):
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[**738-4d284963**](https://github.com/yegor256/netbout/issues/841) [`EmAlias.java:130-134`](../master/netbout-web/src/main/java/com/netbout/email/EmAlias.java#L130-L134)<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[**738-d76bd177**](https://github.com/yegor256/netbout/issues/842) [`TkSaveEmail.java:53-55`](../master/netbout-web/src/main/java/com/netbout/rest/account/TkSaveEmail.java#L53-L55)<br/>
 &nbsp;&nbsp;&nbsp;[<del>847</del>](https://github.com/yegor256/netbout/issues/847) [`?`](../master/?)<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[**847-f2a7caae**](https://github.com/yegor256/netbout/issues/867) [`Markdown.java:38-40`](../master/netbout-web/src/main/java/com/netbout/rest/Markdown.java#L38-L40)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[<del>847-f2a7caae</del>](https://github.com/yegor256/netbout/issues/867) [`Markdown.java:38-40`](../master/netbout-web/src/main/java/com/netbout/rest/Markdown.java#L38-L40)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[**867-4e7e6e8f**]() [`MarkdownTxtmarkTest.java:42-46`](../master/netbout-web/src/test/java/com/netbout/rest/MarkdownTxtmarkTest.java#L42-L46)<br/>
