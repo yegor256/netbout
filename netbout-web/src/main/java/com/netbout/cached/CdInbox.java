@@ -94,6 +94,7 @@ final class CdInbox implements Inbox {
     }
 
     @Override
+    @Cacheable.FlushBefore
     public Iterable<Bout> iterate() throws IOException {
         return Iterables.transform(
             this.origin.iterate(),
