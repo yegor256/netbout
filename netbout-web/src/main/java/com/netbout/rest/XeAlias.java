@@ -92,13 +92,20 @@ final class XeAlias extends XeWrap {
      * @param alias Alias
      * @return Xembly source
      * @throws IOException If fails
+     * @todo #842:30min/Dev Write test for the logic of generating Xembly for
+     *  {@link Alias} class. It should focus on checking whether tags "email"
+     *  and "newEmail" are properly populated based on input.
      */
     private static XeSource source(final Alias alias) throws IOException {
         final String email;
-        if (alias.email().contains("!")) {
-            email = alias.email().substring(0, alias.email().indexOf('!'));
+        final String newEmail;
+        final String[] emails = alias.email().split("!");
+        if (emails.length > 1) {
+            email = emails[0];
+            newEmail = emails[1];
         } else {
             email = alias.email();
+            newEmail = "";
         }
         return new XeAppend(
             "alias",
@@ -107,7 +114,8 @@ final class XeAlias extends XeWrap {
                     .add("name").set(alias.name()).up()
                     .add("locale").set(alias.locale().toString()).up()
                     .add("photo").set(alias.photo().toString()).up()
-                    .add("email").set(email)
+                    .add("email").set(email).up()
+                    .add("newEmail").set(newEmail)
             )
         );
     }

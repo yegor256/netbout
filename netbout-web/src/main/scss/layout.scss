@@ -194,11 +194,11 @@ $width: 750px;
   }
 }
 
-#notice {
+.notice {
   position: absolute;
   top: $em;
   left: 0;
-  width: 12 * $em;
+  white-space: nowrap;
   background: white;
   border: 1px solid $color-red;
   color: $color-red;
