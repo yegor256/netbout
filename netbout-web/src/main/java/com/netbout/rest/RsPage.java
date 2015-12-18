@@ -37,6 +37,7 @@ import org.takes.facets.fork.Fork;
 import org.takes.facets.fork.RsFork;
 import org.takes.misc.Opt;
 import org.takes.rq.RqHeaders;
+import org.takes.rq.RqWithHeader;
 import org.takes.rs.RsPrettyXML;
 import org.takes.rs.RsWithType;
 import org.takes.rs.RsWrap;
@@ -87,8 +88,9 @@ public final class RsPage extends RsWrap {
             new XePage(base, req, src)
         );
         final Response raw = new RsWithType(xbl, "text/xml");
+        final String all = "*/*";
         final Response rsp = new RsFork(
-            req,
+            new RqWithHeader(req, "Accept", all),
             new Fork() {
                 @Override
                 public Opt<Response> route(final Request rst)
@@ -110,7 +112,7 @@ public final class RsPage extends RsWrap {
             },
             new FkTypes("application/xml,text/xml", raw),
             new FkTypes(
-                "*/*",
+                all,
                 new RsXSLT(new RsWithType(raw, "text/html"))
             )
         );
