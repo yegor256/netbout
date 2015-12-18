@@ -26,6 +26,9 @@
  */
 package com.netbout.rest;
 
+import com.github.rjeschke.txtmark.Processor;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import javax.validation.constraints.NotNull;
 
 /**
@@ -37,9 +40,51 @@ import javax.validation.constraints.NotNull;
  * @since 2.23
  */
 public final class MarkdownTxtmark implements Markdown {
+    /**
+     * Plain link detection pattern.
+     */
+    private static final Pattern LINK = Pattern.compile(
+        "https?://[a-zA-Z0-9-._~:/\\?#@!$&'*+,;=%]+[a-zA-Z0-9-_~/#@$&'*+=%]"
+    );
 
     @Override
     public String html(@NotNull final String txt) {
-        throw new UnsupportedOperationException("not implemented yet");
+        return Processor.process(MarkdownTxtmark.formatLinks(txt));
+    }
+
+    /**
+     * Replace plain links with Markdown syntax. To make sure it doesn't
+     * replace links inside markdown syntax, it makes sure that characters
+     * before and after link do not match to Markdown link syntax.
+     * @param txt Text to find links in
+     * @return Text with Markdown-formatted links
+     */
+    private static String formatLinks(final String txt) {
+        final String marker = "](";
+        final String html = "=\"";
+        final StringBuilder result = new StringBuilder();
+        final Matcher matcher = MarkdownTxtmark.LINK.matcher(txt);
+        int start = 0;
+        while (matcher.find(start)) {
+            result.append(txt.substring(start, matcher.start()));
+            final String prefix = txt.substring(
+                Math.max(0, matcher.start() - 2),
+                matcher.start()
+            );
+            final String suffix = txt.substring(
+                matcher.end(),
+                Math.min(txt.length(), matcher.end() + 2)
+            );
+            final String uri = matcher.group();
+            if (marker.equals(suffix) || marker.equals(prefix)
+                || html.equals(prefix)) {
+                result.append(uri);
+            } else {
+                result.append(String.format("[%1$s](%1$s)", uri));
+            }
+            start = matcher.end();
+        }
+        result.append(txt.substring(start));
+        return result.toString();
     }
 }
