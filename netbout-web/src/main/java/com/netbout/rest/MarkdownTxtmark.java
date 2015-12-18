@@ -53,8 +53,8 @@ public final class MarkdownTxtmark implements Markdown {
     }
 
     /**
-     * Replace plain links with Markdown syntax. To make sure it doesn't
-     * replace links inside markdown syntax, it makes sure that characters
+     * Replace plain links with Markdown syntax. To be convinced it doesn't
+     * replace links inside markdown syntax, it ensures that characters
      * before and after link do not match to Markdown link syntax.
      * @param txt Text to find links in
      * @return Text with Markdown-formatted links
