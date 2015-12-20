@@ -44,7 +44,8 @@ public final class MarkdownTxtmark implements Markdown {
      * Plain link detection pattern.
      */
     private static final Pattern LINK = Pattern.compile(
-        "https?://[a-zA-Z0-9-._~:/\\?#@!$&'*+,;=%]+[a-zA-Z0-9-_~/#@$&'*+=%]"
+        // @checkstyle LineLengthCheck (1 line)
+        "(?<!\\]\\()(?<!=\")(https?:\\/\\/[a-zA-Z0-9-._~:\\?#@!$&'*+,;=%\\/]+[a-zA-Z0-9-_~#@$&'*+=%\\/])(?!.*\\]\\()"
     );
 
     @Override
@@ -60,31 +61,15 @@ public final class MarkdownTxtmark implements Markdown {
      * @return Text with Markdown-formatted links
      */
     private static String formatLinks(final String txt) {
-        final String marker = "](";
-        final String html = "=\"";
-        final StringBuilder result = new StringBuilder();
+        final StringBuffer result = new StringBuffer();
         final Matcher matcher = MarkdownTxtmark.LINK.matcher(txt);
-        int start = 0;
-        while (matcher.find(start)) {
-            result.append(txt.substring(start, matcher.start()));
-            final String prefix = txt.substring(
-                Math.max(0, matcher.start() - 2),
-                matcher.start()
+        while (matcher.find()) {
+            matcher.appendReplacement(
+                result,
+                String.format("[%1$s](%1$s)", matcher.group())
             );
-            final String suffix = txt.substring(
-                matcher.end(),
-                Math.min(txt.length(), matcher.end() + 2)
-            );
-            final String uri = matcher.group();
-            if (marker.equals(suffix) || marker.equals(prefix)
-                || html.equals(prefix)) {
-                result.append(uri);
-            } else {
-                result.append(String.format("[%1$s](%1$s)", uri));
-            }
-            start = matcher.end();
         }
-        result.append(txt.substring(start));
+        matcher.appendTail(result);
         return result.toString();
     }
 }
