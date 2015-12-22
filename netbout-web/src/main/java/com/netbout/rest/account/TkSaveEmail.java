@@ -50,9 +50,6 @@ import org.takes.rq.RqHref;
  * @version $Id$
  * @since 2.14
  * @checkstyle ClassDataAbstractionCouplingCheck (500 lines)
- * @todo #738 If the email attribute value contains !,
- *  we should display an exclamation icon with hint that
- *  the email is not verified yet near the alias name.
  */
 final class TkSaveEmail implements Take {
 
