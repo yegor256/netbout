@@ -33,10 +33,8 @@ import com.netbout.spi.Base;
 import com.netbout.spi.Bout;
 import eu.medsea.mimeutil.MimeUtil;
 import eu.medsea.mimeutil.detector.MagicMimeMimeDetector;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
+
+import java.io.*;
 import java.net.URLDecoder;
 import java.util.Collection;
 import java.util.regex.Matcher;
@@ -96,7 +94,9 @@ final class TkAttach implements Take {
         ).single("file");
         final String name = this.name(file);
         final File temp = File.createTempFile("netbout", "bin");
-        IOUtils.copy(file.body(), new FileOutputStream(temp));
+        try(OutputStream os = new FileOutputStream(temp)){
+            IOUtils.copy(file.body(), os);
+        }
         final Bout bout = new RqBout(this.base, req).bout();
         final StringBuilder msg = new StringBuilder(Tv.HUNDRED);
         if (new Attachments.Search(bout.attachments()).exists(name)) {
@@ -112,9 +112,9 @@ final class TkAttach implements Take {
         final String ctype = TkAttach.ctype(temp);
         msg.append(" (").append(temp.length())
             .append(" bytes, ").append(ctype).append(')');
-        try {
+        try (InputStream is = new FileInputStream(temp)) {
             bout.attachments().get(name).write(
-                new FileInputStream(temp),
+                is,
                 ctype, Long.toString(System.currentTimeMillis())
             );
         } catch (final Attachment.TooBigException
