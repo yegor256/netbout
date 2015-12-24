@@ -155,7 +155,6 @@
             <plugin>
                 <artifactId>maven-failsafe-plugin</artifactId>
                 <configuration>
-              		<parallelTestsTimeoutInSeconds>10</parallelTestsTimeoutInSeconds>
                     <systemPropertyVariables>
                         <netbout.token>${netbout.token}</netbout.token>
                     </systemPropertyVariables>
