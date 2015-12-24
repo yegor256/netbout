@@ -27,7 +27,6 @@
 package com.netbout.client;
 
 import com.netbout.client.cached.CdUser;
-import com.netbout.client.retry.ReUser;
 import com.netbout.spi.User;
 import java.net.URI;
 import org.junit.Assume;
