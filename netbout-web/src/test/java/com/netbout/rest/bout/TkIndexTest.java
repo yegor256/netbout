@@ -37,6 +37,7 @@ import org.junit.Test;
 import org.takes.facets.auth.RqWithAuth;
 import org.takes.rq.RqFake;
 import org.takes.rq.RqMethod;
+import org.takes.rq.RqWithHeader;
 import org.takes.rs.RsPrint;
 
 /**
@@ -70,12 +71,16 @@ public final class TkIndexTest {
             XhtmlMatchers.xhtml(
                 new RsPrint(
                     new FkBout(TkIndexTest.REGEX, new TkIndex(base)).route(
-                        new RqWithAuth(
-                            urn,
-                            new RqFake(
-                                RqMethod.GET,
-                                String.format("/b/%d", bout.number())
-                            )
+                        new RqWithHeader(
+                            new RqWithAuth(
+                                urn,
+                                new RqFake(
+                                    RqMethod.GET,
+                                    String.format("/b/%d", bout.number())
+                                )
+                            ),
+                            "Accept",
+                            "text/xml"
                         )
                     ).get()
                 ).printBody()
@@ -112,15 +117,19 @@ public final class TkIndexTest {
             XhtmlMatchers.xhtml(
                 new RsPrint(
                     new FkBout(TkIndexTest.REGEX, new TkIndex(base)).route(
-                        new RqWithAuth(
-                            urn,
-                            new RqFake(
-                                RqMethod.GET,
-                                String.format(
-                                    "/b/%d/search?q=test",
-                                    bout.number()
+                        new RqWithHeader(
+                            new RqWithAuth(
+                                urn,
+                                new RqFake(
+                                    RqMethod.GET,
+                                    String.format(
+                                        "/b/%d/search?q=test",
+                                        bout.number()
+                                    )
                                 )
-                            )
+                            ),
+                            "Accept",
+                            "text/xml"
                         )
                     ).get()
                 ).printBody()
@@ -132,5 +141,4 @@ public final class TkIndexTest {
             )
         );
     }
-
 }
