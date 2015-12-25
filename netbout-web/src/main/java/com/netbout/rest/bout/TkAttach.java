@@ -33,8 +33,12 @@ import com.netbout.spi.Base;
 import com.netbout.spi.Bout;
 import eu.medsea.mimeutil.MimeUtil;
 import eu.medsea.mimeutil.detector.MagicMimeMimeDetector;
-
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.URLDecoder;
 import java.util.Collection;
 import java.util.regex.Matcher;
@@ -94,7 +98,7 @@ final class TkAttach implements Take {
         ).single("file");
         final String name = this.name(file);
         final File temp = File.createTempFile("netbout", "bin");
-        try(OutputStream os = new FileOutputStream(temp)){
+        try (OutputStream os = new FileOutputStream(temp)) {
             IOUtils.copy(file.body(), os);
         }
         final Bout bout = new RqBout(this.base, req).bout();
