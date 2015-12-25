@@ -45,12 +45,23 @@ import org.takes.rs.RsPrint;
  * @author Yegor Bugayenko (yegor@teamed.io)
  * @version $Id$
  * @since 2.15
+ * @checkstyle ClassDataAbstractionCouplingCheck (500 lines)
  */
 public final class TkIndexTest {
     /**
      * Bout fork regex.
      */
     private static final String REGEX = ".*";
+
+    /**
+     * Accept HTTP request header.
+     */
+    private static final String HEADER_ACCEPT = "Accept";
+
+    /**
+     * MIME Type text/xml.
+     */
+    private static final String MIME_TEXT_XML = "text/xml";
 
     /**
      * TkIndex can render bout page.
@@ -79,8 +90,8 @@ public final class TkIndexTest {
                                     String.format("/b/%d", bout.number())
                                 )
                             ),
-                            "Accept",
-                            "text/xml"
+                            HEADER_ACCEPT,
+                            MIME_TEXT_XML
                         )
                     ).get()
                 ).printBody()
@@ -97,6 +108,7 @@ public final class TkIndexTest {
             )
         );
     }
+
     /**
      * TkIndex can search bout messages.
      * @throws Exception If there is some problem inside
@@ -128,8 +140,8 @@ public final class TkIndexTest {
                                     )
                                 )
                             ),
-                            "Accept",
-                            "text/xml"
+                            HEADER_ACCEPT,
+                            MIME_TEXT_XML
                         )
                     ).get()
                 ).printBody()

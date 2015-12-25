@@ -56,13 +56,17 @@ public final class TkIndexTest {
         base.user(URN.create(urn)).aliases().add(alias);
         MatcherAssert.assertThat(
             new RsPrint(
-                new TkIndex(base).act(new RqWithHeader(new RqWithAuth(urn),"Accept", "text/xml"))
-                ).printBody(),
+                new TkIndex(base).act(
+                    new RqWithHeader(
+                        new RqWithAuth(urn),
+                        "Accept",
+                        "text/xml"
+                    )
+                )).printBody(),
             XhtmlMatchers.hasXPaths(
                 "/page/alias/email",
                 "/page/links/link[@rel='save-email']/@href"
             )
         );
     }
-
 }
