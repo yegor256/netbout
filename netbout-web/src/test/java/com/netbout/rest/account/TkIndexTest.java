@@ -62,7 +62,8 @@ public final class TkIndexTest {
                         "Accept",
                         "text/xml"
                     )
-                )).printBody(),
+                )
+            ).printBody(),
             XhtmlMatchers.hasXPaths(
                 "/page/alias/email",
                 "/page/links/link[@rel='save-email']/@href"

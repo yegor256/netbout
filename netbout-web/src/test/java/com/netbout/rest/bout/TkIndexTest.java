@@ -45,7 +45,7 @@ import org.takes.rs.RsPrint;
  * @author Yegor Bugayenko (yegor@teamed.io)
  * @version $Id$
  * @since 2.15
- * @checkstyle ClassDataAbstractionCouplingCheck (500 lines)
+ * @checkstyle ClassDataAbstractionCouplingCheck (2 lines)
  */
 public final class TkIndexTest {
     /**
@@ -90,8 +90,8 @@ public final class TkIndexTest {
                                     String.format("/b/%d", bout.number())
                                 )
                             ),
-                            HEADER_ACCEPT,
-                            MIME_TEXT_XML
+                            TkIndexTest.HEADER_ACCEPT,
+                            TkIndexTest.MIME_TEXT_XML
                         )
                     ).get()
                 ).printBody()
@@ -140,8 +140,8 @@ public final class TkIndexTest {
                                     )
                                 )
                             ),
-                            HEADER_ACCEPT,
-                            MIME_TEXT_XML
+                            TkIndexTest.HEADER_ACCEPT,
+                            TkIndexTest.MIME_TEXT_XML
                         )
                     ).get()
                 ).printBody()
@@ -153,4 +153,5 @@ public final class TkIndexTest {
             )
         );
     }
+
 }
