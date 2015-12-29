@@ -1,6 +1,6 @@
 ## Puzzles
 
-There are 15 active puzzles (42 total):
+There are 14 active puzzles (42 total):
 
 
 <del>unknown</del> [`?`](../master/?)<br/>
@@ -38,7 +38,7 @@ There are 15 active puzzles (42 total):
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[#827](https://github.com/yegor256/netbout/issues/827):[**806-43ee63d7**](https://github.com/yegor256/netbout/issues/827) [`MkBout.java:104-106`](../master/netbout-client/src/main/java/com/netbout/mock/MkBout.java#L104-L106)<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;[<del>738</del>](https://github.com/yegor256/netbout/issues/738) [`?`](../master/?)<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[#841](https://github.com/yegor256/netbout/issues/841):[**738-4d284963**](https://github.com/yegor256/netbout/issues/841) [`EmAlias.java:130-134`](../master/netbout-web/src/main/java/com/netbout/email/EmAlias.java#L130-L134)<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[#842](https://github.com/yegor256/netbout/issues/842):[**738-d76bd177**](https://github.com/yegor256/netbout/issues/842) [`TkSaveEmail.java:53-55`](../master/netbout-web/src/main/java/com/netbout/rest/account/TkSaveEmail.java#L53-L55)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[#842](https://github.com/yegor256/netbout/issues/842):[<del>738-d76bd177</del>](https://github.com/yegor256/netbout/issues/842) [`TkSaveEmail.java:53-55`](../master/netbout-web/src/main/java/com/netbout/rest/account/TkSaveEmail.java#L53-L55)<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[#879](https://github.com/yegor256/netbout/issues/879):[**842-9eb73ef4**](https://github.com/yegor256/netbout/issues/879) [`XeAlias.java:95-97`](../master/netbout-web/src/main/java/com/netbout/rest/XeAlias.java#L95-L97)<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;[#847](https://github.com/yegor256/netbout/issues/847):[<del>847</del>](https://github.com/yegor256/netbout/issues/847) [`?`](../master/?)<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[#867](https://github.com/yegor256/netbout/issues/867):[<del>847-f2a7caae</del>](https://github.com/yegor256/netbout/issues/867) [`Markdown.java:38-40`](../master/netbout-web/src/main/java/com/netbout/rest/Markdown.java#L38-L40)<br/>
