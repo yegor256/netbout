@@ -37,7 +37,6 @@ import org.junit.Test;
 import org.takes.facets.auth.RqWithAuth;
 import org.takes.rq.RqFake;
 import org.takes.rq.RqMethod;
-import org.takes.rq.RqWithHeader;
 import org.takes.rs.RsPrint;
 
 /**
@@ -45,23 +44,12 @@ import org.takes.rs.RsPrint;
  * @author Yegor Bugayenko (yegor@teamed.io)
  * @version $Id$
  * @since 2.15
- * @checkstyle ClassDataAbstractionCouplingCheck (2 lines)
  */
 public final class TkIndexTest {
     /**
      * Bout fork regex.
      */
     private static final String REGEX = ".*";
-
-    /**
-     * Accept HTTP request header.
-     */
-    private static final String HEADER_ACCEPT = "Accept";
-
-    /**
-     * MIME Type text/xml.
-     */
-    private static final String MIME_TEXT_XML = "text/xml";
 
     /**
      * TkIndex can render bout page.
@@ -82,16 +70,12 @@ public final class TkIndexTest {
             XhtmlMatchers.xhtml(
                 new RsPrint(
                     new FkBout(TkIndexTest.REGEX, new TkIndex(base)).route(
-                        new RqWithHeader(
-                            new RqWithAuth(
-                                urn,
-                                new RqFake(
-                                    RqMethod.GET,
-                                    String.format("/b/%d", bout.number())
-                                )
-                            ),
-                            TkIndexTest.HEADER_ACCEPT,
-                            TkIndexTest.MIME_TEXT_XML
+                        new RqWithAuth(
+                            urn,
+                            new RqFake(
+                                RqMethod.GET,
+                                String.format("/b/%d", bout.number())
+                            )
                         )
                     ).get()
                 ).printBody()
@@ -108,7 +92,6 @@ public final class TkIndexTest {
             )
         );
     }
-
     /**
      * TkIndex can search bout messages.
      * @throws Exception If there is some problem inside
@@ -129,19 +112,15 @@ public final class TkIndexTest {
             XhtmlMatchers.xhtml(
                 new RsPrint(
                     new FkBout(TkIndexTest.REGEX, new TkIndex(base)).route(
-                        new RqWithHeader(
-                            new RqWithAuth(
-                                urn,
-                                new RqFake(
-                                    RqMethod.GET,
-                                    String.format(
-                                        "/b/%d/search?q=test",
-                                        bout.number()
-                                    )
+                        new RqWithAuth(
+                            urn,
+                            new RqFake(
+                                RqMethod.GET,
+                                String.format(
+                                    "/b/%d/search?q=test",
+                                    bout.number()
                                 )
-                            ),
-                            TkIndexTest.HEADER_ACCEPT,
-                            TkIndexTest.MIME_TEXT_XML
+                            )
                         )
                     ).get()
                 ).printBody()

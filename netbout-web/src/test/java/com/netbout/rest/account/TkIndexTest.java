@@ -33,7 +33,6 @@ import com.netbout.spi.Base;
 import org.hamcrest.MatcherAssert;
 import org.junit.Test;
 import org.takes.facets.auth.RqWithAuth;
-import org.takes.rq.RqWithHeader;
 import org.takes.rs.RsPrint;
 
 /**
@@ -56,13 +55,7 @@ public final class TkIndexTest {
         base.user(URN.create(urn)).aliases().add(alias);
         MatcherAssert.assertThat(
             new RsPrint(
-                new TkIndex(base).act(
-                    new RqWithHeader(
-                        new RqWithAuth(urn),
-                        "Accept",
-                        "text/xml"
-                    )
-                )
+                new TkIndex(base).act(new RqWithAuth(urn))
             ).printBody(),
             XhtmlMatchers.hasXPaths(
                 "/page/alias/email",
@@ -70,4 +63,5 @@ public final class TkIndexTest {
             )
         );
     }
+
 }

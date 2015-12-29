@@ -26,6 +26,7 @@
  */
 package com.netbout.rest.account;
 
+import com.netbout.rest.RqWithDefaultHeader;
 import com.netbout.rest.RsPage;
 import com.netbout.spi.Base;
 import java.io.IOException;
@@ -62,7 +63,7 @@ final class TkIndex implements Take {
         return new RsPage(
             "/xsl/account.xsl",
             this.base,
-            req,
+            new RqWithDefaultHeader(req, "accept", "text/xml"),
             new XeLink("save-email", "/acc/save")
         );
     }
