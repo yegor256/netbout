@@ -31,42 +31,49 @@ import java.io.InputStream;
 import org.takes.Request;
 import org.takes.rq.RqHeaders;
 import org.takes.rq.RqWithHeader;
-import org.takes.rq.RqWrap;
 
 /**
  * Request with default header.
  * @author Andrey Eliseev (aeg.exper0@gmail.com)
  * @version $Id$
- * @checkstyle AvoidInlineConditionalsCheck (20 lines)
  */
-public class RqWithDefaultHeader extends RqWrap {
+public final class RqWithDefaultHeader implements Request {
 
+    /**
+     * Request with specified header.
+     */
+    private final transient Request request;
     /**
      * Ctor.
      * @param req Original request
-     * @param header Header name
-     * @param value Header value
+     * @param hdr Header name
+     * @param val Header value
      */
     public RqWithDefaultHeader(final Request req,
-        final String header,
-        final String value) {
-        super(new Request() {
-            @Override
-            public Iterable<String> head() throws IOException {
-                return hasHeader()
-                        ? req.head()
-                        : new RqWithHeader(req, header, value).head();
+                                final String hdr,
+                                final String val) {
+        try {
+            if (new RqHeaders.Base(req)
+                    .header(hdr)
+                    .iterator()
+                    .hasNext()
+                ) {
+                this.request = req;
+            } else {
+                this.request = new RqWithHeader(req, hdr, val);
             }
-            @Override
-            public InputStream body() throws IOException {
-                return req.body();
-            }
-            private boolean hasHeader() throws IOException {
-                return new RqHeaders.Base(req)
-                        .header(header)
-                        .iterator()
-                        .hasNext();
-            }
-        });
+        } catch (final IOException ex) {
+            throw new IllegalStateException(ex);
+        }
+    }
+
+    @Override
+    public Iterable<String> head() throws IOException {
+        return this.request.head();
+    }
+
+    @Override
+    public InputStream body() throws IOException {
+        return this.request.body();
     }
 }

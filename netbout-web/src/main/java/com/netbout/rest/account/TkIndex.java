@@ -26,6 +26,7 @@
  */
 package com.netbout.rest.account;
 
+import com.google.common.net.HttpHeaders;
 import com.netbout.rest.RqWithDefaultHeader;
 import com.netbout.rest.RsPage;
 import com.netbout.spi.Base;
@@ -63,7 +64,7 @@ final class TkIndex implements Take {
         return new RsPage(
             "/xsl/account.xsl",
             this.base,
-            new RqWithDefaultHeader(req, "accept", "text/xml"),
+            new RqWithDefaultHeader(req, HttpHeaders.ACCEPT, "text/xml"),
             new XeLink("save-email", "/acc/save")
         );
     }

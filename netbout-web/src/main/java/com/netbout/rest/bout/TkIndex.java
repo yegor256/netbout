@@ -27,6 +27,7 @@
 package com.netbout.rest.bout;
 
 import com.google.common.collect.Iterables;
+import com.google.common.net.HttpHeaders;
 import com.netbout.rest.RqWithDefaultHeader;
 import com.netbout.rest.RsPage;
 import com.netbout.spi.Attachment;
@@ -80,12 +81,12 @@ final class TkIndex implements Take {
         );
         final Bout bout = new RqBout(this.base, req).bout();
         final Href home = new Href("/b").path(bout.number());
-        final RqWithDefaultHeader reqdef =
-                new RqWithDefaultHeader(req, "accept", "text/xml");
+        final RqWithDefaultHeader request =
+                new RqWithDefaultHeader(req, HttpHeaders.ACCEPT, "text/xml");
         return new RsPage(
             "/xsl/bout.xsl",
             this.base,
-            reqdef,
+            request,
             new XeAppend(
                 "bout",
                 new XeDirectives(
@@ -121,7 +122,7 @@ final class TkIndex implements Take {
                             @Override
                             public XeSource transform(final Attachment atmt)
                                 throws IOException {
-                                return new XeAttachment(reqdef, bout, atmt);
+                                return new XeAttachment(request, bout, atmt);
                             }
                         }
                     )
@@ -129,7 +130,7 @@ final class TkIndex implements Take {
                 new XeAppend(
                     "messages",
                     new XeTransform<>(
-                        this.messages(bout, reqdef, query),
+                        this.messages(bout, request, query),
                         new XeTransform.Func<Message>() {
                             @Override
                             public XeSource transform(final Message msg)
