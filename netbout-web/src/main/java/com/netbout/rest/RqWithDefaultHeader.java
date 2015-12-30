@@ -27,53 +27,47 @@
 package com.netbout.rest;
 
 import java.io.IOException;
-import java.io.InputStream;
 import org.takes.Request;
 import org.takes.rq.RqHeaders;
 import org.takes.rq.RqWithHeader;
+import org.takes.rq.RqWrap;
 
 /**
  * Request with default header.
  * @author Andrey Eliseev (aeg.exper0@gmail.com)
  * @version $Id$
  */
-public final class RqWithDefaultHeader implements Request {
+public final class RqWithDefaultHeader extends RqWrap {
 
-    /**
-     * Request with specified header.
-     */
-    private final transient Request request;
     /**
      * Ctor.
      * @param req Original request
      * @param hdr Header name
      * @param val Header value
+     * @throws IOException in case of request errors
      */
     public RqWithDefaultHeader(final Request req,
-                                final String hdr,
-                                final String val) {
-        try {
-            if (new RqHeaders.Base(req)
-                    .header(hdr)
-                    .iterator()
-                    .hasNext()
-                ) {
-                this.request = req;
-            } else {
-                this.request = new RqWithHeader(req, hdr, val);
-            }
-        } catch (final IOException ex) {
-            throw new IllegalStateException(ex);
+        final String hdr, final String val) throws IOException {
+        super(RqWithDefaultHeader.buildRequest(req, hdr, val));
+    }
+
+    /**
+     * Builds the request with the default header if it is not already present.
+     * @param req Original request.
+     * @param hdr Header name.
+     * @param val Header value.
+     * @return The new request.
+     * @throws IOException in case of request errors
+     */
+    private static Request buildRequest(final Request req,
+        final String hdr, final String val) throws IOException {
+        final Request request;
+        if (new RqHeaders.Base(req).header(hdr).iterator().hasNext()) {
+            request = req;
+        } else {
+            request = new RqWithHeader(req, hdr, val);
         }
+        return request;
     }
 
-    @Override
-    public Iterable<String> head() throws IOException {
-        return this.request.head();
-    }
-
-    @Override
-    public InputStream body() throws IOException {
-        return this.request.body();
-    }
 }
