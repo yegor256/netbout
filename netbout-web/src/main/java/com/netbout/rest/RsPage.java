@@ -88,9 +88,8 @@ public final class RsPage extends RsWrap {
             new XePage(base, req, src)
         );
         final Response raw = new RsWithType(xbl, "text/xml");
-        final String all = "*/*";
         final Response rsp = new RsFork(
-            new RqWithHeader(req, "Accept", all),
+            req,
             new Fork() {
                 @Override
                 public Opt<Response> route(final Request rst)
@@ -112,7 +111,7 @@ public final class RsPage extends RsWrap {
             },
             new FkTypes("application/xml,text/xml", raw),
             new FkTypes(
-                all,
+                "*/*",
                 new RsXSLT(new RsWithType(raw, "text/html"))
             )
         );
