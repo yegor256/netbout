@@ -26,6 +26,9 @@
  */
 package com.netbout.rest;
 
+import com.github.rjeschke.txtmark.Processor;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import javax.validation.constraints.NotNull;
 
 /**
@@ -37,9 +40,39 @@ import javax.validation.constraints.NotNull;
  * @since 2.23
  */
 public final class MarkdownTxtmark implements Markdown {
+    /**
+     * Plain link detection pattern.
+     */
+    private static final Pattern LINK = Pattern.compile(
+        // @checkstyle LineLengthCheck (1 line)
+        "(?<!\\]\\()(?<!=\")(https?:\\/\\/[a-zA-Z0-9-._~:\\?#@!$&'*+,;=%\\/]+[a-zA-Z0-9-_~#@$&'*+=%\\/])(?!.*\\]\\()"
+    );
 
     @Override
     public String html(@NotNull final String txt) {
-        throw new UnsupportedOperationException("not implemented yet");
+        return Processor.process(MarkdownTxtmark.formatLinks(txt));
+    }
+
+    /**
+     * Replace plain links with Markdown syntax. To be convinced it doesn't
+     * replace links inside markdown syntax, it ensures that characters
+     * before and after link do not match to Markdown link syntax.
+     * @param txt Text to find links in
+     * @return Text with Markdown-formatted links
+     * @todo #873:30min/DEV We need more tests for the case, when text
+     *  contains several links. Both plain links and markdown preformatted links
+     *  need to be checked.
+     */
+    private static String formatLinks(final String txt) {
+        final StringBuffer result = new StringBuffer();
+        final Matcher matcher = MarkdownTxtmark.LINK.matcher(txt);
+        while (matcher.find()) {
+            matcher.appendReplacement(
+                result,
+                String.format("[%1$s](%1$s)", matcher.group())
+            );
+        }
+        matcher.appendTail(result);
+        return result.toString();
     }
 }

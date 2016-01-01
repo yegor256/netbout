@@ -26,8 +26,8 @@
  */
 package com.netbout.rest;
 
+import com.google.common.base.Joiner;
 import com.jcabi.matchers.XhtmlMatchers;
-import org.apache.commons.lang3.StringUtils;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Ignore;
@@ -39,40 +39,27 @@ import org.junit.Test;
  * @author Dmitry Zaytsev (dmitry.zaytsev@gmail.com)
  * @version $Id$
  * @since 2.23
- * @todo #867:30min/DEV MarkdownTxtmark not implemented but has to be.
- *  See #847 for details.
- *  This class should be implementation of Markdown using TxtMark.
- *  See https://github.com/rjeschke/txtmark.
- *  After that don't forget remove Ignore annotation from unit tests.
  *
  */
 public final class MarkdownTxtmarkTest {
     /**
-     * Start of html paragraph.
+     * End of line.
      */
-    private static final String START_PARAGRAPH = "<p>";
-    /**
-     * End of html paragraph.
-     */
-    private static final String END_PARAGRAPH = "</p>";
+    private static final String EOL = "\n";
+
     /**
      * MarkdownTxtmark can handle whitespace after links.
      * @throws Exception If there is some problem inside
      */
     @Test
-    @Ignore
     public void handlesWhitespaceAfterLinks() throws Exception {
         MatcherAssert.assertThat(
             new MarkdownTxtmark().html(
                 "Hi [google](http://www.google.com) how are you?"
             ),
             Matchers.equalTo(
-                MarkdownTxtmarkTest.join(
-                    "MarkdownTxtmarkTest.START_PARAGRAPHHi ",
-                    // @checkstyle LineLengthCheck (1 line)
-                    "<a href=\"http://www.google.com\">google</a> how are you?</p>",
-                    ""
-                )
+                // @checkstyle LineLengthCheck (1 line)
+                "<p>Hi <a href=\"http://www.google.com\">google</a> how are you?</p>\n"
             )
         );
     }
@@ -82,14 +69,14 @@ public final class MarkdownTxtmarkTest {
      * @throws Exception If there is some problem inside
      */
     @Test
-    @Ignore
     public void formatsTextToHtml() throws Exception {
         final String meta = new MarkdownTxtmark().html(
-            MarkdownTxtmarkTest.join(
-                "**hi**, _dude_!",
+            Joiner.on(MarkdownTxtmarkTest.EOL).join(
+                "**hi**, _dude_!\r",
                 "",
                 "     b**o",
                 "       ",
+                "        ",
                 "    o**m",
                 ""
             )
@@ -101,11 +88,8 @@ public final class MarkdownTxtmarkTest {
                 XhtmlMatchers.hasXPaths(
                     "/x/p/strong[.='hi']",
                     "/x/p/em[.='dude']",
-                    MarkdownTxtmarkTest.join(
-                        "/x/pre/code[.=' b**o",
-                        "",
-                        "",
-                        "o**m']"
+                    Joiner.on(MarkdownTxtmarkTest.EOL).join(
+                        "/x/pre/code[.=' b**o", "", "", "o**m", "']"
                     )
                 )
             )
@@ -117,15 +101,20 @@ public final class MarkdownTxtmarkTest {
      * @throws Exception If there is some problem inside
      */
     @Test
-    @Ignore
     @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
     public void handlesBrokenFormattingGracefully() throws Exception {
         final String[] texts = {
-            MarkdownTxtmarkTest.join("**", ""),
+            Joiner.on(MarkdownTxtmarkTest.EOL).join("**", ""),
             "__",
             "",
             "**hi there! {{{",
-            MarkdownTxtmarkTest.join("    ", " ", "      ", "     ", ""),
+            Joiner.on(MarkdownTxtmarkTest.EOL).join(
+                "    ",
+                " ",
+                "      ",
+                "     ",
+                ""
+            ),
         };
         for (final String text : texts) {
             MatcherAssert.assertThat(
@@ -140,41 +129,31 @@ public final class MarkdownTxtmarkTest {
      * @throws Exception If there is some problem inside
      */
     @Test
-    @Ignore
     @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
     public void formatsTextFragmentsToHtml() throws Exception {
         final String[][] texts = {
-            new String[] {"hi, *dude*!", "<p>hi, \n<em>dude</em>!</p>"},
+            new String[] {"hi, *dude*!", "<p>hi, <em>dude</em>!</p>"},
             new String[] {
                 "hello, **dude**!",
-                "<p>hello, \n<strong>dude</strong>!</p>",
+                "<p>hello, <strong>dude</strong>!</p>",
             },
             new String[] {
                 "wazzup, ***dude***!",
-                MarkdownTxtmarkTest.join(
-                    "<p>wazzup, ",
-                    "<strong>",
-                    "  <em>dude</em>",
-                    "</strong>!</p>"
-                ),
+                "<p>wazzup, <strong><em>dude</em></strong>!</p>",
             },
             new String[] {
                 "hey, _man_!",
-                MarkdownTxtmarkTest.join("<p>hey, ", "<em>man</em>!</p>"),
+                "<p>hey, <em>man</em>!</p>",
             },
             new String[] {
                 "x: `oops`",
-                MarkdownTxtmarkTest.join("<p>x: ", "<code>oops</code></p>"),
+                "<p>x: <code>oops</code></p>",
             },
             new String[] {
                 "[a](http://foo)",
-                MarkdownTxtmarkTest.join(
-                    MarkdownTxtmarkTest.START_PARAGRAPH,
-                    "  <a href=\"http://foo\">a</a>",
-                    MarkdownTxtmarkTest.END_PARAGRAPH
-                ),
+                "<p><a href=\"http://foo\">a</a></p>",
             },
-            new String[] {"}}}\n", "<p>}}}</p>"},
+            new String[] {"}}}", "<p>}}}</p>"},
         };
         for (final String[] pair : texts) {
             MatcherAssert.assertThat(
@@ -189,10 +168,9 @@ public final class MarkdownTxtmarkTest {
      * @throws Exception If there is some problem inside
      */
     @Test
-    @Ignore
     public void formatsBulletsToHtml() throws Exception {
         final String meta = new MarkdownTxtmark().html(
-            MarkdownTxtmarkTest.join(
+            Joiner.on(MarkdownTxtmarkTest.EOL).join(
                 "my list:",
                 "",
                 "* line one",
@@ -219,19 +197,26 @@ public final class MarkdownTxtmarkTest {
     /**
      * MarkdownTxtmark can break a single line.
      * @throws Exception If there is some problem inside
+     * @todo #873:30min/DEV MarkdownTxtmark doesn't break a line on a new line
+     *  symbol. It should put br code or make a new paragraph on each new line
+     *  in the input data. I didn't find that option in TxtMark's settings,
+     *  but perhaps I missed something. If the option won't be found we can
+     *  replace single eol symbol to double eol as workaround.
      */
     @Test
     @Ignore
     public void breaksSingleLine() throws Exception {
         MatcherAssert.assertThat(
             new MarkdownTxtmark().html(
-                MarkdownTxtmarkTest.join("line1", "line2", "", "line3").trim()
+                Joiner.on(MarkdownTxtmarkTest.EOL)
+                    .join("line1", "line2", "", "line3").trim()
             ),
             Matchers.equalTo(
-                MarkdownTxtmarkTest.join(
-                    "<p>line1",
-                    "<br /",
-                    ">line2</p>",
+                Joiner.on(MarkdownTxtmarkTest.EOL).join(
+                    "<p>line1 ",
+                    "line2 ",
+                    "<br/>",
+                    "line2</p>",
                     "<p>line3</p>"
                 )
             )
@@ -243,7 +228,6 @@ public final class MarkdownTxtmarkTest {
      * @throws Exception If there is some problem inside
      */
     @Test
-    @Ignore
     public void leavesDivUntouched() throws Exception {
         MatcherAssert.assertThat(
             new MarkdownTxtmark().html("<div>hey<svg viewBox='444'/></div>"),
@@ -259,78 +243,44 @@ public final class MarkdownTxtmarkTest {
      * @throws Exception If there is some problem inside
      */
     @Test
-    @Ignore
     @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
     public void detectsLinks() throws Exception {
-        final String bracket = "(";
         final String[][] texts = {
             new String[] {
                 "<a href=\"http://_google_.com\">g</a>",
-                MarkdownTxtmarkTest.join(
-                    MarkdownTxtmarkTest.START_PARAGRAPH,
-                    "  <a href=\"http://_google_.com\">g</a>",
-                    MarkdownTxtmarkTest.END_PARAGRAPH
-                ),
+                "<p><a href=\"http://_google_.com\">g</a></p>",
             },
             new String[] {
                 "http://foo.com",
-                MarkdownTxtmarkTest.join(
-                    MarkdownTxtmarkTest.START_PARAGRAPH,
-                    "  ",
-                    "<a href=\"http://foo.com\">http://foo.com</a>",
-                    MarkdownTxtmarkTest.END_PARAGRAPH
-                ),
+                "<p><a href=\"http://foo.com\">http://foo.com</a></p>",
             },
-            new String[] {
+            new String[]{
                 "(http://foo?com)",
-                MarkdownTxtmarkTest.join(
-                    MarkdownTxtmarkTest.START_PARAGRAPH,
-                    bracket,
-                    "<a href=\"http://foo?com\">http://foo?com</a>)</p>"
-                ),
+                "<p>(<a href=\"http://foo?com\">http://foo?com</a>)</p>",
             },
             new String[] {
                 "(http://foo#com)",
-                MarkdownTxtmarkTest.join(
-                    MarkdownTxtmarkTest.START_PARAGRAPH,
-                    bracket,
-                    "<a href=\"http://foo#com\">http://foo#com</a>)</p>"
-                ),
+                "<p>(<a href=\"http://foo#com\">http://foo#com</a>)</p>",
             },
             new String[] {
                 "(https://a?b=c)",
-                MarkdownTxtmarkTest.join(
-                    MarkdownTxtmarkTest.START_PARAGRAPH,
-                    bracket,
-                    "<a href=\"https://a?b=c\">https://a?b=c</a>)</p>"
-                ),
+                "<p>(<a href=\"https://a?b=c\">https://a?b=c</a>)</p>",
             },
             new String[] {
                 "[foo](http://foo)",
-                MarkdownTxtmarkTest.join(
-                    MarkdownTxtmarkTest.START_PARAGRAPH,
-                    "  <a href=\"http://foo\">foo</a>\n</p>"
-                ),
+                "<p><a href=\"http://foo\">foo</a></p>",
             },
             new String[] {
                 "[http://bar.com](http://bar.com)",
-                MarkdownTxtmarkTest.join(
-                    MarkdownTxtmarkTest.START_PARAGRAPH,
-                    "  <a href=\"http://bar.com\">http://bar.com</a>",
-                    MarkdownTxtmarkTest.END_PARAGRAPH
-                ),
+                "<p><a href=\"http://bar.com\">http://bar.com</a></p>",
             },
             new String[] {
                 "[http://googl.com]",
-                "<p>[\n<a href=\"http://googl.com\">http://googl.com</a>]</p>",
+                "<p>[<a href=\"http://googl.com\">http://googl.com</a>]</p>",
             },
             new String[] {
                 "[google](http://www.google.com)",
-                MarkdownTxtmarkTest.join(
-                    MarkdownTxtmarkTest.START_PARAGRAPH,
-                    "  <a href=\"http://www.google.com\">google</a>",
-                    MarkdownTxtmarkTest.END_PARAGRAPH
-                ),
+                "<p><a href=\"http://www.google.com\">google</a></p>",
             },
         };
         for (final String[] pair : texts) {
@@ -339,14 +289,5 @@ public final class MarkdownTxtmarkTest {
                 Matchers.equalTo(pair[1])
             );
         }
-    }
-
-    /**
-     * Join string separated by platform line separator.
-     * @param elements Strings to join
-     * @return Joined elements
-     */
-    private static String join(final String ... elements) {
-        return StringUtils.join(elements, System.getProperty("line.separator"));
     }
 }

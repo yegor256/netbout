@@ -27,7 +27,6 @@
 package com.netbout.client;
 
 import com.netbout.client.cached.CdUser;
-import com.netbout.client.retry.ReUser;
 import com.netbout.spi.User;
 import java.net.URI;
 import org.junit.Assume;
@@ -53,7 +52,7 @@ public final class NbRule implements TestRule {
             System.getProperty("netbout.url", "http://www.netbout.com")
         );
         Assume.assumeNotNull(token);
-        return new ReUser(new CdUser(new RtUser(url, token)));
+        return new CdUser(new RtUser(url, token));
     }
 
     @Override
