@@ -45,7 +45,7 @@ public final class MarkdownTxtmark implements Markdown {
      */
     private static final Pattern LINK = Pattern.compile(
         // @checkstyle LineLengthCheck (1 line)
-        "(?<!\\]\\()(?<!=\")(https?:\\/\\/[a-zA-Z0-9-._~:\\?#@!$&'*+,;=%\\/]+[a-zA-Z0-9-_~#@$&'*+=%\\/])(?!.*\\]\\()"
+        "(?<!\\]\\()(?<!=\")(https?:\\/\\/[a-zA-Z0-9-._~:\\?#@!$&'*+,;=%\\/]+[a-zA-Z0-9-_~#@$&'*+=%\\/])(?![\\w.]*\\]\\()"
     );
 
     @Override
