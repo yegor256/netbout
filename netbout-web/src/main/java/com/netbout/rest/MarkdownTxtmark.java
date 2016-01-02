@@ -59,9 +59,6 @@ public final class MarkdownTxtmark implements Markdown {
      * before and after link do not match to Markdown link syntax.
      * @param txt Text to find links in
      * @return Text with Markdown-formatted links
-     * @todo #873:30min/DEV We need more tests for the case, when text
-     *  contains several links. Both plain links and markdown preformatted links
-     *  need to be checked.
      */
     private static String formatLinks(final String txt) {
         final StringBuffer result = new StringBuffer();
