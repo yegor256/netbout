@@ -17,5 +17,6 @@ install:
   - gem install est
 script:
   - mvn clean install -Pqulice --batch-mode --errors
-  - pdd --source=$(pwd) --verbose --file=/dev/null
+  - mvn clean
+  - pdd --source=$(pwd) --file=/dev/null
   - est --dir=est --file=/dev/null
