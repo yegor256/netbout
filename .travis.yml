@@ -3,12 +3,16 @@ sudo: false
 cache:
   directories:
     - $HOME/.m2
+addons:
+  apt:
+    packages:
+    - libmagic1
+    - libmagic-dev
 before_install:
   - unset GEM_PATH
 install:
   - npm install phantomjs -g
   - npm install casperjs -g
-  - travis_retry sudo apt-get install -y --fix-missing libmagic1 libmagic-dev
   - gem install pdd
   - gem install est
 script:
