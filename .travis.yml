@@ -3,10 +3,20 @@ sudo: false
 cache:
   directories:
     - $HOME/.m2
+addons:
+  apt:
+    packages:
+    - libmagic1
+    - libmagic-dev
 before_install:
   - unset GEM_PATH
 install:
   - npm install phantomjs -g
   - npm install casperjs -g
+  - gem install pdd
+  - gem install est
 script:
   - mvn clean install -Pqulice --batch-mode --errors
+  - mvn clean
+  - pdd --source=$(pwd) --file=/dev/null
+  - est --dir=est --file=/dev/null

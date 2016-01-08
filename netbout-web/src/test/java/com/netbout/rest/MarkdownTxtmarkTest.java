@@ -282,6 +282,17 @@ public final class MarkdownTxtmarkTest {
                 "[google](http://www.google.com)",
                 "<p><a href=\"http://www.google.com\">google</a></p>",
             },
+            new String[] {
+                Joiner.on(MarkdownTxtmarkTest.EOL).join(
+                    "http://yahoo.com",
+                    "http://bar.com [http://af.com](http://af.com) end"
+                ),
+                Joiner.on(MarkdownTxtmarkTest.EOL).join(
+                    "<p><a href=\"http://yahoo.com\">http://yahoo.com</a>",
+                    // @checkstyle LineLengthCheck (1 line)
+                    "<a href=\"http://bar.com\">http://bar.com</a> <a href=\"http://af.com\">http://af.com</a> end</p>"
+                ),
+            },
         };
         for (final String[] pair : texts) {
             MatcherAssert.assertThat(
