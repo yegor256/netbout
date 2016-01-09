@@ -1,6 +1,6 @@
 ## Puzzles
 
-There are 14 active puzzles (42 total):
+There are 13 active puzzles (42 total):
 
 
 <del>unknown</del> [`?`](../master/?)<br/>
@@ -43,5 +43,5 @@ There are 14 active puzzles (42 total):
 &nbsp;&nbsp;&nbsp;&nbsp;[#847](https://github.com/yegor256/netbout/issues/847):[<del>847</del>](https://github.com/yegor256/netbout/issues/847) [`?`](../master/?)<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[#867](https://github.com/yegor256/netbout/issues/867):[<del>847-f2a7caae</del>](https://github.com/yegor256/netbout/issues/867) [`Markdown.java:38-40`](../master/netbout-web/src/main/java/com/netbout/rest/Markdown.java#L38-L40)<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[#873](https://github.com/yegor256/netbout/issues/873):[<del>867-4e7e6e8f</del>](https://github.com/yegor256/netbout/issues/873) [`MarkdownTxtmarkTest.java:42-46`](../master/netbout-web/src/test/java/com/netbout/rest/MarkdownTxtmarkTest.java#L42-L46)<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[#889](https://github.com/yegor256/netbout/issues/889):[**873-bdf7b68b**](https://github.com/yegor256/netbout/issues/889) [`MarkdownTxtmark.java:62-64`](../master/netbout-web/src/main/java/com/netbout/rest/MarkdownTxtmark.java#L62-L64)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[#889](https://github.com/yegor256/netbout/issues/889):[<del>873-bdf7b68b</del>](https://github.com/yegor256/netbout/issues/889) [`MarkdownTxtmark.java:62-64`](../master/netbout-web/src/main/java/com/netbout/rest/MarkdownTxtmark.java#L62-L64)<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[#888](https://github.com/yegor256/netbout/issues/888):[**873-3b1d8aa3**](https://github.com/yegor256/netbout/issues/888) [`MarkdownTxtmarkTest.java:200-204`](../master/netbout-web/src/test/java/com/netbout/rest/MarkdownTxtmarkTest.java#L200-L204)<br/>
