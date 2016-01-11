@@ -130,6 +130,16 @@
                         </xsl:choose>
                     </span>
                 </xsl:if>
+                <a href="{links/link[@rel='hsubscribe']/@href}">
+                    <xsl:choose>
+                        <xsl:when test="subscription='true'">
+                            <i class="fa fa-bell-o"></i>
+                        </xsl:when>
+                        <xsl:otherwise>
+                            <i class="fa fa-bell-slash-o"></i>
+                        </xsl:otherwise>
+                    </xsl:choose>
+                </a>
             </h1>
             <xsl:apply-templates select="friends"/>
         </li>

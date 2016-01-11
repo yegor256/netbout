@@ -68,6 +68,7 @@ public final class TkBout extends TkWrap {
             new FkBout("/invite", new TkInvite(base)),
             new FkBout("/kick", new TkKick(base)),
             new FkBout("/subscribe", new TkSubscribe(base)),
+            new FkBout("/hsubscribe", new TkSubscribe(base), false),
             new FkBout("/search", new TkIndex(base))
         );
     }
