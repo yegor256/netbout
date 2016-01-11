@@ -48,6 +48,7 @@ merge:
   - ggajos
   - krzyk
   - longtimeago
+  - mkordas
   - pinaf
 release:
   script: |-
