@@ -47,10 +47,18 @@ public final class MarkdownTxtmark implements Markdown {
         // @checkstyle LineLengthCheck (1 line)
         "(?<!\\]\\()(?<!=\")(https?:\\/\\/[a-zA-Z0-9-._~:\\?#@!$&'*+,;=%\\/]+[a-zA-Z0-9-_~#@$&'*+=%\\/])(?![\\w.]*\\]\\()"
     );
+    /**
+     * New lines detection pattern.
+     */
+    private static final Pattern NEW_LINE = Pattern.compile(
+        "([^ ]{2}(\\n|\\r\\n)+)"
+    );
 
     @Override
     public String html(@NotNull final String txt) {
-        return Processor.process(MarkdownTxtmark.formatLinks(txt));
+        return Processor.process(
+            MarkdownTxtmark.formatLinks(MarkdownTxtmark.makeLineBreak(txt))
+        );
     }
 
     /**
@@ -67,6 +75,26 @@ public final class MarkdownTxtmark implements Markdown {
             matcher.appendReplacement(
                 result,
                 String.format("[%1$s](%1$s)", matcher.group())
+            );
+        }
+        matcher.appendTail(result);
+        return result.toString();
+    }
+    /**
+     * Insert two spaces before a new line symbol to force html line break.
+     * @param txt Text to replace
+     * @return Text with Markdown-formatted links
+     */
+    private static String makeLineBreak(final String txt) {
+        final StringBuffer result = new StringBuffer();
+        final Matcher matcher = MarkdownTxtmark.NEW_LINE.matcher(txt);
+        while (matcher.find()) {
+            matcher.appendReplacement(
+                result,
+                String.format(
+                    "%s  \n",
+                    matcher.group().substring(0, matcher.group().length() - 1)
+                )
             );
         }
         matcher.appendTail(result);

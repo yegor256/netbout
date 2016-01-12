@@ -197,14 +197,8 @@ public final class MarkdownTxtmarkTest {
     /**
      * MarkdownTxtmark can break a single line.
      * @throws Exception If there is some problem inside
-     * @todo #873:30min/DEV MarkdownTxtmark doesn't break a line on a new line
-     *  symbol. It should put br code or make a new paragraph on each new line
-     *  in the input data. I didn't find that option in TxtMark's settings,
-     *  but perhaps I missed something. If the option won't be found we can
-     *  replace single eol symbol to double eol as workaround.
      */
     @Test
-    @Ignore
     public void breaksSingleLine() throws Exception {
         MatcherAssert.assertThat(
             new MarkdownTxtmark().html(
@@ -212,13 +206,8 @@ public final class MarkdownTxtmarkTest {
                     .join("line1", "line2", "", "line3").trim()
             ),
             Matchers.equalTo(
-                Joiner.on(MarkdownTxtmarkTest.EOL).join(
-                    "<p>line1 ",
-                    "line2 ",
-                    "<br/>",
-                    "line2</p>",
-                    "<p>line3</p>"
-                )
+                Joiner.on(MarkdownTxtmarkTest.EOL)
+                    .join("<p>line1<br  />", "line2</p>", "<p>line3</p>", "")
             )
         );
     }
@@ -288,8 +277,8 @@ public final class MarkdownTxtmarkTest {
                     "http://bar.com [http://af.com](http://af.com) end"
                 ),
                 Joiner.on(MarkdownTxtmarkTest.EOL).join(
-                    "<p><a href=\"http://yahoo.com\">http://yahoo.com</a>",
-                    // @checkstyle LineLengthCheck (1 line)
+                    // @checkstyle LineLengthCheck (2 lines)
+                    "<p><a href=\"http://yahoo.com\">http://yahoo.com</a><br  />",
                     "<a href=\"http://bar.com\">http://bar.com</a> <a href=\"http://af.com\">http://af.com</a> end</p>"
                 ),
             },
