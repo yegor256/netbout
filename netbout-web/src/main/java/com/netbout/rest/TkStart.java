@@ -33,7 +33,9 @@ import com.netbout.spi.Friends;
 import com.netbout.spi.Inbox;
 import com.netbout.spi.Messages;
 import java.io.IOException;
+import java.util.Date;
 import java.util.Iterator;
+import java.util.concurrent.ConcurrentHashMap;
 import org.takes.Request;
 import org.takes.Response;
 import org.takes.Take;
@@ -58,6 +60,12 @@ public final class TkStart implements Take {
     private final transient Base base;
 
     /**
+     * Token cache.
+     */
+    private final ConcurrentHashMap<String, Object[]> tokencache = new
+            ConcurrentHashMap<String, Object[]>();
+
+    /**
      * Ctor.
      * @param bse Base
      */
@@ -67,13 +75,45 @@ public final class TkStart implements Take {
 
     @Override
     public Response act(final Request req) throws IOException {
-        final Inbox inbox = new RqAlias(this.base, req).alias().inbox();
-        final long number = inbox.start();
+        final Href href = new RqHref.Base(req).href();
+        final Iterator<String> token = href.param("token").iterator();
+        String tokenkey = "";
+        final Inbox inbox;
+        long number = 0;
+        while (token.hasNext()) {
+            tokenkey = token.next();
+        }
+        if (tokenkey.equals("")) {
+            inbox = new RqAlias(this.base, req).alias().inbox();
+        } else {
+            if (this.tokencache.containsKey(tokenkey)) {
+                final int hoursInDay = 24;
+                final int minsInHours = 60;
+                final int secsInMins = 60;
+                final int micsInSecs = 1000;
+                final Object[] cache = this.tokencache.get(tokenkey);
+                final Date today = new Date();
+                final long diff = Math.abs(today.getTime()
+                        - ((Date) cache[0]).getTime());
+                final long diffDays = diff
+                        / (hoursInDay * minsInHours * secsInMins * micsInSecs);
+                if (diffDays <= 2) {
+                    inbox = (Inbox) cache[1];
+                } else {
+                    this.tokencache.remove(tokenkey);
+                    inbox = new RqAlias(this.base, req).alias().inbox();
+                }
+            } else {
+                inbox = new RqAlias(this.base, req).alias().inbox();
+                this.tokencache.put(tokenkey,
+                        new Object[] {new Date(), inbox});
+            }
+        }
+        number = inbox.start();
         final Bout bout = inbox.bout(number);
         final StringBuilder msg = new StringBuilder(
             String.format("new bout #%d started", number)
         );
-        final Href href = new RqHref.Base(req).href();
         this.rename(bout, msg, href);
         this.invite(bout, msg, href);
         final Iterator<String> post = href.param("post").iterator();
