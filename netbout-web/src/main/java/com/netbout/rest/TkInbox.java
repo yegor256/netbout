@@ -137,12 +137,19 @@ final class TkInbox implements Take {
                     .add("unseen")
                     .set(Integer.toString(bout.attachments().unseen())).up()
                     .add("title")
-                    .set(bout.title()).up()
+                    .set(bout.title())
+                    .up()
+                    .add("subscription")
+                    .set(String.valueOf(bout.subscription()))
             ),
             new XeLink("open", new Href("/b").path(bout.number())),
             new XeLink(
                 "more",
                 new Href().with("since", bout.updated().getTime())
+            ),
+            new XeLink(
+                "hsubscribe",
+                new Href("/b").path(bout.number()).path("hsubscribe")
             ),
             new XeAppend(
                 "friends",
