@@ -36,6 +36,8 @@ import java.io.IOException;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.TimeUnit;
 import org.takes.Request;
 import org.takes.Response;
 import org.takes.Take;
@@ -62,7 +64,7 @@ public final class TkStart implements Take {
     /**
      * Token cache.
      */
-    private final ConcurrentHashMap<String, Object[]> tokencache = new
+    private final ConcurrentMap<String, Object[]> tokens = new
             ConcurrentHashMap<String, Object[]>();
 
     /**
@@ -85,29 +87,20 @@ public final class TkStart implements Take {
         }
         if (tokenkey.equals("")) {
             inbox = new RqAlias(this.base, req).alias().inbox();
-        } else {
-            if (this.tokencache.containsKey(tokenkey)) {
-                final int hoursInDay = 24;
-                final int minsInHours = 60;
-                final int secsInMins = 60;
-                final int micsInSecs = 1000;
-                final Object[] cache = this.tokencache.get(tokenkey);
-                final Date today = new Date();
-                final long diff = Math.abs(today.getTime()
-                        - ((Date) cache[0]).getTime());
-                final long diffDays = diff
-                        / (hoursInDay * minsInHours * secsInMins * micsInSecs);
-                if (diffDays <= 2) {
-                    inbox = (Inbox) cache[1];
-                } else {
-                    this.tokencache.remove(tokenkey);
-                    inbox = new RqAlias(this.base, req).alias().inbox();
-                }
+        } else if (this.tokens.containsKey(tokenkey)) {
+            final Object[] cache = this.tokens.get(tokenkey);
+            final Date today = new Date();
+            final long diff = today.getTime() - ((Date) cache[0]).getTime();
+            if ((TimeUnit.MILLISECONDS.toDays(diff)) <= 2) {
+                inbox = (Inbox) cache[1];
             } else {
+                this.tokens.remove(tokenkey);
                 inbox = new RqAlias(this.base, req).alias().inbox();
-                this.tokencache.put(tokenkey,
-                        new Object[] {new Date(), inbox});
             }
+        } else {
+            inbox = new RqAlias(this.base, req).alias().inbox();
+            this.tokens.put(tokenkey,
+                    new Object[] {new Date(), inbox});
         }
         number = inbox.start();
         final Bout bout = inbox.bout(number);
