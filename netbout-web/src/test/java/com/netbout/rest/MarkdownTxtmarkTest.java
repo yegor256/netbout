@@ -30,7 +30,6 @@ import com.google.common.base.Joiner;
 import com.jcabi.matchers.XhtmlMatchers;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
-import org.junit.Ignore;
 import org.junit.Test;
 
 /**
@@ -206,8 +205,10 @@ public final class MarkdownTxtmarkTest {
                     .join("line1", "line2", "", "line3").trim()
             ),
             Matchers.equalTo(
-                Joiner.on(MarkdownTxtmarkTest.EOL)
-                    .join("<p>line1<br  />", "line2</p>", "<p>line3</p>", "")
+                Joiner.on(MarkdownTxtmarkTest.EOL).join(
+                    "<p>line1<br  />", "line2<br  /></p>",
+                    "<p>line3</p>", ""
+                )
             )
         );
     }

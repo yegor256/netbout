@@ -51,7 +51,7 @@ public final class MarkdownTxtmark implements Markdown {
      * New lines detection pattern.
      */
     private static final Pattern NEW_LINE = Pattern.compile(
-        "([^ ]{2}(\\n|\\r\\n)+)"
+        "^[ ]{0,3}\\S*[ ]?$", Pattern.MULTILINE
     );
 
     @Override
@@ -89,13 +89,14 @@ public final class MarkdownTxtmark implements Markdown {
         final StringBuffer result = new StringBuffer();
         final Matcher matcher = MarkdownTxtmark.NEW_LINE.matcher(txt);
         while (matcher.find()) {
-            matcher.appendReplacement(
-                result,
-                String.format(
-                    "%s  \n",
-                    matcher.group().substring(0, matcher.group().length() - 1)
-                )
-            );
+            if (!matcher.hitEnd()) {
+                matcher.appendReplacement(
+                    result,
+                    String.format(
+                        "%s  ", matcher.group()
+                    )
+                );
+            }
         }
         matcher.appendTail(result);
         return result.toString();
