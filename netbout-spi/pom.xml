@@ -92,10 +92,9 @@
                             <excludes>
                                 <!--
                                 @todo #911 Fix findbugs errors in SPI classes
-                                Friends and Attachemtns
-                                filters in qulice 0.12 are broken, right exclude should be
-                                <exclude>findbugs:~com.netbout.spi.Friends.*</exclude>
-                                <exclude>findbugs:~com.netbout.spi.Attachments.*</exclude>
+                                 Friends and Attachemtns
+                                 filters in qulice 0.12 are broken, right excludes
+                                 should be more granular
                                 -->
                                 <exclude>findbugs:~com.netbout.spi.*</exclude>
                             </excludes>
