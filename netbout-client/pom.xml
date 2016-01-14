@@ -181,9 +181,11 @@
                         <configuration>
                             <excludes>
                                 <!--
-                                @todo #911 Fix findbugs errors once findbugs filters are fixed
+                                @todo #911 Fix findbugs errors in client
+                                 filters in qulice 0.12 are broken, right excludes
+                                 should be more granular
                                 -->
-                                <exclude>findbugs:^$</exclude>
+                                <exclude>findbugs:~com.netbout.client.*</exclude>
                             </excludes>
                         </configuration>
                     </plugin>
