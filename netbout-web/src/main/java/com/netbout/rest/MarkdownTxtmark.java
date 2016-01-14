@@ -48,10 +48,10 @@ public final class MarkdownTxtmark implements Markdown {
         "(?<!\\]\\()(?<!=\")(https?:\\/\\/[a-zA-Z0-9-._~:\\?#@!$&'*+,;=%\\/]+[a-zA-Z0-9-_~#@$&'*+=%\\/])(?![\\w.]*\\]\\()"
     );
     /**
-     * New lines detection pattern.
+     * Pattern to detect lines which should have a line break on the end.
      */
     private static final Pattern NEW_LINE = Pattern.compile(
-        "^[ ]{0,3}\\S*[ ]?$", Pattern.MULTILINE
+        "^ {0,3}\\S* ?$", Pattern.MULTILINE
     );
 
     @Override
