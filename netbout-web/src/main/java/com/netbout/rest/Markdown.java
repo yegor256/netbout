@@ -56,9 +56,12 @@ public interface Markdown {
 
         /**
          * Ctor.
+         * @todo #888:30min We should switch to another Markdown processor
+         *  MarkdownTxtMark and remove the old implementation
+         *  MarkdownPegdown and its unit tests from the code.
          */
         public Default() {
-            this.processor = new MarkdownTxtmark();
+            this.processor = new MarkdownPegdown();
         }
 
         @Override
