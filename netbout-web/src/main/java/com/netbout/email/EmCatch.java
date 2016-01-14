@@ -210,8 +210,12 @@ final class EmCatch {
         } catch (final NoSuchProviderException | IOException ex) {
             throw new IllegalStateException(ex);
         } finally {
-            inbox.close(true);
-            store.close();
+            if (inbox != null) {
+                inbox.close(true);
+            }
+            if (store != null) {
+                store.close();
+            }
         }
     }
 

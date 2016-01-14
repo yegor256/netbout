@@ -32,7 +32,9 @@ import com.jcabi.aspects.RetryOnFailure;
 import com.jcabi.log.Logger;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
+import java.nio.charset.StandardCharsets;
 import java.util.logging.Level;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -156,7 +158,12 @@ public final class MarkdownPegdown implements Markdown {
         final Tidy tidy = new Tidy();
         tidy.setShowErrors(0);
         tidy.setErrout(
-            new PrintWriter(Logger.stream(Level.FINE, MarkdownPegdown.class))
+            new PrintWriter(
+                new OutputStreamWriter(
+                    Logger.stream(Level.FINE, MarkdownPegdown.class),
+                    StandardCharsets.UTF_8
+                )
+            )
         );
         tidy.setUpperCaseTags(false);
         tidy.setUpperCaseAttrs(false);

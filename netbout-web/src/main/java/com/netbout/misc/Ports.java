@@ -55,7 +55,7 @@ public final class Ports {
      * @throws IOException If fails
      */
     public int allocate() throws IOException {
-        synchronized (Ports.ASSIGNED) {
+        synchronized (Ports.class) {
             int attempts = 0;
             int prt;
             do {
