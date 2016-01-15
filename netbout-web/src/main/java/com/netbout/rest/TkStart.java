@@ -46,6 +46,7 @@ import org.takes.facets.forward.RsFailure;
 import org.takes.facets.forward.RsForward;
 import org.takes.misc.Href;
 import org.takes.rq.RqHref;
+import org.apache.commons.lang3.tuple.Pair;
 
 /**
  * Start.
@@ -56,8 +57,6 @@ import org.takes.rq.RqHref;
  * @todo #750:30min Solve the puzzle for build mysteriously failing for
  *  this task citing a NullPointerException (See qulice issue #608 raised for
  *  the same) and then remove TkStart.java from qulice exceptions.
- * @todo #750:30min Solve the puzzle for needing an Object array in the
- *  tokens dictionary try to replace it with a Map of Date/Inbox if possible.
  */
 public final class TkStart implements Take {
 
@@ -69,8 +68,8 @@ public final class TkStart implements Take {
     /**
      * Token cache.
      */
-    private final transient ConcurrentMap<String, Object[]> tokens = new
-            ConcurrentHashMap<String, Object[]>();
+    private final transient ConcurrentMap<String, Pair<Date, Inbox>> tokens = new
+            ConcurrentHashMap<String, Pair<Date, Inbox>>();
 
     /**
      * Ctor.
@@ -84,27 +83,27 @@ public final class TkStart implements Take {
     public Response act(final Request req) throws IOException {
         final Href href = new RqHref.Base(req).href();
         final Iterator<String> token = href.param("token").iterator();
-        String tokenkey = "";
+        String key = "";
         final Inbox inbox;
         while (token.hasNext()) {
-            tokenkey = token.next();
+            key = token.next();
         }
-        if (tokenkey.isEmpty()) {
+        if (key.isEmpty()) {
             inbox = new RqAlias(this.base, req).alias().inbox();
-        } else if (this.tokens.containsKey(tokenkey)) {
-            final Object[] cache = this.tokens.get(tokenkey);
-            final Date today = new Date();
-            final long diff = today.getTime() - ((Date) cache[0]).getTime();
+        } else if (this.tokens.containsKey(key)) {
+            final Pair<Date, Inbox> cached = this.tokens.get(key);
+            final long diff = (new Date()).getTime()
+                - (cached.getLeft()).getTime();
             if ((TimeUnit.MILLISECONDS.toDays(diff)) <= 2) {
-                inbox = (Inbox) cache[1];
+                inbox = cached.getRight();
             } else {
-                this.tokens.remove(tokenkey);
+                this.tokens.remove(key);
                 inbox = new RqAlias(this.base, req).alias().inbox();
             }
         } else {
             inbox = new RqAlias(this.base, req).alias().inbox();
-            this.tokens.put(tokenkey,
-                    new Object[] {new Date(), inbox});
+            this.tokens.put(key,
+                    Pair.of(new Date(), inbox));
         }
         final long number = inbox.start();
         final Bout bout = inbox.bout(number);
