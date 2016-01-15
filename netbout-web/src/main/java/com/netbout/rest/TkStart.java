@@ -55,7 +55,7 @@ import org.takes.rq.RqHref;
  * @since 2.14
  * @todo #750:30min Solve the puzzle for build mysteriously failing for
  *  this task citing a NullPointerException (See qulice issue #608 raised for
- *  the same and then remove TkStart.java from qulice exceptions.
+ *  the same) and then remove TkStart.java from qulice exceptions.
  * @todo #750:30min Solve the puzzle for needing an Object array in the
  *  tokens dictionary try to replace it with a Map of Date/Inbox if possible.
  */
