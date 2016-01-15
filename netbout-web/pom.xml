@@ -55,7 +55,7 @@
         <dependency>
             <groupId>org.takes</groupId>
             <artifactId>takes</artifactId>
-            <version>0.24.1</version>
+            <version>0.28.2</version>
         </dependency>
         <dependency>
             <groupId>com.jcabi.incubator</groupId>
@@ -137,7 +137,7 @@
         <dependency>
             <groupId>com.jcabi</groupId>
             <artifactId>jcabi-http</artifactId>
-            <version>1.10.3</version>
+            <version>1.14.2</version>
         </dependency>
         <dependency>
             <groupId>com.restfb</groupId>
@@ -733,7 +733,6 @@
                         <artifactId>qulice-maven-plugin</artifactId>
                         <configuration>
                             <excludes>
-                                <exclude>checkstyle:/src/main/java/com/netbout/rest/TkStart.java</exclude>
                                 <exclude>checkstyle:/src/main/scss/.*</exclude>
                                 <exclude>checkstyle:/src/test/casperjs/.*</exclude>
                                 <exclude>checkstyle:/src/main/js/.*</exclude>

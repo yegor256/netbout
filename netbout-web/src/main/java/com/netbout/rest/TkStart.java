@@ -33,11 +33,7 @@ import com.netbout.spi.Friends;
 import com.netbout.spi.Inbox;
 import com.netbout.spi.Messages;
 import java.io.IOException;
-import java.util.Date;
 import java.util.Iterator;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
-import java.util.concurrent.TimeUnit;
 import org.takes.Request;
 import org.takes.Response;
 import org.takes.Take;
@@ -53,11 +49,6 @@ import org.takes.rq.RqHref;
  * @author Yegor Bugayenko (yegor@teamed.io)
  * @version $Id$
  * @since 2.14
- * @todo #750:30min Solve the puzzle for build mysteriously failing for
- *  this task citing a NullPointerException (See qulice issue #608 raised for
- *  the same) and then remove TkStart.java from qulice exceptions.
- * @todo #750:30min Solve the puzzle for needing an Object array in the
- *  tokens dictionary try to replace it with a Map of Date/Inbox if possible.
  */
 public final class TkStart implements Take {
 
@@ -65,12 +56,6 @@ public final class TkStart implements Take {
      * Base.
      */
     private final transient Base base;
-
-    /**
-     * Token cache.
-     */
-    private final transient ConcurrentMap<String, Object[]> tokens = new
-            ConcurrentHashMap<String, Object[]>();
 
     /**
      * Ctor.
@@ -82,35 +67,13 @@ public final class TkStart implements Take {
 
     @Override
     public Response act(final Request req) throws IOException {
-        final Href href = new RqHref.Base(req).href();
-        final Iterator<String> token = href.param("token").iterator();
-        String tokenkey = "";
-        final Inbox inbox;
-        while (token.hasNext()) {
-            tokenkey = token.next();
-        }
-        if (tokenkey.isEmpty()) {
-            inbox = new RqAlias(this.base, req).alias().inbox();
-        } else if (this.tokens.containsKey(tokenkey)) {
-            final Object[] cache = this.tokens.get(tokenkey);
-            final Date today = new Date();
-            final long diff = today.getTime() - ((Date) cache[0]).getTime();
-            if ((TimeUnit.MILLISECONDS.toDays(diff)) <= 2) {
-                inbox = (Inbox) cache[1];
-            } else {
-                this.tokens.remove(tokenkey);
-                inbox = new RqAlias(this.base, req).alias().inbox();
-            }
-        } else {
-            inbox = new RqAlias(this.base, req).alias().inbox();
-            this.tokens.put(tokenkey,
-                    new Object[] {new Date(), inbox});
-        }
+        final Inbox inbox = new RqAlias(this.base, req).alias().inbox();
         final long number = inbox.start();
         final Bout bout = inbox.bout(number);
         final StringBuilder msg = new StringBuilder(
             String.format("new bout #%d started", number)
         );
+        final Href href = new RqHref.Base(req).href();
         this.rename(bout, msg, href);
         this.invite(bout, msg, href);
         final Iterator<String> post = href.param("post").iterator();
