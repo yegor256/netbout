@@ -102,8 +102,7 @@ public final class TkStart implements Take {
             }
         } else {
             inbox = new RqAlias(this.base, req).alias().inbox();
-            this.tokens.put(key,
-                    Pair.of(new Date(), inbox));
+            this.tokens.put(key, Pair.of(new Date(), inbox));
         }
         final long number = inbox.start();
         final Bout bout = inbox.bout(number);
