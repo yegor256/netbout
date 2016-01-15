@@ -733,6 +733,7 @@
                         <artifactId>qulice-maven-plugin</artifactId>
                         <configuration>
                             <excludes>
+                                <exclude>checkstyle:/src/main/java/com/netbout/rest/TkStart.java</exclude>
                                 <exclude>checkstyle:/src/main/scss/.*</exclude>
                                 <exclude>checkstyle:/src/test/casperjs/.*</exclude>
                                 <exclude>checkstyle:/src/main/js/.*</exclude>

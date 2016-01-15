@@ -53,6 +53,11 @@ import org.takes.rq.RqHref;
  * @author Yegor Bugayenko (yegor@teamed.io)
  * @version $Id$
  * @since 2.14
+ * @todo #750:30min Solve the puzzle for build mysteriously failing for
+ *  this task citing a NullPointerException (See qulice issue #608 raised for
+ *  the same and then remove TkStart.java from qulice exceptions.
+ * @todo #750:30min Solve the puzzle for needing an Object array in the
+ *  tokens dictionary try to replace it with a Map of Date/Inbox if possible.
  */
 public final class TkStart implements Take {
 
@@ -64,7 +69,7 @@ public final class TkStart implements Take {
     /**
      * Token cache.
      */
-    private final ConcurrentMap<String, Object[]> tokens = new
+    private final transient ConcurrentMap<String, Object[]> tokens = new
             ConcurrentHashMap<String, Object[]>();
 
     /**
@@ -85,7 +90,7 @@ public final class TkStart implements Take {
         while (token.hasNext()) {
             tokenkey = token.next();
         }
-        if (tokenkey.equals("")) {
+        if (tokenkey.isEmpty()) {
             inbox = new RqAlias(this.base, req).alias().inbox();
         } else if (this.tokens.containsKey(tokenkey)) {
             final Object[] cache = this.tokens.get(tokenkey);
