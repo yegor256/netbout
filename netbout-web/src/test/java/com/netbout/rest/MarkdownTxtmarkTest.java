@@ -183,10 +183,10 @@ public final class MarkdownTxtmarkTest {
             Matchers.describedAs(
                 meta,
                 XhtmlMatchers.hasXPaths(
-                    "/r/p[.='my list:']",
+                    "/r/p[text()='my list:']",
                     "/r/ul[count(li) = 2]",
-                    "/r/ul/li[.='line one']",
-                    "/r/ul/li[.='line two']",
+                    "/r/ul/li[text()='line one']",
+                    "/r/ul/li[text()='line two']",
                     "/r/p[.='normal text now']"
                 )
             )
@@ -202,11 +202,11 @@ public final class MarkdownTxtmarkTest {
         MatcherAssert.assertThat(
             new MarkdownTxtmark().html(
                 Joiner.on(MarkdownTxtmarkTest.EOL)
-                    .join("line1", "line2", "", "line3").trim()
+                    .join("line1 line", "line2", "", "line3").trim()
             ),
             Matchers.equalTo(
                 Joiner.on(MarkdownTxtmarkTest.EOL).join(
-                    "<p>line1<br  />", "line2<br  /></p>",
+                    "<p>line1 line<br  />", "line2<br  /></p>",
                     "<p>line3</p>", ""
                 )
             )
