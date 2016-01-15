@@ -737,9 +737,10 @@
                                 <exclude>checkstyle:/src/test/casperjs/.*</exclude>
                                 <exclude>checkstyle:/src/main/js/.*</exclude>
                                 <!--
-                                @todo #911 Fix findbugs errors in web
-                                 filters in qulice 0.12 are broken, right excludes
-                                 should be more granular
+                                @todo #911:30min Fix findbugs errors in web
+                                 Some issues may not require fixing an should be
+                                 excluded. Filters in qulice 0.12 are broken, right
+                                 excludes should be more granular
                                 -->
                                 <exclude>findbugs:.*</exclude>
                                 <exclude>xml:/src/main/resources/lang/.*</exclude>

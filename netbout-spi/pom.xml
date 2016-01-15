@@ -91,10 +91,11 @@
                         <configuration>
                             <excludes>
                                 <!--
-                                @todo #911 Fix findbugs errors in SPI classes
+                                @todo #911:30min Fix findbugs errors in SPI classes
                                  Friends and Attachemtns
-                                 filters in qulice 0.12 are broken, right excludes
-                                 should be more granular
+                                 Some issues may not require fixing and should be
+                                 excluded. filters in qulice 0.12 are broken, right
+                                 excludes should be more granular
                                 -->
                                 <exclude>findbugs:~com.netbout.spi.*</exclude>
                             </excludes>
