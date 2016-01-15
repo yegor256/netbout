@@ -57,6 +57,10 @@ import org.apache.commons.lang3.tuple.Pair;
  * @todo #750:30min Solve the puzzle for build mysteriously failing for
  *  this task citing a NullPointerException (See qulice issue #608 raised for
  *  the same) and then remove TkStart.java from qulice exceptions.
+ * @todo #750:30min Implement a proper Guava cache with eviction policy instead
+ *  of this concurrent hashmap approach.
+ * @todo #750:30min Add unit tests to test scenarios for requests
+ *  with/without a token.
  */
 public final class TkStart implements Take {
 
@@ -64,6 +68,11 @@ public final class TkStart implements Take {
      * Base.
      */
     private final transient Base base;
+    
+    /**
+     * Last cache clearance time.
+     * */
+     private transient Date lastChecked = new Date();
 
     /**
      * Token cache.
@@ -79,11 +88,27 @@ public final class TkStart implements Take {
         this.base = bse;
     }
 
+    /**
+     * Clear the token cache.
+     * */
+    private void clearCache() {
+        final Date now = new Date();
+        long diff = 0;
+        for (final String tkey : tokens.keySet()) {
+            diff = now.getTime()
+                - tokens.get(tkey).getLeft().getTime();
+            if ((TimeUnit.MILLISECONDS.toHours(diff)) >= 1) {
+                tokens.remove(tkey);
+            }
+        }
+    }
+
     @Override
     public Response act(final Request req) throws IOException {
         final Href href = new RqHref.Base(req).href();
         final Iterator<String> token = href.param("token").iterator();
         String key = "";
+        long diff = 0;
         final Inbox inbox;
         while (token.hasNext()) {
             key = token.next();
@@ -92,7 +117,7 @@ public final class TkStart implements Take {
             inbox = new RqAlias(this.base, req).alias().inbox();
         } else if (this.tokens.containsKey(key)) {
             final Pair<Date, Inbox> cached = this.tokens.get(key);
-            final long diff = (new Date()).getTime()
+            diff = (new Date()).getTime()
                 - (cached.getLeft()).getTime();
             if ((TimeUnit.MILLISECONDS.toDays(diff)) <= 2) {
                 inbox = cached.getRight();
@@ -103,6 +128,11 @@ public final class TkStart implements Take {
         } else {
             inbox = new RqAlias(this.base, req).alias().inbox();
             this.tokens.put(key, Pair.of(new Date(), inbox));
+        }
+        diff = (new Date()).getTime() - lastChecked.getTime();
+        if ((TimeUnit.MILLISECONDS.toHours(diff)) >= 1) {
+            lastChecked = new Date();
+            clearCache();
         }
         final long number = inbox.start();
         final Bout bout = inbox.bout(number);
