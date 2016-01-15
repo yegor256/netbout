@@ -86,7 +86,6 @@ public final class TkStart implements Take {
         final Iterator<String> token = href.param("token").iterator();
         String tokenkey = "";
         final Inbox inbox;
-        long number = 0;
         while (token.hasNext()) {
             tokenkey = token.next();
         }
@@ -107,7 +106,7 @@ public final class TkStart implements Take {
             this.tokens.put(tokenkey,
                     new Object[] {new Date(), inbox});
         }
-        number = inbox.start();
+        final long number = inbox.start();
         final Bout bout = inbox.bout(number);
         final StringBuilder msg = new StringBuilder(
             String.format("new bout #%d started", number)
