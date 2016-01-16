@@ -48,11 +48,11 @@ public final class MarkdownTxtmark implements Markdown {
         "(?<!\\]\\()(?<!=\")(https?:\\/\\/[a-zA-Z0-9-._~:\\?#@!$&'*+,;=%\\/]+[a-zA-Z0-9-_~#@$&'*+=%\\/])(?![\\w.]*\\]\\()"
     );
     /**
-     * Pattern to detect lines which should have a line break on the end.
-     * We look for lines which have less then two spaces on their end because
-     * TxtMark automatically puts <br/> if the line has two or more spaces
-     * on its end and we should skip a line that starts with four or more
-     * spaces because it's a code block in markdown.
+     * Pattern to detect lines which should have a line break at the end.
+     * We look for lines which have less than two spaces on their end because
+     * TxtMark automatically puts {@code <br/>} if the line has two or more
+     * spaces on its end and we should skip a line that starts with four
+     * or more spaces because it's a code block in markdown.
      */
     private static final Pattern NEW_LINE = Pattern.compile(
         "^ {0,3}(\\S|(\\S.*\\S)) ?$", Pattern.MULTILINE
@@ -85,8 +85,8 @@ public final class MarkdownTxtmark implements Markdown {
         return result.toString();
     }
     /**
-     * Insert two spaces at the end of string that needs line break.
-     * To force creation of HTML line break.
+     * Insert two spaces at the end of string that needs line break to
+     * force creation of HTML line break.
      * @param txt Text to replace
      * @return Text with Markdown-formatted links
      */
