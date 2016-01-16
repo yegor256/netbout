@@ -115,7 +115,17 @@
             <dependency>
                 <groupId>com.jcabi</groupId>
                 <artifactId>jcabi-aspects</artifactId>
-                <version>0.22</version>
+                <version>0.22.3</version>
+            </dependency>
+            <dependency>
+                <groupId>com.jcabi</groupId>
+                <artifactId>jcabi-xml</artifactId>
+                <version>0.17.1</version>
+            </dependency>
+            <dependency>
+                <groupId>com.jcabi</groupId>
+                <artifactId>jcabi-dynamo</artifactId>
+                <version>0.19</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
