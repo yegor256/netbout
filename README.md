@@ -64,6 +64,12 @@ If your default encoding is not UTF-8, some of unit tests will break. This is an
 SET JAVA_TOOL_OPTIONS=-Dfile.encoding=UTF-8
 ```
 
+Similarly, on Linux:
+
+```
+export JAVA_TOOL_OPTIONS="-Dfile.encoding=UTF-8"
+```
+
 ### Run locally and test it
 
 Want to run it locally? Simple as that:
