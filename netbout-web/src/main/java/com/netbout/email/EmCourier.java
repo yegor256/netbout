@@ -67,23 +67,21 @@ final class EmCourier {
      * @param pst Postman
      * @param bot Bout we're in
      */
-    public EmCourier(final Postman pst, final Bout bot) {
+    EmCourier(final Postman pst, final Bout bot) {
         this.postman = pst;
         this.bout = bot;
     }
 
     /**
      * Send an email.
+     * @param self Sender
      * @param friend Friend to send to
      * @param text The text of the new message
      * @throws IOException If fails
-     * @todo #692:30min/DEV Header `Reply-To` should be added to
-     *  an outgoing email. Format is crypt-string@reply.netbout.com
-     *  where crypt-string is user-urn|bout-number
-     *  Use EmCatch.encrypt() to encrypt the string
-     *  see #692 and EmActionTest for additional info
      */
-    public void email(final Friend friend, final String text)
+    public void email(final String self,
+        final Friend friend,
+        final String text)
         throws IOException {
         this.postman.send(
             new Envelope.MIME()
@@ -94,6 +92,21 @@ final class EmCourier {
                             "#%d: %s",
                             this.bout.number(),
                             this.bout.title()
+                        )
+                    )
+                )
+                .with(
+                    new StReplyTo(
+                        String.format(
+                            "%s%s",
+                            EmCatch.encrypt(
+                                String.format(
+                                    "%s|%d",
+                                    self,
+                                    this.bout.number()
+                                )
+                            ),
+                            "@reply.netbout.com"
                         )
                     )
                 )
