@@ -67,4 +67,41 @@ public final class DyAliasITCase {
         );
     }
 
+    /**
+     * DyAlias can reject invalid email.
+     * @throws Exception If there is some problem inside
+     */
+    @Test (expected = Alias.InvalidEmailException.class)
+    public void rejectsInvalidEmail() throws Exception {
+        final Aliases aliases =
+            new DyBase().user(new URN("urn:test:13")).aliases();
+        final String name = "max";
+        aliases.add(name);
+        final Alias alias = aliases.iterate().iterator().next();
+        alias.email("test");
+    }
+
+    /**
+     * DyAlias can accept valid email.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void acceptsValidEmail() throws Exception {
+        final Aliases aliases =
+            new DyBase().user(new URN("urn:test:14")).aliases();
+        final String name = "jack";
+        aliases.add(name);
+        final Alias alias = aliases.iterate().iterator().next();
+        final String[] emails = {
+            "test@domain.com", "test@domain.com!test@domain.com",
+        };
+        for (final String email: emails) {
+            alias.email(email);
+            MatcherAssert.assertThat(
+                alias.email(),
+                Matchers.containsString(email)
+            );
+        }
+    }
+
 }
