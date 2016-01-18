@@ -74,7 +74,8 @@ final class DyAlias implements Alias {
         //@checkstyle LineLengthCheck (1 line)
         final String valid = "([a-z0-9_-]+\\.)*[a-z0-9_-]+@[a-z0-9_-]+(\\.[a-z0-9_-]+)*\\.[a-z]{2,6}";
         MAIL = Pattern.compile(
-            String.format("%s|%s!%s", valid, valid, valid)
+            String.format("%s|%s!%s", valid, valid, valid),
+            Pattern.CASE_INSENSITIVE
         );
     }
 
