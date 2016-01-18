@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2009-2015, netbout.com
+ * Copyright (c) 2009-2016, netbout.com
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -26,6 +26,8 @@
  */
 package com.netbout.rest.account;
 
+import com.google.common.net.HttpHeaders;
+import com.netbout.rest.RqWithDefaultHeader;
 import com.netbout.rest.RsPage;
 import com.netbout.spi.Base;
 import java.io.IOException;
@@ -62,7 +64,7 @@ final class TkIndex implements Take {
         return new RsPage(
             "/xsl/account.xsl",
             this.base,
-            req,
+            new RqWithDefaultHeader(req, HttpHeaders.ACCEPT, "text/xml"),
             new XeLink("save-email", "/acc/save")
         );
     }

@@ -1,3 +1,7 @@
+architect:
+- dmzaytsev
+- yegor256
+- karato
 assets:
   settings.xml: yegor256/home#assets/netbout/settings.xml
   settings-snapshot.xml: yegor256/home#assets/netbout/settings-snapshot.xml
@@ -48,6 +52,7 @@ merge:
   - ggajos
   - krzyk
   - longtimeago
+  - mkordas
   - pinaf
 release:
   script: |-
@@ -71,7 +76,3 @@ release:
   commanders:
   - dmzaytsev
   - yegor256
-architect:
-- dmzaytsev
-- yegor256
-- karato

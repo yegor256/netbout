@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2009-2015, netbout.com
+ * Copyright (c) 2009-2016, netbout.com
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -45,12 +45,24 @@ public final class MarkdownTxtmark implements Markdown {
      */
     private static final Pattern LINK = Pattern.compile(
         // @checkstyle LineLengthCheck (1 line)
-        "(?<!\\]\\()(?<!=\")(https?:\\/\\/[a-zA-Z0-9-._~:\\?#@!$&'*+,;=%\\/]+[a-zA-Z0-9-_~#@$&'*+=%\\/])(?!.*\\]\\()"
+        "(?<!\\]\\()(?<!=\")(https?:\\/\\/[a-zA-Z0-9-._~:\\?#@!$&'*+,;=%\\/]+[a-zA-Z0-9-_~#@$&'*+=%\\/])(?![\\w.]*\\]\\()"
+    );
+    /**
+     * Pattern to detect lines which should have a line break at the end.
+     * We look for lines which have less than two spaces on their end because
+     * TxtMark automatically puts {@code <br/>} if the line has two or more
+     * spaces on its end and we should skip a line that starts with four
+     * or more spaces because it's a code block in markdown.
+     */
+    private static final Pattern NEW_LINE = Pattern.compile(
+        "^ {0,3}(\\S|(\\S.*\\S)) ?$", Pattern.MULTILINE
     );
 
     @Override
     public String html(@NotNull final String txt) {
-        return Processor.process(MarkdownTxtmark.formatLinks(txt));
+        return Processor.process(
+            MarkdownTxtmark.formatLinks(MarkdownTxtmark.makeLineBreak(txt))
+        );
     }
 
     /**
@@ -59,9 +71,6 @@ public final class MarkdownTxtmark implements Markdown {
      * before and after link do not match to Markdown link syntax.
      * @param txt Text to find links in
      * @return Text with Markdown-formatted links
-     * @todo #873:30min/DEV We need more tests for the case, when text
-     *  contains several links. Both plain links and markdown preformatted links
-     *  need to be checked.
      */
     private static String formatLinks(final String txt) {
         final StringBuffer result = new StringBuffer();
@@ -71,6 +80,28 @@ public final class MarkdownTxtmark implements Markdown {
                 result,
                 String.format("[%1$s](%1$s)", matcher.group())
             );
+        }
+        matcher.appendTail(result);
+        return result.toString();
+    }
+    /**
+     * Insert two spaces at the end of string that needs line break to
+     * force creation of HTML line break.
+     * @param txt Text to replace
+     * @return Text with Markdown-formatted links
+     */
+    private static String makeLineBreak(final String txt) {
+        final StringBuffer result = new StringBuffer();
+        final Matcher matcher = MarkdownTxtmark.NEW_LINE.matcher(txt);
+        while (matcher.find()) {
+            if (!matcher.hitEnd()) {
+                matcher.appendReplacement(
+                    result,
+                    String.format(
+                        "%s  ", matcher.group()
+                    )
+                );
+            }
         }
         matcher.appendTail(result);
         return result.toString();

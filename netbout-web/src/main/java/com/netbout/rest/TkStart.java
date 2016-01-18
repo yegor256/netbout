@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2009-2015, netbout.com
+ * Copyright (c) 2009-2016, netbout.com
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -33,11 +33,7 @@ import com.netbout.spi.Friends;
 import com.netbout.spi.Inbox;
 import com.netbout.spi.Messages;
 import java.io.IOException;
-import java.util.Date;
 import java.util.Iterator;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
-import java.util.concurrent.TimeUnit;
 import org.takes.Request;
 import org.takes.Response;
 import org.takes.Take;
@@ -46,7 +42,6 @@ import org.takes.facets.forward.RsFailure;
 import org.takes.facets.forward.RsForward;
 import org.takes.misc.Href;
 import org.takes.rq.RqHref;
-import org.apache.commons.lang3.tuple.Pair;
 
 /**
  * Start.
@@ -54,11 +49,6 @@ import org.apache.commons.lang3.tuple.Pair;
  * @author Yegor Bugayenko (yegor@teamed.io)
  * @version $Id$
  * @since 2.14
- * @todo #750:30min Solve the puzzle for build mysteriously failing for
- *  this task citing a NullPointerException (See qulice issue #608 raised for
- *  the same) and then remove TkStart.java from qulice exceptions.
- * @todo #750:30min Add unit tests to test scenarios for requests
- *  with/without a token.
  */
 public final class TkStart implements Take {
 
@@ -66,17 +56,6 @@ public final class TkStart implements Take {
      * Base.
      */
     private final transient Base base;
-    
-    /**
-     * Last cache clearance time.
-     * */
-     private transient Date checked = new Date();
-
-    /**
-     * Token cache.
-     */
-    private final transient ConcurrentMap<String, Pair<Date, Inbox>> tokens = new
-            ConcurrentHashMap<String, Pair<Date, Inbox>>();
 
     /**
      * Ctor.
@@ -86,57 +65,15 @@ public final class TkStart implements Take {
         this.base = bse;
     }
 
-    /**
-     * Clear the token cache.
-     * */
-    private void clearCache() {
-        final Date now = new Date();
-        long diff = 0;
-        for (final String tkey : tokens.keySet()) {
-            diff = now.getTime()
-                - tokens.get(tkey).getLeft().getTime();
-            if ((TimeUnit.MILLISECONDS.toHours(diff)) >= 1) {
-                tokens.remove(tkey);
-            }
-        }
-    }
-
     @Override
     public Response act(final Request req) throws IOException {
-        final Href href = new RqHref.Base(req).href();
-        final Iterator<String> token = href.param("token").iterator();
-        String key = "";
-        long diff = 0;
-        final Inbox inbox;
-        while (token.hasNext()) {
-            key = token.next();
-        }
-        if (key.isEmpty()) {
-            inbox = new RqAlias(this.base, req).alias().inbox();
-        } else if (this.tokens.containsKey(key)) {
-            final Pair<Date, Inbox> cached = this.tokens.get(key);
-            diff = (new Date()).getTime()
-                - (cached.getLeft()).getTime();
-            if ((TimeUnit.MILLISECONDS.toDays(diff)) <= 2) {
-                inbox = cached.getRight();
-            } else {
-                this.tokens.remove(key);
-                inbox = new RqAlias(this.base, req).alias().inbox();
-            }
-        } else {
-            inbox = new RqAlias(this.base, req).alias().inbox();
-            this.tokens.put(key, Pair.of(new Date(), inbox));
-        }
-        diff = (new Date()).getTime() - checked.getTime();
-        if ((TimeUnit.MILLISECONDS.toHours(diff)) >= 1) {
-            checked = new Date();
-            clearCache();
-        }
+        final Inbox inbox = new RqAlias(this.base, req).alias().inbox();
         final long number = inbox.start();
         final Bout bout = inbox.bout(number);
         final StringBuilder msg = new StringBuilder(
             String.format("new bout #%d started", number)
         );
+        final Href href = new RqHref.Base(req).href();
         this.rename(bout, msg, href);
         this.invite(bout, msg, href);
         final Iterator<String> post = href.param("post").iterator();

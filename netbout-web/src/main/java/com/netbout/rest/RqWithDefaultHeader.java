@@ -26,40 +26,48 @@
  */
 package com.netbout.rest;
 
-import com.netbout.spi.Base;
 import java.io.IOException;
 import org.takes.Request;
-import org.takes.Response;
-import org.takes.Take;
+import org.takes.rq.RqHeaders;
+import org.takes.rq.RqWithHeader;
+import org.takes.rq.RqWrap;
 
 /**
- * Login.
- *
- * @author Yegor Bugayenko (yegor@teamed.io)
+ * Request with default header.
+ * @author Andrey Eliseev (aeg.exper0@gmail.com)
  * @version $Id$
- * @since 2.14
  */
-final class TkHome implements Take {
-
-    /**
-     * Base.
-     */
-    private final transient Base base;
+public final class RqWithDefaultHeader extends RqWrap {
 
     /**
      * Ctor.
-     * @param bse Base
+     * @param req Original request
+     * @param hdr Header name
+     * @param val Header value
+     * @throws IOException in case of request errors
      */
-    TkHome(final Base bse) {
-        this.base = bse;
+    public RqWithDefaultHeader(final Request req,
+        final String hdr, final String val) throws IOException {
+        super(RqWithDefaultHeader.buildRequest(req, hdr, val));
     }
 
-    @Override
-    public Response act(final Request req) throws IOException {
-        return new RsPage(
-            "/xsl/login.xsl",
-            this.base,
-            req
-        );
+    /**
+     * Builds the request with the default header if it is not already present.
+     * @param req Original request.
+     * @param hdr Header name.
+     * @param val Header value.
+     * @return The new request.
+     * @throws IOException in case of request errors
+     */
+    private static Request buildRequest(final Request req,
+        final String hdr, final String val) throws IOException {
+        final Request request;
+        if (new RqHeaders.Base(req).header(hdr).iterator().hasNext()) {
+            request = req;
+        } else {
+            request = new RqWithHeader(req, hdr, val);
+        }
+        return request;
     }
+
 }

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2009-2015, netbout.com
+ * Copyright (c) 2009-2016, netbout.com
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -68,6 +68,7 @@ public final class TkBout extends TkWrap {
             new FkBout("/invite", new TkInvite(base)),
             new FkBout("/kick", new TkKick(base)),
             new FkBout("/subscribe", new TkSubscribe(base)),
+            new FkBout("/hsubscribe", new TkSubscribe(base), false),
             new FkBout("/search", new TkIndex(base))
         );
     }

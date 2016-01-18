@@ -5,9 +5,9 @@ The following members are in the project team:
 Role | Members
 ---|---
 PM | @karato
-CR | @darkled, @caarlos0, @carlosmiranda, @pinaf, @ggajos, @krzyk, @longtimeago
-DEV | @exper0, @danff, @bdragan, @erimerturk, @komaz, @ivanjunckes, @mbarbieri, @prahladyeri, @lauresh
-IMP | @exper0, @danff, @bdragan, @erimerturk, @komaz, @ivanjunckes, @mbarbieri, @prahladyeri, @lauresh
+CR | @darkled, @caarlos0, @carlosmiranda, @pinaf, @ggajos, @krzyk, @mkordas, @longtimeago
+DEV | @exper0, @kitsook, @danff, @erimerturk, @komaz, @kujtimiihoxha, @mbarbieri, @prahladyeri, @skirpichenok, @lauresh
+IMP | @exper0, @kitsook, @danff, @erimerturk, @komaz, @kujtimiihoxha, @mbarbieri, @prahladyeri, @skirpichenok, @lauresh
 ARC | @dmzaytsev
 DES | 
 PO | @yegor256

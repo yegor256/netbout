@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2009-2015, netbout.com
+ * Copyright (c) 2009-2016, netbout.com
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -56,6 +56,9 @@ public interface Markdown {
 
         /**
          * Ctor.
+         * @todo #888:30min We should switch to another Markdown processor
+         *  MarkdownTxtMark and remove the old implementation
+         *  MarkdownPegdown and its unit tests from the code.
          */
         public Default() {
             this.processor = new MarkdownPegdown();

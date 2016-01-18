@@ -1,6 +1,7 @@
 <img src="http://img.netbout.com/logo.svg" width="132px"/>
 
 [![Made By Teamed.io](http://img.teamed.io/btn.svg)](http://www.teamed.io)
+[![We recommend IntelliJ IDEA](http://img.teamed.io/intellij-idea-recommend.svg)](https://www.jetbrains.com/idea/)
 
 [![Build Status](https://travis-ci.org/yegor256/netbout.svg?branch=master)](https://travis-ci.org/yegor256/netbout)
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.netbout/netbout/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.netbout/netbout)
@@ -56,6 +57,18 @@ Please run Maven (3.1 or higher!) build before submitting a pull request:
 
 ```
 $ mvn clean install -Pqulice
+```
+
+If your default encoding is not UTF-8, some of unit tests will break. This is an intentional behavior. To fix that, set this environment variable in console (in Windows, for example):
+
+```
+SET JAVA_TOOL_OPTIONS=-Dfile.encoding=UTF-8
+```
+
+Similarly, on Linux:
+
+```
+export JAVA_TOOL_OPTIONS="-Dfile.encoding=UTF-8"
 ```
 
 ### Run locally and test it
