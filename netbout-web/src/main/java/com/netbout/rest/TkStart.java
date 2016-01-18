@@ -57,8 +57,6 @@ import org.apache.commons.lang3.tuple.Pair;
  * @todo #750:30min Solve the puzzle for build mysteriously failing for
  *  this task citing a NullPointerException (See qulice issue #608 raised for
  *  the same) and then remove TkStart.java from qulice exceptions.
- * @todo #750:30min Implement a proper Guava cache with eviction policy instead
- *  of this concurrent hashmap approach.
  * @todo #750:30min Add unit tests to test scenarios for requests
  *  with/without a token.
  */
@@ -72,7 +70,7 @@ public final class TkStart implements Take {
     /**
      * Last cache clearance time.
      * */
-     private transient Date lastChecked = new Date();
+     private transient Date checked = new Date();
 
     /**
      * Token cache.
@@ -129,9 +127,9 @@ public final class TkStart implements Take {
             inbox = new RqAlias(this.base, req).alias().inbox();
             this.tokens.put(key, Pair.of(new Date(), inbox));
         }
-        diff = (new Date()).getTime() - lastChecked.getTime();
+        diff = (new Date()).getTime() - checked.getTime();
         if ((TimeUnit.MILLISECONDS.toHours(diff)) >= 1) {
-            lastChecked = new Date();
+            checked = new Date();
             clearCache();
         }
         final long number = inbox.start();
