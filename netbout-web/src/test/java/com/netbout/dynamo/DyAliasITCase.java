@@ -94,7 +94,7 @@ public final class DyAliasITCase {
         final Alias alias = aliases.iterate().iterator().next();
         final String[] emails = {
             "test@domain.com", "test@domain.com!test@domain.com",
-            "first.second@sub.domain.com", "UpperCase@Mail.com"
+            "first.second@sub.domain.com", "UpperCase@Mail.com",
         };
         for (final String email: emails) {
             alias.email(email);
