@@ -66,17 +66,17 @@ public final class TkStart implements Take {
      * Base.
      */
     private final transient Base base;
-    
+
     /**
-     * Last cache clearance time.
-     * */
+      * Last cache clearance time.
+      */
      private transient Date checked = new Date();
 
     /**
      * Token cache.
      */
-    private final transient ConcurrentMap<String, Pair<Date, Inbox>> tokens = new
-            ConcurrentHashMap<String, Pair<Date, Inbox>>();
+    private final transient ConcurrentMap<String, Pair<Date, Inbox>> tokens
+        = new ConcurrentHashMap<String, Pair<Date, Inbox>>();
 
     /**
      * Ctor.
