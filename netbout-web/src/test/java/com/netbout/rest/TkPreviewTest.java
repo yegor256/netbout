@@ -77,7 +77,7 @@ public final class TkPreviewTest {
                 )
             ).printBody(),
             Matchers.allOf(
-                Matchers.containsString("<p>Here is a paragraph.</p>"),
+                Matchers.containsString("<p>Here is a paragraph.<br  /></p>"),
                 Matchers.containsString("<p>New paragraph.</p>")
             )
         );
