@@ -32,6 +32,7 @@ import com.netbout.spi.Alias;
 import com.netbout.spi.Base;
 import java.io.IOException;
 import java.net.URLDecoder;
+import java.util.logging.Level;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.jasypt.encryption.pbe.StandardPBEStringEncryptor;
