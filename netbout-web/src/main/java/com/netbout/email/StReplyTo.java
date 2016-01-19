@@ -41,7 +41,7 @@ import lombok.ToString;
  *
  * @author Andrey Eliseev (aeg.exper0@gmail.com)
  * @version $Id$
- * @since 0.31
+ * @since 2.31
  */
 @Immutable
 @ToString
