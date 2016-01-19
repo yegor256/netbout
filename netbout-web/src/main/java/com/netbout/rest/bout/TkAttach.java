@@ -123,6 +123,7 @@ final class TkAttach implements Take {
             );
         } catch (final Attachment.TooBigException
             | Attachment.BrokenContentException ex) {
+            bout.attachments().delete(name);
             throw new RsFailure(ex);
         }
         FileUtils.forceDelete(temp);
