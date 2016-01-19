@@ -84,14 +84,24 @@ public final class TkEmVerify implements TkRegex {
 
     @Override
     public Response act(final RqRegex req) throws IOException {
-              final String invalid = "verification link not valid.";
-        String decoded;
-        try{
-            decoded= TkEmVerify.ENC.decrypt(URLDecoder.decode(req.matcher().group(1), "UTF-8")
-                    .replaceAll(" ", "+"));
+        String decoded = "";
+        boolean eonpe = false;
+        try {
+            decoded = TkEmVerify.ENC.decrypt(
+                URLDecoder.decode(
+                    req.matcher().group(1), "UTF-8"
+                ).replaceAll(" ", "+")
+            );
+        } catch (final EncryptionOperationNotPossibleException ignore) {
+            eonpe = true;
         }
-        catch (final EncryptionOperationNotPossibleException ignored){
-            throw new RsFailure(new EncryptionOperationNotPossibleException(invalid));
+        final String invalid = "verification link not valid.";
+        if (eonpe) {
+            throw new RsForward(
+                new RsFlash(invalid, Level.SEVERE)
+                , HttpURLConnection.HTTP_MOVED_PERM
+                , "/"
+            );
         }
         final Matcher matcher = TkEmVerify.PATTERN.matcher(decoded);
         if (!matcher.matches()) {
