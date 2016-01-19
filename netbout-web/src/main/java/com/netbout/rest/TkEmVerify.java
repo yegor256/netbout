@@ -31,6 +31,7 @@ import com.jcabi.urn.URN;
 import com.netbout.spi.Alias;
 import com.netbout.spi.Base;
 import java.io.IOException;
+import java.net.HttpURLConnection;
 import java.net.URLDecoder;
 import java.util.logging.Level;
 import java.util.regex.Matcher;
