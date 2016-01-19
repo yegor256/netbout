@@ -99,11 +99,11 @@ final class TkAttach implements Take {
         final Bout bout = new RqBout(this.base, req).bout();
         final String name = this.name(file);
         final File temp = File.createTempFile("netbout", "bin");
-        try (OutputStream os = new FileOutputStream(temp)) {
-            IOUtils.copy(file.body(), os);
-        }
         try {
-            this.validate(temp);
+            try (OutputStream os = new FileOutputStream(temp)) {
+                IOUtils.copy(file.body(), os);
+            }
+            this.validate(temp, name);
             final StringBuilder msg = new StringBuilder(Tv.HUNDRED);
             if (new Attachments.Search(bout.attachments()).exists(name)) {
                 msg.append(
@@ -158,20 +158,25 @@ final class TkAttach implements Take {
     /**
      * Checks some limitations on attachment.
      * @param attach Temportary file with attachment
+     * @param name Attachment name
      * @throws IOException If attachment violates limitations
      */
-    private void validate(final File attach) throws IOException {
+    private void validate(final File attach, final String name)
+        throws IOException {
         if (attach.length() == 0) {
             throw new Attachment.BrokenContentException(
                 String.format(
                     "content of attachment \"%s\" can't be empty",
-                    attach.getName()
+                    name
                 )
             );
         }
         if (attach.length() > Tv.TEN * Tv.MILLION) {
             throw new Attachment.TooBigException(
-                "attachment is too big, 10Mb is the maximum size"
+                String.format(
+                    "attachment \"%s\" is too big, 10Mb is the maximum size",
+                    name
+                )
             );
         }
     }
