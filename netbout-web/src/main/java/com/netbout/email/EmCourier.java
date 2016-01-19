@@ -79,8 +79,7 @@ final class EmCourier {
      * @param text The text of the new message
      * @throws IOException If fails
      */
-    public void email(final String self,
-        final Friend friend,
+    public void email(final String self, final Friend friend,
         final String text)
         throws IOException {
         this.postman.send(
@@ -98,15 +97,14 @@ final class EmCourier {
                 .with(
                     new StReplyTo(
                         String.format(
-                            "%s%s",
+                            "%s@reply.netbout.com",
                             EmCatch.encrypt(
                                 String.format(
                                     "%s|%d",
                                     self,
                                     this.bout.number()
                                 )
-                            ),
-                            "@reply.netbout.com"
+                            )
                         )
                     )
                 )

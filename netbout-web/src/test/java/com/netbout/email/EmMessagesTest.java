@@ -72,7 +72,6 @@ public final class EmMessagesTest {
 
     /**
      * Can send email with Reply-To header.
-     * delivery failure.
      * @throws Exception If there is some problem inside
      */
     @Test
@@ -81,11 +80,6 @@ public final class EmMessagesTest {
         final MkBase base = new MkBase();
         final Alias alias = new EmAlias(base.randomAlias(), postman);
         final Bout bout = alias.inbox().bout(alias.inbox().start());
-        final String expected = String.format(
-            "%s|%d",
-            alias.name(),
-            bout.number()
-        );
         bout.friends().invite(base.randomAlias().name());
         bout.messages().post("reply-to header test");
         final ArgumentCaptor<Envelope> argument =
@@ -95,8 +89,18 @@ public final class EmMessagesTest {
         final String[] reply =
             argument.getValue().unwrap().getReplyTo()[0].toString().split("@");
         MatcherAssert.assertThat(
-            EmCatch.decrypt(reply[0]),
-            Matchers.equalTo(expected)
+            String.format(
+                "%s@%s",
+                EmCatch.decrypt(reply[0]),
+                reply[1]
+            ),
+            Matchers.equalTo(
+                String.format(
+                    "%s|%d@reply.netbout.com",
+                    alias.name(),
+                    bout.number()
+                )
+            )
         );
     }
 

@@ -29,7 +29,6 @@ package com.netbout.email;
 import com.jcabi.aspects.Immutable;
 import com.jcabi.aspects.Loggable;
 import com.jcabi.email.Stamp;
-import java.io.UnsupportedEncodingException;
 import javax.mail.Address;
 import javax.mail.Message;
 import javax.mail.MessagingException;
@@ -42,6 +41,7 @@ import lombok.ToString;
  *
  * @author Andrey Eliseev (aeg.exper0@gmail.com)
  * @version $Id$
+ * @since 0.31
  */
 @Immutable
 @ToString
@@ -60,19 +60,6 @@ public final class StReplyTo implements Stamp {
      */
     public StReplyTo(final Address addr) {
         this(addr.toString());
-    }
-
-    /**
-     * Ctor.
-     * @param name Name of the recipient
-     * @param addr Email address of recipient
-     */
-    public StReplyTo(final String name, final String addr) {
-        try {
-            this.email = new InternetAddress(addr, name, "UTF-8").toString();
-        } catch (final UnsupportedEncodingException ex) {
-            throw new IllegalStateException(ex);
-        }
     }
 
     /**
