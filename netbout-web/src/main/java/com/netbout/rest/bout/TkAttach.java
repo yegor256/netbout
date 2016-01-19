@@ -96,39 +96,44 @@ final class TkAttach implements Take {
         final Request file = new RqMultipart.Smart(
             new RqMultipart.Base(req)
         ).single("file");
+        final Bout bout = new RqBout(this.base, req).bout();
         final String name = this.name(file);
         final File temp = File.createTempFile("netbout", "bin");
         try (OutputStream os = new FileOutputStream(temp)) {
             IOUtils.copy(file.body(), os);
         }
-        final Bout bout = new RqBout(this.base, req).bout();
-        final StringBuilder msg = new StringBuilder(Tv.HUNDRED);
-        if (new Attachments.Search(bout.attachments()).exists(name)) {
-            msg.append(String.format("attachment \"%s\" overwritten", name));
-        } else {
-            try {
+        try {
+            this.validate(temp);
+            final StringBuilder msg = new StringBuilder(Tv.HUNDRED);
+            if (new Attachments.Search(bout.attachments()).exists(name)) {
+                msg.append(
+                    String.format("attachment \"%s\" overwritten", name)
+                );
+            } else {
                 bout.attachments().create(name);
-            } catch (final Attachments.InvalidNameException ex) {
-                throw new RsFailure(ex);
+                msg.append(String.format("attachment \"%s\" uploaded", name));
             }
-            msg.append(String.format("attachment \"%s\" uploaded", name));
-        }
-        final String ctype = TkAttach.ctype(temp);
-        msg.append(" (").append(temp.length())
-            .append(" bytes, ").append(ctype).append(')');
-        try (InputStream is = new FileInputStream(temp)) {
-            bout.attachments().get(name).write(
-                is,
-                ctype, Long.toString(System.currentTimeMillis())
-            );
+            final String ctype = TkAttach.ctype(temp);
+            msg.append(" (").append(temp.length())
+                .append(" bytes, ").append(ctype).append(')');
+            try (InputStream is = new FileInputStream(temp)) {
+                bout.attachments().get(name).write(
+                    is,
+                    ctype, Long.toString(System.currentTimeMillis())
+                );
+            }
+            bout.messages().post(msg.toString());
+            throw new RsForward(new RsFlash(msg.toString()));
         } catch (final Attachment.TooBigException
-            | Attachment.BrokenContentException ex) {
-            bout.attachments().delete(name);
+            | Attachment.BrokenContentException
+            | Attachments.InvalidNameException ex) {
+            if (new Attachments.Search(bout.attachments()).exists(name)) {
+                bout.attachments().delete(name);
+            }
             throw new RsFailure(ex);
+        } finally {
+            FileUtils.forceDelete(temp);
         }
-        FileUtils.forceDelete(temp);
-        bout.messages().post(msg.toString());
-        throw new RsForward(new RsFlash(msg.toString()));
     }
 
     /**
@@ -148,6 +153,27 @@ final class TkAttach implements Take {
         }
         // @checkstyle MagicNumberCheck (1 line)
         return URLDecoder.decode(matcher.group(5), CharEncoding.UTF_8);
+    }
+
+    /**
+     * Checks some limitations on attachment.
+     * @param attach Temportary file with attachment
+     * @throws IOException If attachment violates limitations
+     */
+    private void validate(final File attach) throws IOException {
+        if (attach.length() == 0) {
+            throw new Attachment.BrokenContentException(
+                String.format(
+                    "content of attachment \"%s\" can't be empty",
+                    attach.getName()
+                )
+            );
+        }
+        if (attach.length() > Tv.TEN * Tv.MILLION) {
+            throw new Attachment.TooBigException(
+                "attachment is too big, 10Mb is the maximum size"
+            );
+        }
     }
 
     /**
