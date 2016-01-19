@@ -35,6 +35,7 @@ import java.net.URLDecoder;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.jasypt.encryption.pbe.StandardPBEStringEncryptor;
+import org.jasypt.exceptions.EncryptionOperationNotPossibleException;
 import org.takes.Response;
 import org.takes.facets.flash.RsFlash;
 import org.takes.facets.fork.RqRegex;
@@ -83,13 +84,16 @@ public final class TkEmVerify implements TkRegex {
 
     @Override
     public Response act(final RqRegex req) throws IOException {
-        final String invalid = "verification link not valid";
-        final Matcher matcher = TkEmVerify.PATTERN.matcher(
-            TkEmVerify.ENC.decrypt(
-                URLDecoder.decode(req.matcher().group(1), "UTF-8")
-                    .replaceAll(" ", "+")
-            )
-        );
+              final String invalid = "verification link not valid.";
+        String decoded;
+        try{
+            decoded= TkEmVerify.ENC.decrypt(URLDecoder.decode(req.matcher().group(1), "UTF-8")
+                    .replaceAll(" ", "+"));
+        }
+        catch (final EncryptionOperationNotPossibleException ignored){
+            throw new RsFailure(new EncryptionOperationNotPossibleException(invalid));
+        }
+        final Matcher matcher = TkEmVerify.PATTERN.matcher(decoded);
         if (!matcher.matches()) {
             throw new RsFailure(invalid);
         }
