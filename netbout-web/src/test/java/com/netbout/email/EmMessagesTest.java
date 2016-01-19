@@ -32,7 +32,10 @@ import com.netbout.mock.MkBase;
 import com.netbout.spi.Alias;
 import com.netbout.spi.Bout;
 import java.io.IOException;
+import org.hamcrest.MatcherAssert;
+import org.hamcrest.Matchers;
 import org.junit.Test;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 import org.takes.facets.forward.RsFailure;
 
@@ -66,4 +69,39 @@ public final class EmMessagesTest {
         );
         emMessages.post("how are you?");
     }
+
+    /**
+     * Can send email with Reply-To header.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void canSendEmailWithReplyTo() throws Exception {
+        final Postman postman = Mockito.mock(Postman.class);
+        final MkBase base = new MkBase();
+        final Alias alias = new EmAlias(base.randomAlias(), postman);
+        final Bout bout = alias.inbox().bout(alias.inbox().start());
+        bout.friends().invite(base.randomAlias().name());
+        bout.messages().post("reply-to header test");
+        final ArgumentCaptor<Envelope> argument =
+            ArgumentCaptor.forClass(Envelope.class);
+        Mockito.verify(postman)
+            .send(argument.capture());
+        final String[] reply =
+            argument.getValue().unwrap().getReplyTo()[0].toString().split("@");
+        MatcherAssert.assertThat(
+            String.format(
+                "%s@%s",
+                EmCatch.decrypt(reply[0]),
+                reply[1]
+            ),
+            Matchers.equalTo(
+                String.format(
+                    "%s|%d@reply.netbout.com",
+                    alias.name(),
+                    bout.number()
+                )
+            )
+        );
+    }
+
 }

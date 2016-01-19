@@ -108,7 +108,7 @@ final class EmMessages implements Messages {
                 continue;
             }
             try {
-                this.courier.email(friend, text);
+                this.courier.email(this.self, friend, text);
             } catch (final IOException exception) {
                 failed.add(friend.alias());
             }
