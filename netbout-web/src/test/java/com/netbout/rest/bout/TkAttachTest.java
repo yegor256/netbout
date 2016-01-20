@@ -29,13 +29,19 @@ package com.netbout.rest.bout;
 import com.jcabi.urn.URN;
 import com.netbout.mock.MkBase;
 import com.netbout.spi.Alias;
+import com.netbout.spi.Attachments;
 import com.netbout.spi.Bout;
 import com.netbout.spi.User;
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.HttpURLConnection;
+import java.util.LinkedList;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
+import org.junit.Assert;
 import org.junit.Test;
+import org.takes.Request;
 import org.takes.facets.auth.RqWithAuth;
 import org.takes.facets.forward.RsFailure;
 import org.takes.facets.forward.RsForward;
@@ -80,13 +86,12 @@ public final class TkAttachTest {
             new RqMultipart.Fake(
                 TkAttachTest.fake(number),
                 new RqWithHeaders(
-                    new RqLive(
-                        new ByteArrayInputStream("content1".getBytes())
-                    ),
+                    TkAttachTest.body("non-zero"),
                     String.format(TkAttachTest.POST_URL, number),
                     //@checkstyle LineLengthCheck (1 line)
                     "Content-Disposition: form-data; name=\"file\"; filename=\"some.xml\"",
-                    "Content-Type: application/xml"
+                    "Content-Type: application/xml",
+                    "Content-Length: 8"
                 )
             )
         );
@@ -111,9 +116,9 @@ public final class TkAttachTest {
     @Test(expected = RsFailure.class)
     public void ignoresWrongRequest() throws Exception {
         final MkBase base = new MkBase();
-        final String urn = "urn:test:2";
+        final String urn = "urn:test:3";
         final User user = base.user(new URN(urn));
-        user.aliases().add("jeff2");
+        user.aliases().add("jeff3");
         final Alias alias = user.aliases().iterate().iterator().next();
         final long bout = alias.inbox().start();
         alias.inbox().bout(bout).friends().invite(alias.name());
@@ -137,6 +142,47 @@ public final class TkAttachTest {
     }
 
     /**
+     * TkAttach can ignore wrong file without saving it.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void ignoresWrongFile() throws Exception {
+        final MkBase base = new MkBase();
+        final String urn = "urn:test:2";
+        final User user = base.user(new URN(urn));
+        user.aliases().add("jeff2");
+        final Alias alias = user.aliases().iterate().iterator().next();
+        final long bout = alias.inbox().start();
+        alias.inbox().bout(bout).friends().invite(alias.name());
+        final String file = "test.bin";
+        final RqWithAuth request = new RqWithAuth(
+            urn,
+            new RqMultipart.Fake(
+                TkAttachTest.fake(bout),
+                new RqWithHeaders(
+                    TkAttachTest.body(""),
+                    String.format(TkAttachTest.POST_URL, bout),
+                    //@checkstyle LineLengthCheck (1 line)
+                    String.format("Content-Disposition: form-data; name=\"file\"; filename=\"%s\"", file),
+                    "Content-Type: application/octet-stream"
+                )
+            )
+        );
+        try {
+            new FkBout(".*$", new TkAttach(base)).route(request);
+            Assert.fail("Expected RsFailure exception but nothing was thrown");
+        } catch (final RsFailure ex) {
+            MatcherAssert.assertThat(
+                "file unexpectedly exists after attach failure",
+                new Attachments.Search(
+                    alias.inbox().bout(bout).attachments()
+                ).exists(file),
+                Matchers.is(false)
+            );
+        }
+    }
+
+    /**
      * Creates fake request for the provided bout number.
      * @param number Bout number
      * @return Fake request
@@ -146,5 +192,23 @@ public final class TkAttachTest {
             "POST",
             String.format("/b/%d/attach", number)
         );
+    }
+
+    /**
+     * Creates request with body from given string.
+     * @param body Body string
+     * @return Request instance
+     */
+    private static Request body(final String body) {
+        return new Request() {
+            @Override
+            public Iterable<String> head() throws IOException {
+                return new LinkedList<>();
+            }
+            @Override
+            public InputStream body() throws IOException {
+                return new ByteArrayInputStream(body.getBytes());
+            }
+        };
     }
 }
