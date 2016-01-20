@@ -125,4 +125,34 @@ public final class TkInboxTest {
             Matchers.not(Matchers.containsString(firstTitle))
         );
     }
+
+    /**
+     * TkInbox can handle invalid 'since' filter.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void handleInvalidSince() throws Exception {
+        final String alias = "test3";
+        final String urn = "urn:test:3";
+        final MkBase base = new MkBase();
+        final Bout bout = base.randomBout();
+        base.user(new URN(urn)).aliases().add(alias);
+        bout.friends().invite(alias);
+        MatcherAssert.assertThat(
+            new RsPrint(
+                new TkAuth(
+                    new TkApp(base),
+                    new PsFixed(new Identity.Simple(urn))
+                ).act(
+                    new RqFake(
+                        RqMethod.GET,
+                        "/?since"
+                    )
+                )
+            ).printHead(),
+            Matchers.containsString(
+                "invalid+%27since%27+value%2C+timestamp+is+expected"
+            )
+        );
+    }
 }
