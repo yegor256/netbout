@@ -86,18 +86,7 @@ public final class TkAttachTest {
             new RqMultipart.Fake(
                 TkAttachTest.fake(number),
                 new RqWithHeaders(
-                    new Request() {
-                        @Override
-                        public Iterable<String> head() throws IOException {
-                            return new LinkedList<>();
-                        }
-                        @Override
-                        public InputStream body() throws IOException {
-                            return new ByteArrayInputStream(
-                                "non-zero".getBytes()
-                            );
-                        }
-                    },
+                    TkAttachTest.body("non-zero"),
                     String.format(TkAttachTest.POST_URL, number),
                     //@checkstyle LineLengthCheck (1 line)
                     "Content-Disposition: form-data; name=\"file\"; filename=\"some.xml\"",
@@ -171,16 +160,7 @@ public final class TkAttachTest {
             new RqMultipart.Fake(
                 TkAttachTest.fake(bout),
                 new RqWithHeaders(
-                    new Request() {
-                        @Override
-                        public Iterable<String> head() throws IOException {
-                            return new LinkedList<>();
-                        }
-                        @Override
-                        public InputStream body() throws IOException {
-                            return new ByteArrayInputStream("".getBytes());
-                        }
-                    },
+                    TkAttachTest.body(""),
                     String.format(TkAttachTest.POST_URL, bout),
                     //@checkstyle LineLengthCheck (1 line)
                     String.format("Content-Disposition: form-data; name=\"file\"; filename=\"%s\"", file),
@@ -190,6 +170,7 @@ public final class TkAttachTest {
         );
         try {
             new FkBout(".*$", new TkAttach(base)).route(request);
+            Assert.fail("Expected RsFailure exception but nothing was thrown");
         } catch (final RsFailure ex) {
             MatcherAssert.assertThat(
                 "file unexpectedly exists after attach failure",
@@ -198,9 +179,7 @@ public final class TkAttachTest {
                 ).exists(file),
                 Matchers.is(false)
             );
-            return;
         }
-        Assert.fail("Expected RsFailure exception but nothing was thrown");
     }
 
     /**
@@ -213,5 +192,23 @@ public final class TkAttachTest {
             "POST",
             String.format("/b/%d/attach", number)
         );
+    }
+
+    /**
+     * Creates request with body from given string.
+     * @param body Body string
+     * @return Request instance
+     */
+    private static Request body(final String body) {
+        return new Request() {
+            @Override
+            public Iterable<String> head() throws IOException {
+                return new LinkedList<>();
+            }
+            @Override
+            public InputStream body() throws IOException {
+                return new ByteArrayInputStream(body.getBytes());
+            }
+        };
     }
 }
