@@ -50,6 +50,9 @@ import org.takes.rq.RqHref;
  * @version $Id$
  * @since 2.14
  * @checkstyle ClassDataAbstractionCouplingCheck (500 lines)
+ * @todo #947:30min TkSaveEmail shouldn't validate a email when running
+ *  locally. One idea how to know Netbout running locally or not is
+ *  checking Version attribute from MANIFEST for substring LOCAL
  */
 final class TkSaveEmail implements Take {
 
