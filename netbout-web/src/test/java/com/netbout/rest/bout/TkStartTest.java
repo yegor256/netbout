@@ -238,4 +238,61 @@ public final class TkStartTest {
         }
         MatcherAssert.assertThat(posted, Matchers.equalTo(msgs.length));
     }
+
+    /**
+     * TkStart can handle token parameter.
+     *
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void handlesToken() throws Exception {
+        final MkBase base = new MkBase();
+        final String urn = "urn:test:5";
+        final User user = base.user(new URN(urn));
+        user.aliases().add("Jane");
+        final String msgs[] = {
+                "Hello World",
+                "I shouldn't be created as new",
+                "I should be created as new",
+                "I am new too",
+                "Another new"
+        };
+        final String tokens[] = {
+                "13579",
+                "13579",
+                "24680",
+                "",
+                ""
+        };
+        long locNum[] = new long[msgs.length];
+
+        for (int i=0; i < msgs.length; i++) {
+            final String head = new RsPrint(
+                    new TkForward(new TkStart(base)).act(
+                            new RqWithAuth(
+                                    urn,
+                                    new RqFake(
+                                            RqMethod.GET,
+                                            String.format(
+                                                    "/start?post=%s&token=%s",
+                                                    URLEncoder.encode(msgs[i], "UTF-8"),
+                                                    URLEncoder.encode(tokens[i], "UTF-8")
+                                            )
+                                    )
+                            )
+                    )
+            ).printHead();
+            final Matcher matcher = TkStartTest.LOCATION.matcher(head);
+            MatcherAssert.assertThat("Location header is valid", matcher.find());
+            // make sure the bout can be found
+            user.aliases().iterate().iterator().next().inbox()
+                    .bout(Long.parseLong(matcher.group(1)));
+            locNum[i] = Long.parseLong(matcher.group(1));
+        }
+        MatcherAssert.assertThat(locNum[0], Matchers.equalTo(locNum[1]));
+        MatcherAssert.assertThat(locNum[0], Matchers.not(locNum[2]));
+        MatcherAssert.assertThat(locNum[0], Matchers.not(locNum[3]));
+        MatcherAssert.assertThat(locNum[2], Matchers.not(locNum[3]));
+        MatcherAssert.assertThat(locNum[3], Matchers.not(locNum[4]));
+    }
 }
