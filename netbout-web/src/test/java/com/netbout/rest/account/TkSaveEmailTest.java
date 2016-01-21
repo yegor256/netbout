@@ -47,6 +47,10 @@ import org.takes.rq.RqForm;
  * @checkstyle ClassDataAbstractionCouplingCheck (500 lines)
  */
 public final class TkSaveEmailTest {
+    /**
+     * Email parameter name.
+     */
+    private static final transient String EMAIL = "email";
 
     /**
      * TkSaveEmail can save email.
@@ -61,12 +65,40 @@ public final class TkSaveEmailTest {
         final Alias alias = user.aliases().iterate().iterator().next();
         alias.email("old@example.com");
         new TkAuth(
-            new TkSaveEmail(base),
+            new TkSaveEmail(base, false),
             new PsFixed(new Identity.Simple(urn))
-        ).act(new RqForm.Fake(new RqFake(), "email", "new@example.com"));
+        ).act(
+            new RqForm.Fake(
+                new RqFake(), TkSaveEmailTest.EMAIL, "new@example.com"
+            )
+        );
         MatcherAssert.assertThat(
             alias.email(),
             Matchers.equalTo("old@example.com!new@example.com")
         );
     }
+
+    /**
+     * TkSaveEmail can save email locally.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void savesEmailLocal() throws Exception {
+        final MkBase base = new MkBase();
+        final String urn = "urn:test:2";
+        final User user = base.user(new URN(urn));
+        user.aliases().add("alias2");
+        final Alias alias = user.aliases().iterate().iterator().next();
+        alias.email("jack@example.com");
+        final String email = "john@example.com";
+        new TkAuth(
+            new TkSaveEmail(base, true),
+            new PsFixed(new Identity.Simple(urn))
+        ).act(new RqForm.Fake(new RqFake(), TkSaveEmailTest.EMAIL, email));
+        MatcherAssert.assertThat(
+            alias.email(),
+            Matchers.equalTo(email)
+        );
+    }
+
 }
