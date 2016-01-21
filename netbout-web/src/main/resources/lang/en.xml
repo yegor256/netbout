@@ -43,6 +43,7 @@
     <!-- top menu -->
     <About>About</About>
     <Start>Start</Start>
+    <Start.later>Start (later)</Start.later>
     <start.new.bout>click here to start a new bout</start.new.bout>
     <back.to.inbox>click to go back to inbox</back.to.inbox>
     <Logout>Logout</Logout>

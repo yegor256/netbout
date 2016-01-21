@@ -122,18 +122,25 @@
                         </li>
                         <xsl:if test="links/link[@rel='start']">
                             <li>
-                                <a>
-                                    <xsl:attribute name="href">
-                                        <xsl:value-of select="links/link[@rel='start']/@href"/>
-                                    </xsl:attribute>
-                                    <xsl:attribute name="title">
-                                        <xsl:value-of select="$TEXTS/start.new.bout"/>
-                                    </xsl:attribute>
-                                    <xsl:value-of select="$TEXTS/Start"/>
-                                </a>
-                                <span class="start">
-                                    <xsl:text>+</xsl:text>
-                                </span>
+                                <xsl:choose>
+                                    <xsl:when test="/page/bouts and count(/page/bouts/bout) = 0 and /page/query = '' and not(contains(version/name,'LOCAL'))">
+                                        <xsl:value-of select="$TEXTS/Start.later"/>
+                                    </xsl:when>
+                                    <xsl:otherwise>
+                                        <a>
+                                            <xsl:attribute name="href">
+                                                <xsl:value-of select="links/link[@rel='start']/@href"/>
+                                            </xsl:attribute>
+                                            <xsl:attribute name="title">
+                                                <xsl:value-of select="$TEXTS/start.new.bout"/>
+                                            </xsl:attribute>
+                                            <xsl:value-of select="$TEXTS/Start"/>
+                                        </a>
+                                        <span class="start">
+                                            <xsl:text>+</xsl:text>
+                                        </span>
+                                    </xsl:otherwise>
+                                </xsl:choose>
                             </li>
                         </xsl:if>
                         <xsl:if test="links/link[@rel='about']">
