@@ -85,7 +85,6 @@ public final class TkEmVerifyTest {
             Matchers.equalTo("new1@example.com")
         );
     }
-
     /**
      *
      * TkEmVerify can reject invalid verification link.
@@ -133,7 +132,7 @@ public final class TkEmVerifyTest {
         alias.email("old@example.com!new4@example.com");
         try {
             new TkEmVerify(base).act(
-                    new RqRegex.Fake(PATTERN, "x")
+                new RqRegex.Fake(TkEmVerifyTest.PATTERN, "x")
             );
         } catch (final RsForward ex) {
             final Iterator<String> response = ex.head().iterator();
@@ -142,8 +141,8 @@ public final class TkEmVerifyTest {
             final String[] cookie = response
                 .next().split(space)[1].split("./")[0].split("=");
             MatcherAssert.assertThat(
-                    cookie[1].replace("+", space),
-                    Matchers.equalTo("verification link not valid")
+                cookie[1].replace("+", space),
+                Matchers.equalTo("verification link not valid")
             );
         }
     }
@@ -156,8 +155,8 @@ public final class TkEmVerifyTest {
      */
     private static RqRegex request(final String code) throws Exception {
         return new RqRegex.Fake(
-                PATTERN,
-                URLEncoder.encode(TkEmVerifyTest.ENC.encrypt(code), "UTF-8")
+            TkEmVerifyTest.PATTERN,
+            URLEncoder.encode(TkEmVerifyTest.ENC.encrypt(code), "UTF-8")
         );
     }
 }
