@@ -135,6 +135,10 @@ public final class TkEmVerifyTest {
                 new RqRegex.Fake(TkEmVerifyTest.PATTERN, "x")
             );
         } catch (final RsForward ex) {
+            MatcherAssert.assertThat(
+                ex,
+                Matchers.not(Matchers.instanceOf(RsFailure.class))
+            );
             final Iterator<String> response = ex.head().iterator();
             response.next();
             final String space = " ";
