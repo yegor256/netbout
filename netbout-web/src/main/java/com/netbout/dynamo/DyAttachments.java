@@ -61,7 +61,17 @@ final class DyAttachments implements Attachments {
      * Table name.
      */
     public static final String TBL = "attachments";
-
+    
+    /**
+     * Min number of char.
+     */
+    public static final int MIN = 3;
+    
+    /**
+     * Max number of char.
+     */
+    public static final int MAX = 100;
+    
     /**
      * Bout attribute.
      */
@@ -197,7 +207,17 @@ final class DyAttachments implements Attachments {
 
     @Override
     public void create(final String name) throws IOException {
-        if (!name.matches("[a-zA-Z\\.\\-0-9]{3,100}")) {
+        if (name.length() < DyAttachments.MIN
+                || name.length() > DyAttachments.MAX) {
+            throw new Attachments.InvalidNameException(
+                String.format(
+                        "invalid attachment name length \"%s\". %s%s",
+                        name,
+                        "The length of the attachment name must be ",
+                        "between 3-100 characters"
+                )
+            );
+        } else if (!name.matches("[a-zA-Z\\.\\-0-9]{3,100}")) {
             throw new Attachments.InvalidNameException(
                 String.format(
                     "invalid attachment name \"%s\". %s%s",
