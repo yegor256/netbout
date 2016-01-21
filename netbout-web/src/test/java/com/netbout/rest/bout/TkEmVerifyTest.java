@@ -140,7 +140,7 @@ public final class TkEmVerifyTest {
             response.next();
             final String space = " ";
             final String[] cookie = response
-                    .next().split(space)[1].split("./")[0].split("=");
+                .next().split(space)[1].split("./")[0].split("=");
             MatcherAssert.assertThat(
                     cookie[1].replace("+", space),
                     Matchers.equalTo("verification link not valid")
