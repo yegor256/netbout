@@ -86,7 +86,6 @@ public final class TkEmVerifyTest {
         );
     }
     /**
-     *
      * TkEmVerify can reject invalid verification link.
      * @throws Exception If some problem inside
      */
@@ -117,7 +116,6 @@ public final class TkEmVerifyTest {
         );
     }
     /**
-     *
      * TkEmVerify can return user friendly message if
      * the verification url is not properly encoded.
      * @throws Exception If some problem inside
