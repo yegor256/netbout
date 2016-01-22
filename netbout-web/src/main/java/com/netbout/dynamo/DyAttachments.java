@@ -61,17 +61,14 @@ final class DyAttachments implements Attachments {
      * Table name.
      */
     public static final String TBL = "attachments";
-    
     /**
      * Min number of char.
      */
     public static final int MIN = 3;
-    
     /**
      * Max number of char.
      */
     public static final int MAX = 100;
-    
     /**
      * Bout attribute.
      */
