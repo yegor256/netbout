@@ -41,6 +41,7 @@ import java.net.URLEncoder;
 import java.util.Iterator;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import org.apache.commons.lang3.CharEncoding;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;
@@ -150,7 +151,7 @@ public final class TkStartTest {
                         String.format(
                             "/start?post=message&invite=%s&rename=%s",
                             base.randomAlias().name(),
-                            URLEncoder.encode(name, "UTF-8")
+                            URLEncoder.encode(name, CharEncoding.UTF_8)
                         )
                     )
                 )
@@ -245,54 +246,64 @@ public final class TkStartTest {
      * @throws Exception If there is some problem inside
      */
     @Test
+    @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
     public void handlesToken() throws Exception {
         final MkBase base = new MkBase();
         final String urn = "urn:test:5";
         final User user = base.user(new URN(urn));
         user.aliases().add("Jane");
-        final String msgs[] = {
-                "Hello World",
-                "I shouldn't be created as new",
-                "I should be created as new",
-                "I am new too",
-                "Another new"
+        final String[] msgs = {
+            "Hello World",
+            "I shouldn't be created as new",
+            "I should be created as new",
+            "I am new too",
+            "Another new",
         };
-        final String tokens[] = {
-                "13579",
-                "13579",
-                "24680",
-                "",
-                ""
+        final String[] tokens = {
+            // @checkstyle MultipleStringLiteralsCheck (2 lines)
+            "13579",
+            "13579",
+            "24680",
+            "",
+            "",
         };
-        long locNum[] = new long[msgs.length];
-
-        for (int i=0; i < msgs.length; i++) {
+        final long[] loc = new long[msgs.length];
+        for (int count = 0; count < msgs.length; count += 1) {
             final String head = new RsPrint(
-                    new TkForward(new TkStart(base)).act(
-                            new RqWithAuth(
-                                    urn,
-                                    new RqFake(
-                                            RqMethod.GET,
-                                            String.format(
-                                                    "/start?post=%s&token=%s",
-                                                    URLEncoder.encode(msgs[i], "UTF-8"),
-                                                    URLEncoder.encode(tokens[i], "UTF-8")
-                                            )
-                                    )
+                new TkForward(new TkStart(base)).act(
+                    new RqWithAuth(
+                        urn,
+                        new RqFake(
+                            RqMethod.GET,
+                            String.format(
+                                "/start?post=%s&token=%s",
+                                URLEncoder.encode(
+                                    msgs[count],
+                                    CharEncoding.UTF_8
+                                ),
+                                URLEncoder.encode(
+                                    tokens[count],
+                                    CharEncoding.UTF_8
+                                )
                             )
+                        )
                     )
+                )
             ).printHead();
             final Matcher matcher = TkStartTest.LOCATION.matcher(head);
-            MatcherAssert.assertThat("Location header is valid", matcher.find());
-            // make sure the bout can be found
+            MatcherAssert.assertThat(
+                "Found matching location header",
+                matcher.find()
+            );
             user.aliases().iterate().iterator().next().inbox()
-                    .bout(Long.parseLong(matcher.group(1)));
-            locNum[i] = Long.parseLong(matcher.group(1));
+                .bout(Long.parseLong(matcher.group(1)));
+            loc[count] = Long.parseLong(matcher.group(1));
         }
-        MatcherAssert.assertThat(locNum[0], Matchers.equalTo(locNum[1]));
-        MatcherAssert.assertThat(locNum[0], Matchers.not(locNum[2]));
-        MatcherAssert.assertThat(locNum[0], Matchers.not(locNum[3]));
-        MatcherAssert.assertThat(locNum[2], Matchers.not(locNum[3]));
-        MatcherAssert.assertThat(locNum[3], Matchers.not(locNum[4]));
+        // @checkstyle MagicNumber (5 lines)
+        MatcherAssert.assertThat(loc[0], Matchers.equalTo(loc[1]));
+        MatcherAssert.assertThat(loc[0], Matchers.not(loc[2]));
+        MatcherAssert.assertThat(loc[0], Matchers.not(loc[3]));
+        MatcherAssert.assertThat(loc[2], Matchers.not(loc[3]));
+        MatcherAssert.assertThat(loc[3], Matchers.not(loc[4]));
     }
 }
