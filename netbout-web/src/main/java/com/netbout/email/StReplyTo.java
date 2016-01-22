@@ -24,65 +24,56 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
+package com.netbout.email;
 
-.tabs {
-  background-color: #fff;
-  border: 1px solid #dadbd9;
-  position: relative;
-  .tab-panel {
-    display: none;
-    margin-top: 10px;
-    padding: 0px 10px 0px;
-    &.active {
-      display: block;
-    }
-  }
-  .tabnav {
-    background-color: #f3f3f1;
-    border-bottom: 1px solid #ddd;
-    .tabnav-tabs {
-      padding: 6px 10px 0;
-      margin-bottom: -1px;
-      a {
-        color: #666;
-        display: inline-block;
-        font-size: 14px;
-        padding: 8px 12px;
-        line-height: 20px;
-        text-decoration: none;
-        border: 1px solid transparent;
-        border-bottom: 0;
-        &.active {
-          background-color: #fff;
-          border-color: #ddd;
-          border-radius: 3px 3px 0 0;
-          color: #333;
-        }
-      }
-    }
-  }
-}
-.previewable-content {
-  content: 'B';
-  form {
-    content: 'F';
-    textarea {
-      height: 150px;
-    }
-    .form-submit {
-      padding: 0px 0px 10px;
-      margin-left: 10px;
-    }
-  }
-  .preview {
-    content: 'H';
-    .content {
-      content: 'I';
-      width: 100%;
-    }
-  }
-  .tab-panel {
-    min-height: 150px;
-  }
-}
+import com.jcabi.aspects.Immutable;
+import com.jcabi.aspects.Loggable;
+import com.jcabi.email.Stamp;
+import javax.mail.Address;
+import javax.mail.Message;
+import javax.mail.MessagingException;
+import javax.mail.internet.InternetAddress;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
+/**
+ * Stamp for a MIME envelope, with a replyTo.
+ *
+ * @author Andrey Eliseev (aeg.exper0@gmail.com)
+ * @version $Id$
+ * @since 2.31
+ */
+@Immutable
+@ToString
+@EqualsAndHashCode(of = "email")
+@Loggable(Loggable.DEBUG)
+public final class StReplyTo implements Stamp {
+
+    /**
+     * Email to send reply.
+     */
+    private final transient String email;
+
+    /**
+     * Ctor.
+     * @param addr Address
+     */
+    public StReplyTo(final Address addr) {
+        this(addr.toString());
+    }
+
+    /**
+     * Ctor.
+     * @param addr Address
+     */
+    public StReplyTo(final String addr) {
+        this.email = addr;
+    }
+
+    @Override
+    public void attach(final Message message) throws MessagingException {
+        final Address[] addresses = {new InternetAddress(this.email)};
+        message.setReplyTo(addresses);
+    }
+
+}
