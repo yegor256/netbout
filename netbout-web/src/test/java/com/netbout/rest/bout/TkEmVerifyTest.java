@@ -114,7 +114,7 @@ public final class TkEmVerifyTest {
         final Alias alias = user.aliases().iterate().iterator().next();
         alias.email("old@example.com");
         new TkEmVerify(base).act(
-                request("urn:test:3:alias3:new3@example.com")
+            request("urn:test:3:alias3:new3@example.com")
         );
     }
 
@@ -133,12 +133,12 @@ public final class TkEmVerifyTest {
         alias.email("old@example.com!new4@example.com");
         try {
             new TkEmVerify(base).act(
-                    new RqRegex.Fake(TkEmVerifyTest.PATTERN, "x")
+                new RqRegex.Fake(TkEmVerifyTest.PATTERN, "x")
             );
         } catch (final RsForward ex) {
             MatcherAssert.assertThat(
-                    ex,
-                    Matchers.not(Matchers.instanceOf(RsFailure.class))
+                ex,
+                Matchers.not(Matchers.instanceOf(RsFailure.class))
             );
             final Iterator<String> response = ex.head().iterator();
             response.next();
@@ -146,8 +146,8 @@ public final class TkEmVerifyTest {
             final String[] cookie = response
                     .next().split(space)[1].split("./")[0].split("=");
             MatcherAssert.assertThat(
-                    cookie[1].replace("+", space),
-                    Matchers.equalTo("verification link not valid")
+                cookie[1].replace("+", space),
+                Matchers.equalTo("verification link not valid")
             );
         }
     }
