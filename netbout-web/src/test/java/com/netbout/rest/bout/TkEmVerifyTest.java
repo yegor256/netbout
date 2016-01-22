@@ -85,6 +85,7 @@ public final class TkEmVerifyTest {
             Matchers.equalTo("new1@example.com")
         );
     }
+    
     /**
      * TkEmVerify can reject invalid verification link.
      * @throws Exception If some problem inside
@@ -99,6 +100,7 @@ public final class TkEmVerifyTest {
         alias.email("old@example.com!new2@example.com");
         new TkEmVerify(base).act(request("urn:test:2:alias2:ab@cd.com"));
     }
+    
     /**
      * TkEmVerify can reject verification when none necessary.
      * @throws Exception If some problem inside
@@ -115,6 +117,7 @@ public final class TkEmVerifyTest {
             request("urn:test:3:alias3:new3@example.com")
         );
     }
+    
     /**
      * TkEmVerify can return user friendly message if
      * the verification url is not properly encoded.
@@ -148,6 +151,7 @@ public final class TkEmVerifyTest {
             );
         }
     }
+    
     /**
      * Creates a RqRegex for the provided verification code.
      *
