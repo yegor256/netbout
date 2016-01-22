@@ -62,7 +62,7 @@ import org.takes.rs.RsPrint;
  *  discarded.
  * @todo #750:30min TkStart should not create new bout
  * when same token is specified. Currently set the test case
- * as ignored. See issue #954 for findings.
+ * as ignored.
  * @since 2.15
  * @checkstyle ClassDataAbstractionCouplingCheck (500 lines)
  */
