@@ -85,7 +85,7 @@ public final class TkEmVerifyTest {
             Matchers.equalTo("new1@example.com")
         );
     }
-    
+
     /**
      * TkEmVerify can reject invalid verification link.
      * @throws Exception If some problem inside
@@ -100,7 +100,7 @@ public final class TkEmVerifyTest {
         alias.email("old@example.com!new2@example.com");
         new TkEmVerify(base).act(request("urn:test:2:alias2:ab@cd.com"));
     }
-    
+
     /**
      * TkEmVerify can reject verification when none necessary.
      * @throws Exception If some problem inside
@@ -114,10 +114,10 @@ public final class TkEmVerifyTest {
         final Alias alias = user.aliases().iterate().iterator().next();
         alias.email("old@example.com");
         new TkEmVerify(base).act(
-            request("urn:test:3:alias3:new3@example.com")
+                request("urn:test:3:alias3:new3@example.com")
         );
     }
-    
+
     /**
      * TkEmVerify can return user friendly message if
      * the verification url is not properly encoded.
@@ -133,25 +133,25 @@ public final class TkEmVerifyTest {
         alias.email("old@example.com!new4@example.com");
         try {
             new TkEmVerify(base).act(
-                new RqRegex.Fake(TkEmVerifyTest.PATTERN, "x")
+                    new RqRegex.Fake(TkEmVerifyTest.PATTERN, "x")
             );
         } catch (final RsForward ex) {
             MatcherAssert.assertThat(
-                ex,
-                Matchers.not(Matchers.instanceOf(RsFailure.class))
+                    ex,
+                    Matchers.not(Matchers.instanceOf(RsFailure.class))
             );
             final Iterator<String> response = ex.head().iterator();
             response.next();
             final String space = " ";
             final String[] cookie = response
-                .next().split(space)[1].split("./")[0].split("=");
+                    .next().split(space)[1].split("./")[0].split("=");
             MatcherAssert.assertThat(
-                cookie[1].replace("+", space),
-                Matchers.equalTo("verification link not valid")
+                    cookie[1].replace("+", space),
+                    Matchers.equalTo("verification link not valid")
             );
         }
     }
-    
+
     /**
      * Creates a RqRegex for the provided verification code.
      *
