@@ -123,7 +123,7 @@
                         <xsl:if test="links/link[@rel='start']">
                             <li>
                                 <xsl:choose>
-                                    <xsl:when test="/page/bouts and count(/page/bouts/bout) = 0 and /page/query = ''">
+                                    <xsl:when test="/page/bouts and count(/page/bouts/bout) = 0 and /page/query = '' and not(contains(version/name,'LOCAL'))">
                                         <xsl:value-of select="$TEXTS/Start.later"/>
                                     </xsl:when>
                                     <xsl:otherwise>
