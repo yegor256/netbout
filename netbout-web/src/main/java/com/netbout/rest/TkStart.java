@@ -57,8 +57,6 @@ import org.apache.commons.lang3.tuple.Pair;
  * @todo #750:30min Solve the puzzle for build mysteriously failing for
  *  this task citing a NullPointerException (See qulice issue #608 raised for
  *  the same) and then remove TkStart.java from qulice exceptions.
- * @todo #750:30min Add unit tests to test scenarios for requests
- *  with/without a token.
  */
 public final class TkStart implements Take {
 
