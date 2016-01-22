@@ -100,9 +100,9 @@ public final class TkEmVerify implements TkRegex {
         final String invalid = "verification link not valid.";
         if (eonpe) {
             throw new RsForward(
-                new RsFlash(invalid, Level.SEVERE)
-                , HttpURLConnection.HTTP_MOVED_PERM
-                , "/"
+                new RsFlash(invalid, Level.SEVERE),
+                HttpURLConnection.HTTP_MOVED_PERM,
+                "/"
             );
         }
         final Matcher matcher = TkEmVerify.PATTERN.matcher(decoded);
