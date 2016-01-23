@@ -53,5 +53,5 @@ There are 16 active puzzles (52 total):
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[#957](https://github.com/yegor256/netbout/issues/957):[<del>947-64235763</del>](https://github.com/yegor256/netbout/issues/957) [`TkSaveEmail.java:53-55`](../master/netbout-web/src/main/java/com/netbout/rest/account/TkSaveEmail.java#L53-L55)<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;[#911](https://github.com/yegor256/netbout/issues/911):[<del>911</del>](https://github.com/yegor256/netbout/issues/911) [`?`](../master/?)<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[#965](https://github.com/yegor256/netbout/issues/965):[**911-a1464331**](https://github.com/yegor256/netbout/issues/965) [`pom.xml:184-189`](../master/netbout-client/pom.xml#L184-L189)<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[**911-20c870d4**]() [`pom.xml:94-100`](../master/netbout-spi/pom.xml#L94-L100)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[#966](https://github.com/yegor256/netbout/issues/966):[**911-20c870d4**](https://github.com/yegor256/netbout/issues/966) [`pom.xml:94-100`](../master/netbout-spi/pom.xml#L94-L100)<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[**911-1ad8e6c0**]() [`pom.xml:730-735`](../master/netbout-web/pom.xml#L730-L735)<br/>
