@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2009-2015, netbout.com
+ * Copyright (c) 2009-2016, netbout.com
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -58,7 +58,7 @@ public interface Markdown {
          * Ctor.
          */
         public Default() {
-            this.processor = new MarkdownPegdown();
+            this.processor = new MarkdownTxtmark();
         }
 
         @Override

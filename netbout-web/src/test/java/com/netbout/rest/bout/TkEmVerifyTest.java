@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2009-2015, netbout.com
+ * Copyright (c) 2009-2016, netbout.com
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -33,12 +33,14 @@ import com.netbout.rest.TkEmVerify;
 import com.netbout.spi.Alias;
 import com.netbout.spi.User;
 import java.net.URLEncoder;
+import java.util.Iterator;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.jasypt.encryption.pbe.StandardPBEStringEncryptor;
 import org.junit.Test;
 import org.takes.facets.fork.RqRegex;
 import org.takes.facets.forward.RsFailure;
+import org.takes.facets.forward.RsForward;
 
 /**
  * Test case for {@link TkEmVerify}.
@@ -47,7 +49,10 @@ import org.takes.facets.forward.RsFailure;
  * @since 2.22
  */
 public final class TkEmVerifyTest {
-
+    /**
+     * RqRegex.Fake pattern.
+     */
+    private static final String PATTERN = "(.*)";
     /**
      * Encryptor.
      */
@@ -82,7 +87,6 @@ public final class TkEmVerifyTest {
     }
 
     /**
-     *
      * TkEmVerify can reject invalid verification link.
      * @throws Exception If some problem inside
      */
@@ -115,6 +119,40 @@ public final class TkEmVerifyTest {
     }
 
     /**
+     * TkEmVerify can return user friendly message if
+     * the verification url is not properly encoded.
+     * @throws Exception If some problem inside
+     */
+    @Test
+    public void returnsUserFriendlyMessage() throws Exception {
+        final MkBase base = new MkBase();
+        final String urn = "urn:test:4";
+        final User user = base.user(new URN(urn));
+        user.aliases().add("alias4");
+        final Alias alias = user.aliases().iterate().iterator().next();
+        alias.email("old@example.com!new4@example.com");
+        try {
+            new TkEmVerify(base).act(
+                new RqRegex.Fake(TkEmVerifyTest.PATTERN, "x")
+            );
+        } catch (final RsForward ex) {
+            MatcherAssert.assertThat(
+                ex,
+                Matchers.not(Matchers.instanceOf(RsFailure.class))
+            );
+            final Iterator<String> response = ex.head().iterator();
+            response.next();
+            final String space = " ";
+            final String[] cookie = response
+                    .next().split(space)[1].split("./")[0].split("=");
+            MatcherAssert.assertThat(
+                cookie[1].replace("+", space),
+                Matchers.equalTo("verification link not valid")
+            );
+        }
+    }
+
+    /**
      * Creates a RqRegex for the provided verification code.
      *
      * @param code Verification code
@@ -123,7 +161,7 @@ public final class TkEmVerifyTest {
      */
     private static RqRegex request(final String code) throws Exception {
         return new RqRegex.Fake(
-            "(.*)",
+            TkEmVerifyTest.PATTERN,
             URLEncoder.encode(TkEmVerifyTest.ENC.encrypt(code), "UTF-8")
         );
     }

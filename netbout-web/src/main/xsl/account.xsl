@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <!--
- * Copyright (c) 2009-2015, netbout.com
+ * Copyright (c) 2009-2016, netbout.com
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -40,7 +40,8 @@
         </title>
     </xsl:template>
     <xsl:template match="page" mode="body">
-        <form method="post" action="{links/link[@rel='save-email']/@href}">
+        <form method="post" action="{links/link[@rel='save-email']/@href}"
+            id="form" onSubmit="if (form.email.value==='{alias/email}' || form.email.value.trim()==='') return false; else return true;">
             <fieldset>
                 <p>
                     <xsl:value-of select="$TEXTS/email.hello"/>

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2009-2015, netbout.com
+ * Copyright (c) 2009-2016, netbout.com
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -60,6 +60,11 @@ final class TkSaveEmail implements Take {
         new StandardPBEStringEncryptor();
 
     /**
+     * Is Netbout running local?
+     */
+    private final transient boolean local;
+
+    /**
      * Base.
      */
     private final transient Base base;
@@ -75,7 +80,17 @@ final class TkSaveEmail implements Take {
      * @param bse Base
      */
     TkSaveEmail(final Base bse) {
+        this(bse, !Manifests.read("Netbout-Version").contains("LOCAL"));
+    }
+
+    /**
+     * Ctor.
+     * @param bse Base
+     * @param lcl Local Netbout
+     */
+    TkSaveEmail(final Base bse, final boolean lcl) {
         this.base = bse;
+        this.local = lcl;
     }
 
     @Override
@@ -84,38 +99,49 @@ final class TkSaveEmail implements Take {
             new RqForm.Base(req)
         ).single("email");
         final Alias alias = new RqAlias(this.base, req).alias();
-        final String code = URLEncoder.encode(
-            TkSaveEmail.ENC.encrypt(
-                String.format(
-                    "%s:%s:%s",
-                    new RqAuth(req).identity().urn(), alias.name(), email
+        final Response res;
+        if (this.local) {
+            alias.email(email);
+            res = new RsForward(
+                new RsFlash(
+                    String.format("Email changed to \"%s\".", email)
                 )
-            ), "UTF-8"
-        );
-        final String link = String.format(
-            "%semverify/%s",
-            new RqHref.Smart(new RqHref.Base(req)).home().bare(), code
-        );
-        final String old;
-        if (alias.email().contains("!")) {
-            old = alias.email().substring(0, alias.email().indexOf('!'));
+            );
         } else {
-            old = alias.email();
-        }
-        try {
-            alias.email(String.format("%s!%s", old, email), link);
-        } catch (final IOException ex) {
-            throw new RsFailure(ex);
-        }
-        return new RsForward(
-            new RsFlash(
-                String.format(
-                    // @checkstyle StringLiteralsConcatenationCheck (2 lines)
-                    "Email changed to \"%s\". The verification "
-                    + "link sent to this address.",
-                    email
+            final String code = URLEncoder.encode(
+                TkSaveEmail.ENC.encrypt(
+                    String.format(
+                        "%s:%s:%s",
+                        new RqAuth(req).identity().urn(), alias.name(), email
+                    )
+                ), "UTF-8"
+            );
+            final String link = String.format(
+                "%semverify/%s",
+                new RqHref.Smart(new RqHref.Base(req)).home().bare(), code
+            );
+            final String old;
+            if (alias.email().contains("!")) {
+                old = alias.email().substring(0, alias.email().indexOf('!'));
+            } else {
+                old = alias.email();
+            }
+            try {
+                alias.email(String.format("%s!%s", old, email), link);
+            } catch (final IOException ex) {
+                throw new RsFailure(ex);
+            }
+            res = new RsForward(
+                new RsFlash(
+                    String.format(
+                        // @checkstyle StringLiteralsConcatenationCheck (2 lines)
+                        "Email changed to \"%s\". The verification "
+                            + "link sent to this address.",
+                        email
+                    )
                 )
-            )
-        );
+            );
+        }
+        return res;
     }
 }

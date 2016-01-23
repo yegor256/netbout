@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2009-2015, netbout.com
+ * Copyright (c) 2009-2016, netbout.com
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -33,11 +33,9 @@ import org.takes.Response;
 import org.takes.Take;
 import org.takes.facets.fork.FkRegex;
 import org.takes.facets.fork.FkWrap;
-import org.takes.facets.fork.Fork;
 import org.takes.facets.fork.RqRegex;
 import org.takes.facets.fork.TkRegex;
 import org.takes.facets.forward.RsForward;
-import org.takes.misc.Opt;
 import org.takes.rq.RqHref;
 import org.takes.rq.RqWithHeader;
 
@@ -57,60 +55,54 @@ final class FkBout extends FkWrap {
      * @param take Take
      */
     FkBout(final String regex, final Take take) {
-        super(
-            new Fork() {
-                @Override
-                public Opt<Response> route(final Request req)
-                    throws IOException {
-                    return FkBout.route(regex, take, req);
-                }
-            }
-        );
+        this(regex, take, true);
     }
 
     /**
-     * Route.
+     * Ctor.
      * @param regex Regular expression
      * @param take Take
-     * @param req Request
-     * @return Response or empty
-     * @throws IOException If fails
+     * @param redirect Redirect to bout page flag
      */
-    private static Opt<Response> route(final String regex, final Take take,
-        final Request req) throws IOException {
-        return new FkRegex(
-            String.format("/b/([0-9]+)%s", regex),
-            new TkRegex() {
-                @Override
-                public Response act(final RqRegex rreq) throws IOException {
-                    final long bout = Long.parseLong(
-                        rreq.matcher().group(1)
-                    );
-                    return FkBout.redirect(bout, take).act(
-                        new RqWithHeader(
-                            rreq, "X-Netbout-Bout",
-                            Long.toString(bout)
-                        )
-                    );
+    FkBout(final String regex, final Take take, final boolean redirect) {
+        super(
+            new FkRegex(
+                String.format("/b/([0-9]+)%s", regex),
+                new TkRegex() {
+                    @Override
+                    public Response act(final RqRegex rreq) throws IOException {
+                        final long bout = Long.parseLong(
+                            rreq.matcher().group(1)
+                        );
+                        return FkBout.redirect(bout, take, redirect).act(
+                            new RqWithHeader(
+                                rreq, "X-Netbout-Bout",
+                                Long.toString(bout)
+                            )
+                        );
+                    }
                 }
-            }
-        ).route(req);
+        )
+        );
     }
 
     /**
      * Redirect to the bout.
      * @param bout Bout number
      * @param take Take
+     * @param redirect Redirect to bout page flag
      * @return New take
      */
-    private static Take redirect(final long bout, final Take take) {
+    private static Take redirect(final long bout,
+        final Take take, final boolean redirect) {
         return new Take() {
             @Override
             public Response act(final Request req) throws IOException {
                 try {
                     return take.act(req);
                 } catch (final RsForward ex) {
-                    if (ex.code() == HttpURLConnection.HTTP_SEE_OTHER) {
+                    if (ex.code() == HttpURLConnection.HTTP_SEE_OTHER
+                        && redirect) {
                         throw new RsForward(
                             ex,
                             new RqHref.Smart(

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2009-2015, netbout.com
+ * Copyright (c) 2009-2016, netbout.com
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -65,6 +65,57 @@ public final class DyAliasITCase {
             alias.photo().toString(),
             Matchers.containsString("#test")
         );
+    }
+
+    /**
+     * DyAlias can reject invalid email.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void rejectsInvalidEmails() throws Exception {
+        final Aliases aliases =
+            new DyBase().user(new URN("urn:test:13")).aliases();
+        final String name = "max";
+        aliases.add(name);
+        final Alias alias = aliases.iterate().iterator().next();
+        final String[] emails = {
+            "test", "!test@domain.com!test@domain.com",
+            "!!test@domain.com", "!test@domain!.com!test@domain.com",
+        };
+        int errors = 0;
+        for (final String email: emails) {
+            try {
+                alias.email(email);
+            } catch (final Alias.InvalidEmailException ex) {
+                ++errors;
+            }
+        }
+        MatcherAssert.assertThat(errors, Matchers.is(emails.length));
+    }
+
+    /**
+     * DyAlias can accept valid email.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void acceptsValidEmail() throws Exception {
+        final Aliases aliases =
+            new DyBase().user(new URN("urn:test:14")).aliases();
+        final String name = "jack";
+        aliases.add(name);
+        final Alias alias = aliases.iterate().iterator().next();
+        final String[] emails = {
+            "test@domain.com", "test@domain.com!test@domain.com",
+            "first.second@sub.domain.com", "UpperCase@Mail.com",
+            "!empty@mail.com",
+        };
+        for (final String email: emails) {
+            alias.email(email);
+            MatcherAssert.assertThat(
+                alias.email(),
+                Matchers.containsString(email)
+            );
+        }
     }
 
 }

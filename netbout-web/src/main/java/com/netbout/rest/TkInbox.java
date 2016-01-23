@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2009-2015, netbout.com
+ * Copyright (c) 2009-2016, netbout.com
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -37,6 +37,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.takes.Request;
 import org.takes.Response;
 import org.takes.Take;
+import org.takes.facets.flash.RsFlash;
+import org.takes.facets.forward.RsForward;
 import org.takes.misc.Href;
 import org.takes.rq.RqHref;
 import org.takes.rs.xe.XeAppend;
@@ -100,7 +102,7 @@ final class TkInbox implements Take {
             final Iterator<String> param = new RqHref.Base(req).href()
                 .param("since").iterator();
             if (param.hasNext()) {
-                since = Long.parseLong(param.next());
+                since = TkInbox.since(param.next());
             }
             bouts = inbox.jump(since).iterate();
         } else {
@@ -115,6 +117,30 @@ final class TkInbox implements Take {
                 }
             }
         );
+    }
+
+    /**
+     * Returns since value.
+     * @param param Since parameter from request
+     * @return Parsed 'since' value or default value
+     * @throws IOException If fails
+     */
+    private static long since(final String param) throws IOException {
+        long since = Inbox.NEVER;
+        boolean valid = true;
+        try {
+            since = Long.parseLong(param);
+        } catch (final NumberFormatException ex) {
+            valid = false;
+        }
+        if (!valid) {
+            throw new RsForward(
+                new RsFlash(
+                    "invalid 'since' value, timestamp is expected"
+                )
+            );
+        }
+        return since;
     }
 
     /**
@@ -137,12 +163,19 @@ final class TkInbox implements Take {
                     .add("unseen")
                     .set(Integer.toString(bout.attachments().unseen())).up()
                     .add("title")
-                    .set(bout.title()).up()
+                    .set(bout.title())
+                    .up()
+                    .add("subscription")
+                    .set(String.valueOf(bout.subscription()))
             ),
             new XeLink("open", new Href("/b").path(bout.number())),
             new XeLink(
                 "more",
                 new Href().with("since", bout.updated().getTime())
+            ),
+            new XeLink(
+                "hsubscribe",
+                new Href("/b").path(bout.number()).path("hsubscribe")
             ),
             new XeAppend(
                 "friends",

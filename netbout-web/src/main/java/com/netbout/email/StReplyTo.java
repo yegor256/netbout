@@ -24,42 +24,56 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.rest;
+package com.netbout.email;
 
-import com.netbout.spi.Base;
-import java.io.IOException;
-import org.takes.Request;
-import org.takes.Response;
-import org.takes.Take;
+import com.jcabi.aspects.Immutable;
+import com.jcabi.aspects.Loggable;
+import com.jcabi.email.Stamp;
+import javax.mail.Address;
+import javax.mail.Message;
+import javax.mail.MessagingException;
+import javax.mail.internet.InternetAddress;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
 /**
- * Login.
+ * Stamp for a MIME envelope, with a replyTo.
  *
- * @author Yegor Bugayenko (yegor@teamed.io)
+ * @author Andrey Eliseev (aeg.exper0@gmail.com)
  * @version $Id$
- * @since 2.14
+ * @since 2.31
  */
-final class TkHome implements Take {
+@Immutable
+@ToString
+@EqualsAndHashCode(of = "email")
+@Loggable(Loggable.DEBUG)
+public final class StReplyTo implements Stamp {
 
     /**
-     * Base.
+     * Email to send reply.
      */
-    private final transient Base base;
+    private final transient String email;
 
     /**
      * Ctor.
-     * @param bse Base
+     * @param addr Address
      */
-    TkHome(final Base bse) {
-        this.base = bse;
+    public StReplyTo(final Address addr) {
+        this(addr.toString());
+    }
+
+    /**
+     * Ctor.
+     * @param addr Address
+     */
+    public StReplyTo(final String addr) {
+        this.email = addr;
     }
 
     @Override
-    public Response act(final Request req) throws IOException {
-        return new RsPage(
-            "/xsl/login.xsl",
-            this.base,
-            req
-        );
+    public void attach(final Message message) throws MessagingException {
+        final Address[] addresses = {new InternetAddress(this.email)};
+        message.setReplyTo(addresses);
     }
+
 }

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2009-2015, netbout.com
+ * Copyright (c) 2009-2016, netbout.com
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -30,7 +30,6 @@ import com.google.common.base.Joiner;
 import com.jcabi.matchers.XhtmlMatchers;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
-import org.junit.Ignore;
 import org.junit.Test;
 
 /**
@@ -184,10 +183,10 @@ public final class MarkdownTxtmarkTest {
             Matchers.describedAs(
                 meta,
                 XhtmlMatchers.hasXPaths(
-                    "/r/p[.='my list:']",
+                    "/r/p[text()='my list:']",
                     "/r/ul[count(li) = 2]",
-                    "/r/ul/li[.='line one']",
-                    "/r/ul/li[.='line two']",
+                    "/r/ul/li[text()='line one']",
+                    "/r/ul/li[text()='line two']",
                     "/r/p[.='normal text now']"
                 )
             )
@@ -197,27 +196,18 @@ public final class MarkdownTxtmarkTest {
     /**
      * MarkdownTxtmark can break a single line.
      * @throws Exception If there is some problem inside
-     * @todo #873:30min/DEV MarkdownTxtmark doesn't break a line on a new line
-     *  symbol. It should put br code or make a new paragraph on each new line
-     *  in the input data. I didn't find that option in TxtMark's settings,
-     *  but perhaps I missed something. If the option won't be found we can
-     *  replace single eol symbol to double eol as workaround.
      */
     @Test
-    @Ignore
     public void breaksSingleLine() throws Exception {
         MatcherAssert.assertThat(
             new MarkdownTxtmark().html(
                 Joiner.on(MarkdownTxtmarkTest.EOL)
-                    .join("line1", "line2", "", "line3").trim()
+                    .join("line1 line", "line2", "", "line3").trim()
             ),
             Matchers.equalTo(
                 Joiner.on(MarkdownTxtmarkTest.EOL).join(
-                    "<p>line1 ",
-                    "line2 ",
-                    "<br/>",
-                    "line2</p>",
-                    "<p>line3</p>"
+                    "<p>line1 line<br  />", "line2<br  /></p>",
+                    "<p>line3</p>", ""
                 )
             )
         );
@@ -288,8 +278,8 @@ public final class MarkdownTxtmarkTest {
                     "http://bar.com [http://af.com](http://af.com) end"
                 ),
                 Joiner.on(MarkdownTxtmarkTest.EOL).join(
-                    "<p><a href=\"http://yahoo.com\">http://yahoo.com</a>",
-                    // @checkstyle LineLengthCheck (1 line)
+                    // @checkstyle LineLengthCheck (2 lines)
+                    "<p><a href=\"http://yahoo.com\">http://yahoo.com</a><br  />",
                     "<a href=\"http://bar.com\">http://bar.com</a> <a href=\"http://af.com\">http://af.com</a> end</p>"
                 ),
             },
