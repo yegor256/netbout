@@ -74,4 +74,35 @@ public final class DyAttachmentsITCase {
         attachments.delete(name);
     }
 
+    /**
+     * DyAttachments can create, save and load attachments.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void throwsExceptionForNameLength() throws Exception {
+        final String alias = "bill1";
+        final Aliases aliases =
+            new DyBase().user(new URN("urn:test:840919")).aliases();
+        aliases.add(alias);
+        final Inbox inbox = aliases.iterate().iterator().next().inbox();
+        final Bout bout = inbox.bout(inbox.start());
+        final Attachments attachments = bout.attachments();
+        final String name = "a";
+        try {
+            attachments.create(name);
+        } catch (final Attachments.InvalidNameException ex) {
+            MatcherAssert.assertThat(
+                ex.getMessage(),
+                Matchers.equalTo(
+                    String.format(
+                        "invalid attachment name length \"%s\". %s%s",
+                        name,
+                        "The length of the attachment name must be ",
+                        "between 3-100 characters"
+                    )
+                )
+            );
+        }
+    }
+
 }
