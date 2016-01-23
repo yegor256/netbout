@@ -38,10 +38,10 @@ import com.netbout.spi.Message;
 import com.netbout.spi.User;
 import java.io.IOException;
 import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.Iterator;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import org.apache.commons.lang3.CharEncoding;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Ignore;
@@ -60,9 +60,9 @@ import org.takes.rs.RsPrint;
  *  should be added, e.g. when a friend is not found, the error
  *  should be reported correctly and bout creation should be
  *  discarded.
- * @todo #750:30min TkStart should not create new bout
+ * @todo #954:30min TkStart should not create new bout
  *  when same token is specified. Currently set the test case
- *  as ignored.
+ *  "handlesToken" as ignored.
  * @since 2.15
  * @checkstyle ClassDataAbstractionCouplingCheck (500 lines)
  */
@@ -155,7 +155,10 @@ public final class TkStartTest {
                         String.format(
                             "/start?post=message&invite=%s&rename=%s",
                             base.randomAlias().name(),
-                            URLEncoder.encode(name, CharEncoding.UTF_8)
+                            URLEncoder.encode(
+                                name,
+                                StandardCharsets.UTF_8.name()
+                            )
                         )
                     )
                 )
@@ -264,10 +267,10 @@ public final class TkStartTest {
             "I am new too",
             "Another new",
         };
+        final String same = "13579";
         final String[] tokens = {
-            // @checkstyle MultipleStringLiteralsCheck (2 lines)
-            "13579",
-            "13579",
+            same,
+            same,
             "24680",
             "",
             "",
@@ -284,11 +287,11 @@ public final class TkStartTest {
                                 "/start?post=%s&token=%s",
                                 URLEncoder.encode(
                                     msgs[count],
-                                    CharEncoding.UTF_8
+                                    StandardCharsets.UTF_8.name()
                                 ),
                                 URLEncoder.encode(
                                     tokens[count],
-                                    CharEncoding.UTF_8
+                                    StandardCharsets.UTF_8.name()
                                 )
                             )
                         )
