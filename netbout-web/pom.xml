@@ -730,7 +730,9 @@
                                 @todo #911:30min Fix findbugs errors in web
                                  Some issues may not require fixing an should be
                                  excluded. Filters in qulice 0.12 are broken, right
-                                 excludes should be more granular
+                                 excludes should be more granular. I think it should
+                                 be resolved when #961 completed due to broken
+                                 Findbugs filters in current version of Qulice
                                 -->
                                 <exclude>findbugs:.*</exclude>
                                 <exclude>xml:/src/main/resources/lang/.*</exclude>
