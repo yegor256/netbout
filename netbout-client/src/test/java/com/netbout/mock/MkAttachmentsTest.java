@@ -84,7 +84,7 @@ public final class MkAttachmentsTest {
         attachments.create(name);
         final Attachment attachment = attachments.get(name);
         attachment.write(
-            IOUtils.toInputStream("<root/>", StandardCharsets.UTF_8 ),
+            IOUtils.toInputStream("<root/>", StandardCharsets.UTF_8),
             "text/xml",
             Long.toString(System.currentTimeMillis())
         );
