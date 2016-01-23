@@ -29,7 +29,6 @@ package com.netbout.mock;
 import com.netbout.spi.Bout;
 import com.netbout.spi.Message;
 import com.netbout.spi.Messages;
-import java.util.Date;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;

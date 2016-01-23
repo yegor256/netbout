@@ -78,12 +78,12 @@ public final class MkAttachmentsTest {
         final Bout bout = new MkBase().randomBout();
         final Attachments attachments = bout.attachments();
         final Long last = bout.updated().getTime();
-        final String name = "test-name";
+        final String name = "att-name";
         attachments.create(name);
         final Attachment attachment = attachments.get(name);
         attachment.write(
-            IOUtils.toInputStream("hey \u20ac", CharEncoding.UTF_8),
-            "text/plain",
+            IOUtils.toInputStream("<root/>", CharEncoding.UTF_8),
+            "text/xml",
             Long.toString(System.currentTimeMillis())
         );
         final Long pause = 100L;

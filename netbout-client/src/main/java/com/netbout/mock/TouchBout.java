@@ -69,6 +69,7 @@ public final class TouchBout {
 
     /**
      * Set update attribute of the bout to current timestamp.
+     * @throws IOException If there is some problem inside
      */
     public void act() throws IOException {
         try {
