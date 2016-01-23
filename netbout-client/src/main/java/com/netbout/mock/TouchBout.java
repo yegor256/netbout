@@ -45,7 +45,7 @@ import lombok.ToString;
 @Immutable
 @ToString
 @Loggable(Loggable.DEBUG)
-@EqualsAndHashCode(of = "bout")
+@EqualsAndHashCode(of = { "sql", "bout" })
 public final class TouchBout {
     /**
      * SQL data source provider.

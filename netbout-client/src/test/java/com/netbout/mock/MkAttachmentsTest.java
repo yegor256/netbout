@@ -26,9 +26,11 @@
  */
 package com.netbout.mock;
 
+import com.jcabi.aspects.Tv;
 import com.netbout.spi.Attachment;
 import com.netbout.spi.Attachments;
 import com.netbout.spi.Bout;
+import java.nio.charset.StandardCharsets;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.CharEncoding;
 import org.hamcrest.MatcherAssert;
@@ -82,12 +84,11 @@ public final class MkAttachmentsTest {
         attachments.create(name);
         final Attachment attachment = attachments.get(name);
         attachment.write(
-            IOUtils.toInputStream("<root/>", CharEncoding.UTF_8),
+            IOUtils.toInputStream("<root/>", StandardCharsets.UTF_8 ),
             "text/xml",
             Long.toString(System.currentTimeMillis())
         );
-        final Long pause = 100L;
-        Thread.sleep(pause);
+        Thread.sleep(Tv.HUNDRED);
         MatcherAssert.assertThat(
             bout.updated().getTime(), Matchers.greaterThan(last)
         );

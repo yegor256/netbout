@@ -26,6 +26,7 @@
  */
 package com.netbout.mock;
 
+import com.jcabi.aspects.Tv;
 import com.netbout.spi.Bout;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
@@ -49,8 +50,7 @@ public final class TouchBoutTest {
         final Bout bout = new MkBase(sql).randomBout();
         final Long last = bout.updated().getTime();
         new TouchBout(sql, bout.number()).act();
-        final Long pause = 100L;
-        Thread.sleep(pause);
+        Thread.sleep(Tv.HUNDRED);
         MatcherAssert.assertThat(
             bout.updated().getTime(), Matchers.greaterThan(last)
         );

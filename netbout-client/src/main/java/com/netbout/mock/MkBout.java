@@ -100,9 +100,6 @@ final class MkBout implements Bout {
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public Date updated() throws IOException {
         try {
