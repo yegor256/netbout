@@ -29,6 +29,7 @@ package com.netbout.mock;
 import com.netbout.spi.Bout;
 import com.netbout.spi.Message;
 import com.netbout.spi.Messages;
+import java.util.Date;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;
@@ -61,4 +62,20 @@ public final class MkMessagesTest {
         );
     }
 
+    /**
+     * MkMessages can change update attribut on Bout.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void changesUpdateAttribute() throws Exception {
+        final Bout bout = new MkBase().randomBout();
+        final Messages messages = bout.messages();
+        final Long last = bout.updated().getTime();
+        messages.post("hi");
+        final Long pause = 100L;
+        Thread.sleep(pause);
+        MatcherAssert.assertThat(
+            bout.updated().getTime(), Matchers.greaterThan(last)
+        );
+    }
 }

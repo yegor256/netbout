@@ -29,64 +29,56 @@ package com.netbout.mock;
 import com.jcabi.aspects.Immutable;
 import com.jcabi.aspects.Loggable;
 import com.jcabi.jdbc.JdbcSession;
-import java.io.File;
+import com.jcabi.jdbc.Outcome;
 import java.io.IOException;
 import java.sql.SQLException;
-import javax.sql.DataSource;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
-import org.h2.jdbcx.JdbcDataSource;
 
 /**
- * Mock base.
+ * Touch bout.
  *
- * @author Yegor Bugayenko (yegor@teamed.io)
+ * @author Dmitry Zaytsev (dmitr.zaytsev@gmail.com)
  * @version $Id$
- * @since 2.0
+ * @since 2.23
  */
 @Immutable
 @ToString
 @Loggable(Loggable.DEBUG)
-@EqualsAndHashCode(of = "file")
-final class H2Sql implements Sql {
+@EqualsAndHashCode(of = "bout")
+public final class TouchBout {
+    /**
+     * SQL data source provider.
+     */
+    private final transient Sql sql;
 
     /**
-     * File with H2 database.
+     * Bout.
      */
-    private final transient String file;
+    private final transient long bout;
 
     /**
-     * Public ctor.
-     * @throws IOException If fails
+     * Ctor.
+     * @param src Source
+     * @param bot Bout number
      */
-    H2Sql() throws IOException {
-        final File tmp = File.createTempFile("netbout-", ".h2");
-        tmp.deleteOnExit();
-        this.file = tmp.getAbsolutePath();
-        final String[] stmts = {
-            // @checkstyle LineLength (5 lines)
-            "CREATE TABLE alias (name VARCHAR, urn VARCHAR, photo VARCHAR, locale VARCHAR, email VARCHAR)",
-            "CREATE TABLE bout (number BIGINT AUTO_INCREMENT, title VARCHAR, date TIMESTAMP DEFAULT CURRENT_TIMESTAMP, updated TIMESTAMP DEFAULT CURRENT_TIMESTAMP)",
-            "CREATE TABLE message (number BIGINT AUTO_INCREMENT, bout BIGINT, text VARCHAR, author VARCHAR, date TIMESTAMP DEFAULT CURRENT_TIMESTAMP)",
-            "CREATE TABLE attachment (name VARCHAR, bout BIGINT, data VARCHAR, author VARCHAR, ctype VARCHAR, etag VARCHAR)",
-            "CREATE TABLE friend (alias VARCHAR, bout BIGINT, subscription INTEGER )",
-        };
-        final JdbcSession session = new JdbcSession(this.source());
-        for (final String stmt : stmts) {
-            try {
-                session.sql(stmt).execute();
-            } catch (final SQLException ex) {
-                throw new IOException(ex);
-            }
-        }
+    TouchBout(final Sql src, final long bot) {
+        this.sql = src;
+        this.bout = bot;
     }
 
-    @Override
-    public DataSource source() {
-        final JdbcDataSource src = new JdbcDataSource();
-        src.setURL(String.format("jdbc:h2:%s", this.file));
-        src.setUser("");
-        src.setPassword("");
-        return src;
+    /**
+     * Set update attribute of the bout to current timestamp.
+     */
+    public void act() throws IOException {
+        try {
+            new JdbcSession(this.sql.source())
+                // @checkstyle LineLength (1 line)
+                .sql("UPDATE bout SET updated = CURRENT_TIMESTAMP WHERE number = ?")
+                .set(this.bout)
+                .update(Outcome.VOID);
+        } catch (final SQLException ex) {
+            throw new IOException(ex);
+        }
     }
 }

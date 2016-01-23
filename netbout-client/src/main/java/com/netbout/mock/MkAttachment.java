@@ -149,5 +149,6 @@ final class MkAttachment implements Attachment {
         } catch (final SQLException ex) {
             throw new IOException(ex);
         }
+        new TouchBout(this.sql, this.bout).act();
     }
 }

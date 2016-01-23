@@ -69,4 +69,27 @@ public final class MkAttachmentsTest {
         );
     }
 
+    /**
+     * MkAttachments can change update attribute on Bout.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void changesUpdateAttribute() throws Exception {
+        final Bout bout = new MkBase().randomBout();
+        final Attachments attachments = bout.attachments();
+        final Long last = bout.updated().getTime();
+        final String name = "test-name";
+        attachments.create(name);
+        final Attachment attachment = attachments.get(name);
+        attachment.write(
+            IOUtils.toInputStream("hey \u20ac", CharEncoding.UTF_8),
+            "text/plain",
+            Long.toString(System.currentTimeMillis())
+        );
+        final Long pause = 100L;
+        Thread.sleep(pause);
+        MatcherAssert.assertThat(
+            bout.updated().getTime(), Matchers.greaterThan(last)
+        );
+    }
 }
