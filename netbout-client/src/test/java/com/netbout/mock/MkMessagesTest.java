@@ -26,6 +26,7 @@
  */
 package com.netbout.mock;
 
+import com.jcabi.aspects.Tv;
 import com.netbout.spi.Bout;
 import com.netbout.spi.Message;
 import com.netbout.spi.Messages;
@@ -61,4 +62,19 @@ public final class MkMessagesTest {
         );
     }
 
+    /**
+     * MkMessages can change update attribut on Bout.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void changesUpdateAttribute() throws Exception {
+        final Bout bout = new MkBase().randomBout();
+        final Messages messages = bout.messages();
+        final Long last = bout.updated().getTime();
+        messages.post("hi");
+        Thread.sleep(Tv.HUNDRED);
+        MatcherAssert.assertThat(
+            bout.updated().getTime(), Matchers.greaterThan(last)
+        );
+    }
 }

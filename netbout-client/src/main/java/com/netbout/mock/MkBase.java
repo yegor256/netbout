@@ -69,7 +69,15 @@ public final class MkBase implements Base {
      * @throws IOException If fails
      */
     public MkBase() throws IOException {
-        this.sql = new H2Sql();
+        this(new H2Sql());
+    }
+
+    /**
+     * Public ctor.
+     * @param src Source
+     */
+    MkBase(final Sql src) {
+        this.sql = src;
     }
 
     @Override

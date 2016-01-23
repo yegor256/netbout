@@ -31,6 +31,7 @@ import com.jcabi.aspects.Loggable;
 import com.jcabi.jdbc.JdbcSession;
 import com.jcabi.jdbc.Outcome;
 import com.jcabi.jdbc.SingleOutcome;
+import com.jcabi.jdbc.Utc;
 import com.netbout.spi.Attachments;
 import com.netbout.spi.Bout;
 import com.netbout.spi.Friends;
@@ -99,15 +100,16 @@ final class MkBout implements Bout {
         }
     }
 
-    /**
-     * {@inheritDoc}
-     * @todo #806:30min/DEV This method needs to be implemented
-     *  because it is used in tests that read bout properties.
-     *  Currently, this implementation always returns the current date.
-     */
     @Override
     public Date updated() throws IOException {
-        return new Date();
+        try {
+            return new JdbcSession(this.sql.source())
+                .sql("SELECT updated FROM bout WHERE number = ?")
+                .set(this.bout)
+                .select(new SingleOutcome<>(Utc.class)).getDate();
+        } catch (final SQLException ex) {
+            throw new IOException(ex);
+        }
     }
 
     @Override
@@ -133,6 +135,7 @@ final class MkBout implements Bout {
         } catch (final SQLException ex) {
             throw new IOException(ex);
         }
+        new TouchBout(this.sql, this.bout).act();
     }
 
     @Override
