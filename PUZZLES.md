@@ -1,6 +1,6 @@
 ## Puzzles
 
-There are 16 active puzzles (52 total):
+There are 15 active puzzles (52 total):
 
 
 <del>unknown</del> [`?`](../master/?)<br/>
@@ -35,7 +35,7 @@ There are 16 active puzzles (52 total):
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<del>703-ca5668ad</del> [`pom.xml:58-58`](../master/netbout-web/pom.xml#L58-L58)<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;[#806](https://github.com/yegor256/netbout/issues/806):[<del>806</del>](https://github.com/yegor256/netbout/issues/806) [`?`](../master/?)<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[#826](https://github.com/yegor256/netbout/issues/826):[**806-1e507f57**](https://github.com/yegor256/netbout/issues/826) [`MkAttachments.java:86-88`](../master/netbout-client/src/main/java/com/netbout/mock/MkAttachments.java#L86-L88)<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[#827](https://github.com/yegor256/netbout/issues/827):[**806-43ee63d7**](https://github.com/yegor256/netbout/issues/827) [`MkBout.java:104-106`](../master/netbout-client/src/main/java/com/netbout/mock/MkBout.java#L104-L106)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[#827](https://github.com/yegor256/netbout/issues/827):[<del>806-43ee63d7</del>](https://github.com/yegor256/netbout/issues/827) [`MkBout.java:104-106`](../master/netbout-client/src/main/java/com/netbout/mock/MkBout.java#L104-L106)<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;[<del>738</del>](https://github.com/yegor256/netbout/issues/738) [`?`](../master/?)<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[#841](https://github.com/yegor256/netbout/issues/841):[**738-4d284963**](https://github.com/yegor256/netbout/issues/841) [`EmAlias.java:130-134`](../master/netbout-web/src/main/java/com/netbout/email/EmAlias.java#L130-L134)<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[#842](https://github.com/yegor256/netbout/issues/842):[<del>738-d76bd177</del>](https://github.com/yegor256/netbout/issues/842) [`TkSaveEmail.java:53-55`](../master/netbout-web/src/main/java/com/netbout/rest/account/TkSaveEmail.java#L53-L55)<br/>
