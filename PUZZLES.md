@@ -1,6 +1,6 @@
 ## Puzzles
 
-There are 15 active puzzles (52 total):
+There are 15 active puzzles (53 total):
 
 
 <del>unknown</del> [`?`](../master/?)<br/>
@@ -48,7 +48,8 @@ There are 15 active puzzles (52 total):
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[#937](https://github.com/yegor256/netbout/issues/937):[<del>888-3f71fb04</del>](https://github.com/yegor256/netbout/issues/937) [`Markdown.java:59-61`](../master/netbout-web/src/main/java/com/netbout/rest/Markdown.java#L59-L61)<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;[#750](https://github.com/yegor256/netbout/issues/750):[<del>750</del>](https://github.com/yegor256/netbout/issues/750) [`?`](../master/?)<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[#953](https://github.com/yegor256/netbout/issues/953):[**750-23d45618**](https://github.com/yegor256/netbout/issues/953) [`TkStart.java:57-59`](../master/netbout-web/src/main/java/com/netbout/rest/TkStart.java#L57-L59)<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[#954](https://github.com/yegor256/netbout/issues/954):[**750-65232fbb**](https://github.com/yegor256/netbout/issues/954) [`TkStart.java:60-61`](../master/netbout-web/src/main/java/com/netbout/rest/TkStart.java#L60-L61)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[#954](https://github.com/yegor256/netbout/issues/954):[<del>750-65232fbb</del>](https://github.com/yegor256/netbout/issues/954) [`TkStart.java:60-61`](../master/netbout-web/src/main/java/com/netbout/rest/TkStart.java#L60-L61)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[**954-b453159b**]() [`TkStartTest.java:63-65`](../master/netbout-web/src/test/java/com/netbout/rest/bout/TkStartTest.java#L63-L65)<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;[#947](https://github.com/yegor256/netbout/issues/947):[<del>947</del>](https://github.com/yegor256/netbout/issues/947) [`?`](../master/?)<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[#957](https://github.com/yegor256/netbout/issues/957):[<del>947-64235763</del>](https://github.com/yegor256/netbout/issues/957) [`TkSaveEmail.java:53-55`](../master/netbout-web/src/main/java/com/netbout/rest/account/TkSaveEmail.java#L53-L55)<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;[#911](https://github.com/yegor256/netbout/issues/911):[<del>911</del>](https://github.com/yegor256/netbout/issues/911) [`?`](../master/?)<br/>
