@@ -38,11 +38,13 @@ import com.netbout.spi.Message;
 import com.netbout.spi.User;
 import java.io.IOException;
 import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.Iterator;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.takes.facets.auth.RqWithAuth;
 import org.takes.facets.forward.TkForward;
@@ -58,6 +60,9 @@ import org.takes.rs.RsPrint;
  *  should be added, e.g. when a friend is not found, the error
  *  should be reported correctly and bout creation should be
  *  discarded.
+ * @todo #954:30min TkStart should not create new bout
+ *  when same token is specified. When this is fixed, remove @Ignore from
+ *  handlesTokens test
  * @since 2.15
  * @checkstyle ClassDataAbstractionCouplingCheck (500 lines)
  */
@@ -150,7 +155,10 @@ public final class TkStartTest {
                         String.format(
                             "/start?post=message&invite=%s&rename=%s",
                             base.randomAlias().name(),
-                            URLEncoder.encode(name, "UTF-8")
+                            URLEncoder.encode(
+                                name,
+                                StandardCharsets.UTF_8.name()
+                            )
                         )
                     )
                 )
@@ -237,5 +245,73 @@ public final class TkStartTest {
             ++posted;
         }
         MatcherAssert.assertThat(posted, Matchers.equalTo(msgs.length));
+    }
+
+    /**
+     * TkStart can handle token parameter.
+     *
+     * @throws Exception If there is some problem inside
+     */
+    @Ignore("#750 not ready yet")
+    @Test
+    @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
+    public void handlesToken() throws Exception {
+        final MkBase base = new MkBase();
+        final String urn = "urn:test:5";
+        final User user = base.user(new URN(urn));
+        user.aliases().add("Jane");
+        final String[] msgs = {
+            "Hello World",
+            "I shouldn't be created as new",
+            "I should be created as new",
+            "I am new too",
+            "Another new",
+        };
+        final String same = "13579";
+        final String[] tokens = {
+            same,
+            same,
+            "24680",
+            "",
+            "",
+        };
+        final long[] loc = new long[msgs.length];
+        for (int count = 0; count < msgs.length; count += 1) {
+            final String head = new RsPrint(
+                new TkForward(new TkStart(base)).act(
+                    new RqWithAuth(
+                        urn,
+                        new RqFake(
+                            RqMethod.GET,
+                            String.format(
+                                "/start?post=%s&token=%s",
+                                URLEncoder.encode(
+                                    msgs[count],
+                                    StandardCharsets.UTF_8.name()
+                                ),
+                                URLEncoder.encode(
+                                    tokens[count],
+                                    StandardCharsets.UTF_8.name()
+                                )
+                            )
+                        )
+                    )
+                )
+            ).printHead();
+            final Matcher matcher = TkStartTest.LOCATION.matcher(head);
+            MatcherAssert.assertThat(
+                "Found matching location header",
+                matcher.find()
+            );
+            user.aliases().iterate().iterator().next().inbox()
+                .bout(Long.parseLong(matcher.group(1)));
+            loc[count] = Long.parseLong(matcher.group(1));
+        }
+        // @checkstyle MagicNumber (5 lines)
+        MatcherAssert.assertThat(loc[0], Matchers.equalTo(loc[1]));
+        MatcherAssert.assertThat(loc[0], Matchers.not(loc[2]));
+        MatcherAssert.assertThat(loc[0], Matchers.not(loc[3]));
+        MatcherAssert.assertThat(loc[2], Matchers.not(loc[3]));
+        MatcherAssert.assertThat(loc[3], Matchers.not(loc[4]));
     }
 }
