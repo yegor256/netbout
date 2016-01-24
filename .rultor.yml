@@ -44,6 +44,7 @@ merge:
     mvn clean
     pdd --source=$(pwd) --verbose --file=/dev/null
     est --dir=est --file=/dev/null
+    ./years.sh
   commanders:
   - caarlos0
   - carlosmiranda
