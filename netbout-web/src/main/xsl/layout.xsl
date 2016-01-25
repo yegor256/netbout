@@ -43,7 +43,7 @@
             <head>
                 <meta charset="UTF-8"/>
                 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-                <meta name="description" content="Netbout.com is a conversation-centric UI on demand, which is making software to help us communicate, instead of making us to communicate through software."/>
+                <meta name="description" content="{documentation}"/>
                 <script type="text/javascript" src="//code.jquery.com/jquery-2.1.1-rc1.min.js">
                     <xsl:text> </xsl:text>
                 </script>

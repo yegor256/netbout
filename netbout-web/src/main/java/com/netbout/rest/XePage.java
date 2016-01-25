@@ -83,6 +83,10 @@ public final class XePage extends XeWrap {
         final Request req, final XeSource... src) throws IOException {
         return new XeAppend(
             "page",
+            new XeAppend(
+                "documentation",
+                Manifests.read("Netbout-Documentation")
+            ),
             new XeMillis(false),
             new XeChain(src),
             new XeDate(),
