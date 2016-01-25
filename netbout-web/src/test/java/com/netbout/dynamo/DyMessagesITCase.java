@@ -128,4 +128,31 @@ public final class DyMessagesITCase {
             !result.hasNext()
         );
     }
+
+    /**
+     * DyMessages can retain leading spaces as code markdown.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void codeMarkdownInMessages() throws Exception {
+        final String alias = "rokit";
+        final Aliases aliases =
+            new DyBase().user(new URN("urn:test:75065")).aliases();
+        aliases.add(alias);
+        final Inbox inbox = aliases.iterate().iterator().next().inbox();
+        final Bout bout = inbox.bout(inbox.start());
+        final String before = "    4 leading spaces retained  ";
+        final String after  = "    4 leading spaces retained";
+        bout.messages().post(before);
+        final Iterator<Message> result =
+            bout.messages().search(after).iterator();
+        MatcherAssert.assertThat(
+            "no matching result found",
+            result.hasNext()
+        );
+        MatcherAssert.assertThat(
+            result.next().text(),
+            Matchers.equalTo(after)
+        );
+    }
 }
