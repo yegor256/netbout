@@ -141,18 +141,16 @@ public final class DyMessagesITCase {
         aliases.add(alias);
         final Inbox inbox = aliases.iterate().iterator().next().inbox();
         final Bout bout = inbox.bout(inbox.start());
-        final String before = "    4 leading spaces retained  ";
-        final String after  = "    4 leading spaces retained";
-        bout.messages().post(before);
+        bout.messages().post("    4 leading spaces retained  ");
         final Iterator<Message> result =
-            bout.messages().search(after).iterator();
+            bout.messages().iterate().iterator();
         MatcherAssert.assertThat(
-            "no matching result found",
+            "expected message not found",
             result.hasNext()
         );
         MatcherAssert.assertThat(
             result.next().text(),
-            Matchers.equalTo(after)
+            Matchers.equalTo("    4 leading spaces retained")
         );
     }
 }
