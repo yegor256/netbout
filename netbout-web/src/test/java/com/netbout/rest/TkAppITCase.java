@@ -29,9 +29,12 @@ package com.netbout.rest;
 import com.jcabi.http.request.JdkRequest;
 import com.jcabi.http.response.RestResponse;
 import com.jcabi.http.response.XmlResponse;
+import com.jcabi.manifests.Manifests;
 import java.net.HttpURLConnection;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
+import org.hamcrest.MatcherAssert;
+import org.hamcrest.Matchers;
 import org.junit.Test;
 
 /**
@@ -46,6 +49,12 @@ public final class TkAppITCase {
      * Home page of Tomcat.
      */
     private static final String HOME = System.getProperty("takes.home");
+
+    /**
+     * Documentation of the index page.
+     */
+    private static final String DOCUMENTATION =
+        Manifests.read("Netbout-Documentation");
 
     /**
      * TkApp can render static resources.
@@ -116,6 +125,47 @@ public final class TkAppITCase {
             .assertStatus(HttpURLConnection.HTTP_OK)
             .as(XmlResponse.class)
             .assertXPath("/xhtml:html");
+    }
+
+    /**
+     * TkApp can render xml index page with documentation tag.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void containsDocumentation() throws Exception {
+        MatcherAssert.assertThat(
+            new JdkRequest(TkAppITCase.HOME)
+                .header(HttpHeaders.ACCEPT, MediaType.TEXT_XML)
+                .fetch()
+                .as(RestResponse.class)
+                .assertStatus(HttpURLConnection.HTTP_OK)
+                .as(XmlResponse.class)
+                .xml()
+                .xpath("/page/documentation/text()")
+                .get(0),
+            Matchers.equalTo(DOCUMENTATION)
+        );
+    }
+
+    /**
+     * TkApp can render html index page with meta description.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void containsMetaDesc() throws Exception {
+        final String query =
+            "/xhtml:html/xhtml:head/xhtml:meta[@name='description']/@content";
+        MatcherAssert.assertThat(
+            new JdkRequest(TkAppITCase.HOME)
+                .fetch()
+                .as(RestResponse.class)
+                .assertStatus(HttpURLConnection.HTTP_OK)
+                .as(XmlResponse.class)
+                .xml()
+                .xpath(query)
+                .get(0),
+            Matchers.equalTo(DOCUMENTATION)
+        );
     }
 
 }

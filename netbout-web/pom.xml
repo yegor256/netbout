@@ -139,6 +139,11 @@
             <version>1.14.2</version>
         </dependency>
         <dependency>
+            <groupId>com.jcabi</groupId>
+            <artifactId>jcabi-xml</artifactId>
+            <version>0.17.1</version>
+        </dependency>
+        <dependency>
             <groupId>com.restfb</groupId>
             <artifactId>restfb</artifactId>
             <version>1.15.0</version>
