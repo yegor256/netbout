@@ -332,7 +332,7 @@
                             <goal>npm</goal>
                         </goals>
                         <configuration>
-                            <arguments>install bower</arguments>
+                            <arguments>install</arguments>
                         </configuration>
                     </execution>
                     <execution>
