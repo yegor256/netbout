@@ -28,3 +28,4 @@ Netbout-EmCatchSecret: ${emcatch.secret}
 Netbout-Site: ${netbout-site}
 Netbout-BoutInviteSecret: ${boutInvite.secret}
 Netbout-EmailCryptSecret: ${emailCrypt.secret}
+Netbout-Documentation: Netbout.com is a conversation-centric UI on demand, which is making software to help us communicate, instead of making us to communicate through software.

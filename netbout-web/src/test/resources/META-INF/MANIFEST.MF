@@ -27,3 +27,4 @@ Netbout-Basic-Pwd: testpassword
 Netbout-Site: http://www.netbout.com
 Netbout-BoutInviteSecret: testboutinvitesecret
 Netbout-EmailCryptSecret: testemailcryptsecret
+Netbout-Documentation: Netbout.com is a conversation-centric UI on demand, which is making software to help us communicate, instead of making us to communicate through software.
