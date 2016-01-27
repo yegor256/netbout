@@ -37,6 +37,7 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.CharEncoding;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
+import org.junit.Assert;
 import org.junit.Test;
 
 /**
@@ -75,7 +76,8 @@ public final class DyAttachmentsITCase {
     }
 
     /**
-     * DyAttachments can create, save and load attachments.
+     * DyAttachments will throw exception if the file
+     * length is not between 3-100 characters.
      * @throws Exception If there is some problem inside
      */
     @Test
@@ -90,6 +92,7 @@ public final class DyAttachmentsITCase {
         final String name = "a";
         try {
             attachments.create(name);
+            Assert.fail("The character length exeption was not thrown");
         } catch (final Attachments.InvalidNameException ex) {
             MatcherAssert.assertThat(
                 ex.getMessage(),
