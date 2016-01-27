@@ -46,6 +46,7 @@ import java.util.regex.Pattern;
 import org.apache.commons.codec.CharEncoding;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.takes.Request;
 import org.takes.Response;
 import org.takes.Take;
@@ -54,6 +55,7 @@ import org.takes.facets.forward.RsFailure;
 import org.takes.facets.forward.RsForward;
 import org.takes.rq.RqHeaders;
 import org.takes.rq.RqMultipart;
+import org.takes.rq.RqMultipart.Smart;
 
 /**
  * Attach.
@@ -63,6 +65,7 @@ import org.takes.rq.RqMultipart;
  * @since 2.14
  * @checkstyle ClassDataAbstractionCouplingCheck (500 lines)
  */
+@SuppressWarnings("PMD.ExcessiveImports")
 final class TkAttach implements Take {
 
     /**
@@ -93,17 +96,15 @@ final class TkAttach implements Take {
 
     @Override
     public Response act(final Request req) throws IOException {
-        final Request file = new RqMultipart.Smart(
+        final Smart form = new RqMultipart.Smart(
             new RqMultipart.Base(req)
-        ).single("file");
+        );
+        final Request file = form.single("file");
+        final String name = this.filename(form, file);
         final Bout bout = new RqBout(this.base, req).bout();
-        final String name = this.name(file);
         final File temp = File.createTempFile("netbout", "bin");
         try {
-            try (OutputStream os = new FileOutputStream(temp)) {
-                IOUtils.copy(file.body(), os);
-            }
-            this.validate(temp, name);
+            this.copyAndValidate(file, temp, name);
             final StringBuilder msg = new StringBuilder(Tv.HUNDRED);
             if (new Attachments.Search(bout.attachments()).exists(name)) {
                 msg.append(
@@ -137,12 +138,31 @@ final class TkAttach implements Take {
     }
 
     /**
-     * Extracts file name.
+     * Reads the filename either from the name field or from the uploaded file.
+     * @param form From
      * @param file File
-     * @return File name
+     * @return String name
      * @throws IOException If fails
      */
-    private String name(final Request file) throws IOException {
+    private String filename(final Smart form, final Request file)
+        throws IOException {
+        String name = null;
+        for (final Request filename : form.part("name")) {
+            name = IOUtils.toString(filename.body(), CharEncoding.UTF_8);
+        }
+        if (StringUtils.isBlank(name)) {
+            name = this.nameFromFile(file);
+        }
+        return name;
+    }
+
+    /**
+     * Extracts name from file part.
+     * @param file File
+     * @return String name
+     * @throws IOException If fails
+     */
+    private String nameFromFile(final Request file) throws IOException {
         final Matcher matcher = TkAttach.FILE_NAME_PATTERN.matcher(
             new RqHeaders.Smart(
                 new RqHeaders.Base(file)
@@ -153,6 +173,31 @@ final class TkAttach implements Take {
         }
         // @checkstyle MagicNumberCheck (1 line)
         return URLDecoder.decode(matcher.group(5), CharEncoding.UTF_8);
+    }
+
+    /**
+     * Copy the multipart data to a file and validate it.
+     * @param src Multipart request
+     * @param dst File
+     * @param name Filename
+     * @throws IOException If copy or validate fails
+     */
+    private void copyAndValidate(final Request src, final File dst,
+        final String name) throws IOException {
+        this.copy(src, dst);
+        this.validate(dst, name);
+    }
+
+    /**
+     * Copy data from the a multipart request to a file.
+     * @param src Multipart Request
+     * @param dst File
+     * @throws IOException If fails
+     */
+    private void copy(final Request src, final File dst) throws IOException {
+        try (OutputStream os = new FileOutputStream(dst)) {
+            IOUtils.copy(src.body(), os);
+        }
     }
 
     /**
