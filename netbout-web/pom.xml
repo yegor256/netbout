@@ -139,6 +139,11 @@
             <version>1.14.2</version>
         </dependency>
         <dependency>
+            <groupId>com.jcabi</groupId>
+            <artifactId>jcabi-xml</artifactId>
+            <version>0.17.1</version>
+        </dependency>
+        <dependency>
             <groupId>com.restfb</groupId>
             <artifactId>restfb</artifactId>
             <version>1.15.0</version>
@@ -289,6 +294,7 @@
             <plugin>
                 <groupId>com.github.github</groupId>
                 <artifactId>site-maven-plugin</artifactId>
+				<version>0.12</version>
                 <configuration>
                     <path>${project.artifactId}</path>
                 </configuration>
@@ -726,6 +732,14 @@
                                 <exclude>checkstyle:/src/main/scss/.*</exclude>
                                 <exclude>checkstyle:/src/test/casperjs/.*</exclude>
                                 <exclude>checkstyle:/src/main/js/.*</exclude>
+                                <!--
+                                @todo #911:30min Fix findbugs errors in web
+                                 Some issues may not require fixing an should be
+                                 excluded. Filters in qulice 0.12 are broken, right
+                                 excludes should be more granular. I think it should
+                                 be resolved when #961 completed due to broken
+                                 Findbugs filters in current version of Qulice
+                                -->
                                 <exclude>findbugs:.*</exclude>
                                 <exclude>xml:/src/main/resources/lang/.*</exclude>
                                 <exclude>duplicatefinder:.*</exclude>

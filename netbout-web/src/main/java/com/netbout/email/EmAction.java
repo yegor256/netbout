@@ -75,7 +75,7 @@ public final class EmAction implements EmCatch.Action {
                     ).split("\\|");
                     this.base.user(URN.create(split[0])).aliases()
                         .iterate().iterator().next().inbox()
-                        .bout(Long.valueOf(split[1]))
+                        .bout(Long.parseLong(split[1]))
                         .messages().post(this.text(msg));
                 }
             }

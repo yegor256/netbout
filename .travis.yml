@@ -20,3 +20,4 @@ script:
   - mvn clean
   - pdd --source=$(pwd) --file=/dev/null
   - est --dir=est --file=/dev/null
+  - ./years.sh

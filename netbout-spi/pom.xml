@@ -90,7 +90,16 @@
                         <artifactId>qulice-maven-plugin</artifactId>
                         <configuration>
                             <excludes>
-                                <exclude>findbugs:.*</exclude>
+                                <!--
+                                @todo #911:30min Fix findbugs errors in SPI classes
+                                 Friends and Attachemtns
+                                 Some issues may not require fixing and should be
+                                 excluded. filters in qulice 0.12 are broken, right
+                                 excludes should be more granular. I think it should
+                                 be resolved when #961 completed due to broken
+                                 Findbugs filters in current version of Qulice
+                                -->
+                                <exclude>findbugs:~com.netbout.spi.*</exclude>
                             </excludes>
                         </configuration>
                     </plugin>

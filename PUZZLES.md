@@ -1,6 +1,6 @@
 ## Puzzles
 
-There are 14 active puzzles (48 total):
+There are 15 active puzzles (53 total):
 
 
 <del>unknown</del> [`?`](../master/?)<br/>
@@ -35,7 +35,7 @@ There are 14 active puzzles (48 total):
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<del>703-ca5668ad</del> [`pom.xml:58-58`](../master/netbout-web/pom.xml#L58-L58)<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;[#806](https://github.com/yegor256/netbout/issues/806):[<del>806</del>](https://github.com/yegor256/netbout/issues/806) [`?`](../master/?)<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[#826](https://github.com/yegor256/netbout/issues/826):[**806-1e507f57**](https://github.com/yegor256/netbout/issues/826) [`MkAttachments.java:86-88`](../master/netbout-client/src/main/java/com/netbout/mock/MkAttachments.java#L86-L88)<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[#827](https://github.com/yegor256/netbout/issues/827):[**806-43ee63d7**](https://github.com/yegor256/netbout/issues/827) [`MkBout.java:104-106`](../master/netbout-client/src/main/java/com/netbout/mock/MkBout.java#L104-L106)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[#827](https://github.com/yegor256/netbout/issues/827):[<del>806-43ee63d7</del>](https://github.com/yegor256/netbout/issues/827) [`MkBout.java:104-106`](../master/netbout-client/src/main/java/com/netbout/mock/MkBout.java#L104-L106)<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;[<del>738</del>](https://github.com/yegor256/netbout/issues/738) [`?`](../master/?)<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[#841](https://github.com/yegor256/netbout/issues/841):[**738-4d284963**](https://github.com/yegor256/netbout/issues/841) [`EmAlias.java:130-134`](../master/netbout-web/src/main/java/com/netbout/email/EmAlias.java#L130-L134)<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[#842](https://github.com/yegor256/netbout/issues/842):[<del>738-d76bd177</del>](https://github.com/yegor256/netbout/issues/842) [`TkSaveEmail.java:53-55`](../master/netbout-web/src/main/java/com/netbout/rest/account/TkSaveEmail.java#L53-L55)<br/>
@@ -48,6 +48,11 @@ There are 14 active puzzles (48 total):
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[#937](https://github.com/yegor256/netbout/issues/937):[<del>888-3f71fb04</del>](https://github.com/yegor256/netbout/issues/937) [`Markdown.java:59-61`](../master/netbout-web/src/main/java/com/netbout/rest/Markdown.java#L59-L61)<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;[#750](https://github.com/yegor256/netbout/issues/750):[<del>750</del>](https://github.com/yegor256/netbout/issues/750) [`?`](../master/?)<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[#953](https://github.com/yegor256/netbout/issues/953):[**750-23d45618**](https://github.com/yegor256/netbout/issues/953) [`TkStart.java:57-59`](../master/netbout-web/src/main/java/com/netbout/rest/TkStart.java#L57-L59)<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[#954](https://github.com/yegor256/netbout/issues/954):[**750-65232fbb**](https://github.com/yegor256/netbout/issues/954) [`TkStart.java:60-61`](../master/netbout-web/src/main/java/com/netbout/rest/TkStart.java#L60-L61)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[#954](https://github.com/yegor256/netbout/issues/954):[<del>750-65232fbb</del>](https://github.com/yegor256/netbout/issues/954) [`TkStart.java:60-61`](../master/netbout-web/src/main/java/com/netbout/rest/TkStart.java#L60-L61)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[#973](https://github.com/yegor256/netbout/issues/973):[**954-b453159b**](https://github.com/yegor256/netbout/issues/973) [`TkStartTest.java:63-65`](../master/netbout-web/src/test/java/com/netbout/rest/bout/TkStartTest.java#L63-L65)<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;[#947](https://github.com/yegor256/netbout/issues/947):[<del>947</del>](https://github.com/yegor256/netbout/issues/947) [`?`](../master/?)<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[#957](https://github.com/yegor256/netbout/issues/957):[**947-64235763**](https://github.com/yegor256/netbout/issues/957) [`TkSaveEmail.java:53-55`](../master/netbout-web/src/main/java/com/netbout/rest/account/TkSaveEmail.java#L53-L55)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[#957](https://github.com/yegor256/netbout/issues/957):[<del>947-64235763</del>](https://github.com/yegor256/netbout/issues/957) [`TkSaveEmail.java:53-55`](../master/netbout-web/src/main/java/com/netbout/rest/account/TkSaveEmail.java#L53-L55)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;[#911](https://github.com/yegor256/netbout/issues/911):[<del>911</del>](https://github.com/yegor256/netbout/issues/911) [`?`](../master/?)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[#965](https://github.com/yegor256/netbout/issues/965):[**911-a1464331**](https://github.com/yegor256/netbout/issues/965) [`pom.xml:184-189`](../master/netbout-client/pom.xml#L184-L189)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[#966](https://github.com/yegor256/netbout/issues/966):[**911-20c870d4**](https://github.com/yegor256/netbout/issues/966) [`pom.xml:94-100`](../master/netbout-spi/pom.xml#L94-L100)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[#968](https://github.com/yegor256/netbout/issues/968):[**911-1ad8e6c0**](https://github.com/yegor256/netbout/issues/968) [`pom.xml:730-735`](../master/netbout-web/pom.xml#L730-L735)<br/>

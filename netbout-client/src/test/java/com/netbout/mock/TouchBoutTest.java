@@ -27,67 +27,29 @@
 package com.netbout.mock;
 
 import com.jcabi.aspects.Tv;
-import com.netbout.spi.Attachment;
-import com.netbout.spi.Attachments;
 import com.netbout.spi.Bout;
-import java.nio.charset.StandardCharsets;
-import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang3.CharEncoding;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;
 
 /**
- * Test case for {@link MkAttachments}.
- * @author Yegor Bugayenko (yegor@teamed.io)
+ * Test case for {@link TouchBout].
+ *
+ * @author Dmitry Zaytsev (dmitr.zaytsev@gmail.com)
  * @version $Id$
- * @since 2.4
+ * @since 2.23
  */
-public final class MkAttachmentsTest {
-
+public final class TouchBoutTest {
     /**
-     * MkAttachments can upload and download attachments.
-     * @throws Exception If there is some problem inside
-     */
-    @Test
-    public void uploadsAndDownloads() throws Exception {
-        final Bout bout = new MkBase().randomBout();
-        final Attachments attachments = bout.attachments();
-        final String name = "test-name";
-        attachments.create(name);
-        final Attachment attachment = attachments.get(name);
-        attachment.write(
-            IOUtils.toInputStream("hey \u20ac", CharEncoding.UTF_8),
-            "text/plain",
-            Long.toString(System.currentTimeMillis())
-        );
-        MatcherAssert.assertThat(
-            IOUtils.toString(attachment.read(), CharEncoding.UTF_8),
-            Matchers.containsString("\u20ac")
-        );
-        MatcherAssert.assertThat(
-            attachment.ctype(),
-            Matchers.containsString("/plain")
-        );
-    }
-
-    /**
-     * MkAttachments can change update attribute on Bout.
+     * TouchBout can change update attribute of the bout.
      * @throws Exception If there is some problem inside
      */
     @Test
     public void changesUpdateAttribute() throws Exception {
-        final Bout bout = new MkBase().randomBout();
-        final Attachments attachments = bout.attachments();
+        final Sql sql = new H2Sql();
+        final Bout bout = new MkBase(sql).randomBout();
         final Long last = bout.updated().getTime();
-        final String name = "att-name";
-        attachments.create(name);
-        final Attachment attachment = attachments.get(name);
-        attachment.write(
-            IOUtils.toInputStream("<root/>", StandardCharsets.UTF_8),
-            "text/xml",
-            Long.toString(System.currentTimeMillis())
-        );
+        new TouchBout(sql, bout.number()).act();
         Thread.sleep(Tv.HUNDRED);
         MatcherAssert.assertThat(
             bout.updated().getTime(), Matchers.greaterThan(last)

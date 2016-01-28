@@ -180,7 +180,15 @@
                         <artifactId>qulice-maven-plugin</artifactId>
                         <configuration>
                             <excludes>
-                                <exclude>findbugs:.*</exclude>
+                                <!--
+                                @todo #911:30min Fix findbugs errors in client
+                                 Some issues may not require fixing an should be
+                                 excluded. Filters in qulice 0.12 are broken, right
+                                 excludes should be more granular. I think it should
+                                 be resolved when #961 completed due to broken
+                                 Findbugs filters in current version of Qulice
+                                -->
+                                <exclude>findbugs:~com.netbout.client.*</exclude>
                             </excludes>
                         </configuration>
                     </plugin>

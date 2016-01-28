@@ -167,7 +167,7 @@ final class DyMessages implements Messages {
 
     @Override
     public void post(final String text) throws IOException {
-        final String clean = StringUtils.strip(text);
+        final String clean = StringUtils.stripEnd(text, null);
         if (clean.isEmpty()) {
             throw new Messages.BrokenPostException(
                 "empty message content is not allowed"
