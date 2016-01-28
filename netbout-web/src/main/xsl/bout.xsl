@@ -110,7 +110,7 @@
                             <xsl:text> </xsl:text>
                         </label>
                         <textarea name="text" cols="80" rows="5" id="text" onkeydown="if ((event.keyCode == 10 || event.keyCode == 13) &amp;&amp; event.ctrlKey) submit.click();">
-                            <xsl:text> </xsl:text>
+                            <xsl:text></xsl:text>
                         </textarea>
                     </fieldset>
                 </div>
