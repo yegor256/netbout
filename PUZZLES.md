@@ -56,5 +56,5 @@ There are 16 active puzzles (55 total):
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[#965](https://github.com/yegor256/netbout/issues/965):[**911-a1464331**](https://github.com/yegor256/netbout/issues/965) [`pom.xml:184-189`](../master/netbout-client/pom.xml#L184-L189)<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[#966](https://github.com/yegor256/netbout/issues/966):[**911-20c870d4**](https://github.com/yegor256/netbout/issues/966) [`pom.xml:94-100`](../master/netbout-spi/pom.xml#L94-L100)<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[#968](https://github.com/yegor256/netbout/issues/968):[**911-1ad8e6c0**](https://github.com/yegor256/netbout/issues/968) [`pom.xml:730-735`](../master/netbout-web/pom.xml#L730-L735)<br/>
-[#914](https://github.com/yegor256/netbout/issues/914):[<del>914</del>](https://github.com/yegor256/netbout/issues/914) [`?`](../master/?)<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;[**914-ecab4401**]() [`pom.xml:330-339`](../master/netbout-web/pom.xml#L330-L339)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;[#914](https://github.com/yegor256/netbout/issues/914):[<del>914</del>](https://github.com/yegor256/netbout/issues/914) [`?`](../master/?)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[#982](https://github.com/yegor256/netbout/issues/982):[**914-ecab4401**](https://github.com/yegor256/netbout/issues/982) [`pom.xml:330-339`](../master/netbout-web/pom.xml#L330-L339)<br/>
