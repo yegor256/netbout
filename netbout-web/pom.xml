@@ -326,6 +326,8 @@
                             <npmVersion>2.11.3</npmVersion>
                         </configuration>
                     </execution>
+                    <!-- @todo #914 investigate error messages of the following
+                         command and change package.json accordingly -->
                     <execution>
                         <id>npm install</id>
                         <goals>
