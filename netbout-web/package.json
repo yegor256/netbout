@@ -1,0 +1,7 @@
+{
+    "name": "netbout-web",
+    "license": "NETBOUT",
+    "devDependencies": {
+        "bower": "1.7.6"
+    }
+}
