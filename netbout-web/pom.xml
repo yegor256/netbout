@@ -326,8 +326,17 @@
                             <npmVersion>2.11.3</npmVersion>
                         </configuration>
                     </execution>
-                    <!-- @todo #914 investigate error messages of the following
-                         command and change package.json accordingly -->
+                    <!--
+                    @todo #914:30min investigate error messages of the
+                     following command and change package.json accordingly.
+                     The error messages are:
+                     [ERROR] npm WARN package.json netbout-web@ No description
+                     [ERROR] npm WARN package.json netbout-web@ No repository
+                     field.
+                     [ERROR] npm WARN package.json netbout-web@ No README data
+                     [ERROR] npm WARN package.json netbout-web@ license should
+                     be a valid SPDX license expression
+                     -->
                     <execution>
                         <id>npm install</id>
                         <goals>
