@@ -37,10 +37,10 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
-import java.nio.charset.StandardCharsets;
-import java.net.URLDecoder;
 import java.util.Collection;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -65,7 +65,7 @@ import org.takes.rq.RqMultipart;
  * @since 2.14
  * @checkstyle ClassDataAbstractionCouplingCheck (500 lines)
  */
-//@SuppressWarnings("PMD.ExcessiveImports")
+@SuppressWarnings("PMD.ExcessiveImports")
 final class TkAttach implements Take {
 
     /**
@@ -149,19 +149,21 @@ final class TkAttach implements Take {
      */
     private String filename(final RqMultipart.Smart form, final Request file)
         throws IOException {
-    	final String name;
-    	Iterable<Request> requests = form.part("name");
-    	if (requests.iterator().hasNext()) {
-            name = IOUtils.toString(requests.iterator().next().body(),
-                StandardCharsets.UTF_8);
+        final String name;
+        final Iterable<Request> requests = form.part("name");
+        if (requests.iterator().hasNext()) {
+            name = IOUtils.toString(
+                requests.iterator().next().body(),
+                StandardCharsets.UTF_8
+            );
         } else {
-        	name = "";
+            name = "";
         }
         final String filename;
         if (StringUtils.isBlank(name)) {
             filename = this.nameFromFile(file);
         } else {
-        	filename = name;
+            filename = name;
         }
         return filename;
     }
@@ -194,8 +196,11 @@ final class TkAttach implements Take {
      */
     private void copyAndValidate(final Request src, final File dst,
         final String name) throws IOException {
-    	Files.copy(src.body(), dst.toPath(),
-    	    StandardCopyOption.REPLACE_EXISTING);
+        Files.copy(
+            src.body(),
+            dst.toPath(),
+            StandardCopyOption.REPLACE_EXISTING
+        );
         this.validate(dst, name);
     }
 
