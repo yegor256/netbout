@@ -35,10 +35,11 @@ import eu.medsea.mimeutil.MimeUtil;
 import eu.medsea.mimeutil.detector.MagicMimeMimeDetector;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
+import java.nio.charset.StandardCharsets;
 import java.net.URLDecoder;
 import java.util.Collection;
 import java.util.regex.Matcher;
@@ -55,7 +56,6 @@ import org.takes.facets.forward.RsFailure;
 import org.takes.facets.forward.RsForward;
 import org.takes.rq.RqHeaders;
 import org.takes.rq.RqMultipart;
-import org.takes.rq.RqMultipart.Smart;
 
 /**
  * Attach.
@@ -65,7 +65,7 @@ import org.takes.rq.RqMultipart.Smart;
  * @since 2.14
  * @checkstyle ClassDataAbstractionCouplingCheck (500 lines)
  */
-@SuppressWarnings("PMD.ExcessiveImports")
+//@SuppressWarnings("PMD.ExcessiveImports")
 final class TkAttach implements Take {
 
     /**
@@ -96,7 +96,7 @@ final class TkAttach implements Take {
 
     @Override
     public Response act(final Request req) throws IOException {
-        final Smart form = new RqMultipart.Smart(
+        final RqMultipart.Smart form = new RqMultipart.Smart(
             new RqMultipart.Base(req)
         );
         final Request file = form.single("file");
@@ -139,21 +139,31 @@ final class TkAttach implements Take {
 
     /**
      * Reads the filename either from the name field or from the uploaded file.
+     * @todo #865:30min write a test for this method. It should make sure that
+     *  if there is a name part in the form and it is not empty then it is
+     *  taken and if not, the name of the uploaded file is used.
      * @param form From
      * @param file File
      * @return String name
      * @throws IOException If fails
      */
-    private String filename(final Smart form, final Request file)
+    private String filename(final RqMultipart.Smart form, final Request file)
         throws IOException {
-        String name = null;
-        for (final Request filename : form.part("name")) {
-            name = IOUtils.toString(filename.body(), CharEncoding.UTF_8);
+    	final String name;
+    	Iterable<Request> requests = form.part("name");
+    	if (requests.iterator().hasNext()) {
+            name = IOUtils.toString(requests.iterator().next().body(),
+                StandardCharsets.UTF_8);
+        } else {
+        	name = "";
         }
+        final String filename;
         if (StringUtils.isBlank(name)) {
-            name = this.nameFromFile(file);
+            filename = this.nameFromFile(file);
+        } else {
+        	filename = name;
         }
-        return name;
+        return filename;
     }
 
     /**
@@ -184,20 +194,9 @@ final class TkAttach implements Take {
      */
     private void copyAndValidate(final Request src, final File dst,
         final String name) throws IOException {
-        this.copy(src, dst);
+    	Files.copy(src.body(), dst.toPath(),
+    	    StandardCopyOption.REPLACE_EXISTING);
         this.validate(dst, name);
-    }
-
-    /**
-     * Copy data from the a multipart request to a file.
-     * @param src Multipart Request
-     * @param dst File
-     * @throws IOException If fails
-     */
-    private void copy(final Request src, final File dst) throws IOException {
-        try (OutputStream os = new FileOutputStream(dst)) {
-            IOUtils.copy(src.body(), os);
-        }
     }
 
     /**
