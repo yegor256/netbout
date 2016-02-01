@@ -35,6 +35,7 @@ import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;
 import org.takes.facets.auth.RqWithAuth;
+import org.takes.facets.forward.RsFailure;
 import org.takes.facets.forward.RsForward;
 import org.takes.rq.RqFake;
 import org.takes.rq.RqMethod;
@@ -43,8 +44,10 @@ import org.takes.rq.RqWithHeader;
 /**
  * Test case for {@link TkInvite}.
  * @author Endrigo Antonini (teamed@endrigo.com.br)
- * @version $Id$
+ * @version $Id: 1cc7dffb02a2cc1e4f71ee5953e0ccc757dbe9d1 $
  * @since 2.15.1
+ * @checkstyle MultipleStringLiteralsCheck (500 lines)
+ * @checkstyle StringLiteralsConcatenationCheck (500 lines)
  */
 public final class TkInviteTest {
 
@@ -84,6 +87,48 @@ public final class TkInviteTest {
             MatcherAssert.assertThat(
                 ex.getLocalizedMessage(),
                 Matchers.containsString("foo-bar-airforce")
+            );
+            throw ex;
+        }
+    }
+
+    /**
+     * TkInvite should throw an RsFailure when invite alias is too long.
+     * @throws Exception If there is some problem inside
+     */
+    @Test (expected = RsFailure.class)
+    public void inviteWithTooLongAlias() throws Exception {
+        final MkBase base = new MkBase();
+        final String urn = "urn:test:1";
+        final User user = base.user(new URN(urn));
+        final String name = "12345678901234567890123456789012345678901234"
+            + "5678901234567890123456789012345678901234567"
+            + "890123456789012345678901234567890";
+        user.aliases().add(name);
+        final Alias alias = user.aliases().iterate().iterator().next();
+        final Bout bout = alias.inbox().bout(alias.inbox().start());
+        try {
+            new TkInvite(base).act(
+                new RqWithHeader(
+                    new RqWithAuth(
+                        urn,
+                        new RqFake(
+                            RqMethod.POST,
+                            String.format(
+                                "/b/%d/invite",
+                                bout.number()
+                            ),
+                            "name=" + name
+                        )
+                    ),
+                    "X-Netbout-Bout",
+                    Long.toString(bout.number())
+                )
+            );
+        } catch (final RsFailure ex) {
+            MatcherAssert.assertThat(
+                ex.getLocalizedMessage(),
+                Matchers.containsString("incorrect alias")
             );
             throw ex;
         }

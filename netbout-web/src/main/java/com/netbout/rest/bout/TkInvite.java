@@ -49,7 +49,7 @@ import org.takes.rq.RqForm;
  * Invite a friend to the bout.
  *
  * @author Yegor Bugayenko (yegor@teamed.io)
- * @version $Id$
+ * @version $Id: 9ee51b1fdc2de87f03cebf45e3c068b991a95432 $
  * @since 2.14
  * @checkstyle ClassDataAbstractionCouplingCheck (210 lines)
  */
@@ -90,7 +90,7 @@ final class TkInvite implements Take {
         }
         final String check = new RqAlias(this.base, req)
             .user().aliases().check(guest);
-        if (check.isEmpty()) {
+        if (!check.isEmpty()) {
             throw new RsFailure(
                 String.format("incorrect alias \"%s\", try again", guest)
             );
