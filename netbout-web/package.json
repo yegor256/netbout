@@ -1,6 +1,6 @@
 {
     "name": "netbout-web",
-    "description":"",
+    "description":"netbout-web",
     "license": "NETBOUT",
     "private": true,
     "devDependencies": {
