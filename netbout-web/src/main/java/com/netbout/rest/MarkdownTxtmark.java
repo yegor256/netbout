@@ -27,6 +27,7 @@
 package com.netbout.rest;
 
 import com.github.rjeschke.txtmark.Processor;
+import com.jcabi.log.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.validation.constraints.NotNull;
@@ -95,15 +96,23 @@ public final class MarkdownTxtmark implements Markdown {
         final Matcher matcher = MarkdownTxtmark.NEW_LINE.matcher(txt);
         while (matcher.find()) {
             if (!matcher.hitEnd()) {
-                matcher.appendReplacement(
-                    result,
-                    String.format(
-                        "%s  ", matcher.group()
-                    )
-                );
+                try {
+                    matcher.appendReplacement(
+                        result,
+                        String.format(
+                            "%s  ", matcher.group()
+                        )
+                    );
+                } catch (final IndexOutOfBoundsException ex) {
+                    Logger.error(
+                        MarkdownTxtmark.class,
+                        "text %s causes %s", txt, ex.getMessage()
+                    );
+                }
             }
         }
         matcher.appendTail(result);
         return result.toString();
     }
+
 }
