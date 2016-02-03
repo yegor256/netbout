@@ -291,4 +291,16 @@ public final class MarkdownTxtmarkTest {
             );
         }
     }
+
+    /**
+     * MarkdownTxtmark can escape the replacement string.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void escapesReplacement() throws Exception {
+        MatcherAssert.assertThat(
+            new MarkdownTxtmark().html("backslash \\ and group reference $3\n"),
+            Matchers.is("<p>backslash \\ and group reference $3<br  /></p>\n")
+        );
+    }
 }
