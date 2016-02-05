@@ -31,6 +31,7 @@ import com.netbout.mock.MkBase;
 import com.netbout.spi.Alias;
 import com.netbout.spi.Bout;
 import com.netbout.spi.User;
+import org.apache.commons.lang3.StringUtils;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;
@@ -44,7 +45,7 @@ import org.takes.rq.RqWithHeader;
 /**
  * Test case for {@link TkInvite}.
  * @author Endrigo Antonini (teamed@endrigo.com.br)
- * @version $Id: 1cc7dffb02a2cc1e4f71ee5953e0ccc757dbe9d1 $
+ * @version $Id$
  * @since 2.15.1
  * @checkstyle MultipleStringLiteralsCheck (500 lines)
  * @checkstyle StringLiteralsConcatenationCheck (500 lines)
@@ -97,13 +98,15 @@ public final class TkInviteTest {
      * @throws Exception If there is some problem inside
      */
     @Test (expected = RsFailure.class)
-    public void inviteWithTooLongAlias() throws Exception {
+    public void failsWhenInvitingWithTooLongAlias() throws Exception {
         final MkBase base = new MkBase();
         final String urn = "urn:test:1";
         final User user = base.user(new URN(urn));
-        final String name = "12345678901234567890123456789012345678901234"
-            + "5678901234567890123456789012345678901234567"
-            + "890123456789012345678901234567890";
+        final String name = StringUtils.join(
+            "12345678901234567890123456789012345678901234",
+            "5678901234567890123456789012345678901234567",
+            "890123456789012345678901234567890"
+        );
         user.aliases().add(name);
         final Alias alias = user.aliases().iterate().iterator().next();
         final Bout bout = alias.inbox().bout(alias.inbox().start());
@@ -118,7 +121,7 @@ public final class TkInviteTest {
                                 "/b/%d/invite",
                                 bout.number()
                             ),
-                            "name=" + name
+                            String.format("name=%s", name)
                         )
                     ),
                     "X-Netbout-Bout",
