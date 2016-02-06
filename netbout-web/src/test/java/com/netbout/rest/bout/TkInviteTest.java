@@ -47,10 +47,18 @@ import org.takes.rq.RqWithHeader;
  * @author Endrigo Antonini (teamed@endrigo.com.br)
  * @version $Id$
  * @since 2.15.1
- * @checkstyle MultipleStringLiteralsCheck (500 lines)
- * @checkstyle StringLiteralsConcatenationCheck (500 lines)
  */
 public final class TkInviteTest {
+
+    /**
+     * Netbout header identifyer.
+     */
+    private static final String NETBOUT_HEADER = "X-Netbout-Bout";
+
+    /**
+     * Netbout path for invitations.
+     */
+    private static final String INVITE_PATH = "/b/%d/invite";
 
     /**
      * TkInvite can invite user by email.
@@ -74,13 +82,13 @@ public final class TkInviteTest {
                         new RqFake(
                             RqMethod.POST,
                             String.format(
-                                "/b/%d/invite",
+                                INVITE_PATH,
                                 bout.number()
                             ),
                             "name=foo@bar.airforce"
                         )
                     ),
-                    "X-Netbout-Bout",
+                    NETBOUT_HEADER,
                     Long.toString(bout.number())
                 )
             );
@@ -100,7 +108,7 @@ public final class TkInviteTest {
     @Test (expected = RsFailure.class)
     public void failsWhenInvitingWithTooLongAlias() throws Exception {
         final MkBase base = new MkBase();
-        final String urn = "urn:test:1";
+        final String urn = "urn:test:2";
         final User user = base.user(new URN(urn));
         final String name = StringUtils.join(
             "12345678901234567890123456789012345678901234",
@@ -118,13 +126,13 @@ public final class TkInviteTest {
                         new RqFake(
                             RqMethod.POST,
                             String.format(
-                                "/b/%d/invite",
+                                INVITE_PATH,
                                 bout.number()
                             ),
                             String.format("name=%s", name)
                         )
                     ),
-                    "X-Netbout-Bout",
+                    NETBOUT_HEADER,
                     Long.toString(bout.number())
                 )
             );
