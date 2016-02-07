@@ -90,7 +90,7 @@ final class TkInvite implements Take {
         }
         final String check = new RqAlias(this.base, req)
             .user().aliases().check(guest);
-        if (check.isEmpty()) {
+        if (!check.isEmpty()) {
             throw new RsFailure(
                 String.format("incorrect alias \"%s\", try again", guest)
             );

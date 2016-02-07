@@ -31,10 +31,12 @@ import com.netbout.mock.MkBase;
 import com.netbout.spi.Alias;
 import com.netbout.spi.Bout;
 import com.netbout.spi.User;
+import org.apache.commons.lang3.StringUtils;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;
 import org.takes.facets.auth.RqWithAuth;
+import org.takes.facets.forward.RsFailure;
 import org.takes.facets.forward.RsForward;
 import org.takes.rq.RqFake;
 import org.takes.rq.RqMethod;
@@ -47,6 +49,16 @@ import org.takes.rq.RqWithHeader;
  * @since 2.15.1
  */
 public final class TkInviteTest {
+
+    /**
+     * Netbout header identifyer.
+     */
+    private static final String NETBOUT_HEADER = "X-Netbout-Bout";
+
+    /**
+     * Netbout path for invitations.
+     */
+    private static final String INVITE_PATH = "/b/%d/invite";
 
     /**
      * TkInvite can invite user by email.
@@ -70,13 +82,13 @@ public final class TkInviteTest {
                         new RqFake(
                             RqMethod.POST,
                             String.format(
-                                "/b/%d/invite",
+                                INVITE_PATH,
                                 bout.number()
                             ),
                             "name=foo@bar.airforce"
                         )
                     ),
-                    "X-Netbout-Bout",
+                    NETBOUT_HEADER,
                     Long.toString(bout.number())
                 )
             );
@@ -84,6 +96,50 @@ public final class TkInviteTest {
             MatcherAssert.assertThat(
                 ex.getLocalizedMessage(),
                 Matchers.containsString("foo-bar-airforce")
+            );
+            throw ex;
+        }
+    }
+
+    /**
+     * TkInvite should throw an RsFailure when invite alias is too long.
+     * @throws Exception If there is some problem inside
+     */
+    @Test (expected = RsFailure.class)
+    public void failsWhenInvitingWithTooLongAlias() throws Exception {
+        final MkBase base = new MkBase();
+        final String urn = "urn:test:2";
+        final User user = base.user(new URN(urn));
+        final String name = StringUtils.join(
+            "12345678901234567890123456789012345678901234",
+            "5678901234567890123456789012345678901234567",
+            "890123456789012345678901234567890"
+        );
+        user.aliases().add(name);
+        final Alias alias = user.aliases().iterate().iterator().next();
+        final Bout bout = alias.inbox().bout(alias.inbox().start());
+        try {
+            new TkInvite(base).act(
+                new RqWithHeader(
+                    new RqWithAuth(
+                        urn,
+                        new RqFake(
+                            RqMethod.POST,
+                            String.format(
+                                INVITE_PATH,
+                                bout.number()
+                            ),
+                            String.format("name=%s", name)
+                        )
+                    ),
+                    NETBOUT_HEADER,
+                    Long.toString(bout.number())
+                )
+            );
+        } catch (final RsFailure ex) {
+            MatcherAssert.assertThat(
+                ex.getLocalizedMessage(),
+                Matchers.containsString("incorrect alias")
             );
             throw ex;
         }
