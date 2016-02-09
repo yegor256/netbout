@@ -127,7 +127,7 @@ final class EmAlias implements Alias {
 
     /**
      * {@inheritDoc}
-     * @todo #738 We need to improve the format and content of the
+     * @todo #738:30min  We need to improve the format and content of the
      *  verification email. Currently, it only asks the user to verify
      *  the new email by using the provided verification link. We may add
      *  some header, footer, note like "Ignore this email if you did not

@@ -138,7 +138,7 @@ final class DyInbox implements Inbox {
 
     /**
      * {@inheritDoc}
-     * @todo #1 DynamoDBLocal doesn't work with all attributes
+     * @todo #1:30min  DynamoDBLocal doesn't work with all attributes
      *  in global index. If we remove this check for a local version,
      *  most tests fail. I'm not sure how to fix that. I suspect, it's
      *  a bug in DynamoDBLocal, but I don't even know how to report
