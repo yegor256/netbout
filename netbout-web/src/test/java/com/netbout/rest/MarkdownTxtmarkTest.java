@@ -124,6 +124,24 @@ public final class MarkdownTxtmarkTest {
     }
 
     /**
+     * MarkdownTxtmark will properly format reference link.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void handlesReferenceLinks() throws Exception {
+        MatcherAssert.assertThat(
+            new MarkdownTxtmark().html(
+                // @checkstyle LineLengthCheck (1 line)
+                "Reference-style: \n![alt text][logo]\n\n[logo]: https://camo.githubusercontent.com/f60dcff129bbc252ab48a4bace2aa92cc982774a/687474703a2f2f696d672e7465616d65642e696f2f62746e2e737667"
+            ),
+            Matchers.equalTo(
+                // @checkstyle LineLengthCheck (1 line)
+                "<p>Reference-style:<br  />\n<img src=\"https://camo.githubusercontent.com/f60dcff129bbc252ab48a4bace2aa92cc982774a/687474703a2f2f696d672e7465616d65642e696f2f62746e2e737667\" alt=\"alt text\" /><br  /></p>\n"
+            )
+        );
+    }
+
+    /**
      * MarkdownTxtmark can format small snippets.
      * @throws Exception If there is some problem inside
      */
