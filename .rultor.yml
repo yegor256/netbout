@@ -34,7 +34,7 @@ deploy:
     git push -f heroku $(git symbolic-ref --short HEAD):master
     git reset HEAD~1
     mvn clean
-    pdd --source=$(pwd) --verbose --file=netbout.xml
+    pdd  --file=netbout.xml
     s3cmd --no-progress put netbout.xml --config=../s3cfg s3://pdd.teamed.io/netbout.xml
     est --dir=./est --verbose --file=netbout.xml --format=xml
     s3cmd --no-progress put netbout.xml --config=../s3cfg s3://est.teamed.io/netbout.xml
@@ -42,7 +42,7 @@ merge:
   script: |
     mvn clean install -Pqulice --errors --settings ../settings.xml
     mvn clean
-    pdd --source=$(pwd) --verbose --file=/dev/null
+    pdd  --file=/dev/null
     est --dir=est --file=/dev/null
     ./years.sh
   commanders:

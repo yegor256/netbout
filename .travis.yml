@@ -18,6 +18,6 @@ install:
 script:
   - mvn clean install -Pqulice --batch-mode --errors
   - mvn clean
-  - pdd --source=$(pwd) --file=/dev/null
+  - pdd  --file=/dev/null
   - est --dir=est --file=/dev/null
   - ./years.sh
