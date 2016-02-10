@@ -1,6 +1,6 @@
 ## Puzzles
 
-There are 15 active puzzles (55 total):
+There are 15 active puzzles (56 total):
 
 
 <del>unknown</del> [`?`](../master/?)<br/>
@@ -11,7 +11,7 @@ There are 15 active puzzles (55 total):
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<del>609-bc8eaf9f</del> [`TkAppTest.java:99-102`](../master/netbout-web/src/test/java/com/netbout/rest/TkAppTest.java#L99-L102)<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;[<del>547</del>](https://github.com/yegor256/netbout/issues/547) [`?`](../master/?)<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[<del>547-299902f6</del>](https://github.com/yegor256/netbout/issues/682) [`EmMessages.java:96-97`](../master/netbout-web/src/main/java/com/netbout/email/EmMessages.java#L96-L97)<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[#693](https://github.com/yegor256/netbout/issues/693):[**682-753e25af**](https://github.com/yegor256/netbout/issues/693) [`RtBout.java:155-157`](../master/netbout-client/src/main/java/com/netbout/client/RtBout.java#L155-L157)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[#693](https://github.com/yegor256/netbout/issues/693):[<del>682-753e25af</del>](https://github.com/yegor256/netbout/issues/693) [`RtBout.java:155-157`](../master/netbout-client/src/main/java/com/netbout/client/RtBout.java#L155-L157)<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;[<del>600</del>](https://github.com/yegor256/netbout/issues/600) [`?`](../master/?)<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[<del>600-f8c0ce2e</del>](https://github.com/yegor256/netbout/issues/692) [`EmCatch.java:188-194`](../master/netbout-web/src/main/java/com/netbout/email/EmCatch.java#L188-L194)<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[#770](https://github.com/yegor256/netbout/issues/770):[<del>692-1caba32d</del>](https://github.com/yegor256/netbout/issues/770) [`EmMessages.java:137-141`](../master/netbout-web/src/main/java/com/netbout/email/EmMessages.java#L137-L141)<br/>
@@ -58,3 +58,4 @@ There are 15 active puzzles (55 total):
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[#968](https://github.com/yegor256/netbout/issues/968):[**911-1ad8e6c0**](https://github.com/yegor256/netbout/issues/968) [`pom.xml:730-735`](../master/netbout-web/pom.xml#L730-L735)<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;[#914](https://github.com/yegor256/netbout/issues/914):[<del>914</del>](https://github.com/yegor256/netbout/issues/914) [`?`](../master/?)<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[#982](https://github.com/yegor256/netbout/issues/982):[<del>914-ecab4401</del>](https://github.com/yegor256/netbout/issues/982) [`pom.xml:330-339`](../master/netbout-web/pom.xml#L330-L339)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;[**682-2583dc75**]() [`RtBout.java:155-157`](../master/netbout-client/src/main/java/com/netbout/client/RtBout.java#L155-L157)<br/>
