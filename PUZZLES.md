@@ -58,4 +58,4 @@ There are 15 active puzzles (56 total):
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[#968](https://github.com/yegor256/netbout/issues/968):[**911-1ad8e6c0**](https://github.com/yegor256/netbout/issues/968) [`pom.xml:730-735`](../master/netbout-web/pom.xml#L730-L735)<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;[#914](https://github.com/yegor256/netbout/issues/914):[<del>914</del>](https://github.com/yegor256/netbout/issues/914) [`?`](../master/?)<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[#982](https://github.com/yegor256/netbout/issues/982):[<del>914-ecab4401</del>](https://github.com/yegor256/netbout/issues/982) [`pom.xml:330-339`](../master/netbout-web/pom.xml#L330-L339)<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;[**682-2583dc75**]() [`RtBout.java:155-157`](../master/netbout-client/src/main/java/com/netbout/client/RtBout.java#L155-L157)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;[#1003](https://github.com/yegor256/netbout/issues/1003):[**682-2583dc75**](https://github.com/yegor256/netbout/issues/1003) [`RtBout.java:155-157`](../master/netbout-client/src/main/java/com/netbout/client/RtBout.java#L155-L157)<br/>
