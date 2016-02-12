@@ -38,6 +38,7 @@ import java.util.Iterator;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.TimeUnit;
+import org.apache.commons.lang3.tuple.Pair;
 import org.takes.Request;
 import org.takes.Response;
 import org.takes.Take;
@@ -46,7 +47,6 @@ import org.takes.facets.forward.RsFailure;
 import org.takes.facets.forward.RsForward;
 import org.takes.misc.Href;
 import org.takes.rq.RqHref;
-import org.apache.commons.lang3.tuple.Pair;
 
 /**
  * Start.
@@ -90,11 +90,11 @@ public final class TkStart implements Take {
     private void clearCache() {
         final Date now = new Date();
         long diff = 0;
-        for (final String tkey : tokens.keySet()) {
+        for (final String tkey : this.tokens.keySet()) {
             diff = now.getTime()
-                - tokens.get(tkey).getLeft().getTime();
-            if ((TimeUnit.MILLISECONDS.toHours(diff)) >= 1) {
-                tokens.remove(tkey);
+                - this.tokens.get(tkey).getLeft().getTime();
+            if (TimeUnit.MILLISECONDS.toHours(diff) >= 1) {
+                this.tokens.remove(tkey);
             }
         }
     }
@@ -113,9 +113,9 @@ public final class TkStart implements Take {
             inbox = new RqAlias(this.base, req).alias().inbox();
         } else if (this.tokens.containsKey(key)) {
             final Pair<Date, Inbox> cached = this.tokens.get(key);
-            diff = (new Date()).getTime()
-                - (cached.getLeft()).getTime();
-            if ((TimeUnit.MILLISECONDS.toDays(diff)) <= 2) {
+            diff = new Date().getTime()
+                - cached.getLeft().getTime();
+            if (TimeUnit.MILLISECONDS.toDays(diff) <= 2) {
                 inbox = cached.getRight();
             } else {
                 this.tokens.remove(key);
@@ -125,9 +125,9 @@ public final class TkStart implements Take {
             inbox = new RqAlias(this.base, req).alias().inbox();
             this.tokens.put(key, Pair.of(new Date(), inbox));
         }
-        diff = (new Date()).getTime() - checked.getTime();
-        if ((TimeUnit.MILLISECONDS.toHours(diff)) >= 1) {
-            checked = new Date();
+        diff = new Date().getTime() - this.checked.getTime();
+        if (TimeUnit.MILLISECONDS.toHours(diff) >= 1) {
+            this.checked = new Date();
             clearCache();
         }
         final long number = inbox.start();

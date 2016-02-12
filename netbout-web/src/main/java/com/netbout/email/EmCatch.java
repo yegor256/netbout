@@ -106,8 +106,8 @@ final class EmCatch {
      * @param prd Email server check period in milliseconds
      * @checkstyle ParameterNumberCheck (3 lines)
      */
-    public EmCatch(final Action act, final String usr, final String pass,
-            final String hst, final int prt, final long prd) {
+    EmCatch(final Action act, final String usr, final String pass,
+        final String hst, final int prt, final long prd) {
         this.action = act;
         this.user = usr;
         this.password = pass;

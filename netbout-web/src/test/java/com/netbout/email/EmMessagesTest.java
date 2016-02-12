@@ -61,13 +61,13 @@ public final class EmMessagesTest {
         bout.friends().invite(base.randomAlias().name());
         Mockito.doThrow(new IOException()).when(postman)
             .send(Mockito.any(Envelope.class));
-        final EmMessages emMessages = new EmMessages(
+        final EmMessages messages = new EmMessages(
             bout.messages(),
             postman,
             bout,
             alias.name()
         );
-        emMessages.post("how are you?");
+        messages.post("how are you?");
     }
 
     /**

@@ -158,7 +158,7 @@ final class EmMessages implements Messages {
          * Public ctor.
          * @param message The error message
          */
-        public EmailDeliveryException(final String message) {
+        EmailDeliveryException(final String message) {
             super(message);
         }
     }

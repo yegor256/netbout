@@ -132,7 +132,7 @@ public final class EmMessagesITCase {
      * @throws IOException If fails
      */
     private Alias getAlias(final DyBase base,
-            final int usernum, final int aliasnum) throws IOException {
+        final int usernum, final int aliasnum) throws IOException {
         final User user = base.user(
             URN.create(
                 String.format(

@@ -58,7 +58,7 @@ public final class EmCatchTest {
         );
         mail.start();
         final ServerSetup setup = mail.getPop3().getServerSetup();
-        final String mailUser = "to";
+        final String login = "to";
         // @checkstyle MagicNumberCheck (1 line)
         final String from = "from@localhost.com";
         // @checkstyle LocalFinalVariableNameCheck (1 line)
@@ -66,7 +66,7 @@ public final class EmCatchTest {
         final String password = "soooosecret";
         final String subject = GreenMailUtil.random();
         final String body = GreenMailUtil.random();
-        final GreenMailUser user = mail.setUser(mailUser, password);
+        final GreenMailUser user = mail.setUser(login, password);
         new EmCatch(
             // @checkstyle AnonInnerLengthCheck (22 lines)
             new EmCatch.Action() {
@@ -91,7 +91,7 @@ public final class EmCatchTest {
                     }
                 }
             },
-            mailUser,
+            login,
             password,
             setup.getBindAddress(),
             setup.getPort(),

@@ -36,6 +36,7 @@ import org.takes.rq.RqWrap;
  * Request with default header.
  * @author Andrey Eliseev (aeg.exper0@gmail.com)
  * @version $Id$
+ * @since 2.17
  */
 public final class RqWithDefaultHeader extends RqWrap {
 

@@ -74,7 +74,7 @@ public final class PsTwice implements Pass {
 
     @Override
     public Response exit(final Response response,
-            final Identity identity) throws IOException {
+        final Identity identity) throws IOException {
         return this.snd.exit(response, identity);
     }
 }

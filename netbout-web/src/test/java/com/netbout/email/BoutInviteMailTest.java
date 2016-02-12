@@ -58,13 +58,13 @@ public final class BoutInviteMailTest {
         final String content =
             "You are invited into the Netbout click on the link to";
         final Postman postman = Mockito.mock(Postman.class);
-        final BoutInviteMail boutInviteMail = new BoutInviteMail(postman);
+        final BoutInviteMail mail = new BoutInviteMail(postman);
         final MkBase base = new MkBase();
         final Alias alias = new EmAlias(base.randomAlias(), postman);
         final String email = "mesutozen36@gmail.com";
         final String urn = "urn:mesutozen36@gmail.com:mesutozen36-gmail-com";
         final Bout bout = alias.inbox().bout(alias.inbox().start());
-        boutInviteMail.send(email, urn, bout);
+        mail.send(email, urn, bout);
         final ArgumentCaptor<Envelope> captor =
             ArgumentCaptor.forClass(Envelope.class);
         Mockito.verify(postman).send(captor.capture());
