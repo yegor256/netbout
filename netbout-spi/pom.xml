@@ -88,7 +88,6 @@
                     <plugin>
                         <groupId>com.qulice</groupId>
                         <artifactId>qulice-maven-plugin</artifactId>
-                        <version>0.15.2</version>
                         <configuration>
                             <excludes>
                                 <!--

@@ -155,6 +155,11 @@
                         <argLine>-Djava.awt.headless=true</argLine>
                     </configuration>
                 </plugin>
+                <plugin>
+                    <groupId>com.qulice</groupId>
+                    <artifactId>qulice-maven-plugin</artifactId>
+                    <version>0.15.2</version>
+                </plugin>
             </plugins>
         </pluginManagement>
     </build>

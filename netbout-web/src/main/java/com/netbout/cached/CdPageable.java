@@ -43,7 +43,7 @@ import lombok.ToString;
  * @author Yegor Bugayenko (yegor@teamed.io)
  * @version $Id$
  * @since 2.10.3
- * @param <T> items type
+ * @param <T> The type of items
  */
 @Immutable
 @Loggable(Loggable.DEBUG)

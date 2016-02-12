@@ -178,7 +178,6 @@
                     <plugin>
                         <groupId>com.qulice</groupId>
                         <artifactId>qulice-maven-plugin</artifactId>
-                        <version>0.15.2</version>
                         <configuration>
                             <excludes>
                                 <!--
@@ -191,9 +190,10 @@
                                 -->
                                 <exclude>findbugs:~com.netbout.client.*</exclude>
                                 <!--
-                                 puzzle #961:30min declared in netbout-web/pom.xml.
-                                 Below excludes were added to avoid the new checks
-                                 violations when upgrading to qulice 0.15.2.
+                                 Additional to puzzle #961:30min declared in
+                                 netbout-web/pom.xml. Below excludes were added
+                                 to avoid the new checks violations when upgrading
+                                 to qulice 0.15.2.
                                 -->
                                 <exclude>checkstyle:/src/main/java/com/netbout/client/retry/ReAlias.java</exclude>
                                 <exclude>checkstyle:/src/main/java/com/netbout/client/retry/ReAliases.java</exclude>

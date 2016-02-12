@@ -726,7 +726,6 @@
                     <plugin>
                         <groupId>com.qulice</groupId>
                         <artifactId>qulice-maven-plugin</artifactId>
-                        <version>0.15.2</version>
                         <configuration>
                             <excludes>
                                 <exclude>checkstyle:/src/main/java/com/netbout/rest/TkStart.java</exclude>
@@ -744,40 +743,40 @@
                                 <exclude>findbugs:.*</exclude>
                                 <exclude>xml:/src/main/resources/lang/.*</exclude>
                                 <exclude>duplicatefinder:.*</exclude>
-	                            <!--
+                                <!--
                                 @todo #961:30min These excludes were added
                                  during upgrade to qulice 0.15.2. New version of
                                  qulice adds new violations that need to be fixed.
                                  There are also excludes added to netbout-client/pom.xml.
                                  They are also part of this puzzle and need to be
                                  fixed.
-                             	-->
-                             	<exclude>checkstyle:/src/main/java/com/netbout/cached/CdInbox.java</exclude>
-								<exclude>checkstyle:/src/main/java/com/netbout/cached/CdMessages.java</exclude>
-								<exclude>checkstyle:/src/main/java/com/netbout/email/EmAction.java</exclude>
-								<exclude>checkstyle:/src/main/java/com/netbout/misc/Ports.java</exclude>
-								<exclude>checkstyle:/src/main/java/com/netbout/misc/Ports.java</exclude>
-								<exclude>checkstyle:/src/main/java/com/netbout/rest/bout/TkAttach.java</exclude>
-								<exclude>checkstyle:/src/main/java/com/netbout/rest/bout/TkAttach.java</exclude>
-								<exclude>checkstyle:/src/main/java/com/netbout/rest/bout/TkIndex.java</exclude>
-								<exclude>checkstyle:/src/test/java/com/netbout/dynamo/DyAliasesITCase.java</exclude>
-								<exclude>checkstyle:/src/test/java/com/netbout/dynamo/DyAliasITCase.java</exclude>
-								<exclude>checkstyle:/src/test/java/com/netbout/dynamo/DyAttachmentITCase.java</exclude>
-								<exclude>checkstyle:/src/test/java/com/netbout/dynamo/DyAttachmentsITCase.java</exclude>
-								<exclude>checkstyle:/src/test/java/com/netbout/dynamo/DyBaseITCase.java</exclude>
-								<exclude>checkstyle:/src/test/java/com/netbout/dynamo/DyBoutITCase.java</exclude>
-								<exclude>checkstyle:/src/test/java/com/netbout/dynamo/DyFriendsITCase.java</exclude>
-								<exclude>checkstyle:/src/test/java/com/netbout/dynamo/DyInboxITCase.java</exclude>
-								<exclude>checkstyle:/src/test/java/com/netbout/dynamo/DyMessagesITCase.java</exclude>
-                             	<exclude>checkstyle:/src/test/java/com/netbout/dynamo/DyUserITCase.java</exclude>
-                             	<exclude>checkstyle:/src/test/java/com/netbout/email/EmAliasITCase.java</exclude>
-                             	<exclude>checkstyle:/src/test/java/com/netbout/email/EmMessagesITCase.java</exclude>
-                             	<exclude>checkstyle:/src/test/java/com/netbout/rest/bout/TkBoutITCase.java</exclude>
-                             	<exclude>checkstyle:/src/test/java/com/netbout/rest/bout/TkDeleteITCase.java</exclude>
-                             	<exclude>checkstyle:/src/test/java/com/netbout/rest/bout/XeMessageTest.java</exclude>
-                             	<exclude>checkstyle:/src/test/java/com/netbout/rest/TkAppITCase.java</exclude>
-								<exclude>pmd:/src/main/java/com/netbout/dynamo/DyBase.java</exclude>
-								<exclude>pmd:/src/main/java/com/netbout/rest/TkStart.java</exclude>
+                                -->
+                                <exclude>checkstyle:/src/main/java/com/netbout/cached/CdInbox.java</exclude>
+                                <exclude>checkstyle:/src/main/java/com/netbout/cached/CdMessages.java</exclude>
+                                <exclude>checkstyle:/src/main/java/com/netbout/email/EmAction.java</exclude>
+                                <exclude>checkstyle:/src/main/java/com/netbout/misc/Ports.java</exclude>
+                                <exclude>checkstyle:/src/main/java/com/netbout/misc/Ports.java</exclude>
+                                <exclude>checkstyle:/src/main/java/com/netbout/rest/bout/TkAttach.java</exclude>
+                                <exclude>checkstyle:/src/main/java/com/netbout/rest/bout/TkAttach.java</exclude>
+                                <exclude>checkstyle:/src/main/java/com/netbout/rest/bout/TkIndex.java</exclude>
+                                <exclude>checkstyle:/src/test/java/com/netbout/dynamo/DyAliasesITCase.java</exclude>
+                                <exclude>checkstyle:/src/test/java/com/netbout/dynamo/DyAliasITCase.java</exclude>
+                                <exclude>checkstyle:/src/test/java/com/netbout/dynamo/DyAttachmentITCase.java</exclude>
+                                <exclude>checkstyle:/src/test/java/com/netbout/dynamo/DyAttachmentsITCase.java</exclude>
+                                <exclude>checkstyle:/src/test/java/com/netbout/dynamo/DyBaseITCase.java</exclude>
+                                <exclude>checkstyle:/src/test/java/com/netbout/dynamo/DyBoutITCase.java</exclude>
+                                <exclude>checkstyle:/src/test/java/com/netbout/dynamo/DyFriendsITCase.java</exclude>
+                                <exclude>checkstyle:/src/test/java/com/netbout/dynamo/DyInboxITCase.java</exclude>
+                                <exclude>checkstyle:/src/test/java/com/netbout/dynamo/DyMessagesITCase.java</exclude>
+                                <exclude>checkstyle:/src/test/java/com/netbout/dynamo/DyUserITCase.java</exclude>
+                                <exclude>checkstyle:/src/test/java/com/netbout/email/EmAliasITCase.java</exclude>
+                                <exclude>checkstyle:/src/test/java/com/netbout/email/EmMessagesITCase.java</exclude>
+                                <exclude>checkstyle:/src/test/java/com/netbout/rest/bout/TkBoutITCase.java</exclude>
+                                <exclude>checkstyle:/src/test/java/com/netbout/rest/bout/TkDeleteITCase.java</exclude>
+                                <exclude>checkstyle:/src/test/java/com/netbout/rest/bout/XeMessageTest.java</exclude>
+                                <exclude>checkstyle:/src/test/java/com/netbout/rest/TkAppITCase.java</exclude>
+                                <exclude>pmd:/src/main/java/com/netbout/dynamo/DyBase.java</exclude>
+                                <exclude>pmd:/src/main/java/com/netbout/rest/TkStart.java</exclude>
                             </excludes>
                         </configuration>
                     </plugin>
