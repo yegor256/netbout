@@ -191,8 +191,9 @@
                                 -->
                                 <exclude>findbugs:~com.netbout.client.*</exclude>
                                 <!--
-                                @todo #961:30min Fix checkstyle and pmd errors
-                                appeares when upgrading to qulice 0.15.2
+                                @todo #961:30min These excludes were added 
+                                 during upgrade to qulice 0.15.2. New version of
+                                 qulice adds new violations that need to be fixed.
                                 -->
                                 <exclude>checkstyle:/src/main/java/com/netbout/client/retry/ReAlias.java</exclude>
                                 <exclude>checkstyle:/src/main/java/com/netbout/client/retry/ReAliases.java</exclude>
