@@ -94,14 +94,12 @@ public final class TkInboxTest {
         final Aliases aliases = base.user(new URN(urn)).aliases();
         aliases.add("test2");
         final Inbox inbox = aliases.iterate().iterator().next().inbox();
-        final Bout fbout = inbox.bout(inbox.start());
-        final String ftitle = "bout1 title";
-        fbout.rename(ftitle);
-        final Bout sbout = inbox.bout(inbox.start());
-        final String stitle = "bout2 title";
-        sbout.rename(stitle);
-        fbout.messages().post("hello");
-        sbout.messages().post("world");
+        final Bout first = inbox.bout(inbox.start());
+        first.rename("bout1 title!");
+        final Bout second = inbox.bout(inbox.start());
+        second.rename("bout2 title!");
+        first.messages().post("hello");
+        second.messages().post("world");
         final String body = new RsPrint(
             new TkAuth(
                 new TkInbox(base),
@@ -118,11 +116,11 @@ public final class TkInboxTest {
         ).printBody();
         MatcherAssert.assertThat(
             body,
-            Matchers.containsString(stitle)
+            Matchers.containsString("bout2 title")
         );
         MatcherAssert.assertThat(
             body,
-            Matchers.not(Matchers.containsString(ftitle))
+            Matchers.not(Matchers.containsString("bout1 title"))
         );
     }
 
