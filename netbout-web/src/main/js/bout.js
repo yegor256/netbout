@@ -215,9 +215,8 @@ $(document).ready(
           search: function (term, callback) {
             callback($.map($('.friends .friend img'),
               function(el) {
-                var nick = $(el).attr('alt');
-                var element = $(el).attr('alt').startsWith(term) ? nick : null;
-                return element;
+                return $(el).attr('alt').startsWith(term) ?
+                    $(el).attr('alt') : null;
               }
             ));
           },
