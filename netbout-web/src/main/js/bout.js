@@ -215,15 +215,16 @@ $(document).ready(
           search: function (term, callback) {
             callback($.map($('.friends .friend img'),
               function(el) {
-                return $(el).attr('alt');
+                var nick = $(el).attr('alt');
+                var element = $(el).attr('alt').startsWith(term) ? nick : null;
+                return element;
               }
             ));
           },
           replace: function (value) {
             return '$1@' + value + ' ';
-          },
-          cache: true
           }
+        }
       ],
       {
         maxCount: 10,
