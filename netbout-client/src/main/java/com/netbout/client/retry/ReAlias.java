@@ -122,8 +122,8 @@ public final class ReAlias implements Alias {
 
     @Override
     @RetryOnFailure(
-            verbose = false, attempts = Tv.TWENTY,
-            delay = Tv.FIVE, unit = TimeUnit.SECONDS
+        verbose = false, attempts = Tv.TWENTY,
+        delay = Tv.FIVE, unit = TimeUnit.SECONDS
     )
     public void email(final String email, final String urn, final Bout bout)
         throws IOException {
@@ -132,8 +132,8 @@ public final class ReAlias implements Alias {
 
     @Override
     @RetryOnFailure(
-            verbose = false, attempts = Tv.TWENTY,
-            delay = Tv.FIVE, unit = TimeUnit.SECONDS
+        verbose = false, attempts = Tv.TWENTY,
+        delay = Tv.FIVE, unit = TimeUnit.SECONDS
     )
     public void email(final String email, final String link)
         throws IOException {
