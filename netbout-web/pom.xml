@@ -745,9 +745,12 @@
                                 <exclude>xml:/src/main/resources/lang/.*</exclude>
                                 <exclude>duplicatefinder:.*</exclude>
 	                            <!--
-                                @todo #961:30min These excludes were added 
+                                @todo #961:30min These excludes were added
                                  during upgrade to qulice 0.15.2. New version of
                                  qulice adds new violations that need to be fixed.
+                                 There are also excludes added to netbout-client/pom.xml.
+                                 They are also part of this puzzle and need to be
+                                 fixed.
                              	-->
                              	<exclude>checkstyle:/src/main/java/com/netbout/cached/CdInbox.java</exclude>
 								<exclude>checkstyle:/src/main/java/com/netbout/cached/CdMessages.java</exclude>

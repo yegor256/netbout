@@ -191,9 +191,9 @@
                                 -->
                                 <exclude>findbugs:~com.netbout.client.*</exclude>
                                 <!--
-                                @todo #961:30min These excludes were added 
-                                 during upgrade to qulice 0.15.2. New version of
-                                 qulice adds new violations that need to be fixed.
+                                 puzzle #961:30min declared in netbout-web/pom.xml.
+                                 Below excludes were added to avoid the new checks
+                                 violations when upgrading to qulice 0.15.2.
                                 -->
                                 <exclude>checkstyle:/src/main/java/com/netbout/client/retry/ReAlias.java</exclude>
                                 <exclude>checkstyle:/src/main/java/com/netbout/client/retry/ReAliases.java</exclude>
