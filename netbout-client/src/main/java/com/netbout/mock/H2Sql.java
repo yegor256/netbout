@@ -63,6 +63,7 @@ final class H2Sql implements Sql {
         final File tmp = File.createTempFile("netbout-", ".h2");
         tmp.deleteOnExit();
         this.file = tmp.getAbsolutePath();
+        new File(String.format("%s.mv.db", this.file)).deleteOnExit();
         final String[] stmts = {
             // @checkstyle LineLength (5 lines)
             "CREATE TABLE alias (name VARCHAR, urn VARCHAR, photo VARCHAR, locale VARCHAR, email VARCHAR)",
