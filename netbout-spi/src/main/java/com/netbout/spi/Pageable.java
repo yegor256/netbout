@@ -35,6 +35,7 @@ import java.io.IOException;
  * @author Yegor Bugayenko (yegor@teamed.io)
  * @version $Id$
  * @since 2.0
+ * @param <T> type of the items
  */
 @Immutable
 public interface Pageable<T> {
