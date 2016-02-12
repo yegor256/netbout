@@ -294,7 +294,7 @@
             <plugin>
                 <groupId>com.github.github</groupId>
                 <artifactId>site-maven-plugin</artifactId>
-				<version>0.12</version>
+                <version>0.12</version>
                 <configuration>
                     <path>${project.artifactId}</path>
                 </configuration>
@@ -747,9 +747,9 @@
                                 @todo #961:30min These excludes were added
                                  during upgrade to qulice 0.15.2. New version of
                                  qulice adds new violations that need to be fixed.
-                                 There are also excludes added to netbout-client/pom.xml.
-                                 They are also part of this puzzle and need to be
-                                 fixed.
+                                 There are also excludes added to netbout-client/pom.xml
+                                 (lines 192 - 207) related to this puzzle.
+                                 They also need to be fixed in order to solve this puzzle.
                                 -->
                                 <exclude>checkstyle:/src/main/java/com/netbout/cached/CdInbox.java</exclude>
                                 <exclude>checkstyle:/src/main/java/com/netbout/cached/CdMessages.java</exclude>
