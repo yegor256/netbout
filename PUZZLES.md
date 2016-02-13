@@ -1,6 +1,6 @@
 ## Puzzles
 
-There are 15 active puzzles (56 total):
+There are 16 active puzzles (58 total):
 
 
 <del>unknown</del> [`?`](../master/?)<br/>
@@ -59,3 +59,5 @@ There are 15 active puzzles (56 total):
 &nbsp;&nbsp;&nbsp;&nbsp;[#914](https://github.com/yegor256/netbout/issues/914):[<del>914</del>](https://github.com/yegor256/netbout/issues/914) [`?`](../master/?)<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[#982](https://github.com/yegor256/netbout/issues/982):[<del>914-ecab4401</del>](https://github.com/yegor256/netbout/issues/982) [`pom.xml:330-339`](../master/netbout-web/pom.xml#L330-L339)<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;[#1003](https://github.com/yegor256/netbout/issues/1003):[**682-2583dc75**](https://github.com/yegor256/netbout/issues/1003) [`RtBout.java:155-157`](../master/netbout-client/src/main/java/com/netbout/client/RtBout.java#L155-L157)<br/>
+[#961](https://github.com/yegor256/netbout/issues/961):[<del>961</del>](https://github.com/yegor256/netbout/issues/961) [`?`](../master/?)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;[**961-58fc8a23**]() [`pom.xml:747-752`](../master/netbout-web/pom.xml#L747-L752)<br/>
