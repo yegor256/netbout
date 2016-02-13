@@ -95,9 +95,11 @@ public final class TkInboxTest {
         aliases.add("test2");
         final Inbox inbox = aliases.iterate().iterator().next().inbox();
         final Bout first = inbox.bout(inbox.start());
-        first.rename("bout1 title!");
+        final String firsttitle = "bout1 title";
+        first.rename(firsttitle);
         final Bout second = inbox.bout(inbox.start());
-        second.rename("bout2 title!");
+        final String secondtitle = "bout2 title";
+        second.rename(secondtitle);
         first.messages().post("hello");
         second.messages().post("world");
         final String body = new RsPrint(
@@ -116,11 +118,11 @@ public final class TkInboxTest {
         ).printBody();
         MatcherAssert.assertThat(
             body,
-            Matchers.containsString("bout2 title")
+            Matchers.containsString(secondtitle)
         );
         MatcherAssert.assertThat(
             body,
-            Matchers.not(Matchers.containsString("bout1 title"))
+            Matchers.not(Matchers.containsString(firsttitle))
         );
     }
 
