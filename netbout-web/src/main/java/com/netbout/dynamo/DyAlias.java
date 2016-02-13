@@ -128,7 +128,7 @@ final class DyAlias implements Alias {
 
     @Override
     public void email(final String email) throws IOException {
-        if (!MAIL.matcher(email).matches()) {
+        if (!DyAlias.MAIL.matcher(email).matches()) {
             throw new Alias.InvalidEmailException(email);
         }
         this.item.put(

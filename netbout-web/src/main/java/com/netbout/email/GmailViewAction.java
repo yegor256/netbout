@@ -34,6 +34,7 @@ import org.xembly.Xembler;
  * Integrates with Gmail's View Actions.
  * @author Matteo Barbieri (barbieri.matteo@gmail.com)
  * @version $Id$
+ * @since 2.15
  */
 final class GmailViewAction {
 

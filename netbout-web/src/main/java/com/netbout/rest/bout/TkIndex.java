@@ -82,7 +82,7 @@ final class TkIndex implements Take {
         final Bout bout = new RqBout(this.base, req).bout();
         final Href home = new Href("/b").path(bout.number());
         final RqWithDefaultHeader request =
-                new RqWithDefaultHeader(req, HttpHeaders.ACCEPT, "text/xml");
+            new RqWithDefaultHeader(req, HttpHeaders.ACCEPT, "text/xml");
         return new RsPage(
             "/xsl/bout.xsl",
             this.base,

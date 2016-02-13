@@ -94,7 +94,7 @@ final class EmInbox implements Inbox {
     @Loggable(
         value = Loggable.DEBUG,
         ignore = Inbox.BoutNotFoundException.class
-    )
+        )
     public Bout bout(final long number) throws Inbox.BoutNotFoundException {
         return new EmBout(this.origin.bout(number), this.postman, this.self);
     }

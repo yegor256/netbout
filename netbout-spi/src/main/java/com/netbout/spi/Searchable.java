@@ -35,6 +35,7 @@ import java.io.IOException;
  * @author Ivan Inozemtsev (ivan.inozemtsev@gmail.com)
  * @version $Id$
  * @since 2.15.2
+ * @param <T> The type of items
  */
 @Immutable
 public interface Searchable<T> {

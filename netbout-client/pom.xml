@@ -189,6 +189,22 @@
                                  Findbugs filters in current version of Qulice
                                 -->
                                 <exclude>findbugs:~com.netbout.client.*</exclude>
+                                <exclude>checkstyle:/src/main/java/com/netbout/client/retry/ReAlias.java</exclude>
+                                <exclude>checkstyle:/src/main/java/com/netbout/client/retry/ReAliases.java</exclude>
+                                <exclude>checkstyle:/src/main/java/com/netbout/client/retry/ReAttachment.java</exclude>
+                                <exclude>checkstyle:/src/main/java/com/netbout/client/retry/ReAttachments.java</exclude>
+                                <exclude>checkstyle:/src/main/java/com/netbout/client/retry/ReBout.java</exclude>
+                                <exclude>checkstyle:/src/main/java/com/netbout/client/retry/ReFriend.java</exclude>
+                                <exclude>checkstyle:/src/main/java/com/netbout/client/retry/ReFriends.java</exclude>
+                                <exclude>checkstyle:/src/main/java/com/netbout/client/retry/ReInbox.java</exclude>
+                                <exclude>checkstyle:/src/main/java/com/netbout/client/retry/ReMessage.java</exclude>
+                                <exclude>checkstyle:/src/main/java/com/netbout/client/retry/ReMessages.java</exclude>
+                                <exclude>checkstyle:/src/main/java/com/netbout/client/retry/ReUser.java</exclude>
+                                <exclude>checkstyle:/src/test/java/com/netbout/client/NbRule.java</exclude>
+                                <exclude>checkstyle:/src/test/java/com/netbout/client/RtFriendsITCase.java</exclude>
+                                <exclude>pmd:/src/main/java/com/netbout/client/RtBoutIterator.java</exclude>
+                                <exclude>pmd:/src/main/java/com/netbout/client/RtMessageIterator.java</exclude>
+                                <exclude>pmd:/src/main/java/com/netbout/mock/H2Sql.java</exclude>
                             </excludes>
                         </configuration>
                     </plugin>

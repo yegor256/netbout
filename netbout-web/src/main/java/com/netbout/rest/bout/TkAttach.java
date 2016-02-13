@@ -69,7 +69,7 @@ final class TkAttach implements Take {
      * Pattern to look for file name.
      */
     private static final Pattern FILE_NAME_PATTERN = Pattern.compile(
-            "(.*)(name=\"file\")(.*)(filename=\"(.*)\")(.*)"
+        "(.*)(name=\"file\")(.*)(filename=\"(.*)\")(.*)"
     );
 
     /**

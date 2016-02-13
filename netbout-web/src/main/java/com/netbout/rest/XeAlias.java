@@ -98,14 +98,14 @@ final class XeAlias extends XeWrap {
      */
     private static XeSource source(final Alias alias) throws IOException {
         final String email;
-        final String newEmail;
+        final String newemail;
         final String[] emails = alias.email().split("!");
         if (emails.length > 1) {
             email = emails[0];
-            newEmail = emails[1];
+            newemail = emails[1];
         } else {
             email = alias.email();
-            newEmail = "";
+            newemail = "";
         }
         return new XeAppend(
             "alias",
@@ -115,7 +115,7 @@ final class XeAlias extends XeWrap {
                     .add("locale").set(alias.locale().toString()).up()
                     .add("photo").set(alias.photo().toString()).up()
                     .add("email").set(email).up()
-                    .add("newEmail").set(newEmail)
+                    .add("newEmail").set(newemail)
             )
         );
     }

@@ -43,6 +43,7 @@ import org.takes.http.FtCLI;
  * @author Yegor Bugayenko (yegor@teamed.io)
  * @version $Id$
  * @checkstyle ClassDataAbstractionCouplingCheck (500 lines)
+ * @since 2.14
  */
 public final class Launch {
 
@@ -58,7 +59,7 @@ public final class Launch {
      * @param args Command line args
      * @throws Exception If fails
      */
-    public static void main(final String[] args) throws Exception {
+    public static void main(final String... args) throws Exception {
         new FtCLI(
             new TkApp(
                 new EmBase(

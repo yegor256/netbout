@@ -133,8 +133,8 @@ final class TkSaveEmail implements Take {
             }
             res = new RsForward(
                 new RsFlash(
+                    // @checkstyle StringLiteralsConcatenationCheck (5 lines)
                     String.format(
-                        // @checkstyle StringLiteralsConcatenationCheck (2 lines)
                         "Email changed to \"%s\". The verification "
                             + "link sent to this address.",
                         email
