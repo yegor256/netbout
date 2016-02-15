@@ -301,6 +301,14 @@ public final class MarkdownTxtmarkTest {
                     "<a href=\"http://bar.com\">http://bar.com</a> <a href=\"http://af.com\">http://af.com</a> end</p>"
                 ),
             },
+            new String[] {
+                "![logo]  (http://img.qulice.com/logo.svg)",
+                "<p><img src=\"http://img.qulice.com/logo.svg\" alt=\"logo\" /></p>",
+            },
+            new String[] {
+                "![logo](http://img.qulice.com/pict.svg)",
+                "<p><img src=\"http://img.qulice.com/pict.svg\" alt=\"logo\" /></p>",
+            },
         };
         for (final String[] pair : texts) {
             MatcherAssert.assertThat(
