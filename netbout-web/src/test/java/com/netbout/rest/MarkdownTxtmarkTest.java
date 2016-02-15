@@ -303,10 +303,12 @@ public final class MarkdownTxtmarkTest {
             },
             new String[] {
                 "![logo]  (http://img.qulice.com/logo.svg)",
+                // @checkstyle LineLengthCheck (1 line)
                 "<p><img src=\"http://img.qulice.com/logo.svg\" alt=\"logo\" /></p>",
             },
             new String[] {
                 "![logo](http://img.qulice.com/pict.svg)",
+                // @checkstyle LineLengthCheck (1 line)
                 "<p><img src=\"http://img.qulice.com/pict.svg\" alt=\"logo\" /></p>",
             },
         };
