@@ -89,10 +89,7 @@ final class BoutInviteMail {
 
     /**
      * Send an email with register link which is like.
-     * {@code
-     * http://www.netbout.com/b/<bout_number>?invite=<invite-key>
-     * }
-     *
+     * {@code http://www.netbout.com/b/<bout_number>?invite=<invite-key>}
      * @param email Email
      * @param urn Urn
      * @param bout Bout
@@ -117,13 +114,12 @@ final class BoutInviteMail {
                         Joiner.on('\n').join(
                             new Markdown.Default().html(
                                 BoutInviteMail.MAIL_CONTENT
-                            ),
-                            "<br/>",
+                            ), "<br/>",
                             String.format(
                                 Manifests.read("Netbout-Site")
                                     .concat("/b/%d?invite=%s"),
-                            bout.number(),
-                            encrypt(urn)
+                                bout.number(),
+                                encrypt(urn)
                             ),
                             "<p style=\"color:#C8C8C8;font-size:2px;\">",
                             String.format("%d</p>", System.nanoTime()),

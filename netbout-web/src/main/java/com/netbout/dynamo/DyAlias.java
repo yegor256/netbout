@@ -63,7 +63,7 @@ final class DyAlias implements Alias {
     /**
      * Valid email pattern.
      */
-    private static final Pattern MAIL  = Pattern.compile(
+    private static final Pattern MAIL = Pattern.compile(
         String.format(
             "!?%s|%s!%s",
             DyAlias.VALID, DyAlias.VALID, DyAlias.VALID

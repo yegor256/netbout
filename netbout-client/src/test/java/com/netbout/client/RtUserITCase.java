@@ -38,7 +38,7 @@ import org.junit.Test;
  * Integration case for {@link RtUser}.
  * @author Yegor Bugayenko (yegor@teamed.io)
  * @version $Id$
- * @since 2.0
+ * @since 2.4
  */
 public final class RtUserITCase {
 
