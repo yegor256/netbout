@@ -92,7 +92,7 @@ public final class TkSaveEmailTest {
         alias.email("jack@example.com");
         final String email = "john@example.com";
         new TkAuth(
-            new TkSaveEmail(base, true),
+            new TkSaveEmail(base),
             new PsFixed(new Identity.Simple(urn))
         ).act(new RqForm.Fake(new RqFake(), TkSaveEmailTest.EMAIL, email));
         MatcherAssert.assertThat(

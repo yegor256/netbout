@@ -80,7 +80,7 @@ final class TkSaveEmail implements Take {
      * @param bse Base
      */
     TkSaveEmail(final Base bse) {
-        this(bse, !Manifests.read("Netbout-Version").contains("LOCAL"));
+        this(bse, Manifests.read("Netbout-Version").contains("LOCAL"));
     }
 
     /**
