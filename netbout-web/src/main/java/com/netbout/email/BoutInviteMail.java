@@ -89,7 +89,10 @@ final class BoutInviteMail {
 
     /**
      * Send an email with register link which is like.
-     * http://www.netbout.com/b/<bout_number/>?invite=<invite-key/>
+     * {@code
+     * http://www.netbout.com/b/<bout_number>?invite=<invite-key>
+     * }
+     *
      * @param email Email
      * @param urn Urn
      * @param bout Bout

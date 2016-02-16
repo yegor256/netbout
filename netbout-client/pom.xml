@@ -193,7 +193,7 @@
                                 @todo #1013:30min Fix findbugs errors in mock.
                                  There are issues with classes that use jcabi
                                  annotations and they are causing the false
-                                 violation positives.This will be resolved when
+                                 violation positives. This will be resolved when
                                  issue teamed/qulice#706 is closed.
                                 -->
                                 <exclude>findbugs:~com.netbout.mock.*</exclude>

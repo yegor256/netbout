@@ -126,7 +126,7 @@ final class MkAttachment implements Attachment {
                     .set(this.bout)
                     .set(this.label)
                     .select(new SingleOutcome<String>(String.class)),
-                    StandardCharsets.UTF_8
+                StandardCharsets.UTF_8
             );
         } catch (final SQLException ex) {
             throw new IOException(ex);

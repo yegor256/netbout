@@ -73,8 +73,7 @@ final class TkDownload implements Take {
                 String.format(
                     "attachment; filename=\"%s\"",
                     URLEncoder.encode(
-                        attachment.name(),
-                        StandardCharsets.UTF_8.toString()
+                        attachment.name(), StandardCharsets.UTF_8.toString()
                     )
                 )
             )

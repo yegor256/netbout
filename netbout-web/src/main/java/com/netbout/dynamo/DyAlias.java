@@ -56,9 +56,20 @@ import lombok.ToString;
 final class DyAlias implements Alias {
 
     /**
+     * Valid pattern.
+     * @checkstyle LineLengthCheck (2 line)
+     */
+    private static final String VALID = "([a-z0-9_-]+\\.)*[a-z0-9_-]+@[a-z0-9_-]+(\\.[a-z0-9_-]+)*\\.[a-z]{2,6}";
+    /**
      * Valid email pattern.
      */
-    private static Pattern mail;
+    private static final Pattern MAIL  = Pattern.compile(
+        String.format(
+            "!?%s|%s!%s",
+            DyAlias.VALID, DyAlias.VALID, DyAlias.VALID
+        ),
+        Pattern.CASE_INSENSITIVE
+    );
 
     /**
      * Region we're in.
@@ -69,15 +80,6 @@ final class DyAlias implements Alias {
      * Item we're working with.
      */
     private final transient Item item;
-
-    static {
-        //@checkstyle LineLengthCheck (1 line)
-        final String valid = "([a-z0-9_-]+\\.)*[a-z0-9_-]+@[a-z0-9_-]+(\\.[a-z0-9_-]+)*\\.[a-z]{2,6}";
-        DyAlias.mail = Pattern.compile(
-            String.format("!?%s|%s!%s", valid, valid, valid),
-            Pattern.CASE_INSENSITIVE
-        );
-    }
 
     /**
      * Ctor.
@@ -128,7 +130,7 @@ final class DyAlias implements Alias {
 
     @Override
     public void email(final String email) throws IOException {
-        if (!DyAlias.mail.matcher(email).matches()) {
+        if (!DyAlias.MAIL.matcher(email).matches()) {
             throw new Alias.InvalidEmailException(email);
         }
         this.item.put(
