@@ -190,7 +190,7 @@
                                 -->
                                 <exclude>findbugs:~com.netbout.client.*</exclude>
                                 <!--
-                                @todo #1013:30min Fix findbugs errors in mock
+                                @todo #1013:30min Fix findbugs errors in mock.
                                  There are issues with classes that use jcabi
                                  annotations and they are causing the false
                                  violation positives.This will be resolved when
