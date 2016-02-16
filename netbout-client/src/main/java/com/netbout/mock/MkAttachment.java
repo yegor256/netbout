@@ -34,11 +34,11 @@ import com.jcabi.jdbc.SingleOutcome;
 import com.netbout.spi.Attachment;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.sql.SQLException;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang3.CharEncoding;
 
 /**
  * Cached attachment.
@@ -126,7 +126,7 @@ final class MkAttachment implements Attachment {
                     .set(this.bout)
                     .set(this.label)
                     .select(new SingleOutcome<String>(String.class)),
-                CharEncoding.UTF_8
+                    StandardCharsets.UTF_8
             );
         } catch (final SQLException ex) {
             throw new IOException(ex);
@@ -140,7 +140,7 @@ final class MkAttachment implements Attachment {
             new JdbcSession(this.sql.source())
                 // @checkstyle LineLength (1 line)
                 .sql("UPDATE attachment SET data = ?, ctype = ?, etag = ? WHERE bout = ? AND name = ?")
-                .set(IOUtils.toString(stream, CharEncoding.UTF_8))
+                .set(IOUtils.toString(stream, StandardCharsets.UTF_8))
                 .set(ctype)
                 .set(etag)
                 .set(this.bout)

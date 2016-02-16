@@ -41,6 +41,7 @@ import org.junit.Test;
  * Test case for {@link MkInbox}.
  * @author Lautaro Cozzani (lautaromail@gmail.com)
  * @version $Id$
+ * @since 2.4
  */
 public class MkInboxTest {
 

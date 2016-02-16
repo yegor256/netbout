@@ -38,7 +38,6 @@ import org.junit.Test;
  * @author Dmitry Zaytsev (dmitry.zaytsev@gmail.com)
  * @version $Id$
  * @since 2.23
- *
  */
 public final class MarkdownTxtmarkTest {
     /**

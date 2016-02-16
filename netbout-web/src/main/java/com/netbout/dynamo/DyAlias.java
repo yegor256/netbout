@@ -58,7 +58,7 @@ final class DyAlias implements Alias {
     /**
      * Valid email pattern.
      */
-    private static final Pattern MAIL;
+    private static Pattern mail;
 
     /**
      * Region we're in.
@@ -73,7 +73,7 @@ final class DyAlias implements Alias {
     static {
         //@checkstyle LineLengthCheck (1 line)
         final String valid = "([a-z0-9_-]+\\.)*[a-z0-9_-]+@[a-z0-9_-]+(\\.[a-z0-9_-]+)*\\.[a-z]{2,6}";
-        MAIL = Pattern.compile(
+        DyAlias.mail = Pattern.compile(
             String.format("!?%s|%s!%s", valid, valid, valid),
             Pattern.CASE_INSENSITIVE
         );
@@ -128,7 +128,7 @@ final class DyAlias implements Alias {
 
     @Override
     public void email(final String email) throws IOException {
-        if (!DyAlias.MAIL.matcher(email).matches()) {
+        if (!DyAlias.mail.matcher(email).matches()) {
             throw new Alias.InvalidEmailException(email);
         }
         this.item.put(

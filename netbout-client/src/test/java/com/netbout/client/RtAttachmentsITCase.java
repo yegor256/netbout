@@ -43,6 +43,7 @@ import org.junit.Test;
  * Integration case for {@link RtAttachments}.
  * @author Yegor Bugayenko (yegor@teamed.io)
  * @version $Id$
+ * @since 2.0
  */
 public final class RtAttachmentsITCase {
 

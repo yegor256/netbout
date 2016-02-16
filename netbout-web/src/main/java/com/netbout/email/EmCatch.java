@@ -162,7 +162,7 @@ final class EmCatch {
         while (true) {
             try {
                 TimeUnit.SECONDS.sleep(this.period);
-                EmCatch.this.check();
+                this.check();
                 prd = this.period;
             } catch (final InterruptedException ex) {
                 Thread.currentThread().interrupt();

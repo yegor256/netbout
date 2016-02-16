@@ -47,7 +47,6 @@ import org.takes.rs.RsPrint;
  * @version $Id$
  * @since 2.14.17
  * @checkstyle ClassDataAbstractionCouplingCheck (100 lines)
- *
  */
 public final class TkInboxTest {
 

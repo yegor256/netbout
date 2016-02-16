@@ -56,6 +56,7 @@ import org.takes.rs.RsPrint;
  * Test case for {@link TkStart}.
  * @author Ivan Inozemtsev (ivan.inozemtsev@gmail.com)
  * @version $Id$
+ * @since 2.15
  * @todo #610:30min Test case for negative scenario of TkStart
  *  should be added, e.g. when a friend is not found, the error
  *  should be reported correctly and bout creation should be
@@ -63,7 +64,6 @@ import org.takes.rs.RsPrint;
  * @todo #954:30min TkStart should not create new bout
  *  when same token is specified. When this is fixed, remove @Ignore from
  *  handlesTokens test
- * @since 2.15
  * @checkstyle ClassDataAbstractionCouplingCheck (500 lines)
  */
 public final class TkStartTest {

@@ -38,6 +38,7 @@ import org.junit.Test;
  * Integration case for {@link RtAlias}.
  * @author Matteo Barbieri (barbieri.matteo@gmail.com)
  * @version $Id$
+ * @since 2.0
  */
 public final class RtAliasITCase {
 

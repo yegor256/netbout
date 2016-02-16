@@ -32,7 +32,6 @@ import com.netbout.spi.Attachments;
 import com.netbout.spi.Bout;
 import java.nio.charset.StandardCharsets;
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang3.CharEncoding;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;
@@ -57,12 +56,12 @@ public final class MkAttachmentsTest {
         attachments.create(name);
         final Attachment attachment = attachments.get(name);
         attachment.write(
-            IOUtils.toInputStream("hey \u20ac", CharEncoding.UTF_8),
+            IOUtils.toInputStream("hey \u20ac", StandardCharsets.UTF_8),
             "text/plain",
             Long.toString(System.currentTimeMillis())
         );
         MatcherAssert.assertThat(
-            IOUtils.toString(attachment.read(), CharEncoding.UTF_8),
+            IOUtils.toString(attachment.read(), StandardCharsets.UTF_8),
             Matchers.containsString("\u20ac")
         );
         MatcherAssert.assertThat(

@@ -82,13 +82,13 @@ public final class TkInviteTest {
                         new RqFake(
                             RqMethod.POST,
                             String.format(
-                                INVITE_PATH,
+                                TkInviteTest.INVITE_PATH,
                                 bout.number()
                             ),
                             "name=foo@bar.airforce"
                         )
                     ),
-                    NETBOUT_HEADER,
+                    TkInviteTest.NETBOUT_HEADER,
                     Long.toString(bout.number())
                 )
             );
@@ -126,13 +126,13 @@ public final class TkInviteTest {
                         new RqFake(
                             RqMethod.POST,
                             String.format(
-                                INVITE_PATH,
+                                TkInviteTest.INVITE_PATH,
                                 bout.number()
                             ),
                             String.format("name=%s", name)
                         )
                     ),
-                    NETBOUT_HEADER,
+                    TkInviteTest.NETBOUT_HEADER,
                     Long.toString(bout.number())
                 )
             );

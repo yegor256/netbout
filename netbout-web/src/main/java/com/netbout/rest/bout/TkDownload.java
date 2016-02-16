@@ -31,7 +31,7 @@ import com.netbout.spi.Base;
 import com.netbout.spi.Bout;
 import java.io.IOException;
 import java.net.URLEncoder;
-import org.apache.commons.lang3.CharEncoding;
+import java.nio.charset.StandardCharsets;
 import org.takes.Request;
 import org.takes.Response;
 import org.takes.Take;
@@ -72,7 +72,10 @@ final class TkDownload implements Take {
                 "Content-Disposition",
                 String.format(
                     "attachment; filename=\"%s\"",
-                    URLEncoder.encode(attachment.name(), CharEncoding.UTF_8)
+                    URLEncoder.encode(
+                        attachment.name(),
+                        StandardCharsets.UTF_8.toString()
+                    )
                 )
             )
             .withType(attachment.ctype());
