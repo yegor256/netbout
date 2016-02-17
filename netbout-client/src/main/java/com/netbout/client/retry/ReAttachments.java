@@ -69,7 +69,7 @@ public final class ReAttachments implements Attachments {
     @RetryOnFailure(
         verbose = false, attempts = Tv.TWENTY,
         delay = Tv.FIVE, unit = TimeUnit.SECONDS
-    )
+        )
     public int unseen() throws IOException {
         return this.origin.unseen();
     }
@@ -78,7 +78,7 @@ public final class ReAttachments implements Attachments {
     @RetryOnFailure(
         verbose = false, attempts = Tv.TWENTY,
         delay = Tv.FIVE, unit = TimeUnit.SECONDS
-    )
+        )
     public void create(final String name) throws IOException {
         this.origin.create(name);
     }
@@ -87,7 +87,7 @@ public final class ReAttachments implements Attachments {
     @RetryOnFailure(
         verbose = false, attempts = Tv.TWENTY,
         delay = Tv.FIVE, unit = TimeUnit.SECONDS
-    )
+        )
     public void delete(final String name) throws IOException {
         this.origin.delete(name);
     }
@@ -96,7 +96,7 @@ public final class ReAttachments implements Attachments {
     @RetryOnFailure(
         verbose = false, attempts = Tv.TWENTY,
         delay = Tv.FIVE, unit = TimeUnit.SECONDS
-    )
+        )
     public Attachment get(final String name) throws IOException {
         return new ReAttachment(this.origin.get(name));
     }
@@ -105,7 +105,7 @@ public final class ReAttachments implements Attachments {
     @RetryOnFailure(
         verbose = false, attempts = Tv.TWENTY,
         delay = Tv.FIVE, unit = TimeUnit.SECONDS
-    )
+        )
     public Iterable<Attachment> iterate() throws IOException {
         return Iterables.transform(
             this.origin.iterate(),

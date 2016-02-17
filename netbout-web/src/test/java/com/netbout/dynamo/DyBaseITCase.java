@@ -43,6 +43,7 @@ public final class DyBaseITCase {
     /**
      * DyBase can make a user.
      * @throws Exception If there is some problem inside
+     * @checkstyle NonStaticMethodCheck (12 lines)
      */
     @Test
     public void makesUserObject() throws Exception {

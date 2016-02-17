@@ -41,6 +41,7 @@ import org.junit.Test;
  * Integration case for {@link TkApp}.
  * @author Yegor Bugayenko (yegor@teamed.io)
  * @version $Id$
+ * @checkstyle NonStaticMethodCheck (150 lines)
  */
 @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
 public final class TkAppITCase {
@@ -143,7 +144,7 @@ public final class TkAppITCase {
                 .xml()
                 .xpath("/page/documentation/text()")
                 .get(0),
-            Matchers.equalTo(DOCUMENTATION)
+            Matchers.equalTo(TkAppITCase.DOCUMENTATION)
         );
     }
 
@@ -164,7 +165,7 @@ public final class TkAppITCase {
                 .xml()
                 .xpath(query)
                 .get(0),
-            Matchers.equalTo(DOCUMENTATION)
+            Matchers.equalTo(TkAppITCase.DOCUMENTATION)
         );
     }
 

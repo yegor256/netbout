@@ -71,7 +71,7 @@ public final class ReBout implements Bout {
     @RetryOnFailure(
         verbose = false, attempts = Tv.TWENTY,
         delay = Tv.FIVE, unit = TimeUnit.SECONDS
-    )
+        )
     public long number() throws IOException {
         return this.origin.number();
     }
@@ -80,7 +80,7 @@ public final class ReBout implements Bout {
     @RetryOnFailure(
         verbose = false, attempts = Tv.TWENTY,
         delay = Tv.FIVE, unit = TimeUnit.SECONDS
-    )
+        )
     public Date date() throws IOException {
         return this.origin.date();
     }
@@ -89,7 +89,7 @@ public final class ReBout implements Bout {
     @RetryOnFailure(
         verbose = false, attempts = Tv.TWENTY,
         delay = Tv.FIVE, unit = TimeUnit.SECONDS
-    )
+        )
     public Date updated() throws IOException {
         return this.origin.updated();
     }
@@ -98,7 +98,7 @@ public final class ReBout implements Bout {
     @RetryOnFailure(
         verbose = false, attempts = Tv.TWENTY,
         delay = Tv.FIVE, unit = TimeUnit.SECONDS
-    )
+        )
     public String title() throws IOException {
         return this.origin.title();
     }
@@ -107,7 +107,7 @@ public final class ReBout implements Bout {
     @RetryOnFailure(
         verbose = false, attempts = Tv.TWENTY,
         delay = Tv.FIVE, unit = TimeUnit.SECONDS
-    )
+        )
     public void rename(final String text) throws IOException {
         this.origin.rename(text);
     }
@@ -116,7 +116,7 @@ public final class ReBout implements Bout {
     @RetryOnFailure(
         verbose = false, attempts = Tv.TWENTY,
         delay = Tv.FIVE, unit = TimeUnit.SECONDS
-    )
+        )
     public boolean subscription() throws IOException {
         return this.origin.subscription();
     }
@@ -125,7 +125,7 @@ public final class ReBout implements Bout {
     @RetryOnFailure(
         verbose = false, attempts = Tv.TWENTY,
         delay = Tv.FIVE, unit = TimeUnit.SECONDS
-    )
+        )
     public boolean subscription(final String alias) throws IOException {
         return this.origin.subscription(alias);
     }
@@ -134,7 +134,7 @@ public final class ReBout implements Bout {
     @RetryOnFailure(
         verbose = false, attempts = Tv.TWENTY,
         delay = Tv.FIVE, unit = TimeUnit.SECONDS
-    )
+        )
     public void subscribe(final boolean subs) throws IOException {
         this.origin.subscribe(subs);
     }
@@ -143,7 +143,7 @@ public final class ReBout implements Bout {
     @RetryOnFailure(
         verbose = false, attempts = Tv.TWENTY,
         delay = Tv.FIVE, unit = TimeUnit.SECONDS
-    )
+        )
     public Messages messages() throws IOException {
         return new ReMessages(this.origin.messages());
     }
@@ -152,7 +152,7 @@ public final class ReBout implements Bout {
     @RetryOnFailure(
         verbose = false, attempts = Tv.TWENTY,
         delay = Tv.FIVE, unit = TimeUnit.SECONDS
-    )
+        )
     public Friends friends() throws IOException {
         return new ReFriends(this.origin.friends());
     }
@@ -161,7 +161,7 @@ public final class ReBout implements Bout {
     @RetryOnFailure(
         verbose = false, attempts = Tv.TWENTY,
         delay = Tv.FIVE, unit = TimeUnit.SECONDS
-    )
+        )
     public Attachments attachments() throws IOException {
         return new ReAttachments(this.origin.attachments());
     }

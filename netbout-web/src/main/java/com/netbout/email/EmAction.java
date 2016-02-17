@@ -76,7 +76,7 @@ public final class EmAction implements EmCatch.Action {
                     this.base.user(URN.create(split[0])).aliases()
                         .iterate().iterator().next().inbox()
                         .bout(Long.parseLong(split[1]))
-                        .messages().post(this.text(msg));
+                        .messages().post(text(msg));
                 }
             }
         } catch (final MessagingException ex) {
@@ -90,7 +90,7 @@ public final class EmAction implements EmCatch.Action {
      * @return The text of it
      * @throws IOException If some problem inside
      */
-    private String text(final Message msg) throws IOException {
+    private static String text(final Message msg) throws IOException {
         final String raw = EmAction.raw(msg);
         final StringBuilder text = new StringBuilder();
         for (final String line : raw.split(Pattern.quote(EmAction.CRLF))) {

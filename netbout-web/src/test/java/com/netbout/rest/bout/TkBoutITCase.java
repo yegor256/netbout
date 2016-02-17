@@ -46,6 +46,7 @@ import org.junit.Test;
  * Integration case for {@link TkBout}.
  * @author Yegor Bugayenko (yegor@teamed.io)
  * @version $Id$
+ * @checkstyle NonStaticMethodCheck (60 lines)
  */
 public final class TkBoutITCase {
 

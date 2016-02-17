@@ -70,7 +70,7 @@ public final class ReInbox implements Inbox {
     @RetryOnFailure(
         verbose = false, attempts = Tv.TWENTY,
         delay = Tv.FIVE, unit = TimeUnit.SECONDS
-    )
+        )
     public long start() throws IOException {
         return this.origin.start();
     }
@@ -79,7 +79,7 @@ public final class ReInbox implements Inbox {
     @RetryOnFailure(
         verbose = false, attempts = Tv.TWENTY,
         delay = Tv.FIVE, unit = TimeUnit.SECONDS
-    )
+        )
     public long unread() throws IOException {
         return this.origin.unread();
     }
@@ -88,7 +88,7 @@ public final class ReInbox implements Inbox {
     @RetryOnFailure(
         verbose = false, attempts = Tv.TWENTY,
         delay = Tv.FIVE, unit = TimeUnit.SECONDS
-    )
+        )
     public Bout bout(final long number) throws Inbox.BoutNotFoundException {
         return new ReBout(this.origin.bout(number));
     }
@@ -97,7 +97,7 @@ public final class ReInbox implements Inbox {
     @RetryOnFailure(
         verbose = false, attempts = Tv.TWENTY,
         delay = Tv.FIVE, unit = TimeUnit.SECONDS
-    )
+        )
     public Pageable<Bout> jump(final long number) throws IOException {
         return this.origin.jump(number);
     }
@@ -106,7 +106,7 @@ public final class ReInbox implements Inbox {
     @RetryOnFailure(
         verbose = false, attempts = Tv.TWENTY,
         delay = Tv.FIVE, unit = TimeUnit.SECONDS
-    )
+        )
     public Iterable<Bout> iterate() throws IOException {
         return Iterables.transform(
             this.origin.iterate(),
@@ -123,7 +123,7 @@ public final class ReInbox implements Inbox {
     @RetryOnFailure(
         verbose = false, attempts = Tv.TWENTY,
         delay = Tv.FIVE, unit = TimeUnit.SECONDS
-    )
+        )
     public Iterable<Bout> search(final String term) throws IOException {
         return Iterables.transform(
             this.origin.search(term),

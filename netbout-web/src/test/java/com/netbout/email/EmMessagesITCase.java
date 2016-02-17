@@ -57,6 +57,7 @@ public final class EmMessagesITCase {
     /**
      * EmMessages can send an email containing Gmail ViewAction code.
      * @throws Exception If there is some problem inside
+     * @checkstyle NonStaticMethodCheck (25 lines)
      */
     @Test
     public void mailContainsGmailViewActionCode() throws Exception {
@@ -87,14 +88,15 @@ public final class EmMessagesITCase {
      * Send mail only to subscribed aliases.
      * @throws Exception If there is some problem.
      * @checkstyle ExecutableStatementCountCheck (50 lines)
+     * @checkstyle NonStaticMethodCheck (35 lines)
      */
     @Test
     public void subscribeUnsubscribe() throws Exception {
         final Postman postman = Mockito.mock(Postman.class);
         final DyBase base = new DyBase();
-        final Alias alias = new EmAlias(this.getAlias(base, 26, 6), postman);
+        final Alias alias = new EmAlias(getAlias(base, 26, 6), postman);
         final Bout bout = alias.inbox().bout(alias.inbox().start());
-        final Alias friend = this.getAlias(base, 20, 1);
+        final Alias friend = getAlias(base, 20, 1);
         bout.friends().invite(friend.name());
         final ArgumentCaptor<Envelope> captor =
             ArgumentCaptor.forClass(Envelope.class);
@@ -131,7 +133,7 @@ public final class EmMessagesITCase {
      * @return Alias
      * @throws IOException If fails
      */
-    private Alias getAlias(final DyBase base,
+    private static Alias getAlias(final DyBase base,
         final int usernum, final int aliasnum) throws IOException {
         final User user = base.user(
             URN.create(

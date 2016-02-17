@@ -67,7 +67,7 @@ public final class ReMessage implements Message {
     @RetryOnFailure(
         verbose = false, attempts = Tv.TWENTY,
         delay = Tv.FIVE, unit = TimeUnit.SECONDS
-    )
+        )
     public long number() throws IOException {
         return this.origin.number();
     }
@@ -76,7 +76,7 @@ public final class ReMessage implements Message {
     @RetryOnFailure(
         verbose = false, attempts = Tv.TWENTY,
         delay = Tv.FIVE, unit = TimeUnit.SECONDS
-    )
+        )
     public Date date() throws IOException {
         return this.origin.date();
     }
@@ -85,7 +85,7 @@ public final class ReMessage implements Message {
     @RetryOnFailure(
         verbose = false, attempts = Tv.TWENTY,
         delay = Tv.FIVE, unit = TimeUnit.SECONDS
-    )
+        )
     public String text() throws IOException {
         return this.origin.text();
     }
@@ -94,7 +94,7 @@ public final class ReMessage implements Message {
     @RetryOnFailure(
         verbose = false, attempts = Tv.TWENTY,
         delay = Tv.FIVE, unit = TimeUnit.SECONDS
-    )
+        )
     public String author() throws IOException {
         return this.origin.author();
     }

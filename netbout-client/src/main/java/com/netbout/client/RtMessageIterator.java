@@ -56,6 +56,7 @@ import org.apache.commons.lang3.time.DateFormatUtils;
 @ToString
 @Loggable(Loggable.DEBUG)
 @EqualsAndHashCode(of = { "request", "messages" })
+@SuppressWarnings("PMD.ConstructorShouldDoInitialization")
 final class RtMessageIterator implements Iterator<Message> {
 
     /**

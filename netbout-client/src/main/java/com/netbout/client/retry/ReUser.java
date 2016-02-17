@@ -68,7 +68,7 @@ public final class ReUser implements User {
     @RetryOnFailure(
         verbose = false, attempts = Tv.TWENTY,
         delay = Tv.FIVE, unit = TimeUnit.SECONDS
-    )
+        )
     public Aliases aliases() {
         return new ReAliases(this.origin.aliases());
     }
@@ -77,7 +77,7 @@ public final class ReUser implements User {
     @RetryOnFailure(
         verbose = false, attempts = Tv.TWENTY,
         delay = Tv.FIVE, unit = TimeUnit.SECONDS
-    )
+        )
     public Iterable<Friend> friends(final String text) throws IOException {
         return this.origin.friends(text);
     }

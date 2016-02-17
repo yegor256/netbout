@@ -70,6 +70,7 @@ public final class XeMessageTest {
                     }
                 }
             ).toXembly()
+        // @checkstyle IndentationCheck (1 line)
         ).xml();
         MatcherAssert.assertThat(
             xml,

@@ -84,7 +84,7 @@ public final class ReFriends implements Friends {
     @RetryOnFailure(
         verbose = false, attempts = Tv.TWENTY,
         delay = Tv.FIVE, unit = TimeUnit.SECONDS
-    )
+        )
     public Iterable<Friend> iterate() throws IOException {
         return Iterables.transform(
             this.origin.iterate(),

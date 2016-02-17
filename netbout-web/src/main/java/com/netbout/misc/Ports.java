@@ -53,13 +53,14 @@ public final class Ports {
      * Allocate a new random TCP port.
      * @return TCP port
      * @throws IOException If fails
+     * @checkstyle NonStaticMethodCheck (24 lines)
      */
     public int allocate() throws IOException {
         synchronized (Ports.class) {
             int attempts = 0;
             int prt;
             do {
-                prt = this.random();
+                prt = random();
                 ++attempts;
                 // @checkstyle MagicNumber (1 line)
                 if (attempts > 100) {
@@ -78,6 +79,7 @@ public final class Ports {
     /**
      * Release it.
      * @param port Port
+     * @checkstyle NonStaticMethodCheck (4 lines)
      */
     public void release(final int port) {
         Ports.ASSIGNED.remove(port);
@@ -88,7 +90,7 @@ public final class Ports {
      * @return TCP port
      * @throws IOException If fails
      */
-    private int random() throws IOException {
+    private static int random() throws IOException {
         final ServerSocket socket = new ServerSocket(0);
         try {
             socket.setReuseAddress(true);

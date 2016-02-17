@@ -48,6 +48,7 @@ import org.h2.jdbcx.JdbcDataSource;
 @ToString
 @Loggable(Loggable.DEBUG)
 @EqualsAndHashCode(of = "file")
+@SuppressWarnings("PMD.ConstructorOnlyInitializesOrCallOtherConstructors")
 final class H2Sql implements Sql {
 
     /**

@@ -50,6 +50,7 @@ import lombok.ToString;
 @Loggable(Loggable.DEBUG)
 @ToString(of = "region")
 @EqualsAndHashCode(of = "region")
+@SuppressWarnings("PMD.ConstructorOnlyInitializesOrCallOtherConstructors")
 public final class DyBase implements Base {
 
     /**

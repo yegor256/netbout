@@ -58,6 +58,7 @@ import org.takes.rq.RqHref;
  *  this task citing a NullPointerException (See qulice issue #608 raised for
  *  the same) and then remove TkStart.java from qulice exceptions.
  */
+@SuppressWarnings("PMD.ConstructorShouldDoInitialization")
 public final class TkStart implements Take {
 
     /**

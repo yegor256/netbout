@@ -46,6 +46,7 @@ public final class DyFriendsITCase {
     /**
      * DyFriends can manage friends.
      * @throws Exception If there is some problem inside
+     * @checkstyle NonStaticMethodCheck (20 lines)
      */
     @Test
     public void managesFriends() throws Exception {

@@ -70,7 +70,7 @@ public final class ReMessages implements Messages {
     @RetryOnFailure(
         verbose = false, attempts = Tv.TWENTY,
         delay = Tv.FIVE, unit = TimeUnit.SECONDS
-    )
+        )
     public void post(final String text) throws IOException {
         this.origin.post(text);
     }
@@ -79,7 +79,7 @@ public final class ReMessages implements Messages {
     @RetryOnFailure(
         verbose = false, attempts = Tv.TWENTY,
         delay = Tv.FIVE, unit = TimeUnit.SECONDS
-    )
+        )
     public long unread() throws IOException {
         return this.origin.unread();
     }
@@ -88,7 +88,7 @@ public final class ReMessages implements Messages {
     @RetryOnFailure(
         verbose = false, attempts = Tv.TWENTY,
         delay = Tv.FIVE, unit = TimeUnit.SECONDS
-    )
+        )
     public Pageable<Message> jump(final long number) throws IOException {
         return this.origin.jump(number);
     }
@@ -97,7 +97,7 @@ public final class ReMessages implements Messages {
     @RetryOnFailure(
         verbose = false, attempts = Tv.TWENTY,
         delay = Tv.FIVE, unit = TimeUnit.SECONDS
-    )
+        )
     public Iterable<Message> iterate() throws IOException {
         return Iterables.transform(
             this.origin.iterate(),
@@ -114,7 +114,7 @@ public final class ReMessages implements Messages {
     @RetryOnFailure(
         verbose = false, attempts = Tv.TWENTY,
         delay = Tv.FIVE, unit = TimeUnit.SECONDS
-    )
+        )
     public Iterable<Message> search(final String term) throws IOException {
         return Iterables.transform(
             this.origin.search(term),

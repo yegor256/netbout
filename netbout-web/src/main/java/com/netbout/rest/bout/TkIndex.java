@@ -130,7 +130,7 @@ final class TkIndex implements Take {
                 new XeAppend(
                     "messages",
                     new XeTransform<>(
-                        this.messages(bout, request, query),
+                        messages(bout, request, query),
                         new XeTransform.Func<Message>() {
                             @Override
                             public XeSource transform(final Message msg)
@@ -161,8 +161,8 @@ final class TkIndex implements Take {
      * @return Messages
      * @throws IOException If fails
      */
-    private Iterable<Message> messages(final Bout bout, final Request req,
-        final String query) throws IOException {
+    private static Iterable<Message> messages(final Bout bout,
+        final Request req, final String query) throws IOException {
         final Iterable<Message> messages;
         if (StringUtils.isBlank(query)) {
             final long start = Long.parseLong(

@@ -52,6 +52,7 @@ public final class TkDeleteITCase {
     /**
      * TkDelete can delete an attachment.
      * @throws Exception If there is some problem inside
+     * @checkstyle NonStaticMethodCheck (20 lines)
      */
     @Test
     public void deletesAttachments() throws Exception {

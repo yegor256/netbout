@@ -53,6 +53,7 @@ import lombok.ToString;
 @ToString
 @Loggable(Loggable.DEBUG)
 @EqualsAndHashCode(of = { "request", "bouts" })
+@SuppressWarnings("PMD.ConstructorShouldDoInitialization")
 final class RtBoutIterator implements Iterator<Bout> {
 
     /**

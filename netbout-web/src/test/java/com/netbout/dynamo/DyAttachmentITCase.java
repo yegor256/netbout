@@ -51,6 +51,7 @@ public final class DyAttachmentITCase {
     /**
      * DyAttachment can create, save and load attachments.
      * @throws Exception If there is some problem inside
+     * @checkstyle NonStaticMethodCheck (30 lines)
      */
     @Test
     public void createsAndLoadsAttachment() throws Exception {

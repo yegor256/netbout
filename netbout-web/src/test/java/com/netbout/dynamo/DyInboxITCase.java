@@ -47,6 +47,7 @@ import org.junit.Test;
  * Integration case for {@link DyInbox}.
  * @author Yegor Bugayenko (yegor@teamed.io)
  * @version $Id$
+ * @checkstyle NonStaticMethodCheck (110 lines)
  */
 public final class DyInboxITCase {
     /**
@@ -142,7 +143,7 @@ public final class DyInboxITCase {
         final List<Long> bouts = new ArrayList<Long>(total);
         for (int idx = 0; idx < total; ++idx) {
             bouts.add(inbox.start());
-            TimeUnit.MILLISECONDS.sleep((long) Tv.TEN);
+            TimeUnit.MILLISECONDS.sleep(Tv.TEN);
         }
         Collections.reverse(bouts);
         final List<Long> found = new ArrayList<Long>(total);
