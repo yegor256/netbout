@@ -125,14 +125,11 @@ final class EmAlias implements Alias {
         new BoutInviteMail(this.postman).send(email, urn, bout);
     }
 
-    /**
-     * {@inheritDoc}
-     * @todo #738:30min  We need to improve the format and content of the
-     *  verification email. Currently, it only asks the user to verify
-     *  the new email by using the provided verification link. We may add
-     *  some header, footer, note like "Ignore this email if you did not
-     *  change your email address", etc.
-     */
+    // @todo #738:30min  We need to improve the format and content of the
+    //  verification email. Currently, it only asks the user to verify
+    //  the new email by using the provided verification link. We may add
+    //  some header, footer, note like "Ignore this email if you did not
+    //  change your email address", etc.
     @Override
     public void email(final String email, final String link)
         throws IOException {

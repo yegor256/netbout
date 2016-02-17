@@ -33,9 +33,9 @@ import javax.validation.constraints.NotNull;
  *
  * @author Dmitry Zaytsev (dmitry.zaytsev@gmail.com)
  * @version $Id$
+ * @see <a href="Markdown Syntax">http://daringfireball.net/projects/markdown/syntax</a>
  * @since 2.23
  * @checkstyle LineLengthCheck (1 line)
- * @see <a href="Markdown Syntax">http://daringfireball.net/projects/markdown/syntax</a>
  */
 public interface Markdown {
     /**

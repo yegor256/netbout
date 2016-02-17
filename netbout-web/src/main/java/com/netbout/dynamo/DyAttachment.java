@@ -51,11 +51,11 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
+import java.nio.charset.StandardCharsets;
 import java.util.HashSet;
 import java.util.Set;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
-import org.apache.commons.codec.CharEncoding;
 import org.apache.commons.io.IOUtils;
 
 /**
@@ -176,7 +176,9 @@ final class DyAttachment implements Attachment {
             final ByteBuffer buf =
                 this.item.get(DyAttachments.ATTR_DATA).getB();
             if (buf == null) {
-                bytes = "temporary unavailable".getBytes(CharEncoding.UTF_8);
+                bytes = "temporary unavailable".getBytes(
+                    StandardCharsets.UTF_8
+                );
             } else {
                 bytes = buf.array();
             }

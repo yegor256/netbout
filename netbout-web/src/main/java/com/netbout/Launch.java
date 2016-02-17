@@ -42,8 +42,8 @@ import org.takes.http.FtCLI;
  *
  * @author Yegor Bugayenko (yegor@teamed.io)
  * @version $Id$
- * @checkstyle ClassDataAbstractionCouplingCheck (500 lines)
  * @since 2.14
+ * @checkstyle ClassDataAbstractionCouplingCheck (500 lines)
  */
 public final class Launch {
 
