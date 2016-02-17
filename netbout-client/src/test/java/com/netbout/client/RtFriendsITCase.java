@@ -44,7 +44,6 @@ import org.junit.Test;
  * @author Yegor Bugayenko (yegor@teamed.io)
  * @version $Id$
  * @since 0.14
- * @checkstyle NonStaticMethodCheck (80 lines)
  */
 public final class RtFriendsITCase {
 

@@ -45,7 +45,6 @@ public final class EmAliasITCase {
     /**
      * EmAlias can send a real email.
      * @throws Exception If there is some problem inside
-     * @checkstyle NonStaticMethodCheck (20 lines)
      */
     @Test
     @Ignore

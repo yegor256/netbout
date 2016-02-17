@@ -39,7 +39,6 @@ import org.xembly.Xembler;
  * @author Dmitry Zaytsev (dmitry.zaytsev@gmail.com)
  * @version $Id$
  * @since 2.16.1
- *
  */
 public final class XeMessageTest {
     /**

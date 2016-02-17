@@ -44,7 +44,6 @@ import org.junit.Test;
  * Integration case for {@link DyAttachments}.
  * @author Yegor Bugayenko (yegor@teamed.io)
  * @version $Id$
- * @checkstyle NonStaticMethodCheck (65 lines)
  */
 public final class DyAttachmentsITCase {
 

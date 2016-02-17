@@ -43,7 +43,6 @@ public final class DyUserITCase {
     /**
      * DyUser can list aliases.
      * @throws Exception If there is some problem inside
-     * @checkstyle NonStaticMethodCheck (10 lines)
      */
     @Test
     public void listsAliases() throws Exception {

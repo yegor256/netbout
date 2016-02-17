@@ -41,7 +41,6 @@ import org.junit.Test;
  * Integration case for {@link TkApp}.
  * @author Yegor Bugayenko (yegor@teamed.io)
  * @version $Id$
- * @checkstyle NonStaticMethodCheck (150 lines)
  */
 @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
 public final class TkAppITCase {

@@ -39,13 +39,13 @@ import org.junit.runners.model.Statement;
  * @author Yegor Bugayenko (yegor@teamed.io)
  * @version $Id$
  * @since 2.1
- * @checkstyle NonStaticMethodCheck (24 lines)
  */
 public final class NbRule implements TestRule {
 
     /**
      * Get user.
      * @return User
+     * @checkstyle NonStaticMethodCheck (10 lines)
      */
     public User get() {
         final String token = System.getProperty("netbout.token");

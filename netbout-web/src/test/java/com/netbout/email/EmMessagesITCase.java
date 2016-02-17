@@ -57,7 +57,6 @@ public final class EmMessagesITCase {
     /**
      * EmMessages can send an email containing Gmail ViewAction code.
      * @throws Exception If there is some problem inside
-     * @checkstyle NonStaticMethodCheck (25 lines)
      */
     @Test
     public void mailContainsGmailViewActionCode() throws Exception {
@@ -88,7 +87,6 @@ public final class EmMessagesITCase {
      * Send mail only to subscribed aliases.
      * @throws Exception If there is some problem.
      * @checkstyle ExecutableStatementCountCheck (50 lines)
-     * @checkstyle NonStaticMethodCheck (35 lines)
      */
     @Test
     public void subscribeUnsubscribe() throws Exception {

@@ -43,7 +43,6 @@ import org.junit.Test;
  * Integration case for {@link DyMessages}.
  * @author Yegor Bugayenko (yegor@teamed.io)
  * @version $Id$
- * @checkstyle NonStaticMethodCheck (110 lines)
  */
 public final class DyMessagesITCase {
 

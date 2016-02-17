@@ -38,7 +38,6 @@ import org.junit.Test;
  * Integration case for {@link DyBout}.
  * @author Yegor Bugayenko (yegor@teamed.io)
  * @version $Id$
- * @checkstyle NonStaticMethodCheck (45 lines)
  */
 public final class DyBoutITCase {
 

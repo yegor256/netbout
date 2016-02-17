@@ -43,7 +43,6 @@ public final class DyAliasesITCase {
     /**
      * DyAliases can make an alias.
      * @throws Exception If there is some problem inside
-     * @checkstyle NonStaticMethodCheck (22 lines)
      */
     @Test
     public void makesAlias() throws Exception {

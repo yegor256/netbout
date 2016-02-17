@@ -38,7 +38,6 @@ import org.junit.Test;
  * Integration case for {@link DyAlias}.
  * @author Yegor Bugayenko (yegor@teamed.io)
  * @version $Id$
- * @checkstyle NonStaticMethodCheck (85 lines)
  */
 public final class DyAliasITCase {
 
