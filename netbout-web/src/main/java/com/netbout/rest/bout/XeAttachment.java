@@ -30,9 +30,9 @@ import com.netbout.rest.Markdown;
 import com.netbout.spi.Attachment;
 import com.netbout.spi.Bout;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.Iterator;
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang3.CharEncoding;
 import org.takes.Request;
 import org.takes.misc.Href;
 import org.takes.rq.RqHref;
@@ -129,7 +129,7 @@ final class XeAttachment extends XeWrap {
                                 new Markdown.Default().html(
                                     IOUtils.toString(
                                         atmt.read(),
-                                        CharEncoding.UTF_8
+                                        StandardCharsets.UTF_8
                                     )
                                 )
                             )

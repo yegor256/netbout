@@ -33,7 +33,7 @@ import org.hamcrest.Matchers;
 import org.junit.Test;
 
 /**
- * Test case for {@link TouchBout].
+ * Test case for {@link TouchBout}.
  *
  * @author Dmitry Zaytsev (dmitr.zaytsev@gmail.com)
  * @version $Id$

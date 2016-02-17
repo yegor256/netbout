@@ -136,16 +136,13 @@ final class DyInbox implements Inbox {
         return number;
     }
 
-    /**
-     * {@inheritDoc}
-     * @todo #1:30min  DynamoDBLocal doesn't work with all attributes
-     *  in global index. If we remove this check for a local version,
-     *  most tests fail. I'm not sure how to fix that. I suspect, it's
-     *  a bug in DynamoDBLocal, but I don't even know how to report
-     *  it to them :( Anyway, let's try to investigate and either fix
-     *  property or introduce a better workaround. Pay attention that this
-     *  code works correctly in production.
-     */
+    // @todo #1:30min  DynamoDBLocal doesn't work with all attributes
+    //  in global index. If we remove this check for a local version,
+    //  most tests fail. I'm not sure how to fix that. I suspect, it's
+    //  a bug in DynamoDBLocal, but I don't even know how to report
+    //  it to them :( Anyway, let's try to investigate and either fix
+    //  property or introduce a better workaround. Pay attention that this
+    //  code works correctly in production.
     @Override
     public long unread() throws IOException {
         long unread = 0L;

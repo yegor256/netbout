@@ -123,7 +123,7 @@ public final class TkApp extends TkWrap {
                 )
             );
         }
-        TkAppAuth auth;
+        final TkAppAuth auth;
         if (pass.has()) {
             auth = new TkAppAuth(
                 TkApp.regex(base),
