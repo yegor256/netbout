@@ -744,8 +744,10 @@
                                 <exclude>xml:/src/main/resources/lang/.*</exclude>
                                 <exclude>duplicatefinder:.*</exclude>
                                 <!--
-                                @todo #1012:30min These excludes remains to be fixed
-                                 after upgrade to qulice 0.16.2.
+                                @todo #1012:30min These excludes were added because
+                                 of the upgrade to qulice 0.16.2. The new version of qulice
+                                 adds some javadocs rules and also regexp rules for imported
+                                 some wrong classes which should be replaced with others.
                                 -->
                                 <exclude>checkstyle:/src/main/java/com/netbout/rest/bout/TkAttach.java</exclude>
                                 <exclude>checkstyle:/src/test/java/com/netbout/dynamo/DyAliasesITCase.java</exclude>
