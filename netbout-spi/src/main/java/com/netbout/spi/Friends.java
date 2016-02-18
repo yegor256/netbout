@@ -30,6 +30,7 @@ import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
 import com.jcabi.aspects.Immutable;
 import com.jcabi.aspects.Loggable;
+import com.jcabi.aspects.Tv;
 import java.io.IOException;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
@@ -42,6 +43,7 @@ import lombok.ToString;
  * @since 2.0
  */
 @Immutable
+@SuppressWarnings("PMD.TooManyMethods")
 public interface Friends {
 
     /**
@@ -150,4 +152,51 @@ public interface Friends {
         }
     }
 
+    /**
+     * Valid friends.
+     */
+    final class ValidFriends implements Friends {
+        /**
+         * Origin friends.
+         */
+        private final Friends origin;
+
+        /**
+         * Ctor.
+         * @param origin Origin Friends
+         */
+        public ValidFriends(final Friends origin) {
+            this.origin = origin;
+        }
+
+        @Override
+        public void invite(final String friend) throws IOException {
+            Friends.ValidFriends.validate(friend);
+            this.origin.invite(friend);
+        }
+
+        @Override
+        public void kick(final String friend) throws IOException {
+            Friends.ValidFriends.validate(friend);
+            this.origin.kick(friend);
+        }
+
+        @Override
+        public Iterable<Friend> iterate() throws IOException {
+            return this.origin.iterate();
+        }
+
+        /**
+         * Validate friend's name.
+         * @param name Name
+         */
+        private static void validate(final String name) {
+            if (name.trim().isEmpty()) {
+                throw new IllegalArgumentException("alias can't be empty");
+            }
+            if (name.length() > Tv.HUNDRED) {
+                throw new IllegalArgumentException("alias is too long");
+            }
+        }
+    }
 }

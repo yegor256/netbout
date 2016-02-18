@@ -177,7 +177,7 @@ final class DyBout implements Bout {
 
     @Override
     public Friends friends() {
-        return new DyFriends(this.region, this.item);
+        return new Friends.ValidFriends(new DyFriends(this.region, this.item));
     }
 
     @Override

@@ -48,6 +48,7 @@ import lombok.ToString;
  * @author Yegor Bugayenko (yegor@teamed.io)
  * @version $Id$
  * @since 2.4
+ * @checkstyle ClassDataAbstractionCouplingCheck (6 lines)
  */
 @Immutable
 @ToString
@@ -179,7 +180,7 @@ final class MkBout implements Bout {
 
     @Override
     public Friends friends() {
-        return new MkFriends(this.sql, this.bout);
+        return new Friends.ValidFriends(new MkFriends(this.sql, this.bout));
     }
 
     @Override
