@@ -6,8 +6,8 @@ Role | Members
 ---|---
 PM | @karato
 CR | @darkled, @caarlos0, @carlosmiranda, @pinaf, @ggajos, @hdouss, @krzyk, @mkordas, @longtimeago
-DEV | @kitsook, @danff, @bdragan, @erimerturk, @komaz, @kujtimiihoxha, @jhyle, @2686747, @mbarbieri, @prahladyeri
-IMP | @kitsook, @danff, @bdragan, @erimerturk, @komaz, @kujtimiihoxha, @jhyle, @2686747, @mbarbieri, @prahladyeri
+DEV | @original-brownbear, @kitsook, @danff, @bdragan, @erimerturk, @komaz, @kujtimiihoxha, @jhyle, @2686747, @mbarbieri, @prahladyeri
+IMP | @original-brownbear, @kitsook, @danff, @bdragan, @erimerturk, @komaz, @kujtimiihoxha, @jhyle, @2686747, @mbarbieri, @prahladyeri
 ARC | @dmzaytsev
 DES | 
 PO | @yegor256
