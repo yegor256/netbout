@@ -53,13 +53,12 @@ import lombok.ToString;
 @ToString
 @Loggable(Loggable.DEBUG)
 @EqualsAndHashCode(of = { "request", "bouts" })
-@SuppressWarnings("PMD.ConstructorShouldDoInitialization")
 final class RtBoutIterator implements Iterator<Bout> {
 
     /**
      * Pre-fetched bouts.
      */
-    private final transient Queue<Bout> bouts = new LinkedList<Bout>();
+    private final transient Queue<Bout> bouts;
 
     /**
      * Request to use.
@@ -69,14 +68,16 @@ final class RtBoutIterator implements Iterator<Bout> {
     /**
      * Has more?
      */
-    private transient boolean more = true;
+    private transient boolean more;
 
     /**
      * Public ctor.
      * @param req Request to use
      */
     RtBoutIterator(final Request req) {
+        this.bouts = new LinkedList<Bout>();
         this.request = req;
+        this.more = true;
     }
 
     @Override

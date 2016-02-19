@@ -60,7 +60,7 @@ public final class RtFriendsITCase {
      */
     @Test
     public void invitesAndKicksOff() throws Exception {
-        final User user = this.rule.get();
+        final User user = NbRule.get();
         final Alias alias = user.aliases().iterate().iterator().next();
         final Inbox inbox = alias.inbox();
         final Bout bout = inbox.bout(inbox.start());
@@ -83,7 +83,7 @@ public final class RtFriendsITCase {
      */
     @Test (expected = Friends.UnknownAliasException.class)
     public void throwsExceptionIfUnknownAliasInvited() throws Exception {
-        final User user = this.rule.get();
+        final User user = NbRule.get();
         final Alias alias = user.aliases().iterate().iterator().next();
         final Inbox inbox = alias.inbox();
         final Bout bout = inbox.bout(inbox.start());
@@ -116,7 +116,7 @@ public final class RtFriendsITCase {
      */
     @Test (expected = Friends.UnknownAliasException.class)
     public void throwsExceptionIfUnknownAliasKicked() throws Exception {
-        final Inbox inbox = this.rule.get().aliases()
+        final Inbox inbox = NbRule.get().aliases()
             .iterate().iterator().next().inbox();
         inbox.bout(inbox.start()).friends().kick("jim");
     }

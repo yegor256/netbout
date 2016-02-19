@@ -52,9 +52,8 @@ public final class EmCatchTest {
      */
     @Test
     public void readsInboxPeriodically() throws Exception {
-        final Ports ports = new Ports();
         final GreenMail mail = new GreenMail(
-            new ServerSetup(ports.allocate(), null, "pop3")
+            new ServerSetup(Ports.allocate(), null, "pop3")
         );
         mail.start();
         final ServerSetup setup = mail.getPop3().getServerSetup();
@@ -112,7 +111,7 @@ public final class EmCatchTest {
         );
         // @checkstyle MagicNumberCheck (1 line)
         Thread.sleep(1000);
-        ports.release(setup.getPort());
+        Ports.release(setup.getPort());
         mail.stop();
     }
 

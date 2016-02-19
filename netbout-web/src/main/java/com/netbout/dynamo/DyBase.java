@@ -50,7 +50,6 @@ import lombok.ToString;
 @Loggable(Loggable.DEBUG)
 @ToString(of = "region")
 @EqualsAndHashCode(of = "region")
-@SuppressWarnings("PMD.ConstructorOnlyInitializesOrCallOtherConstructors")
 public final class DyBase implements Base {
 
     /**
@@ -62,20 +61,7 @@ public final class DyBase implements Base {
      * Public ctor.
      */
     public DyBase() {
-        final String key = Manifests.read("Netbout-DynamoKey");
-        Credentials creds = new Credentials.Simple(
-            key,
-            Manifests.read("Netbout-DynamoSecret")
-        );
-        if ("AAAAABBBBBAAAAABBBBB".equals(key)) {
-            creds = new Credentials.Direct(
-                creds, Integer.parseInt(System.getProperty("dynamo.port"))
-            );
-        }
-        this.region = new Region.Prefixed(
-            new ReRegion(new Region.Simple(creds)),
-            Manifests.read("Netbout-DynamoPrefix")
-        );
+        this.region = DyBase.initialize();
     }
 
     @Override
@@ -88,4 +74,24 @@ public final class DyBase implements Base {
         // nothing to do here
     }
 
+    /**
+     * Initialize a region instance.
+     * @return The initialized region instance
+     */
+    private static Region initialize() {
+        final String key = Manifests.read("Netbout-DynamoKey");
+        Credentials creds = new Credentials.Simple(
+            key,
+            Manifests.read("Netbout-DynamoSecret")
+        );
+        if ("AAAAABBBBBAAAAABBBBB".equals(key)) {
+            creds = new Credentials.Direct(
+                creds, Integer.parseInt(System.getProperty("dynamo.port"))
+            );
+        }
+        return new Region.Prefixed(
+            new ReRegion(new Region.Simple(creds)),
+            Manifests.read("Netbout-DynamoPrefix")
+        );
+    }
 }

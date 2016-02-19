@@ -56,13 +56,12 @@ import org.apache.commons.lang3.time.DateFormatUtils;
 @ToString
 @Loggable(Loggable.DEBUG)
 @EqualsAndHashCode(of = { "request", "messages" })
-@SuppressWarnings("PMD.ConstructorShouldDoInitialization")
 final class RtMessageIterator implements Iterator<Message> {
 
     /**
      * Pre-fetched messages.
      */
-    private final transient Queue<Message> messages = new LinkedList<Message>();
+    private final transient Queue<Message> messages;
 
     /**
      * Request to use.
@@ -72,7 +71,7 @@ final class RtMessageIterator implements Iterator<Message> {
     /**
      * Has more?
      */
-    private transient boolean more = true;
+    private transient boolean more;
 
     /**
      * Public ctor.
@@ -80,6 +79,8 @@ final class RtMessageIterator implements Iterator<Message> {
      */
     RtMessageIterator(final Request req) {
         this.request = req;
+        this.messages = new LinkedList<Message>();
+        this.more = true;
     }
 
     @Override

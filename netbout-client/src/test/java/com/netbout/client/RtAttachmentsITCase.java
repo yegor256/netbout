@@ -60,7 +60,7 @@ public final class RtAttachmentsITCase {
      */
     @Test
     public void postsAndReads() throws Exception {
-        final User user = this.rule.get();
+        final User user = NbRule.get();
         final Alias alias = user.aliases().iterate().iterator().next();
         final Inbox inbox = alias.inbox();
         final Bout bout = inbox.bout(inbox.start());

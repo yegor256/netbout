@@ -45,9 +45,8 @@ public final class NbRule implements TestRule {
     /**
      * Get user.
      * @return User
-     * @checkstyle NonStaticMethodCheck (10 lines)
      */
-    public User get() {
+    public static User get() {
         final String token = System.getProperty("netbout.token");
         final URI url = URI.create(
             System.getProperty("netbout.url", "http://www.netbout.com")
@@ -60,5 +59,4 @@ public final class NbRule implements TestRule {
     public Statement apply(final Statement stmt, final Description desc) {
         return stmt;
     }
-
 }

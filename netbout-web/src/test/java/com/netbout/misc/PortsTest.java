@@ -46,9 +46,9 @@ public final class PortsTest {
      */
     @Test
     public void allocatesDifferentNumbersWithDifferentPorts() throws Exception {
-        final int porta = new Ports().allocate();
-        final int portb = new Ports().allocate();
-        final int portc = new Ports().allocate();
+        final int porta = Ports.allocate();
+        final int portb = Ports.allocate();
+        final int portc = Ports.allocate();
         MatcherAssert.assertThat(porta, Matchers.not(portb));
         MatcherAssert.assertThat(porta, Matchers.not(portc));
         MatcherAssert.assertThat(portb, Matchers.not(portc));
@@ -61,10 +61,9 @@ public final class PortsTest {
      */
     @Test
     public void allocatesDifferentNumbersWithSamePorts() throws Exception {
-        final Ports ports = new Ports();
-        final int porta = ports.allocate();
-        final int portb = ports.allocate();
-        final int portc = ports.allocate();
+        final int porta = Ports.allocate();
+        final int portb = Ports.allocate();
+        final int portc = Ports.allocate();
         MatcherAssert.assertThat(porta, Matchers.not(portb));
         MatcherAssert.assertThat(porta, Matchers.not(portc));
         MatcherAssert.assertThat(portb, Matchers.not(portc));

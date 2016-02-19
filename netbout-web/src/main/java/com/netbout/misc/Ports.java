@@ -50,12 +50,18 @@ public final class Ports {
         new ConcurrentSkipListSet<Integer>();
 
     /**
+     * Hide the default no args constructor from the utility class.
+     */
+    private Ports() {
+        super();
+    }
+
+    /**
      * Allocate a new random TCP port.
      * @return TCP port
      * @throws IOException If fails
-     * @checkstyle NonStaticMethodCheck (24 lines)
      */
-    public int allocate() throws IOException {
+    public static int allocate() throws IOException {
         synchronized (Ports.class) {
             int attempts = 0;
             int prt;
@@ -79,9 +85,8 @@ public final class Ports {
     /**
      * Release it.
      * @param port Port
-     * @checkstyle NonStaticMethodCheck (4 lines)
      */
-    public void release(final int port) {
+    public static void release(final int port) {
         Ports.ASSIGNED.remove(port);
     }
 
