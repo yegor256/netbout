@@ -33,6 +33,7 @@ import com.jcabi.manifests.Manifests;
 import java.net.HttpURLConnection;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
+import org.apache.commons.lang3.StringUtils;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;
@@ -55,6 +56,18 @@ public final class TkAppITCase {
      */
     private static final String DOCUMENTATION =
         Manifests.read("Netbout-Documentation");
+
+    /**
+     * Xpath to the 'page not found' notice.
+     */
+    private static final String MISSING =
+        StringUtils.join(
+            "/xhtml:html/xhtml:body/",
+            "xhtml:div[@class='content']/",
+            "xhtml:div[contains(@class, 'flash')",
+            " and contains(@class, 'SEVERE')",
+            " and text()[contains(., 'page not found')]]"
+        );
 
     /**
      * TkApp can render static resources.
@@ -80,7 +93,7 @@ public final class TkAppITCase {
     }
 
     /**
-     * TkApp can render non-found pages.
+     * TkApp can render non-found pages while adding a severe level notice.
      * @throws Exception If there is some problem inside
      */
     @Test
@@ -94,7 +107,11 @@ public final class TkAppITCase {
                 .uri().path(page).back()
                 .fetch()
                 .as(RestResponse.class)
-                .assertStatus(HttpURLConnection.HTTP_MOVED_PERM);
+                .assertStatus(HttpURLConnection.HTTP_MOVED_PERM)
+                .follow()
+                .fetch()
+                .as(XmlResponse.class)
+                .assertXPath(TkAppITCase.MISSING);
         }
     }
 
