@@ -1,32 +1,27 @@
-date: 17-2-2016
+date: 19-2-2016
 author: Maksim Vakhnik
 method: champions.pert
 scope:
   1: Infrastructure setup
-  2: GitHub integration
-  3: Facebook integration
-  4: Google+ integration
-  5: User login
-  6: User logout
-  7: User account
-  8: Email notifications
-  9: Starting bouts
-  10: Inviting others to bouts
-  11: Adding attachments to bouts
-  12: Markdown support
-  13: Unread messages support
-  14: Avatars support
-  15: Search functionality
+  2: Security layer
+  3: Database layer
+  4: Web service layer
+  5: GitHub integration
+  6: Facebook integration
+  7: Google+ integration
+  8: E-mail notificaiton
+  9: Web UI
+
 champions:
   2:
-    worst-case: 32 
-    best-case: 12
-    most-likely: 20
-  7:
-    worst-case: 32
-    best-case: 10
-    most-likely: 16 
-  12:
-    worst-case: 40 
-    best-case: 12
-    most-likely: 24
+    worst-case: 48  
+    best-case: 24
+    most-likely: 36
+  3:
+    worst-case: 40
+    best-case: 16
+    most-likely: 24 
+  9:
+    worst-case: 48
+    best-case: 24
+    most-likely: 36
