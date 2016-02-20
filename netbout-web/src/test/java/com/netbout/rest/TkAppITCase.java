@@ -58,18 +58,6 @@ public final class TkAppITCase {
         Manifests.read("Netbout-Documentation");
 
     /**
-     * Xpath to the 'page not found' notice.
-     */
-    private static final String MISSING =
-        StringUtils.join(
-            "/xhtml:html/xhtml:body/",
-            "xhtml:div[@class='content']/",
-            "xhtml:div[contains(@class, 'flash')",
-            " and contains(@class, 'SEVERE')",
-            " and text()[contains(., 'page not found')]]"
-        );
-
-    /**
      * TkApp can render static resources.
      * @throws Exception If there is some problem inside
      */
@@ -93,7 +81,7 @@ public final class TkAppITCase {
     }
 
     /**
-     * TkApp can render non-found pages while adding a severe level notice.
+     * TkApp can render missing pages and add flash message with level severe.
      * @throws Exception If there is some problem inside
      */
     @Test
@@ -111,7 +99,15 @@ public final class TkAppITCase {
                 .follow()
                 .fetch()
                 .as(XmlResponse.class)
-                .assertXPath(TkAppITCase.MISSING);
+                .assertXPath(
+                    StringUtils.join(
+                        "/xhtml:html/xhtml:body/",
+                        "xhtml:div[@class='content']/",
+                        "xhtml:div[contains(@class, 'flash')",
+                        " and contains(@class, 'SEVERE')",
+                        " and text()[contains(., 'page not found')]]"
+                    )
+                );
         }
     }
 
