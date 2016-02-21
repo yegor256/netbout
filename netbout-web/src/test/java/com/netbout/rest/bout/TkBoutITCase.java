@@ -101,7 +101,7 @@ public final class TkBoutITCase {
     }
 
     /**
-     * TkBout can kick missing user and add flash message with level severe.
+     * TkBout can kick missing user and display severe level flash message.
      * @throws Exception If there is some problem inside
      */
     @Test
@@ -127,8 +127,8 @@ public final class TkBoutITCase {
                     "xhtml:div[contains(@class, 'flash')",
                     " and contains(@class, 'SEVERE')",
                     String.format(
-                        " and text()[contains(., \"alias '%s'"
-                        , name
+                        " and text()[contains(., \"alias '%s'",
+                        name
                     ),
                     " is not in the bout\")]]"
                 )
