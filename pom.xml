@@ -111,9 +111,6 @@
             <url>http://maven.netbout.com/</url>
         </site>
     </distributionManagement>
-    <properties>
-        <timestamp>${maven.build.timestamp}</timestamp>
-    </properties>
     <dependencyManagement>
         <dependencies>
             <dependency>
