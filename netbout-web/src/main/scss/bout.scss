@@ -175,3 +175,7 @@
     }
   }
 }
+input[type="submit"]:disabled {
+  color: grey;
+  cursor: not-allowed;
+}
