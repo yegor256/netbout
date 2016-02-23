@@ -142,6 +142,7 @@
             <plugin>
                 <groupId>com.github.github</groupId>
                 <artifactId>site-maven-plugin</artifactId>
+                <version>0.12</version>
                 <configuration>
                     <path>${project.artifactId}</path>
                 </configuration>
