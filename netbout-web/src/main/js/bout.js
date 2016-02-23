@@ -257,7 +257,7 @@ $(document).ready(
       $( "#file-submit" ).prop('disabled', false);
   }
   $( "#file-binary" ).change(function() {
-      if($( "#file-binary" )[0].value==''){
+      if($( "#file-binary" )[0].value === ""){
           $( "#file-submit" ).prop('disabled', true);
       } else {
           $( "#file-submit" ).prop('disabled', false);
