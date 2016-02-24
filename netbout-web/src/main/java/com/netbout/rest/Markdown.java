@@ -59,7 +59,7 @@ public interface Markdown {
          * Ctor.
          */
         public Default() {
-            this.processor = new MarkdownTxtmark();
+            this.processor = new MarkdownPegdown();
         }
 
         @Override
