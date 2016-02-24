@@ -177,7 +177,13 @@ function scrollOrLoad(amountRecords) {
     }
   }
 }
-
+function checkUpload() {
+    if ($("#file-binary")[0].value === "") {
+        $("#file-submit").prop('disabled', true);
+    } else {
+        $("#file-submit").prop('disabled', false);
+    }
+}
 $(document).ready(
   function () {
     "use strict";
@@ -251,19 +257,8 @@ $(document).ready(
           return false;
         }
     );
-  if ($( "#file-binary" )[0].value === "") {
-      $( "#file-submit" ).prop('disabled', true);
-  } else {
-      $( "#file-submit" ).prop('disabled', false);
-  }
-  $( "#file-binary" ).change(function() {
-      if($( "#file-binary" )[0].value === ""){
-          $( "#file-submit" ).prop('disabled', true);
-      } else {
-          $( "#file-submit" ).prop('disabled', false);
-      }
-  });
-
+  $("#file-binary").change(checkUpload);
+  checkUpload();
   }
 );
 
