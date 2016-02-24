@@ -55,7 +55,7 @@
     </parent>
     <groupId>com.netbout</groupId>
     <artifactId>netbout</artifactId>
-    <version>3.0-SNAPSHOT</version>
+    <version>0.22.5</version>
     <packaging>pom</packaging>
     <modules>
         <module>netbout-spi</module>
