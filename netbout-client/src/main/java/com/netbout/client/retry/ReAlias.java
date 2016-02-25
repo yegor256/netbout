@@ -70,7 +70,7 @@ public final class ReAlias implements Alias {
     @RetryOnFailure(
         verbose = false, attempts = Tv.TWENTY,
         delay = Tv.FIVE, unit = TimeUnit.SECONDS
-        )
+    )
     public String name() throws IOException {
         return this.origin.name();
     }
@@ -79,7 +79,7 @@ public final class ReAlias implements Alias {
     @RetryOnFailure(
         verbose = false, attempts = Tv.TWENTY,
         delay = Tv.FIVE, unit = TimeUnit.SECONDS
-        )
+    )
     public URI photo() throws IOException {
         return this.origin.photo();
     }
@@ -88,7 +88,7 @@ public final class ReAlias implements Alias {
     @RetryOnFailure(
         verbose = false, attempts = Tv.TWENTY,
         delay = Tv.FIVE, unit = TimeUnit.SECONDS
-        )
+    )
     public Locale locale() throws IOException {
         return this.origin.locale();
     }
@@ -97,7 +97,7 @@ public final class ReAlias implements Alias {
     @RetryOnFailure(
         verbose = false, attempts = Tv.TWENTY,
         delay = Tv.FIVE, unit = TimeUnit.SECONDS
-        )
+    )
     public void photo(final URI uri) throws IOException {
         this.origin.photo(uri);
     }
@@ -106,7 +106,7 @@ public final class ReAlias implements Alias {
     @RetryOnFailure(
         verbose = false, attempts = Tv.TWENTY,
         delay = Tv.FIVE, unit = TimeUnit.SECONDS
-        )
+    )
     public String email() throws IOException {
         return this.origin.email();
     }
@@ -115,7 +115,7 @@ public final class ReAlias implements Alias {
     @RetryOnFailure(
         verbose = false, attempts = Tv.TWENTY,
         delay = Tv.FIVE, unit = TimeUnit.SECONDS
-        )
+    )
     public void email(final String email) throws IOException {
         this.origin.email(email);
     }
@@ -124,7 +124,7 @@ public final class ReAlias implements Alias {
     @RetryOnFailure(
         verbose = false, attempts = Tv.TWENTY,
         delay = Tv.FIVE, unit = TimeUnit.SECONDS
-        )
+    )
     public void email(final String email, final String urn, final Bout bout)
         throws IOException {
         this.origin.email(email, urn, bout);
@@ -134,7 +134,7 @@ public final class ReAlias implements Alias {
     @RetryOnFailure(
         verbose = false, attempts = Tv.TWENTY,
         delay = Tv.FIVE, unit = TimeUnit.SECONDS
-        )
+    )
     public void email(final String email, final String link)
         throws IOException {
         this.origin.email(email, link);
@@ -144,7 +144,7 @@ public final class ReAlias implements Alias {
     @RetryOnFailure(
         verbose = false, attempts = Tv.TWENTY,
         delay = Tv.FIVE, unit = TimeUnit.SECONDS
-        )
+    )
     public Inbox inbox() throws IOException {
         return new ReInbox(this.origin.inbox());
     }

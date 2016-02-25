@@ -69,7 +69,7 @@ public final class ReAliases implements Aliases {
     @RetryOnFailure(
         verbose = false, attempts = Tv.TWENTY,
         delay = Tv.FIVE, unit = TimeUnit.SECONDS
-        )
+    )
     public String check(final String name) throws IOException {
         return this.origin.check(name);
     }
@@ -78,7 +78,7 @@ public final class ReAliases implements Aliases {
     @RetryOnFailure(
         verbose = false, attempts = Tv.TWENTY,
         delay = Tv.FIVE, unit = TimeUnit.SECONDS
-        )
+    )
     public Alias add(final String name) throws IOException {
         return this.origin.add(name);
     }
@@ -87,7 +87,7 @@ public final class ReAliases implements Aliases {
     @RetryOnFailure(
         verbose = false, attempts = Tv.TWENTY,
         delay = Tv.FIVE, unit = TimeUnit.SECONDS
-        )
+    )
     public Iterable<Alias> iterate() throws IOException {
         return Iterables.transform(
             this.origin.iterate(),

@@ -69,7 +69,7 @@ public final class ReAttachment implements Attachment {
     @RetryOnFailure(
         verbose = false, attempts = Tv.TWENTY,
         delay = Tv.FIVE, unit = TimeUnit.SECONDS
-        )
+    )
     public String name() throws IOException {
         return this.origin.name();
     }
@@ -78,7 +78,7 @@ public final class ReAttachment implements Attachment {
     @RetryOnFailure(
         verbose = false, attempts = Tv.TWENTY,
         delay = Tv.FIVE, unit = TimeUnit.SECONDS
-        )
+    )
     public String ctype() throws IOException {
         return this.origin.ctype();
     }
@@ -87,7 +87,7 @@ public final class ReAttachment implements Attachment {
     @RetryOnFailure(
         verbose = false, attempts = Tv.TWENTY,
         delay = Tv.FIVE, unit = TimeUnit.SECONDS
-        )
+    )
     public String etag() throws IOException {
         return this.origin.etag();
     }
@@ -96,7 +96,7 @@ public final class ReAttachment implements Attachment {
     @RetryOnFailure(
         verbose = false, attempts = Tv.TWENTY,
         delay = Tv.FIVE, unit = TimeUnit.SECONDS
-        )
+    )
     public boolean unseen() throws IOException {
         return this.origin.unseen();
     }
@@ -105,7 +105,7 @@ public final class ReAttachment implements Attachment {
     @RetryOnFailure(
         verbose = false, attempts = Tv.TWENTY,
         delay = Tv.FIVE, unit = TimeUnit.SECONDS
-        )
+    )
     public InputStream read() throws IOException {
         return this.origin.read();
     }
@@ -126,7 +126,7 @@ public final class ReAttachment implements Attachment {
     @RetryOnFailure(
         verbose = false, attempts = Tv.TWENTY,
         delay = Tv.FIVE, unit = TimeUnit.SECONDS
-        )
+    )
     private void write(final byte[] bytes, final String ctype,
         final String etag) throws IOException {
         this.origin.write(new ByteArrayInputStream(bytes), ctype, etag);

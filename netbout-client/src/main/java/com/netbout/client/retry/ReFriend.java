@@ -67,7 +67,7 @@ public final class ReFriend implements Friend {
     @RetryOnFailure(
         verbose = false, attempts = Tv.TWENTY,
         delay = Tv.FIVE, unit = TimeUnit.SECONDS
-        )
+    )
     public String alias() throws IOException {
         return this.origin.alias();
     }
@@ -76,7 +76,7 @@ public final class ReFriend implements Friend {
     @RetryOnFailure(
         verbose = false, attempts = Tv.TWENTY,
         delay = Tv.FIVE, unit = TimeUnit.SECONDS
-        )
+    )
     public URI photo() throws IOException {
         return this.origin.photo();
     }
@@ -85,7 +85,7 @@ public final class ReFriend implements Friend {
     @RetryOnFailure(
         verbose = false, attempts = Tv.TWENTY,
         delay = Tv.FIVE, unit = TimeUnit.SECONDS
-        )
+    )
     public String email() throws IOException {
         return this.origin.email();
     }
