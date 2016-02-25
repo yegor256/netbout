@@ -52,12 +52,8 @@ public final class TkPreviewTest {
     /**
      * TkPreview can preview message before post.
      * @throws Exception If there is some problem inside
-     * @todo #1045:30min/DEV Don't forget to enable this test after shifting
-     *  back to MardownTxtMark. I have ignored the test as the TxtMark
-     *  and the PegDown produce different HTML.
      */
     @Test
-    @Ignore
     public void previewMessageBeforePost() throws Exception {
         final String alias = "test";
         final String urn = "urn:test:1";

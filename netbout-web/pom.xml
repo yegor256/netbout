@@ -279,16 +279,6 @@
             <version>0.13</version>
             <scope>compile</scope>
         </dependency>
-        <dependency>
-            <groupId>org.pegdown</groupId>
-            <artifactId>pegdown</artifactId>
-            <version>1.5.0</version>
-        </dependency>
-        <dependency>
-            <groupId>net.sf.jtidy</groupId>
-            <artifactId>jtidy</artifactId>
-            <version>r938</version>
-        </dependency>
     </dependencies>
     <build>
         <pluginManagement>
