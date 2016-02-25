@@ -177,13 +177,15 @@ function scrollOrLoad(amountRecords) {
     }
   }
 }
-function checkUpload() {
+
+function checkIfUploadShouldBeDisabled() {
     if ($("#file-binary")[0].value === "") {
         $("#file-submit").prop('disabled', true);
     } else {
         $("#file-submit").prop('disabled', false);
     }
 }
+
 $(document).ready(
   function () {
     "use strict";
@@ -257,8 +259,8 @@ $(document).ready(
           return false;
         }
     );
-  $("#file-binary").change(checkUpload);
-  checkUpload();
+    $("#file-binary").change(checkIfUploadShouldBeDisabled);
+    checkIfUploadShouldBeDisabled();
   }
 );
 
