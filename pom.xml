@@ -111,9 +111,6 @@
             <url>http://maven.netbout.com/</url>
         </site>
     </distributionManagement>
-    <properties>
-        <timestamp>${maven.build.timestamp}</timestamp>
-    </properties>
     <dependencyManagement>
         <dependencies>
             <dependency>
@@ -153,6 +150,7 @@
                     <artifactId>maven-surefire-plugin</artifactId>
                     <configuration>
                         <argLine>-Djava.awt.headless=true</argLine>
+                        <argLine>-Dfile.encoding=UTF-8</argLine>
                     </configuration>
                 </plugin>
                 <plugin>
@@ -200,6 +198,7 @@
                                 </goals>
                                 <configuration>
                                     <repoToken>${coveralls.token}</repoToken>
+                                    <failOnServiceError>false</failOnServiceError>
                                 </configuration>
                             </execution>
                         </executions>

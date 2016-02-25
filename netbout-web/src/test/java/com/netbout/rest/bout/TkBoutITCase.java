@@ -28,6 +28,7 @@ package com.netbout.rest.bout;
 
 import com.jcabi.http.request.JdkRequest;
 import com.jcabi.http.response.RestResponse;
+import com.jcabi.http.response.XmlResponse;
 import com.netbout.client.RtUser;
 import com.netbout.spi.Alias;
 import com.netbout.spi.Attachment;
@@ -38,6 +39,7 @@ import java.net.HttpURLConnection;
 import java.net.URI;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.CharEncoding;
+import org.apache.commons.lang3.StringUtils;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;
@@ -98,4 +100,38 @@ public final class TkBoutITCase {
             .assertStatus(HttpURLConnection.HTTP_MOVED_PERM);
     }
 
+    /**
+     * TkBout can kick missing user and display severe level flash message.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void kicksNotFoundUser() throws Exception {
+        final User user = new RtUser(URI.create(TkBoutITCase.HOME), "");
+        final Alias alias = user.aliases().iterate().iterator().next();
+        final Bout bout = alias.inbox().bout(alias.inbox().start());
+        final String name = "invalid";
+        new JdkRequest(TkBoutITCase.HOME).uri()
+            .path(String.format("/b/%d/kick", bout.number()))
+            .queryParam("name", name)
+            .back()
+            .fetch()
+            .as(RestResponse.class)
+            .assertStatus(HttpURLConnection.HTTP_MOVED_PERM)
+            .follow()
+            .fetch()
+            .as(XmlResponse.class)
+            .assertXPath(
+                StringUtils.join(
+                    "/xhtml:html/xhtml:body/",
+                    "xhtml:div[@class='content']/",
+                    "xhtml:div[contains(@class, 'flash')",
+                    " and contains(@class, 'SEVERE')",
+                    String.format(
+                        " and text()[contains(., \"alias '%s'",
+                        name
+                    ),
+                    " is not in the bout\")]]"
+                )
+            );
+    }
 }

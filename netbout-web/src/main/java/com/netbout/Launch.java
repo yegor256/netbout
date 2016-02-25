@@ -29,6 +29,7 @@ package com.netbout;
 import com.jcabi.email.Postman;
 import com.jcabi.email.postman.PostNoLoops;
 import com.jcabi.email.wire.SMTP;
+import com.jcabi.log.Logger;
 import com.jcabi.manifests.Manifests;
 import com.netbout.cached.CdBase;
 import com.netbout.dynamo.DyBase;
@@ -60,6 +61,7 @@ public final class Launch {
      * @throws Exception If fails
      */
     public static void main(final String... args) throws Exception {
+        Logger.info(Launch.class, "starting...");
         new FtCLI(
             new TkApp(
                 new EmBase(

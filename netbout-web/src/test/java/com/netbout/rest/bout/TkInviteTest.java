@@ -61,6 +61,11 @@ public final class TkInviteTest {
     private static final String INVITE_PATH = "/b/%d/invite";
 
     /**
+     * Netbout parameter  for invitations.
+     */
+    private static final String INVITE_PARAM = "name=%s";
+
+    /**
      * TkInvite can invite user by email.
      * @throws Exception If there is some problem inside
      */
@@ -115,7 +120,7 @@ public final class TkInviteTest {
             "5678901234567890123456789012345678901234567",
             "890123456789012345678901234567890"
         );
-        user.aliases().add(name);
+        user.aliases().add("jack");
         final Alias alias = user.aliases().iterate().iterator().next();
         final Bout bout = alias.inbox().bout(alias.inbox().start());
         try {
@@ -129,7 +134,7 @@ public final class TkInviteTest {
                                 TkInviteTest.INVITE_PATH,
                                 bout.number()
                             ),
-                            String.format("name=%s", name)
+                            String.format(TkInviteTest.INVITE_PARAM, name)
                         )
                     ),
                     TkInviteTest.NETBOUT_HEADER,
@@ -139,7 +144,49 @@ public final class TkInviteTest {
         } catch (final RsFailure ex) {
             MatcherAssert.assertThat(
                 ex.getLocalizedMessage(),
-                Matchers.containsString("incorrect alias")
+                Matchers.containsString("alias is too long")
+            );
+            throw ex;
+        }
+    }
+
+    /**
+     * TkInvite can invite a valid alias.
+     * @throws Exception If there is some problem inside
+     */
+    @Test (expected = RsForward.class)
+    public void invitesValidAlias() throws Exception {
+        final MkBase base = new MkBase();
+        final String urn = "urn:test:3";
+        final User user = base.user(new URN(urn));
+        final String name = "john";
+        user.aliases().add(name);
+        final Alias alias = user.aliases().iterate().iterator().next();
+        try {
+            final Bout bout = alias.inbox().bout(alias.inbox().start());
+            new TkInvite(base).act(
+                new RqWithHeader(
+                    new RqWithAuth(
+                        urn,
+                        new RqFake(
+                            RqMethod.POST,
+                            String.format(
+                                TkInviteTest.INVITE_PATH,
+                                bout.number()
+                            ),
+                            String.format(TkInviteTest.INVITE_PARAM, name)
+                        )
+                    ),
+                    TkInviteTest.NETBOUT_HEADER,
+                    Long.toString(bout.number())
+                )
+            );
+        } catch (final RsForward ex) {
+            MatcherAssert.assertThat(
+                ex.getLocalizedMessage(),
+                Matchers.containsString(
+                    String.format("\"%s\" invited to the bout", name)
+                )
             );
             throw ex;
         }
