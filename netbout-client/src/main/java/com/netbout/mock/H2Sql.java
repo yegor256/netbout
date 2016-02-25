@@ -60,7 +60,7 @@ final class H2Sql implements Sql {
      * @throws IOException If fails
      */
     H2Sql() throws IOException {
-        this.file = initialize();
+        this.file = filename();
     }
 
     @Override
@@ -69,11 +69,11 @@ final class H2Sql implements Sql {
     }
 
     /**
-     * Initialize a JdbcDataSource working files and database tables.
-     * @return The name of the JdbcDataSource file name
+     * Return the JdbcDataSource working file name.
+     * @return The JdbcDataSource file name
      * @throws IOException If fails
      */
-    private static String initialize() throws IOException {
+    private static String filename() throws IOException {
         final File tmp = File.createTempFile("netbout-", ".h2");
         tmp.deleteOnExit();
         final String result = tmp.getAbsolutePath();

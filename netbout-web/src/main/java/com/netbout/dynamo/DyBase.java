@@ -48,25 +48,25 @@ import lombok.ToString;
  */
 @Immutable
 @Loggable(Loggable.DEBUG)
-@ToString(of = "region")
-@EqualsAndHashCode(of = "region")
+@ToString(of = "reg")
+@EqualsAndHashCode(of = "reg")
 public final class DyBase implements Base {
 
     /**
      * Region we're in.
      */
-    private final transient Region region;
+    private final transient Region reg;
 
     /**
      * Public ctor.
      */
     public DyBase() {
-        this.region = DyBase.initialize();
+        this.reg = DyBase.region();
     }
 
     @Override
     public User user(final URN urn) {
-        return new DyUser(this.region, urn);
+        return new DyUser(this.reg, urn);
     }
 
     @Override
@@ -75,10 +75,10 @@ public final class DyBase implements Base {
     }
 
     /**
-     * Initialize a region instance.
+     * Return an initialized region instance.
      * @return The initialized region instance
      */
-    private static Region initialize() {
+    private static Region region() {
         final String key = Manifests.read("Netbout-DynamoKey");
         Credentials creds = new Credentials.Simple(
             key,

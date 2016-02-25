@@ -39,6 +39,9 @@ import java.util.concurrent.ConcurrentSkipListSet;
  * @author Yegor Bugayenko (yegor@teamed.io)
  * @version $Id$
  * @since 2.14.17
+ * @todo #1012:30min This class should not be left as utility one. All methods
+ *  became static because of checkstyle NonStaticMethodCheck introduced after
+ *  qulice upgrade to 0.15.2 and the contructor became private.
  * @checkstyle ClassDataAbstractionCouplingCheck (500 lines)
  */
 public final class Ports {

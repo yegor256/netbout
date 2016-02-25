@@ -69,8 +69,8 @@ public final class XeMessageTest {
                     }
                 }
             ).toXembly()
-        // @checkstyle IndentationCheck (1 line)
-        ).xml();
+        )
+            .xml();
         MatcherAssert.assertThat(
             xml,
             Matchers.containsString("<author>author  contains \\u0000</author>")
