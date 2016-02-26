@@ -196,7 +196,9 @@ $(document).ready(
           var $input = $rename.find("input[name='title']"),
             previous = $input.val(),
             entered = $(this).text();
-          if (entered !== previous) {
+          if ($.trim(entered) === '') {
+            $(this).text(previous);
+          } else if (entered !== previous) {
             $input.val(entered);
             $rename.submit();
           }
