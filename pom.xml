@@ -205,7 +205,6 @@
                                 </goals>
                                 <configuration>
                                     <repoToken>${coveralls.token}</repoToken>
-                                    <failOnServiceError>false</failOnServiceError>
                                 </configuration>
                             </execution>
                         </executions>
