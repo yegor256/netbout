@@ -88,16 +88,11 @@ final class TkInvite implements Take {
         } else {
             guest = invite;
         }
-        final String check = new RqAlias(this.base, req)
-            .user().aliases().check(guest);
-        if (!check.isEmpty()) {
-            throw new RsFailure(
-                String.format("incorrect alias \"%s\", try again", guest)
-            );
-        }
         try {
             bout.friends().invite(guest);
-        } catch (final Friends.UnknownAliasException ex) {
+        } catch (
+            final Friends.UnknownAliasException | IllegalArgumentException ex
+        ) {
             throw new RsFailure(ex);
         }
         throw new RsForward(

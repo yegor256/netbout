@@ -33,6 +33,7 @@ import com.jcabi.manifests.Manifests;
 import java.net.HttpURLConnection;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
+import org.apache.commons.lang3.StringUtils;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;
@@ -80,7 +81,7 @@ public final class TkAppITCase {
     }
 
     /**
-     * TkApp can render non-found pages.
+     * TkApp can render missing pages and add flash message with level severe.
      * @throws Exception If there is some problem inside
      */
     @Test
@@ -94,7 +95,19 @@ public final class TkAppITCase {
                 .uri().path(page).back()
                 .fetch()
                 .as(RestResponse.class)
-                .assertStatus(HttpURLConnection.HTTP_MOVED_PERM);
+                .assertStatus(HttpURLConnection.HTTP_MOVED_PERM)
+                .follow()
+                .fetch()
+                .as(XmlResponse.class)
+                .assertXPath(
+                    StringUtils.join(
+                        "/xhtml:html/xhtml:body/",
+                        "xhtml:div[@class='content']/",
+                        "xhtml:div[contains(@class, 'flash')",
+                        " and contains(@class, 'SEVERE')",
+                        " and text()[contains(., 'page not found')]]"
+                    )
+                );
         }
     }
 

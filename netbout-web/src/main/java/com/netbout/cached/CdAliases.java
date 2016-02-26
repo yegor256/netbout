@@ -74,7 +74,7 @@ final class CdAliases implements Aliases {
     @Override
     @Cacheable.FlushBefore
     public Alias add(final String name) throws IOException {
-        return this.origin.add(name);
+        return new CdAlias(this.origin.add(name));
     }
 
     @Override

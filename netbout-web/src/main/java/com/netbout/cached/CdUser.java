@@ -26,6 +26,9 @@
  */
 package com.netbout.cached;
 
+import com.google.common.base.Function;
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Lists;
 import com.jcabi.aspects.Immutable;
 import com.jcabi.aspects.Loggable;
 import com.netbout.spi.Aliases;
@@ -68,6 +71,16 @@ final class CdUser implements User {
 
     @Override
     public Iterable<Friend> friends(final String text) throws IOException {
-        return this.origin.friends(text);
+        return Lists.newArrayList(
+            Iterables.transform(
+                this.origin.friends(text),
+                new Function<Friend, Friend>() {
+                    @Override
+                    public Friend apply(final Friend input) {
+                        return new CdFriend(input);
+                    }
+                }
+            )
+        );
     }
 }

@@ -178,6 +178,14 @@ function scrollOrLoad(amountRecords) {
   }
 }
 
+function checkIfUploadShouldBeDisabled() {
+    if ($("#file-binary")[0].value === "") {
+        $("#file-submit").prop('disabled', true);
+    } else {
+        $("#file-submit").prop('disabled', false);
+    }
+}
+
 $(document).ready(
   function () {
     "use strict";
@@ -188,7 +196,9 @@ $(document).ready(
           var $input = $rename.find("input[name='title']"),
             previous = $input.val(),
             entered = $(this).text();
-          if (entered !== previous) {
+          if ($.trim(entered) === '') {
+            $(this).text(previous);
+          } else if (entered !== previous) {
             $input.val(entered);
             $rename.submit();
           }
@@ -251,6 +261,8 @@ $(document).ready(
           return false;
         }
     );
+    $("#file-binary").change(checkIfUploadShouldBeDisabled);
+    checkIfUploadShouldBeDisabled();
   }
 );
 

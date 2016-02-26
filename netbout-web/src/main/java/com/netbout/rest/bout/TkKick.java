@@ -29,6 +29,7 @@ package com.netbout.rest.bout;
 import com.netbout.spi.Attachments;
 import com.netbout.spi.Base;
 import com.netbout.spi.Bout;
+import com.netbout.spi.Friends;
 import java.io.IOException;
 import org.takes.Request;
 import org.takes.Response;
@@ -68,7 +69,10 @@ final class TkKick implements Take {
         final Bout bout = new RqBout(this.base, req).bout();
         try {
             bout.friends().kick(name);
-        } catch (final Attachments.InvalidNameException ex) {
+        } catch (
+            final Attachments.InvalidNameException
+            | Friends.UnknownAliasException ex
+        ) {
             throw new RsFailure(ex);
         }
         throw new RsForward(
