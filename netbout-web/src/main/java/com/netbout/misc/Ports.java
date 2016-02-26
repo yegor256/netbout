@@ -56,7 +56,6 @@ public final class Ports {
      * Hide the default no args constructor from the utility class.
      */
     private Ports() {
-        super();
     }
 
     /**

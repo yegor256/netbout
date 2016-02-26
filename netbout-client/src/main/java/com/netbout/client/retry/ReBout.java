@@ -143,7 +143,7 @@ public final class ReBout implements Bout {
     @RetryOnFailure(
         verbose = false, attempts = Tv.TWENTY,
         delay = Tv.FIVE, unit = TimeUnit.SECONDS
-        )
+    )
     public Messages messages() throws IOException {
         return new ReMessages(this.origin.messages());
     }
