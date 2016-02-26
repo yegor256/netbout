@@ -1,6 +1,6 @@
 Netbout-Version: ${project.version}
 Netbout-Date: ${timestamp}
-Netbout-Revision: BUILD
+Netbout-Revision: fcc2bea
 Netbout-FbId: ${fb.id}
 Netbout-FbSecret: ${fb.secret}
 Netbout-GoogleId: ${google.id}
