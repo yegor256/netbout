@@ -141,6 +141,22 @@ public final class MarkdownTxtmarkTest {
     }
 
     /**
+     * MarkdownTxtmark will handle XSS violation.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void handlesScriptViolation() throws Exception {
+        MatcherAssert.assertThat(
+            new MarkdownTxtmark().html(
+                "<script>alert()</script>"
+            ),
+            Matchers.equalTo(
+                "<p>&lt;script>alert()&lt;/script></p>\n"
+            )
+        );
+    }
+
+    /**
      * MarkdownTxtmark can format small snippets.
      * @throws Exception If there is some problem inside
      */
