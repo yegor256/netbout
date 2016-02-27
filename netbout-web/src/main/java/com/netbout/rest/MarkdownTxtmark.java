@@ -26,6 +26,7 @@
  */
 package com.netbout.rest;
 
+import com.github.rjeschke.txtmark.Configuration;
 import com.github.rjeschke.txtmark.Processor;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -60,8 +61,11 @@ public final class MarkdownTxtmark implements Markdown {
 
     @Override
     public String html(@NotNull final String txt) {
+        final Configuration conf = Configuration.builder()
+            .enableSafeMode().build();
         return Processor.process(
-            MarkdownTxtmark.formatLinks(MarkdownTxtmark.makeLineBreak(txt))
+            MarkdownTxtmark.formatLinks(MarkdownTxtmark.makeLineBreak(txt)),
+            conf
         );
     }
 
