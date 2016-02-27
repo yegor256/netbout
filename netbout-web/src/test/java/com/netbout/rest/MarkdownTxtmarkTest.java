@@ -39,6 +39,7 @@ import org.junit.Test;
  * @version $Id$
  * @since 2.23
  */
+@SuppressWarnings("PMD.TooManyMethods")
 public final class MarkdownTxtmarkTest {
     /**
      * End of line.
