@@ -39,6 +39,7 @@ import org.junit.Test;
  * @version $Id$
  * @since 2.23
  */
+@SuppressWarnings("PMD.TooManyMethods")
 public final class MarkdownTxtmarkTest {
     /**
      * End of line.
@@ -136,6 +137,22 @@ public final class MarkdownTxtmarkTest {
             Matchers.equalTo(
                 // @checkstyle LineLengthCheck (1 line)
                 "<p>Reference-style:<br  />\n<img src=\"https://camo.githubusercontent.com/f60dcff129bbc252ab48a4bace2aa92cc982774a/687474703a2f2f696d672e7465616d65642e696f2f62746e2e737667\" alt=\"alt text\" /><br  /></p>\n"
+            )
+        );
+    }
+
+    /**
+     * MarkdownTxtmark will handle XSS violation.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void handlesScriptViolation() throws Exception {
+        MatcherAssert.assertThat(
+            new MarkdownTxtmark().html(
+                "<script>alert()</script>"
+            ),
+            Matchers.equalTo(
+                "<p>&lt;script>alert()&lt;/script></p>\n"
             )
         );
     }
