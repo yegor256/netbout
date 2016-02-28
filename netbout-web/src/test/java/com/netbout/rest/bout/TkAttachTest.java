@@ -183,6 +183,54 @@ public final class TkAttachTest {
     }
 
     /**
+     * Take attachement name from name field if value is set.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void takeAttachementNameFromField() throws Exception {
+        final MkBase base = new MkBase();
+        final String urn = "urn:test:4";
+        final User user = base.user(new URN(urn));
+        user.aliases().add("jeff4");
+        final Alias alias = user.aliases().iterate().iterator().next();
+        final long number = alias.inbox().start();
+        final Bout bout = alias.inbox().bout(number);
+        bout.friends().invite(alias.name());
+        final String name = "test.jpg";
+        final String filename = "tt.jpg";
+        final RqWithAuth request = new RqWithAuth(
+            urn,
+            new RqMultipart.Fake(
+                TkAttachTest.fake(number),
+                new RqWithHeaders(
+                    TkAttachTest.body(""),
+                    String.format(TkAttachTest.POST_URL, number),
+                    //@checkstyle LineLengthCheck (1 line)
+                    String.format("Content-Disposition: form-data; filename=\"%s\"; name=\"file\"", filename),
+                    "Content-Type: application/json"
+                ),
+                new RqWithHeaders(
+                    TkAttachTest.body(name),
+                    String.format(TkAttachTest.POST_URL, number),
+                    "Content-Disposition: form-data; name=\"name\""
+                )
+            )
+        );
+        try {
+            new FkBout(".++", new TkAttach(base)).route(request);
+        } catch (final RsForward response) {
+            MatcherAssert.assertThat(
+                response,
+                new HmRsStatus(HttpURLConnection.HTTP_SEE_OTHER)
+            );
+        }
+        MatcherAssert.assertThat(
+            bout.messages().iterate().iterator().next().text(),
+            Matchers.containsString(String.format("attachment \"%s\"", name))
+        );
+    }
+
+    /**
      * Creates fake request for the provided bout number.
      * @param number Bout number
      * @return Fake request

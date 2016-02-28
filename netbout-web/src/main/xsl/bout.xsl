@@ -221,7 +221,7 @@
                     enctype="multipart/form-data">
                     <fieldset>
                         <input id="file-name" name="name" autocomplete="off" placeholder="attachment name..." size="30" maxlength="50"/>
-                        <input id="file-binary" name="file" type="file"/>
+                        <input id="file-binary" name="file" type="file" onchange="$('#file-name').val(cleanFilename($(this).val()))" />
                         <label for="file-submit"/>
                         <input id="file-submit" type="submit" value="Upload"/>
                     </fieldset>

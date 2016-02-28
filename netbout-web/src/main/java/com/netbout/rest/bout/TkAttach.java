@@ -35,17 +35,19 @@ import eu.medsea.mimeutil.MimeUtil;
 import eu.medsea.mimeutil.detector.MagicMimeMimeDetector;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 import java.util.Collection;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.apache.commons.codec.CharEncoding;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.takes.Request;
 import org.takes.Response;
 import org.takes.Take;
@@ -63,6 +65,7 @@ import org.takes.rq.RqMultipart;
  * @since 2.14
  * @checkstyle ClassDataAbstractionCouplingCheck (500 lines)
  */
+@SuppressWarnings("PMD.ExcessiveImports")
 final class TkAttach implements Take {
 
     /**
@@ -93,17 +96,15 @@ final class TkAttach implements Take {
 
     @Override
     public Response act(final Request req) throws IOException {
-        final Request file = new RqMultipart.Smart(
+        final RqMultipart.Smart form = new RqMultipart.Smart(
             new RqMultipart.Base(req)
-        ).single("file");
+        );
+        final Request file = form.single("file");
+        final String name = this.filename(form, file);
         final Bout bout = new RqBout(this.base, req).bout();
-        final String name = this.name(file);
         final File temp = File.createTempFile("netbout", "bin");
         try {
-            try (OutputStream os = new FileOutputStream(temp)) {
-                IOUtils.copy(file.body(), os);
-            }
-            this.validate(temp, name);
+            this.copyAndValidate(file, temp, name);
             final StringBuilder msg = new StringBuilder(Tv.HUNDRED);
             if (new Attachments.Search(bout.attachments()).exists(name)) {
                 msg.append(
@@ -137,12 +138,43 @@ final class TkAttach implements Take {
     }
 
     /**
-     * Extracts file name.
+     * Reads the filename either from the name field or from the uploaded file.
+     * @todo #865:30min write a test for this method. It should make sure that
+     *  if there is a name part in the form and it is not empty then it is
+     *  taken and if not, the name of the uploaded file is used.
+     * @param form From
      * @param file File
-     * @return File name
+     * @return String name
      * @throws IOException If fails
      */
-    private String name(final Request file) throws IOException {
+    private String filename(final RqMultipart.Smart form, final Request file)
+        throws IOException {
+        final String name;
+        final Iterable<Request> requests = form.part("name");
+        if (requests.iterator().hasNext()) {
+            name = IOUtils.toString(
+                requests.iterator().next().body(),
+                StandardCharsets.UTF_8
+            );
+        } else {
+            name = "";
+        }
+        final String filename;
+        if (StringUtils.isBlank(name)) {
+            filename = this.nameFromFile(file);
+        } else {
+            filename = name;
+        }
+        return filename;
+    }
+
+    /**
+     * Extracts name from file part.
+     * @param file File
+     * @return String name
+     * @throws IOException If fails
+     */
+    private String nameFromFile(final Request file) throws IOException {
         final Matcher matcher = TkAttach.FILE_NAME_PATTERN.matcher(
             new RqHeaders.Smart(
                 new RqHeaders.Base(file)
@@ -153,6 +185,23 @@ final class TkAttach implements Take {
         }
         // @checkstyle MagicNumberCheck (1 line)
         return URLDecoder.decode(matcher.group(5), CharEncoding.UTF_8);
+    }
+
+    /**
+     * Copy the multipart data to a file and validate it.
+     * @param src Multipart request
+     * @param dst File
+     * @param name Filename
+     * @throws IOException If copy or validate fails
+     */
+    private void copyAndValidate(final Request src, final File dst,
+        final String name) throws IOException {
+        Files.copy(
+            src.body(),
+            dst.toPath(),
+            StandardCopyOption.REPLACE_EXISTING
+        );
+        this.validate(dst, name);
     }
 
     /**

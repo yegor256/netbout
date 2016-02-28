@@ -27,6 +27,18 @@
 
 /*globals $:false, document:false, window:false */
 
+function cleanFilename(name) {
+  /* jslint forbidds [^a-z], but it's needed here */
+  /*jslint regexp: false*/
+  var cleaned = name.split(/[\/\\]/).pop()
+    .replace(/[^a-zA-Z\.\-0-9]+/g, "-")
+    .replace(/[\-]+/g, "-")
+    .replace(/^-/, "")
+    .replace(/-$/, "");
+  /*jslint regexp: true*/
+  return cleaned;
+}
+
 function escapeHTML(txt) {
   "use strict";
   return txt.replace(/&/g, '&amp;')
