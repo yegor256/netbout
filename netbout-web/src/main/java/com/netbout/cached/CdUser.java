@@ -29,12 +29,15 @@ package com.netbout.cached;
 import com.google.common.base.Function;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
+import com.jcabi.aspects.Cacheable;
 import com.jcabi.aspects.Immutable;
 import com.jcabi.aspects.Loggable;
+import com.jcabi.aspects.Tv;
 import com.netbout.spi.Aliases;
 import com.netbout.spi.Friend;
 import com.netbout.spi.User;
 import java.io.IOException;
+import java.util.concurrent.TimeUnit;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
@@ -70,6 +73,7 @@ final class CdUser implements User {
     }
 
     @Override
+    @Cacheable(lifetime = Tv.FIVE, unit = TimeUnit.HOURS)
     public Iterable<Friend> friends(final String text) throws IOException {
         return Lists.newArrayList(
             Iterables.transform(

@@ -114,16 +114,19 @@ final class CdBout implements Bout {
     }
 
     @Override
+    @Cacheable(lifetime = Tv.FIVE, unit = TimeUnit.HOURS)
     public Messages messages() throws IOException {
         return new CdMessages(this.origin.messages());
     }
 
     @Override
+    @Cacheable(lifetime = Tv.FIVE, unit = TimeUnit.HOURS)
     public Friends friends() throws IOException {
         return new CdFriends(this.origin.friends());
     }
 
     @Override
+    @Cacheable(lifetime = Tv.FIVE, unit = TimeUnit.HOURS)
     public Attachments attachments() throws IOException {
         return new CdAttachments(this.origin.attachments());
     }
