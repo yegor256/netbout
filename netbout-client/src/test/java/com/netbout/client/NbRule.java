@@ -39,6 +39,10 @@ import org.junit.runners.model.Statement;
  * @author Yegor Bugayenko (yegor@teamed.io)
  * @version $Id$
  * @since 2.1
+ * @todo #1012:30min No public static methods are allowed. This class should
+ *  be refactored to not contain any of them. The method get() should either be
+ *  an instance method with refrence to this (to avoid checkstyle
+ *  NonStaticMethodCheck) or a static but not public.
  */
 public final class NbRule implements TestRule {
 
