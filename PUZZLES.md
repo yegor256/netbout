@@ -1,6 +1,6 @@
 ## Puzzles
 
-There are 18 active puzzles (62 total):
+There are 20 active puzzles (65 total):
 
 
 <del>unknown</del> [`?`](../master/?)<br/>
@@ -60,7 +60,10 @@ There are 18 active puzzles (62 total):
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[#982](https://github.com/yegor256/netbout/issues/982):[<del>914-ecab4401</del>](https://github.com/yegor256/netbout/issues/982) [`pom.xml:330-339`](../master/netbout-web/pom.xml#L330-L339)<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;[#1003](https://github.com/yegor256/netbout/issues/1003):[**682-2583dc75**](https://github.com/yegor256/netbout/issues/1003) [`RtBout.java:155-157`](../master/netbout-client/src/main/java/com/netbout/client/RtBout.java#L155-L157)<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;[#961](https://github.com/yegor256/netbout/issues/961):[<del>961</del>](https://github.com/yegor256/netbout/issues/961) [`?`](../master/?)<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[#1012](https://github.com/yegor256/netbout/issues/1012):[**961-58fc8a23**](https://github.com/yegor256/netbout/issues/1012) [`pom.xml:747-752`](../master/netbout-web/pom.xml#L747-L752)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[#1012](https://github.com/yegor256/netbout/issues/1012):[<del>961-58fc8a23</del>](https://github.com/yegor256/netbout/issues/1012) [`pom.xml:747-752`](../master/netbout-web/pom.xml#L747-L752)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[**1012-2dfa2c65**]() [`NbRule.java:42-45`](../master/netbout-client/src/test/java/com/netbout/client/NbRule.java#L42-L45)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[**1012-7ae4ec06**]() [`pom.xml:754-757`](../master/netbout-web/pom.xml#L754-L757)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[**1012-68768ab8**]() [`Ports.java:42-44`](../master/netbout-web/src/main/java/com/netbout/misc/Ports.java#L42-L44)<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;[#1013](https://github.com/yegor256/netbout/issues/1013):[<del>1013</del>](https://github.com/yegor256/netbout/issues/1013) [`?`](../master/?)<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[#1028](https://github.com/yegor256/netbout/issues/1028):[**1013-d9e5eb87**](https://github.com/yegor256/netbout/issues/1028) [`pom.xml:193-197`](../master/netbout-client/pom.xml#L193-L197)<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;[#1025](https://github.com/yegor256/netbout/issues/1025):[<del>1025</del>](https://github.com/yegor256/netbout/issues/1025) [`?`](../master/?)<br/>
