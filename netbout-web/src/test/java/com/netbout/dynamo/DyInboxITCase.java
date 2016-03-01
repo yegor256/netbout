@@ -142,7 +142,7 @@ public final class DyInboxITCase {
         final List<Long> bouts = new ArrayList<Long>(total);
         for (int idx = 0; idx < total; ++idx) {
             bouts.add(inbox.start());
-            TimeUnit.MILLISECONDS.sleep((long) Tv.TEN);
+            TimeUnit.MILLISECONDS.sleep(Tv.TEN);
         }
         Collections.reverse(bouts);
         final List<Long> found = new ArrayList<Long>(total);

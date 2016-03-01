@@ -66,8 +66,10 @@ public final class ReFriends implements Friends {
     }
 
     @Override
-    @RetryOnFailure(verbose = false, attempts = Tv.TWENTY, delay = Tv.FIVE,
-        unit = TimeUnit.SECONDS, ignore = Friends.UnknownAliasException.class)
+    @RetryOnFailure(
+        verbose = false, attempts = Tv.TWENTY, delay = Tv.FIVE,
+        unit = TimeUnit.SECONDS, ignore = Friends.UnknownAliasException.class
+    )
     public void invite(final String friend) throws IOException {
         this.origin.invite(friend);
     }
@@ -75,7 +77,8 @@ public final class ReFriends implements Friends {
     @Override
     @RetryOnFailure(
         verbose = false, attempts = Tv.TWENTY, delay = Tv.FIVE,
-        unit = TimeUnit.SECONDS, ignore = Friends.UnknownAliasException.class)
+        unit = TimeUnit.SECONDS, ignore = Friends.UnknownAliasException.class
+    )
     public void kick(final String friend) throws IOException {
         this.origin.kick(friend);
     }

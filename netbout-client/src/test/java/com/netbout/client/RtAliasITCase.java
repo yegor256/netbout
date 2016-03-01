@@ -56,7 +56,7 @@ public final class RtAliasITCase {
     @Test
     public void updateAndRetrieveEmail() throws Exception {
         final MkBase base = new MkBase();
-        final User user = this.rule.get();
+        final User user = NbRule.get();
         final Alias alias = user.aliases().iterate().iterator().next();
         final String email = base.randomAlias().email();
         alias.email(email);

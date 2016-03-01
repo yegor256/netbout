@@ -60,10 +60,24 @@ final class H2Sql implements Sql {
      * @throws IOException If fails
      */
     H2Sql() throws IOException {
+        this.file = filename();
+    }
+
+    @Override
+    public DataSource source() {
+        return H2Sql.source(this.file);
+    }
+
+    /**
+     * Return the JdbcDataSource working file name.
+     * @return The JdbcDataSource file name
+     * @throws IOException If fails
+     */
+    private static String filename() throws IOException {
         final File tmp = File.createTempFile("netbout-", ".h2");
         tmp.deleteOnExit();
-        this.file = tmp.getAbsolutePath();
-        new File(String.format("%s.mv.db", this.file)).deleteOnExit();
+        final String result = tmp.getAbsolutePath();
+        new File(String.format("%s.mv.db", result)).deleteOnExit();
         final String[] stmts = {
             // @checkstyle LineLength (5 lines)
             "CREATE TABLE alias (name VARCHAR, urn VARCHAR, photo VARCHAR, locale VARCHAR, email VARCHAR)",
@@ -72,7 +86,7 @@ final class H2Sql implements Sql {
             "CREATE TABLE attachment (name VARCHAR, bout BIGINT, data VARCHAR, author VARCHAR, ctype VARCHAR, etag VARCHAR)",
             "CREATE TABLE friend (alias VARCHAR, bout BIGINT, subscription INTEGER )",
         };
-        final JdbcSession session = new JdbcSession(this.source());
+        final JdbcSession session = new JdbcSession(H2Sql.source(result));
         for (final String stmt : stmts) {
             try {
                 session.sql(stmt).execute();
@@ -80,12 +94,17 @@ final class H2Sql implements Sql {
                 throw new IOException(ex);
             }
         }
+        return result;
     }
 
-    @Override
-    public DataSource source() {
+    /**
+     * Returns the JdbcDataSource created on the given file.
+     * @param file The name of the file for the JdbcDataSource
+     * @return The JdbcDataSource created
+     */
+    private static DataSource source(final String file) {
         final JdbcDataSource src = new JdbcDataSource();
-        src.setURL(String.format("jdbc:h2:%s", this.file));
+        src.setURL(String.format("jdbc:h2:%s", file));
         src.setUser("");
         src.setPassword("");
         return src;

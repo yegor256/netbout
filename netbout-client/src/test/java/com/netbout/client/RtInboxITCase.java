@@ -56,7 +56,7 @@ public final class RtInboxITCase {
      */
     @Test
     public void listsBouts() throws Exception {
-        final User user = this.rule.get();
+        final User user = NbRule.get();
         final Alias alias = user.aliases().iterate().iterator().next();
         final Inbox inbox = alias.inbox();
         MatcherAssert.assertThat(

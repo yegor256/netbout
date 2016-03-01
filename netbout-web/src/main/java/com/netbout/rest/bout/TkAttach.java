@@ -97,13 +97,13 @@ final class TkAttach implements Take {
             new RqMultipart.Base(req)
         ).single("file");
         final Bout bout = new RqBout(this.base, req).bout();
-        final String name = this.name(file);
+        final String name = name(file);
         final File temp = File.createTempFile("netbout", "bin");
         try {
             try (OutputStream os = new FileOutputStream(temp)) {
                 IOUtils.copy(file.body(), os);
             }
-            this.validate(temp, name);
+            validate(temp, name);
             final StringBuilder msg = new StringBuilder(Tv.HUNDRED);
             if (new Attachments.Search(bout.attachments()).exists(name)) {
                 msg.append(
@@ -142,7 +142,7 @@ final class TkAttach implements Take {
      * @return File name
      * @throws IOException If fails
      */
-    private String name(final Request file) throws IOException {
+    private static String name(final Request file) throws IOException {
         final Matcher matcher = TkAttach.FILE_NAME_PATTERN.matcher(
             new RqHeaders.Smart(
                 new RqHeaders.Base(file)
@@ -161,7 +161,7 @@ final class TkAttach implements Take {
      * @param name Attachment name
      * @throws IOException If attachment violates limitations
      */
-    private void validate(final File attach, final String name)
+    private static void validate(final File attach, final String name)
         throws IOException {
         if (attach.length() == 0) {
             throw new Attachment.BrokenContentException(

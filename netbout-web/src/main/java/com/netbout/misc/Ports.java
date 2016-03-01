@@ -39,6 +39,9 @@ import java.util.concurrent.ConcurrentSkipListSet;
  * @author Yegor Bugayenko (yegor@teamed.io)
  * @version $Id$
  * @since 2.14.17
+ * @todo #1012:30min This class should not be left as utility one. All methods
+ *  became static because of checkstyle NonStaticMethodCheck introduced after
+ *  qulice upgrade to 0.15.2 and the contructor became private.
  * @checkstyle ClassDataAbstractionCouplingCheck (500 lines)
  */
 public final class Ports {
@@ -50,16 +53,22 @@ public final class Ports {
         new ConcurrentSkipListSet<Integer>();
 
     /**
+     * Hide the default no args constructor from the utility class.
+     */
+    private Ports() {
+    }
+
+    /**
      * Allocate a new random TCP port.
      * @return TCP port
      * @throws IOException If fails
      */
-    public int allocate() throws IOException {
+    public static int allocate() throws IOException {
         synchronized (Ports.class) {
             int attempts = 0;
             int prt;
             do {
-                prt = this.random();
+                prt = random();
                 ++attempts;
                 // @checkstyle MagicNumber (1 line)
                 if (attempts > 100) {
@@ -79,7 +88,7 @@ public final class Ports {
      * Release it.
      * @param port Port
      */
-    public void release(final int port) {
+    public static void release(final int port) {
         Ports.ASSIGNED.remove(port);
     }
 
@@ -88,7 +97,7 @@ public final class Ports {
      * @return TCP port
      * @throws IOException If fails
      */
-    private int random() throws IOException {
+    private static int random() throws IOException {
         final ServerSocket socket = new ServerSocket(0);
         try {
             socket.setReuseAddress(true);

@@ -39,7 +39,6 @@ import org.xembly.Xembler;
  * @author Dmitry Zaytsev (dmitry.zaytsev@gmail.com)
  * @version $Id$
  * @since 2.16.1
- *
  */
 public final class XeMessageTest {
     /**
@@ -70,7 +69,8 @@ public final class XeMessageTest {
                     }
                 }
             ).toXembly()
-        ).xml();
+        )
+            .xml();
         MatcherAssert.assertThat(
             xml,
             Matchers.containsString("<author>author  contains \\u0000</author>")

@@ -68,13 +68,12 @@ public final class TkStart implements Take {
     /**
       * Last cache clearance time.
       */
-     private transient Date checked = new Date();
+    private transient Date checked;
 
     /**
      * Token cache.
      */
-    private final transient ConcurrentMap<String, Pair<Date, Inbox>> tokens
-        = new ConcurrentHashMap<String, Pair<Date, Inbox>>();
+    private final transient ConcurrentMap<String, Pair<Date, Inbox>> tokens;
 
     /**
      * Ctor.
@@ -82,6 +81,8 @@ public final class TkStart implements Take {
      */
     public TkStart(final Base bse) {
         this.base = bse;
+        this.checked = new Date();
+        this.tokens = new ConcurrentHashMap<>();
     }
 
     /**

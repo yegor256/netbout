@@ -146,6 +146,7 @@ final class CdMessages implements Messages {
         }
         /**
          * I've seen them all.
+         * @checkstyle NonStaticMethodCheck (5 lines)
          */
         @Cacheable.FlushBefore
         public void touch() {
