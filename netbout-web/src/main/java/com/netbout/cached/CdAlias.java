@@ -91,7 +91,6 @@ final class CdAlias implements Alias {
     }
 
     @Override
-    @Cacheable(lifetime = Tv.FIVE, unit = TimeUnit.HOURS)
     public String email() throws IOException {
         return this.origin.email();
     }

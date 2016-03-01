@@ -27,8 +27,10 @@
 package com.netbout.rest.account;
 
 import com.jcabi.urn.URN;
+import com.netbout.cached.CdBase;
 import com.netbout.mock.MkBase;
 import com.netbout.spi.Alias;
+import com.netbout.spi.Base;
 import com.netbout.spi.User;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
@@ -58,7 +60,7 @@ public final class TkSaveEmailTest {
      */
     @Test
     public void savesEmail() throws Exception {
-        final MkBase base = new MkBase();
+        final Base base = new CdBase(new MkBase());
         final String urn = "urn:test:1";
         final User user = base.user(new URN(urn));
         user.aliases().add("alias");
