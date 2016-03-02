@@ -548,14 +548,11 @@
                                 </goals>
                                 <configuration>
                                     <executable>git</executable>
-                                    <workingDirectory>${project.build.directory}
-                                    </workingDirectory>
+                                    <workingDirectory>${project.build.directory}</workingDirectory>
                                     <arguments>
                                         <argument>clone</argument>
                                         <argument>--depth=1</argument>
-                                        <argument>
-                                            https://github.com/n1k0/casperjs.git
-                                        </argument>
+                                        <argument>https://github.com/n1k0/casperjs.git</argument>
                                         <argument>casperjs-install</argument>
                                     </arguments>
                                 </configuration>
@@ -574,26 +571,19 @@
                                     <goal>exec</goal>
                                 </goals>
                                 <configuration>
-                                    <executable>${casper.executable}
-                                    </executable>
-                                    <workingDirectory>${basedir}
-                                    </workingDirectory>
+                                    <executable>${casper.executable}</executable>
+                                    <workingDirectory>${basedir}</workingDirectory>
                                     <arguments>
                                         <argument>test</argument>
                                         <argument>--verbose</argument>
                                         <argument>--no-colors</argument>
                                         <argument>--concise</argument>
-                                        <argument>
-                                            --home=http://localhost:${takes.port}
-                                        </argument>
+                                        <argument>--home=http://localhost:${takes.port}</argument>
                                         <argument>--engine=phantomjs</argument>
-                                        <argument>${basedir}/src/test/casperjs
-                                        </argument>
+                                        <argument>${basedir}/src/test/casperjs</argument>
                                     </arguments>
                                     <environmentVariables>
-                                        <PHANTOMJS_EXECUTABLE>
-                                            ${phantomjs.binary}
-                                        </PHANTOMJS_EXECUTABLE>
+                                        <PHANTOMJS_EXECUTABLE>${phantomjs.binary}</PHANTOMJS_EXECUTABLE>
                                     </environmentVariables>
                                 </configuration>
                             </execution>
