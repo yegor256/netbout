@@ -85,7 +85,7 @@ In case you are looking for an even quicker startup or experience failing tests,
 but still want to run the site, you can skip the tests by running:
 
 ```
-$ mvn clean install -DskipTests=true -Phit-refresh -Dport=8080
+$ mvn clean install -DskipTests -Phit-refresh -Dport=8080
 ```
 
 ### Integration tests
