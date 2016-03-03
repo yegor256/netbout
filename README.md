@@ -81,6 +81,13 @@ $ mvn clean install -Phit-refresh -Dport=8080
 
 In a minute the site is ready at `http://localhost:8080`
 
+In case you are looking for an even quicker startup or experience failing tests,
+but still want to run the site, you can skip the tests by running:
+
+```
+$ mvn clean install -DskipTests=true -Phit-refresh -Dport=8080
+```
+
 ### Integration tests
 
 It is highly recommended to run integration tests to guarantee that your changes will not break any other part of the system.
