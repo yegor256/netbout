@@ -39,7 +39,9 @@ import org.junit.Test;
  * @version $Id$
  * @since 2.23
  */
-@SuppressWarnings("PMD.TooManyMethods")
+@SuppressWarnings(
+    {"PMD.TooManyMethods", "PMD.AvoidInstantiatingObjectsInLoops"}
+)
 public final class MarkdownTxtmarkTest {
     /**
      * End of line.
@@ -100,7 +102,6 @@ public final class MarkdownTxtmarkTest {
      * @throws Exception If there is some problem inside
      */
     @Test
-    @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
     public void handlesBrokenFormattingGracefully() throws Exception {
         final String[] texts = {
             Joiner.on(MarkdownTxtmarkTest.EOL).join("**", ""),
@@ -162,7 +163,6 @@ public final class MarkdownTxtmarkTest {
      * @throws Exception If there is some problem inside
      */
     @Test
-    @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
     public void formatsTextFragmentsToHtml() throws Exception {
         final String[][] texts = {
             new String[] {"hi, *dude*!", "<p>hi, <em>dude</em>!</p>"},
@@ -187,6 +187,27 @@ public final class MarkdownTxtmarkTest {
                 "<p><a href=\"http://foo\">a</a></p>",
             },
             new String[] {"}}}", "<p>}}}</p>"},
+        };
+        for (final String[] pair : texts) {
+            MatcherAssert.assertThat(
+                new MarkdownTxtmark().html(pair[0]).trim(),
+                Matchers.equalTo(pair[1])
+            );
+        }
+    }
+
+    /**
+     * MarkdownTxmart can format code blocks to HTML.
+     * Must be <pre><code>content</code></pre>
+     * @throws Exception If there are some problems inside.
+     */
+    @Test
+    public void formatsCodeBlocksToHtml() throws Exception {
+        final String[][] texts = {
+            new String[] {
+                "```\ncode\nanother line of code\n```",
+                "<p><pre><code>code\nanother line of code</code></pre></p>",
+            },
         };
         for (final String[] pair : texts) {
             MatcherAssert.assertThat(
@@ -267,7 +288,6 @@ public final class MarkdownTxtmarkTest {
      * @throws Exception If there is some problem inside
      */
     @Test
-    @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
     public void detectsLinks() throws Exception {
         final String[][] texts = {
             new String[] {

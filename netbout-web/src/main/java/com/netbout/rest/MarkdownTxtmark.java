@@ -28,6 +28,8 @@ package com.netbout.rest;
 
 import com.github.rjeschke.txtmark.Configuration;
 import com.github.rjeschke.txtmark.Processor;
+import java.util.Arrays;
+import java.util.Iterator;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.validation.constraints.NotNull;
@@ -58,14 +60,30 @@ public final class MarkdownTxtmark implements Markdown {
     private static final Pattern NEW_LINE = Pattern.compile(
         "^ {0,3}(\\S|(\\S.*\\S)) ?$", Pattern.MULTILINE
     );
+    /**
+     * Html &lt;pre&gt;&ltcode&gt; fragment.
+     */
+    private static final String PRE_CODE = "<pre><code>";
+    /**
+     * Html &lt;/code&gt;&lt/end&gt; fragment.
+     */
+    private static final String END_CODE_PRE = "</code></pre>";
 
     @Override
     public String html(@NotNull final String txt) {
         final Configuration conf = Configuration.builder()
-            .enableSafeMode().build();
-        return Processor.process(
-            MarkdownTxtmark.formatLinks(MarkdownTxtmark.makeLineBreak(txt)),
-            conf
+            .enableSafeMode()
+            .build();
+        return MarkdownTxtmark.fixedCodeBlocks(
+            Processor.process(
+                MarkdownTxtmark.formatLinks(
+                    MarkdownTxtmark.makeLineBreakMarkedCode(
+                        txt,
+                        Arrays.asList("```", "``", "`").iterator()
+                    )
+                ),
+                conf
+            )
         );
     }
 
@@ -88,11 +106,44 @@ public final class MarkdownTxtmark implements Markdown {
         matcher.appendTail(result);
         return result.toString();
     }
+
+    /**
+     * Insert two spaces at the end of string that needs line break to
+     * force creation of HTML line break. Skip code blocks marked with markers
+     * elements.
+     * @param txt Text to parse
+     * @param markers Markers to be used in the iteration order
+     * @return Text with Markdown-formatted line breaks outside code blocks
+     */
+    private static String makeLineBreakMarkedCode(final String txt,
+        final Iterator<String> markers) {
+        final String result;
+        if (markers.hasNext()) {
+            final String marker = markers.next();
+            final StringBuilder builder = new StringBuilder();
+            boolean code = false;
+            for (final String fragment : txt.split(marker, -1)) {
+                if (code) {
+                    builder.append(marker)
+                    .append(fragment)
+                        .append(marker);
+                } else {
+                    builder.append(makeLineBreakMarkedCode(fragment, markers));
+                }
+                code = !code;
+            }
+            result = builder.toString();
+        } else {
+            result = makeLineBreak(txt);
+        }
+        return result;
+    }
+
     /**
      * Insert two spaces at the end of string that needs line break to
      * force creation of HTML line break.
      * @param txt Text to replace
-     * @return Text with Markdown-formatted links
+     * @return Text with Markdown-formatted line breaks
      */
     private static String makeLineBreak(final String txt) {
         final StringBuffer result = new StringBuffer();
@@ -109,5 +160,20 @@ public final class MarkdownTxtmark implements Markdown {
         }
         matcher.appendTail(result);
         return result.toString();
+    }
+
+    /**
+     * Fix code blocks marked with "```" as they are incorrect processed.
+     * @param txt Text to parse
+     * @return Fixed text with correct code blocks.
+     */
+    private static String fixedCodeBlocks(final String txt) {
+        return txt
+            .replace("<code>`\r\n", MarkdownTxtmark.PRE_CODE)
+            .replace("<code>`\n", MarkdownTxtmark.PRE_CODE)
+            .replace("<code>`", MarkdownTxtmark.PRE_CODE)
+            .replace("\r\n</code>`", MarkdownTxtmark.END_CODE_PRE)
+            .replace("\n</code>`", MarkdownTxtmark.END_CODE_PRE)
+            .replace("</code>`", MarkdownTxtmark.END_CODE_PRE);
     }
 }
