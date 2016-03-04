@@ -7,7 +7,7 @@
 <body>
 <div id="overview"><a href="../../../../../testapidocs/com/netbout/rest/bout/TkCreateTest.html">View Javadoc</a></div><pre>
 <a class="jxr_linenumber" name="L1" href="#L1">1</a>   <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="L2" href="#L2">2</a>   <em class="jxr_javadoccomment"> * Copyright (c) 2009-2014, netbout.com</em>
+<a class="jxr_linenumber" name="L2" href="#L2">2</a>   <em class="jxr_javadoccomment"> * Copyright (c) 2009-2016, netbout.com</em>
 <a class="jxr_linenumber" name="L3" href="#L3">3</a>   <em class="jxr_javadoccomment"> * All rights reserved.</em>
 <a class="jxr_linenumber" name="L4" href="#L4">4</a>   <em class="jxr_javadoccomment"> *</em>
 <a class="jxr_linenumber" name="L5" href="#L5">5</a>   <em class="jxr_javadoccomment"> * Redistribution and use in source and binary forms, with or without</em>
@@ -36,18 +36,18 @@
 <a class="jxr_linenumber" name="L28" href="#L28">28</a>  
 <a class="jxr_linenumber" name="L29" href="#L29">29</a>  <strong class="jxr_keyword">import</strong> com.jcabi.urn.URN;
 <a class="jxr_linenumber" name="L30" href="#L30">30</a>  <strong class="jxr_keyword">import</strong> com.netbout.mock.MkBase;
-<a class="jxr_linenumber" name="L31" href="#L31">31</a>  <strong class="jxr_keyword">import</strong> com.netbout.<strong class="jxr_keyword">rest</strong>.RqWithTester;
-<a class="jxr_linenumber" name="L32" href="#L32">32</a>  <strong class="jxr_keyword">import</strong> com.netbout.spi.Alias;
-<a class="jxr_linenumber" name="L33" href="#L33">33</a>  <strong class="jxr_keyword">import</strong> com.netbout.spi.User;
-<a class="jxr_linenumber" name="L34" href="#L34">34</a>  <strong class="jxr_keyword">import</strong> org.hamcrest.MatcherAssert;
-<a class="jxr_linenumber" name="L35" href="#L35">35</a>  <strong class="jxr_keyword">import</strong> org.hamcrest.Matchers;
-<a class="jxr_linenumber" name="L36" href="#L36">36</a>  <strong class="jxr_keyword">import</strong> org.junit.Test;
+<a class="jxr_linenumber" name="L31" href="#L31">31</a>  <strong class="jxr_keyword">import</strong> com.netbout.spi.Alias;
+<a class="jxr_linenumber" name="L32" href="#L32">32</a>  <strong class="jxr_keyword">import</strong> com.netbout.spi.User;
+<a class="jxr_linenumber" name="L33" href="#L33">33</a>  <strong class="jxr_keyword">import</strong> org.hamcrest.MatcherAssert;
+<a class="jxr_linenumber" name="L34" href="#L34">34</a>  <strong class="jxr_keyword">import</strong> org.hamcrest.Matchers;
+<a class="jxr_linenumber" name="L35" href="#L35">35</a>  <strong class="jxr_keyword">import</strong> org.junit.Test;
+<a class="jxr_linenumber" name="L36" href="#L36">36</a>  <strong class="jxr_keyword">import</strong> org.takes.facets.auth.RqWithAuth;
 <a class="jxr_linenumber" name="L37" href="#L37">37</a>  <strong class="jxr_keyword">import</strong> org.takes.rq.RqFake;
 <a class="jxr_linenumber" name="L38" href="#L38">38</a>  
 <a class="jxr_linenumber" name="L39" href="#L39">39</a>  <em class="jxr_javadoccomment">/**</em>
 <a class="jxr_linenumber" name="L40" href="#L40">40</a>  <em class="jxr_javadoccomment"> * Test case for {@link TkCreate}.</em>
 <a class="jxr_linenumber" name="L41" href="#L41">41</a>  <em class="jxr_javadoccomment"> * @author Yegor Bugayenko (yegor@teamed.io)</em>
-<a class="jxr_linenumber" name="L42" href="#L42">42</a>  <em class="jxr_javadoccomment"> * @version $Id$</em>
+<a class="jxr_linenumber" name="L42" href="#L42">42</a>  <em class="jxr_javadoccomment"> * @version $Id: 13706b48ac5a26e6c4d1b88c53afd59bc7c1cb38 $</em>
 <a class="jxr_linenumber" name="L43" href="#L43">43</a>  <em class="jxr_javadoccomment"> * @since 2.14</em>
 <a class="jxr_linenumber" name="L44" href="#L44">44</a>  <em class="jxr_javadoccomment"> */</em>
 <a class="jxr_linenumber" name="L45" href="#L45">45</a>  <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">class</strong> <a href="../../../../com/netbout/rest/bout/TkCreateTest.html">TkCreateTest</a> {
@@ -59,14 +59,14 @@
 <a class="jxr_linenumber" name="L51" href="#L51">51</a>      @Test
 <a class="jxr_linenumber" name="L52" href="#L52">52</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> createsAttachments() <strong class="jxr_keyword">throws</strong> Exception {
 <a class="jxr_linenumber" name="L53" href="#L53">53</a>          <strong class="jxr_keyword">final</strong> MkBase base = <strong class="jxr_keyword">new</strong> MkBase();
-<a class="jxr_linenumber" name="L54" href="#L54">54</a>          <strong class="jxr_keyword">final</strong> URN urn = <strong class="jxr_keyword">new</strong> URN(<span class="jxr_string">"urn:test:1"</span>);
-<a class="jxr_linenumber" name="L55" href="#L55">55</a>          <strong class="jxr_keyword">final</strong> User user = base.user(urn);
+<a class="jxr_linenumber" name="L54" href="#L54">54</a>          <strong class="jxr_keyword">final</strong> String urn = <span class="jxr_string">"urn:test:1"</span>;
+<a class="jxr_linenumber" name="L55" href="#L55">55</a>          <strong class="jxr_keyword">final</strong> User user = base.user(<strong class="jxr_keyword">new</strong> URN(urn));
 <a class="jxr_linenumber" name="L56" href="#L56">56</a>          user.aliases().add(<span class="jxr_string">"jeff"</span>);
 <a class="jxr_linenumber" name="L57" href="#L57">57</a>          <strong class="jxr_keyword">final</strong> Alias alias = user.aliases().iterate().iterator().next();
 <a class="jxr_linenumber" name="L58" href="#L58">58</a>          <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">long</strong> bout = alias.inbox().start();
 <a class="jxr_linenumber" name="L59" href="#L59">59</a>          alias.inbox().bout(bout).friends().invite(alias.name());
 <a class="jxr_linenumber" name="L60" href="#L60">60</a>          <strong class="jxr_keyword">new</strong> FkBout(<span class="jxr_string">".*"</span>, <strong class="jxr_keyword">new</strong> TkCreate(base)).route(
-<a class="jxr_linenumber" name="L61" href="#L61">61</a>              <strong class="jxr_keyword">new</strong> <a href="../../../../com/netbout/rest/RqWithTester.html">RqWithTester</a>(
+<a class="jxr_linenumber" name="L61" href="#L61">61</a>              <strong class="jxr_keyword">new</strong> RqWithAuth(
 <a class="jxr_linenumber" name="L62" href="#L62">62</a>                  urn,
 <a class="jxr_linenumber" name="L63" href="#L63">63</a>                  <strong class="jxr_keyword">new</strong> RqFake(
 <a class="jxr_linenumber" name="L64" href="#L64">64</a>                      <span class="jxr_string">"GET"</span>,
@@ -85,6 +85,6 @@
 <a class="jxr_linenumber" name="L77" href="#L77">77</a>  }
 </pre>
 <hr/>
-<div id="footer">Copyright &#169; 2009&#x2013;2015 <a href="http://www.netbout.com">Netbout Inc.</a>. All rights reserved.</div>
+<div id="footer">Copyright &#169; 2009&#x2013;2016 <a href="http://www.netbout.com">Netbout Inc.</a>. All rights reserved.</div>
 </body>
 </html>

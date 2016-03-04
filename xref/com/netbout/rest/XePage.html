@@ -7,7 +7,7 @@
 <body>
 <div id="overview"><a href="../../../../apidocs/com/netbout/rest/XePage.html">View Javadoc</a></div><pre>
 <a class="jxr_linenumber" name="L1" href="#L1">1</a>   <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="L2" href="#L2">2</a>   <em class="jxr_javadoccomment"> * Copyright (c) 2009-2014, netbout.com</em>
+<a class="jxr_linenumber" name="L2" href="#L2">2</a>   <em class="jxr_javadoccomment"> * Copyright (c) 2009-2016, netbout.com</em>
 <a class="jxr_linenumber" name="L3" href="#L3">3</a>   <em class="jxr_javadoccomment"> * All rights reserved.</em>
 <a class="jxr_linenumber" name="L4" href="#L4">4</a>   <em class="jxr_javadoccomment"> *</em>
 <a class="jxr_linenumber" name="L5" href="#L5">5</a>   <em class="jxr_javadoccomment"> * Redistribution and use in source and binary forms, with or without</em>
@@ -60,7 +60,7 @@
 <a class="jxr_linenumber" name="L52" href="#L52">52</a>  <em class="jxr_javadoccomment"> * Index resource, front page of the website.</em>
 <a class="jxr_linenumber" name="L53" href="#L53">53</a>  <em class="jxr_javadoccomment"> *</em>
 <a class="jxr_linenumber" name="L54" href="#L54">54</a>  <em class="jxr_javadoccomment"> * @author Yegor Bugayenko (yegor@teamed.io)</em>
-<a class="jxr_linenumber" name="L55" href="#L55">55</a>  <em class="jxr_javadoccomment"> * @version $Id$</em>
+<a class="jxr_linenumber" name="L55" href="#L55">55</a>  <em class="jxr_javadoccomment"> * @version $Id: 791f8b096ca79b598c1ccf8a6d65d5e3a94e6d3e $</em>
 <a class="jxr_linenumber" name="L56" href="#L56">56</a>  <em class="jxr_javadoccomment"> * @since 2.14</em>
 <a class="jxr_linenumber" name="L57" href="#L57">57</a>  <em class="jxr_javadoccomment"> * @checkstyle ClassDataAbstractionCouplingCheck (500 lines)</em>
 <a class="jxr_linenumber" name="L58" href="#L58">58</a>  <em class="jxr_javadoccomment"> */</em>
@@ -91,37 +91,41 @@
 <a class="jxr_linenumber" name="L83" href="#L83">83</a>          <strong class="jxr_keyword">final</strong> Request req, <strong class="jxr_keyword">final</strong> XeSource... src) <strong class="jxr_keyword">throws</strong> IOException {
 <a class="jxr_linenumber" name="L84" href="#L84">84</a>          <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> XeAppend(
 <a class="jxr_linenumber" name="L85" href="#L85">85</a>              <span class="jxr_string">"page"</span>,
-<a class="jxr_linenumber" name="L86" href="#L86">86</a>              <strong class="jxr_keyword">new</strong> XeMillis(false),
-<a class="jxr_linenumber" name="L87" href="#L87">87</a>              <strong class="jxr_keyword">new</strong> XeChain(src),
-<a class="jxr_linenumber" name="L88" href="#L88">88</a>              <strong class="jxr_keyword">new</strong> XeDate(),
-<a class="jxr_linenumber" name="L89" href="#L89">89</a>              <strong class="jxr_keyword">new</strong> XeSLA(),
-<a class="jxr_linenumber" name="L90" href="#L90">90</a>              <strong class="jxr_keyword">new</strong> XeLinkHome(req),
-<a class="jxr_linenumber" name="L91" href="#L91">91</a>              <strong class="jxr_keyword">new</strong> XeLinkSelf(req),
-<a class="jxr_linenumber" name="L92" href="#L92">92</a>              <strong class="jxr_keyword">new</strong> XeLocalhost(),
-<a class="jxr_linenumber" name="L93" href="#L93">93</a>              <strong class="jxr_keyword">new</strong> XeIdentity(req),
-<a class="jxr_linenumber" name="L94" href="#L94">94</a>              <strong class="jxr_keyword">new</strong> <a href="../../../com/netbout/rest/XeAlias.html">XeAlias</a>(base, req),
-<a class="jxr_linenumber" name="L95" href="#L95">95</a>              <strong class="jxr_keyword">new</strong> <a href="../../../com/netbout/rest/XeFavicon.html">XeFavicon</a>(base, req),
-<a class="jxr_linenumber" name="L96" href="#L96">96</a>              <strong class="jxr_keyword">new</strong> XeFlash(req),
-<a class="jxr_linenumber" name="L97" href="#L97">97</a>              <strong class="jxr_keyword">new</strong> XeGithubLink(req, Manifests.read(<span class="jxr_string">"Netbout-GithubId"</span>)),
-<a class="jxr_linenumber" name="L98" href="#L98">98</a>              <strong class="jxr_keyword">new</strong> XeFacebookLink(req, Manifests.read(<span class="jxr_string">"Netbout-FbId"</span>)),
-<a class="jxr_linenumber" name="L99" href="#L99">99</a>              <strong class="jxr_keyword">new</strong> XeGoogleLink(
-<a class="jxr_linenumber" name="L100" href="#L100">100</a>                 req, Manifests.read(<span class="jxr_string">"Netbout-GoogleId"</span>),
-<a class="jxr_linenumber" name="L101" href="#L101">101</a>                 <span class="jxr_string">"http://www.netbout.com/?PsByFlag=PsGoogle"</span>
-<a class="jxr_linenumber" name="L102" href="#L102">102</a>             ),
-<a class="jxr_linenumber" name="L103" href="#L103">103</a>             <strong class="jxr_keyword">new</strong> XeLogoutLink(req),
-<a class="jxr_linenumber" name="L104" href="#L104">104</a>             <strong class="jxr_keyword">new</strong> XeAppend(
-<a class="jxr_linenumber" name="L105" href="#L105">105</a>                 <span class="jxr_string">"version"</span>,
-<a class="jxr_linenumber" name="L106" href="#L106">106</a>                 <strong class="jxr_keyword">new</strong> XeAppend(<span class="jxr_string">"name"</span>, Manifests.read(<span class="jxr_string">"Netbout-Version"</span>)),
-<a class="jxr_linenumber" name="L107" href="#L107">107</a>                 <strong class="jxr_keyword">new</strong> XeAppend(<span class="jxr_string">"rev"</span>, Manifests.read(<span class="jxr_string">"Netbout-Revision"</span>)),
-<a class="jxr_linenumber" name="L108" href="#L108">108</a>                 <strong class="jxr_keyword">new</strong> XeAppend(<span class="jxr_string">"date"</span>, Manifests.read(<span class="jxr_string">"Netbout-Date"</span>))
-<a class="jxr_linenumber" name="L109" href="#L109">109</a>             ),
-<a class="jxr_linenumber" name="L110" href="#L110">110</a>             <strong class="jxr_keyword">new</strong> XeMillis(<strong class="jxr_keyword">true</strong>)
-<a class="jxr_linenumber" name="L111" href="#L111">111</a>         );
-<a class="jxr_linenumber" name="L112" href="#L112">112</a>     }
-<a class="jxr_linenumber" name="L113" href="#L113">113</a> 
-<a class="jxr_linenumber" name="L114" href="#L114">114</a> }
+<a class="jxr_linenumber" name="L86" href="#L86">86</a>              <strong class="jxr_keyword">new</strong> XeAppend(
+<a class="jxr_linenumber" name="L87" href="#L87">87</a>                  <span class="jxr_string">"documentation"</span>,
+<a class="jxr_linenumber" name="L88" href="#L88">88</a>                  Manifests.read(<span class="jxr_string">"Netbout-Documentation"</span>)
+<a class="jxr_linenumber" name="L89" href="#L89">89</a>              ),
+<a class="jxr_linenumber" name="L90" href="#L90">90</a>              <strong class="jxr_keyword">new</strong> XeMillis(false),
+<a class="jxr_linenumber" name="L91" href="#L91">91</a>              <strong class="jxr_keyword">new</strong> XeChain(src),
+<a class="jxr_linenumber" name="L92" href="#L92">92</a>              <strong class="jxr_keyword">new</strong> XeDate(),
+<a class="jxr_linenumber" name="L93" href="#L93">93</a>              <strong class="jxr_keyword">new</strong> XeSLA(),
+<a class="jxr_linenumber" name="L94" href="#L94">94</a>              <strong class="jxr_keyword">new</strong> XeLinkHome(req),
+<a class="jxr_linenumber" name="L95" href="#L95">95</a>              <strong class="jxr_keyword">new</strong> XeLinkSelf(req),
+<a class="jxr_linenumber" name="L96" href="#L96">96</a>              <strong class="jxr_keyword">new</strong> XeLocalhost(),
+<a class="jxr_linenumber" name="L97" href="#L97">97</a>              <strong class="jxr_keyword">new</strong> XeIdentity(req),
+<a class="jxr_linenumber" name="L98" href="#L98">98</a>              <strong class="jxr_keyword">new</strong> <a href="../../../com/netbout/rest/XeAlias.html">XeAlias</a>(base, req),
+<a class="jxr_linenumber" name="L99" href="#L99">99</a>              <strong class="jxr_keyword">new</strong> <a href="../../../com/netbout/rest/XeFavicon.html">XeFavicon</a>(base, req),
+<a class="jxr_linenumber" name="L100" href="#L100">100</a>             <strong class="jxr_keyword">new</strong> XeFlash(req),
+<a class="jxr_linenumber" name="L101" href="#L101">101</a>             <strong class="jxr_keyword">new</strong> XeGithubLink(req, Manifests.read(<span class="jxr_string">"Netbout-GithubId"</span>)),
+<a class="jxr_linenumber" name="L102" href="#L102">102</a>             <strong class="jxr_keyword">new</strong> XeFacebookLink(req, Manifests.read(<span class="jxr_string">"Netbout-FbId"</span>)),
+<a class="jxr_linenumber" name="L103" href="#L103">103</a>             <strong class="jxr_keyword">new</strong> XeGoogleLink(
+<a class="jxr_linenumber" name="L104" href="#L104">104</a>                 req, Manifests.read(<span class="jxr_string">"Netbout-GoogleId"</span>),
+<a class="jxr_linenumber" name="L105" href="#L105">105</a>                 <span class="jxr_string">"http://www.netbout.com/?PsByFlag=PsGoogle"</span>
+<a class="jxr_linenumber" name="L106" href="#L106">106</a>             ),
+<a class="jxr_linenumber" name="L107" href="#L107">107</a>             <strong class="jxr_keyword">new</strong> XeLogoutLink(req),
+<a class="jxr_linenumber" name="L108" href="#L108">108</a>             <strong class="jxr_keyword">new</strong> XeAppend(
+<a class="jxr_linenumber" name="L109" href="#L109">109</a>                 <span class="jxr_string">"version"</span>,
+<a class="jxr_linenumber" name="L110" href="#L110">110</a>                 <strong class="jxr_keyword">new</strong> XeAppend(<span class="jxr_string">"name"</span>, Manifests.read(<span class="jxr_string">"Netbout-Version"</span>)),
+<a class="jxr_linenumber" name="L111" href="#L111">111</a>                 <strong class="jxr_keyword">new</strong> XeAppend(<span class="jxr_string">"rev"</span>, Manifests.read(<span class="jxr_string">"Netbout-Revision"</span>)),
+<a class="jxr_linenumber" name="L112" href="#L112">112</a>                 <strong class="jxr_keyword">new</strong> XeAppend(<span class="jxr_string">"date"</span>, Manifests.read(<span class="jxr_string">"Netbout-Date"</span>))
+<a class="jxr_linenumber" name="L113" href="#L113">113</a>             ),
+<a class="jxr_linenumber" name="L114" href="#L114">114</a>             <strong class="jxr_keyword">new</strong> XeMillis(<strong class="jxr_keyword">true</strong>)
+<a class="jxr_linenumber" name="L115" href="#L115">115</a>         );
+<a class="jxr_linenumber" name="L116" href="#L116">116</a>     }
+<a class="jxr_linenumber" name="L117" href="#L117">117</a> 
+<a class="jxr_linenumber" name="L118" href="#L118">118</a> }
 </pre>
 <hr/>
-<div id="footer">Copyright &#169; 2009&#x2013;2015 <a href="http://www.netbout.com">Netbout Inc.</a>. All rights reserved.</div>
+<div id="footer">Copyright &#169; 2009&#x2013;2016 <a href="http://www.netbout.com">Netbout Inc.</a>. All rights reserved.</div>
 </body>
 </html>
