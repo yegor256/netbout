@@ -32,6 +32,7 @@ import java.io.IOException;
 import org.takes.Request;
 import org.takes.Response;
 import org.takes.Take;
+import org.takes.rq.RqHeaders;
 import org.takes.rs.RsWithHeader;
 
 /**
@@ -46,14 +47,11 @@ public class TkWithAliasHeader implements Take {
      * Base.
      */
     private final Base base;
+
     /**
      * Take.
      */
     private final Take take;
-    /**
-     * Header.
-     */
-    private final String header;
 
     /**
      * Ctr.
@@ -63,26 +61,20 @@ public class TkWithAliasHeader implements Take {
     public TkWithAliasHeader(final Base base, final Take take) {
         this.base = base;
         this.take = take;
-        this.header =
-            String.format("%s: %s", "X-Netbout-Alias", "%s");
     }
 
     @Override
     public final Response act(final Request req)
         throws IOException {
-        final Iterable<String> hdit = req.head();
-        String aliashd = "";
-        for (final String hdr:hdit) {
-            if (hdr.contains("TkAuth")) {
-                aliashd = this.base.user(
-                    URN.create(hdr.replace("TkAuth: ", "")
-                        .replaceAll("%3A", ":")
-                    )
-                ).aliases().iterate().iterator().next().name();
-            }
-        }
+        final String aliashd = this.base.user(
+            URN.create(
+                new RqHeaders.Smart(
+                    new RqHeaders.Base(req)
+                ).single("TkAuth").replaceAll("%3A", ":")
+            )
+        ).aliases().iterate().iterator().next().name();
         return new RsWithHeader(
-            this.take.act(req), String.format(this.header, aliashd)
+            this.take.act(req), String.format("X-Netbout-Alias: %s", aliashd)
         );
     }
 }

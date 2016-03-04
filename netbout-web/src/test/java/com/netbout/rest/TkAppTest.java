@@ -157,17 +157,16 @@ public final class TkAppTest {
     /**
      * TkApp includes authenticated user alias in header.
      * @throws Exception If there is some problem inside
-     * @checkstyle MultipleStringLiteralsCheck (20 lines)
      */
     @Test
     public void hasAuthenticatedUserAliasInHeader() throws Exception {
-        final String loc = "http://example.com/whatever";
+        final String loc = "http://example.com/whateverr";
         final String head = new RsPrint(
             new TkApp(new MkBase()).act(
                 new RqWithHeader(
-                    new RqWithAuth("urn:test:1"),
+                    new RqWithAuth("urn:test:2"),
                     String.format(
-                        "Cookie: RsReturn=%s",
+                        "Cookie: RsReturn=%s ",
                         URLEncoder.encode(loc, Charset.defaultCharset().name())
                     )
                 )
@@ -176,7 +175,6 @@ public final class TkAppTest {
         MatcherAssert.assertThat(
             "Incorrect X-Netbout-Alias header",
             Pattern.compile(
-                // @checkstyle LineLengthCheck (1 line)
                 "^X-Netbout-Alias: tester",
                 Pattern.MULTILINE
             ).matcher(head).find()
