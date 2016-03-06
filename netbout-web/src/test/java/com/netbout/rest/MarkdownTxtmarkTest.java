@@ -197,16 +197,25 @@ public final class MarkdownTxtmarkTest {
     }
 
     /**
-     * MarkdownTxmart can format code blocks to HTML.
-     * Must be <pre><code>content</code></pre>
+     * MarkdownTxmart can format code fragments (blocks and spans) to HTML.
+     * Must be <pre><code>content_without_surrounding_eols</code></pre> for
+     * blocks and <code>content</code> for spans.
      * @throws Exception If there are some problems inside.
      */
     @Test
-    public void formatsCodeBlocksToHtml() throws Exception {
+    public void formatsCodeFragmentsToHtml() throws Exception {
         final String[][] texts = {
             new String[] {
                 "```\ncode\nanother line of code\n```",
                 "<p><pre><code>code\nanother line of code</code></pre></p>",
+            },
+            new String[] {
+                "``code span not block\nextra line``",
+                "<p><code>code span not block\nextra line</code></p>",
+            },
+            new String[] {
+                "`single char\nextra line with eol\n`",
+                "<p><code>single char\nextra line with eol\n</code></p>",
             },
         };
         for (final String[] pair : texts) {

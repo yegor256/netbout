@@ -60,14 +60,6 @@ public final class MarkdownTxtmark implements Markdown {
     private static final Pattern NEW_LINE = Pattern.compile(
         "^ {0,3}(\\S|(\\S.*\\S)) ?$", Pattern.MULTILINE
     );
-    /**
-     * Html &lt;pre&gt;&ltcode&gt; fragment.
-     */
-    private static final String PRE_CODE = "<pre><code>";
-    /**
-     * Html &lt;/code&gt;&lt/end&gt; fragment.
-     */
-    private static final String END_CODE_PRE = "</code></pre>";
 
     @Override
     public String html(@NotNull final String txt) {
@@ -77,7 +69,7 @@ public final class MarkdownTxtmark implements Markdown {
         return MarkdownTxtmark.fixedCodeBlocks(
             Processor.process(
                 MarkdownTxtmark.formatLinks(
-                    MarkdownTxtmark.makeLineBreakMarkedCode(
+                    MarkdownTxtmark.makeLineBreakExcludeCode(
                         txt,
                         Arrays.asList("```", "``", "`").iterator()
                     )
@@ -115,7 +107,7 @@ public final class MarkdownTxtmark implements Markdown {
      * @param markers Markers to be used in the iteration order
      * @return Text with Markdown-formatted line breaks outside code blocks
      */
-    private static String makeLineBreakMarkedCode(final String txt,
+    private static String makeLineBreakExcludeCode(final String txt,
         final Iterator<String> markers) {
         final String result;
         if (markers.hasNext()) {
@@ -128,7 +120,7 @@ public final class MarkdownTxtmark implements Markdown {
                     .append(fragment)
                         .append(marker);
                 } else {
-                    builder.append(makeLineBreakMarkedCode(fragment, markers));
+                    builder.append(makeLineBreakExcludeCode(fragment, markers));
                 }
                 code = !code;
             }
@@ -169,11 +161,7 @@ public final class MarkdownTxtmark implements Markdown {
      */
     private static String fixedCodeBlocks(final String txt) {
         return txt
-            .replace("<code>`\r\n", MarkdownTxtmark.PRE_CODE)
-            .replace("<code>`\n", MarkdownTxtmark.PRE_CODE)
-            .replace("<code>`", MarkdownTxtmark.PRE_CODE)
-            .replace("\r\n</code>`", MarkdownTxtmark.END_CODE_PRE)
-            .replace("\n</code>`", MarkdownTxtmark.END_CODE_PRE)
-            .replace("</code>`", MarkdownTxtmark.END_CODE_PRE);
+            .replaceAll("<code>`\\R?", "<pre><code>")
+            .replaceAll("\\R?</code>`", "</code></pre>");
     }
 }
