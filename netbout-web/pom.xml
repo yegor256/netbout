@@ -366,13 +366,13 @@
                                 <phase>process-resources</phase>
                                 <configuration>
                                     <target>
-                                        <mkdir dir="target/classes/js/thridparty/" />
+                                        <mkdir dir="target/classes/js/thridparty/"/>
                                         <move todir="target/classes/js/thridparty/">
                                             <fileset dir="target/js-tmp/jquery-textcomplete/dist/">
                                                 <include name="jquery.textcomplete.min.*"/>
                                             </fileset>
                                         </move>
-                                        <delete  dir="target/js-tmp"/>
+                                        <delete dir="target/js-tmp"/>
                                     </target>
                                 </configuration>
                                 <goals>
