@@ -26,13 +26,11 @@
  */
 package com.netbout.rest;
 
-import com.jcabi.urn.URN;
 import com.netbout.spi.Base;
 import java.io.IOException;
 import org.takes.Request;
 import org.takes.Response;
 import org.takes.Take;
-import org.takes.rq.RqHeaders;
 import org.takes.rs.RsWithHeader;
 
 /**
@@ -66,15 +64,12 @@ public class TkWithAliasHeader implements Take {
     @Override
     public final Response act(final Request req)
         throws IOException {
-        final String aliashd = this.base.user(
-            URN.create(
-                new RqHeaders.Smart(
-                    new RqHeaders.Base(req)
-                ).single("TkAuth").replaceAll("%3A", ":")
-            )
-        ).aliases().iterate().iterator().next().name();
         return new RsWithHeader(
-            this.take.act(req), String.format("X-Netbout-Alias: %s", aliashd)
+            this.take.act(req),
+            String.format(
+                "X-Netbout-Alias: %s",
+                new RqAlias(this.base, req).alias().name()
+            )
         );
     }
 }
