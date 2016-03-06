@@ -160,8 +160,15 @@ public final class MarkdownTxtmark implements Markdown {
      * @return Fixed text with correct code blocks.
      */
     private static String fixedCodeBlocks(final String txt) {
+        // @checkstyle LineLengthCheck (1 line)
+        final String eol = "\\u000D\\u000A|[\\u000A\\u000B\\u000C\\u000D\\u0085\\u2028\\u2029]";
         return txt
-            .replaceAll("<code>`\\R?", "<pre><code>")
-            .replaceAll("\\R?</code>`", "</code></pre>");
+            .replaceAll(
+                String.format("<code>`(%s)?", eol),
+                "<pre><code>"
+            ).replaceAll(
+                String.format("(%s)?</code>`", eol),
+                "</code></pre>"
+            );
     }
 }
