@@ -155,6 +155,32 @@ public final class TkAppTest {
     }
 
     /**
+     * TkApp includes authenticated user alias in header.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void hasAuthenticatedUserAliasInHeader() throws Exception {
+        final String loc = "http://example.com/whateverr";
+        final String head = new RsPrint(
+            new TkApp(new MkBase()).act(
+                new RqWithHeader(
+                    new RqWithAuth("urn:test:2"),
+                    String.format(
+                        "Cookie: RsReturn=%s ",
+                        URLEncoder.encode(loc, Charset.defaultCharset().name())
+                    )
+                )
+            )
+        ).printHead();
+        MatcherAssert.assertThat(
+            "Incorrect X-Netbout-Alias header",
+            Pattern.compile(
+                "^X-Netbout-Alias: tester",
+                Pattern.MULTILINE
+            ).matcher(head).find()
+        );
+    }
+    /**
      * TkApp can redirect authenticated users from home location
      * to the location of RsReturn cookie.
      * @throws Exception If there is some problem inside

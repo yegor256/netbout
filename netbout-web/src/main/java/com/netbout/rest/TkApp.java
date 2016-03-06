@@ -221,18 +221,24 @@ public final class TkApp extends TkWrap {
                 new TkFork(
                     new FkRegistered(
                         base,
-                        new TkFork(
-                            new FkRegex("/", new TkReturn(new TkInbox(base))),
-                            new FkRegex(
-                                "/search",
-                                new TkReturn(new TkInbox(base))
-                            ),
-                            new FkRegex("/start", new TkStart(base)),
-                            new FkRegex("/b/.*", new TkBout(base)),
-                            new FkRegex("/acc/.*", new TkAccount(base)),
-                            new FkRegex(
-                                "/f/([a-zA-Z0-9]+)\\.png",
-                                new TkFriend(base)
+                        new TkWithAliasHeader(
+                            base,
+                            new TkFork(
+                                new FkRegex(
+                                    "/",
+                                    new TkReturn(new TkInbox(base))
+                                ),
+                                new FkRegex(
+                                    "/search",
+                                    new TkReturn(new TkInbox(base))
+                                ),
+                                new FkRegex("/start", new TkStart(base)),
+                                new FkRegex("/b/.*", new TkBout(base)),
+                                new FkRegex("/acc/.*", new TkAccount(base)),
+                                new FkRegex(
+                                    "/f/([a-zA-Z0-9]+)\\.png",
+                                    new TkFriend(base)
+                                )
                             )
                         )
                     ),
