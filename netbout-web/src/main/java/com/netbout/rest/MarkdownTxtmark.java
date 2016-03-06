@@ -60,6 +60,23 @@ public final class MarkdownTxtmark implements Markdown {
     private static final Pattern NEW_LINE = Pattern.compile(
         "^ {0,3}(\\S|(\\S.*\\S)) ?$", Pattern.MULTILINE
     );
+    /**
+     * String pattern for end of line characters match.
+     * @checkstyle LineLengthCheck (2 line)
+     */
+    private static final String EOL = "\\u000D\\u000A|[\\u000A\\u000B\\u000C\\u000D\\u0085\\u2028\\u2029]";
+    /**
+     * Pattern used for fixing the start of code blocks after processing.
+     */
+    private static final Pattern CODE_BLOCK_START = Pattern.compile(
+        String.format("<code>`(%s)?", MarkdownTxtmark.EOL)
+    );
+    /**
+     * Pattern used for fixing the end of code blocks after processing.
+     */
+    private static final Pattern CODE_BLOCK_END = Pattern.compile(
+        String.format("(%s)?</code>`", MarkdownTxtmark.EOL)
+    );
 
     @Override
     public String html(@NotNull final String txt) {
@@ -160,15 +177,10 @@ public final class MarkdownTxtmark implements Markdown {
      * @return Fixed text with correct code blocks.
      */
     private static String fixedCodeBlocks(final String txt) {
-        // @checkstyle LineLengthCheck (1 line)
-        final String eol = "\\u000D\\u000A|[\\u000A\\u000B\\u000C\\u000D\\u0085\\u2028\\u2029]";
-        return txt
-            .replaceAll(
-                String.format("<code>`(%s)?", eol),
-                "<pre><code>"
-            ).replaceAll(
-                String.format("(%s)?</code>`", eol),
-                "</code></pre>"
-            );
+        return MarkdownTxtmark.CODE_BLOCK_END.matcher(
+            MarkdownTxtmark.CODE_BLOCK_START
+            .matcher(txt)
+            .replaceAll("<pre><code>")
+        ).replaceAll("</code></pre>");
     }
 }
