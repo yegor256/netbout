@@ -108,9 +108,9 @@ public final class DyAttachmentITCase {
     }
 
     // @todo #839 DyAttachment Item should have an attribute for the creation
-    // time of the attachment. Remove @Ignore from this test to check it.
-    // After this, update XeAttachment.make(), RtAttachment.date() and
-    // ignored test at RtAttachmentsITCase.
+    //  time of the attachment. Remove @Ignore from this test to check it.
+    //  After this, update XeAttachment.make(), RtAttachment.date() and
+    //  ignored test at RtAttachmentsITCase.
     /**
      * DyAttachment can obtain the creation date of an attachment.
      * @throws Exception If there is some problem inside
