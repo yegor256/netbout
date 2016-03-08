@@ -31,6 +31,7 @@ import com.jcabi.aspects.Loggable;
 import com.netbout.spi.Attachment;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Date;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
@@ -78,6 +79,16 @@ final class EmAttachment implements Attachment {
     @Override
     public boolean unseen() throws IOException {
         return this.origin.unseen();
+    }
+
+    @Override
+    public Date date() throws IOException {
+        return this.origin.date();
+    }
+
+    @Override
+    public String author() throws IOException {
+        return this.origin.author();
     }
 
     @Override

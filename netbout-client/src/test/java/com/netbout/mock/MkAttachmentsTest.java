@@ -27,9 +27,11 @@
 package com.netbout.mock;
 
 import com.jcabi.aspects.Tv;
+import com.netbout.spi.Alias;
 import com.netbout.spi.Attachment;
 import com.netbout.spi.Attachments;
 import com.netbout.spi.Bout;
+import com.netbout.spi.Inbox;
 import java.nio.charset.StandardCharsets;
 import org.apache.commons.io.IOUtils;
 import org.hamcrest.MatcherAssert;
@@ -90,6 +92,45 @@ public final class MkAttachmentsTest {
         Thread.sleep(Tv.HUNDRED);
         MatcherAssert.assertThat(
             bout.updated().getTime(), Matchers.greaterThan(last)
+        );
+    }
+
+    /**
+     * MkAttachments can obtain the author of an attachment.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void obtainsAuthor() throws Exception {
+        final Alias alias = new MkBase().randomAlias();
+        final Inbox inbox = alias.inbox();
+        final Bout bout = inbox.bout(inbox.start());
+        final Attachments attachments = bout.attachments();
+        final String name = "name";
+        attachments.create(name);
+        final Attachment attachment = attachments.get(name);
+        MatcherAssert.assertThat(
+            attachment.author(), Matchers.equalTo(alias.name())
+        );
+    }
+
+    /**
+     * MkAttachments can obtain the creation date of an attachment.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void obtainsCreationDate() throws Exception {
+        final Bout bout = new MkBase().randomBout();
+        final Attachments attachments = bout.attachments();
+        final long before = System.currentTimeMillis();
+        final String name = "attach-name";
+        attachments.create(name);
+        final Attachment attachment = attachments.get(name);
+        MatcherAssert.assertThat(
+            attachment.date().getTime(), Matchers.greaterThan(before)
+        );
+        final long after = System.currentTimeMillis();
+        MatcherAssert.assertThat(
+            attachment.date().getTime(), Matchers.lessThan(after)
         );
     }
 }

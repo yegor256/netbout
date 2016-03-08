@@ -52,6 +52,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 import lombok.EqualsAndHashCode;
@@ -160,6 +161,20 @@ final class DyAttachment implements Attachment {
             .iterator().next();
         return itm.has(DyFriends.ATTR_UNSEEN)
             && itm.get(DyFriends.ATTR_UNSEEN).getSS().contains(this.name());
+    }
+
+    @Override
+    public Date date() throws IOException {
+        return new Date(
+            Long.parseLong(
+                this.item.get(DyFriends.ATTR_UPDATED).getN()
+            )
+        );
+    }
+
+    @Override
+    public String author() throws IOException {
+        return this.item.get(DyAttachments.ATTR_ALIAS).getS();
     }
 
     @Override

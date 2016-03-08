@@ -35,7 +35,10 @@ import com.netbout.spi.Attachment;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.Date;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 import org.apache.commons.io.IOUtils;
@@ -114,6 +117,44 @@ final class MkAttachment implements Attachment {
     @Override
     public boolean unseen() {
         return false;
+    }
+
+    @Override
+    public Date date() throws IOException {
+        try {
+            return new JdbcSession(this.sql.source())
+                .sql("SELECT date FROM attachment WHERE bout = ? AND name = ?")
+                .set(this.bout)
+                .set(this.label)
+                .select(
+                    new Outcome<Date>() {
+                        @Override
+                        public Date handle(
+                            final ResultSet rset,
+                            final Statement stmt
+                        ) throws SQLException {
+                            rset.next();
+                            return new Date(rset.getTimestamp(1).getTime());
+                        }
+                    }
+                );
+        } catch (final SQLException ex) {
+            throw new IOException(ex);
+        }
+    }
+
+    @Override
+    public String author() throws IOException {
+        try {
+            return new JdbcSession(this.sql.source())
+                // @checkstyle LineLength (1 line)
+                .sql("SELECT author FROM attachment WHERE bout = ? AND name = ?")
+                .set(this.bout)
+                .set(this.label)
+                .select(new SingleOutcome<>(String.class));
+        } catch (final SQLException ex) {
+            throw new IOException(ex);
+        }
     }
 
     @Override

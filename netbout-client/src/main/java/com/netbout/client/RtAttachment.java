@@ -37,6 +37,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
+import java.util.Date;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import lombok.EqualsAndHashCode;
@@ -114,6 +115,24 @@ final class RtAttachment implements Attachment {
                 .xpath(this.xpath("unseen/text()"))
                 .get(0)
         );
+    }
+
+    // There is a puzzle about this method in
+    // DyAttachmentITCase.obtainsCreationDate()
+    @Override
+    public Date date() throws IOException {
+        return new Date();
+    }
+
+    @Override
+    public String author() throws IOException {
+        return this.request.fetch()
+            .as(RestResponse.class)
+            .assertStatus(HttpURLConnection.HTTP_OK)
+            .as(XmlResponse.class)
+            .xml()
+            .xpath(this.xpath("author/text()"))
+            .get(0);
     }
 
     @Override
