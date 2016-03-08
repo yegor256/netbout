@@ -107,7 +107,7 @@ public final class DyAttachmentITCase {
         attachments.delete(name);
     }
 
-    // @todo #839:30min DyAttachment Item should have an attribute for the 
+    // @todo #839:30min DyAttachment Item should have an attribute for the
     //  creation time of the attachment. Remove @Ignore from this test to check
     //  it. After this, update XeAttachment.make(), RtAttachment.date() and
     //  ignored test at RtAttachmentsITCase.
