@@ -96,8 +96,8 @@ public final class DyAttachmentITCase {
             new DyBase().user(new URN("urn:test:89636")).aliases();
         aliases.add(alias);
         final Inbox inbox = aliases.iterate().iterator().next().inbox();
-        final Bout bout = inbox.bout(inbox.start());
-        final Attachments attachments = bout.attachments();
+        final Attachments attachments = inbox.bout(inbox.start())
+            .attachments();
         final String name = "name";
         attachments.create(name);
         final Attachment attachment = attachments.get(name);

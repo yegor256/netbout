@@ -103,8 +103,8 @@ public final class MkAttachmentsTest {
     public void obtainsAuthor() throws Exception {
         final Alias alias = new MkBase().randomAlias();
         final Inbox inbox = alias.inbox();
-        final Bout bout = inbox.bout(inbox.start());
-        final Attachments attachments = bout.attachments();
+        final Attachments attachments = inbox.bout(inbox.start())
+            .attachments();
         final String name = "name";
         attachments.create(name);
         final Attachment attachment = attachments.get(name);
