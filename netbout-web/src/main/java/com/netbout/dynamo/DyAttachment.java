@@ -163,8 +163,8 @@ final class DyAttachment implements Attachment {
             && itm.get(DyFriends.ATTR_UNSEEN).getSS().contains(this.name());
     }
 
-    // @todo #839:30min Attachment Item in remote db must have an
-    //  attribute for the creation time added. Until then, this method crashes.
+    // @todo #839:30min An attribute for the creation time must be added to the
+    //  attachment item in the remote db. Until then, this method crashes.
     //  Once it is done, this must be developed:
     //  - Remove @Ignore from DyAttachmentITCase.obtainsCreationDate().
     //  - Add directive for date in XeAttachment.make().
