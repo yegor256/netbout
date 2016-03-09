@@ -113,11 +113,10 @@ public final class RtAttachmentsITCase {
     @Ignore
     @Test
     public void obtainsCreationDate() throws Exception {
-        final User user = NbRule.get();
-        final Alias alias = user.aliases().iterate().iterator().next();
+        final Alias alias = NbRule.get().aliases().iterate().iterator().next();
         final Inbox inbox = alias.inbox();
-        final Bout bout = inbox.bout(inbox.start());
-        final Attachments attachments = bout.attachments();
+        final Attachments attachments =
+            inbox.bout(inbox.start()).attachments();
         final long before = System.currentTimeMillis();
         final String name = "attach-name";
         attachments.create(name);

@@ -117,8 +117,6 @@ final class RtAttachment implements Attachment {
         );
     }
 
-    // There is a puzzle about this method in
-    // DyAttachmentITCase.obtainsCreationDate()
     @Override
     public Date date() throws IOException {
         return new Date();

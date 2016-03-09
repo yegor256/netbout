@@ -107,10 +107,6 @@ public final class DyAttachmentITCase {
         attachments.delete(name);
     }
 
-    // @todo #839:30min DyAttachment Item should have an attribute for the
-    //  creation time of the attachment. Remove @Ignore from this test to check
-    //  it. After this, update XeAttachment.make(), RtAttachment.date() and
-    //  ignored test at RtAttachmentsITCase.
     /**
      * DyAttachment can obtain the creation date of an attachment.
      * @throws Exception If there is some problem inside
@@ -118,13 +114,12 @@ public final class DyAttachmentITCase {
     @Ignore
     @Test
     public void obtainsCreationDate() throws Exception {
-        final String alias = "brown";
         final Aliases aliases =
             new DyBase().user(new URN("urn:test:89637")).aliases();
-        aliases.add(alias);
+        aliases.add("brown");
         final Inbox inbox = aliases.iterate().iterator().next().inbox();
-        final Bout bout = inbox.bout(inbox.start());
-        final Attachments attachments = bout.attachments();
+        final Attachments attachments =
+            inbox.bout(inbox.start()).attachments();
         final long before = System.currentTimeMillis();
         final String name = "attach-name";
         attachments.create(name);

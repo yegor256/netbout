@@ -129,17 +129,18 @@ final class MkAttachment implements Attachment {
                 .select(
                     new Outcome<Date>() {
                         @Override
-                        public Date handle(
-                            final ResultSet rset,
-                            final Statement stmt
-                        ) throws SQLException {
+                        public Date handle(final ResultSet rset,
+                            final Statement stmt) throws SQLException {
                             rset.next();
                             return new Date(rset.getTimestamp(1).getTime());
                         }
                     }
                 );
         } catch (final SQLException ex) {
-            throw new IOException(ex);
+            throw new IOException(
+                String.format("Can't fetch date from bout #%d", this.bout),
+                ex
+            );
         }
     }
 
@@ -147,13 +148,17 @@ final class MkAttachment implements Attachment {
     public String author() throws IOException {
         try {
             return new JdbcSession(this.sql.source())
-                // @checkstyle LineLength (1 line)
-                .sql("SELECT author FROM attachment WHERE bout = ? AND name = ?")
+                .sql(
+                    "SELECT author FROM attachment WHERE bout = ? AND name = ?"
+                )
                 .set(this.bout)
                 .set(this.label)
                 .select(new SingleOutcome<>(String.class));
         } catch (final SQLException ex) {
-            throw new IOException(ex);
+            throw new IOException(
+                String.format("Can't fetch author from bout #%d", this.bout),
+                ex
+            );
         }
     }
 
