@@ -122,11 +122,11 @@ public final class RtAttachmentsITCase {
         attachments.create(name);
         final Attachment attachment = attachments.get(name);
         MatcherAssert.assertThat(
-            attachment.date().getTime(), Matchers.greaterThan(before)
+            attachment.date().getTime(), Matchers.greaterThanOrEqualTo(before)
         );
         final long after = System.currentTimeMillis();
         MatcherAssert.assertThat(
-            attachment.date().getTime(), Matchers.lessThan(after)
+            attachment.date().getTime(), Matchers.lessThanOrEqualTo(after)
         );
         attachments.delete(name);
     }
