@@ -92,9 +92,6 @@ final class XeAlias extends XeWrap {
      * @param alias Alias
      * @return Xembly source
      * @throws IOException If fails
-     * @todo #842:30min/Dev Write test for the logic of generating Xembly for
-     *  {@link Alias} class. It should focus on checking whether tags "email"
-     *  and "newEmail" are properly populated based on input.
      */
     private static XeSource source(final Alias alias) throws IOException {
         final String email;

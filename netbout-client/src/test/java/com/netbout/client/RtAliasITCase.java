@@ -58,8 +58,17 @@ public final class RtAliasITCase {
         final MkBase base = new MkBase();
         final User user = NbRule.get();
         final Alias alias = user.aliases().iterate().iterator().next();
-        final String email = base.randomAlias().email();
-        alias.email(email);
-        MatcherAssert.assertThat(alias.email(), Matchers.is(email));
+        final String verified;
+        if (alias.email().contains("!")) {
+            verified = alias.email().substring(0, alias.email().indexOf('!'));
+        } else {
+            verified = alias.email();
+        }
+        final String unverified = base.randomAlias().email();
+        alias.email(unverified);
+        MatcherAssert.assertThat(
+            alias.email(),
+            Matchers.is(String.format("%s!%s", verified, unverified))
+        );
     }
 }

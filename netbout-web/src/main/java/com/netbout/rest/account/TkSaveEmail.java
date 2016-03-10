@@ -101,10 +101,12 @@ final class TkSaveEmail implements Take {
         final Alias alias = new RqAlias(this.base, req).alias();
         final Response res;
         if (this.local) {
-            alias.email(email);
+            alias.email(combinedEmails(alias, email));
             res = new RsForward(
                 new RsFlash(
-                    String.format("Email changed to \"%s\".", email)
+                    String.format(
+                        "Email changed to \"%s\". Not verified yet.", email
+                    )
                 )
             );
         } else {
@@ -120,14 +122,8 @@ final class TkSaveEmail implements Take {
                 "%semverify/%s",
                 new RqHref.Smart(new RqHref.Base(req)).home().bare(), code
             );
-            final String old;
-            if (alias.email().contains("!")) {
-                old = alias.email().substring(0, alias.email().indexOf('!'));
-            } else {
-                old = alias.email();
-            }
             try {
-                alias.email(String.format("%s!%s", old, email), link);
+                alias.email(combinedEmails(alias, email), link);
             } catch (final IOException ex) {
                 throw new RsFailure(ex);
             }
@@ -143,5 +139,24 @@ final class TkSaveEmail implements Take {
             );
         }
         return res;
+    }
+
+    /**
+     * Combine verified email and received email into a single String with
+     * specific format that we use later.
+     * @param alias Alias
+     * @param email Received email
+     * @return Verified and received email properly combined together.
+     * @throws IOException If something wrong
+     */
+    private static String combinedEmails(final Alias alias, final String email)
+        throws IOException {
+        final String verified;
+        if (alias.email().contains("!")) {
+            verified = alias.email().substring(0, alias.email().indexOf('!'));
+        } else {
+            verified = alias.email();
+        }
+        return String.format("%s!%s", verified, email);
     }
 }

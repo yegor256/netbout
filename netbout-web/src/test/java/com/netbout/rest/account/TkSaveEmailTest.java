@@ -91,15 +91,16 @@ public final class TkSaveEmailTest {
         final User user = base.user(new URN(urn));
         user.aliases().add("alias2");
         final Alias alias = user.aliases().iterate().iterator().next();
-        alias.email("jack@example.com");
-        final String email = "john@example.com";
+        final String verified = "verified@example.com";
+        alias.email(verified);
+        final String unverified = "unverified@example.com";
         new TkAuth(
             new TkSaveEmail(base),
             new PsFixed(new Identity.Simple(urn))
-        ).act(new RqForm.Fake(new RqFake(), TkSaveEmailTest.EMAIL, email));
+        ).act(new RqForm.Fake(new RqFake(), TkSaveEmailTest.EMAIL, unverified));
         MatcherAssert.assertThat(
             alias.email(),
-            Matchers.equalTo(email)
+            Matchers.equalTo(String.format("%s!%s", verified, unverified))
         );
     }
 
