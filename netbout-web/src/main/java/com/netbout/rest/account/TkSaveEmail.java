@@ -101,7 +101,7 @@ final class TkSaveEmail implements Take {
         final Alias alias = new RqAlias(this.base, req).alias();
         final Response res;
         if (this.local) {
-            alias.email(combinedEmails(alias, email));
+            alias.email(TkSaveEmail.combinedEmails(alias, email));
             res = new RsForward(
                 new RsFlash(
                     String.format(
@@ -123,7 +123,7 @@ final class TkSaveEmail implements Take {
                 new RqHref.Smart(new RqHref.Base(req)).home().bare(), code
             );
             try {
-                alias.email(combinedEmails(alias, email), link);
+                alias.email(TkSaveEmail.combinedEmails(alias, email), link);
             } catch (final IOException ex) {
                 throw new RsFailure(ex);
             }
@@ -151,11 +151,13 @@ final class TkSaveEmail implements Take {
      */
     private static String combinedEmails(final Alias alias, final String email)
         throws IOException {
+        final String previous = alias.email();
+        final int index = previous.indexOf('!');
         final String verified;
-        if (alias.email().contains("!")) {
-            verified = alias.email().substring(0, alias.email().indexOf('!'));
+        if (index == -1) {
+            verified = previous;
         } else {
-            verified = alias.email();
+            verified = previous.substring(0, index);
         }
         return String.format("%s!%s", verified, email);
     }

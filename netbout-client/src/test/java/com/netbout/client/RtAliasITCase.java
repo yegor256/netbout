@@ -58,11 +58,13 @@ public final class RtAliasITCase {
         final MkBase base = new MkBase();
         final User user = NbRule.get();
         final Alias alias = user.aliases().iterate().iterator().next();
+        final String previous = alias.email();
+        final int index = previous.indexOf('!');
         final String verified;
-        if (alias.email().contains("!")) {
-            verified = alias.email().substring(0, alias.email().indexOf('!'));
+        if (index == -1) {
+            verified = previous;
         } else {
-            verified = alias.email();
+            verified = previous.substring(0, index);
         }
         final String unverified = base.randomAlias().email();
         alias.email(unverified);

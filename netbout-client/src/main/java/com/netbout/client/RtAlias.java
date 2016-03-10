@@ -111,21 +111,20 @@ final class RtAlias implements Alias {
     @Override
     public String email() throws IOException {
         final XML body = this.request.fetch().as(XmlResponse.class).xml();
-        final List<String> lverified = body
-            .xpath("/page/alias/email/text()");
-        final String verified;
-        if (lverified.isEmpty()) {
-            verified = "";
+        final List<String> verified = body.xpath("/page/alias/email/text()");
+        final String email;
+        if (verified.isEmpty()) {
+            email = "";
         } else {
-            verified = lverified.get(0);
+            email = verified.get(0);
         }
-        final List<String> lunverified = body
+        final List<String> unverified = body
             .xpath("/page/alias/newEmail/text()");
         final String complete;
-        if (lunverified.isEmpty()) {
-            complete = verified;
+        if (unverified.isEmpty()) {
+            complete = email;
         } else {
-            complete = String.format("%s!%s", verified, lunverified.get(0));
+            complete = String.format("%s!%s", email, unverified.get(0));
         }
         return complete;
     }
