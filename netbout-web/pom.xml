@@ -55,7 +55,7 @@
         <dependency>
             <groupId>org.takes</groupId>
             <artifactId>takes</artifactId>
-            <version>0.31.3</version>
+            <version>0.32.6</version>
         </dependency>
         <dependency>
             <groupId>com.jcabi.incubator</groupId>

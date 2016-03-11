@@ -33,6 +33,7 @@ import com.jcabi.aspects.Tv;
 import com.netbout.spi.Attachment;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Date;
 import java.util.concurrent.TimeUnit;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
@@ -85,6 +86,18 @@ final class CdAttachment implements Attachment {
     @Cacheable(lifetime = Tv.FIVE, unit = TimeUnit.HOURS)
     public boolean unseen() throws IOException {
         return this.origin.unseen();
+    }
+
+    @Override
+    @Cacheable(lifetime = Tv.FIVE, unit = TimeUnit.HOURS)
+    public Date date() throws IOException {
+        return this.origin.date();
+    }
+
+    @Override
+    @Cacheable(lifetime = Tv.FIVE, unit = TimeUnit.HOURS)
+    public String author() throws IOException {
+        return this.origin.author();
     }
 
     @Override

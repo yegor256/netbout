@@ -34,6 +34,7 @@ import com.netbout.spi.Attachment;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Date;
 import java.util.concurrent.TimeUnit;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
@@ -99,6 +100,24 @@ public final class ReAttachment implements Attachment {
     )
     public boolean unseen() throws IOException {
         return this.origin.unseen();
+    }
+
+    @Override
+    @RetryOnFailure(
+        verbose = false, attempts = Tv.TWENTY,
+        delay = Tv.FIVE, unit = TimeUnit.SECONDS
+    )
+    public Date date() throws IOException {
+        return this.origin.date();
+    }
+
+    @Override
+    @RetryOnFailure(
+        verbose = false, attempts = Tv.TWENTY,
+        delay = Tv.FIVE, unit = TimeUnit.SECONDS
+    )
+    public String author() throws IOException {
+        return this.origin.author();
     }
 
     @Override

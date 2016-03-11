@@ -36,6 +36,7 @@ import java.io.ByteArrayInputStream;
 import org.apache.commons.io.IOUtils;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -81,6 +82,51 @@ public final class RtAttachmentsITCase {
         MatcherAssert.assertThat(
             IOUtils.toByteArray(attachment.read()),
             Matchers.equalTo(data)
+        );
+        attachments.delete(name);
+    }
+
+    /**
+     * RtAttachments can obtain author of an attachment.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void obtainsAuthor() throws Exception {
+        final User user = NbRule.get();
+        final Alias alias = user.aliases().iterate().iterator().next();
+        final Inbox inbox = alias.inbox();
+        final Attachments attachments = inbox.bout(inbox.start())
+            .attachments();
+        final String name = "name";
+        attachments.create(name);
+        final Attachment attachment = attachments.get(name);
+        MatcherAssert.assertThat(
+            attachment.author(), Matchers.equalTo(alias.name())
+        );
+        attachments.delete(name);
+    }
+
+    /**
+     * RtAttachments can obtain the creation date of an attachment.
+     * @throws Exception If there is some problem inside
+     */
+    @Ignore
+    @Test
+    public void obtainsCreationDate() throws Exception {
+        final Alias alias = NbRule.get().aliases().iterate().iterator().next();
+        final Inbox inbox = alias.inbox();
+        final Attachments attachments =
+            inbox.bout(inbox.start()).attachments();
+        final long before = System.currentTimeMillis();
+        final String name = "attach-name";
+        attachments.create(name);
+        final Attachment attachment = attachments.get(name);
+        MatcherAssert.assertThat(
+            attachment.date().getTime(), Matchers.greaterThanOrEqualTo(before)
+        );
+        final long after = System.currentTimeMillis();
+        MatcherAssert.assertThat(
+            attachment.date().getTime(), Matchers.lessThanOrEqualTo(after)
         );
         attachments.delete(name);
     }

@@ -29,6 +29,7 @@ package com.netbout.spi;
 import com.jcabi.aspects.Immutable;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Date;
 
 /**
  * Attachment.
@@ -72,6 +73,20 @@ public interface Attachment {
      * @throws IOException If fails
      */
     boolean unseen() throws IOException;
+
+    /**
+     * When it was created.
+     * @return The date of creation
+     * @throws IOException If fails
+     */
+    Date date() throws IOException;
+
+    /**
+     * Author of it.
+     * @return The author
+     * @throws IOException If fails
+     */
+    String author() throws IOException;
 
     /**
      * Read content.

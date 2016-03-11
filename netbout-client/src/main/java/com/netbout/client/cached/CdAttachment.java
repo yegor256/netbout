@@ -32,6 +32,7 @@ import com.jcabi.aspects.Loggable;
 import com.netbout.spi.Attachment;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Date;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
@@ -83,6 +84,18 @@ public final class CdAttachment implements Attachment {
     @Cacheable
     public boolean unseen() throws IOException {
         return this.origin.unseen();
+    }
+
+    @Override
+    @Cacheable
+    public Date date() throws IOException {
+        return this.origin.date();
+    }
+
+    @Override
+    @Cacheable
+    public String author() throws IOException {
+        return this.origin.author();
     }
 
     @Override
