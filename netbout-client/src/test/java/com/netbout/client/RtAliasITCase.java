@@ -50,7 +50,7 @@ public final class RtAliasITCase {
     public final transient NbRule rule = new NbRule();
 
     /**
-     * RtAlias can update and retrieve its own mail address.
+     * RtAlias can update and retrieve its own email address.
      * @throws Exception If there is some problem inside
      */
     @Test
