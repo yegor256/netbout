@@ -68,5 +68,5 @@ There are 21 active puzzles (67 total):
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[#1028](https://github.com/yegor256/netbout/issues/1028):[**1013-d9e5eb87**](https://github.com/yegor256/netbout/issues/1028) [`pom.xml:193-197`](../master/netbout-client/pom.xml#L193-L197)<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;[#1025](https://github.com/yegor256/netbout/issues/1025):[<del>1025</del>](https://github.com/yegor256/netbout/issues/1025) [`?`](../master/?)<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[#1047](https://github.com/yegor256/netbout/issues/1047):[**1025-adc69076**](https://github.com/yegor256/netbout/issues/1047) [`pom.xml:544-547`](../master/netbout-web/pom.xml#L544-L547)<br/>
-[#839](https://github.com/yegor256/netbout/issues/839):[<del>839</del>](https://github.com/yegor256/netbout/issues/839) [`?`](../master/?)<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;[**839-90f22678**]() [`DyAttachment.java:166-172`](../master/netbout-web/src/main/java/com/netbout/dynamo/DyAttachment.java#L166-L172)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;[#839](https://github.com/yegor256/netbout/issues/839):[<del>839</del>](https://github.com/yegor256/netbout/issues/839) [`?`](../master/?)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[#1090](https://github.com/yegor256/netbout/issues/1090):[**839-90f22678**](https://github.com/yegor256/netbout/issues/1090) [`DyAttachment.java:166-172`](../master/netbout-web/src/main/java/com/netbout/dynamo/DyAttachment.java#L166-L172)<br/>
