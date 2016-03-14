@@ -43,7 +43,7 @@ import org.xembly.Xembler;
  */
 public final class XeAliasTest {
     /**
-     * XeAlias can generate corresponding Xembly properly.
+     * XeAlias can generate corresponding Xembly directives properly.
      * @throws Exception If there is some problem inside
      */
     @Test
