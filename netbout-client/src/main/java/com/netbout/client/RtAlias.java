@@ -32,14 +32,12 @@ import com.jcabi.http.Request;
 import com.jcabi.http.response.RestResponse;
 import com.jcabi.http.response.XmlResponse;
 import com.jcabi.log.Logger;
-import com.jcabi.xml.XML;
 import com.netbout.spi.Alias;
 import com.netbout.spi.Bout;
 import com.netbout.spi.Inbox;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URI;
-import java.util.List;
 import java.util.Locale;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
@@ -110,23 +108,11 @@ final class RtAlias implements Alias {
 
     @Override
     public String email() throws IOException {
-        final XML body = this.request.fetch().as(XmlResponse.class).xml();
-        final List<String> verified = body.xpath("/page/alias/email/text()");
-        final String email;
-        if (verified.isEmpty()) {
-            email = "";
-        } else {
-            email = verified.get(0);
-        }
-        final List<String> unverified = body
-            .xpath("/page/alias/newEmail/text()");
-        final String complete;
-        if (unverified.isEmpty()) {
-            complete = email;
-        } else {
-            complete = String.format("%s!%s", email, unverified.get(0));
-        }
-        return complete;
+        return this.request.fetch()
+            .as(XmlResponse.class)
+            .xml()
+            .xpath("/page/alias/email/text()")
+            .get(0);
     }
 
     @Override

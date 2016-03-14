@@ -101,12 +101,10 @@ final class TkSaveEmail implements Take {
         final Alias alias = new RqAlias(this.base, req).alias();
         final Response res;
         if (this.local) {
-            alias.email(TkSaveEmail.combinedEmails(alias, email));
+            alias.email(email);
             res = new RsForward(
                 new RsFlash(
-                    String.format(
-                        "Email changed to \"%s\". Not verified yet.", email
-                    )
+                    String.format("Email changed to \"%s\".", email)
                 )
             );
         } else {
@@ -122,8 +120,14 @@ final class TkSaveEmail implements Take {
                 "%semverify/%s",
                 new RqHref.Smart(new RqHref.Base(req)).home().bare(), code
             );
+            final String old;
+            if (alias.email().contains("!")) {
+                old = alias.email().substring(0, alias.email().indexOf('!'));
+            } else {
+                old = alias.email();
+            }
             try {
-                alias.email(TkSaveEmail.combinedEmails(alias, email), link);
+                alias.email(String.format("%s!%s", old, email), link);
             } catch (final IOException ex) {
                 throw new RsFailure(ex);
             }
@@ -139,26 +143,5 @@ final class TkSaveEmail implements Take {
             );
         }
         return res;
-    }
-
-    /**
-     * Combine verified email and received email into a single String with
-     * specific format that we use later.
-     * @param alias Alias
-     * @param email Received email
-     * @return Verified and received email properly combined together.
-     * @throws IOException If something wrong
-     */
-    private static String combinedEmails(final Alias alias, final String email)
-        throws IOException {
-        final String previous = alias.email();
-        final int index = previous.indexOf('!');
-        final String verified;
-        if (index == -1) {
-            verified = previous;
-        } else {
-            verified = previous.substring(0, index);
-        }
-        return String.format("%s!%s", verified, email);
     }
 }

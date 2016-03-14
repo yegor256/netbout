@@ -24,42 +24,54 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-package com.netbout.client;
+package com.netbout.rest;
 
 import com.netbout.mock.MkBase;
-import com.netbout.spi.Alias;
-import com.netbout.spi.User;
+import com.netbout.spi.Base;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
-import org.junit.Rule;
 import org.junit.Test;
+import org.takes.Request;
+import org.takes.facets.auth.RqWithAuth;
+import org.xembly.Xembler;
 
 /**
- * Integration case for {@link RtAlias}.
- * @author Matteo Barbieri (barbieri.matteo@gmail.com)
+ * Test case for {@link XeAlias}.
+ * @author Carlos Gines (efrel.v2@gmail.com)
  * @version $Id$
- * @since 2.15
+ * @since 2.23
  */
-public final class RtAliasITCase {
-
+public final class XeAliasTest {
     /**
-     * Netbout rule.
-     * @checkstyle VisibilityModifierCheck (3 lines)
-     */
-    @Rule
-    public final transient NbRule rule = new NbRule();
-
-    /**
-     * RtAlias can update and retrieve its own mail address.
+     * XeAlias can generate corresponding Xembly properly.
      * @throws Exception If there is some problem inside
      */
     @Test
-    public void updateAndRetrieveEmail() throws Exception {
-        final MkBase base = new MkBase();
-        final User user = NbRule.get();
-        final Alias alias = user.aliases().iterate().iterator().next();
-        final String email = base.randomAlias().email();
-        alias.email(email);
-        MatcherAssert.assertThat(alias.email(), Matchers.is(email));
+    public void generatesXembly() throws Exception {
+        final Base base = new MkBase();
+        final Request request = new RqWithAuth("urn:test:1");
+        final String xml = new Xembler(
+            new XePage(base, request, new XeAlias(base, request)).toXembly()
+        ).xml();
+        MatcherAssert.assertThat(
+            xml,
+            Matchers.containsString("<name>")
+        );
+        MatcherAssert.assertThat(
+            xml,
+            Matchers.containsString("<locale>")
+        );
+        MatcherAssert.assertThat(
+            xml,
+            Matchers.containsString("<photo>")
+        );
+        MatcherAssert.assertThat(
+            xml,
+            Matchers.containsString("<email>")
+        );
+        MatcherAssert.assertThat(
+            xml,
+            Matchers.containsString("<newEmail/>")
+        );
     }
 }
