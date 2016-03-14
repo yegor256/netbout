@@ -54,24 +54,19 @@ public final class XeAliasTest {
             new XePage(base, request, new XeAlias(base, request)).toXembly()
         ).xml();
         MatcherAssert.assertThat(
-            xml,
-            Matchers.containsString("<name>")
+            xml, Matchers.containsString("<name>")
         );
         MatcherAssert.assertThat(
-            xml,
-            Matchers.containsString("<locale>")
+            xml, Matchers.containsString("<locale>")
         );
         MatcherAssert.assertThat(
-            xml,
-            Matchers.containsString("<photo>")
+            xml, Matchers.containsString("<photo>")
         );
         MatcherAssert.assertThat(
-            xml,
-            Matchers.containsString("<email>")
+            xml, Matchers.containsString("<email>")
         );
         MatcherAssert.assertThat(
-            xml,
-            Matchers.containsString("<newEmail/>")
+            xml, Matchers.containsString("<newEmail/>")
         );
     }
 }
