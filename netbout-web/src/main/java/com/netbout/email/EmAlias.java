@@ -57,7 +57,7 @@ import lombok.ToString;
 @Loggable(Loggable.DEBUG)
 @ToString(of = "origin")
 @EqualsAndHashCode(of = "origin")
-final class EmAlias implements Alias {
+public final class EmAlias implements Alias {
 
     /**
      * Original.
@@ -74,7 +74,7 @@ final class EmAlias implements Alias {
      * @param org Origin
      * @param pst Postman
      */
-    EmAlias(final Alias org, final Postman pst) {
+    public EmAlias(final Alias org, final Postman pst) {
         this.origin = org;
         this.postman = new Postman() {
             @Override

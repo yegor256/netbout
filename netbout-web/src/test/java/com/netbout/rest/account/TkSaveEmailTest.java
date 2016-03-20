@@ -26,8 +26,10 @@
  */
 package com.netbout.rest.account;
 
+import com.jcabi.email.Postman;
 import com.jcabi.urn.URN;
 import com.netbout.cached.CdBase;
+import com.netbout.email.EmAlias;
 import com.netbout.mock.MkBase;
 import com.netbout.spi.Alias;
 import com.netbout.spi.Base;
@@ -35,9 +37,11 @@ import com.netbout.spi.User;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;
+import org.mockito.Mockito;
 import org.takes.facets.auth.Identity;
 import org.takes.facets.auth.PsFixed;
 import org.takes.facets.auth.TkAuth;
+import org.takes.facets.forward.RsForward;
 import org.takes.rq.RqFake;
 import org.takes.rq.RqForm;
 
@@ -100,6 +104,27 @@ public final class TkSaveEmailTest {
         MatcherAssert.assertThat(
             alias.email(),
             Matchers.equalTo(email)
+        );
+    }
+
+    /**
+     * TkSaveEmailTest throws RsForward error.
+     * @throws Exception on Error.
+     */
+    @Test(expected = RsForward.class)
+    public void throwsRsForward() throws Exception {
+        final Postman postman = Mockito.mock(Postman.class);
+        final MkBase base = new MkBase();
+        final String urn = "urn:test:3";
+        final Alias alias = new EmAlias(base.randomAlias(), postman);
+        alias.email("email@example.com");
+        new TkAuth(
+            new TkSaveEmail(base, true),
+            new PsFixed(new Identity.Simple(urn))
+        ).act(
+            new RqForm.Fake(
+                new RqFake(), TkSaveEmailTest.EMAIL, "new"
+                )
         );
     }
 
