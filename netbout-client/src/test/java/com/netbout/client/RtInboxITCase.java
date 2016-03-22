@@ -30,6 +30,8 @@ import com.netbout.spi.Alias;
 import com.netbout.spi.Bout;
 import com.netbout.spi.Inbox;
 import com.netbout.spi.User;
+import java.util.ArrayList;
+import java.util.List;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Rule;
@@ -65,4 +67,39 @@ public final class RtInboxITCase {
         );
     }
 
+    /**
+     * TkInbox can search bouts.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void searchesBouts() throws Exception {
+        final Inbox inbox =
+            NbRule.get().aliases().iterate().iterator().next().inbox();
+        final Bout first = inbox.bout(inbox.start());
+        final String firsttitle = "bout1 title";
+        first.rename(firsttitle);
+        first.messages().post("hello");
+        final Bout second = inbox.bout(inbox.start());
+        final String secondtitle = "bout2 title";
+        second.rename(secondtitle);
+        second.messages().post("message with term");
+        final String thirdtitle = "bout title with term";
+        inbox.bout(inbox.start()).rename(thirdtitle);
+        final List<String> titles = new ArrayList<>(16);
+        for (final Bout bout : inbox.search("term")) {
+            titles.add(bout.title());
+        }
+        MatcherAssert.assertThat(
+            titles,
+            Matchers.hasItem(Matchers.equalTo(secondtitle))
+        );
+        MatcherAssert.assertThat(
+            titles,
+            Matchers.hasItem(Matchers.equalTo(thirdtitle))
+        );
+        MatcherAssert.assertThat(
+            titles,
+            Matchers.not(Matchers.hasItem(Matchers.equalTo(firsttitle)))
+        );
+    }
 }

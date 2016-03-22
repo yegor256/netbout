@@ -155,7 +155,9 @@ final class MkInbox implements Inbox {
     public Iterable<Bout> search(final String term) throws IOException {
         final List<Bout> result = new ArrayList<>(16);
         for (final Bout bout : this.iterate()) {
-            if (bout.messages().search(term).iterator().hasNext()) {
+            if (bout.title().contains(term)) {
+                result.add(bout);
+            } else if (bout.messages().search(term).iterator().hasNext()) {
                 result.add(bout);
             }
         }
