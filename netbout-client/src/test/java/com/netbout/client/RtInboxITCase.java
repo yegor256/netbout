@@ -68,7 +68,7 @@ public final class RtInboxITCase {
     }
 
     /**
-     * TkInbox can search bouts.
+     * RtInbox can search bouts.
      * @throws Exception If there is some problem inside
      */
     @Test
