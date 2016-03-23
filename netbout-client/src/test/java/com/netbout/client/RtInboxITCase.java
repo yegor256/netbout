@@ -68,7 +68,7 @@ public final class RtInboxITCase {
     }
 
     /**
-     * RtInbox can search bouts.
+     * RtInbox can search for bouts.
      * @throws Exception If there is some problem inside
      */
     @SuppressWarnings("unchecked")
