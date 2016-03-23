@@ -30,7 +30,7 @@ import com.netbout.spi.Alias;
 import com.netbout.spi.Bout;
 import com.netbout.spi.Inbox;
 import com.netbout.spi.User;
-import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
@@ -71,6 +71,7 @@ public final class RtInboxITCase {
      * RtInbox can search bouts.
      * @throws Exception If there is some problem inside
      */
+    @SuppressWarnings("unchecked")
     @Test
     public void searchesBouts() throws Exception {
         final Inbox inbox =
@@ -85,17 +86,16 @@ public final class RtInboxITCase {
         second.messages().post("message with term");
         final String thirdtitle = "bout title with term";
         inbox.bout(inbox.start()).rename(thirdtitle);
-        final List<String> titles = new ArrayList<>(16);
+        final List<String> titles = new LinkedList<>();
         for (final Bout bout : inbox.search("term")) {
             titles.add(bout.title());
         }
         MatcherAssert.assertThat(
             titles,
-            Matchers.hasItem(Matchers.equalTo(secondtitle))
-        );
-        MatcherAssert.assertThat(
-            titles,
-            Matchers.hasItem(Matchers.equalTo(thirdtitle))
+            Matchers.hasItems(
+                Matchers.equalTo(secondtitle),
+                Matchers.equalTo(thirdtitle)
+            )
         );
         MatcherAssert.assertThat(
             titles,
