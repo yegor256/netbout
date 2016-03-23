@@ -71,7 +71,6 @@ public final class RtInboxITCase {
      * RtInbox can search for bouts.
      * @throws Exception If there is some problem inside
      */
-    @SuppressWarnings("unchecked")
     @Test
     public void searchesBouts() throws Exception {
         final Inbox inbox =
@@ -92,14 +91,11 @@ public final class RtInboxITCase {
         }
         MatcherAssert.assertThat(
             titles,
-            Matchers.hasItems(
-                Matchers.equalTo(secondtitle),
-                Matchers.equalTo(thirdtitle)
-            )
+            Matchers.hasItems(secondtitle, thirdtitle)
         );
         MatcherAssert.assertThat(
             titles,
-            Matchers.not(Matchers.hasItem(Matchers.equalTo(firsttitle)))
+            Matchers.not(Matchers.hasItem(firsttitle))
         );
     }
 }
