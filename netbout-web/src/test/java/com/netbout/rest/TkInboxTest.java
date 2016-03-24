@@ -96,11 +96,13 @@ public final class TkInboxTest {
         final Bout first = inbox.bout(inbox.start());
         final String firsttitle = "bout1 title";
         first.rename(firsttitle);
+        first.messages().post("hello");
         final Bout second = inbox.bout(inbox.start());
         final String secondtitle = "bout2 title";
         second.rename(secondtitle);
-        first.messages().post("hello");
-        second.messages().post("world");
+        second.messages().post("message with term");
+        final String thirdtitle = "bout title with term";
+        inbox.bout(inbox.start()).rename(thirdtitle);
         final String body = new RsPrint(
             new TkAuth(
                 new TkInbox(base),
@@ -110,7 +112,7 @@ public final class TkInboxTest {
                     RqMethod.GET,
                     String.format(
                         "/search?q=%s",
-                        "r"
+                        "term"
                     )
                 )
             )
@@ -118,6 +120,10 @@ public final class TkInboxTest {
         MatcherAssert.assertThat(
             body,
             Matchers.containsString(secondtitle)
+        );
+        MatcherAssert.assertThat(
+            body,
+            Matchers.containsString(thirdtitle)
         );
         MatcherAssert.assertThat(
             body,
