@@ -59,9 +59,11 @@ import com.netbout.spi.Pageable;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 import org.apache.commons.lang3.StringUtils;
+import org.takes.facets.forward.RsFailure;
 
 /**
  * Dynamo messages.
@@ -193,23 +195,27 @@ final class DyMessages implements Messages {
 
     @Override
     public long unread() throws IOException {
-        final Item item = this.region.table(DyFriends.TBL)
-            .frame()
-            .through(
-                new QueryValve()
-                    .withLimit(1)
-                    .withAttributesToGet(DyFriends.ATTR_UNREAD)
-            )
-            .where(DyFriends.HASH, Conditions.equalTo(this.bout))
-            .where(DyFriends.RANGE, Conditions.equalTo(this.self))
-            .iterator().next();
-        final long unread;
-        if (item.has(DyFriends.ATTR_UNREAD)) {
-            unread = Long.parseLong(item.get(DyFriends.ATTR_UNREAD).getN());
-        } else {
-            unread = 0L;
+        try {
+            final Item item = this.region.table(DyFriends.TBL)
+                .frame()
+                .through(
+                    new QueryValve()
+                        .withLimit(1)
+                        .withAttributesToGet(DyFriends.ATTR_UNREAD)
+                )
+                .where(DyFriends.HASH, Conditions.equalTo(this.bout))
+                .where(DyFriends.RANGE, Conditions.equalTo(this.self))
+                .iterator().next();
+            final long unread;
+            if (item.has(DyFriends.ATTR_UNREAD)) {
+                unread = Long.parseLong(item.get(DyFriends.ATTR_UNREAD).getN());
+            } else {
+                unread = 0L;
+            }
+            return unread;
+        } catch (final NoSuchElementException ex) {
+            throw new RsFailure(ex);
         }
-        return unread;
     }
 
     @Override
