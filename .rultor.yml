@@ -55,6 +55,7 @@ merge:
   - krzyk
   - longtimeago
   - mkordas
+  - original-brownbear
   - pinaf
 release:
   script: |-
