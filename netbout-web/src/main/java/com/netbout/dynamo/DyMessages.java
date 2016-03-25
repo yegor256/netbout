@@ -58,8 +58,8 @@ import com.netbout.spi.Messages;
 import com.netbout.spi.Pageable;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
-import java.util.NoSuchElementException;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 import org.apache.commons.lang3.StringUtils;
@@ -195,27 +195,30 @@ final class DyMessages implements Messages {
 
     @Override
     public long unread() throws IOException {
-        try {
-            final Item item = this.region.table(DyFriends.TBL)
-                .frame()
-                .through(
-                    new QueryValve()
-                        .withLimit(1)
-                        .withAttributesToGet(DyFriends.ATTR_UNREAD)
-                )
-                .where(DyFriends.HASH, Conditions.equalTo(this.bout))
-                .where(DyFriends.RANGE, Conditions.equalTo(this.self))
-                .iterator().next();
-            final long unread;
-            if (item.has(DyFriends.ATTR_UNREAD)) {
-                unread = Long.parseLong(item.get(DyFriends.ATTR_UNREAD).getN());
-            } else {
-                unread = 0L;
-            }
-            return unread;
-        } catch (final NoSuchElementException ex) {
-            throw new RsFailure(ex);
+        final Iterator<Item> iterator = this.region.table(DyFriends.TBL)
+            .frame()
+            .through(
+                new QueryValve()
+                    .withLimit(1)
+                    .withAttributesToGet(DyFriends.ATTR_UNREAD)
+            )
+            .where(DyFriends.HASH, Conditions.equalTo(this.bout))
+            .where(DyFriends.RANGE, Conditions.equalTo(this.self))
+            .iterator();
+        if (!iterator.hasNext()) {
+            throw new RsFailure(
+                new StringBuilder("you're not in bout #")
+                .append(this.bout).toString()
+            );
         }
+        final Item item = iterator.next();
+        final long unread;
+        if (item.has(DyFriends.ATTR_UNREAD)) {
+            unread = Long.parseLong(item.get(DyFriends.ATTR_UNREAD).getN());
+        } else {
+            unread = 0L;
+        }
+        return unread;
     }
 
     @Override
