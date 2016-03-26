@@ -63,7 +63,6 @@ import java.util.List;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 import org.apache.commons.lang3.StringUtils;
-import org.takes.facets.forward.RsFailure;
 
 /**
  * Dynamo messages.
@@ -206,10 +205,7 @@ final class DyMessages implements Messages {
             .where(DyFriends.RANGE, Conditions.equalTo(this.self))
             .iterator();
         if (!iterator.hasNext()) {
-            throw new RsFailure(
-                new StringBuilder("you're not in bout #")
-                .append(this.bout).toString()
-            );
+            throw new Inbox.BoutNotFoundException(this.bout);
         }
         final Item item = iterator.next();
         final long unread;
