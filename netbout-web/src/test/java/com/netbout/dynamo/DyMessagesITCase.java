@@ -183,8 +183,8 @@ public final class DyMessagesITCase {
             final Friends friends = bout.friends();
             friends.kick(name);
             final Messages messages = bout.messages();
-            thrown.expect(HttpException.class);
-            thrown.expectMessage(String.valueOf(bout.number()));
+            this.thrown.expect(HttpException.class);
+            this.thrown.expectMessage(String.valueOf(bout.number()));
             messages.unread();
         }
     }
