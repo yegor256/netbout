@@ -57,12 +57,14 @@ import com.netbout.spi.Message;
 import com.netbout.spi.Messages;
 import com.netbout.spi.Pageable;
 import java.io.IOException;
+import java.net.HttpURLConnection;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 import org.apache.commons.lang3.StringUtils;
+import org.takes.HttpException;
 
 /**
  * Dynamo messages.
@@ -205,7 +207,10 @@ final class DyMessages implements Messages {
             .where(DyFriends.RANGE, Conditions.equalTo(this.self))
             .iterator();
         if (!iterator.hasNext()) {
-            throw new Inbox.BoutNotFoundException(this.bout);
+            throw new HttpException(
+                HttpURLConnection.HTTP_NOT_FOUND,
+                new Inbox.BoutNotFoundException(this.bout)
+            );
         }
         final Item item = iterator.next();
         final long unread;
