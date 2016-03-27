@@ -29,7 +29,6 @@ package com.netbout.rest.account;
 import com.jcabi.email.Postman;
 import com.jcabi.urn.URN;
 import com.netbout.cached.CdBase;
-import com.netbout.email.EmAlias;
 import com.netbout.mock.MkBase;
 import com.netbout.spi.Alias;
 import com.netbout.spi.Base;
@@ -108,22 +107,23 @@ public final class TkSaveEmailTest {
     }
 
     /**
-     * TkSaveEmailTest throws RsForward error.
+     * TkSaveEmailTest throws RsForward error in case of invalid email.
      * @throws Exception on Error.
      */
     @Test(expected = RsForward.class)
     public void throwsRsForward() throws Exception {
-        final Postman postman = Mockito.mock(Postman.class);
         final MkBase base = new MkBase();
         final String urn = "urn:test:3";
-        final Alias alias = new EmAlias(base.randomAlias(), postman);
-        alias.email("email@example.com");
+        final User user = base.user(new URN(urn));
+        user.aliases().add("alias3");
+        final Alias alias = user.aliases().iterate().iterator().next();
+        alias.email("test@example.com");
         new TkAuth(
             new TkSaveEmail(base, true),
             new PsFixed(new Identity.Simple(urn))
         ).act(
             new RqForm.Fake(
-                new RqFake(), TkSaveEmailTest.EMAIL, "new"
+                new RqFake(), TkSaveEmailTest.EMAIL, "invalidemail"
                 )
         );
     }
