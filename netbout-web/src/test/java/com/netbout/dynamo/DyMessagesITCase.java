@@ -26,7 +26,6 @@
  */
 package com.netbout.dynamo;
 
-import static org.junit.Assert.fail;
 import com.jcabi.aspects.Tv;
 import com.jcabi.urn.URN;
 import com.netbout.spi.Alias;
@@ -42,7 +41,9 @@ import java.net.URISyntaxException;
 import java.util.Iterator;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 import org.takes.HttpException;
 
 /**
@@ -52,6 +53,8 @@ import org.takes.HttpException;
  */
 public final class DyMessagesITCase {
 
+    @Rule
+    public ExpectedException thrown = ExpectedException.none();
     /**
      * DyMessages can list and create messages.
      * @throws Exception If there is some problem inside
@@ -168,24 +171,22 @@ public final class DyMessagesITCase {
      */
     @Test
     public void exceptionIfBoutNotFound() throws Exception {
-        final String name = "testunread";
-        final Aliases aliases =
-            new DyBase().user(new URN("urn:test:75066")).aliases();
-        final Alias alias = aliases.add(name);
-        final Inbox inbox = alias.inbox();
-        final Bout bout = inbox.bout(inbox.start());
-        bout.messages().post("    4 leading spaces retained  ");
-        final Friends friends = bout.friends();
-        friends.kick(name);
-        final Messages messages = bout.messages();
-        try {
+        try (final DyBase base = new DyBase()) {
+            final String name = "testunread";
+            final Aliases aliases = base.user(
+                new URN("urn:test:75066")
+                ).aliases();
+            final Alias alias = aliases.add(name);
+            final Inbox inbox = alias.inbox();
+            final Bout bout = inbox.bout(inbox.start());
+            bout.messages().post("    4 leading spaces retained  ");
+            final Friends friends = bout.friends();
+            friends.kick(name);
+            final Messages messages = bout.messages();
+            thrown.expect(HttpException.class);
+            thrown.expectMessage(String.valueOf(bout.number()));
             messages.unread();
-            fail("HttpException is not received");
-        } catch (HttpException e) {
-            MatcherAssert.assertThat(
-                e.getMessage(),
-                Matchers.containsString(String.valueOf(bout.number()))
-            );
         }
+
     }
 }
