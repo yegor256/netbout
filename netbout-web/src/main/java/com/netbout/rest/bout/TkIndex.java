@@ -122,9 +122,7 @@ final class TkIndex implements Take {
                             @Override
                             public XeSource transform(final Attachment atmt)
                                 throws IOException {
-                                return new XeAttachment(
-                                    request, bout, atmt
-                                );
+                                return new XeAttachment(request, bout, atmt);
                             }
                         }
                     )

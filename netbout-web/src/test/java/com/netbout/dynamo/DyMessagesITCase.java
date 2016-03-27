@@ -26,6 +26,7 @@
  */
 package com.netbout.dynamo;
 
+import static org.junit.Assert.fail;
 import com.jcabi.aspects.Tv;
 import com.jcabi.urn.URN;
 import com.netbout.spi.Alias;
@@ -179,6 +180,7 @@ public final class DyMessagesITCase {
         final Messages messages = bout.messages();
         try {
             messages.unread();
+            fail("HttpException is not received");
         } catch (HttpException e) {
             MatcherAssert.assertThat(
                 e.getMessage(),
