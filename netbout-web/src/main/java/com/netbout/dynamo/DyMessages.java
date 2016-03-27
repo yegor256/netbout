@@ -194,7 +194,7 @@ final class DyMessages implements Messages {
         Logger.info(this, "posted to #%d by @%s", this.bout, this.self);
     }
 
-    // @todo #1094 #834 HttpException seems not really appropriate here
+    // @todo #1094:30min HttpException seems not really appropriate here
     //  in database layer. I think we have to throw something like
     //  BoutNotFoundException and process its somewhere in web layer.
     //  Pay attention that we should also change a test

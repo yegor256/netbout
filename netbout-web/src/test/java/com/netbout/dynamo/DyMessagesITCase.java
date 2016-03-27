@@ -187,6 +187,5 @@ public final class DyMessagesITCase {
             thrown.expectMessage(String.valueOf(bout.number()));
             messages.unread();
         }
-
     }
 }
