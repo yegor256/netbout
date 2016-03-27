@@ -42,7 +42,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.takes.Request;
 import org.takes.Response;
 import org.takes.Take;
-import org.takes.facets.forward.RsFailure;
 import org.takes.misc.Href;
 import org.takes.rq.RqHref;
 import org.takes.rs.xe.XeAppend;
@@ -84,81 +83,77 @@ final class TkIndex implements Take {
         final Href home = new Href("/b").path(bout.number());
         final RqWithDefaultHeader request =
             new RqWithDefaultHeader(req, HttpHeaders.ACCEPT, "text/xml");
-        try {
-            return new RsPage(
-                "/xsl/bout.xsl",
-                this.base,
-                request,
+        return new RsPage(
+            "/xsl/bout.xsl",
+            this.base,
+            request,
+            new XeAppend(
+                "bout",
+                new XeDirectives(
+                    new Directives()
+                        .add("number")
+                        .set(Long.toString(bout.number()))
+                        .up()
+                        .add("title").set(bout.title()).up()
+                        .add("unread")
+                        .set(Long.toString(bout.messages().unread()))
+                        .up()
+                        .add("subscription")
+                        .set(String.valueOf(bout.subscription()))
+                ),
                 new XeAppend(
-                    "bout",
-                    new XeDirectives(
-                        new Directives()
-                            .add("number")
-                            .set(Long.toString(bout.number()))
-                            .up()
-                            .add("title").set(bout.title()).up()
-                            .add("unread")
-                            .set(Long.toString(bout.messages().unread()))
-                            .up()
-                            .add("subscription")
-                            .set(String.valueOf(bout.subscription()))
-                    ),
-                    new XeAppend(
-                        "friends",
-                        new XeTransform<>(
-                            bout.friends().iterate(),
-                            new XeTransform.Func<Friend>() {
-                                @Override
-                                public XeSource transform(final Friend friend)
-                                    throws IOException {
-                                    return new XeFriend(bout, friend);
-                                }
+                    "friends",
+                    new XeTransform<>(
+                        bout.friends().iterate(),
+                        new XeTransform.Func<Friend>() {
+                            @Override
+                            public XeSource transform(final Friend friend)
+                                throws IOException {
+                                return new XeFriend(bout, friend);
                             }
-                        )
-                    ),
-                    new XeAppend(
-                        "attachments",
-                        new XeTransform<>(
-                            bout.attachments().iterate(),
-                            new XeTransform.Func<Attachment>() {
-                                @Override
-                                public XeSource transform(final Attachment atmt)
-                                    throws IOException {
-                                    return new XeAttachment(
-                                        request, bout, atmt
-                                    );
-                                }
-                            }
-                        )
-                    ),
-                    new XeAppend(
-                        "messages",
-                        new XeTransform<>(
-                            messages(bout, request, query),
-                            new XeTransform.Func<Message>() {
-                                @Override
-                                public XeSource transform(final Message msg)
-                                    throws IOException {
-                                    return new XeMessage(bout, msg);
-                                }
-                            }
-                        )
+                        }
                     )
                 ),
-                new XeAppend("query", query),
-                new XeLink("post", home.path("post")),
-                new XeLink("preview", home.path("preview")),
-                new XeLink("rename", home.path("rename")),
-                new XeLink("invite", home.path("invite")),
-                new XeLink("search", home.path("search")),
-                new XeLink("upload", home.path("upload")),
-                new XeLink("create", home.path("create")),
-                new XeLink("attach", home.path("attach")),
-                new XeLink("subscribe", home.path("subscribe"))
-            );
-        } catch (final Inbox.BoutNotFoundException ex) {
-            throw new RsFailure(ex);
-        }
+                new XeAppend(
+                    "attachments",
+                    new XeTransform<>(
+                        bout.attachments().iterate(),
+                        new XeTransform.Func<Attachment>() {
+                            @Override
+                            public XeSource transform(final Attachment atmt)
+                                throws IOException {
+                                return new XeAttachment(
+                                    request, bout, atmt
+                                );
+                            }
+                        }
+                    )
+                ),
+                new XeAppend(
+                    "messages",
+                    new XeTransform<>(
+                        messages(bout, request, query),
+                        new XeTransform.Func<Message>() {
+                            @Override
+                            public XeSource transform(final Message msg)
+                                throws IOException {
+                                return new XeMessage(bout, msg);
+                            }
+                        }
+                    )
+                )
+            ),
+            new XeAppend("query", query),
+            new XeLink("post", home.path("post")),
+            new XeLink("preview", home.path("preview")),
+            new XeLink("rename", home.path("rename")),
+            new XeLink("invite", home.path("invite")),
+            new XeLink("search", home.path("search")),
+            new XeLink("upload", home.path("upload")),
+            new XeLink("create", home.path("create")),
+            new XeLink("attach", home.path("attach")),
+            new XeLink("subscribe", home.path("subscribe"))
+        );
     }
     /**
      * Returns searched or paginated messages.

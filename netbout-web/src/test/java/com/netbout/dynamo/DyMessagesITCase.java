@@ -26,7 +26,6 @@
  */
 package com.netbout.dynamo;
 
-import static org.junit.Assert.fail;
 import com.jcabi.aspects.Tv;
 import com.jcabi.urn.URN;
 import com.netbout.spi.Alias;
@@ -161,29 +160,30 @@ public final class DyMessagesITCase {
     }
     
     /**
-     * DyMessages has to throw {@code HttpException} if invoke {@code unread()}
+     * DyMessages can throw {@code HttpException} if invoke {@code unread()}
      * for user which is not in a bout.
      * @throws URISyntaxException If there is some problem inside
      * @throws IOException If there is some problem inside
      */
-    @Test(expected = HttpException.class)
-    public void exceptionIfBoutNotFound() throws IOException {
-        Messages messages = null;
+    @Test
+    public void exceptionIfBoutNotFound() throws Exception {
+        final String name = "testunread";
+        final Aliases aliases =
+            new DyBase().user(new URN("urn:test:75066")).aliases();
+        final Alias alias = aliases.add(name);
+        final Inbox inbox = alias.inbox();
+        final Bout bout = inbox.bout(inbox.start());
+        bout.messages().post("    4 leading spaces retained  ");
+        final Friends friends = bout.friends();
+        friends.kick(name);
+        final Messages messages = bout.messages();
         try {
-            final String name = "testunread";
-            final Aliases aliases =
-                new DyBase().user(new URN("urn:test:75066")).aliases();
-            final Alias alias = aliases.add(name);
-            final Inbox inbox = alias.inbox();
-            final Bout bout = inbox.bout(inbox.start());
-            bout.messages().post("    4 leading spaces retained  ");
-            final Friends friends = bout.friends();
-            friends.kick(name);
-            messages = bout.messages();
-        } catch (IOException | URISyntaxException e) {
-            fail(e.getMessage());
+            messages.unread();
+        } catch (HttpException e) {
+            MatcherAssert.assertThat(
+                e.getMessage(),
+                Matchers.containsString(String.valueOf(bout.number()))
+            );
         }
-        messages.unread();
-        fail("Exception is not received");
     }
 }
