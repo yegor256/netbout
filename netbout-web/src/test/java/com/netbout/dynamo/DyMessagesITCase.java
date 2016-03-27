@@ -26,18 +26,24 @@
  */
 package com.netbout.dynamo;
 
+import static org.junit.Assert.fail;
 import com.jcabi.aspects.Tv;
 import com.jcabi.urn.URN;
+import com.netbout.spi.Alias;
 import com.netbout.spi.Aliases;
 import com.netbout.spi.Bout;
+import com.netbout.spi.Friends;
 import com.netbout.spi.Inbox;
 import com.netbout.spi.Message;
 import com.netbout.spi.Messages;
 import com.netbout.spi.Pageable;
+import java.io.IOException;
+import java.net.URISyntaxException;
 import java.util.Iterator;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;
+import org.takes.HttpException;
 
 /**
  * Integration case for {@link DyMessages}.
@@ -152,5 +158,32 @@ public final class DyMessagesITCase {
             result.next().text(),
             Matchers.equalTo("    4 leading spaces retained")
         );
+    }
+    
+    /**
+     * DyMessages has to throw {@code HttpException} if invoke {@code unread()}
+     * for user which is not in a bout.
+     * @throws URISyntaxException If there is some problem inside
+     * @throws IOException If there is some problem inside
+     */
+    @Test(expected = HttpException.class)
+    public void exceptionIfBoutNotFound() throws IOException {
+        Messages messages = null;
+        try {
+            final String name = "testunread";
+            final Aliases aliases =
+                new DyBase().user(new URN("urn:test:75066")).aliases();
+            final Alias alias = aliases.add(name);
+            final Inbox inbox = alias.inbox();
+            final Bout bout = inbox.bout(inbox.start());
+            bout.messages().post("    4 leading spaces retained  ");
+            final Friends friends = bout.friends();
+            friends.kick(name);
+            messages = bout.messages();
+        } catch (IOException | URISyntaxException e) {
+            fail(e.getMessage());
+        }
+        messages.unread();
+        fail("Exception is not received");
     }
 }
