@@ -71,4 +71,4 @@ There are 21 active puzzles (69 total):
 &nbsp;&nbsp;&nbsp;&nbsp;[#839](https://github.com/yegor256/netbout/issues/839):[<del>839</del>](https://github.com/yegor256/netbout/issues/839) [`?`](../master/?)<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[#1090](https://github.com/yegor256/netbout/issues/1090):[**839-90f22678**](https://github.com/yegor256/netbout/issues/1090) [`DyAttachment.java:166-172`](../master/netbout-web/src/main/java/com/netbout/dynamo/DyAttachment.java#L166-L172)<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;[#1094](https://github.com/yegor256/netbout/pull/1094):[<del>1094</del>](https://github.com/yegor256/netbout/pull/1094) [`?`](../master/?)<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[**1094-571b0dd7**]() [`DyMessages.java:197-202`](../master/netbout-web/src/main/java/com/netbout/dynamo/DyMessages.java#L197-L202)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[#1096](https://github.com/yegor256/netbout/issues/1096):[**1094-571b0dd7**](https://github.com/yegor256/netbout/issues/1096) [`DyMessages.java:197-202`](../master/netbout-web/src/main/java/com/netbout/dynamo/DyMessages.java#L197-L202)<br/>
