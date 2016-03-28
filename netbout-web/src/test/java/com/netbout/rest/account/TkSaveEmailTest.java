@@ -26,7 +26,6 @@
  */
 package com.netbout.rest.account;
 
-import com.jcabi.email.Postman;
 import com.jcabi.urn.URN;
 import com.netbout.cached.CdBase;
 import com.netbout.mock.MkBase;
@@ -36,7 +35,6 @@ import com.netbout.spi.User;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;
-import org.mockito.Mockito;
 import org.takes.facets.auth.Identity;
 import org.takes.facets.auth.PsFixed;
 import org.takes.facets.auth.TkAuth;
