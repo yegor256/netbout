@@ -38,6 +38,7 @@ import org.junit.Test;
 import org.takes.facets.auth.Identity;
 import org.takes.facets.auth.PsFixed;
 import org.takes.facets.auth.TkAuth;
+import org.takes.facets.forward.RsForward;
 import org.takes.rq.RqFake;
 import org.takes.rq.RqForm;
 
@@ -100,6 +101,28 @@ public final class TkSaveEmailTest {
         MatcherAssert.assertThat(
             alias.email(),
             Matchers.equalTo(email)
+        );
+    }
+
+    /**
+     * TkSaveEmailTest throws RsForward error in case of invalid email.
+     * @throws Exception on Error.
+     */
+    @Test(expected = RsForward.class)
+    public void throwsRsForward() throws Exception {
+        final MkBase base = new MkBase();
+        final String urn = "urn:test:3";
+        final User user = base.user(new URN(urn));
+        user.aliases().add("alias3");
+        final Alias alias = user.aliases().iterate().iterator().next();
+        alias.email("test@example.com");
+        new TkAuth(
+            new TkSaveEmail(base, true),
+            new PsFixed(new Identity.Simple(urn))
+        ).act(
+            new RqForm.Fake(
+                new RqFake(), TkSaveEmailTest.EMAIL, "invalidemail"
+                )
         );
     }
 

@@ -38,6 +38,7 @@ import java.io.IOException;
 import java.net.URI;
 import java.sql.SQLException;
 import java.util.Locale;
+import java.util.regex.Pattern;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
@@ -53,6 +54,22 @@ import lombok.ToString;
 @Loggable(Loggable.DEBUG)
 @EqualsAndHashCode(of = { "sql", "label" })
 final class MkAlias implements Alias {
+
+    /**
+     * Valid pattern.
+     * @checkstyle LineLengthCheck (2 line)
+     */
+    private static final String VALID = "([a-z0-9_-]+\\.)*[a-z0-9_-]+@[a-z0-9_-]+(\\.[a-z0-9_-]+)*\\.[a-z]{2,6}";
+    /**
+     * Valid email pattern.
+     */
+    private static final Pattern MAIL = Pattern.compile(
+        String.format(
+            "!?%s|%s!%s",
+            MkAlias.VALID, MkAlias.VALID, MkAlias.VALID
+        ),
+        Pattern.CASE_INSENSITIVE
+    );
 
     /**
      * SQL data source provider.
@@ -134,6 +151,9 @@ final class MkAlias implements Alias {
 
     @Override
     public void email(final String email) throws IOException {
+        if (!MkAlias.MAIL.matcher(email).matches()) {
+            throw new Alias.InvalidEmailException(email);
+        }
         try {
             new JdbcSession(this.sql.source())
                 .sql("UPDATE alias SET email = ? WHERE name = ?")

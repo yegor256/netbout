@@ -90,7 +90,7 @@ public final class TkInviteTest {
                                 TkInviteTest.INVITE_PATH,
                                 bout.number()
                             ),
-                            "name=foo@bar.airforce"
+                            "name=foo@bar.airfrc"
                         )
                     ),
                     TkInviteTest.NETBOUT_HEADER,
@@ -100,7 +100,7 @@ public final class TkInviteTest {
         } catch (final RsForward ex) {
             MatcherAssert.assertThat(
                 ex.getLocalizedMessage(),
-                Matchers.containsString("foo-bar-airforce")
+                Matchers.containsString("foo-bar-airfrc")
             );
             throw ex;
         }
