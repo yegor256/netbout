@@ -119,7 +119,17 @@ final class RtAttachment implements Attachment {
 
     @Override
     public Date date() throws IOException {
-        return new Date();
+        return new Date(
+            Long.parseLong(
+                this.request.fetch()
+                    .as(RestResponse.class)
+                    .assertStatus(HttpURLConnection.HTTP_OK)
+                    .as(XmlResponse.class)
+                    .xml()
+                    .xpath(this.xpath("date/text()"))
+                    .get(0)
+            )
+        );
     }
 
     @Override

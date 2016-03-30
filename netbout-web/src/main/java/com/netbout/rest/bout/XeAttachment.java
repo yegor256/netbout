@@ -94,7 +94,8 @@ final class XeAttachment extends XeWrap {
                     .add("ctype").set(atmt.ctype()).up()
                     .add("etag").set(atmt.etag()).up()
                     .add("unseen").set(Boolean.toString(atmt.unseen())).up()
-                    .add("author").set(atmt.author())
+                    .add("author").set(atmt.author()).up()
+                    .add("date").set(atmt.date().getTime())
             ),
             new XeLink(
                 "delete",
