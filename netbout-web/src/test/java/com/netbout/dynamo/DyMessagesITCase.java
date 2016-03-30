@@ -28,16 +28,23 @@ package com.netbout.dynamo;
 
 import com.jcabi.aspects.Tv;
 import com.jcabi.urn.URN;
+import com.netbout.spi.Alias;
 import com.netbout.spi.Aliases;
 import com.netbout.spi.Bout;
+import com.netbout.spi.Friends;
 import com.netbout.spi.Inbox;
 import com.netbout.spi.Message;
 import com.netbout.spi.Messages;
 import com.netbout.spi.Pageable;
+import java.io.IOException;
+import java.net.URISyntaxException;
 import java.util.Iterator;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
+import org.takes.HttpException;
 
 /**
  * Integration case for {@link DyMessages}.
@@ -46,6 +53,8 @@ import org.junit.Test;
  */
 public final class DyMessagesITCase {
 
+    @Rule
+    public ExpectedException thrown = ExpectedException.none();
     /**
      * DyMessages can list and create messages.
      * @throws Exception If there is some problem inside
@@ -152,5 +161,31 @@ public final class DyMessagesITCase {
             result.next().text(),
             Matchers.equalTo("    4 leading spaces retained")
         );
+    }
+    
+    /**
+     * DyMessages can throw {@code HttpException} if invoke {@code unread()}
+     * for user which is not in a bout.
+     * @throws URISyntaxException If there is some problem inside
+     * @throws IOException If there is some problem inside
+     */
+    @Test
+    public void exceptionIfBoutNotFound() throws Exception {
+        try (final DyBase base = new DyBase()) {
+            final String name = "testunread";
+            final Aliases aliases = base.user(
+                new URN("urn:test:75066")
+                ).aliases();
+            final Alias alias = aliases.add(name);
+            final Inbox inbox = alias.inbox();
+            final Bout bout = inbox.bout(inbox.start());
+            bout.messages().post("    4 leading spaces retained  ");
+            final Friends friends = bout.friends();
+            friends.kick(name);
+            final Messages messages = bout.messages();
+            this.thrown.expect(HttpException.class);
+            this.thrown.expectMessage(String.valueOf(bout.number()));
+            messages.unread();
+        }
     }
 }

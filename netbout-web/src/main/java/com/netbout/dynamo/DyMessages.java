@@ -57,11 +57,14 @@ import com.netbout.spi.Message;
 import com.netbout.spi.Messages;
 import com.netbout.spi.Pageable;
 import java.io.IOException;
+import java.net.HttpURLConnection;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 import org.apache.commons.lang3.StringUtils;
+import org.takes.HttpException;
 
 /**
  * Dynamo messages.
@@ -191,9 +194,15 @@ final class DyMessages implements Messages {
         Logger.info(this, "posted to #%d by @%s", this.bout, this.self);
     }
 
+    // @todo #1094:30min HttpException seems not really appropriate here
+    //  in database layer. I think we have to throw something like
+    //  BoutNotFoundException and process its somewhere in web layer.
+    //  Pay attention that we should also change a test
+    //  DyMessagesITCase.exceptionIfBoutNotFound() which tests a presence
+    //  of HttpException.
     @Override
     public long unread() throws IOException {
-        final Item item = this.region.table(DyFriends.TBL)
+        final Iterator<Item> iterator = this.region.table(DyFriends.TBL)
             .frame()
             .through(
                 new QueryValve()
@@ -202,7 +211,14 @@ final class DyMessages implements Messages {
             )
             .where(DyFriends.HASH, Conditions.equalTo(this.bout))
             .where(DyFriends.RANGE, Conditions.equalTo(this.self))
-            .iterator().next();
+            .iterator();
+        if (!iterator.hasNext()) {
+            throw new HttpException(
+                HttpURLConnection.HTTP_NOT_FOUND,
+                new Inbox.BoutNotFoundException(this.bout)
+            );
+        }
+        final Item item = iterator.next();
         final long unread;
         if (item.has(DyFriends.ATTR_UNREAD)) {
             unread = Long.parseLong(item.get(DyFriends.ATTR_UNREAD).getN());

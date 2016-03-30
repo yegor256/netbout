@@ -101,7 +101,11 @@ final class TkSaveEmail implements Take {
         final Alias alias = new RqAlias(this.base, req).alias();
         final Response res;
         if (this.local) {
-            alias.email(email);
+            try {
+                alias.email(email);
+            } catch (final IOException ex) {
+                throw new RsFailure(ex);
+            }
             res = new RsForward(
                 new RsFlash(
                     String.format("Email changed to \"%s\".", email)

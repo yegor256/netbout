@@ -1,6 +1,6 @@
 ## Puzzles
 
-There are 20 active puzzles (67 total):
+There are 21 active puzzles (69 total):
 
 
 <del>unknown</del> [`?`](../master/?)<br/>
@@ -11,7 +11,7 @@ There are 20 active puzzles (67 total):
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<del>609-bc8eaf9f</del> [`TkAppTest.java:99-102`](../master/netbout-web/src/test/java/com/netbout/rest/TkAppTest.java#L99-L102)<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;[<del>547</del>](https://github.com/yegor256/netbout/issues/547) [`?`](../master/?)<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[<del>547-299902f6</del>](https://github.com/yegor256/netbout/issues/682) [`EmMessages.java:96-97`](../master/netbout-web/src/main/java/com/netbout/email/EmMessages.java#L96-L97)<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[#693](https://github.com/yegor256/netbout/issues/693):[<del>682-753e25af</del>](https://github.com/yegor256/netbout/issues/693) [`RtBout.java:155-157`](../master/netbout-client/src/main/java/com/netbout/client/RtBout.java#L155-L157)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<del>682-753e25af</del> [`RtBout.java:155-157`](../master/netbout-client/src/main/java/com/netbout/client/RtBout.java#L155-L157)<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;[<del>600</del>](https://github.com/yegor256/netbout/issues/600) [`?`](../master/?)<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[<del>600-f8c0ce2e</del>](https://github.com/yegor256/netbout/issues/692) [`EmCatch.java:188-194`](../master/netbout-web/src/main/java/com/netbout/email/EmCatch.java#L188-L194)<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<del>692-1caba32d</del> [`EmMessages.java:137-141`](../master/netbout-web/src/main/java/com/netbout/email/EmMessages.java#L137-L141)<br/>
@@ -59,7 +59,7 @@ There are 20 active puzzles (67 total):
 &nbsp;&nbsp;&nbsp;&nbsp;[<del>914</del>](https://github.com/yegor256/netbout/issues/914) [`?`](../master/?)<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<del>914-ecab4401</del> [`pom.xml:330-339`](../master/netbout-web/pom.xml#L330-L339)<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;[#1003](https://github.com/yegor256/netbout/issues/1003):[**682-2583dc75**](https://github.com/yegor256/netbout/issues/1003) [`RtBout.java:155-157`](../master/netbout-client/src/main/java/com/netbout/client/RtBout.java#L155-L157)<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;[#961](https://github.com/yegor256/netbout/issues/961):[<del>961</del>](https://github.com/yegor256/netbout/issues/961) [`?`](../master/?)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;[<del>961</del>](https://github.com/yegor256/netbout/issues/961) [`?`](../master/?)<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[#1012](https://github.com/yegor256/netbout/issues/1012):[<del>961-58fc8a23</del>](https://github.com/yegor256/netbout/issues/1012) [`pom.xml:747-752`](../master/netbout-web/pom.xml#L747-L752)<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[#1063](https://github.com/yegor256/netbout/issues/1063):[**1012-2dfa2c65**](https://github.com/yegor256/netbout/issues/1063) [`NbRule.java:42-45`](../master/netbout-client/src/test/java/com/netbout/client/NbRule.java#L42-L45)<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[#1061](https://github.com/yegor256/netbout/issues/1061):[**1012-7ae4ec06**](https://github.com/yegor256/netbout/issues/1061) [`pom.xml:754-757`](../master/netbout-web/pom.xml#L754-L757)<br/>
@@ -70,3 +70,5 @@ There are 20 active puzzles (67 total):
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[#1047](https://github.com/yegor256/netbout/issues/1047):[**1025-adc69076**](https://github.com/yegor256/netbout/issues/1047) [`pom.xml:544-547`](../master/netbout-web/pom.xml#L544-L547)<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;[#839](https://github.com/yegor256/netbout/issues/839):[<del>839</del>](https://github.com/yegor256/netbout/issues/839) [`?`](../master/?)<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[#1090](https://github.com/yegor256/netbout/issues/1090):[**839-90f22678**](https://github.com/yegor256/netbout/issues/1090) [`DyAttachment.java:166-172`](../master/netbout-web/src/main/java/com/netbout/dynamo/DyAttachment.java#L166-L172)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;[#1094](https://github.com/yegor256/netbout/pull/1094):[<del>1094</del>](https://github.com/yegor256/netbout/pull/1094) [`?`](../master/?)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[#1096](https://github.com/yegor256/netbout/issues/1096):[**1094-571b0dd7**](https://github.com/yegor256/netbout/issues/1096) [`DyMessages.java:197-202`](../master/netbout-web/src/main/java/com/netbout/dynamo/DyMessages.java#L197-L202)<br/>
