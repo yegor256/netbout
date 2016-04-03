@@ -167,7 +167,7 @@ final class DyAttachment implements Attachment {
     public Date date() throws IOException {
         return new Date(
             Long.parseLong(
-                this.item.get("date").getN()
+                this.item.get(DyAttachments.ATTR_DATE).getN()
             )
         );
     }

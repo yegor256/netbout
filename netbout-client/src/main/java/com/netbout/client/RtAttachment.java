@@ -50,6 +50,8 @@ import org.apache.commons.io.IOUtils;
  * @author Yegor Bugayenko (yegor@teamed.io)
  * @version $Id$
  * @since 2.0
+ * @todo #1090:30min remove coade duplication in all public methods in
+ *  this class except in method name()
  */
 @Immutable
 @ToString(includeFieldNames = false)

@@ -46,10 +46,11 @@ import lombok.ToString;
 
 /**
  * Dynamo attachments.
- *
  * @author Yegor Bugayenko (yegor@teamed.io)
  * @version $Id$
  * @since 2.0
+ * @todo #1090:30min No public static literals are allowed. This class should
+ *  be refactored to not contain any of them.
  */
 @Immutable
 @Loggable(Loggable.DEBUG)
@@ -96,6 +97,11 @@ final class DyAttachments implements Attachments {
      * Etag of the attachment.
      */
     public static final String ATTR_ETAG = "etag";
+
+    /**
+     * Data.
+     */
+    public static final String ATTR_DATE = "date";
 
     /**
      * Data.
@@ -236,7 +242,7 @@ final class DyAttachments implements Attachments {
                 .with(DyAttachments.ATTR_CTYPE, "text/plain")
                 .with(DyAttachments.ATTR_DATA, " ")
                 .with(DyAttachments.ATTR_ETAG, "empty")
-                .with("date", System.currentTimeMillis())
+                .with(DyAttachments.ATTR_DATE, System.currentTimeMillis())
         );
         Logger.info(this, "attachment %s created in #%d", name, this.bout);
     }
