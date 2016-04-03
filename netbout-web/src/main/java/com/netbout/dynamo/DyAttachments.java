@@ -98,11 +98,6 @@ final class DyAttachments implements Attachments {
     public static final String ATTR_ETAG = "etag";
 
     /**
-     * Creation time of the attachment.
-     */
-    public static final String ATTR_DATE = "date";
-
-    /**
      * Data.
      */
     public static final String ATTR_DATA = "data";
@@ -241,7 +236,7 @@ final class DyAttachments implements Attachments {
                 .with(DyAttachments.ATTR_CTYPE, "text/plain")
                 .with(DyAttachments.ATTR_DATA, " ")
                 .with(DyAttachments.ATTR_ETAG, "empty")
-                .with(DyAttachments.ATTR_DATE, System.currentTimeMillis())
+                .with("date", System.currentTimeMillis())
         );
         Logger.info(this, "attachment %s created in #%d", name, this.bout);
     }
