@@ -57,7 +57,7 @@
 <a class="jxr_linenumber" name="L49" href="#L49">49</a>  <em class="jxr_javadoccomment"> * Cached inbox.</em>
 <a class="jxr_linenumber" name="L50" href="#L50">50</a>  <em class="jxr_javadoccomment"> *</em>
 <a class="jxr_linenumber" name="L51" href="#L51">51</a>  <em class="jxr_javadoccomment"> * @author Yegor Bugayenko (yegor@teamed.io)</em>
-<a class="jxr_linenumber" name="L52" href="#L52">52</a>  <em class="jxr_javadoccomment"> * @version $Id: e628b55f1dae9df6fdaab5bec89a2f90f45bbcc9 $</em>
+<a class="jxr_linenumber" name="L52" href="#L52">52</a>  <em class="jxr_javadoccomment"> * @version $Id: 528e5beb8ea90cb0227a9de378d0be75b53b7cb0 $</em>
 <a class="jxr_linenumber" name="L53" href="#L53">53</a>  <em class="jxr_javadoccomment"> * @since 2.4</em>
 <a class="jxr_linenumber" name="L54" href="#L54">54</a>  <em class="jxr_javadoccomment"> */</em>
 <a class="jxr_linenumber" name="L55" href="#L55">55</a>  @Immutable
@@ -163,13 +163,15 @@
 <a class="jxr_linenumber" name="L155" href="#L155">155</a>     <strong class="jxr_keyword">public</strong> Iterable&lt;Bout&gt; search(<strong class="jxr_keyword">final</strong> String term) <strong class="jxr_keyword">throws</strong> IOException {
 <a class="jxr_linenumber" name="L156" href="#L156">156</a>         <strong class="jxr_keyword">final</strong> List&lt;Bout&gt; result = <strong class="jxr_keyword">new</strong> ArrayList&lt;&gt;(16);
 <a class="jxr_linenumber" name="L157" href="#L157">157</a>         <strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">final</strong> Bout bout : <strong class="jxr_keyword">this</strong>.iterate()) {
-<a class="jxr_linenumber" name="L158" href="#L158">158</a>             <strong class="jxr_keyword">if</strong> (bout.messages().search(term).iterator().hasNext()) {
+<a class="jxr_linenumber" name="L158" href="#L158">158</a>             <strong class="jxr_keyword">if</strong> (bout.title().contains(term)) {
 <a class="jxr_linenumber" name="L159" href="#L159">159</a>                 result.add(bout);
-<a class="jxr_linenumber" name="L160" href="#L160">160</a>             }
-<a class="jxr_linenumber" name="L161" href="#L161">161</a>         }
-<a class="jxr_linenumber" name="L162" href="#L162">162</a>         <strong class="jxr_keyword">return</strong> result;
-<a class="jxr_linenumber" name="L163" href="#L163">163</a>     }
-<a class="jxr_linenumber" name="L164" href="#L164">164</a> }
+<a class="jxr_linenumber" name="L160" href="#L160">160</a>             } <strong class="jxr_keyword">else</strong> <strong class="jxr_keyword">if</strong> (bout.messages().search(term).iterator().hasNext()) {
+<a class="jxr_linenumber" name="L161" href="#L161">161</a>                 result.add(bout);
+<a class="jxr_linenumber" name="L162" href="#L162">162</a>             }
+<a class="jxr_linenumber" name="L163" href="#L163">163</a>         }
+<a class="jxr_linenumber" name="L164" href="#L164">164</a>         <strong class="jxr_keyword">return</strong> result;
+<a class="jxr_linenumber" name="L165" href="#L165">165</a>     }
+<a class="jxr_linenumber" name="L166" href="#L166">166</a> }
 </pre>
 <hr/>
 <div id="footer">Copyright &#169; 2009&#x2013;2016 <a href="http://www.netbout.com">Netbout Inc.</a>. All rights reserved.</div>

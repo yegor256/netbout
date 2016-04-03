@@ -72,7 +72,7 @@
 <a class="jxr_linenumber" name="L64" href="#L64">64</a>  <em class="jxr_javadoccomment"> *  there are some private static methods there, those could be easily</em>
 <a class="jxr_linenumber" name="L65" href="#L65">65</a>  <em class="jxr_javadoccomment"> *  extracted.</em>
 <a class="jxr_linenumber" name="L66" href="#L66">66</a>  <em class="jxr_javadoccomment"> * @author Yegor Bugayenko (yegor@teamed.io)</em>
-<a class="jxr_linenumber" name="L67" href="#L67">67</a>  <em class="jxr_javadoccomment"> * @version $Id: 5771af8e558f4afba6169ab2e666277cd3fe5953 $</em>
+<a class="jxr_linenumber" name="L67" href="#L67">67</a>  <em class="jxr_javadoccomment"> * @version $Id: 5b48ea535e98a21c8d5a356237d0469d7b45f9e1 $</em>
 <a class="jxr_linenumber" name="L68" href="#L68">68</a>  <em class="jxr_javadoccomment"> * @since 2.0</em>
 <a class="jxr_linenumber" name="L69" href="#L69">69</a>  <em class="jxr_javadoccomment"> * @checkstyle ClassDataAbstractionCouplingCheck (500 lines)</em>
 <a class="jxr_linenumber" name="L70" href="#L70">70</a>  <em class="jxr_javadoccomment"> */</em>
@@ -248,34 +248,36 @@
 <a class="jxr_linenumber" name="L240" href="#L240">240</a>     <strong class="jxr_keyword">public</strong> Iterable&lt;Bout&gt; search(<strong class="jxr_keyword">final</strong> String term) <strong class="jxr_keyword">throws</strong> IOException {
 <a class="jxr_linenumber" name="L241" href="#L241">241</a>         <strong class="jxr_keyword">final</strong> List&lt;Bout&gt; result = <strong class="jxr_keyword">new</strong> ArrayList&lt;&gt;(16);
 <a class="jxr_linenumber" name="L242" href="#L242">242</a>         <strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">final</strong> Bout bout : <strong class="jxr_keyword">this</strong>.iterate()) {
-<a class="jxr_linenumber" name="L243" href="#L243">243</a>             <strong class="jxr_keyword">if</strong> (bout.messages().search(term).iterator().hasNext()) {
+<a class="jxr_linenumber" name="L243" href="#L243">243</a>             <strong class="jxr_keyword">if</strong> (bout.title().contains(term)) {
 <a class="jxr_linenumber" name="L244" href="#L244">244</a>                 result.add(bout);
-<a class="jxr_linenumber" name="L245" href="#L245">245</a>             }
-<a class="jxr_linenumber" name="L246" href="#L246">246</a>         }
-<a class="jxr_linenumber" name="L247" href="#L247">247</a>         <strong class="jxr_keyword">return</strong> result;
-<a class="jxr_linenumber" name="L248" href="#L248">248</a>     }
-<a class="jxr_linenumber" name="L249" href="#L249">249</a> 
-<a class="jxr_linenumber" name="L250" href="#L250">250</a>     <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="L251" href="#L251">251</a> <em class="jxr_javadoccomment">     * Sttc counter.</em>
-<a class="jxr_linenumber" name="L252" href="#L252">252</a> <em class="jxr_javadoccomment">     * @return Counter</em>
-<a class="jxr_linenumber" name="L253" href="#L253">253</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L254" href="#L254">254</a>     @Cacheable(forever = <strong class="jxr_keyword">true</strong>)
-<a class="jxr_linenumber" name="L255" href="#L255">255</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> Counter sttc() {
-<a class="jxr_linenumber" name="L256" href="#L256">256</a>         <strong class="jxr_keyword">try</strong> {
-<a class="jxr_linenumber" name="L257" href="#L257">257</a>             <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> CdSttc(
-<a class="jxr_linenumber" name="L258" href="#L258">258</a>                 <strong class="jxr_keyword">new</strong> ReSttc(
-<a class="jxr_linenumber" name="L259" href="#L259">259</a>                     RtSttc.make(
-<a class="jxr_linenumber" name="L260" href="#L260">260</a>                         URN.create(Manifests.read(<span class="jxr_string">"Netbout-SttcUrn"</span>)),
-<a class="jxr_linenumber" name="L261" href="#L261">261</a>                         Manifests.read(<span class="jxr_string">"Netbout-SttcToken"</span>)
-<a class="jxr_linenumber" name="L262" href="#L262">262</a>                     )
-<a class="jxr_linenumber" name="L263" href="#L263">263</a>                 )
-<a class="jxr_linenumber" name="L264" href="#L264">264</a>             ).counters().get(<span class="jxr_string">"nb-bout"</span>);
-<a class="jxr_linenumber" name="L265" href="#L265">265</a>         } <strong class="jxr_keyword">catch</strong> (<strong class="jxr_keyword">final</strong> IOException ex) {
-<a class="jxr_linenumber" name="L266" href="#L266">266</a>             <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> IllegalStateException(ex);
-<a class="jxr_linenumber" name="L267" href="#L267">267</a>         }
-<a class="jxr_linenumber" name="L268" href="#L268">268</a>     }
-<a class="jxr_linenumber" name="L269" href="#L269">269</a> 
-<a class="jxr_linenumber" name="L270" href="#L270">270</a> }
+<a class="jxr_linenumber" name="L245" href="#L245">245</a>             } <strong class="jxr_keyword">else</strong> <strong class="jxr_keyword">if</strong> (bout.messages().search(term).iterator().hasNext()) {
+<a class="jxr_linenumber" name="L246" href="#L246">246</a>                 result.add(bout);
+<a class="jxr_linenumber" name="L247" href="#L247">247</a>             }
+<a class="jxr_linenumber" name="L248" href="#L248">248</a>         }
+<a class="jxr_linenumber" name="L249" href="#L249">249</a>         <strong class="jxr_keyword">return</strong> result;
+<a class="jxr_linenumber" name="L250" href="#L250">250</a>     }
+<a class="jxr_linenumber" name="L251" href="#L251">251</a> 
+<a class="jxr_linenumber" name="L252" href="#L252">252</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L253" href="#L253">253</a> <em class="jxr_javadoccomment">     * Sttc counter.</em>
+<a class="jxr_linenumber" name="L254" href="#L254">254</a> <em class="jxr_javadoccomment">     * @return Counter</em>
+<a class="jxr_linenumber" name="L255" href="#L255">255</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="L256" href="#L256">256</a>     @Cacheable(forever = <strong class="jxr_keyword">true</strong>)
+<a class="jxr_linenumber" name="L257" href="#L257">257</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> Counter sttc() {
+<a class="jxr_linenumber" name="L258" href="#L258">258</a>         <strong class="jxr_keyword">try</strong> {
+<a class="jxr_linenumber" name="L259" href="#L259">259</a>             <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> CdSttc(
+<a class="jxr_linenumber" name="L260" href="#L260">260</a>                 <strong class="jxr_keyword">new</strong> ReSttc(
+<a class="jxr_linenumber" name="L261" href="#L261">261</a>                     RtSttc.make(
+<a class="jxr_linenumber" name="L262" href="#L262">262</a>                         URN.create(Manifests.read(<span class="jxr_string">"Netbout-SttcUrn"</span>)),
+<a class="jxr_linenumber" name="L263" href="#L263">263</a>                         Manifests.read(<span class="jxr_string">"Netbout-SttcToken"</span>)
+<a class="jxr_linenumber" name="L264" href="#L264">264</a>                     )
+<a class="jxr_linenumber" name="L265" href="#L265">265</a>                 )
+<a class="jxr_linenumber" name="L266" href="#L266">266</a>             ).counters().get(<span class="jxr_string">"nb-bout"</span>);
+<a class="jxr_linenumber" name="L267" href="#L267">267</a>         } <strong class="jxr_keyword">catch</strong> (<strong class="jxr_keyword">final</strong> IOException ex) {
+<a class="jxr_linenumber" name="L268" href="#L268">268</a>             <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> IllegalStateException(ex);
+<a class="jxr_linenumber" name="L269" href="#L269">269</a>         }
+<a class="jxr_linenumber" name="L270" href="#L270">270</a>     }
+<a class="jxr_linenumber" name="L271" href="#L271">271</a> 
+<a class="jxr_linenumber" name="L272" href="#L272">272</a> }
 </pre>
 <hr/>
 <div id="footer">Copyright &#169; 2009&#x2013;2016 <a href="http://www.netbout.com">Netbout Inc.</a>. All rights reserved.</div>
