@@ -50,9 +50,9 @@ import org.apache.commons.io.IOUtils;
  * @author Yegor Bugayenko (yegor@teamed.io)
  * @version $Id$
  * @since 2.0
- * @todo #1090:30min remove code duplication in public methods in this class
- *  except in method name(). Create one or more private methods to achieve
- *  this.
+ * @todo #1090:30min There is code code duplication in all public methods in
+ *  this class, except in method name(). This class should be refactored to
+ *  avoid it.
  */
 @Immutable
 @ToString(includeFieldNames = false)
