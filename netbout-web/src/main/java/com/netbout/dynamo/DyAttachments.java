@@ -49,8 +49,9 @@ import lombok.ToString;
  * @author Yegor Bugayenko (yegor@teamed.io)
  * @version $Id$
  * @since 2.0
- * @todo #1090:30min No public static literals are allowed according to our
+ * @todo #1090:30min No public static literals are recommended according to our
  *  methodology. This class should be refactored to not contain any of them.
+ *  See: http://www.yegor256.com/2015/07/06/public-static-literals.html
  */
 @Immutable
 @Loggable(Loggable.DEBUG)
