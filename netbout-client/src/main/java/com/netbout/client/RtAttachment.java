@@ -50,6 +50,9 @@ import org.apache.commons.io.IOUtils;
  * @author Yegor Bugayenko (yegor@teamed.io)
  * @version $Id$
  * @since 2.0
+ * @todo #1090:30min There is code duplication in public methods in this class:
+ *  ctype(), etag(), unseen(), date(), author(), read() and write(). Please
+ *  refactor to avoid it.
  */
 @Immutable
 @ToString(includeFieldNames = false)
@@ -119,7 +122,17 @@ final class RtAttachment implements Attachment {
 
     @Override
     public Date date() throws IOException {
-        return new Date();
+        return new Date(
+            Long.parseLong(
+                this.request.fetch()
+                    .as(RestResponse.class)
+                    .assertStatus(HttpURLConnection.HTTP_OK)
+                    .as(XmlResponse.class)
+                    .xml()
+                    .xpath(this.xpath("date/text()"))
+                    .get(0)
+            )
+        );
     }
 
     @Override

@@ -36,7 +36,6 @@ import java.io.ByteArrayInputStream;
 import org.apache.commons.io.IOUtils;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
-import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -110,7 +109,6 @@ public final class RtAttachmentsITCase {
      * RtAttachments can obtain the creation date of an attachment.
      * @throws Exception If there is some problem inside
      */
-    @Ignore
     @Test
     public void obtainsCreationDate() throws Exception {
         final Alias alias = NbRule.get().aliases().iterate().iterator().next();
