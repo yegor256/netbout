@@ -107,27 +107,4 @@ public final class DyAttachmentsITCase {
             );
         }
     }
-
-    /**
-     * DyAttachments can save Markdown attachments.
-     * @throws Exception If there is some problem inside
-     */
-    @Test
-    public void savesMdAttachments() throws Exception {
-        final String alias = "jack";
-        final Aliases aliases =
-            new DyBase().user(new URN("urn:test:840919")).aliases();
-        aliases.add(alias);
-        final Inbox inbox = aliases.iterate().iterator().next().inbox();
-        final Bout bout = inbox.bout(inbox.start());
-        final Attachments attachments = bout.attachments();
-        final String name = "testing-3";
-        attachments.create(name);
-        final Attachment attachment = attachments.get(name);
-        attachment.write(
-            IOUtils.toInputStream("markdown", CharEncoding.UTF_8),
-            "text/x-markdown",
-            Long.toString(System.currentTimeMillis())
-        );
-    }
 }
