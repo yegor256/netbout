@@ -1,6 +1,6 @@
 ## Puzzles
 
-There are 21 active puzzles (69 total):
+There are 23 active puzzles (72 total):
 
 
 <del>unknown</del> [`?`](../master/?)<br/>
@@ -69,6 +69,9 @@ There are 21 active puzzles (69 total):
 &nbsp;&nbsp;&nbsp;&nbsp;[#1025](https://github.com/yegor256/netbout/issues/1025):[<del>1025</del>](https://github.com/yegor256/netbout/issues/1025) [`?`](../master/?)<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[#1047](https://github.com/yegor256/netbout/issues/1047):[**1025-adc69076**](https://github.com/yegor256/netbout/issues/1047) [`pom.xml:544-547`](../master/netbout-web/pom.xml#L544-L547)<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;[#839](https://github.com/yegor256/netbout/issues/839):[<del>839</del>](https://github.com/yegor256/netbout/issues/839) [`?`](../master/?)<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[#1090](https://github.com/yegor256/netbout/issues/1090):[**839-90f22678**](https://github.com/yegor256/netbout/issues/1090) [`DyAttachment.java:166-172`](../master/netbout-web/src/main/java/com/netbout/dynamo/DyAttachment.java#L166-L172)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[#1090](https://github.com/yegor256/netbout/issues/1090):[<del>839-90f22678</del>](https://github.com/yegor256/netbout/issues/1090) [`DyAttachment.java:166-172`](../master/netbout-web/src/main/java/com/netbout/dynamo/DyAttachment.java#L166-L172)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[**1090-b1fba4c1**]() [`RtAttachment.java:53-55`](../master/netbout-client/src/main/java/com/netbout/client/RtAttachment.java#L53-L55)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[**1090-d49470f5**]() [`DyAttachments.java:52-54`](../master/netbout-web/src/main/java/com/netbout/dynamo/DyAttachments.java#L52-L54)<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;[#1094](https://github.com/yegor256/netbout/pull/1094):[<del>1094</del>](https://github.com/yegor256/netbout/pull/1094) [`?`](../master/?)<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[#1096](https://github.com/yegor256/netbout/issues/1096):[**1094-571b0dd7**](https://github.com/yegor256/netbout/issues/1096) [`DyMessages.java:197-202`](../master/netbout-web/src/main/java/com/netbout/dynamo/DyMessages.java#L197-L202)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;[**1103-520ca7fd**]() [`DyAttachment.java:168-171`](../master/netbout-web/src/main/java/com/netbout/dynamo/DyAttachment.java#L168-L171)<br/>
