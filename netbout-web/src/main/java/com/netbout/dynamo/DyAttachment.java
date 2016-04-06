@@ -48,12 +48,12 @@ import com.jcabi.s3.mock.MkRegion;
 import com.netbout.spi.Attachment;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
@@ -413,16 +413,16 @@ final class DyAttachment implements Attachment {
                 Manifests.read("Netbout-S3Secret")
             );
         } else {
-            final Path temp;
+            final File temp;
             try {
                 temp = Files.createTempDirectory(
                     DyAttachment.class.getSimpleName()
-                );
-                temp.toFile().deleteOnExit();
+                ).toFile();
+                temp.deleteOnExit();
             } catch (final IOException ex) {
                 throw new IllegalStateException(ex);
             }
-            region = new MkRegion(temp.toFile());
+            region = new MkRegion(temp);
         }
         return region.bucket(Manifests.read("Netbout-S3Bucket"));
     }
