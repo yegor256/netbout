@@ -165,13 +165,23 @@ final class DyAttachment implements Attachment {
             && itm.get(DyFriends.ATTR_UNSEEN).getSS().contains(this.name());
     }
 
+    // @todo 1103:30min/DEV please create a proper integration test
+    //  for both cases:
+    //  when attribute DyAttachments.ATTR_DATE exists before getting,
+    //  when attribute DyAttachments.ATTR_DATE not exists.
     @Override
     public Date date() throws IOException {
-        return new Date(
-            Long.parseLong(
-                this.item.get(DyAttachments.ATTR_DATE).getN()
-            )
-        );
+        final Date res;
+        if (this.item.has(DyAttachments.ATTR_DATE)) {
+            res = new Date(
+                Long.parseLong(
+                    this.item.get(DyAttachments.ATTR_DATE).getN()
+                )
+            );
+        } else {
+            return new Date();
+        }
+        return res;
     }
 
     @Override
