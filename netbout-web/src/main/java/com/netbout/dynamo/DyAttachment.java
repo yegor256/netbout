@@ -179,7 +179,7 @@ final class DyAttachment implements Attachment {
                 )
             );
         } else {
-            return new Date();
+            res = new Date();
         }
         return res;
     }
