@@ -165,8 +165,8 @@ final class DyAttachment implements Attachment {
             && itm.get(DyFriends.ATTR_UNSEEN).getSS().contains(this.name());
     }
 
-    // @todo 1103:30min/DEV please create a proper integration test
-    //  for both cases:
+    // @todo #1103:30min/DEV please create a proper integration test
+    //  for both cases
     //  when attribute DyAttachments.ATTR_DATE exists before getting,
     //  when attribute DyAttachments.ATTR_DATE not exists.
     @Override
