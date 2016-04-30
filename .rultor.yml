@@ -46,7 +46,6 @@ merge:
     est --dir=est --file=/dev/null
     ./years.sh
   commanders:
-  - caarlos0
   - carlosmiranda
   - darkled
   - dmzaytsev
