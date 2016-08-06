@@ -59,24 +59,33 @@
     <xsl:template match="page" mode="body">
         <xsl:choose>
             <xsl:when test="count(bouts/bout) = 0">
-                <p style="margin-top:36px;">
-                    Someone invited you here?
-                    If yes, give him your alias
-                    <strong>@<xsl:value-of select="alias/name"/></strong>
-                    and wait. You will be invited to a private
-                    conversation. The rest is very simple :)
-                </p>
-                <p>
-                    If you registered here just because you are
-                    curios what Netbout is, we can explain. It is
-                    a place for your private talks, made right. You start
-                    a new conversation, invite
-                    your friends, post messages, share documents, and never
-                    reveal your real identity. Try to start one ("start"
-                    link is at the top right corner) and invite
-                    <strong>@help</strong>. You'll get the idea
-                    quite soon :)
-                </p>
+                <xsl:choose>
+                    <xsl:when test="query = ''">
+                        <p style="margin-top:36px;">
+                            Someone invited you here?
+                            If yes, give him your alias
+                            <strong>@<xsl:value-of select="alias/name"/></strong>
+                            and wait. You will be invited to a private
+                            conversation. The rest is very simple :)
+                        </p>
+                        <p>
+                            If you registered here just because you are
+                            curios what Netbout is, we can explain. It is
+                            a place for your private talks, made right. You start
+                            a new conversation, invite
+                            your friends, post messages, share documents, and never
+                            reveal your real identity. Try to start one ("start"
+                            link is at the top right corner) and invite
+                            <strong>@help</strong>. You'll get the idea
+                            quite soon :)
+                        </p>
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <p class="red" style="margin-top:36px;">
+                            <strong>No bouts found for query "<xsl:value-of select="query"/></strong>"
+                        </p>
+                    </xsl:otherwise>
+                </xsl:choose>
             </xsl:when>
             <xsl:otherwise>
                 <div id="bouts" data-more="{bouts/bout[position()=last()]/links/link[@rel='more']/@href}">
