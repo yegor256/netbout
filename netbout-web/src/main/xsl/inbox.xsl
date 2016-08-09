@@ -81,7 +81,7 @@
                         </p>
                     </xsl:when>
                     <xsl:otherwise>
-                        <p class="red alligned">
+                        <p id="noresmsg" class="red alligned">
                             <strong>No bouts found for query "<xsl:value-of select="query"/></strong>"
                         </p>
                     </xsl:otherwise>
