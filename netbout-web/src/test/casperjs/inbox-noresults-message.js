@@ -1,6 +1,6 @@
 /*globals casper:false */
 casper.test.begin(
-    'inbox can list bouts',
+    'message is displayed if there are no test results',
     function (test) {
         casper.start().then(
             function() {

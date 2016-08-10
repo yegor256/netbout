@@ -61,7 +61,7 @@
             <xsl:when test="count(bouts/bout) = 0">
                 <xsl:choose>
                     <xsl:when test="query = ''">
-                        <p class="alligned">
+                        <p class="allgned">
                             Someone invited you here?
                             If yes, give him your alias
                             <strong>@<xsl:value-of select="alias/name"/></strong>
@@ -81,7 +81,7 @@
                         </p>
                     </xsl:when>
                     <xsl:otherwise>
-                        <p id="noresmsg" class="red alligned">
+                        <p id="noresmsg" class="red allgned">
                             <strong>No bouts found for query "<xsl:value-of select="query"/></strong>"
                         </p>
                     </xsl:otherwise>
