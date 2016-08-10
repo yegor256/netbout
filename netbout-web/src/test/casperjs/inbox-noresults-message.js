@@ -1,6 +1,6 @@
 /*globals casper:false */
 casper.test.begin(
-    'message is displayed if there are no test results',
+    'message is displayed if there are no search results',
     function (test) {
         casper.start().then(
             function() {
