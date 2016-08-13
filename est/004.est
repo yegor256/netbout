@@ -1,4 +1,4 @@
-date: 13-8-2016
+date: 13-08-2016
 author: Mihai Andronache
 method: champions.pert
 scope:
@@ -10,6 +10,10 @@ scope:
   6: Infrastructure fixes (CI and build related fixes)
 
 champions:
+  4:
+    worst-case: 48
+    best-case: 24
+    most-likely: 36
   1:
     worst-case: 32
     best-case: 16
@@ -17,8 +21,4 @@ champions:
   2:
     worst-case: 24
     best-case: 12
-    most-likely: 16 
-  4:
-    worst-case: 48
-    best-case: 24
-    most-likely: 36
+    most-likely: 16
