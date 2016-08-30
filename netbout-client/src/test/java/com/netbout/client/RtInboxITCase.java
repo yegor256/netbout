@@ -58,7 +58,7 @@ public final class RtInboxITCase {
      */
     @Test
     public void listsBouts() throws Exception {
-        final User user = NbRule.get();
+        final User user = this.rule.get();
         final Alias alias = user.aliases().iterate().iterator().next();
         final Inbox inbox = alias.inbox();
         MatcherAssert.assertThat(
@@ -74,7 +74,7 @@ public final class RtInboxITCase {
     @Test
     public void searchesBouts() throws Exception {
         final Inbox inbox =
-            NbRule.get().aliases().iterate().iterator().next().inbox();
+            this.rule.get().aliases().iterate().iterator().next().inbox();
         final Bout first = inbox.bout(inbox.start());
         final String firsttitle = "bout1 title";
         first.rename(firsttitle);

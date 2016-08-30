@@ -54,6 +54,7 @@ import org.takes.rs.xe.XeStylesheet;
  * @checkstyle ClassDataAbstractionCouplingCheck (500 lines)
  */
 @EqualsAndHashCode(callSuper = true)
+@SuppressWarnings("PMD.AvoidDuplicateLiterals")
 public final class RsPage extends RsWrap {
 
     /**

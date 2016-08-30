@@ -51,6 +51,7 @@ import org.takes.HttpException;
  * @author Yegor Bugayenko (yegor@teamed.io)
  * @version $Id$
  */
+@SuppressWarnings("PMD.AvoidDuplicateLiterals")
 public final class DyMessagesITCase {
 
     @Rule

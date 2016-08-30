@@ -395,7 +395,7 @@ final class DyAttachment implements Attachment {
             .where(DyFriends.HASH, Conditions.equalTo(this.bout()))
             .where(DyFriends.RANGE, Conditions.equalTo(alias))
             .iterator().next();
-        final Set<String> list = new HashSet<String>(0);
+        final Set<String> list = new HashSet<>(0);
         if (itm.has(DyFriends.ATTR_UNSEEN)) {
             list.addAll(itm.get(DyFriends.ATTR_UNSEEN).getSS());
         }

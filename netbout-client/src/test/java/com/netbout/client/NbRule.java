@@ -43,14 +43,20 @@ import org.junit.runners.model.Statement;
  *  be refactored to not contain any of them. The method get() should either be
  *  an instance method with refrence to this (to avoid checkstyle
  *  NonStaticMethodCheck) or a static but not public.
+ * @checkstyle NonStaticMethodCheck (100 lines)
  */
 public final class NbRule implements TestRule {
+
+    @Override
+    public Statement apply(final Statement stmt, final Description desc) {
+        return stmt;
+    }
 
     /**
      * Get user.
      * @return User
      */
-    public static User get() {
+    public User get() {
         final String token = System.getProperty("netbout.token");
         final URI url = URI.create(
             System.getProperty("netbout.url", "http://www.netbout.com")
@@ -60,8 +66,4 @@ public final class NbRule implements TestRule {
         return new CdUser(new RtUser(url, token));
     }
 
-    @Override
-    public Statement apply(final Statement stmt, final Description desc) {
-        return stmt;
-    }
 }

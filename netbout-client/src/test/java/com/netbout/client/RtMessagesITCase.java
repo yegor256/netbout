@@ -57,7 +57,7 @@ public final class RtMessagesITCase {
      */
     @Test
     public void listsMessagesInBout() throws Exception {
-        final User user = NbRule.get();
+        final User user = this.rule.get();
         final Alias alias = user.aliases().iterate().iterator().next();
         final Inbox inbox = alias.inbox();
         inbox.start();

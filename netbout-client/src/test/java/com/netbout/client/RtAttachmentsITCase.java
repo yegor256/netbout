@@ -60,7 +60,7 @@ public final class RtAttachmentsITCase {
      */
     @Test
     public void postsAndReads() throws Exception {
-        final User user = NbRule.get();
+        final User user = this.rule.get();
         final Alias alias = user.aliases().iterate().iterator().next();
         final Inbox inbox = alias.inbox();
         final Bout bout = inbox.bout(inbox.start());
@@ -91,7 +91,7 @@ public final class RtAttachmentsITCase {
      */
     @Test
     public void obtainsAuthor() throws Exception {
-        final User user = NbRule.get();
+        final User user = this.rule.get();
         final Alias alias = user.aliases().iterate().iterator().next();
         final Inbox inbox = alias.inbox();
         final Attachments attachments = inbox.bout(inbox.start())
@@ -111,7 +111,8 @@ public final class RtAttachmentsITCase {
      */
     @Test
     public void obtainsCreationDate() throws Exception {
-        final Alias alias = NbRule.get().aliases().iterate().iterator().next();
+        final Alias alias = this.rule
+            .get().aliases().iterate().iterator().next();
         final Inbox inbox = alias.inbox();
         final Attachments attachments =
             inbox.bout(inbox.start()).attachments();

@@ -100,7 +100,7 @@ final class EmMessages implements Messages {
     @Override
     public void post(final String text) throws IOException {
         this.origin.post(text);
-        final Collection<String> failed = new ArrayList<String>(16);
+        final Collection<String> failed = new ArrayList<>(16);
         for (final Friend friend : this.bout.friends().iterate()) {
             if (friend.email().isEmpty()
                 || friend.alias().equals(this.self)

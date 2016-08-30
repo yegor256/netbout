@@ -56,7 +56,7 @@ public final class RtBoutITCase {
      */
     @Test
     public void startsBoutAndTalks() throws Exception {
-        final User user = NbRule.get();
+        final User user = this.rule.get();
         final Alias alias = user.aliases().iterate().iterator().next();
         final Inbox inbox = alias.inbox();
         final Bout bout = inbox.bout(inbox.start());

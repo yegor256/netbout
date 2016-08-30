@@ -44,13 +44,14 @@ import java.util.concurrent.ConcurrentSkipListSet;
  *  qulice upgrade to 0.15.2 and the contructor became private.
  * @checkstyle ClassDataAbstractionCouplingCheck (500 lines)
  */
+@SuppressWarnings("PMD.ProhibitPublicStaticMethods")
 public final class Ports {
 
     /**
      * Already assigned ports.
      */
     private static final Collection<Integer> ASSIGNED =
-        new ConcurrentSkipListSet<Integer>();
+        new ConcurrentSkipListSet<>();
 
     /**
      * Hide the default no args constructor from the utility class.

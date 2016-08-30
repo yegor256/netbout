@@ -55,6 +55,7 @@ import org.xembly.Xembler;
  * @checkstyle MultipleStringLiteralsCheck (500 lines)
  * @checkstyle ClassDataAbstractionCouplingCheck (500 lines)
  */
+@SuppressWarnings("PMD.AvoidDuplicateLiterals")
 final class XeAttachment extends XeWrap {
 
     /**

@@ -65,7 +65,7 @@ public final class PsTwice implements Pass {
 
     @Override
     public Opt<Identity> enter(final Request req) throws IOException {
-        Opt<Identity> user = new Opt.Empty<Identity>();
+        Opt<Identity> user = new Opt.Empty<>();
         if (this.fst.enter(req).has()) {
             user = this.snd.enter(req);
         }
