@@ -97,7 +97,9 @@ public final class RtFriendsITCase {
      */
     @Test (expected = AssertionError.class)
     public void throwsExceptionIfInvalidToken() throws Exception {
-        Assume.assumeNotNull(System.getProperty("netbout.token"));
+        final String token = System.getProperty("netbout.token");
+        Assume.assumeNotNull(token);
+        Assume.assumeTrue(!token.isEmpty());
         final User user = new RtUser(
             URI.create(
                 System.getProperty("netbout.url", "http://www.netbout.com")
