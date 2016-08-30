@@ -56,6 +56,7 @@ public final class NbRule implements TestRule {
             System.getProperty("netbout.url", "http://www.netbout.com")
         );
         Assume.assumeNotNull(token);
+        Assume.assumeTrue(!token.isEmpty());
         return new CdUser(new RtUser(url, token));
     }
 
