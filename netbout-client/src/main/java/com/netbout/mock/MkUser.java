@@ -94,8 +94,7 @@ final class MkUser implements User {
                         @Override
                         public Iterable<Friend> handle(final ResultSet rset,
                             final Statement stmt) throws SQLException {
-                            final Collection<Friend> list =
-                                new LinkedList<Friend>();
+                            final Collection<Friend> list = new LinkedList<>();
                             while (rset.next()) {
                                 list.add(
                                     new MkFriend(

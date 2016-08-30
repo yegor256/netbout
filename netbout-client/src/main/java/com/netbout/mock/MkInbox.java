@@ -131,8 +131,7 @@ final class MkInbox implements Inbox {
                         @Override
                         public Iterable<Bout> handle(final ResultSet rset,
                             final Statement stmt) throws SQLException {
-                            final Collection<Bout> list =
-                                new LinkedList<Bout>();
+                            final Collection<Bout> list = new LinkedList<>();
                             while (rset.next()) {
                                 list.add(
                                     new MkBout(

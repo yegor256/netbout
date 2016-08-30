@@ -136,7 +136,7 @@ final class MkAttachments implements Attachments {
                         public Iterable<Attachment> handle(final ResultSet rset,
                             final Statement stmt) throws SQLException {
                             final Collection<Attachment> list =
-                                new LinkedList<Attachment>();
+                                new LinkedList<>();
                             while (rset.next()) {
                                 list.add(
                                     new MkAttachment(

@@ -125,8 +125,7 @@ final class MkAliases implements Aliases {
                         @Override
                         public Iterable<Alias> handle(final ResultSet rset,
                             final Statement stmt) throws SQLException {
-                            final Collection<Alias> list =
-                                new LinkedList<Alias>();
+                            final Collection<Alias> list = new LinkedList<>();
                             while (rset.next()) {
                                 list.add(
                                     new MkAlias(

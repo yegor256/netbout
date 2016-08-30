@@ -122,7 +122,7 @@ final class MkMessages implements Messages {
                         public Iterable<Message> handle(final ResultSet rset,
                             final Statement stmt) throws SQLException {
                             final Collection<Message> list =
-                                new LinkedList<Message>();
+                                new LinkedList<>();
                             while (rset.next()) {
                                 list.add(
                                     new MkMessage(
