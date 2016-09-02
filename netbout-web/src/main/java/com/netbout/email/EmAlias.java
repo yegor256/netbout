@@ -26,7 +26,6 @@
  */
 package com.netbout.email;
 
-import com.google.common.base.Joiner;
 import com.jcabi.aspects.Immutable;
 import com.jcabi.aspects.Loggable;
 import com.jcabi.email.Envelope;
@@ -42,6 +41,7 @@ import com.netbout.spi.Inbox;
 import java.io.IOException;
 import java.net.URI;
 import java.util.Locale;
+import org.apache.commons.lang3.StringUtils;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
@@ -125,11 +125,6 @@ final class EmAlias implements Alias {
         new BoutInviteMail(this.postman).send(email, urn, bout);
     }
 
-    // @todo #738:30min  We need to improve the format and content of the
-    //  verification email. Currently, it only asks the user to verify
-    //  the new email by using the provided verification link. We may add
-    //  some header, footer, note like "Ignore this email if you did not
-    //  change your email address", etc.
     @Override
     public void email(final String email, final String link)
         throws IOException {
@@ -145,20 +140,31 @@ final class EmAlias implements Alias {
                     )
                     .with(
                         new EnHTML(
-                            Joiner.on('\n').join(
+                            StringUtils.join(
                                 new Markdown.Default().html(
-                                    "Please verify your new email:"
-                                ), "<br/>",
-                                String.format("<a href=%s>%s</a>", link, link)
+                                    StringUtils.join(
+                                        "Hi,<br/>Your notification e-mail ",
+                                        "address for [netbout](http://",
+                                        "www.netbout.com) has been changed. ",
+                                        "Please verify it by clicking ",
+                                        "[here](", link, ")."
+                                    )
+                                ),
+                                "If you did not change your e-mail address ",
+                                "you can ignore this message <br/>",
+                                "This is an automated e-mail, please ",
+                                "do not reply. If you have any questions, ",
+                                "submit an issue <a href=\"",
+                                "https://www.github.com/yegor256/netbout\"",
+                                ">here</a><br/><br/> Best regards,<br/>",
+                                "Netbout team"
                             )
                         )
                     )
             );
         } catch (final IOException exc) {
             throw new IOException(
-                // @checkstyle StringLiteralsConcatenationCheck (2 lines)
-                "Sorry we were not able to send the verification link to "
-                + "the new email address.", exc
+                "Exception while sending the verification email ", exc
             );
         }
     }
