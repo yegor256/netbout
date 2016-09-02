@@ -119,8 +119,7 @@ public final class EmAliasTest {
         final Message msg = captor.getValue().unwrap();
         MatcherAssert.assertThat(msg.getFrom().length, Matchers.is(1));
         MatcherAssert.assertThat(
-            msg.getSubject(),
-            Matchers.equalTo("Netbout email verification")
+            msg.getSubject(), Matchers.equalTo("Netbout email verification")
         );
         MatcherAssert.assertThat(
             msg.getAllRecipients()[0].toString(),
@@ -128,7 +127,7 @@ public final class EmAliasTest {
         );
         final ByteArrayOutputStream baos = new ByteArrayOutputStream();
         MimeMultipart.class.cast(msg.getContent()).writeTo(baos);
-        final String content = new String(baos.toByteArray());
+        final String content = new String(baos.toByteArray(), "UTF-8");
         MatcherAssert.assertThat(
             content, Matchers.containsString(
                 "<p>Hi,<br />Your notification e-mail address"
