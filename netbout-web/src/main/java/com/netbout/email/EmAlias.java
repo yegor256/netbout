@@ -60,6 +60,12 @@ import org.apache.commons.lang3.StringUtils;
 final class EmAlias implements Alias {
 
     /**
+     * Url to the netbout repository.
+     */
+    private static final String NETBOUT_GITHUB =
+        "https://www.github.com/yegor256/netbout";
+
+    /**
      * Original.
      */
     private final transient Alias origin;
@@ -68,12 +74,6 @@ final class EmAlias implements Alias {
      * Postman.
      */
     private final transient Postman postman;
-
-    /**
-     * Url to the netbout repository.
-     */
-    private static final String NETBOUT_GITHUB =
-        "https://www.github.com/yegor256/netbout";
 
     /**
      * Public ctor.
