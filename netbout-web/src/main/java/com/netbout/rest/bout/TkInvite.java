@@ -115,7 +115,6 @@ final class TkInvite implements Take {
      */
     public String inviteByEmail(@NotNull(message = "Invite can't be NULL")
         final String invite, final Bout bout) throws IOException {
-        // @checkstyle MultipleStringLiteralsCheck (1 line)
         final String alias = invite.replace("@", "-").replace(".", "-");
         final String urn = String.format(
             "urn:email:%s",

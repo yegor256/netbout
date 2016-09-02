@@ -120,7 +120,6 @@ public final class DyMessagesITCase {
         final Inbox inbox = aliases.iterate().iterator().next().inbox();
         final Bout bout = inbox.bout(inbox.start());
         bout.messages().post("hello");
-        // @checkstyle MultipleStringLiteralsCheck (1 line)
         bout.messages().post("world");
         bout.messages().post("foo");
         final Iterator<Message> result = bout.messages().search("r").iterator();
@@ -130,7 +129,6 @@ public final class DyMessagesITCase {
         );
         MatcherAssert.assertThat(
             result.next().text(),
-            // @checkstyle MultipleStringLiteralsCheck (1 line)
             Matchers.equalTo("world")
         );
         MatcherAssert.assertThat(

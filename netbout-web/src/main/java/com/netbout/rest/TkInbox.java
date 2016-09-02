@@ -54,7 +54,6 @@ import org.xembly.Directives;
  * @version $Id$
  * @since 2.14
  * @checkstyle ClassDataAbstractionCouplingCheck (500 lines)
- * @checkstyle MultipleStringLiteralsCheck (500 lines)
  */
 @SuppressWarnings("PMD.AvoidDuplicateLiterals")
 final class TkInbox implements Take {

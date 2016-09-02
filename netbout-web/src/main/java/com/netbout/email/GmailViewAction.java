@@ -54,7 +54,6 @@ final class GmailViewAction {
     /**
      * Returns the XML section for Gmail ViewAction.
      * @return The XML
-     * @checkstyle MultipleStringLiteralsCheck (45 lines)
      */
     @SuppressWarnings("PMD.AvoidDuplicateLiterals")
     public String xml() {

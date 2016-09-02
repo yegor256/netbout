@@ -119,7 +119,6 @@ final class EmCatch {
     /**
      * Start the monitoring.
      */
-    @SuppressWarnings("PMD.DoNotUseThreads")
     public void start() {
         final Thread monitor = new Thread(
             new Runnable() {

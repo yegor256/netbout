@@ -31,6 +31,7 @@ import java.net.HttpURLConnection;
 import java.net.URLEncoder;
 import java.nio.charset.Charset;
 import java.util.regex.Pattern;
+import org.apache.commons.lang3.StringUtils;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;
@@ -131,13 +132,11 @@ public final class TkAppTest {
             ).act(new RqFake(RqMethod.GET, "/whatever?q=1"))
         ).printHead();
         MatcherAssert.assertThat(
-            // @checkstyle MultipleStringLiteralsCheck (2 lines)
             "Incorrect status code",
             Integer.parseInt(head.split("\\s")[1]),
             Matchers.equalTo(HttpURLConnection.HTTP_SEE_OTHER)
         );
         MatcherAssert.assertThat(
-            // @checkstyle MultipleStringLiteralsCheck (1 line)
             "Incorrect Location header",
             Pattern.compile(
                 "^Location: /$",
@@ -145,11 +144,12 @@ public final class TkAppTest {
             ).matcher(head).find()
         );
         MatcherAssert.assertThat(
-            // @checkstyle MultipleStringLiteralsCheck (1 line)
             "Incorrect Set-Cookie header",
             Pattern.compile(
-                // @checkstyle LineLengthCheck (1 line)
-                "^Set-Cookie: RsReturn=.*%2Fwhatever%3Fq%3D1;Path=/;Expires=.*;$",
+                StringUtils.join(
+                    "^Set-Cookie: RsReturn=.*%2Fwhatever%3Fq%3D1;Path=/;",
+                    "Expires=.*;$"
+                ),
                 Pattern.MULTILINE
             ).matcher(head).find()
         );
@@ -201,13 +201,11 @@ public final class TkAppTest {
             )
         ).printHead();
         MatcherAssert.assertThat(
-            // @checkstyle MultipleStringLiteralsCheck (3 lines)
             "Incorrect status code",
             Integer.parseInt(head.split("\\s")[1]),
             Matchers.equalTo(HttpURLConnection.HTTP_SEE_OTHER)
         );
         MatcherAssert.assertThat(
-            // @checkstyle MultipleStringLiteralsCheck (1 line)
             "Incorrect Location header",
             Pattern.compile(
                 "^Location: http://example.com/whatever$",
@@ -215,7 +213,6 @@ public final class TkAppTest {
             ).matcher(head).find()
         );
         MatcherAssert.assertThat(
-            // @checkstyle MultipleStringLiteralsCheck (1 line)
             "Incorrect Set-Cookie header",
             Pattern.compile(
                 "^Set-Cookie: RsReturn=;",

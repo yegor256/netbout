@@ -71,7 +71,6 @@ import org.takes.tk.TkWrap;
  * @version $Id$
  * @since 2.14
  * @checkstyle ClassDataAbstractionCouplingCheck (500 lines)
- * @checkstyle MultipleStringLiteralsCheck (500 lines)
  * @checkstyle ClassFanOutComplexityCheck (500 lines)
  */
 @SuppressWarnings({"PMD.ExcessiveImports", "PMD.AvoidDuplicateLiterals"})
@@ -255,7 +254,6 @@ public final class TkApp extends TkWrap {
      * @return Fork
      * @throws IOException If fails
      */
-    @SuppressWarnings("PMD.DoNotUseThreads")
     private static Take refresh(final String path) throws IOException {
         return new TkFork(
             new FkHitRefresh(

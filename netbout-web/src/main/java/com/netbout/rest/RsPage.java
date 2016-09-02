@@ -101,7 +101,6 @@ public final class RsPage extends RsWrap {
                         final Opt<Response> opt;
                         if (agent.hasNext()
                             && agent.next().contains("Firefox")) {
-                            // @checkstyle MultipleStringLiteralsCheck (3 line)
                             opt = new Opt.Single<Response>(
                                 new RsXSLT(new RsWithType(raw, "text/html"))
                             );

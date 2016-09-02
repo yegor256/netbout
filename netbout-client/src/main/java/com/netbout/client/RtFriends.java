@@ -82,7 +82,6 @@ final class RtFriends implements Friends {
             .as(XmlResponse.class)
             .rel("/page/links/link[@rel='invite']/@href")
             .method(Request.POST)
-            // @checkstyle MultipleStringLiteralsCheck (1 line)
             .body().formParam("name", friend).back()
             .fetch()
             .as(RestResponse.class);
