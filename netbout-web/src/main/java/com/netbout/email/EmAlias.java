@@ -41,9 +41,9 @@ import com.netbout.spi.Inbox;
 import java.io.IOException;
 import java.net.URI;
 import java.util.Locale;
-import org.apache.commons.lang3.StringUtils;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * Email Alias.

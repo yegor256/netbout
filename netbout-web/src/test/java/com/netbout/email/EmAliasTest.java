@@ -110,7 +110,7 @@ public final class EmAliasTest {
      */
     @Test
     public void sendsConfirmationEmail() throws Exception {
-        final Postman postman = Mockito.mock(Postman.class);   
+        final Postman postman = Mockito.mock(Postman.class);
         final Alias alias = new EmAlias(new MkBase().randomAlias(), postman);
         alias.email("mihai@test.com", "netbout.com/test/verification/link");
         final ArgumentCaptor<Envelope> captor =
