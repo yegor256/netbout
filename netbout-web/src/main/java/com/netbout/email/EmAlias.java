@@ -70,6 +70,12 @@ final class EmAlias implements Alias {
     private final transient Postman postman;
 
     /**
+     * Url to the netbout repository.
+     */
+    private static final String NETBOUT_GITHUB =
+        "https://www.github.com/yegor256/netbout";
+
+    /**
      * Public ctor.
      * @param org Origin
      * @param pst Postman
@@ -155,8 +161,8 @@ final class EmAlias implements Alias {
                                 "This is an automated e-mail, please ",
                                 "do not reply. If you have any questions, ",
                                 "submit an issue <a href=\"",
-                                "https://www.github.com/yegor256/netbout\"",
-                                ">here</a><br/><br/> Best regards,<br/>",
+                                EmAlias.NETBOUT_GITHUB,
+                                "\">here</a><br/><br/> Best regards,<br/>",
                                 "Netbout team"
                             )
                         )
@@ -164,7 +170,7 @@ final class EmAlias implements Alias {
             );
         } catch (final IOException exc) {
             throw new IOException(
-                "Exception while sending the verification email ", exc
+                "Exception while sending the verification email.", exc
             );
         }
     }
