@@ -103,4 +103,40 @@ public final class EmAliasTest {
             )
         );
     }
+
+    /**
+     * EmAlias can send an email with address confirmation link.
+     * @throws Exception If there is some problem inside
+     */
+    @Test
+    public void sendsConfirmationEmail() throws Exception {
+        final Postman postman = Mockito.mock(Postman.class);
+        final Alias alias = new EmAlias(new MkBase().randomAlias(), postman);
+        alias.email("mihai@test.com", "netbout.com/test/verification/link");
+        final ArgumentCaptor<Envelope> captor =
+            ArgumentCaptor.forClass(Envelope.class);
+        Mockito.verify(postman).send(captor.capture());
+        final Message msg = captor.getValue().unwrap();
+        MatcherAssert.assertThat(msg.getFrom().length, Matchers.is(1));
+        MatcherAssert.assertThat(
+            msg.getSubject(), Matchers.equalTo("Netbout email verification")
+        );
+        MatcherAssert.assertThat(
+            msg.getAllRecipients()[0].toString(),
+            Matchers.containsString("mihai@test")
+        );
+        final ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        MimeMultipart.class.cast(msg.getContent()).writeTo(baos);
+        final String content = new String(baos.toByteArray(), "UTF-8");
+        MatcherAssert.assertThat(
+            content, Matchers.containsString(
+                "<p>Hi,<br />Your notification e-mail address"
+            )
+        );
+        MatcherAssert.assertThat(
+            content, Matchers.containsString(
+                "<a href=\"netbout.com/test/verification/link\">here</a>"
+            )
+        );
+    }
 }
