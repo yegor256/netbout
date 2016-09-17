@@ -145,8 +145,7 @@
                 <plugin>
                     <artifactId>maven-surefire-plugin</artifactId>
                     <configuration>
-                        <argLine>-Djava.awt.headless=true</argLine>
-                        <argLine>-Dfile.encoding=UTF-8</argLine>
+                        <argLine>${argLine} -Dfile.encoding=UTF-8 -Djava.awt.headless=true</argLine>
                     </configuration>
                 </plugin>
                 <plugin>
@@ -172,36 +171,49 @@
     </build>
     <profiles>
         <profile>
-            <id>cobertura</id>
+            <id>jacoco</id>
             <activation>
                 <file><exists>pom.xml</exists></file>
             </activation>
             <build>
                 <plugins>
                     <plugin>
-                        <groupId>org.codehaus.mojo</groupId>
-                        <artifactId>cobertura-maven-plugin</artifactId>
+                        <groupId>org.jacoco</groupId>
+                        <artifactId>jacoco-maven-plugin</artifactId>
+                        <version>0.7.6.201602180812</version>
                         <executions>
                             <execution>
-                                <phase>pre-site</phase>
+                                <phase>test-compile</phase>
+                                <id>prepare-agent</id>
                                 <goals>
-                                    <goal>cobertura</goal>
+                                    <goal>prepare-agent</goal>
                                 </goals>
-                                <configuration>
-                                    <format>xml</format>
-                                    <maxmem>256m</maxmem>
-                                    <aggregate>true</aggregate>
-                                </configuration>
+                            </execution>
+                            <execution>
+                                <phase>pre-site</phase>
+                                <id>report coverage</id>
+                                <goals>
+                                    <goal>report</goal>
+                                </goals>
                             </execution>
                         </executions>
                     </plugin>
                 </plugins>
             </build>
+            <reporting>
+                <plugins>
+                    <plugin>
+                        <groupId>org.jacoco</groupId>
+                        <artifactId>jacoco-maven-plugin</artifactId>
+                        <version>0.7.6.201602180812</version>
+                    </plugin>
+                </plugins>
+            </reporting>
         </profile>
         <profile>
             <id>coveralls</id>
             <activation>
-                <file><exists>target/site/cobertura/coverage.xml</exists></file>
+                <file><exists>target/site/jacoco/jacoco.xml</exists></file>
             </activation>
             <build>
                 <plugins>
