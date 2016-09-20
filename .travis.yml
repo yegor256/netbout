@@ -16,7 +16,7 @@ install:
   - gem install pdd
   - gem install est
 script:
-  - mvn clean install -Pqulice,jacoco coveralls:report --batch-mode --errors
+  - mvn clean install -Pqulice coveralls:report --batch-mode --errors
   - mvn clean
   - pdd  --file=/dev/null
   - est --dir=est --file=/dev/null
