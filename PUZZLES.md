@@ -37,7 +37,7 @@ There are 22 active puzzles (72 total):
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[#826](https://github.com/yegor256/netbout/issues/826):[**806-1e507f57**](https://github.com/yegor256/netbout/issues/826) [`MkAttachments.java:86-88`](../master/netbout-client/src/main/java/com/netbout/mock/MkAttachments.java#L86-L88)<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<del>806-43ee63d7</del> [`MkBout.java:104-106`](../master/netbout-client/src/main/java/com/netbout/mock/MkBout.java#L104-L106)<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;[<del>738</del>](https://github.com/yegor256/netbout/issues/738) [`?`](../master/?)<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[#841](https://github.com/yegor256/netbout/issues/841):[<del>738-4d284963</del>](https://github.com/yegor256/netbout/issues/841) [`EmAlias.java:130-134`](../master/netbout-web/src/main/java/com/netbout/email/EmAlias.java#L130-L134)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<del>738-4d284963</del> [`EmAlias.java:130-134`](../master/netbout-web/src/main/java/com/netbout/email/EmAlias.java#L130-L134)<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[<del>738-d76bd177</del>](https://github.com/yegor256/netbout/issues/842) [`TkSaveEmail.java:53-55`](../master/netbout-web/src/main/java/com/netbout/rest/account/TkSaveEmail.java#L53-L55)<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<del>842-9eb73ef4</del> [`XeAlias.java:95-97`](../master/netbout-web/src/main/java/com/netbout/rest/XeAlias.java#L95-L97)<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;[<del>847</del>](https://github.com/yegor256/netbout/issues/847) [`?`](../master/?)<br/>
