@@ -4,6 +4,7 @@
 [![We recommend IntelliJ IDEA](http://img.teamed.io/intellij-idea-recommend.svg)](https://www.jetbrains.com/idea/)
 
 [![Build Status](https://travis-ci.org/yegor256/netbout.svg?branch=master)](https://travis-ci.org/yegor256/netbout)
+[![PDD status](http://www.0pdd.com/svg?name=yegor256/netbout)](http://www.0pdd.com/p?name=yegor256/netbout)
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.netbout/netbout/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.netbout/netbout)
 [![Coverage Status](https://coveralls.io/repos/yegor256/netbout/badge.svg?branch=master&service=github)](https://coveralls.io/github/yegor256/netbout?branch=master)
 [![Dependencies](https://www.versioneye.com/user/projects/561ac5eca193340f2f001222/badge.svg?style=flat)](https://www.versioneye.com/user/projects/561ac5eca193340f2f001222)
