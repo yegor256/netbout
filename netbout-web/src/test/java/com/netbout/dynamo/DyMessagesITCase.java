@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2009-2016, netbout.com
+ * Copyright (c) 2009-2017, netbout.com
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -161,7 +161,7 @@ public final class DyMessagesITCase {
             Matchers.equalTo("    4 leading spaces retained")
         );
     }
-    
+
     /**
      * DyMessages can throw {@code HttpException} if invoke {@code unread()}
      * for user which is not in a bout.
