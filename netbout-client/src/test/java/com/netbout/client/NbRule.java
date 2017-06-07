@@ -36,7 +36,7 @@ import org.junit.runners.model.Statement;
 
 /**
  * User rule.
- * @author Yegor Bugayenko (yegor@teamed.io)
+ * @author Yegor Bugayenko (yegor256@gmail.com)
  * @version $Id$
  * @since 2.1
  * @todo #1012:30min No public static methods are allowed. This class should

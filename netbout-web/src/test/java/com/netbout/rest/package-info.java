@@ -28,7 +28,7 @@
 /**
  * RESTful interface, tests.
  *
- * @author Yegor Bugayenko (yegor@teamed.io)
+ * @author Yegor Bugayenko (yegor256@gmail.com)
  * @version $Id$
  */
 package com.netbout.rest;

@@ -36,7 +36,7 @@ import org.junit.Test;
 
 /**
  * Integration case for {@link DyBout}.
- * @author Yegor Bugayenko (yegor@teamed.io)
+ * @author Yegor Bugayenko (yegor256@gmail.com)
  * @version $Id$
  */
 public final class DyBoutITCase {

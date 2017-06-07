@@ -51,7 +51,7 @@ import org.takes.rq.RqHref;
 /**
  * Start.
  *
- * @author Yegor Bugayenko (yegor@teamed.io)
+ * @author Yegor Bugayenko (yegor256@gmail.com)
  * @version $Id$
  * @since 2.14
  * @todo #750:30min Solve the puzzle for build mysteriously failing for

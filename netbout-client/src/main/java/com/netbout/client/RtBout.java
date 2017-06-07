@@ -46,7 +46,7 @@ import org.apache.commons.lang3.time.DateFormatUtils;
 /**
  * REST bout.
  *
- * @author Yegor Bugayenko (yegor@teamed.io)
+ * @author Yegor Bugayenko (yegor256@gmail.com)
  * @version $Id$
  * @since 2.0
  */

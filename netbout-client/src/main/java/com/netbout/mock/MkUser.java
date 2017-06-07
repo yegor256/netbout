@@ -47,7 +47,7 @@ import lombok.ToString;
 /**
  * Cached Netbout user.
  *
- * @author Yegor Bugayenko (yegor@teamed.io)
+ * @author Yegor Bugayenko (yegor256@gmail.com)
  * @version $Id$
  * @since 2.4
  */

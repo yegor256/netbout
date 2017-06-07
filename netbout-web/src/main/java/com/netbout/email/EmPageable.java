@@ -41,7 +41,7 @@ import lombok.ToString;
 /**
  * Email pageable.
  *
- * @author Yegor Bugayenko (yegor@teamed.io)
+ * @author Yegor Bugayenko (yegor256@gmail.com)
  * @version $Id$
  * @since 2.10.3
  * @param <T> The type of items

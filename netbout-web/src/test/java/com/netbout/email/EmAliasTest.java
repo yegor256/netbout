@@ -43,7 +43,7 @@ import org.mockito.Mockito;
 
 /**
  * Test case for {@link EmAlias}.
- * @author Yegor Bugayenko (yegor@teamed.io)
+ * @author Yegor Bugayenko (yegor256@gmail.com)
  * @version $Id$
  * @since 2.12.2
  */

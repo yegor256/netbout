@@ -47,7 +47,7 @@ import org.apache.commons.io.IOUtils;
 /**
  * REST attachment.
  *
- * @author Yegor Bugayenko (yegor@teamed.io)
+ * @author Yegor Bugayenko (yegor256@gmail.com)
  * @version $Id$
  * @since 2.0
  * @todo #1090:30min There is code duplication in public methods in this class:

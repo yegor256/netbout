@@ -36,7 +36,7 @@ import org.junit.Test;
 
 /**
  * Integration case for {@link EmAlias}.
- * @author Yegor Bugayenko (yegor@teamed.io)
+ * @author Yegor Bugayenko (yegor256@gmail.com)
  * @version $Id$
  * @since 2.15
  */
@@ -61,7 +61,7 @@ public final class EmAliasITCase {
         final Alias alias = new EmAlias(base.randomAlias(), postman);
         final Bout bout = alias.inbox().bout(alias.inbox().start());
         final Alias friend = base.randomAlias();
-        friend.email("yegor@teamed.io");
+        friend.email("yegor256@gmail.com");
         bout.friends().invite(friend.name());
         bout.messages().post("how are you?");
     }

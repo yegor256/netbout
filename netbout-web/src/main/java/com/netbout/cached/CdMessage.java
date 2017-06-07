@@ -37,7 +37,7 @@ import lombok.ToString;
 /**
  * Cached Message.
  *
- * @author Yegor Bugayenko (yegor@teamed.io)
+ * @author Yegor Bugayenko (yegor256@gmail.com)
  * @version $Id$
  * @since 2.10.3
  */

@@ -48,7 +48,7 @@ import org.apache.commons.lang3.StringUtils;
 /**
  * Email Alias.
  *
- * @author Yegor Bugayenko (yegor@teamed.io)
+ * @author Yegor Bugayenko (yegor256@gmail.com)
  * @version $Id$
  * @since 2.12
  * @checkstyle ClassDataAbstractionCouplingCheck (500 lines)

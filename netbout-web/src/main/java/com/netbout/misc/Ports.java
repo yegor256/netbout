@@ -36,7 +36,7 @@ import java.util.concurrent.ConcurrentSkipListSet;
  *
  * <p>The class is immutable and thread-safe.</p>
  *
- * @author Yegor Bugayenko (yegor@teamed.io)
+ * @author Yegor Bugayenko (yegor256@gmail.com)
  * @version $Id$
  * @since 2.14.17
  * @todo #1012:30min This class should not be left as utility one. All methods

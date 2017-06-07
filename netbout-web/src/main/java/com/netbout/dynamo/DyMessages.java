@@ -72,7 +72,7 @@ import org.takes.HttpException;
  *  PMD.TooManyMethods and PMD.ExcessiveImports warnings. for example
  *  there are some private static methods there, those could be easily
  *  extracted.
- * @author Yegor Bugayenko (yegor@teamed.io)
+ * @author Yegor Bugayenko (yegor256@gmail.com)
  * @version $Id$
  * @since 2.0
  * @checkstyle ClassDataAbstractionCouplingCheck (500 lines)

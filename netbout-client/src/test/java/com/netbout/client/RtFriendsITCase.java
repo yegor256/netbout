@@ -41,7 +41,7 @@ import org.junit.Test;
 
 /**
  * Integration case for {@link RtFriends}.
- * @author Yegor Bugayenko (yegor@teamed.io)
+ * @author Yegor Bugayenko (yegor256@gmail.com)
  * @version $Id$
  * @since 0.14
  */

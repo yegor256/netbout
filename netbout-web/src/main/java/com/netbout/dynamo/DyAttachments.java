@@ -46,7 +46,7 @@ import lombok.ToString;
 
 /**
  * Dynamo attachments.
- * @author Yegor Bugayenko (yegor@teamed.io)
+ * @author Yegor Bugayenko (yegor256@gmail.com)
  * @version $Id$
  * @since 2.0
  * @todo #1090:30min No public static literals are recommended according to our

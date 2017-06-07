@@ -52,7 +52,7 @@ import org.takes.tk.TkWrap;
 /**
  * App with fallback.
  *
- * @author Yegor Bugayenko (yegor@teamed.io)
+ * @author Yegor Bugayenko (yegor256@gmail.com)
  * @version $Id$
  * @since 2.14
  * @checkstyle ClassDataAbstractionCouplingCheck (500 lines)

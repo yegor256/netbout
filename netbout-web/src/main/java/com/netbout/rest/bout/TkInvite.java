@@ -48,7 +48,7 @@ import org.takes.rq.RqForm;
 /**
  * Invite a friend to the bout.
  *
- * @author Yegor Bugayenko (yegor@teamed.io)
+ * @author Yegor Bugayenko (yegor256@gmail.com)
  * @version $Id$
  * @since 2.14
  * @checkstyle ClassDataAbstractionCouplingCheck (210 lines)
