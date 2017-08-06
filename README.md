@@ -1,6 +1,6 @@
 <img src="http://img.netbout.com/logo.svg" width="132px"/>
 
-[![Made By Teamed.io](http://img.teamed.io/btn.svg)](http://www.teamed.io)
+[![Managed by Zerocracy](http://www.zerocracy.com/badge.svg)](http://www.zerocracy.com)
 [![We recommend IntelliJ IDEA](http://img.teamed.io/intellij-idea-recommend.svg)](https://www.jetbrains.com/idea/)
 
 [![Build Status](https://travis-ci.org/yegor256/netbout.svg?branch=master)](https://travis-ci.org/yegor256/netbout)
