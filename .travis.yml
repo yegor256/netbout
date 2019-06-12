@@ -10,8 +10,8 @@ addons:
     - libmagic-dev
 before_install:
   - unset GEM_PATH
-  - rvm install 2.2.2
-  - rvm use 2.2.2
+  - rvm install 2.6.0
+  - rvm use 2.6.0
 install:
   - npm install phantomjs -g
   - npm install casperjs -g
