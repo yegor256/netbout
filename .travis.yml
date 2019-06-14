@@ -16,7 +16,7 @@ install:
   - npm install phantomjs -g
   - npm install casperjs -g
   - gem install pdd -v 0.20.5
-  - gem install est
+  - gem install est -v 0.3.4
 script:
   - mvn clean install -Pqulice coveralls:report --batch-mode --errors
   - mvn clean
