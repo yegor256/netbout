@@ -1,13 +1,18 @@
 <img src="http://img.netbout.com/logo.svg" width="132px"/>
 
-[![Managed by Zerocracy](http://www.zerocracy.com/badge.svg)](http://www.zerocracy.com)
-[![We recommend IntelliJ IDEA](https://www.elegantobjects.org/intellij-idea.svg)](https://www.jetbrains.com/idea/)
+[![EO principles respected here](https://www.elegantobjects.org/badge.svg)](https://www.elegantobjects.org)
+[![Managed by Zerocracy](https://www.0crat.com/badge/CAZPZR9FS.svg)](https://www.0crat.com/p/CAZPZR9FS)
+[![DevOps By Rultor.com](http://www.rultor.com/b/yegor256/netbout)](http://www.rultor.com/p/yegor256/netbout)
+[![We recommend RubyMine](https://www.elegantobjects.org/rubymine.svg)](https://www.jetbrains.com/ruby/)
 
 [![Build Status](https://travis-ci.org/yegor256/netbout.svg?branch=master)](https://travis-ci.org/yegor256/netbout)
 [![PDD status](http://www.0pdd.com/svg?name=yegor256/netbout)](http://www.0pdd.com/p?name=yegor256/netbout)
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.netbout/netbout/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.netbout/netbout)
 [![Coverage Status](https://coveralls.io/repos/yegor256/netbout/badge.svg?branch=master&service=github)](https://coveralls.io/github/yegor256/netbout?branch=master)
-[![Dependencies](https://www.versioneye.com/user/projects/561ac5eca193340f2f001222/badge.svg?style=flat)](https://www.versioneye.com/user/projects/561ac5eca193340f2f001222)
+[![Hits-of-Code](https://hitsofcode.com/github/yegor256/netbout)](https://hitsofcode.com/view/github/yegor256/netbout)
+
+[![License](https://img.shields.io/badge/license-MIT-green.svg)](https://github.com/yegor256/netbout/blob/master/LICENSE.txt)
+[![Availability at SixNines](https://www.sixnines.io/b/6fb0)](https://www.sixnines.io/h/6fb0)
 
 Netbout.com is a communication platform that enables smoothless integration
 of humans and software agents in a conversation-centered environment.
@@ -72,7 +77,7 @@ Similarly, on Linux:
 export JAVA_TOOL_OPTIONS="-Dfile.encoding=UTF-8"
 ```
 
-### Run locally and test it
+## Run locally and test it
 
 Want to run it locally? Simple as that:
 
@@ -89,7 +94,7 @@ but still want to run the site, you can skip the tests by running:
 $ mvn clean install -DskipTests -Phit-refresh -Dport=8080
 ```
 
-### Integration tests
+## Integration tests
 
 It is highly recommended to run integration tests to guarantee that your changes will not break any other part of the system.
 Follow these steps to execute integration tests:
