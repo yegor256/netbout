@@ -19,8 +19,8 @@ install: |
   export LC_ALL=en_US.UTF-8
   export LANG=en_US.UTF-8
   export LANGUAGE=en_US.UTF-8
-  sudo gem install --no-ri --no-rdoc pdd
-  sudo gem install --no-ri --no-rdoc est
+  sudo gem install pdd
+  sudo gem install est
   mkdir ~/.ssh
   mv ../id_rsa ../id_rsa.pub ~/.ssh
   chmod -R 600 ~/.ssh/*
