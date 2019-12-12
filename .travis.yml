@@ -23,3 +23,5 @@ script:
   - pdd  --file=/dev/null
   - est --dir=est --file=/dev/null
   - ./years.sh
+jdk:
+  - openjdk8
