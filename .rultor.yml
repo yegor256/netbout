@@ -58,6 +58,8 @@ merge:
   - mkordas
   - pinaf
 release:
+  sensitive:
+    - settings.xml
   script: |-
     mvn versions:set "-DnewVersion=${tag}"
     git commit -am "${tag}"
