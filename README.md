@@ -1,41 +1,47 @@
 <img src="http://img.netbout.com/logo.svg" width="132px"/>
 
 [![EO principles respected here](https://www.elegantobjects.org/badge.svg)](https://www.elegantobjects.org)
-[![Managed by Zerocracy](https://www.0crat.com/badge/CAZPZR9FS.svg)](https://www.0crat.com/p/CAZPZR9FS)
 [![DevOps By Rultor.com](http://www.rultor.com/b/yegor256/netbout)](http://www.rultor.com/p/yegor256/netbout)
 [![We recommend RubyMine](https://www.elegantobjects.org/rubymine.svg)](https://www.jetbrains.com/ruby/)
 
-[![Build Status](https://travis-ci.org/yegor256/netbout.svg?branch=master)](https://travis-ci.org/yegor256/netbout)
 [![PDD status](http://www.0pdd.com/svg?name=yegor256/netbout)](http://www.0pdd.com/p?name=yegor256/netbout)
-[![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.netbout/netbout/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.netbout/netbout)
-[![Coverage Status](https://coveralls.io/repos/yegor256/netbout/badge.svg?branch=master&service=github)](https://coveralls.io/github/yegor256/netbout?branch=master)
 [![Hits-of-Code](https://hitsofcode.com/github/yegor256/netbout)](https://hitsofcode.com/view/github/yegor256/netbout)
-
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](https://github.com/yegor256/netbout/blob/master/LICENSE.txt)
 [![Availability at SixNines](https://www.sixnines.io/b/6fb0)](https://www.sixnines.io/h/6fb0)
 
 Netbout.com is a communication platform that enables smoothless integration
 of humans and software agents in a conversation-centered environment.
 
-Try it at [www.netbout.com](http://www.netbout.com).
-
 The original idea behind Netbout is explained in USPTO patent application [US 12/943,022](https://www.google.com/patents/US20120117164).
 
 ## Functionality
 
-A user is able to login, using one of the following social/federated methods: Facebook, Google+ and Github.
-A user is able to logout.
+A user can (both via web interface and RESTful JSON API):
+ 
+  * Login via GitHub
+  * Create a unique identifier
+  * Start a bout with a title
+  * Join a bout
+  * Post a `VARCHAR(65536)` message to a bout
+  * Assign an immutable `VARCHAR(256)` variable to a bout
+  * List all visible bouts (with pagination) by search string
+  * List all messages by bout-id (with pagination) and search string
+  * Read message content by bout-id/message-id
+  * Read variable content by bout-id/variable-name
 
-When user logs in for the first time, he must create a new "alias" inside Netbout. The system checks
-the validity of the alias and makes sure each alias is unique in the entire system.
+While listing bouts and messages, a search string may be used, which 
+is similar to what GitHub uses for searches:
 
-A user can start a new "bout", which is a conversation between a few users.
+  * "Hello, world!" --- the text must be in the body of a message
+  * `author:yegor256` --- the author must be `yegor256`
+  * `before:2023-12-14` --- posted before 14-Dec-23
+  * `after:2023-12-14` --- posted after 14-Dec-23
 
-A user can post a message to a bout and read all other messages, posted by other users, in reverse chronological order (the most recent messages on the top).
+Predicates may be groupped using `or`, `and`, and brackets, for example:
 
-A user can invite other users to the bout, knowing just their aliases.
-
-A user can attach a file to a bout. Any attached file can be deleted. A user can download any attached file.
+```
+"important" and (author:yegor256 or (after:2023-12-14 and "something" and "Hello"))
+```
 
 ## How to test?
 
