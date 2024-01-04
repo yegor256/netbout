@@ -18,12 +18,13 @@ The original idea behind Netbout is explained in USPTO patent application [US 12
 
 A user can (both via web interface and RESTful JSON API):
  
-  * Login via GitHub
-  * Create a unique identifier
-  * Start a bout with a title
+  * Login by email, by Github, by Facebook, etc.
+  * Create a unique `VARCHAR(24)` identifier
+  * Start a bout with a `VARCHAR(256)` title
   * Join a bout
-  * Post a `VARCHAR(65536)` message to a bout
-  * Assign an immutable `VARCHAR(256)` variable to a bout
+  * Post an immutable `TEXT` message to a bout
+  * Attach an immutable `VARCHAR(16)`-named tag to a bout with `VARCHAR(256)` value
+  * Detach an attribute
   * List all visible bouts (with pagination) by search string
   * List all messages by bout-id (with pagination) and search string
   * Read message content by bout-id/message-id
@@ -32,15 +33,20 @@ A user can (both via web interface and RESTful JSON API):
 While listing bouts and messages, a search string may be used, which 
 is similar to what GitHub uses for searches:
 
-  * "Hello, world!" --- the text must be in the body of a message
-  * `author:yegor256` --- the author must be `yegor256`
-  * `before:2023-12-14` --- posted before 14-Dec-23
-  * `after:2023-12-14` --- posted after 14-Dec-23
+  * `+body:"Hello!"` --- the body of a message must be exactly `Hello!`
+  * `+contains~"Hello, &quot;world&quot;!" --- the body of a message must contain this text, HTML-escaped
+  * `+author:yegor256` --- the author must be `yegor256`
+  * `+before:2023-12-14` --- posted before 14-Dec-23
+  * `+after:2023-12-14` --- posted after 14-Dec-23
+  * `+foo` --- has attribute `foo`
+  * `-foo` --- doesn't have attribute `foo`
+  * `+foo=bar` --- has attribute `foo` with the value `bar`
 
 Predicates may be groupped using `or`, `and`, and brackets, for example:
 
 ```
-"important" and (author:yegor256 or (after:2023-12-14 and "something" and "Hello"))
+body:"important" and (author:yegor256 or 
+  (after:2023-12-14 and contains:"something" and contains:"Hello"))
 ```
 
 ## How to test?
