@@ -23,8 +23,8 @@ A user can (both via web interface and RESTful JSON API):
   * Start a bout with a `VARCHAR(256)` title
   * Join a bout (can't leave it)
   * Post an immutable `TEXT` message to a bout (can't edit or delete it)
-  * Attach an immutable `VARCHAR(16)`-named tag to a bout with `VARCHAR(256)` value
-  * Detach an tag
+  * (Re)attach a `VARCHAR(16)`-named tag to a bout with `VARCHAR(256)` value
+  * Detach a tag
   * List all visible bouts (with pagination) by search string
   * List all messages by bout-id (with pagination) and search string
   * Read message content by bout-id/message-id
