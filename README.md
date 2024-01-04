@@ -21,14 +21,14 @@ A user can (both via web interface and RESTful JSON API):
   * Login by email, by Github, by Facebook, etc.
   * Create a unique `VARCHAR(24)` identifier
   * Start a bout with a `VARCHAR(256)` title
-  * Join a bout
-  * Post an immutable `TEXT` message to a bout
+  * Join a bout (can't leave it)
+  * Post an immutable `TEXT` message to a bout (can't edit or delete it)
   * Attach an immutable `VARCHAR(16)`-named tag to a bout with `VARCHAR(256)` value
-  * Detach an attribute
+  * Detach an tag
   * List all visible bouts (with pagination) by search string
   * List all messages by bout-id (with pagination) and search string
   * Read message content by bout-id/message-id
-  * Read variable content by bout-id/variable-name
+  * Read tag content by bout-id/tag-name
 
 While listing bouts and messages, a search string may be used, which 
 is similar to what GitHub uses for searches:
@@ -38,9 +38,9 @@ is similar to what GitHub uses for searches:
   * `+author:yegor256` --- the author must be `yegor256`
   * `+before:2023-12-14` --- posted before 14-Dec-23
   * `+after:2023-12-14` --- posted after 14-Dec-23
-  * `+foo` --- has attribute `foo`
-  * `-foo` --- doesn't have attribute `foo`
-  * `+foo=bar` --- has attribute `foo` with the value `bar`
+  * `+foo` --- has `foo` tag
+  * `-foo` --- doesn't have `foo` tag
+  * `+foo=bar` --- has `foo` tag with the value `bar`
 
 Predicates may be groupped using `or`, `and`, and brackets, for example:
 
