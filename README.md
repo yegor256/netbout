@@ -21,8 +21,7 @@ A user can (both via web interface and RESTful JSON API):
   * Login by email, by Github, by Facebook, etc.
   * Create a unique **identity**
   * Start a **bout** with an immutable **title**
-  * Invite another user to a bout (can't kick it out)
-  * Delete a bout
+  * Invite another user to a bout (can't kick him out)
   * Post an immutable `TEXT` **message** to a bout (can't edit or delete it)
   * Attach a **flag** to a message
   * Drop a flag from a message
