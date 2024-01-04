@@ -19,14 +19,14 @@ The original idea behind Netbout is explained in USPTO patent application [US 12
 A user can (both via web interface and RESTful JSON API):
  
   * Login by email, by Github, by Facebook, etc.
-  * Create a unique `VARCHAR(24)` **identity**
-  * Start a **bout** with an immutable `VARCHAR(256)` **title**
+  * Create a unique **identity**
+  * Start a **bout** with an immutable **title**
   * Invite another user to a bout (can't kick it out)
   * Delete a bout
   * Post an immutable `TEXT` **message** to a bout (can't edit or delete it)
-  * Attach a `VARCHAR(24)` **flag** to a message
+  * Attach a **flag** to a message
   * Drop a flag from a message
-  * Attach an immutable `VARCHAR(16)`-named **tag** to a bout with `VARCHAR(256)` value (can't detach or modify)
+  * Attach an immutable **tag** to a bout with a value (can't detach or modify)
   * List messages/bouts by search string
 
 A search string is similar to what GitHub uses:
