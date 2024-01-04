@@ -22,7 +22,7 @@ A user can (both via web interface and RESTful JSON API):
   * Create a unique **identity**
   * Start a **bout** with an immutable **title**
   * Invite another user to a bout (can't kick him out)
-  * Post an immutable `TEXT` **message** to a bout (can't edit or delete it)
+  * Post an immutable **message** to a bout (can't edit or delete it)
   * Attach a **flag** to a message
   * Drop a flag from a message
   * Attach an immutable **tag** to a bout with a value (can't detach or modify)
