@@ -19,34 +19,37 @@ The original idea behind Netbout is explained in USPTO patent application [US 12
 A user can (both via web interface and RESTful JSON API):
  
   * Login by email, by Github, by Facebook, etc.
-  * Create a unique `VARCHAR(24)` identifier
-  * Start a bout with a `VARCHAR(256)` title
-  * Join a bout (can't leave it)
-  * Post an immutable `TEXT` message to a bout (can't edit or delete it)
-  * (Re)attach a `VARCHAR(16)`-named tag to a bout with `VARCHAR(256)` value
-  * Detach a tag
-  * List all visible bouts (with pagination) by search string
-  * List all messages by bout-id (with pagination) and search string
-  * Read message content by bout-id/message-id
-  * Read tag content by bout-id/tag-name
+  * Create a unique `VARCHAR(24)` **identity**
+  * Start a **bout** with an immutable `VARCHAR(256)` **title**
+  * Invite another user to a bout (can't kick it out)
+  * Delete a bout
+  * Post an immutable `TEXT` **message** to a bout (can't edit or delete it)
+  * Attach a `VARCHAR(24)` **flag** to a message
+  * Drop a flag from a message
+  * Attach an immutable `VARCHAR(16)`-named **tag** to a bout with `VARCHAR(256)` value (can't detach or modify)
+  * List messages/bouts by search string
 
-While listing bouts and messages, a search string may be used, which 
-is similar to what GitHub uses for searches:
+A search string is similar to what GitHub uses:
 
-  * `+body:"Hello!"` --- the body of a message must be exactly `Hello!`
-  * `+contains~"Hello, &quot;world&quot;!" --- the body of a message must contain this text, HTML-escaped
-  * `+author:yegor256` --- the author must be `yegor256`
-  * `+before:2023-12-14` --- posted before 14-Dec-23
-  * `+after:2023-12-14` --- posted after 14-Dec-23
-  * `+foo` --- has `foo` tag
-  * `-foo` --- doesn't have `foo` tag
-  * `+foo=bar` --- has `foo` tag with the value `bar`
+  * `title="Hello!"` --- the title of the bout is exactly `Hello!`
+  * `owner=yegor256` --- the owner of the bout is `yegor256`
+  * `started<2023-12-14` --- the bout was created before 14-Dec-23
+  * `guest=:yegor256` --- `yegor256` is one of the participants of the bout
+  * `#foo+` --- the bout has `foo` tag
+  * `#foo-` --- the bout doesn't have `foo` tag
+  * `#foo==bar` --- has `foo` tag with the value `bar`
+  * `$green+` --- the message has `green` flag
+  * `$green-` --- the message doesn't have `green` flag
+  * `body="Hello!"` --- the body of the message is exactly `Hello!`
+  * `body=~"the &quot;world&quot;!" --- the body of the message contains `the "world"!`
+  * `author=yegor256` --- the author of the message is `yegor256`
+  * `posted>2023-12-14` --- the message was posted after 14-Dec-23
 
 Predicates may be groupped using `or`, `and`, and brackets, for example:
 
 ```
-body:"important" and (author:yegor256 or 
-  (after:2023-12-14 and contains:"something" and contains:"Hello"))
+body="important" and (author=yegor256 or #hello+ or $bye+ or
+  (posted<2023-12-14 and title=~"something" and body=~"Hello"))
 ```
 
 ## How to test?
