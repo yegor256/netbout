@@ -1,0 +1,12 @@
+- if offset > 0 || total > limit
+  %p.small
+    - if offset.positive?
+      %a.item{href: iri.over(offset: offset - limit)} Previous
+    - else
+      %span.item Pages:
+    - current = (offset / limit).floor
+    - (0..((total - 1) / limit).floor).each do |p|
+      - next if p < current - 5 || p > current + 5
+      %a.item{href: iri.over(offset: p * limit), style: p == current ? 'font-weight:bold' : ''}= p + 1
+    - if count >= limit
+      %a.item{href: iri.over(offset: offset + limit)} Next

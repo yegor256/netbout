@@ -1,83 +1,42 @@
+docker:
+  image: yegor256/rultor-image:1.22.0
 readers:
   - "urn:github:526301"
-architect:
-- dmzaytsev
-- yegor256
-- karato
 assets:
-  settings.xml: yegor256/home#assets/netbout/settings.xml
-  settings-snapshot.xml: yegor256/home#assets/netbout/settings-snapshot.xml
-  pubring.gpg: yegor256/home#assets/pubring.gpg
-  secring.gpg: yegor256/home#assets/secring.gpg
+  config.yml: yegor256/home#assets/netbout/config.yml
   id_rsa: yegor256/home#assets/heroku-key
   id_rsa.pub: yegor256/home#assets/heroku-key.pub
-  s3cfg: yegor256/home#assets/s3cfg
-env:
-  MAVEN_OPTS: -XX:MaxPermSize=256m -Xmx1g
-install: |
-  sudo locale-gen en_US en_US.UTF-8
-  export LC_ALL=en_US.UTF-8
-  export LANG=en_US.UTF-8
-  export LANGUAGE=en_US.UTF-8
-  sudo gem install pdd
-  sudo gem install est
-  mkdir ~/.ssh
-  mv ../id_rsa ../id_rsa.pub ~/.ssh
-  chmod -R 600 ~/.ssh/*
-  echo -e "Host *\n  StrictHostKeyChecking no\n  UserKnownHostsFile=/dev/null" > ~/.ssh/config
-deploy:
-  script: |
-    mvn clean deploy -Pqulice --errors --settings ../settings.xml
-    git remote add dokku git@snapshot.netbout.com:netbout-snapshot.git
-    cp ../settings-snapshot.xml settings.xml
-    git add settings.xml
-    git commit -m 'settings.xml'
-    git push -f dokku $(git symbolic-ref --short HEAD):master
-    git reset HEAD~1
-    mvn clean
-    pdd  --file=netbout.xml
-    s3cmd --no-progress put netbout.xml --config=../s3cfg s3://pdd.teamed.io/netbout.xml
-    est --dir=./est --verbose --file=netbout.xml --format=xml
-    s3cmd --no-progress put netbout.xml --config=../s3cfg s3://est.teamed.io/netbout.xml
-merge:
-  script: |
-    mvn clean install -Pqulice --errors --settings ../settings.xml
-    mvn clean
-    pdd  --file=/dev/null
-    est --dir=est --file=/dev/null
-    ./years.sh
-  commanders:
-  - carlosmiranda
-  - darkled
-  - dmzaytsev
-  - essobedo
-  - ggajos
-  - hdouss
-  - krzyk
-  - longtimeago
-  - mkordas
-  - pinaf
+install: |-
+  export PATH=$PATH:/usr/lib/postgresql/10/bin
+  sudo apt-get -y update
+  sudo apt-get -y install libpq-dev
+  pdd -f /dev/null
+  bundle install --no-color
 release:
+  pre: false
   sensitive:
-    - settings.xml
+    - config.yml
   script: |-
-    mvn versions:set "-DnewVersion=${tag}"
-    git commit -am "${tag}"
-    mvn clean deploy -Pqulice -Psonatype -Pnetbout --errors --batch-mode --settings ../settings.xml
+    bundle exec rake
     git remote add dokku dokku@www.netbout.com:netbout
-    build=$(git rev-parse --short HEAD)
-    sed -i "s/BUILD/${build}/g" netbout-web/src/main/resources/META-INF/MANIFEST.MF
-    sed -i "s/BUILD/${build}/g" netbout-web/src/main/resources/log4j.properties
-    git add netbout-web/src/main/resources/META-INF/MANIFEST.MF
-    git add netbout-web/src/main/resources/log4j.properties
+    rm -rf ~/.ssh
+    mkdir ~/.ssh
+    mv ../id_rsa ../id_rsa.pub ~/.ssh
+    chmod -R 600 ~/.ssh/*
+    echo -e "Host *\n  StrictHostKeyChecking no\n  UserKnownHostsFile=/dev/null" > ~/.ssh/config
+    sed -i "s/0\.0\.0/${tag}/g" ./version.rb
+    git add ./version.rb
     git commit -m 'build number set'
-    cp ../settings.xml settings.xml
-    git add settings.xml
-    git commit -m 'settings.xml'
+    cp ../config.yml config.yml
+    bundle exec rake config
+    git add config.yml
+    git commit -m 'config.yml'
     git push -f dokku $(git symbolic-ref --short HEAD):master
     git reset HEAD~1
-    curl -f --connect-timeout 15 --retry 5 --retry-delay 30 http://www.netbout.com
-    mvn clean install site-deploy -Psite --errors --settings ../settings.xml --batch-mode
-  commanders:
-  - dmzaytsev
-  - yegor256
+    rm -f target/pgsql-config.yml
+    bundle exec rake liquibase
+    rm -rf config.yml
+    curl -f --connect-timeout 15 --retry 5 --retry-delay 30 https://www.netbout.com > /dev/null
+merge:
+  script: |-
+    bundle exec rake
