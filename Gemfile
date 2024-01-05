@@ -34,7 +34,7 @@ gem 'rack-test', '2.1.0'
 gem 'rake', '13.0.6', require: false
 gem 'relative_time', '1.1.0'
 gem 'rerun', '0.14.0', require: false
-gem 'rspec-rails', '6.0.3', require: false
+gem 'rspec-rails', '6.1.0', require: false
 gem 'rubocop', '1.56.0', require: false
 gem 'rubocop-rspec', '2.23.2', require: false
 gem 'sass', '3.7.4'
