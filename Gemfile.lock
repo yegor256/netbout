@@ -82,7 +82,7 @@ GEM
     glogin (0.13.0)
       base58 (>= 0.2)
       openssl (>= 2.0)
-    haml (5.0.4)
+    haml (5.2.2)
       temple (>= 0.8.0)
       tilt
     i18n (1.14.1)
@@ -277,7 +277,7 @@ PLATFORMS
 
 DEPENDENCIES
   glogin (= 0.13.0)
-  haml (= 5.0.4)
+  haml (= 5.2.2)
   iri (= 0.7.0)
   loog (= 0.3.1)
   minitest (= 5.18.1)
