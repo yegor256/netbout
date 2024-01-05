@@ -103,7 +103,7 @@ GEM
       nokogiri (>= 1.12.0)
     loog (0.3.1)
     minitest (5.18.1)
-    minitest-reporters (1.6.0)
+    minitest-reporters (1.6.1)
       ansi
       builder
       minitest (>= 5.0)
@@ -281,7 +281,7 @@ DEPENDENCIES
   iri (= 0.7.0)
   loog (= 0.3.1)
   minitest (= 5.18.1)
-  minitest-reporters (= 1.6.0)
+  minitest-reporters (= 1.6.1)
   pgtk (= 0.8.1)
   rack (= 2.2.8)
   rack-ssl (= 1.4.1)

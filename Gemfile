@@ -26,7 +26,7 @@ gem 'haml', '5.0.4'
 gem 'iri', '0.7.0'
 gem 'loog', '0.3.1'
 gem 'minitest', '5.18.1', require: false
-gem 'minitest-reporters', '1.6.0', require: false
+gem 'minitest-reporters', '1.6.1', require: false
 gem 'pgtk', '0.8.1'
 gem 'rack', '2.2.8'
 gem 'rack-ssl', '1.4.1'
