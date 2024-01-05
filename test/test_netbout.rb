@@ -22,24 +22,51 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-ENV['RACK_ENV'] = 'test'
-
-require 'simplecov'
-SimpleCov.start
-
-require 'yaml'
 require 'minitest/autorun'
-require 'pgtk/pool'
-require 'loog'
-module Minitest
-  class Test
-    def test_pgsql
-      # rubocop:disable Style/ClassVars
-      @@test_pgsql ||= Pgtk::Pool.new(
-        Pgtk::Wire::Yaml.new(File.join(__dir__, '../target/pgsql-config.yml')),
-        log: Loog::VERBOSE
-      ).start
-      # rubocop:enable Style/ClassVars
+require 'rack/test'
+require_relative 'test__helper'
+require_relative '../netbout'
+require_relative '../objects/nb'
+
+module Rack
+  module Test
+    class Session
+      def default_env
+        { 'REMOTE_ADDR' => '127.0.0.1', 'HTTPS' => 'on' }.merge(headers_for_env)
+      end
+    end
+  end
+end
+
+# Test of web front.
+# Author:: Yegor Bugayenko (yegor256@gmail.com)
+# Copyright:: Copyright (c) 2009-2024 Yegor Bugayenko
+# License:: MIT
+class Nb::AppTest < Minitest::Test
+  include Rack::Test::Methods
+
+  def app
+    Sinatra::Application
+  end
+
+  def test_renders_pages
+    pages = [
+      '/version',
+      '/robots.txt',
+      '/',
+      '/logo.svg'
+    ]
+    pages.each do |p|
+      get(p)
+      assert(last_response.ok?, last_response.body)
+    end
+  end
+
+  def test_not_found
+    ['/unknown_path', '/js/x/y/z/not-found.js', '/css/a/b/c/not-found.css'].each do |p|
+      get(p)
+      assert_equal(404, last_response.status, last_response.body)
+      assert_equal('text/html;charset=utf-8', last_response.content_type)
     end
   end
 end

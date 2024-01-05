@@ -29,7 +29,7 @@ end
 
 get '/version' do
   content_type 'text/plain'
-  require_relative 'objects/version'
+  require_relative '../objects/version'
   Nb::VERSION
 end
 

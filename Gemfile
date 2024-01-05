@@ -22,11 +22,10 @@
 source 'https://rubygems.org'
 
 gem 'glogin', '0.13.0'
-gem 'haml', '5.0.4'
+gem 'haml', '6.3.0'
 gem 'iri', '0.7.0'
 gem 'loog', '0.3.1'
 gem 'minitest', '5.18.1', require: false
-gem 'minitest-reporters', '1.6.0', require: false
 gem 'pgtk', '0.8.1'
 gem 'rack', '2.2.4'
 gem 'rack-ssl', '1.4.1'

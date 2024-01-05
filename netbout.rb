@@ -47,7 +47,6 @@ if ENV['RACK_ENV'] != 'test'
 end
 
 configure do
-  Haml::Options.defaults[:format] = :xhtml
   config = {
     'github' => {
       'client_id' => '?',
@@ -57,9 +56,14 @@ configure do
     'sentry' => ''
   }
   unless ENV['RACK_ENV'] == 'test'
-    cfg = File.join(File.dirname(__FILE__), 'config.yml')
-    raise "The #{cfg} file must exist or you should set RACK_ENV to 'test' " unless File.exist?(cfg)
-    config = YAML.safe_load(File.open())
+    f = File.join(File.dirname(__FILE__), 'config.yml')
+    unless File.exist?(f)
+      raise [
+        "The config file #{f} is absent, can't start the app. ",
+        "If you are running in a staging/testing mode, set RACK_ENV envirornemt variable to 'test'"
+      ].join
+    end
+    config = YAML.safe_load(File.open(f))
   end
   if ENV['RACK_ENV'] != 'test'
     Raven.configure do |c|

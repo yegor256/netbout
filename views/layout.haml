@@ -38,7 +38,7 @@
           %p{style: 'background-color:' + flash_color + ';color:white;padding:.1em .5em;border-radius:4px;width:100%;'}
             = flash_msg
       %article
-        = yield
+        != yield
       %footer.small.gray
         %nav
           %ul
