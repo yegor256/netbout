@@ -24,7 +24,6 @@
 
 require 'telebot'
 require_relative '../objects/urror'
-require_relative '../objects/daemon'
 
 get '/telegram' do
   id = params[:id].to_i
@@ -107,7 +106,7 @@ def reply(msg, login)
 end
 
 if settings.config['telegram']
-  Nb::Daemon.new.start do
+  Thread.new do
     Telebot::Bot.new(settings.config['telegram']['token']).run do |_, message|
       chat = message.chat.id
       if telechats.exists?(chat)

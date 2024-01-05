@@ -7,13 +7,16 @@
     %meta{name: 'keywords', content: 'risks, risk management, risk quality, risk quantity'}
     %meta{name: 'description', content: 'Private Talks Made Easy'}
     %link{href: 'https://cdn.jsdelivr.net/gh/yegor256/tacit@gh-pages/tacit-css.min.css', rel: 'stylesheet'}
-    %link{rel: 'shortcut icon', href: iri.cut('/logo-64.png')}
+    %link{href: 'https://cdn.jsdelivr.net/gh/yegor256/drops@gh-pages/drops-css.min.css', rel: 'stylesheet'}
+    %link{rel: 'shortcut icon', href: iri.cut('/icon.svg')}
     %script{src: 'https://code.jquery.com/jquery-3.3.1.min.js'}
     :css
-      .logo { width: 64px; height: 64px; }
+      .logo { width: 128px; height: 128px; }
+      article { border: none; }
+      footer nav ul, header nav ul { text-align: left; margin-bottom: 1px; }
   %body
     %section
-      %header
+      %header.small
         %nav
           %ul
             %li
@@ -41,8 +44,8 @@
           %ul
             %li
               &copy;
-              ='2009&ndash;' + '-2024'
-              %a{href: 'https://www.zerocracy.com'} Zerocracy
+              ="2009&ndash;#{Time.now.year}"
+              %a{href: 'https://www.netbout.com'} Netbout
             %li
               %a{href: iri.cut('/terms')} Terms of Use
         %nav

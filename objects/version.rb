@@ -22,7 +22,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-require_relative 'objects/nb'
+require_relative 'nb'
 
 module Nb
   VERSION = '0.0.0'

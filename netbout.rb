@@ -56,7 +56,11 @@ configure do
     },
     'sentry' => ''
   }
-  config = YAML.safe_load(File.open(File.join(File.dirname(__FILE__), 'config.yml'))) unless ENV['RACK_ENV'] == 'test'
+  unless ENV['RACK_ENV'] == 'test'
+    cfg = File.join(File.dirname(__FILE__), 'config.yml')
+    raise "The #{cfg} file must exist or you should set RACK_ENV to 'test' " unless File.exist?(cfg)
+    config = YAML.safe_load(File.open())
+  end
   if ENV['RACK_ENV'] != 'test'
     Raven.configure do |c|
       c.dsn = config['sentry']
@@ -66,9 +70,9 @@ configure do
   end
   set :bind, '0.0.0.0'
   set :server, :thin
-  set :show_exceptions, false
-  set :raise_errors, false
-  set :dump_errors, false
+  set :show_exceptions, true
+  set :raise_errors, true
+  set :dump_errors, true
   set :config, config
   set :logging, true
   set :log, Loog::REGULAR

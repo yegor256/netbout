@@ -52,3 +52,19 @@ body="important" and (author=yegor256 or #hello+ or $bye+ or
   (posted<2023-12-14 and title=~"something" and body=~"Hello"))
 ```
 
+## How to Test
+
+In order to test it locally, run:
+
+```
+$ bundle update
+$ bundle exec rake
+```
+
+In order to run it locally as a web service on your localhost, run:
+
+```
+$ bundle exec rake run
+```
+
+You should be able to see it at `http://localhost:4567`.
