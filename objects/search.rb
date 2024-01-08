@@ -29,17 +29,26 @@ require_relative 'nb'
 # Copyright:: Copyright (c) 2009-2024 Yegor Bugayenko
 # License:: MIT
 class Nb::Search
-  def initialize(pgsql, identity, query)
+  def initialize(pgsql, identity, query, offset, limit)
     @pgsql = pgsql
     raise 'Identity is NULL' if identity.nil?
     @identity = identity
     raise 'Query is NULL' if query.nil?
     @query = query
+    @offset = offset
+    @limit = limit
   end
 
   def each
     require_relative 'message'
-    @pgsql.exec("SELECT id FROM message WHERE #{@query.predicate.to_sql} ORDER BY message.created DESC").each do |row|
+    q = [
+      'SELECT id FROM message',
+      "WHERE #{@query.predicate.to_sql}",
+      'ORDER BY message.created DESC',
+      "OFFSET #{@offset}",
+      "LIMIT #{@limit}"
+    ].join(' ')
+    @pgsql.exec(q).each do |row|
       id = row['id'].to_i
       yield Nb::Message.new(@pgsql, @identity, id)
     end

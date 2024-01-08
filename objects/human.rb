@@ -64,8 +64,8 @@ class Nb::Human
     Nb::Messages.new(@pgsql, @identity)
   end
 
-  def search(query)
+  def search(query, offset, limit)
     require_relative 'search'
-    Nb::Search.new(@pgsql, @identity, query)
+    Nb::Search.new(@pgsql, @identity, query, offset, limit)
   end
 end

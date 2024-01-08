@@ -42,4 +42,10 @@ class Nb::Message
   def text
     @pgsql.exec('SELECT text FROM message WHERE id = $1', [@id])[0]['text']
   end
+
+  def bout
+    bout = @pgsql.exec('SELECT bout FROM message WHERE id = $1', [@id])[0]['bout'].to_i
+    require_relative 'bout'
+    Nb::Bout.new(@pgsql, @identity, bout)
+  end
 end

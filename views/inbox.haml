@@ -1,7 +1,7 @@
 %form{action: iri, method: 'get'}
   %fieldset
-    %input{name: 'q', type: 'text', tabindex: 1, value: query.predicate.to_s}
-    %button{type: 'submit', tabindex: 2}
+    %input{name: 'q', type: 'text', value: query.predicate.to_s}
+    %button{type: 'submit'}
       Search
 
 - query.predicate.if_bout do |b|
@@ -14,12 +14,22 @@
         Post
 
 - total = 0
-- current_human.search(query).each do |msg|
-  - break if total > 10
+- current_human.search(query, offset, limit).each do |msg|
   %p
+    %a{href: iri.cut('/b').append(msg.bout.id)}
+      = "##{msg.bout.id}"
+    = '/'
     = "##{msg.id}"
     = msg.text
   - total += 1
+
+%p
+  - if offset > 0
+    %a{href: iri.over(offset: [offset - limit, 0].max)}
+      prev
+  - if total == limit
+    %a{href: iri.over(offset: offset + limit)}
+      next
 
 - if total.zero?
   %p
