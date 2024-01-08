@@ -25,12 +25,15 @@
         %nav
           %ul
             %li
-              - if defined?(user)
-                %span Hello
+              - if defined?(human)
+                = "@#{human.identity}"
               - else
-                %a{href: login_link}
+                %a{href: github_login_link}
                   Login
-            - if defined?(user)
+            - if defined?(human)
+              %li
+                %a{href: iri.cut('/start')}
+                  Start
               %li
                 %a{href: iri.cut('/logout')}
                   Logout
@@ -44,7 +47,7 @@
           %ul
             %li
               &copy;
-              ="2009&ndash;#{Time.now.year}"
+              != "2009&ndash;#{Time.now.year}"
               %a{href: 'https://www.netbout.com'} Netbout
             %li
               %a{href: iri.cut('/terms')} Terms of Use
@@ -57,11 +60,12 @@
                 = request_ip
             %li{title: 'This request processing time'}
               = "#{((Time.now - http_start) * 1000).round}ms"
-        %nav
-          %ul
-            %li
-              %a{href: 'https://github.com/yegor256/netbout/stargazers'}<
-                %img{src: 'https://img.shields.io/github/stars/yegor256/netbout.svg?style=flat-square', alt: 'GitHub'}
-            %li
-              %a{href: 'https://www.sixnines.io/h/6fb0'}<
-                %img{src: 'https://www.sixnines.io/b/6fb0?style=flat', alt: 'SixNines'}
+        - unless defined?(human)
+          %nav
+            %ul
+              %li
+                %a{href: 'https://github.com/yegor256/netbout/stargazers'}<
+                  %img{src: 'https://img.shields.io/github/stars/yegor256/netbout.svg?style=flat-square', alt: 'GitHub'}
+              %li
+                %a{href: 'https://www.sixnines.io/h/6fb0'}<
+                  %img{src: 'https://www.sixnines.io/b/6fb0?style=flat', alt: 'SixNines'}

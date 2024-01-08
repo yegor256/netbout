@@ -23,6 +23,7 @@
 # SOFTWARE.
 
 require_relative 'nb'
+require_relative 'urror'
 
 # Humans.
 # Author:: Yegor Bugayenko (yegor256@gmail.com)
@@ -36,5 +37,15 @@ class Nb::Humans
   def take(identity)
     require_relative 'human'
     Nb::Human.new(@pgsql, identity)
+  end
+
+  def take_by_github(login)
+    rows = @pgsql.exec('SELECT identity FROM human WHERE github = $1', [login])
+    raise Nb::Urror("There is no user @#{login} Github user registered here yet") if rows.empty?
+    take(rows[0]['identity'])
+  end
+
+  def github?(login)
+    !@pgsql.exec('SELECT identity FROM human WHERE github = $1', [login]).empty?
   end
 end

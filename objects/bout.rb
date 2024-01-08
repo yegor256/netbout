@@ -22,47 +22,20 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-require_relative '../objects/version'
+require_relative 'nb'
 
-before '/*' do
-  @locals = {
-    http_start: Time.now,
-    ver: Nb::VERSION,
-    github_login_link: settings.glogin.login_uri,
-    request_ip: request.ip
-  }
-  cookies[:identity] = params[:identity] if params[:identity]
-  if cookies[:identity]
-    begin
-      identity = GLogin::Cookie::Closed.new(
-        cookies[:identity],
-        settings.config['github']['encryption_secret'],
-        context
-      ).to_user[:id]
-      human = humans.take(identity)
-      @locals[:human] = human
-      human.create unless human.exists?
-    rescue GLogin::Codec::DecodingError
-      cookies.delete(:identity)
-    end
+# Bout of a user (reader).
+# Author:: Yegor Bugayenko (yegor256@gmail.com)
+# Copyright:: Copyright (c) 2009-2024 Yegor Bugayenko
+# License:: MIT
+class Nb::Bout
+  attr_reader :id
+
+  def initialize(pgsql, identity, id)
+    @pgsql = pgsql
+    raise 'Identity is NULL' if identity.nil?
+    @identity = identity
+    raise 'Id is NULL' if id.nil?
+    @id = id
   end
-end
-
-get '/github-callback' do
-  code = params[:code]
-  error(400) if code.nil?
-  login = settings.glogin.user(code)[:login]
-  identity = login
-  humans.create(identity) unless humans.github?(login)
-  cookies[:identity] = GLogin::Cookie::Open.new(
-    identity,
-    settings.config['github']['encryption_secret'],
-    context
-  ).to_s
-  flash(iri.cut('/'), 'You have been logged in')
-end
-
-get '/logout' do
-  cookies.delete(:identity)
-  flash(iri.cut('/'), 'You have been logged out')
 end

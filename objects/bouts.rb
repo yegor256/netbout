@@ -22,47 +22,23 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-require_relative '../objects/version'
+require_relative 'nb'
 
-before '/*' do
-  @locals = {
-    http_start: Time.now,
-    ver: Nb::VERSION,
-    github_login_link: settings.glogin.login_uri,
-    request_ip: request.ip
-  }
-  cookies[:identity] = params[:identity] if params[:identity]
-  if cookies[:identity]
-    begin
-      identity = GLogin::Cookie::Closed.new(
-        cookies[:identity],
-        settings.config['github']['encryption_secret'],
-        context
-      ).to_user[:id]
-      human = humans.take(identity)
-      @locals[:human] = human
-      human.create unless human.exists?
-    rescue GLogin::Codec::DecodingError
-      cookies.delete(:identity)
-    end
+# Bouts of a human.
+# Author:: Yegor Bugayenko (yegor256@gmail.com)
+# Copyright:: Copyright (c) 2009-2024 Yegor Bugayenko
+# License:: MIT
+class Nb::Bouts
+  def initialize(pgsql, identity)
+    @pgsql = pgsql
+    raise 'Identity is NULL' if identity.nil?
+    @identity = identity
   end
-end
 
-get '/github-callback' do
-  code = params[:code]
-  error(400) if code.nil?
-  login = settings.glogin.user(code)[:login]
-  identity = login
-  humans.create(identity) unless humans.github?(login)
-  cookies[:identity] = GLogin::Cookie::Open.new(
-    identity,
-    settings.config['github']['encryption_secret'],
-    context
-  ).to_s
-  flash(iri.cut('/'), 'You have been logged in')
-end
-
-get '/logout' do
-  cookies.delete(:identity)
-  flash(iri.cut('/'), 'You have been logged out')
+  def start(title)
+    rows = @pgsql.exec('INSERT INTO bout (owner, title) VALUES ($1, $2) RETURNING id', [@identity, title])
+    id = rows[0]['id'].to_i
+    require_relative 'bout'
+    Nb::Bout.new(@pgsql, @identity, id)
+  end
 end

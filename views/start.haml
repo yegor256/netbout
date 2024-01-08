@@ -1,0 +1,9 @@
+%p
+  Start a new bout:
+
+%form{action: iri.cut('/start'), method: 'post'}
+  %fieldset
+    %label Title
+    %input{name: 'title', type: 'text'}
+    %button{type: 'submit'}
+      Start

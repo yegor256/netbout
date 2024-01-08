@@ -31,6 +31,8 @@ require 'yaml'
 require 'minitest/autorun'
 require 'pgtk/pool'
 require 'loog'
+require 'securerandom'
+
 module Minitest
   class Test
     def test_pgsql
@@ -40,6 +42,10 @@ module Minitest
         log: Loog::VERBOSE
       ).start
       # rubocop:enable Style/ClassVars
+    end
+
+    def test_name
+      "jeff#{SecureRandom.hex(4)}"
     end
   end
 end

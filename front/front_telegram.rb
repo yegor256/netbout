@@ -27,8 +27,8 @@ require_relative '../objects/urror'
 
 get '/telegram' do
   id = params[:id].to_i
-  telechats.add(id, current_user)
-  telepost("We identified you as [@#{current_user}](https://netbout.com/u/#{current_user}), thanks!")
+  telechats.add(id, current_human)
+  telepost("We identified you as [@#{current_human}](https://netbout.com/u/#{current_human}), thanks!")
   flash('/', "Your account linked with Telegram chat ##{id}, thanks!")
 end
 
@@ -42,7 +42,7 @@ def telebot
   @telebot ||= Telebot::Client.new(settings.config['telegram']['token'])
 end
 
-def telepost(msg, chat = telechats.chat_of(current_user), reply_markup: nil)
+def telepost(msg, chat = telechats.chat_of(current_human), reply_markup: nil)
   return unless settings.config['telegram']
   telechats.posted(msg, chat)
   telebot.send_message(

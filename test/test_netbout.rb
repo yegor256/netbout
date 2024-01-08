@@ -69,4 +69,32 @@ class Nb::AppTest < Minitest::Test
       assert_equal('text/html;charset=utf-8', last_response.content_type)
     end
   end
+
+  def test_200_user_pages
+    login
+    pages = [
+      '/inbox'
+    ]
+    pages.each do |p|
+      get(p)
+      assert_equal(200, last_response.status, "#{p} fails: #{last_response.body}")
+    end
+  end
+
+  def test_create_bout
+    login
+    post(
+      '/start',
+      'title=hello+world!'
+    )
+    assert_equal(302, last_response.status, last_response.body)
+    get('/inbox')
+    assert_equal(200, last_response.status, last_response.body)
+  end
+
+  private
+
+  def login(name = test_name)
+    set_cookie("identity=#{name}")
+  end
 end

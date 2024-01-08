@@ -27,11 +27,13 @@ SOFTWARE.
     <sql>
       CREATE TABLE human (
         identity VARCHAR(32) PRIMARY KEY,
+        github VARCHAR(64),
         telechat INT,
         created TIMESTAMPTZ DEFAULT now() NOT NULL
       );
       CREATE INDEX idx_human1 ON human (telechat);
-      CREATE INDEX idx_human2 ON human (created);
+      CREATE INDEX idx_human2 ON human (github);
+      CREATE INDEX idx_human3 ON human (created);
     </sql>
     <sql>
       CREATE TABLE bout (

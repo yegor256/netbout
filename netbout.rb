@@ -41,7 +41,7 @@ require 'time'
 require 'yaml'
 require_relative 'objects/urror'
 
-if ENV['RACK_ENV'] != 'test'
+unless ENV['RACK_ENV'] == 'test'
   require 'rack/ssl'
   use Rack::SSL
 end
@@ -65,7 +65,7 @@ configure do
     end
     config = YAML.safe_load(File.open(f))
   end
-  if ENV['RACK_ENV'] != 'test'
+  unless ENV['RACK_ENV'] == 'test'
     Raven.configure do |c|
       c.dsn = config['sentry']
       require_relative 'objects/version'
@@ -74,7 +74,7 @@ configure do
   end
   set :bind, '0.0.0.0'
   set :server, :thin
-  set :show_exceptions, true
+  set :show_exceptions, false
   set :raise_errors, true
   set :dump_errors, true
   set :config, config
@@ -101,7 +101,7 @@ configure do
 end
 
 get '/' do
-  flash('/inbox') if @locals[:user]
+  flash(iri.cut('/inbox')) if @locals[:human]
   haml :index, layout: :layout, locals: merged(
     title: '/'
   )
@@ -111,12 +111,25 @@ get '/inbox' do
   offset = [(params[:offset] || '0').to_i, 0].max
   limit = (params[:limit] || '10').to_i
   query = params[:q] || ''
-  haml :ranked, layout: :layout, locals: merged(
+  haml :inbox, layout: :layout, locals: merged(
     title: '/inbox',
     query: query,
     limit: limit,
     offset: offset
   )
+end
+
+get '/start' do
+  haml :start, layout: :layout, locals: merged(
+    title: '/start'
+  )
+end
+
+post '/start' do
+  title = params[:title]
+  bout = current_human.bouts.start(title)
+  id = bout.id
+  flash(iri.cut('/b').append(id), "Bout ##{id} was started")
 end
 
 get '/terms' do
@@ -125,14 +138,14 @@ get '/terms' do
   )
 end
 
-def current_user
-  redirect '/' unless @locals[:user]
-  @locals[:user][:id].downcase
+def current_human
+  redirect iri.cut('/') unless @locals[:human]
+  @locals[:human]
 end
 
-def users
-  require_relative 'objects/users'
-  @users ||= Nb::Users.new(settings.pgsql)
+def humans
+  require_relative 'objects/humans'
+  @humans ||= Nb::Humans.new(settings.pgsql)
 end
 
 def iri

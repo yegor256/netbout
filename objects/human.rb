@@ -29,13 +29,20 @@ require_relative 'nb'
 # Copyright:: Copyright (c) 2009-2024 Yegor Bugayenko
 # License:: MIT
 class Nb::Human
+  attr_reader :identity
+
   def initialize(pgsql, identity)
     @pgsql = pgsql
+    raise 'Identity is NULL' if identity.nil?
     @identity = identity
   end
 
   def create
     @pgsql.exec('INSERT INTO human (identity) VALUES ($1)', [@identity])
+  end
+
+  def github=(login)
+    @pgsql.exec('UPDATE human SET github = $1 WHERE identity = $2', [login, @identity])
   end
 
   def exists?
@@ -44,5 +51,10 @@ class Nb::Human
 
   def telechat?
     !@pgsql.exec('SELECT telechat FROM human WHERE identity = $1', [@identity]).empty?
+  end
+
+  def bouts
+    require_relative 'bouts'
+    Nb::Bouts.new(@pgsql, @identity)
   end
 end

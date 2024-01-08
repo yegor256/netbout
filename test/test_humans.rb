@@ -34,11 +34,31 @@ require_relative '../objects/humans'
 # License:: MIT
 class Nb::HumansTest < Minitest::Test
   def test_adds_and_reads
-    identity = "bobbydick#{rand(99_999)}"
+    identity = test_name
     humans = Nb::Humans.new(test_pgsql)
     human = humans.take(identity)
+    assert(human.identity == identity)
     assert(!human.exists?)
     human.create
     assert(human.exists?)
+  end
+
+  def test_adds_and_finds_by_github
+    identity = test_name
+    login = test_name
+    humans = Nb::Humans.new(test_pgsql)
+    assert(!humans.github?(login))
+    human = humans.take(identity)
+    human.create
+    human.github = login
+    assert(humans.github?(login))
+    assert(humans.take_by_github(login).exists?)
+  end
+
+  def test_starts_bout
+    human = Nb::Humans.new(test_pgsql).take(test_name)
+    human.create
+    bout = human.bouts.start('hello!')
+    assert(bout.id.positive?)
   end
 end
