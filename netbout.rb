@@ -75,7 +75,7 @@ configure do
   set :bind, '0.0.0.0'
   set :server, :thin
   set :show_exceptions, false
-  set :raise_errors, true
+  set :raise_errors, false
   set :dump_errors, true
   set :config, config
   set :logging, true
@@ -102,7 +102,7 @@ end
 
 get '/' do
   flash(iri.cut('/inbox')) if @locals[:human]
-  haml :index, layout: :layout, locals: merged(
+  haml :index, locals: merged(
     title: '/'
   )
 end
@@ -111,7 +111,7 @@ get '/inbox' do
   offset = [(params[:offset] || '0').to_i, 0].max
   limit = (params[:limit] || '10').to_i
   query = params[:q] || ''
-  haml :inbox, layout: :layout, locals: merged(
+  haml :inbox, locals: merged(
     title: '/inbox',
     query: query,
     limit: limit,
@@ -120,26 +120,53 @@ get '/inbox' do
 end
 
 get '/start' do
-  haml :start, layout: :layout, locals: merged(
+  haml :start, locals: merged(
     title: '/start'
   )
 end
 
 post '/start' do
   title = params[:title]
+  flash(iri.cut('/start'), "The title can't be empty") if title.nil?
   bout = current_human.bouts.start(title)
-  id = bout.id
-  flash(iri.cut('/b').append(id), "Bout ##{id} was started")
+  response.headers['X-Netbout-Bout'] = bout.id.to_s
+  flash(iri.cut('/b').append(bout.id), "Bout ##{bout.id} was started")
+end
+
+get '/b/{id}' do
+  id = params[:id].to_i
+  response.headers['X-Netbout-Bout'] = id.to_s
+  redirect(iri.cut('/inbox').over(q: "bout=#{id}"))
+end
+
+get '/bout/{id}' do
+  id = params[:id].to_i
+  bout = current_human.bouts.take(id)
+  "Bout ##{bout.id}"
+end
+
+get '/message/{id}' do
+  id = params[:id].to_i
+  msg = current_human.messages.take(id)
+  "Message ##{msg.id}"
+end
+
+post '/post' do
+  bout = current_human.bouts.take(params[:bout].to_i)
+  text = params[:text]
+  msg = bout.post(text)
+  response.headers['X-Netbout-Message'] = msg.id.to_s
+  flash(iri.cut('/b').append(bout.id), "Message posted to the bout ##{msg.id}")
 end
 
 get '/terms' do
-  haml :terms, layout: :layout, locals: merged(
+  haml :terms, locals: merged(
     title: '/terms'
   )
 end
 
 def current_human
-  redirect iri.cut('/') unless @locals[:human]
+  flash(iri.cut('/'), 'You have to login first') unless @locals[:human]
   @locals[:human]
 end
 

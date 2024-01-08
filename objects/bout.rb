@@ -38,4 +38,12 @@ class Nb::Bout
     raise 'Id is NULL' if id.nil?
     @id = id
   end
+
+  def post(text)
+    rows = @pgsql.exec('INSERT INTO message (author, bout, text) VALUES ($1, $2, $3) RETURNING id',
+                       [@identity, @id, text])
+    id = rows[0]['id'].to_i
+    require_relative 'message'
+    Nb::Message.new(@pgsql, @identity, id)
+  end
 end

@@ -23,7 +23,6 @@
 # SOFTWARE.
 
 require 'minitest/autorun'
-require 'rack/test'
 require_relative 'test__helper'
 require_relative '../objects/nb'
 require_relative '../objects/humans'

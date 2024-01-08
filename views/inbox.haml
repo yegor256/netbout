@@ -1,2 +1,9 @@
 %p
   Inbox is empty.
+
+%form{action: iri.cut('/post'), method: 'post'}
+  %fieldset
+    %input{name: 'bout', type: 'text'}
+    %textarea{name: 'text', placeholder: 'Post a message...', tabindex: 1, autofocus: 1}
+    %button{type: 'submit', tabindex: 2}
+      Post

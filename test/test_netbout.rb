@@ -88,7 +88,23 @@ class Nb::AppTest < Minitest::Test
       'title=hello+world!'
     )
     assert_equal(302, last_response.status, last_response.body)
-    get('/inbox')
+    id = last_response.headers['X-Netbout-Bout']
+    get("/bout/#{id}")
+    assert_equal(200, last_response.status, last_response.body)
+    get("/b/#{id}")
+    assert_equal(302, last_response.status, last_response.body)
+    assert_equal(last_response.headers['X-Netbout-Bout'], id)
+  end
+
+  def test_post_message
+    login
+    post('/start', 'title=hello+world!')
+    assert_equal(302, last_response.status, last_response.body)
+    id = last_response.headers['X-Netbout-Bout']
+    post('/post', "bout=#{id}&text=how+are+you")
+    assert_equal(302, last_response.status, last_response.body)
+    msg = last_response.headers['X-Netbout-Message']
+    get("/message/#{msg}")
     assert_equal(200, last_response.status, last_response.body)
   end
 

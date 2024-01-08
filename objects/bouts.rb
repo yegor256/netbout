@@ -23,12 +23,19 @@
 # SOFTWARE.
 
 require_relative 'nb'
+require_relative 'urror'
 
 # Bouts of a human.
 # Author:: Yegor Bugayenko (yegor256@gmail.com)
 # Copyright:: Copyright (c) 2009-2024 Yegor Bugayenko
 # License:: MIT
 class Nb::Bouts
+  # When bout is not found by ID
+  class BoutNotFound < Nb::Urror; end
+
+  # When title is not corrent
+  class WrongTitle < Nb::Urror; end
+
   def initialize(pgsql, identity)
     @pgsql = pgsql
     raise 'Identity is NULL' if identity.nil?
@@ -36,9 +43,20 @@ class Nb::Bouts
   end
 
   def start(title)
+    raise 'Title is NULL' if title.nil?
+    raise WrongTitle, "The title can't be empty" if title.empty?
     rows = @pgsql.exec('INSERT INTO bout (owner, title) VALUES ($1, $2) RETURNING id', [@identity, title])
     id = rows[0]['id'].to_i
+    take(id)
+  end
+
+  def take(id)
+    raise BoutNotFound, "The bout ##{id} doesn't exist" unless exists?(id)
     require_relative 'bout'
     Nb::Bout.new(@pgsql, @identity, id)
+  end
+
+  def exists?(id)
+    !@pgsql.exec('SELECT id FROM bout WHERE id = $1', [id]).empty?
   end
 end

@@ -23,13 +23,15 @@
 # SOFTWARE.
 
 require_relative 'nb'
+require_relative 'urror'
 
-# Human.
+# Messages of a human.
 # Author:: Yegor Bugayenko (yegor256@gmail.com)
 # Copyright:: Copyright (c) 2009-2024 Yegor Bugayenko
 # License:: MIT
-class Nb::Human
-  attr_reader :identity
+class Nb::Messages
+  # When message is not found by ID
+  class MessageNotFound < Nb::Urror; end
 
   def initialize(pgsql, identity)
     @pgsql = pgsql
@@ -37,35 +39,13 @@ class Nb::Human
     @identity = identity
   end
 
-  def create
-    @pgsql.exec('INSERT INTO human (identity) VALUES ($1)', [@identity])
-    self
+  def take(id)
+    raise MessageNotFound("The message ##{id} doesn't exist") unless exists?(id)
+    require_relative 'message'
+    Nb::Message.new(@pgsql, @identity, id)
   end
 
-  def github=(login)
-    @pgsql.exec('UPDATE human SET github = $1 WHERE identity = $2', [login, @identity])
-  end
-
-  def exists?
-    !@pgsql.exec('SELECT * FROM human WHERE identity = $1', [@identity]).empty?
-  end
-
-  def telechat?
-    !@pgsql.exec('SELECT telechat FROM human WHERE identity = $1', [@identity]).empty?
-  end
-
-  def bouts
-    require_relative 'bouts'
-    Nb::Bouts.new(@pgsql, @identity)
-  end
-
-  def messages
-    require_relative 'messages'
-    Nb::Messages.new(@pgsql, @identity)
-  end
-
-  def search(_query)
-    require_relative 'search'
-    Nb::Search.new(@pgsql, @identity)
+  def exists?(id)
+    !@pgsql.exec('SELECT id FROM message WHERE id = $1', [id]).empty?
   end
 end

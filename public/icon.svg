@@ -1,7 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<svg width="91px" height="114px" viewBox="0 0 91 114" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-    <title>Path</title>
+<svg width="151px" height="151px" viewBox="0 0 151 151" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>Group</title>
     <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
-        <polygon id="Path" fill="#4C4451" fill-rule="nonzero" points="0.679 113.792 0.679 -0.001 25.867 -0.001 69.27 76.608 69.589 76.608 67.666 -0.001 90.104 -0.001 90.104 113.792 67.803 113.792 22.635 34.886 21.993 34.886 23.115 113.792"></polygon>
+        <g id="Group">
+            <rect id="Rectangle" fill="#F3F3F1" x="0" y="0" width="151" height="151"></rect>
+            <g id="icon" transform="translate(30.679000, 18.999000)" fill="#4C4451" fill-rule="nonzero">
+                <polygon id="Path" points="0 113.793 0 0 25.188 0 68.591 76.609 68.91 76.609 66.987 0 89.425 0 89.425 113.793 67.124 113.793 21.956 34.887 21.314 34.887 22.436 113.793"></polygon>
+            </g>
+        </g>
     </g>
 </svg>

@@ -22,50 +22,21 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-require_relative 'nb'
+require 'minitest/autorun'
+require_relative 'test__helper'
+require_relative '../objects/nb'
+require_relative '../objects/humans'
+require_relative '../objects/bouts'
 
-# Human.
+# Test of Bouts.
 # Author:: Yegor Bugayenko (yegor256@gmail.com)
 # Copyright:: Copyright (c) 2009-2024 Yegor Bugayenko
 # License:: MIT
-class Nb::Human
-  attr_reader :identity
-
-  def initialize(pgsql, identity)
-    @pgsql = pgsql
-    raise 'Identity is NULL' if identity.nil?
-    @identity = identity
-  end
-
-  def create
-    @pgsql.exec('INSERT INTO human (identity) VALUES ($1)', [@identity])
-    self
-  end
-
-  def github=(login)
-    @pgsql.exec('UPDATE human SET github = $1 WHERE identity = $2', [login, @identity])
-  end
-
-  def exists?
-    !@pgsql.exec('SELECT * FROM human WHERE identity = $1', [@identity]).empty?
-  end
-
-  def telechat?
-    !@pgsql.exec('SELECT telechat FROM human WHERE identity = $1', [@identity]).empty?
-  end
-
-  def bouts
-    require_relative 'bouts'
-    Nb::Bouts.new(@pgsql, @identity)
-  end
-
-  def messages
-    require_relative 'messages'
-    Nb::Messages.new(@pgsql, @identity)
-  end
-
-  def search(_query)
-    require_relative 'search'
-    Nb::Search.new(@pgsql, @identity)
+class Nb::BoutsTest < Minitest::Test
+  def test_creates_and_finds
+    human = Nb::Humans.new(test_pgsql).take(test_name).create
+    bouts = human.bouts
+    bout = bouts.start('hi')
+    assert(bouts.exists?(bout.id))
   end
 end

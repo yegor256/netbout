@@ -36,7 +36,7 @@ end
 not_found do
   status 404
   content_type 'text/html', charset: 'utf-8'
-  haml :not_found, layout: :layout, locals: merged(
+  haml :not_found, locals: merged(
     title: request.url
   )
 end
@@ -50,7 +50,6 @@ error do
     Raven.capture_exception(e)
     haml(
       :error,
-      layout: :layout,
       locals: merged(
         title: 'error',
         error: "#{e.message}\n\t#{e.backtrace.join("\n\t")}"
@@ -78,5 +77,7 @@ end
 def flash(uri, msg = '', color: 'darkgreen')
   cookies[:flash_msg] = msg
   cookies[:flash_color] = color
+  response.headers['X-Netbout-Requested'] = request.url
+  response.headers['X-Netbout-Flash'] = msg
   redirect(uri)
 end

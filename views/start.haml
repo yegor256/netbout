@@ -3,7 +3,6 @@
 
 %form{action: iri.cut('/start'), method: 'post'}
   %fieldset
-    %label Title
-    %input{name: 'title', type: 'text'}
-    %button{type: 'submit'}
+    %input{name: 'title', type: 'text', placeholder: 'Title', tabindex: 1, autofocus: 1}
+    %button{type: 'submit', tabindex: 2}
       Start

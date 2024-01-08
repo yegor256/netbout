@@ -7,30 +7,30 @@
     %meta{name: 'keywords', content: 'risks, risk management, risk quality, risk quantity'}
     %meta{name: 'description', content: 'Private Talks Made Easy'}
     %link{href: 'https://cdn.jsdelivr.net/gh/yegor256/tacit@gh-pages/tacit-css.min.css', rel: 'stylesheet'}
-    %link{href: 'https://cdn.jsdelivr.net/gh/yegor256/drops@gh-pages/drops-css.min.css', rel: 'stylesheet'}
+    %link{href: 'https://cdn.jsdelivr.net/gh/yegor256/drops@gh-pages/drops.min.css', rel: 'stylesheet'}
     %link{rel: 'shortcut icon', href: iri.cut('/icon.svg')}
     %script{src: 'https://code.jquery.com/jquery-3.3.1.min.js'}
     :css
+      @import url('https://fonts.googleapis.com/css2?family=Noto+Sans&display=swap');
+      * { font-family: 'Noto Sans', monospace; }
       .logo { width: 128px; height: 128px; }
-      article { border: none; }
+      section { width: 42em; }
+      article { border: none; padding-top: 0; padding-bottom: 0; }
       footer nav ul, header nav ul { text-align: left; margin-bottom: 1px; }
   %body
     %section
-      %header.small
+      %header
         %nav
           %ul
             %li
               %a{href: url('/')}
                 %img.logo{src: iri.cut('/logo.svg'), alt: 'Logo'}
-        %nav
-          %ul
-            %li
-              - if defined?(human)
-                = "@#{human.identity}"
-              - else
-                %a{href: github_login_link}
-                  Login
-            - if defined?(human)
+        - if defined?(human)
+          %nav
+            %ul
+              %li
+                %a{href: iri.cut('/')}
+                  = "@#{human.identity}"
               %li
                 %a{href: iri.cut('/start')}
                   Start
@@ -42,7 +42,7 @@
             = flash_msg
       %article
         != yield
-      %footer.small.gray
+      %footer.smaller.gray
         %nav
           %ul
             %li
