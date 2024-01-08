@@ -1,15 +1,17 @@
 %form{action: iri, method: 'get'}
   %fieldset
-    %input{name: 'q', type: 'text', tabindex: 1, value: query}
+    %input{name: 'q', type: 'text', tabindex: 1, value: query.predicate.to_s}
     %button{type: 'submit', tabindex: 2}
       Search
 
-%form{action: iri.cut('/post'), method: 'post'}
-  %fieldset
-    %input{name: 'bout', type: 'text'}
-    %textarea{name: 'text', placeholder: 'Post a message...', tabindex: 1, autofocus: 1}
-    %button{type: 'submit', tabindex: 2}
-      Post
+- query.predicate.if_bout do |b|
+  %form{action: iri.cut('/post'), method: 'post'}
+    %fieldset
+      %input{name: 'bout', type: 'hidden', value: b}
+      %textarea{name: 'text', placeholder: 'Post a message...', tabindex: 1, autofocus: 1}
+      %br
+      %button{type: 'submit', tabindex: 2}
+        Post
 
 - total = 0
 - current_human.search(query).each do |msg|

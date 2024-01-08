@@ -23,25 +23,70 @@
 # SOFTWARE.
 
 require_relative 'nb'
+require_relative 'urror'
 
-# Search results.
+# Search query string.
 # Author:: Yegor Bugayenko (yegor256@gmail.com)
 # Copyright:: Copyright (c) 2009-2024 Yegor Bugayenko
 # License:: MIT
-class Nb::Search
-  def initialize(pgsql, identity, query)
-    @pgsql = pgsql
-    raise 'Identity is NULL' if identity.nil?
-    @identity = identity
-    raise 'Query is NULL' if query.nil?
-    @query = query
+class Nb::Query
+  def initialize(text)
+    raise 'Text is NULL' if text.nil?
+    @text = text
   end
 
-  def each
-    require_relative 'message'
-    @pgsql.exec("SELECT id FROM message WHERE #{@query.predicate.to_sql} ORDER BY message.created DESC").each do |row|
-      id = row['id'].to_i
-      yield Nb::Message.new(@pgsql, @identity, id)
+  def predicate
+    preds = @text.split(/\s+and\s+/i).map do |t|
+      (left, right) = t.split('=')
+      Eq.new(left.downcase, right)
+    end
+    And.new(preds)
+  end
+
+  class And
+    def initialize(preds)
+      @preds = preds
+    end
+
+    def if_bout
+      @preds.each do |t|
+        if t.is_a?(Eq)
+          t.if_bout do |bout|
+            yield bout
+          end
+        end
+      end
+    end
+
+    def to_s
+      @preds.map(&:to_s).join(' and ')
+    end
+
+    def to_sql
+      if @preds.empty?
+        '1=1'
+      else
+        @preds.map(&:to_sql).join(' AND ')
+      end
+    end
+  end
+
+  class Eq
+    def initialize(left, right)
+      @left = left
+      @right = right
+    end
+
+    def if_bout
+      yield @right.to_i if @left == 'bout'
+    end
+
+    def to_s
+      "#{@left}=#{@right}"
+    end
+
+    def to_sql
+      "#{@left} = #{@right}"
     end
   end
 end

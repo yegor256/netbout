@@ -40,6 +40,7 @@ require 'telebot'
 require 'time'
 require 'yaml'
 require_relative 'objects/urror'
+require_relative 'objects/query'
 
 unless ENV['RACK_ENV'] == 'test'
   require 'rack/ssl'
@@ -113,7 +114,7 @@ get '/inbox' do
   query = params[:q] || ''
   haml :inbox, locals: merged(
     title: '/inbox',
-    query: query,
+    query: Nb::Query.new(query),
     limit: limit,
     offset: offset
   )

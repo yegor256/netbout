@@ -22,26 +22,23 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-require_relative 'nb'
+require 'minitest/autorun'
+require_relative 'test__helper'
+require_relative '../objects/nb'
+require_relative '../objects/query'
 
-# Search results.
+# Test of Query.
 # Author:: Yegor Bugayenko (yegor256@gmail.com)
 # Copyright:: Copyright (c) 2009-2024 Yegor Bugayenko
 # License:: MIT
-class Nb::Search
-  def initialize(pgsql, identity, query)
-    @pgsql = pgsql
-    raise 'Identity is NULL' if identity.nil?
-    @identity = identity
-    raise 'Query is NULL' if query.nil?
-    @query = query
-  end
-
-  def each
-    require_relative 'message'
-    @pgsql.exec("SELECT id FROM message WHERE #{@query.predicate.to_sql} ORDER BY message.created DESC").each do |row|
-      id = row['id'].to_i
-      yield Nb::Message.new(@pgsql, @identity, id)
+class Nb::QueryTest < Minitest::Test
+  def test_in_bout
+    query = Nb::Query.new('bout=3 and body=hello')
+    predicate = query.predicate
+    bout = 0
+    predicate.if_bout do |b|
+      bout = b
     end
+    assert_equal(3, bout)
   end
 end
