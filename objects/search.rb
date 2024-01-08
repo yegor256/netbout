@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-n # frozen_string_literal: true
-
 # (The MIT License)
 #
 # Copyright (c) 2009-2024 Yegor Bugayenko
@@ -41,16 +39,16 @@ class Nb::Search
 
   def each
     require_relative 'message'
-    @pgsql.exec("SELECT id FROM message #{where}").each do |row|
-      id = row[0]['id'].to_i
-      Nb::Message.new(@pgsql, @identity, id)
+    @pgsql.exec("SELECT id FROM message #{where} ORDER BY message.created DESC").each do |row|
+      id = row['id'].to_i
+      yield Nb::Message.new(@pgsql, @identity, id)
     end
   end
 
   private
 
   def where
-    return @query if @query.start_with?('bout=')
+    return "WHERE #{@query}" if @query.start_with?('bout=')
     ''
   end
 end

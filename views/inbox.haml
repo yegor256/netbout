@@ -1,5 +1,8 @@
-%p
-  Inbox is empty.
+%form{action: iri, method: 'get'}
+  %fieldset
+    %input{name: 'q', type: 'text', tabindex: 1, value: query}
+    %button{type: 'submit', tabindex: 2}
+      Search
 
 %form{action: iri.cut('/post'), method: 'post'}
   %fieldset
@@ -7,3 +10,15 @@
     %textarea{name: 'text', placeholder: 'Post a message...', tabindex: 1, autofocus: 1}
     %button{type: 'submit', tabindex: 2}
       Post
+
+- total = 0
+- current_human.search(query).each do |msg|
+  - break if total > 10
+  %p
+    = "##{msg.id}"
+    = msg.text
+  - total += 1
+
+- if total.zero?
+  %p
+    Inbox is empty.

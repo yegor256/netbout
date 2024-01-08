@@ -38,4 +38,8 @@ class Nb::Message
     raise 'Id is NULL' if id.nil?
     @id = id
   end
+
+  def text
+    @pgsql.exec('SELECT text FROM message WHERE id = $1', [@id])[0]['text']
+  end
 end

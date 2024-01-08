@@ -17,6 +17,7 @@
       section { width: 42em; }
       article { border: none; padding-top: 0; padding-bottom: 0; }
       footer nav ul, header nav ul { text-align: left; margin-bottom: 1px; }
+      footer { line-height: 1.4em; }
   %body
     %section
       %header
@@ -50,9 +51,7 @@
               != "2009&ndash;#{Time.now.year}"
               %a{href: 'https://www.netbout.com'} Netbout
             %li
-              %a{href: iri.cut('/terms')} Terms of Use
-        %nav
-          %ul
+              %a{href: iri.cut('/terms')} Terms
             %li{title: 'PostgreSQL version'}
               = "pg:#{settings.pgsql.version}"
             %li{title: 'Your IP address visible to the server'}
