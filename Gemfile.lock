@@ -89,9 +89,9 @@ GEM
       concurrent-ruby (~> 1.0)
     ice_nine (0.11.2)
     io-console (0.7.1)
-    irb (1.11.0)
+    irb (1.11.1)
       rdoc
-      reline (>= 0.3.8)
+      reline (>= 0.4.2)
     iri (0.7.0)
     json (2.7.1)
     language_server-protocol (3.17.0.3)
@@ -112,7 +112,7 @@ GEM
       racc (~> 1.4)
     openssl (3.2.0)
     parallel (1.24.0)
-    parser (3.3.0.1)
+    parser (3.3.0.3)
       ast (~> 2.4.1)
       racc
     pg (1.5.4)
@@ -159,7 +159,7 @@ GEM
       ffi (~> 1.0)
     rdoc (6.6.2)
       psych (>= 4.0.0)
-    regexp_parser (2.8.3)
+    regexp_parser (2.9.0)
     relative_time (1.1.0)
       i18n
     reline (0.4.2)
@@ -199,8 +199,8 @@ GEM
       parser (>= 3.2.1.0)
     rubocop-capybara (2.20.0)
       rubocop (~> 1.41)
-    rubocop-factory_bot (2.25.0)
-      rubocop (~> 1.33)
+    rubocop-factory_bot (2.25.1)
+      rubocop (~> 1.41)
     rubocop-rspec (2.26.1)
       rubocop (~> 1.40)
       rubocop-capybara (~> 2.17)
@@ -264,6 +264,12 @@ GEM
     zeitwerk (2.6.12)
 
 PLATFORMS
+  ruby
+  x86_64-darwin-16
+  x86_64-darwin-17
+  x86_64-darwin-18
+  x86_64-darwin-19
+  x86_64-darwin-20
   arm64-darwin-22
 
 DEPENDENCIES
