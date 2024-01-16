@@ -22,39 +22,27 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-require_relative 'nb'
+require 'minitest/autorun'
+require_relative 'test__helper'
+require_relative '../objects/nb'
+require_relative '../objects/humans'
+require_relative '../objects/bouts'
 
-# Bout of a user (reader).
+# Test of Tags.
 # Author:: Yegor Bugayenko (yegor256@gmail.com)
 # Copyright:: Copyright (c) 2009-2024 Yegor Bugayenko
 # License:: MIT
-class Nb::Bout
-  attr_reader :id
-
-  def initialize(pgsql, identity, id)
-    @pgsql = pgsql
-    raise 'Identity is NULL' if identity.nil?
-    @identity = identity
-    raise 'Id is NULL' if id.nil?
-    @id = id
-  end
-
-  def exists?
-    !@pgsql.exec('SELECT * FROM bout WHERE id = $1', [@id]).empty?
-  end
-
-  def post(text)
-    rows = @pgsql.exec(
-      'INSERT INTO message (author, bout, text) VALUES ($1, $2, $3) RETURNING id',
-      [@identity, @id, text]
-    )
-    id = rows[0]['id'].to_i
-    require_relative 'message'
-    Nb::Message.new(@pgsql, @identity, id)
-  end
-
-  def tags
-    require_relative 'tags'
-    Nb::Tags.new(@pgsql, @identity, self)
+class Nb::TagsTest < Minitest::Test
+  def test_puts_tag_to_bout
+    human = Nb::Humans.new(test_pgsql).take(test_name).create
+    bouts = human.bouts
+    bout = bouts.start('hi')
+    bout.tags.put('a', 'Hello, друг!')
+    tag = bout.tags.take('a')
+    assert(tag.exists?)
+    assert(tag.value.start_with?('Hello'))
+    bout.tags.each do |t|
+      assert(t.exists?)
+    end
   end
 end

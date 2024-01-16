@@ -43,6 +43,16 @@ class Nb::Message
     @pgsql.exec('SELECT text FROM message WHERE id = $1', [@id])[0]['text']
   end
 
+  def created
+    @pgsql.exec('SELECT created FROM message WHERE id = $1', [@id])[0]['created']
+  end
+
+  def author
+    author = @pgsql.exec('SELECT author FROM message WHERE id = $1', [@id])[0]['author']
+    require_relative 'humans'
+    Nb::Humans.new(@pgsql).take(author)
+  end
+
   def bout
     bout = @pgsql.exec('SELECT bout FROM message WHERE id = $1', [@id])[0]['bout'].to_i
     require_relative 'bout'

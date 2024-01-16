@@ -111,10 +111,14 @@ end
 get '/inbox' do
   offset = [(params[:offset] || '0').to_i, 0].max
   limit = (params[:limit] || '10').to_i
-  query = params[:q] || ''
+  query = Nb::Query.new(params[:q] || '')
+  query.predicate.if_bout do |b|
+    bout = current_human.bouts.take(b)
+    raise Nb::Urror, "The bout ##{b.id} doesn't exist" unless bout.exists?
+  end
   haml :inbox, locals: merged(
     title: '/inbox',
-    query: Nb::Query.new(query),
+    query: query,
     limit: limit,
     offset: offset
   )
@@ -131,7 +135,7 @@ post '/start' do
   flash(iri.cut('/start'), "The title can't be empty") if title.nil?
   bout = current_human.bouts.start(title)
   response.headers['X-Netbout-Bout'] = bout.id.to_s
-  flash(iri.cut('/b').append(bout.id), "Bout ##{bout.id} was started")
+  flash(iri.cut('/b').append(bout.id), "The bout ##{bout.id} started")
 end
 
 get '/b/{id}' do
@@ -157,7 +161,15 @@ post '/post' do
   text = params[:text]
   msg = bout.post(text)
   response.headers['X-Netbout-Message'] = msg.id.to_s
-  flash(iri.cut('/b').append(bout.id), "Message posted to the bout ##{msg.id}")
+  flash(iri.cut('/b').append(bout.id), "Message ##{msg.id} posted to the bout ##{bout.id}")
+end
+
+post '/tag' do
+  bout = current_human.bouts.take(params[:bout].to_i)
+  name = params[:name]
+  value = params[:value]
+  bout.tags.put(name, value)
+  flash(iri.cut('/b').append(bout.id), "Tag '##{name}' put to the bout ##{bout.id}")
 end
 
 get '/terms' do

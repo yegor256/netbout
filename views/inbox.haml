@@ -1,25 +1,44 @@
+- the_bout = nil
+- query.predicate.if_bout { |b| the_bout = b }
+
 %form{action: iri, method: 'get'}
   %fieldset
     %input{name: 'q', type: 'text', value: query.predicate.to_s}
     %button{type: 'submit'}
       Search
 
-- query.predicate.if_bout do |b|
+- unless the_bout.nil?
   %form{action: iri.cut('/post'), method: 'post'}
     %fieldset
-      %input{name: 'bout', type: 'hidden', value: b}
+      %input{name: 'bout', type: 'hidden', value: the_bout}
       %textarea{name: 'text', placeholder: 'Post a message...', tabindex: 1, autofocus: 1}
       %br
       %button{type: 'submit', tabindex: 2}
         Post
 
+- unless the_bout.nil?
+  %form{action: iri.cut('/tag'), method: 'post'}
+    %fieldset
+      %input{name: 'bout', type: 'hidden', value: the_bout}
+      %input{name: 'name', type: 'text', size: 8, placeholder: 'Tag', tabindex: 3}
+      %input{name: 'value', type: 'text', size: 20, placeholder: 'Value', tabindex: 4}
+      %button{type: 'submit', tabindex: 5}
+        Put
+  %p
+    Tags:
+    - current_human.bouts.take(the_bout).tags.each do |tag|
+      %code= "#{tag.name}=#{tag.value}"
+
 - total = 0
 - current_human.search(query, offset, limit).each do |msg|
   %p
-    %a{href: iri.cut('/b').append(msg.bout.id)}
-      = "##{msg.bout.id}"
-    = '/'
+    - if the_bout.nil?
+      %a{href: iri.cut('/b').append(msg.bout.id)}= "##{msg.bout.id}"
+      = '/'
     = "##{msg.id}"
+    = "by @#{msg.author.identity}"
+    = msg.created
+    %br
     = msg.text
   - total += 1
 

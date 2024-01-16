@@ -25,90 +25,28 @@
 require_relative 'nb'
 require_relative 'urror'
 
-# Search query string.
+# Tag of a bout.
 # Author:: Yegor Bugayenko (yegor256@gmail.com)
 # Copyright:: Copyright (c) 2009-2024 Yegor Bugayenko
 # License:: MIT
-class Nb::Query
-  def initialize(text)
-    raise 'Text is NULL' if text.nil?
-    @text = text
+class Nb::Tag
+  attr_reader :name
+
+  def initialize(pgsql, bout, name)
+    @pgsql = pgsql
+    raise 'Bout is NULL' if bout.nil?
+    @bout = bout
+    raise 'Name is NULL' if name.nil?
+    @name = name
   end
 
-  def predicate
-    preds = @text.split(/\s+and\s+/i).map do |t|
-      (left, right) = t.split('=')
-      if right.nil?
-        Contains.new(left)
-      else
-        Eq.new(left.downcase, right)
-      end
-    end
-    And.new(preds)
+  def exists?
+    !@pgsql.exec('SELECT * FROM tag WHERE bout=$1 AND name=$2', [@bout.id, @name]).empty?
   end
 
-  # AND
-  class And
-    def initialize(preds)
-      @preds = preds
-    end
-
-    def if_bout(&block)
-      @preds.each do |t|
-        next unless t.is_a?(Eq)
-        t.if_bout(&block)
-      end
-    end
-
-    def to_s
-      @preds.map(&:to_s).join(' and ')
-    end
-
-    def to_sql
-      if @preds.empty?
-        '1=1'
-      else
-        @preds.map(&:to_sql).join(' AND ')
-      end
-    end
-  end
-
-  # EQ
-  class Eq
-    def initialize(left, right)
-      @left = left
-      @right = right
-    end
-
-    def if_bout
-      yield @right.to_i if @left == 'bout'
-    end
-
-    def to_s
-      "#{@left}=#{@right}"
-    end
-
-    def to_sql
-      "#{@left} = #{@right}"
-    end
-  end
-
-  # CONTAINS
-  class Contains
-    def initialize(text)
-      @text = text
-    end
-
-    def if_bout
-      false
-    end
-
-    def to_s
-      @text.to_s
-    end
-
-    def to_sql
-      "message.text LIKE '%#{@text.gsub('\'', '\\\'')}%'"
-    end
+  def value
+    row = @pgsql.exec('SELECT value FROM tag WHERE bout=$1 AND name=$2', [@bout.id, @name])[0]
+    raise Nb::Urror, "Tag '#{@name}' not found in the bout ##{@bout.id}" if row.nil?
+    row['value']
   end
 end

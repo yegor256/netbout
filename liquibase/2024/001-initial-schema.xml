@@ -60,16 +60,14 @@ SOFTWARE.
     </sql>
     <sql>
       CREATE TABLE tag (
-        id SERIAL PRIMARY KEY,
         bout INT NOT NULL REFERENCES bout(id),
-        author VARCHAR(32) NOT NULL REFERENCES human(identity),
         name VARCHAR(256) NOT NULL,
         value VARCHAR(1024) NOT NULL,
-        created TIMESTAMPTZ DEFAULT now() NOT NULL
+        author VARCHAR(32) NOT NULL REFERENCES human(identity),
+        created TIMESTAMPTZ DEFAULT now() NOT NULL,
+        PRIMARY KEY(bout, name)
       );
-      CREATE INDEX idx_tag1 ON tag (bout);
       CREATE INDEX idx_tag2 ON tag (author);
-      CREATE INDEX idx_tag3 ON tag (name);
       CREATE INDEX idx_tag4 ON tag (value);
       CREATE INDEX idx_tag5 ON tag (created);
     </sql>

@@ -26,7 +26,7 @@ A user can (both via web interface and RESTful JSON API):
   * Post an immutable **message** to a bout (can't edit or delete it)
   * Attach a **flag** to a message
   * Drop a flag from a message
-  * Attach an immutable **tag** to a bout with a value (can't detach or modify)
+  * Put an immutable **tag** to a bout with a value (can't remove or modify)
   * List messages/bouts by search string
 
 A search string is similar to what GitHub uses:
