@@ -42,10 +42,10 @@ require 'yaml'
 require_relative 'objects/urror'
 require_relative 'objects/query'
 
-# unless ENV['RACK_ENV'] == 'test'
-#   require 'rack/ssl'
-#   use Rack::SSL
-# end
+unless ENV['RACK_ENV'] == 'test'
+  require 'rack/ssl'
+  use Rack::SSL
+end
 
 configure do
   config = {
