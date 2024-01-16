@@ -26,7 +26,7 @@ gem 'haml', '6.3.0'
 gem 'iri', '0.7.0'
 gem 'loog', '0.5.1'
 gem 'minitest', '5.20.0', require: false
-gem 'pgtk', '0.8.1'
+gem 'pgtk', '0.9.0'
 gem 'rack', '2.2.8'
 gem 'rack-ssl', '1.4.1'
 gem 'rack-test', '2.1.0'
