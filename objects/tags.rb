@@ -56,4 +56,10 @@ class Nb::Tags
       yield take(row['name'])
     end
   end
+
+  def to_a
+    array = []
+    each { |t| array << t.to_h }
+    array
+  end
 end

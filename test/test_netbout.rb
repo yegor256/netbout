@@ -24,6 +24,7 @@
 
 require 'minitest/autorun'
 require 'rack/test'
+require 'json'
 require_relative 'test__helper'
 require_relative '../netbout'
 require_relative '../objects/nb'
@@ -88,12 +89,14 @@ class Nb::AppTest < Minitest::Test
       'title=hello+world!'
     )
     assert_equal(302, last_response.status, last_response.body)
-    id = last_response.headers['X-Netbout-Bout']
+    id = last_response.headers['X-Netbout-Bout'].to_i
     get("/bout/#{id}")
     assert_equal(200, last_response.status, last_response.body)
+    json = JSON.parse(last_response.body)
+    assert_equal(id, json['id'])
     get("/b/#{id}")
     assert_equal(302, last_response.status, last_response.body)
-    assert_equal(last_response.headers['X-Netbout-Bout'], id)
+    assert_equal(last_response.headers['X-Netbout-Bout'].to_i, id)
   end
 
   def test_post_message
@@ -103,9 +106,28 @@ class Nb::AppTest < Minitest::Test
     id = last_response.headers['X-Netbout-Bout']
     post("/b/#{id}/post", 'text=how+are+you')
     assert_equal(302, last_response.status, last_response.body)
-    msg = last_response.headers['X-Netbout-Message']
+    msg = last_response.headers['X-Netbout-Message'].to_i
     get("/message/#{msg}")
     assert_equal(200, last_response.status, last_response.body)
+    json = JSON.parse(last_response.body)
+    assert_equal(msg, json['id'])
+  end
+
+  def test_flag_message
+    login
+    post('/start', 'title=hello+world!')
+    assert_equal(302, last_response.status, last_response.body)
+    id = last_response.headers['X-Netbout-Bout']
+    post("/b/#{id}/post", 'text=how+are+you')
+    assert_equal(302, last_response.status, last_response.body)
+    msg = last_response.headers['X-Netbout-Message']
+    name = 'some_flag'
+    post("/m/#{msg}/attach", "name=#{name}")
+    assert_equal(302, last_response.status, last_response.body)
+    get("/message/#{msg}")
+    assert_equal(200, last_response.status, last_response.body)
+    json = JSON.parse(last_response.body)
+    assert_equal(name, json['flags'][0]['name'])
   end
 
   private

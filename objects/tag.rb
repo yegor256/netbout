@@ -44,9 +44,20 @@ class Nb::Tag
     !@pgsql.exec('SELECT * FROM tag WHERE bout=$1 AND name=$2', [@bout.id, @name]).empty?
   end
 
+  def created
+    @pgsql.exec('SELECT created FROM tag WHERE bout=$1 AND name=$2', [@bout.id, @name])[0]['created']
+  end
+
   def value
     row = @pgsql.exec('SELECT value FROM tag WHERE bout=$1 AND name=$2', [@bout.id, @name])[0]
     raise Nb::Urror, "Tag '#{@name}' not found in the bout ##{@bout.id}" if row.nil?
     row['value']
+  end
+
+  def to_h
+    {
+      name: @name,
+      created: created
+    }
   end
 end

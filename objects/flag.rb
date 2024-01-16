@@ -44,10 +44,21 @@ class Nb::Flag
     !@pgsql.exec('SELECT * FROM flag WHERE message=$1 AND name=$2', [@message.id, @name]).empty?
   end
 
+  def created
+    @pgsql.exec('SELECT created FROM flag WHERE message=$1 AND name=$2', [@message.id, @name])[0]['created']
+  end
+
   def detach(_name)
     @pgsql.exec(
       'DROP flag WHERE message=$1 AND name=$2',
       [@message.id, @name]
     )
+  end
+
+  def to_h
+    {
+      name: @name,
+      created: created
+    }
   end
 end

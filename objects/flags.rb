@@ -56,4 +56,10 @@ class Nb::Flags
       yield take(row['name'])
     end
   end
+
+  def to_a
+    array = []
+    each { |f| array << f.to_h }
+    array
+  end
 end

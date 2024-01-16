@@ -43,6 +43,10 @@ class Nb::Bout
     !@pgsql.exec('SELECT * FROM bout WHERE id = $1', [@id]).empty?
   end
 
+  def created
+    @pgsql.exec('SELECT created FROM bout WHERE id = $1', [@id])[0]['created']
+  end
+
   def post(text)
     rows = @pgsql.exec(
       'INSERT INTO message (author, bout, text) VALUES ($1, $2, $3) RETURNING id',
@@ -56,5 +60,13 @@ class Nb::Bout
   def tags
     require_relative 'tags'
     Nb::Tags.new(@pgsql, @human, self)
+  end
+
+  def to_h
+    {
+      id: @id,
+      created: created,
+      tags: tags.to_a
+    }
   end
 end

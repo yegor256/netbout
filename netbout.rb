@@ -147,13 +147,13 @@ end
 get '/bout/{id}' do
   id = params[:id].to_i
   bout = current_human.bouts.take(id)
-  "Bout ##{bout.id}"
+  bout.to_h.to_json
 end
 
 get '/message/{id}' do
   id = params[:id].to_i
   msg = current_human.messages.take(id)
-  "Message ##{msg.id}"
+  msg.to_h.to_json
 end
 
 post '/b/{id}/post' do

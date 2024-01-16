@@ -67,4 +67,14 @@ class Nb::Message
     require_relative 'flags'
     Nb::Flags.new(@pgsql, @human, self)
   end
+
+  def to_h
+    {
+      id: @id,
+      text: text,
+      created: created,
+      author: author.identity,
+      flags: flags.to_a
+    }
+  end
 end
