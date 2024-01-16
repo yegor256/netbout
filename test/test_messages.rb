@@ -22,49 +22,23 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-require_relative 'nb'
+require 'minitest/autorun'
+require_relative 'test__helper'
+require_relative '../objects/nb'
+require_relative '../objects/humans'
+require_relative '../objects/bouts'
 
-# Message of a user (reader).
+# Test of Messages.
 # Author:: Yegor Bugayenko (yegor256@gmail.com)
 # Copyright:: Copyright (c) 2009-2024 Yegor Bugayenko
 # License:: MIT
-class Nb::Message
-  attr_reader :id
-
-  def initialize(pgsql, human, id)
-    @pgsql = pgsql
-    raise 'Human is NULL' if human.nil?
-    @human = human
-    raise 'Id is NULL' if id.nil?
-    @id = id
-  end
-
-  def exists?
-    !@pgsql.exec('SELECT * FROM message WHERE id = $1', [@id]).empty?
-  end
-
-  def text
-    @pgsql.exec('SELECT text FROM message WHERE id = $1', [@id])[0]['text']
-  end
-
-  def created
-    @pgsql.exec('SELECT created FROM message WHERE id = $1', [@id])[0]['created']
-  end
-
-  def author
-    author = @pgsql.exec('SELECT author FROM message WHERE id = $1', [@id])[0]['author']
-    require_relative 'humans'
-    Nb::Humans.new(@pgsql).take(author)
-  end
-
-  def bout
-    bout = @pgsql.exec('SELECT bout FROM message WHERE id = $1', [@id])[0]['bout'].to_i
-    require_relative 'bout'
-    Nb::Bout.new(@pgsql, @human, bout)
-  end
-
-  def flags
-    require_relative 'flags'
-    Nb::Flags.new(@pgsql, @human, self)
+class Nb::MessagesTest < Minitest::Test
+  def test_posts_and_takes
+    human = Nb::Humans.new(test_pgsql).take(test_name).create
+    bouts = human.bouts
+    bout = bouts.start('hi')
+    m1 = bout.post('Hey, you!')
+    m2 = human.messages.take(m1.id)
+    assert(m2.exists?)
   end
 end
