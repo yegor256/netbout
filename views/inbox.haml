@@ -3,24 +3,22 @@
 
 %form{action: iri, method: 'get'}
   %fieldset
-    %input{name: 'q', type: 'text', value: query.predicate.to_s}
+    %input{name: 'q', type: 'text', required: true, value: query.predicate.to_s}
     %button{type: 'submit'}
       Search
 
 - unless the_bout.nil?
-  %form{action: iri.cut('/post'), method: 'post'}
+  %form{action: iri.cut('/b').append(the_bout).append('/post'), method: 'post'}
     %fieldset
-      %input{name: 'bout', type: 'hidden', value: the_bout}
-      %textarea{name: 'text', placeholder: 'Post a message...', tabindex: 1, autofocus: 1}
+      %textarea{name: 'text', required: true, placeholder: 'Post a message...', tabindex: 1, autofocus: 1}
       %br
       %button{type: 'submit', tabindex: 2}
         Post
 
 - unless the_bout.nil?
-  %form{action: iri.cut('/tag'), method: 'post'}
+  %form{action: iri.cut('/b').append(the_bout).append('/tag'), method: 'post'}
     %fieldset
-      %input{name: 'bout', type: 'hidden', value: the_bout}
-      %input{name: 'name', type: 'text', size: 8, placeholder: 'Tag', tabindex: 3}
+      %input{name: 'name', type: 'text', required: true, size: 8, placeholder: 'Tag', tabindex: 3}
       %input{name: 'value', type: 'text', size: 20, placeholder: 'Value', tabindex: 4}
       %button{type: 'submit', tabindex: 5}
         Put
@@ -40,6 +38,17 @@
     = msg.created
     %br
     = msg.text
+    %br
+    Flags:
+    - msg.flags.each do |flag|
+      %code
+        = flag.name
+        %a{href: iri.cut('/m').append(msg.id).append('detach').add(name: flag.name)}
+    %form{action: iri.cut('/m').append(msg.id).append('/attach'), method: 'post'}
+      %fieldset
+        %input{name: 'name', type: 'text', required: true, size: 12, placeholder: 'Flag'}
+        %button{type: 'submit'}
+          Attach
   - total += 1
 
 %p

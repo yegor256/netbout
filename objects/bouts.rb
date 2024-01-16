@@ -36,16 +36,16 @@ class Nb::Bouts
   # When title is not corrent
   class WrongTitle < Nb::Urror; end
 
-  def initialize(pgsql, identity)
+  def initialize(pgsql, human)
     @pgsql = pgsql
-    raise 'Identity is NULL' if identity.nil?
-    @identity = identity
+    raise 'Human is NULL' if human.nil?
+    @human = human
   end
 
   def start(title)
     raise 'Title is NULL' if title.nil?
     raise WrongTitle, "The title can't be empty" if title.empty?
-    rows = @pgsql.exec('INSERT INTO bout (owner, title) VALUES ($1, $2) RETURNING id', [@identity, title])
+    rows = @pgsql.exec('INSERT INTO bout (owner, title) VALUES ($1, $2) RETURNING id', [@human.identity, title])
     id = rows[0]['id'].to_i
     take(id)
   end
@@ -53,7 +53,7 @@ class Nb::Bouts
   def take(id)
     raise BoutNotFound, "The bout ##{id} doesn't exist" unless exists?(id)
     require_relative 'bout'
-    Nb::Bout.new(@pgsql, @identity, id)
+    Nb::Bout.new(@pgsql, @human, id)
   end
 
   def exists?(id)

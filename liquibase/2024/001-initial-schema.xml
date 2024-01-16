@@ -67,21 +67,20 @@ SOFTWARE.
         created TIMESTAMPTZ DEFAULT now() NOT NULL,
         PRIMARY KEY(bout, name)
       );
-      CREATE INDEX idx_tag2 ON tag (author);
-      CREATE INDEX idx_tag4 ON tag (value);
-      CREATE INDEX idx_tag5 ON tag (created);
+      CREATE INDEX idx_tag1 ON tag (author);
+      CREATE INDEX idx_tag2 ON tag (value);
+      CREATE INDEX idx_tag3 ON tag (created);
     </sql>
     <sql>
       CREATE TABLE flag (
-        id SERIAL PRIMARY KEY,
         message INT NOT NULL REFERENCES message(id),
-        author VARCHAR(32) NOT NULL REFERENCES human(identity),
         name VARCHAR(256) NOT NULL,
-        created TIMESTAMPTZ DEFAULT now() NOT NULL
+        author VARCHAR(32) NOT NULL REFERENCES human(identity),
+        created TIMESTAMPTZ DEFAULT now() NOT NULL,
+        PRIMARY KEY(message, name)
       );
-      CREATE INDEX idx_flag1 ON flag (message);
-      CREATE INDEX idx_flag2 ON flag (name);
-      CREATE INDEX idx_flag3 ON flag (created);
+      CREATE INDEX idx_flag1 ON flag (author);
+      CREATE INDEX idx_flag2 ON flag (created);
     </sql>
   </changeSet>
 </databaseChangeLog>

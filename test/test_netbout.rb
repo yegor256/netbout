@@ -101,7 +101,7 @@ class Nb::AppTest < Minitest::Test
     post('/start', 'title=hello+world!')
     assert_equal(302, last_response.status, last_response.body)
     id = last_response.headers['X-Netbout-Bout']
-    post('/post', "bout=#{id}&text=how+are+you")
+    post("/b/#{id}/post", 'text=how+are+you')
     assert_equal(302, last_response.status, last_response.body)
     msg = last_response.headers['X-Netbout-Message']
     get("/message/#{msg}")

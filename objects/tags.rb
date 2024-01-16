@@ -30,10 +30,10 @@ require_relative 'urror'
 # Copyright:: Copyright (c) 2009-2024 Yegor Bugayenko
 # License:: MIT
 class Nb::Tags
-  def initialize(pgsql, identity, bout)
+  def initialize(pgsql, human, bout)
     @pgsql = pgsql
-    raise 'Identity is NULL' if identity.nil?
-    @identity = identity
+    raise 'Human is NULL' if human.nil?
+    @human = human
     raise 'Bout is NULL' if bout.nil?
     @bout = bout
   end
@@ -46,13 +46,12 @@ class Nb::Tags
   def put(name, value)
     @pgsql.exec(
       'INSERT INTO tag (bout, name, author, value) VALUES ($1, $2, $3, $4)',
-      [@bout.id, name, @identity, value]
+      [@bout.id, name, @human.identity, value]
     )
     take(name)
   end
 
   def each
-    require_relative 'tag'
     @pgsql.exec('SELECT * FROM tag WHERE bout=$1', [@bout.id]).each do |row|
       yield take(row['name'])
     end

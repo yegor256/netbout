@@ -23,49 +23,37 @@
 # SOFTWARE.
 
 require_relative 'nb'
+require_relative 'urror'
 
-# Human.
+# Flags of a bout.
 # Author:: Yegor Bugayenko (yegor256@gmail.com)
 # Copyright:: Copyright (c) 2009-2024 Yegor Bugayenko
 # License:: MIT
-class Nb::Human
-  attr_reader :identity
-
-  def initialize(pgsql, identity)
+class Nb::Flags
+  def initialize(pgsql, human, message)
     @pgsql = pgsql
-    raise 'Identity is NULL' if identity.nil?
-    @identity = identity
+    raise 'Human is NULL' if human.nil?
+    @human = human
+    raise 'Message is NULL' if message.nil?
+    @message = message
   end
 
-  def create
-    @pgsql.exec('INSERT INTO human (identity) VALUES ($1)', [@identity])
-    self
+  def take(name)
+    require_relative 'flag'
+    Nb::Flag.new(@pgsql, @message, name)
   end
 
-  def github=(login)
-    @pgsql.exec('UPDATE human SET github = $1 WHERE identity = $2', [login, @identity])
+  def attach(name)
+    @pgsql.exec(
+      'INSERT INTO flag (message, name, author) VALUES ($1, $2, $3)',
+      [@message.id, name, @human.identity]
+    )
+    take(name)
   end
 
-  def exists?
-    !@pgsql.exec('SELECT * FROM human WHERE identity = $1', [@identity]).empty?
-  end
-
-  def telechat?
-    !@pgsql.exec('SELECT telechat FROM human WHERE identity = $1', [@identity]).empty?
-  end
-
-  def bouts
-    require_relative 'bouts'
-    Nb::Bouts.new(@pgsql, self)
-  end
-
-  def messages
-    require_relative 'messages'
-    Nb::Messages.new(@pgsql, self)
-  end
-
-  def search(query, offset, limit)
-    require_relative 'search'
-    Nb::Search.new(@pgsql, self, query, offset, limit)
+  def each
+    @pgsql.exec('SELECT * FROM flag WHERE message=$1', [@message.id]).each do |row|
+      yield take(row['name'])
+    end
   end
 end

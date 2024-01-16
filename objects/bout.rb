@@ -31,10 +31,10 @@ require_relative 'nb'
 class Nb::Bout
   attr_reader :id
 
-  def initialize(pgsql, identity, id)
+  def initialize(pgsql, human, id)
     @pgsql = pgsql
-    raise 'Identity is NULL' if identity.nil?
-    @identity = identity
+    raise 'Human is NULL' if human.nil?
+    @human = human
     raise 'Id is NULL' if id.nil?
     @id = id
   end
@@ -46,15 +46,15 @@ class Nb::Bout
   def post(text)
     rows = @pgsql.exec(
       'INSERT INTO message (author, bout, text) VALUES ($1, $2, $3) RETURNING id',
-      [@identity, @id, text]
+      [@human.identity, @id, text]
     )
     id = rows[0]['id'].to_i
     require_relative 'message'
-    Nb::Message.new(@pgsql, @identity, id)
+    Nb::Message.new(@pgsql, @human, id)
   end
 
   def tags
     require_relative 'tags'
-    Nb::Tags.new(@pgsql, @identity, self)
+    Nb::Tags.new(@pgsql, @human, self)
   end
 end

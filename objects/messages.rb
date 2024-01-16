@@ -33,16 +33,16 @@ class Nb::Messages
   # When message is not found by ID
   class MessageNotFound < Nb::Urror; end
 
-  def initialize(pgsql, identity)
+  def initialize(pgsql, human)
     @pgsql = pgsql
-    raise 'Identity is NULL' if identity.nil?
-    @identity = identity
+    raise 'Human is NULL' if human.nil?
+    @human = human
   end
 
   def take(id)
     raise MessageNotFound("The message ##{id} doesn't exist") unless exists?(id)
     require_relative 'message'
-    Nb::Message.new(@pgsql, @identity, id)
+    Nb::Message.new(@pgsql, @human, id)
   end
 
   def exists?(id)

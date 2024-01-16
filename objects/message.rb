@@ -31,10 +31,10 @@ require_relative 'nb'
 class Nb::Message
   attr_reader :id
 
-  def initialize(pgsql, identity, id)
+  def initialize(pgsql, human, id)
     @pgsql = pgsql
-    raise 'Identity is NULL' if identity.nil?
-    @identity = identity
+    raise 'Human is NULL' if human.nil?
+    @human = human
     raise 'Id is NULL' if id.nil?
     @id = id
   end
@@ -56,6 +56,11 @@ class Nb::Message
   def bout
     bout = @pgsql.exec('SELECT bout FROM message WHERE id = $1', [@id])[0]['bout'].to_i
     require_relative 'bout'
-    Nb::Bout.new(@pgsql, @identity, bout)
+    Nb::Bout.new(@pgsql, @human, bout)
+  end
+
+  def flags
+    require_relative 'flags'
+    Nb::Flags.new(@pgsql, @human, self)
   end
 end

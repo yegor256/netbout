@@ -156,20 +156,37 @@ get '/message/{id}' do
   "Message ##{msg.id}"
 end
 
-post '/post' do
-  bout = current_human.bouts.take(params[:bout].to_i)
+post '/b/{id}/post' do
+  bout = current_human.bouts.take(params[:id].to_i)
   text = params[:text]
   msg = bout.post(text)
   response.headers['X-Netbout-Message'] = msg.id.to_s
   flash(iri.cut('/b').append(bout.id), "Message ##{msg.id} posted to the bout ##{bout.id}")
 end
 
-post '/tag' do
-  bout = current_human.bouts.take(params[:bout].to_i)
+post '/b/{id}/tag' do
+  bout = current_human.bouts.take(params[:id].to_i)
   name = params[:name]
   value = params[:value]
   bout.tags.put(name, value)
   flash(iri.cut('/b').append(bout.id), "Tag '##{name}' put to the bout ##{bout.id}")
+end
+
+post '/m/{id}/attach' do
+  msg = current_human.messages.take(params[:id].to_i)
+  name = params[:name]
+  msg.flags.attach(name)
+  bout = msg.bout
+  flash(iri.cut('/b').append(bout.id), "Flag '##{name}' attached to the bout ##{bout.id}")
+end
+
+get '/m/{id}/detach' do
+  msg = current_human.messages.take(params[:id].to_i)
+  name = params[:name]
+  flag = msg.flags.take(name)
+  flag.detach
+  bout = msg.bout
+  flash(iri.cut('/b').append(bout.id), "Flag '##{name}' detached from the bout ##{bout.id}")
 end
 
 get '/terms' do
