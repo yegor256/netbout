@@ -52,7 +52,7 @@
             %li
               %a{href: iri.cut('/terms')} Terms
             %li{title: 'Netbout version'}
-              = "pg:#{Nb::VERSION}"
+              = Nb::VERSION
             %li{title: 'PostgreSQL version'}
               = "pg:#{settings.pgsql.version}"
             %li{title: 'Your IP address visible to the server'}
