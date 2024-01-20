@@ -78,7 +78,7 @@ GEM
     faraday_middleware (1.2.0)
       faraday (~> 1.0)
     ffi (1.16.3)
-    glogin (0.13.0)
+    glogin (0.14.0)
       base58 (>= 0.2)
       openssl (>= 2.0)
     haml (6.3.0)
@@ -275,7 +275,7 @@ PLATFORMS
   x86_64-linux
 
 DEPENDENCIES
-  glogin (= 0.13.0)
+  glogin (= 0.14.0)
   haml (= 6.3.0)
   iri (= 0.7.0)
   loog (= 0.5.1)
