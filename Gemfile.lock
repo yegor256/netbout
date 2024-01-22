@@ -90,7 +90,7 @@ GEM
     irb (1.11.1)
       rdoc
       reline (>= 0.4.2)
-    iri (0.7.0)
+    iri (0.8.0)
     json (2.7.1)
     language_server-protocol (3.17.0.3)
     listen (3.8.0)
@@ -273,7 +273,7 @@ PLATFORMS
 DEPENDENCIES
   glogin (= 0.14.0)
   haml (= 6.3.0)
-  iri (= 0.7.0)
+  iri (= 0.8.0)
   loog (= 0.5.1)
   minitest (= 5.21.2)
   pgtk (= 0.9.2)
