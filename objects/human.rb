@@ -34,6 +34,7 @@ class Nb::Human
   def initialize(pgsql, identity)
     @pgsql = pgsql
     raise 'Identity is NULL' if identity.nil?
+    raise 'Identity is empty' if identity.empty?
     @identity = identity
   end
 
