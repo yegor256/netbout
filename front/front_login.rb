@@ -51,11 +51,10 @@ end
 get '/github-callback' do
   code = params[:code]
   error(400) if code.nil?
-  login = settings.glogin.user(code)[:login]
-  identity = login
-  humans.create(identity) unless humans.github?(login)
+  json = settings.glogin.user(code)
+  identity = json['login']
   cookies[:identity] = GLogin::Cookie::Open.new(
-    identity,
+    { id: identity },
     settings.config['github']['encryption_secret'],
     context
   ).to_s

@@ -130,6 +130,11 @@ class Nb::AppTest < Minitest::Test
     assert_equal(name, json['flags'][0]['name'])
   end
 
+  def test_github_callback
+    get('/github-callback?code=99999')
+    assert_equal(302, last_response.status, last_response.body)
+  end
+
   private
 
   def login(name = test_name)

@@ -51,7 +51,7 @@ configure do
   config = {
     'github' => {
       'client_id' => '?',
-      'client_secret' => '?',
+      'client_secret' => '',
       'encryption_secret' => ''
     },
     'sentry' => ''
