@@ -38,7 +38,7 @@ before '/*' do
         cookies[:identity],
         settings.config['github']['encryption_secret'],
         context
-      ).to_user[:id]
+      ).to_user[:login]
       human = humans.take(identity)
       @locals[:human] = human
       human.create unless human.exists?

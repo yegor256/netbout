@@ -138,6 +138,6 @@ class Nb::AppTest < Minitest::Test
   private
 
   def login(name = test_name)
-    set_cookie("identity=#{name}")
+    set_cookie("identity=#{name}|#{name}")
   end
 end
