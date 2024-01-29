@@ -46,4 +46,17 @@ class Nb::SearchTest < Minitest::Test
     assert_equal(1, found.size)
     assert_equal(msg.id, found.first.id)
   end
+
+  def test_finds_only_my_messages
+    owner = Nb::Humans.new(test_pgsql).take(test_name).create
+    bouts = owner.bouts
+    bout = bouts.start('foo')
+    bout.post('boom')
+    friend = Nb::Humans.new(test_pgsql).take(test_name).create
+    found = []
+    friend.search(Nb::Query.new(''), 0, 1).each do |m|
+      found << m
+    end
+    assert_equal(0, found.size)
+  end
 end

@@ -42,16 +42,18 @@ class Nb::Search
   def each
     require_relative 'message'
     pred = @query.predicate.to_sql
-    pred = "WHERE #{pred}" unless pred.empty?
+    pred = "AND #{pred}" unless pred.empty?
     q = [
       'SELECT message.id FROM message',
       'JOIN bout ON message.bout = bout.id',
+      'LEFT JOIN guest ON guest.bout = bout.id',
+      'WHERE (bout.owner = $1 OR guest.human = $1)',
       pred,
       'ORDER BY message.created DESC',
       "OFFSET #{@offset}",
       "LIMIT #{@limit}"
     ].join(' ')
-    @pgsql.exec(q).each do |row|
+    @pgsql.exec(q, [@identity.identity]).each do |row|
       id = row['id'].to_i
       yield Nb::Message.new(@pgsql, @identity, id)
     end
