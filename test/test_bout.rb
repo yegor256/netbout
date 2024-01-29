@@ -45,4 +45,19 @@ class Nb::BoutTest < Minitest::Test
       bout.post('I can see you :(')
     end
   end
+
+  def test_checks_existence
+    owner = Nb::Humans.new(test_pgsql).take(test_name).create
+    bouts = owner.bouts
+    id = bouts.start('hi').id
+    assert(owner.bouts.take(id).exists?)
+  end
+
+  def test_prohibits_existence_checking
+    owner = Nb::Humans.new(test_pgsql).take(test_name).create
+    guest = Nb::Humans.new(test_pgsql).take(test_name).create
+    bouts = owner.bouts
+    id = bouts.start('hi').id
+    assert(!guest.bouts.take(id).exists?)
+  end
 end

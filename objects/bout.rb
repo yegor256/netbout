@@ -40,7 +40,14 @@ class Nb::Bout
   end
 
   def exists?
-    !@pgsql.exec('SELECT * FROM bout WHERE id = $1', [@id]).empty?
+    !@pgsql.exec(
+      [
+        'SELECT * FROM bout',
+        'LEFT JOIN guest ON guest.bout=bout.id',
+        'WHERE id = $1 AND bout.owner=$2 OR guest.human=$2'
+      ],
+      [@id, @human.identity]
+    ).empty?
   end
 
   def created
