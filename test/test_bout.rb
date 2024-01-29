@@ -41,6 +41,7 @@ class Nb::BoutTest < Minitest::Test
     id = bouts.start('hi').id
     owner.bouts.take(id).post('Hello!')
     bout = guest.bouts.take(id)
+    assert(!bout.mine?)
     assert_raises Nb::Urror do
       bout.post('I can see you :(')
     end
@@ -58,6 +59,8 @@ class Nb::BoutTest < Minitest::Test
     guest = Nb::Humans.new(test_pgsql).take(test_name).create
     bouts = owner.bouts
     id = bouts.start('hi').id
-    assert(!guest.bouts.take(id).exists?)
+    bout = guest.bouts.take(id)
+    assert(!bout.mine?)
+    assert(bout.exists?)
   end
 end

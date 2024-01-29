@@ -40,30 +40,28 @@ class Nb::Bout
   end
 
   def exists?
+    !@pgsql.exec('SELECT * FROM bout WHERE id = $1', [@id]).empty?
+  end
+
+  def mine?
     !@pgsql.exec(
       [
-        'SELECT * FROM bout',
-        'LEFT JOIN guest ON guest.bout=bout.id',
-        'WHERE id = $1 AND bout.owner=$2 OR guest.human=$2'
+        'SELECT id FROM bout',
+        'LEFT JOIN guest ON bout.id=guest.bout',
+        'WHERE bout.id=$2 AND bout.owner=$1 OR guest.human=$1',
+        'LIMIT 1'
       ],
-      [@id, @human.identity]
+      [@human.identity, @id]
     ).empty?
   end
 
   def created
+    raise Nb::Urror, "#{@human} can't touch bout ##{@id}" unless mine?
     @pgsql.exec('SELECT created FROM bout WHERE id = $1', [@id])[0]['created']
   end
 
   def post(text)
-    guest = @pgsql.exec(
-      [
-        'SELECT id FROM bout',
-        'LEFT JOIN guest ON bout.id=guest.bout',
-        'WHERE bout.owner=$1 OR guest.human=$1 AND bout.id=$2 LIMIT 1'
-      ],
-      [@human.identity, @id]
-    )
-    raise Nb::Urror, "#{@human} can't post to bout ##{@id}" if guest.empty?
+    raise Nb::Urror, "#{@human} can't post to bout ##{@id}" unless mine?
     rows = @pgsql.exec(
       'INSERT INTO message (author, bout, text) VALUES ($1, $2, $3) RETURNING id',
       [@human.identity, @id, text]
@@ -74,15 +72,24 @@ class Nb::Bout
   end
 
   def tags
+    raise Nb::Urror, "#{@human} can't read tags of bout ##{@id}" unless mine?
     require_relative 'tags'
     Nb::Tags.new(@pgsql, @human, self)
   end
 
+  def guests
+    raise Nb::Urror, "#{@human} can't read guests of bout ##{@id}" unless mine?
+    require_relative 'guests'
+    Nb::Guests.new(@pgsql, @human, self)
+  end
+
   def to_h
+    raise Nb::Urror, "#{@human} can't serialize bout ##{@id}" unless mine?
     {
       id: @id,
       created: created,
-      tags: tags.to_a
+      tags: tags.to_a,
+      guests: guests.to_a
     }
   end
 end

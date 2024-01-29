@@ -39,11 +39,13 @@ class Nb::Tags
   end
 
   def take(name)
+    raise Nb::Urror, "#{@human} can't take a tag from bout ##{@id}" unless @bout.mine?
     require_relative 'tag'
     Nb::Tag.new(@pgsql, @bout, name)
   end
 
   def put(name, value)
+    raise Nb::Urror, "#{@human} can't put a tag to bout ##{@id}" unless @bout.mine?
     @pgsql.exec(
       'INSERT INTO tag (bout, name, author, value) VALUES ($1, $2, $3, $4)',
       [@bout.id, name, @human.identity, value]
@@ -52,12 +54,14 @@ class Nb::Tags
   end
 
   def each
+    raise Nb::Urror, "#{@human} can't list tags in bout ##{@id}" unless @bout.mine?
     @pgsql.exec('SELECT * FROM tag WHERE bout=$1', [@bout.id]).each do |row|
       yield take(row['name'])
     end
   end
 
   def to_a
+    raise Nb::Urror, "#{@human} can't serialize tags in bout ##{@id}" unless @bout.mine?
     array = []
     each { |t| array << t.to_h }
     array

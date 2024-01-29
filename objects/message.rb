@@ -39,6 +39,19 @@ class Nb::Message
     @id = id
   end
 
+  def mine?
+    !@pgsql.exec(
+      [
+        'SELECT message.id FROM message',
+        'LEFT JOIN bout ON message.bout=bout.id',
+        'LEFT JOIN guest ON message.bout=guest.bout',
+        'WHERE bout.owner=$1 OR guest.human=$1 AND message.id=$2',
+        'LIMIT 1'
+      ],
+      [@human.identity, @id]
+    ).empty?
+  end
+
   def exists?
     !@pgsql.exec('SELECT * FROM message WHERE id = $1', [@id]).empty?
   end

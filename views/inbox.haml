@@ -24,6 +24,10 @@
       %button{type: 'submit', tabindex: 5}
         Put
   %p
+    Guests:
+    - current_human.bouts.take(the_bout).guests.each do |guest|
+      %code= "#{guest}"
+  %p
     Tags:
     - current_human.bouts.take(the_bout).tags.each do |tag|
       %code= "#{tag.name}=#{tag.value}"
