@@ -7,6 +7,12 @@ AllCops:
   NewCops: enable
   SuggestExtensions: false
 
+Layout/EndAlignment:
+  Enabled: false
+Layout/IndentationWidth:
+  Enabled: false
+Layout/ElseAlignment:
+  Enabled: false
 Layout/RescueEnsureAlignment:
   Enabled: false
 Metrics/CyclomaticComplexity:

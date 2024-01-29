@@ -22,47 +22,28 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-require_relative '../objects/version'
+require 'minitest/autorun'
+require_relative 'test__helper'
+require_relative '../objects/nb'
+require_relative '../objects/humans'
+require_relative '../objects/search'
+require_relative '../objects/query'
 
-before '/*' do
-  @locals = {
-    http_start: Time.now,
-    ver: Nb::VERSION,
-    github_login_link: settings.glogin.login_uri,
-    request_ip: request.ip
-  }
-  cookies[:identity] = params[:identity] if params[:identity]
-  if cookies[:identity]
-    begin
-      user = GLogin::Cookie::Closed.new(
-        cookies[:identity],
-        settings.config['github']['encryption_secret'],
-        context
-      ).to_user
-      identity = user[:login]
-      identity = user[:id] if identity.nil?
-      human = humans.take(identity)
-      @locals[:human] = human
-      human.create unless human.exists?
-    rescue GLogin::Codec::DecodingError
-      cookies.delete(:identity)
+# Test of Search.
+# Author:: Yegor Bugayenko (yegor256@gmail.com)
+# Copyright:: Copyright (c) 2009-2024 Yegor Bugayenko
+# License:: MIT
+class Nb::SearchTest < Minitest::Test
+  def test_finds_messages
+    human = Nb::Humans.new(test_pgsql).take(test_name).create
+    bouts = human.bouts
+    bout = bouts.start('hi')
+    msg = bout.post('Hey, you!')
+    found = []
+    human.search(Nb::Query.new('text=~you'), 0, 1).each do |m|
+      found << m
     end
+    assert_equal(1, found.size)
+    assert_equal(msg.id, found.first.id)
   end
-end
-
-get '/github-callback' do
-  code = params[:code]
-  error(400) if code.nil?
-  json = settings.glogin.user(code)
-  cookies[:identity] = GLogin::Cookie::Open.new(
-    json,
-    settings.config['github']['encryption_secret'],
-    context
-  ).to_s
-  flash(iri.cut('/'), "@#{json['login']} has been logged in")
-end
-
-get '/logout' do
-  cookies.delete(:identity)
-  flash(iri.cut('/'), 'You have been logged out')
 end

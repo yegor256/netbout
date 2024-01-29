@@ -22,6 +22,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
+require 'cgi'
 require_relative 'nb'
 require_relative 'urror'
 
@@ -36,15 +37,8 @@ class Nb::Query
   end
 
   def predicate
-    preds = @text.split(/\s+and\s+/i).map do |t|
-      (left, right) = t.split('=')
-      if right.nil?
-        Contains.new(left)
-      else
-        Eq.new(left.downcase, right)
-      end
-    end
-    And.new(preds)
+    (pred,) = to_ast(to_terms("( #{@text} )"), 0)
+    pred
   end
 
   # AND
@@ -55,20 +49,44 @@ class Nb::Query
 
     def if_bout(&block)
       @preds.each do |t|
-        next unless t.is_a?(Eq)
         t.if_bout(&block)
       end
     end
 
     def to_s
-      @preds.map(&:to_s).join(' and ')
+      "(#{@preds.map(&:to_s).join(' and ')})"
     end
 
     def to_sql
       if @preds.empty?
         '1=1'
       else
-        @preds.map(&:to_sql).join(' AND ')
+        "(#{@preds.map(&:to_sql).join(' AND ')})"
+      end
+    end
+  end
+
+  # OR
+  class Or
+    def initialize(preds)
+      @preds = preds
+    end
+
+    def if_bout(&block)
+      @preds.each do |t|
+        t.if_bout(&block)
+      end
+    end
+
+    def to_s
+      "(#{@preds.map(&:to_s).join(' or ')})"
+    end
+
+    def to_sql
+      if @preds.empty?
+        '1=1'
+      else
+        "(#{@preds.map(&:to_sql).join(' OR ')})"
       end
     end
   end
@@ -81,7 +99,7 @@ class Nb::Query
     end
 
     def if_bout
-      yield @right.to_i if @left == 'bout'
+      yield @right.to_s.to_i if @left.to_s == 'bout'
     end
 
     def to_s
@@ -89,14 +107,95 @@ class Nb::Query
     end
 
     def to_sql
-      "#{@left} = #{@right}"
+      r = @right.to_sql
+      r = "'#{r}'" unless r.match?(/^[0-9]+$/)
+      "#{@left.to_sql} = #{r}"
+    end
+  end
+
+  # Less than
+  class Lt
+    def initialize(left, right)
+      @left = left
+      @right = right
+    end
+
+    def if_bout
+      yield false
+    end
+
+    def to_s
+      "#{@left}<#{@right}"
+    end
+
+    def to_sql
+      "#{@left}<'#{@right}'"
+    end
+  end
+
+  # Greater than
+  class Gt
+    def initialize(left, right)
+      @left = left
+      @right = right
+    end
+
+    def if_bout
+      yield false
+    end
+
+    def to_s
+      "#{@left}>#{@right}"
+    end
+
+    def to_sql
+      "#{@left}>'#{@right}'"
+    end
+  end
+
+  # ABSENT
+  class Absent
+    def initialize(tag)
+      @tag = tag
+    end
+
+    def if_bout
+      yield false
+    end
+
+    def to_s
+      "#{@tag}-"
+    end
+
+    def to_sql
+      "#{@tag}!!!"
+    end
+  end
+
+  # PRESENT
+  class Present
+    def initialize(tag)
+      @tag = tag
+    end
+
+    def if_bout
+      yield false
+    end
+
+    def to_s
+      "#{@tag}+"
+    end
+
+    def to_sql
+      "#{@tag}+++"
     end
   end
 
   # CONTAINS
   class Contains
-    def initialize(text)
-      @text = text
+    def initialize(left, right)
+      @left = left
+      @right = right
     end
 
     def if_bout
@@ -104,11 +203,173 @@ class Nb::Query
     end
 
     def to_s
-      @text.to_s
+      "#{@left}=~#{@right}"
     end
 
     def to_sql
-      "message.text LIKE '%#{@text.gsub('\'', '\\\'')}%'"
+      "#{@left.to_sql} LIKE '%#{@right.to_sql}%'"
     end
+  end
+
+  # Blank
+  class Blank
+    def if_bout
+      false
+    end
+
+    def to_s
+      ''
+    end
+
+    def to_sql
+      ''
+    end
+  end
+
+  # Term in AST
+  class Term
+    attr_reader :kind, :left, :right, :op, :prefix, :src
+
+    def initialize(kind, left: nil, right: nil, op: nil, src: nil)
+      @kind = kind
+      @left = left
+      @right = right
+      @op = op
+      @src = src
+    end
+
+    def to_s
+      "#{@kind}<#{@left}#{@op}#{@right}>"
+    end
+
+    def to_pred
+      case @op
+      when '='
+        Eq.new(@left, @right)
+      when '=~'
+        Contains.new(@left, @right)
+      when '-'
+        Absent.new(@left)
+      when '+'
+        Present.new(@left)
+      when '<'
+        Lt.new(@left, @right)
+      when '>'
+        Gt.new(@left, @right)
+      end
+    end
+  end
+
+  # Left operand
+  class Left
+    def initialize(prefix, name)
+      @prefix = prefix
+      @name = name
+    end
+
+    def to_s
+      "#{@prefix}#{@name}"
+    end
+
+    def to_sql
+      if @prefix.nil?
+        case @name
+        when 'bout'
+          'bout.id'
+        when 'text'
+          'message.text'
+        when 'title'
+          'bout.title'
+        when 'owner'
+          'bout.owner'
+        else
+          raise Nb::Urror, "Unknown attribute '#{@name}'"
+        end
+      elsif @prefix == '#' || @prefix == '$'
+        @name
+      else
+        raise Nb::Urror, "Unknown prefix '#{@prefix}'"
+      end
+    end
+  end
+
+  # Right operand
+  class Right
+    def initialize(value)
+      @value = value
+    end
+
+    def to_s
+      @value
+    end
+
+    def to_sql
+      CGI.unescapeHTML(@value).sub("'", "\\\\'")
+    end
+  end
+
+  private
+
+  def to_terms(txt)
+    list = []
+    acc = ''
+    "#{txt} ".chars.each do |c|
+      if !acc.empty? && [' ', ')'].include?(c)
+        list << if acc == 'and'
+          Term.new(:AND)
+        elsif acc == 'or'
+          Term.new(:OR)
+        else
+          m = acc.match(/^(?<prefix>#|\$)?(?<left>[a-z]+)(?<op>=~|\+|-|=|<|>)(?<right>.*)?$/)
+          raise Nb::Urror, "Can't parse '#{@text}' at '#{acc}'" if m.nil?
+          Term.new(:TERM, left: Left.new(m[:prefix], m[:left]), right: Right.new(m[:right]), op: m[:op], src: acc)
+        end
+        acc = ''
+      end
+      case c
+      when '('
+        list << Term.new(:OPEN)
+      when ')'
+        list << Term.new(:CLOSE)
+      when ' '
+        # ignore it
+      else
+        acc += c
+      end
+    end
+    list
+  end
+
+  # Takes a list of terms and a position where to start parsing.
+  # Returns a pred and a new position for parsing continuing.
+  def to_ast(terms, at)
+    pred = if terms[at].kind == :OPEN
+      op = nil
+      operands = []
+      loop do
+        at += 1
+        break if terms[at].kind == :CLOSE
+        (operand, at1) = to_ast(terms, at)
+        at = at1
+        operands << operand
+        break if terms[at].kind == :CLOSE
+        raise Nb::Urror, "Use brackets at #{at}: #{op} -> #{terms[at]}" if !op.nil? && op.kind != terms[at].kind
+        op = terms[at]
+      end
+      if operands.empty?
+        Blank.new
+      elsif op.nil?
+        operands[0]
+      elsif op.kind == :AND
+        And.new(operands)
+      elsif op.kind == :OR
+        Or.new(operands)
+      else
+        raise Nb::Urror, "Unknown operator #{op}"
+      end
+    else
+      terms[at].to_pred
+    end
+    [pred, at + 1]
   end
 end

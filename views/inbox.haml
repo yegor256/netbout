@@ -1,9 +1,10 @@
 - the_bout = nil
+- query = Nb::Query.new(q.start_with?('(') ? q : "(text=~#{CGI.escapeHTML(q)})")
 - query.predicate.if_bout { |b| the_bout = b }
 
 %form{action: iri, method: 'get'}
   %fieldset
-    %input{name: 'q', type: 'text', required: true, value: query.predicate.to_s}
+    %input{name: 'q', type: 'text', required: true, value: q}
     %button{type: 'submit'}
       Search
 

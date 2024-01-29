@@ -41,9 +41,12 @@ class Nb::Search
 
   def each
     require_relative 'message'
+    pred = @query.predicate.to_sql
+    pred = "WHERE #{pred}" unless pred.empty?
     q = [
-      'SELECT id FROM message',
-      "WHERE #{@query.predicate.to_sql}",
+      'SELECT message.id FROM message',
+      'JOIN bout ON message.bout = bout.id',
+      pred,
       'ORDER BY message.created DESC',
       "OFFSET #{@offset}",
       "LIMIT #{@limit}"

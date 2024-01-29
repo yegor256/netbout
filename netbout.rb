@@ -30,6 +30,7 @@ require 'haml'
 require 'iri'
 require 'loog'
 require 'json'
+require 'cgi'
 require 'pgtk'
 require 'pgtk/pool'
 require 'raven'
@@ -111,14 +112,9 @@ end
 get '/inbox' do
   offset = [(params[:offset] || '0').to_i, 0].max
   limit = (params[:limit] || '10').to_i
-  query = Nb::Query.new(params[:q] || '')
-  query.predicate.if_bout do |b|
-    bout = current_human.bouts.take(b)
-    raise Nb::Urror, "The bout ##{b.id} doesn't exist" unless bout.exists?
-  end
   haml :inbox, locals: merged(
     title: '/inbox',
-    query: query,
+    q: params[:q] || '',
     limit: limit,
     offset: offset
   )
@@ -141,7 +137,7 @@ end
 get '/b/{id}' do
   id = params[:id].to_i
   response.headers['X-Netbout-Bout'] = id.to_s
-  redirect(iri.cut('/inbox').over(q: "bout=#{id}"))
+  redirect(iri.cut('/inbox').over(q: "(bout=#{id})"))
 end
 
 get '/bout/{id}' do
