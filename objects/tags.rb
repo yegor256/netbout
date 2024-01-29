@@ -46,6 +46,7 @@ class Nb::Tags
 
   def put(name, value)
     raise Nb::Urror, "#{@human} can't put a tag to bout ##{@id}" unless @bout.mine?
+    raise Nb::Urror, "Invalid tag '#{name}'" unless name.match?(/^[a-z][a-z0-9-]+$/)
     @pgsql.exec(
       'INSERT INTO tag (bout, name, author, value) VALUES ($1, $2, $3, $4)',
       [@bout.id, name, @human.identity, value]

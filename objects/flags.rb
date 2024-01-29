@@ -46,6 +46,7 @@ class Nb::Flags
 
   def attach(name)
     raise Nb::Urror, "#{@human} can't attach a flag to bout ##{@id}" unless @message.mine?
+    raise Nb::Urror, "Invalid flag '#{name}'" unless name.match?(/^[a-z][a-z0-9-]+$/)
     @pgsql.exec(
       'INSERT INTO flag (message, name, author) VALUES ($1, $2, $3)',
       [@message.id, name, @human.identity]

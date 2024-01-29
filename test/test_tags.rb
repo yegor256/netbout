@@ -37,8 +37,9 @@ class Nb::TagsTest < Minitest::Test
     human = Nb::Humans.new(test_pgsql).take(test_name).create
     bouts = human.bouts
     bout = bouts.start('hi')
-    bout.tags.put('a', 'Hello, друг!')
-    tag = bout.tags.take('a')
+    key = 'a6364'
+    bout.tags.put(key, 'Hello, друг!')
+    tag = bout.tags.take(key)
     assert(tag.exists?)
     assert(tag.value.start_with?('Hello'))
     bout.tags.each do |t|

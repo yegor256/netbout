@@ -121,7 +121,7 @@ class Nb::AppTest < Minitest::Test
     post("/b/#{id}/post", 'text=how+are+you')
     assert_equal(302, last_response.status, last_response.body)
     msg = last_response.headers['X-Netbout-Message']
-    name = 'some_flag'
+    name = 'some-flag'
     post("/m/#{msg}/attach", "name=#{name}")
     assert_equal(302, last_response.status, last_response.body)
     get("/message/#{msg}")
