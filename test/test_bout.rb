@@ -22,60 +22,27 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-require_relative 'nb'
+require 'minitest/autorun'
+require_relative 'test__helper'
+require_relative '../objects/nb'
+require_relative '../objects/humans'
+require_relative '../objects/bouts'
+require_relative '../objects/urror'
 
-# Bout of a user (reader).
+# Test of Bout.
 # Author:: Yegor Bugayenko (yegor256@gmail.com)
 # Copyright:: Copyright (c) 2009-2024 Yegor Bugayenko
 # License:: MIT
-class Nb::Bout
-  attr_reader :id
-
-  def initialize(pgsql, human, id)
-    @pgsql = pgsql
-    raise 'Human is NULL' if human.nil?
-    @human = human
-    raise 'Id is NULL' if id.nil?
-    @id = id
-  end
-
-  def exists?
-    !@pgsql.exec('SELECT * FROM bout WHERE id = $1', [@id]).empty?
-  end
-
-  def created
-    @pgsql.exec('SELECT created FROM bout WHERE id = $1', [@id])[0]['created']
-  end
-
-  def post(text)
-    guest = @pgsql.exec(
-      [
-        'SELECT id FROM bout',
-        'LEFT JOIN guest ON bout.id=guest.bout',
-        'WHERE bout.owner=$1 OR guest.human=$1 AND bout.id=$2 LIMIT 1'
-      ],
-      [@human.identity, @id]
-    )
-    raise Nb::Urror, "#{@human} can't post to bout ##{@id}" if guest.empty?
-    rows = @pgsql.exec(
-      'INSERT INTO message (author, bout, text) VALUES ($1, $2, $3) RETURNING id',
-      [@human.identity, @id, text]
-    )
-    id = rows[0]['id'].to_i
-    require_relative 'message'
-    Nb::Message.new(@pgsql, @human, id)
-  end
-
-  def tags
-    require_relative 'tags'
-    Nb::Tags.new(@pgsql, @human, self)
-  end
-
-  def to_h
-    {
-      id: @id,
-      created: created,
-      tags: tags.to_a
-    }
+class Nb::BoutTest < Minitest::Test
+  def test_access_denied_on_post
+    owner = Nb::Humans.new(test_pgsql).take(test_name).create
+    guest = Nb::Humans.new(test_pgsql).take(test_name).create
+    bouts = owner.bouts
+    id = bouts.start('hi').id
+    owner.bouts.take(id).post('Hello!')
+    bout = guest.bouts.take(id)
+    assert_raises Nb::Urror do
+      bout.post('I can see you :(')
+    end
   end
 end

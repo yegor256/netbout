@@ -38,6 +38,10 @@ class Nb::Human
     @identity = identity
   end
 
+  def to_s
+    "@#{@identity}"
+  end
+
   def create
     @pgsql.exec('INSERT INTO human (identity) VALUES ($1)', [@identity])
     self
