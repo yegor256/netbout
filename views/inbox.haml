@@ -2,6 +2,10 @@
 - query = Nb::Query.new(q.start_with?('(') ? q : "(text=~#{CGI.escapeHTML(q)})")
 - query.predicate.if_bout { |b| the_bout = b }
 
+- unless the_bout.nil?
+  - bout = current_human.bouts.take(the_bout)
+  - raise Nb::Urror, "You can't access bout ##{the_bout}" unless bout.mine?
+
 %form{action: iri, method: 'get'}
   %fieldset
     %input{name: 'q', type: 'text', required: true, value: q}
@@ -25,11 +29,16 @@
         Put
   %p
     Guests:
-    - current_human.bouts.take(the_bout).guests.each do |guest|
+    - bout.guests.each do |guest|
       %code= "#{guest}"
+  %form{action: iri.cut('/b').append(the_bout).append('/invite'), method: 'post'}
+    %fieldset
+      %input{name: 'identity', type: 'text', required: true, size: 8, placeholder: 'Identity', tabindex: 6}
+      %button{type: 'submit', tabindex: 7}
+        Put
   %p
     Tags:
-    - current_human.bouts.take(the_bout).tags.each do |tag|
+    - bout.tags.each do |tag|
       %code= "#{tag.name}=#{tag.value}"
 
 - total = 0

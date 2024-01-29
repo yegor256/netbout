@@ -168,6 +168,13 @@ post '/b/{id}/tag' do
   flash(iri.cut('/b').append(bout.id), "Tag '##{name}' put to the bout ##{bout.id}")
 end
 
+post '/b/{id}/invite' do
+  bout = current_human.bouts.take(params[:id].to_i)
+  identity = params[:identity]
+  bout.guests.invite(identity)
+  flash(iri.cut('/b').append(bout.id), "User @#{name}' invited to the bout ##{bout.id}")
+end
+
 post '/m/{id}/attach' do
   msg = current_human.messages.take(params[:id].to_i)
   name = params[:name]

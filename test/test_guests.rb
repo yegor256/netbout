@@ -22,41 +22,30 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-require_relative 'nb'
-require_relative 'urror'
+require 'minitest/autorun'
+require_relative 'test__helper'
+require_relative '../objects/nb'
+require_relative '../objects/humans'
+require_relative '../objects/bouts'
 
-# Guests of a bout.
+# Test of Guests.
 # Author:: Yegor Bugayenko (yegor256@gmail.com)
 # Copyright:: Copyright (c) 2009-2024 Yegor Bugayenko
 # License:: MIT
-class Nb::Guests
-  def initialize(pgsql, human, bout)
-    @pgsql = pgsql
-    raise 'Human is NULL' if human.nil?
-    @human = human
-    raise 'Bout is NULL' if bout.nil?
-    @bout = bout
-  end
-
-  def invite(guest)
-    raise Nb::Urror, "#{@human} can't invite guests to bout ##{@id}" unless @bout.mine?
-    @pgsql.exec(
-      'INSERT INTO guest (bout, human) VALUES ($1, $2)',
-      [@bout.id, guest.identity]
-    )
-  end
-
-  def each
-    raise Nb::Urror, "#{@human} can't list guests in bout ##{@id}" unless @bout.mine?
-    @pgsql.exec('SELECT human FROM guest WHERE bout=$1', [@bout.id]).each do |row|
-      yield row['human']
+class Nb::GuestsTest < Minitest::Test
+  def test_invites_to_bout
+    human = Nb::Humans.new(test_pgsql).take(test_name).create
+    friend = Nb::Humans.new(test_pgsql).take(test_name).create
+    id = human.bouts.start('hi').id
+    human.bouts.take(id).guests.invite(friend)
+    assert(human.bouts.take(id).mine?)
+    bout = friend.bouts.take(id)
+    assert(bout.mine?)
+    found = []
+    bout.guests.each do |t|
+      found << t
     end
-  end
-
-  def to_a
-    raise Nb::Urror, "#{@human} can't serialize guests in bout ##{@id}" unless @bout.mine?
-    array = []
-    each { |g| array << g.to_h }
-    array
+    assert_equal(1, found.size)
+    assert_equal(friend.identity, found.first)
   end
 end
