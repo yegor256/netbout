@@ -63,6 +63,11 @@ class Nb::Human
     !@pgsql.exec('SELECT telechat FROM human WHERE identity = $1', [@identity]).empty?
   end
 
+  def tokens
+    require_relative 'tokens'
+    Nb::Tokens.new(@pgsql, self)
+  end
+
   def bouts
     require_relative 'bouts'
     Nb::Bouts.new(@pgsql, self)

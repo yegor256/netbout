@@ -60,4 +60,12 @@ class Nb::HumansTest < Minitest::Test
     bout = human.bouts.start('hello!')
     assert(bout.id.positive?)
   end
+
+  def test_finds_by_token
+    humans = Nb::Humans.new(test_pgsql)
+    human = humans.take(test_name).create
+    tokens = human.tokens
+    token = tokens.get
+    assert_equal(human.identity, humans.find_by_token(token).identity)
+  end
 end

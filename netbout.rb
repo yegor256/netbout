@@ -198,6 +198,12 @@ get '/terms' do
   )
 end
 
+get '/token' do
+  haml :token, locals: merged(
+    title: '/token'
+  )
+end
+
 get '/sql' do
   raise Urror::Nb, 'You are not allowed to see this' unless current_human.admin?
   query = params[:query] || 'SELECT * FROM human LIMIT 5'

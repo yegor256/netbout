@@ -22,36 +22,27 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
+require 'digest'
+require 'securerandom'
 require_relative 'nb'
 require_relative 'urror'
 
-# Humans.
+# Auth tokens of a human.
 # Author:: Yegor Bugayenko (yegor256@gmail.com)
 # Copyright:: Copyright (c) 2009-2024 Yegor Bugayenko
 # License:: MIT
-class Nb::Humans
-  def initialize(pgsql)
+class Nb::Tokens
+  def initialize(pgsql, human)
     @pgsql = pgsql
+    raise 'Human is NULL' if human.nil?
+    @human = human
   end
 
-  def take(identity)
-    require_relative 'human'
-    Nb::Human.new(@pgsql, identity)
-  end
-
-  def find_by_token(sha)
-    rows = @pgsql.exec('SELECT human FROM token WHERE sha=$1', [sha])
-    raise Nb::Urror, 'Can\'t find a human by this token' if rows.empty?
-    take(rows[0]['human'])
-  end
-
-  def take_by_github(login)
-    rows = @pgsql.exec('SELECT identity FROM human WHERE github = $1', [login])
-    raise Nb::Urror("There is no user @#{login} Github user registered here yet") if rows.empty?
-    take(rows[0]['identity'])
-  end
-
-  def github?(login)
-    !@pgsql.exec('SELECT identity FROM human WHERE github = $1', [login]).empty?
+  def get
+    rows = @pgsql.exec('SELECT sha FROM token WHERE human=$1', [@human.identity])
+    return rows[0]['sha'] unless rows.empty?
+    sha = Digest::SHA1.hexdigest(SecureRandom.hex(64))
+    @pgsql.exec('INSERT INTO token (human, sha) VALUES ($1, $2)', [@human.identity, sha])
+    sha
   end
 end

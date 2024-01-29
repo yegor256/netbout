@@ -23,6 +23,7 @@
 # SOFTWARE.
 
 require_relative '../objects/version'
+require_relative '../objects/tokens'
 
 before '/*' do
   @locals = {
@@ -31,6 +32,7 @@ before '/*' do
     github_login_link: settings.glogin.login_uri,
     request_ip: request.ip
   }
+  cookies[:identity] = humans.find_by_token(params[:token]).identity if params[:token]
   cookies[:identity] = params[:identity] if params[:identity]
   if cookies[:identity]
     begin
