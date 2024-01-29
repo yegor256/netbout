@@ -38,6 +38,10 @@
               %li
                 %a{href: iri.cut('/logout')}
                   Logout
+              - if human.admin?
+                %li
+                  %a{href: iri.cut('/sql')}
+                    SQL
         - if defined?(flash_msg) && !flash_msg.empty?
           %p{style: 'background-color:' + flash_color + ';color:white;padding:.1em .5em;border-radius:4px;width:100%;'}
             = flash_msg

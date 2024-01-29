@@ -170,9 +170,9 @@ end
 
 post '/b/{id}/invite' do
   bout = current_human.bouts.take(params[:id].to_i)
-  identity = params[:identity]
+  identity = params[:human]
   bout.guests.invite(identity)
-  flash(iri.cut('/b').append(bout.id), "User @#{name}' invited to the bout ##{bout.id}")
+  flash(iri.cut('/b').append(bout.id), "User @#{idenity}' invited to the bout ##{bout.id}")
 end
 
 post '/m/{id}/attach' do
@@ -195,6 +195,19 @@ end
 get '/terms' do
   haml :terms, locals: merged(
     title: '/terms'
+  )
+end
+
+get '/sql' do
+  raise Urror::Nb, 'You are not allowed to see this' unless current_human.admin?
+  query = params[:query] || 'SELECT * FROM human LIMIT 5'
+  start = Time.now
+  result = settings.pgsql.exec(query)
+  haml :sql, layout: :layout, locals: merged(
+    title: '/sql',
+    query: query,
+    result: result,
+    lag: Time.now - start
   )
 end
 

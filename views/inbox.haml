@@ -21,6 +21,9 @@
         Post
 
 - unless the_bout.nil?
+  %p
+    - bout.tags.each do |tag|
+      %code= "#{tag.name}=#{tag.value}"
   %form{action: iri.cut('/b').append(the_bout).append('/tag'), method: 'post'}
     %fieldset
       %input{name: 'name', type: 'text', required: true, size: 8, placeholder: 'Tag', tabindex: 3}
@@ -28,18 +31,17 @@
       %button{type: 'submit', tabindex: 5}
         Put
   %p
+    Owned by
+    %code= bout.owner
+    = '/'
     Guests:
     - bout.guests.each do |guest|
       %code= "#{guest}"
   %form{action: iri.cut('/b').append(the_bout).append('/invite'), method: 'post'}
     %fieldset
-      %input{name: 'identity', type: 'text', required: true, size: 8, placeholder: 'Identity', tabindex: 6}
+      %input{name: 'human', type: 'text', required: true, size: 12, placeholder: 'Identity', tabindex: 6}
       %button{type: 'submit', tabindex: 7}
-        Put
-  %p
-    Tags:
-    - bout.tags.each do |tag|
-      %code= "#{tag.name}=#{tag.value}"
+        Invite
 
 - total = 0
 - current_human.search(query, offset, limit).each do |msg|
@@ -48,12 +50,13 @@
       %a{href: iri.cut('/b').append(msg.bout.id)}= "##{msg.bout.id}"
       = '/'
     = "##{msg.id}"
-    = "by @#{msg.author.identity}"
+    by
+    %code= msg.author.identity
+    on
     = msg.created
     %br
     = msg.text
     %br
-    Flags:
     - msg.flags.each do |flag|
       %code
         = flag.name
@@ -62,7 +65,7 @@
       %fieldset
         %input{name: 'name', type: 'text', required: true, size: 12, placeholder: 'Flag'}
         %button{type: 'submit'}
-          Attach
+          Flag
   - total += 1
 
 %p

@@ -38,6 +38,10 @@ class Nb::Human
     @identity = identity
   end
 
+  def admin?
+    @identity == 'yegor256'
+  end
+
   def to_s
     "@#{@identity}"
   end

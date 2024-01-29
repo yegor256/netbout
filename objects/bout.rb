@@ -55,6 +55,11 @@ class Nb::Bout
     ).empty?
   end
 
+  def owner
+    raise Nb::Urror, "#{@human} can't touch bout ##{@id}" unless mine?
+    @pgsql.exec('SELECT owner FROM bout WHERE id = $1', [@id])[0]['owner']
+  end
+
   def created
     raise Nb::Urror, "#{@human} can't touch bout ##{@id}" unless mine?
     @pgsql.exec('SELECT created FROM bout WHERE id = $1', [@id])[0]['created']

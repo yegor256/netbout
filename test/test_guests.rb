@@ -37,7 +37,7 @@ class Nb::GuestsTest < Minitest::Test
     human = Nb::Humans.new(test_pgsql).take(test_name).create
     friend = Nb::Humans.new(test_pgsql).take(test_name).create
     id = human.bouts.start('hi').id
-    human.bouts.take(id).guests.invite(friend)
+    human.bouts.take(id).guests.invite(friend.identity)
     assert(human.bouts.take(id).mine?)
     bout = friend.bouts.take(id)
     assert(bout.mine?)

@@ -42,7 +42,7 @@ class Nb::Guests
     raise Nb::Urror, "#{@human} can't invite guests to bout ##{@id}" unless @bout.mine?
     @pgsql.exec(
       'INSERT INTO guest (bout, human) VALUES ($1, $2)',
-      [@bout.id, guest.identity]
+      [@bout.id, guest]
     )
   end
 
