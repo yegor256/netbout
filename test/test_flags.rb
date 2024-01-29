@@ -44,4 +44,16 @@ class Nb::FlagsTest < Minitest::Test
       assert(f.exists?)
     end
   end
+
+  def test_attaches_and_detaches
+    human = Nb::Humans.new(test_pgsql).take(test_name).create
+    bouts = human.bouts
+    bout = bouts.start('ooo')
+    msg = bout.post('hey you')
+    key = 'the-flag'
+    flag = msg.flags.attach(key)
+    assert(flag.exists?)
+    flag.detach
+    assert(!flag.exists?)
+  end
 end

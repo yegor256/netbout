@@ -40,6 +40,10 @@ class Nb::Guests
 
   def invite(guest)
     raise Nb::Urror, "#{@human} can't invite guests to bout ##{@id}" unless @bout.mine?
+    raise Nb::Urror, "@#{guest} is not a user" if @pgsql.exec(
+      'SELECT identity FROM human WHERE identity=$1',
+      [guest]
+    ).empty?
     @pgsql.exec(
       'INSERT INTO guest (bout, human) VALUES ($1, $2)',
       [@bout.id, guest]

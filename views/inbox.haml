@@ -22,9 +22,13 @@
 
 - unless the_bout.nil?
   %p
+    Tags:
+    %span.click{onclick: '$("#tags").show();'}
+      = '+'
+    %br
     - bout.tags.each do |tag|
       %code= "#{tag.name}=#{tag.value}"
-  %form{action: iri.cut('/b').append(the_bout).append('/tag'), method: 'post'}
+  %form{action: iri.cut('/b').append(the_bout).append('/tag'), method: 'post', id: 'tags', style: 'display: none;'}
     %fieldset
       %input{name: 'name', type: 'text', required: true, size: 8, placeholder: 'Tag', tabindex: 3}
       %input{name: 'value', type: 'text', size: 20, placeholder: 'Value', tabindex: 4}
@@ -37,7 +41,9 @@
     Guests:
     - bout.guests.each do |guest|
       %code= "#{guest}"
-  %form{action: iri.cut('/b').append(the_bout).append('/invite'), method: 'post'}
+    %span.click{onclick: '$("#invite").show();'}
+      = '+'
+  %form{action: iri.cut('/b').append(the_bout).append('/invite'), method: 'post', id: 'invite', style: 'display: none;'}
     %fieldset
       %input{name: 'human', type: 'text', required: true, size: 12, placeholder: 'Identity', tabindex: 6}
       %button{type: 'submit', tabindex: 7}
@@ -54,14 +60,17 @@
     %code= msg.author.identity
     on
     = msg.created
+    %span.click{onclick: "$('#flags-#{msg.id}').show();"}
+      ⚑
     %br
     = msg.text
     %br
     - msg.flags.each do |flag|
       %code
         = flag.name
-        %a{href: iri.cut('/m').append(msg.id).append('detach').add(name: flag.name)}
-    %form{action: iri.cut('/m').append(msg.id).append('/attach'), method: 'post'}
+        != '&nbsp;'
+        %a.click{href: iri.cut('/m').append(msg.id).append('detach').add(name: flag.name)}= 'x'
+    %form{action: iri.cut('/m').append(msg.id).append('/attach'), method: 'post', id: "flags-#{msg.id}", style: 'display: none;'}
       %fieldset
         %input{name: 'name', type: 'text', required: true, size: 12, placeholder: 'Flag'}
         %button{type: 'submit'}
