@@ -23,7 +23,7 @@
 - unless the_bout.nil?
   %p
     Tags:
-    %span.click{onclick: '$("#tags").show();'}
+    %span.click{onclick: '$("#tags").toggle();'}
       = '+'
     %br
     - bout.tags.each do |tag|
@@ -41,7 +41,7 @@
     Guests:
     - bout.guests.each do |guest|
       %code= "#{guest}"
-    %span.click{onclick: '$("#invite").show();'}
+    %span.click{onclick: '$("#invite").toggle();'}
       = '+'
   %form{action: iri.cut('/b').append(the_bout).append('/invite'), method: 'post', id: 'invite', style: 'display: none;'}
     %fieldset
@@ -60,8 +60,8 @@
     %code= msg.author.identity
     on
     = msg.created
-    %span.click{onclick: "$('#flags-#{msg.id}').show();"}
-      ⚑
+    %span.click{onclick: "$('#flags-#{msg.id}').toggle();"}
+      +
     %br
     = msg.text
     %br
