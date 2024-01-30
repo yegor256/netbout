@@ -52,18 +52,63 @@ class Nb::ApiTest < Minitest::Test
   end
 
   def test_bout
-    identity = test_name
-    human = Nb::Humans.new(test_pgsql).take(identity).create
-    token = human.tokens.get
-    header('X-Netbout-Token', token)
+    human = test_user
     bout = human.bouts.start('hey, друг!')
     get("/bout/#{bout.id}")
     json = JSON.parse(last_response.body)
     assert_equal(bout.id, json['id'])
     assert(Time.parse(json['created']) < Time.now)
-    assert_equal(identity, json['owner'])
+    assert_equal(human.identity, json['owner'])
     assert(json['title'].include?('друг'))
     assert(json['tags'].empty?)
     assert(json['guests'].empty?)
+  end
+
+  def test_message
+    human = test_user
+    bout = human.bouts.start('hello, друг!')
+    msg = bout.post('how are you, товарищ?')
+    get("/message/#{msg.id}")
+    json = JSON.parse(last_response.body)
+    assert_equal(msg.id, json['id'])
+    assert(Time.parse(json['created']) < Time.now)
+    assert_equal(human.identity, json['author'])
+    assert(json['text'].include?('товарищ'))
+    assert(json['flags'].empty?)
+  end
+
+  def test_tags
+    human = test_user
+    bout = human.bouts.start('hey, друг!')
+    bout.tags.put('foo1', 'как дела?')
+    get("/tags/#{bout.id}")
+    json = JSON.parse(last_response.body)
+    assert_equal(1, json.size)
+    assert_equal('foo1', json.first['name'])
+    assert_equal('как дела?', json.first['value'])
+  end
+
+  def test_flags
+    human = test_user
+    bout = human.bouts.start('hello, друг!')
+    msg = bout.post('just a test')
+    msg.flags.attach('bar')
+    get("/flags/#{msg.id}")
+    json = JSON.parse(last_response.body)
+    assert_equal(1, json.size)
+    assert_equal('bar', json.first['name'])
+    msg.flags.detach('bar')
+    get("/flags/#{msg.id}")
+    json = JSON.parse(last_response.body)
+    assert(json.empty?)
+  end
+
+  private
+
+  def test_user
+    human = Nb::Humans.new(test_pgsql).take(test_name).create
+    token = human.tokens.get
+    header('X-Netbout-Token', token)
+    human
   end
 end
