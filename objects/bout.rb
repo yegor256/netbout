@@ -98,6 +98,7 @@ class Nb::Bout
     raise Nb::Urror, "#{@human} can't serialize bout ##{@id}" unless mine?
     {
       id: @id,
+      owner: owner,
       created: created,
       title: title,
       tags: tags.to_a,
