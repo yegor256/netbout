@@ -57,6 +57,7 @@ class Nb::Bouts
   end
 
   def exists?(id)
+    raise Nb::Urror, "Bout ID '#{id}' must be integer" unless id.is_a?(Integer)
     !@pgsql.exec('SELECT id FROM bout WHERE id = $1', [id]).empty?
   end
 end
