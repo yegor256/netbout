@@ -17,9 +17,9 @@ jobs:
           sudo apt-get install -y postgresql-14
           sudo ln -s /usr/lib/postgresql/14/bin/initdb /bin/initdb
           sudo ln -s /usr/lib/postgresql/14/bin/postgres /bin/postgres
-      - uses: actions/setup-ruby@v1
+      - uses: ruby/setup-ruby@v1
         with:
-          ruby-version: 3.0
+          ruby-version: 3.1
       - run: bundle update
       - run: bundle exec rake
       - uses: codecov/codecov-action@v3
