@@ -57,6 +57,7 @@ class Nb::Tag
   def to_h
     {
       name: @name,
+      value: value,
       created: created
     }
   end
