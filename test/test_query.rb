@@ -33,7 +33,7 @@ require_relative '../objects/query'
 # License:: MIT
 class Nb::QueryTest < Minitest::Test
   def test_how_in_bout_works
-    query = Nb::Query.new('bout=3 and body=~hello')
+    query = Nb::Query.new('bout=3 and body=~hello and $foo+')
     predicate = query.predicate
     bout = nil
     predicate.if_bout do |b|

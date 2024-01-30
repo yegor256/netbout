@@ -51,13 +51,14 @@ class Nb::Bouts
   end
 
   def take(id)
+    raise "Bout ID '#{id}' must be integer" unless id.is_a?(Integer)
     raise BoutNotFound, "The bout ##{id} doesn't exist" unless exists?(id)
     require_relative 'bout'
     Nb::Bout.new(@pgsql, @human, id)
   end
 
   def exists?(id)
-    raise Nb::Urror, "Bout ID '#{id}' must be integer" unless id.is_a?(Integer)
+    raise "Bout ID '#{id}' must be integer" unless id.is_a?(Integer)
     !@pgsql.exec('SELECT id FROM bout WHERE id = $1', [id]).empty?
   end
 end

@@ -121,7 +121,7 @@ class Nb::Query
     end
 
     def if_bout
-      yield false
+      # yield nothing
     end
 
     def to_s
@@ -141,7 +141,7 @@ class Nb::Query
     end
 
     def if_bout
-      yield false
+      # yield nothing
     end
 
     def to_s
@@ -161,7 +161,7 @@ class Nb::Query
     end
 
     def if_bout
-      yield false
+      # yield nothing
     end
 
     def to_s
@@ -181,7 +181,7 @@ class Nb::Query
     end
 
     def if_bout
-      false
+      # yield nothing
     end
 
     def to_s
@@ -196,7 +196,7 @@ class Nb::Query
   # Blank
   class Blank
     def if_bout
-      false
+      # yield nothing
     end
 
     def to_s
