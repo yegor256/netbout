@@ -147,6 +147,9 @@ class Nb::AppTest < Minitest::Test
     assert_equal(200, last_response.status, last_response.body)
     json = JSON.parse(last_response.body)
     assert_equal(name, json['flags'][0]['name'])
+    get("/flags/#{msg}")
+    assert_equal(200, last_response.status, last_response.body)
+    assert_equal(1, JSON.parse(last_response.body).size)
   end
 
   def test_github_callback

@@ -55,3 +55,10 @@ get '/message/{id}' do
   content_type 'application/json'
   msg.to_h.to_json
 end
+
+get '/flags/{id}' do
+  id = params[:id].to_i
+  msg = current_human.messages.take(id)
+  content_type 'application/json'
+  msg.flags.to_a.to_json
+end
