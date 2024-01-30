@@ -42,6 +42,13 @@ get '/bout/{id}' do
   bout.to_h.to_json
 end
 
+get '/tags/{id}' do
+  id = params[:id].to_i
+  bout = current_human.bouts.take(id)
+  content_type 'application/json'
+  bout.tags.to_a.to_json
+end
+
 get '/message/{id}' do
   id = params[:id].to_i
   msg = current_human.messages.take(id)

@@ -98,6 +98,18 @@ class Nb::AppTest < Minitest::Test
     assert_equal(last_response.headers['X-Netbout-Bout'].to_i, id)
   end
 
+  def test_tag_bout
+    login
+    post('/start', 'title=hello+world!')
+    assert_equal(302, last_response.status, last_response.body)
+    id = last_response.headers['X-Netbout-Bout'].to_i
+    assert(id.positive?)
+    get("/tags/#{id}")
+    assert_equal(200, last_response.status, last_response.body)
+    json = JSON.parse(last_response.body)
+    assert_equal(0, json.size)
+  end
+
   def test_post_message
     login
     post('/start', 'title=hello+world!')
