@@ -140,18 +140,6 @@ get '/b/{id}' do
   redirect(iri.cut('/inbox').over(q: "(bout=#{id})"))
 end
 
-get '/bout/{id}' do
-  id = params[:id].to_i
-  bout = current_human.bouts.take(id)
-  bout.to_h.to_json
-end
-
-get '/message/{id}' do
-  id = params[:id].to_i
-  msg = current_human.messages.take(id)
-  msg.to_h.to_json
-end
-
 post '/b/{id}/post' do
   bout = current_human.bouts.take(params[:id].to_i)
   text = params[:text]
@@ -234,3 +222,4 @@ end
 require_relative 'front/front_telegram'
 require_relative 'front/front_misc'
 require_relative 'front/front_login'
+require_relative 'front/front_api'

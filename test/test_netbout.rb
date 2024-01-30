@@ -112,6 +112,10 @@ class Nb::AppTest < Minitest::Test
     assert_equal(200, last_response.status, last_response.body)
     json = JSON.parse(last_response.body)
     assert_equal(msg, json['id'])
+    get('/search')
+    assert_equal(200, last_response.status, last_response.body)
+    json = JSON.parse(last_response.body)
+    assert_equal(msg, json[0]['id'])
   end
 
   def test_flag_message
