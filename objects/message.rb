@@ -61,7 +61,8 @@ class Nb::Message
   end
 
   def created
-    @pgsql.exec('SELECT created FROM message WHERE id = $1', [@id])[0]['created']
+    time = @pgsql.exec('SELECT created FROM message WHERE id = $1', [@id])[0]['created']
+    Time.parse(time)
   end
 
   def author
