@@ -28,6 +28,7 @@ require 'json'
 require_relative 'test__helper'
 require_relative '../netbout'
 require_relative '../objects/nb'
+require_relative '../objects/humans'
 
 module Rack
   module Test
@@ -133,6 +134,15 @@ class Nb::AppTest < Minitest::Test
   def test_github_callback
     get('/github-callback?code=99999')
     assert_equal(302, last_response.status, last_response.body)
+  end
+
+  def test_login_via_token
+    human = Nb::Humans.new(test_pgsql).take(test_name).create
+    token = human.tokens.get
+    header('X-Netbout-Token', token)
+    post('/start', 'title=hello+world!')
+    assert_equal(302, last_response.status, last_response.body)
+    assert(!last_response.headers['X-Netbout-Bout'].nil?)
   end
 
   private

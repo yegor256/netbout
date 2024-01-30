@@ -32,7 +32,8 @@ before '/*' do
     github_login_link: settings.glogin.login_uri,
     request_ip: request.ip
   }
-  cookies[:identity] = humans.find_by_token(params[:token]).identity if params[:token]
+  token = request.env['HTTP_X_NETBOUT_TOKEN']
+  cookies[:identity] = humans.find_by_token(token).identity unless token.nil?
   cookies[:identity] = params[:identity] if params[:identity]
   if cookies[:identity]
     begin
