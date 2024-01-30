@@ -63,4 +63,13 @@ class Nb::BoutTest < Minitest::Test
     assert(!bout.mine?)
     assert(bout.exists?)
   end
+
+  def test_turns_into_json
+    owner = Nb::Humans.new(test_pgsql).take(test_name).create
+    bouts = owner.bouts
+    bout = bouts.start('hi, друг!')
+    assert(bout.id.positive?)
+    assert(bout.title.include?('друг'))
+    assert(bout.created < Time.now)
+  end
 end

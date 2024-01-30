@@ -62,7 +62,13 @@ class Nb::Bout
 
   def created
     raise Nb::Urror, "#{@human} can't touch bout ##{@id}" unless mine?
-    @pgsql.exec('SELECT created FROM bout WHERE id = $1', [@id])[0]['created']
+    time = @pgsql.exec('SELECT created FROM bout WHERE id = $1', [@id])[0]['created']
+    Time.parse(time)
+  end
+
+  def title
+    raise Nb::Urror, "#{@human} can't touch bout ##{@id}" unless mine?
+    @pgsql.exec('SELECT title FROM bout WHERE id = $1', [@id])[0]['title']
   end
 
   def post(text)
@@ -93,6 +99,7 @@ class Nb::Bout
     {
       id: @id,
       created: created,
+      title: title,
       tags: tags.to_a,
       guests: guests.to_a
     }
