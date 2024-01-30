@@ -112,6 +112,7 @@ end
 get '/inbox' do
   offset = [(params[:offset] || '0').to_i, 0].max
   limit = (params[:limit] || '10').to_i
+  raise Urror::Nb, 'Limit can\'t be larger than 100' if limit > 100
   haml :inbox, locals: merged(
     title: '/inbox',
     q: params[:q] || '',
