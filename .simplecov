@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 # Copyright (c) 2016-2024 Yegor Bugayenko
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -33,5 +34,5 @@ SimpleCov.start do
   add_filter '/front/'
   add_filter '/liquibase/'
   add_filter '/public/'
-  minimum_coverage 70
+  minimum_coverage 90
 end
