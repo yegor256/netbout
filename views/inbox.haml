@@ -1,5 +1,5 @@
 - the_bout = nil
-- query = Nb::Query.new(q.start_with?('(') ? q : "(text=~#{CGI.escapeHTML(q)})")
+- query = Nb::Query.new(q)
 - query.predicate.if_bout { |b| the_bout = b }
 
 - unless the_bout.nil?
@@ -11,6 +11,8 @@
     %input{name: 'q', type: 'text', required: true, value: q}
     %button{type: 'submit'}
       Search
+
+%pre= query.predicate
 
 - unless the_bout.nil?
   %form{action: iri.cut('/b').append(the_bout).append('/post'), method: 'post'}

@@ -37,7 +37,15 @@ class Nb::Query
   end
 
   def predicate
-    (pred,) = to_ast(to_terms("( #{@text} )"), 0)
+    q = @text
+    unless @text.start_with?('(')
+      q = CGI.escapeHTML(q)
+        .gsub(' ', '&#x20;')
+        .gsub('(', '&#x28;')
+        .gsub(')', '&#x29;')
+      q = "(text=~#{q})"
+    end
+    (pred,) = to_ast(to_terms(q), 0)
     pred
   end
 
@@ -307,7 +315,7 @@ class Nb::Query
     end
 
     def to_sql
-      CGI.unescapeHTML(@value).sub("'", "\\\\'")
+      CGI.unescapeHTML(@value).gsub("'", "\\\\'")
     end
   end
 

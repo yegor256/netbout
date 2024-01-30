@@ -33,7 +33,7 @@ require_relative '../objects/query'
 # License:: MIT
 class Nb::QueryTest < Minitest::Test
   def test_how_in_bout_works
-    query = Nb::Query.new('bout=3 and body=~hello and $foo+')
+    query = Nb::Query.new('(bout=3 and body=~hello and $foo+)')
     predicate = query.predicate
     bout = nil
     predicate.if_bout do |b|
@@ -81,11 +81,11 @@ class Nb::QueryTest < Minitest::Test
 
   def test_query_to_sql
     queries = {
-      'bout=3' => 'bout.id = 3',
-      'title=~Hello&#x20;world!' => 'bout.title LIKE \'%Hello world!%\'',
-      'title=A&apos;B' => "bout.title = 'A\\'B'",
-      '$foo+' => "(flag.name='foo' AND flag.message IS NOT NULL)",
-      '#foo=bar' => "(tag.name='foo' AND tag.bout IS NOT NULL AND tag.value = 'bar')"
+      '(bout=3)' => 'bout.id = 3',
+      '(title=~Hello&#x20;world!)' => 'bout.title LIKE \'%Hello world!%\'',
+      '(title=A&apos;B)' => "bout.title = 'A\\'B'",
+      '($foo+)' => "(flag.name='foo' AND flag.message IS NOT NULL)",
+      '(#foo=bar)' => "(tag.name='foo' AND tag.bout IS NOT NULL AND tag.value = 'bar')"
     }
     queries.each do |q, sql|
       query = Nb::Query.new(q)

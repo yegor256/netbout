@@ -40,7 +40,7 @@ class Nb::SearchTest < Minitest::Test
     bout = bouts.start(test_name)
     msg = bout.post('Hey, you!')
     found = []
-    human.search(Nb::Query.new('text=~you'), 0, 1).each do |m|
+    human.search(Nb::Query.new('(text=~you)'), 0, 1).each do |m|
       found << m
     end
     assert_equal(1, found.size)
