@@ -37,7 +37,7 @@ class Nb::SearchTest < Minitest::Test
   def test_finds_messages
     human = Nb::Humans.new(test_pgsql).take(test_name).create
     bouts = human.bouts
-    bout = bouts.start('hi')
+    bout = bouts.start(test_name)
     msg = bout.post('Hey, you!')
     found = []
     human.search(Nb::Query.new('text=~you'), 0, 1).each do |m|
@@ -50,13 +50,30 @@ class Nb::SearchTest < Minitest::Test
   def test_finds_only_my_messages
     owner = Nb::Humans.new(test_pgsql).take(test_name).create
     bouts = owner.bouts
-    bout = bouts.start('foo')
-    bout.post('boom')
+    bout = bouts.start(test_name)
+    bout.post(test_name)
     friend = Nb::Humans.new(test_pgsql).take(test_name).create
     found = []
     friend.search(Nb::Query.new(''), 0, 1).each do |m|
       found << m
     end
     assert_equal(0, found.size)
+  end
+
+  def test_finds_by_tags_and_flags
+    human = Nb::Humans.new(test_pgsql).take(test_name).create
+    bouts = human.bouts
+    bout = bouts.start(test_name)
+    bout.post(test_name)
+    bout.tags.put('weight', '150kg')
+    bout.tags.put('color', 'blue')
+    bout.post(test_name).flags.attach('xxl')
+    bout.post(test_name).flags.attach('small')
+    bout.post(test_name).flags.attach('medium')
+    found = []
+    human.search(Nb::Query.new('(#color=blue and $small+)'), 0, 1).each do |m|
+      found << m
+    end
+    assert_equal(1, found.size)
   end
 end

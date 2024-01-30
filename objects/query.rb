@@ -153,9 +153,10 @@ class Nb::Query
     end
   end
 
-  # ABSENT
-  class Absent
-    def initialize(tag)
+  # ABSENT or PRESENT
+  class Prabsent
+    def initialize(present, tag)
+      @present = present
       @tag = tag
     end
 
@@ -164,30 +165,11 @@ class Nb::Query
     end
 
     def to_s
-      "#{@tag}-"
+      "#{@tag}#{@present ? '+' : '-'}"
     end
 
     def to_sql
-      "#{@tag}!!!"
-    end
-  end
-
-  # PRESENT
-  class Present
-    def initialize(tag)
-      @tag = tag
-    end
-
-    def if_bout
-      yield false
-    end
-
-    def to_s
-      "#{@tag}+"
-    end
-
-    def to_sql
-      "#{@tag}+++"
+      @tag.to_prabsent(@present)
     end
   end
 
@@ -245,13 +227,18 @@ class Nb::Query
     def to_pred
       case @op
       when '='
-        Eq.new(@left, @right)
+        eq = Eq.new(@left, @right)
+        if @left.attr?
+          eq
+        else
+          And.new([Prabsent.new(true, @left), eq])
+        end
       when '=~'
         Contains.new(@left, @right)
       when '-'
-        Absent.new(@left)
+        Prabsent.new(false, @left)
       when '+'
-        Present.new(@left)
+        Prabsent.new(true, @left)
       when '<'
         Lt.new(@left, @right)
       when '>'
@@ -267,12 +254,16 @@ class Nb::Query
       @name = name
     end
 
+    def attr?
+      @prefix.nil?
+    end
+
     def to_s
       "#{@prefix}#{@name}"
     end
 
     def to_sql
-      if @prefix.nil?
+      if attr?
         case @name
         when 'bout'
           'bout.id'
@@ -285,10 +276,22 @@ class Nb::Query
         else
           raise Nb::Urror, "Unknown attribute '#{@name}'"
         end
-      elsif @prefix == '#' || @prefix == '$'
-        @name
+      elsif @prefix == '#'
+        'tag.value'
+      elsif @prefix == '$'
+        raise Nb::Urror, "Can't use flag '#{@name}' as a lefty"
       else
         raise Nb::Urror, "Unknown prefix '#{@prefix}'"
+      end
+    end
+
+    def to_prabsent(present)
+      if @prefix == '#'
+        "tag.name='#{@name}' AND tag.bout IS #{present ? 'NOT' : ''} NULL"
+      elsif @prefix == '$'
+        "(flag.name='#{@name}' AND flag.message IS #{present ? 'NOT' : ''} NULL)"
+      else
+        raise Nb::Urror, "Can't use prabsent on '#{@name}' attribute"
       end
     end
   end

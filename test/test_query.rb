@@ -47,10 +47,10 @@ class Nb::QueryTest < Minitest::Test
   end
 
   def test_easy_query
-    q = '(bout=3 and #foo+ and #bar=Hello)'
-    query = Nb::Query.new(q)
-    predicate = query.predicate
-    assert_equal(q, predicate.to_s)
+    assert_equal(
+      '(bout=3 and #foo+ and (#bar+ and #bar=Hello))',
+      Nb::Query.new('(bout=3 and #foo+ and #bar=Hello)').predicate.to_s
+    )
   end
 
   def test_simple_query
@@ -83,7 +83,9 @@ class Nb::QueryTest < Minitest::Test
     queries = {
       'bout=3' => 'bout.id = 3',
       'title=~Hello&#x20;world!' => 'bout.title LIKE \'%Hello world!%\'',
-      'title=A&apos;B' => "bout.title = 'A\\'B'"
+      'title=A&apos;B' => "bout.title = 'A\\'B'",
+      '$foo+' => "(flag.name='foo' AND flag.message IS NOT NULL)",
+      '#foo=bar' => "(tag.name='foo' AND tag.bout IS NOT NULL AND tag.value = 'bar')"
     }
     queries.each do |q, sql|
       query = Nb::Query.new(q)

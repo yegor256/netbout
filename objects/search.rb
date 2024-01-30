@@ -47,6 +47,8 @@ class Nb::Search
       'SELECT message.id FROM message',
       'JOIN bout ON message.bout = bout.id',
       'LEFT JOIN guest ON guest.bout = bout.id',
+      'LEFT JOIN tag ON tag.bout = bout.id',
+      'LEFT JOIN flag ON flag.message = message.id',
       'WHERE (bout.owner = $1 OR guest.human = $1)',
       pred,
       'ORDER BY message.created DESC',
