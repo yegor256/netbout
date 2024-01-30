@@ -45,7 +45,10 @@ before '/*' do
       identity = user[:id] if identity.nil?
       human = humans.take(identity)
       @locals[:human] = human
-      human.create unless human.exists?
+      unless human.exists?
+        human.create
+        human.github = identity
+      end
     rescue GLogin::Codec::DecodingError
       cookies.delete(:identity)
     end
