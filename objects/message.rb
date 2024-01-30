@@ -23,6 +23,9 @@
 # SOFTWARE.
 
 require_relative 'nb'
+require_relative 'bout'
+require_relative 'humans'
+require_relative 'flags'
 
 # Message of a user (reader).
 # Author:: Yegor Bugayenko (yegor256@gmail.com)
@@ -53,38 +56,42 @@ class Nb::Message
   end
 
   def exists?
-    !@pgsql.exec('SELECT * FROM message WHERE id = $1', [@id]).empty?
+    !@pgsql.exec('SELECT author FROM message WHERE id = $1', [@id]).empty?
   end
 
   def text
+    raise Nb::Urror, "#{@human} can't read message ##{@id}" unless mine?
     @pgsql.exec('SELECT text FROM message WHERE id = $1', [@id])[0]['text']
   end
 
   def created
+    raise Nb::Urror, "#{@human} can't read message ##{@id}" unless mine?
     time = @pgsql.exec('SELECT created FROM message WHERE id = $1', [@id])[0]['created']
     Time.parse(time)
   end
 
   def author
+    raise Nb::Urror, "#{@human} can't read message ##{@id}" unless mine?
     author = @pgsql.exec('SELECT author FROM message WHERE id = $1', [@id])[0]['author']
-    require_relative 'humans'
     Nb::Humans.new(@pgsql).take(author)
   end
 
   def bout
+    raise Nb::Urror, "#{@human} can't read message ##{@id}" unless mine?
     bout = @pgsql.exec('SELECT bout FROM message WHERE id = $1', [@id])[0]['bout'].to_i
-    require_relative 'bout'
     Nb::Bout.new(@pgsql, @human, bout)
   end
 
   def flags
-    require_relative 'flags'
+    raise Nb::Urror, "#{@human} can't read message ##{@id}" unless mine?
     Nb::Flags.new(@pgsql, @human, self)
   end
 
   def to_h
+    raise Nb::Urror, "#{@human} can't serialize message ##{@id}" unless mine?
     {
       id: @id,
+      bout: bout.id,
       text: text,
       created: created,
       author: author.identity,

@@ -82,6 +82,7 @@ class Nb::ApiTest < Minitest::Test
     get("/message/#{msg.id}")
     json = JSON.parse(last_response.body)
     assert_equal(msg.id, json['id'])
+    assert_equal(bout.id, json['bout'])
     assert(Time.parse(json['created']) < Time.now)
     assert_equal(human.identity, json['author'])
     assert(json['text'].include?('товарищ'))
