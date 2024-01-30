@@ -51,6 +51,17 @@ class Nb::ApiTest < Minitest::Test
     Sinatra::Application
   end
 
+  def test_search
+    human = test_user
+    bout = human.bouts.start('hey, друг!')
+    bout.post('first one')
+    bout.post('second one')
+    get('/search')
+    json = JSON.parse(last_response.body)
+    assert_equal(2, json.size)
+    assert(json.first['id'].positive?)
+  end
+
   def test_bout
     human = test_user
     bout = human.bouts.start('hey, друг!')
