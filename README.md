@@ -6,6 +6,7 @@
 
 [![rake](https://github.com/yegor256/netbout/actions/workflows/rake.yml/badge.svg)](https://github.com/yegor256/netbout/actions/workflows/rake.yml)
 [![PDD status](http://www.0pdd.com/svg?name=yegor256/netbout)](http://www.0pdd.com/p?name=yegor256/netbout)
+[![Test Coverage](https://img.shields.io/codecov/c/github/yegor256/netbout.svg)](https://codecov.io/github/yegor256/netbout?branch=master)
 [![Hits-of-Code](https://hitsofcode.com/github/yegor256/netbout)](https://hitsofcode.com/view/github/yegor256/netbout)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](https://github.com/yegor256/netbout/blob/master/LICENSE.txt)
 [![Availability at SixNines](https://www.sixnines.io/b/6fb0)](https://www.sixnines.io/h/6fb0)

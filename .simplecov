@@ -1,8 +1,4 @@
-# frozen_string_literal: true
-
-# (The MIT License)
-#
-# Copyright (c) 2009-2024 Yegor Bugayenko
+# Copyright (c) 2016-2024 Yegor Bugayenko
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the 'Software'), to deal
@@ -16,39 +12,26 @@
 #
 # THE SOFTWARE IS PROVIDED 'AS IS', WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 # IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFINGEMENT. IN NO EVENT SHALL THE
 # AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-ENV['RACK_ENV'] = 'test'
+SimpleCov.formatter = if Gem.win_platform?
+                        SimpleCov::Formatter::MultiFormatter[
+                          SimpleCov::Formatter::HTMLFormatter
+                        ]
+                      else
+                        SimpleCov::Formatter::MultiFormatter.new(
+                          SimpleCov::Formatter::HTMLFormatter
+                        )
+                      end
 
-require 'simplecov'
-SimpleCov.start
-
-require 'simplecov-cobertura'
-SimpleCov.formatter = SimpleCov::Formatter::CoberturaFormatter
-
-require 'yaml'
-require 'minitest/autorun'
-require 'pgtk/pool'
-require 'loog'
-require 'securerandom'
-
-module Minitest
-  class Test
-    def test_pgsql
-      # rubocop:disable Style/ClassVars
-      @@test_pgsql ||= Pgtk::Pool.new(
-        Pgtk::Wire::Yaml.new(File.join(__dir__, '../target/pgsql-config.yml')),
-        log: Loog::VERBOSE
-      ).start
-      # rubocop:enable Style/ClassVars
-    end
-
-    def test_name
-      "jeff#{SecureRandom.hex(4)}"
-    end
-  end
+SimpleCov.start do
+  add_filter '/test/'
+  add_filter '/front/'
+  add_filter '/liquibase/'
+  add_filter '/public/'
+  minimum_coverage 70
 end

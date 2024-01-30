@@ -4,6 +4,9 @@ on:
   push:
     branches:
       - master
+  pull_request:
+    branches:
+      - master
 jobs:
   codecov:
     runs-on: ubuntu-22.04
@@ -22,5 +25,4 @@ jobs:
       - uses: codecov/codecov-action@v3
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
-          file: coverage/.resultset.json
           fail_ci_if_error: true
