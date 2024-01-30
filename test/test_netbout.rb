@@ -85,12 +85,10 @@ class Nb::AppTest < Minitest::Test
 
   def test_create_bout
     login
-    post(
-      '/start',
-      'title=hello+world!'
-    )
+    post('/start', 'title=hello+world!')
     assert_equal(302, last_response.status, last_response.body)
     id = last_response.headers['X-Netbout-Bout'].to_i
+    assert(id.positive?)
     get("/bout/#{id}")
     assert_equal(200, last_response.status, last_response.body)
     json = JSON.parse(last_response.body)
@@ -104,10 +102,12 @@ class Nb::AppTest < Minitest::Test
     login
     post('/start', 'title=hello+world!')
     assert_equal(302, last_response.status, last_response.body)
-    id = last_response.headers['X-Netbout-Bout']
+    id = last_response.headers['X-Netbout-Bout'].to_i
+    assert(id.positive?)
     post("/b/#{id}/post", 'text=how+are+you')
     assert_equal(302, last_response.status, last_response.body)
     msg = last_response.headers['X-Netbout-Message'].to_i
+    assert(msg.positive?)
     get("/message/#{msg}")
     assert_equal(200, last_response.status, last_response.body)
     json = JSON.parse(last_response.body)
@@ -122,10 +122,12 @@ class Nb::AppTest < Minitest::Test
     login
     post('/start', 'title=hello+world!')
     assert_equal(302, last_response.status, last_response.body)
-    id = last_response.headers['X-Netbout-Bout']
+    id = last_response.headers['X-Netbout-Bout'].to_i
+    assert(id.positive?)
     post("/b/#{id}/post", 'text=how+are+you')
     assert_equal(302, last_response.status, last_response.body)
-    msg = last_response.headers['X-Netbout-Message']
+    msg = last_response.headers['X-Netbout-Message'].to_i
+    assert(msg.positive?)
     name = 'some-flag'
     post("/m/#{msg}/attach", "name=#{name}")
     assert_equal(302, last_response.status, last_response.body)
@@ -152,6 +154,10 @@ class Nb::AppTest < Minitest::Test
   private
 
   def login(name = test_name)
-    set_cookie("identity=#{name}|#{name}")
+    enc = GLogin::Cookie::Open.new(
+      { 'id' => name, 'login' => name },
+      'test-secret'
+    ).to_s
+    set_cookie("identity=#{enc}")
   end
 end

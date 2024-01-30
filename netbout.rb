@@ -53,7 +53,7 @@ configure do
     'github' => {
       'client_id' => '?',
       'client_secret' => '',
-      'encryption_secret' => ''
+      'encryption_secret' => 'test-secret'
     },
     'sentry' => ''
   }

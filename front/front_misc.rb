@@ -58,10 +58,6 @@ error do
   end
 end
 
-def context
-  "#{request.ip} #{request.user_agent} #{Nb::VERSION} #{Time.now.strftime('%Y/%m')}"
-end
-
 def merged(hash)
   out = @locals.merge(hash)
   out[:local_assigns] = out

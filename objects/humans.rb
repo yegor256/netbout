@@ -41,7 +41,7 @@ class Nb::Humans
 
   def find_by_token(sha)
     rows = @pgsql.exec('SELECT human FROM token WHERE sha=$1', [sha])
-    raise Nb::Urror, 'Can\'t find a human by this token' if rows.empty?
+    raise Nb::Urror, "Can't find a human by #{'*' * sha.length} token" if rows.empty?
     take(rows[0]['human'])
   end
 
