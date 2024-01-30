@@ -68,8 +68,11 @@ class Nb::BoutTest < Minitest::Test
     owner = Nb::Humans.new(test_pgsql).take(test_name).create
     bouts = owner.bouts
     bout = bouts.start('hi, друг!')
-    assert(bout.id.positive?)
-    assert(bout.title.include?('друг'))
-    assert(bout.created < Time.now)
+    json = bout.to_h
+    assert(json[:id].positive?)
+    assert(json[:title].include?('друг'))
+    assert(json[:created] < Time.now)
+    assert(json[:tags].empty?)
+    assert(json[:guests].empty?)
   end
 end
