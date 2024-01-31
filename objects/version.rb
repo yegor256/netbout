@@ -25,5 +25,5 @@
 require_relative 'nb'
 
 module Nb
-  VERSION = '0.0.0'
+  VERSION = '3.0.12'
 end
