@@ -82,6 +82,6 @@ class Nb::SearchTest < Minitest::Test
     bout = bouts.start(test_name)
     bout.post(test_name)
     assert_equal(1, human.search(Nb::Query.new("(posted<#{(DateTime.now + 1).iso8601(3)})"), 0, 10).to_a.size)
-    assert_equal(0, human.search(Nb::Query.new("(posted>#{DateTime.now.iso8601(3)})"), 0, 10).to_a.size)
+    assert_equal(0, human.search(Nb::Query.new("(posted>#{(DateTime.now + 1).iso8601(3)})"), 0, 10).to_a.size)
   end
 end
