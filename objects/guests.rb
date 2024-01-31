@@ -38,6 +38,8 @@ class Nb::Guests
     @bout = bout
   end
 
+  # Invite another user to this bout, where `guest` is the identity of the guest,
+  # not an object.
   def invite(guest)
     raise Nb::Urror, "#{@human} can't invite guests to bout ##{@id}" unless @bout.mine?
     raise Nb::Urror, "@#{guest} is not a user" if @pgsql.exec(
