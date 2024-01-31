@@ -85,7 +85,7 @@ class Nb::QueryTest < Minitest::Test
       '(title=~Hello&#x20;world!)' => 'bout.title LIKE \'%Hello world!%\'',
       '(title=A&apos;B)' => "bout.title = 'A\\'B'",
       '($foo+)' => "(flag.name='foo' AND flag.message IS NOT NULL)",
-      '(#foo=bar)' => "(tag.name='foo' AND tag.bout IS NOT NULL AND tag.value = 'bar')"
+      '(#foo=bar)' => "((tag.name='foo' AND tag.bout IS NOT NULL) AND tag.value = 'bar')"
     }
     queries.each do |q, sql|
       query = Nb::Query.new(q)
