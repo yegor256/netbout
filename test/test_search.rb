@@ -111,10 +111,10 @@ class Nb::SearchTest < Minitest::Test
     human = Nb::Humans.new(test_pgsql).take(test_name).create
     bouts = human.bouts
     bout = bouts.start(test_name)
-    msg = bout.post(test_name)
-    msg.flags.attach('one')
+    bout.post(test_name).flags.attach('one')
+    bout.post(test_name).flags.attach('one')
     bout.post(test_name)
-    assert_equal(2, human.search(Nb::Query.new(''), 0, 10).to_a.size)
+    assert_equal(3, human.search(Nb::Query.new(''), 0, 10).to_a.size)
     assert_equal(1, human.search(Nb::Query.new('($one-)'), 0, 10).to_a.size)
   end
 end

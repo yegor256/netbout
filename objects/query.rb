@@ -302,29 +302,30 @@ class Nb::Query
     end
 
     def to_prabsent(present)
-      head = if @prefix == '#'
-        "tag.name='#{@name}'"
-      elsif @prefix == '$'
-        "flag.name='#{@name}'"
-      else
-        raise Nb::Urror, "Can't use prabsent on '#{@name}' attribute"
-      end
-      tail = if present
-        if @prefix == '#'
+      if present
+        head = if @prefix == '#'
+          "tag.name='#{@name}'"
+        elsif @prefix == '$'
+          "flag.name='#{@name}'"
+        else
+          raise Nb::Urror, "Can't use prabsent on '#{@name}' attribute"
+        end
+        tail = if @prefix == '#'
           'tag.bout IS NOT NULL'
         elsif @prefix == '$'
           'flag.message IS NOT NULL'
         else
           raise Nb::Urror, "Can't use prabsent on '#{@name}' attribute"
         end
-      elsif @prefix == '#'
-        "(SELECT COUNT(*) FROM flag AS f WHERE f.message=message.id AND name='#{@name}') = 0"
-        elsif @prefix == '$'
-          "(SELECT COUNT(*) FROM tag AS t WHERE t.bout=bout.id AND t.name='#{@name}') = 0"
-        else
-          raise Nb::Urror, "Can't use prabsent on '#{@name}' attribute"
+        return "(#{head} AND #{tail})"
       end
-      "(#{head} AND #{tail})"
+      if @prefix == '#'
+        "(SELECT COUNT(*) FROM tag AS t WHERE t.bout=bout.id AND t.name='#{@name}') = 0"
+      elsif @prefix == '$'
+        "(SELECT COUNT(*) FROM flag AS f WHERE f.message=message.id AND name='#{@name}') = 0"
+      else
+        raise Nb::Urror, "Can't use prabsent on '#{@name}' attribute"
+      end
     end
   end
 
