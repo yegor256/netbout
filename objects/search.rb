@@ -51,6 +51,7 @@ class Nb::Search
       'LEFT JOIN flag ON flag.message = message.id',
       'WHERE (bout.owner = $1 OR guest.human = $1)',
       pred,
+      'GROUP BY message.id',
       'ORDER BY message.created DESC',
       "OFFSET #{@offset}",
       "LIMIT #{@limit}"

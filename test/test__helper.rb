@@ -48,7 +48,7 @@ module Minitest
     end
 
     def test_name
-      "jeff#{SecureRandom.hex(4)}"
+      "jeff#{SecureRandom.hex(8)}"
     end
   end
 end

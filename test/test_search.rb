@@ -40,7 +40,7 @@ class Nb::SearchTest < Minitest::Test
     bout = bouts.start(test_name)
     msg = bout.post('Hey, you!')
     found = []
-    human.search(Nb::Query.new('(text=~you)'), 0, 1).each do |m|
+    human.search(Nb::Query.new('(text=~you)'), 0, 10).each do |m|
       found << m
     end
     assert_equal(1, found.size)
@@ -54,7 +54,7 @@ class Nb::SearchTest < Minitest::Test
     bout.post(test_name)
     friend = Nb::Humans.new(test_pgsql).take(test_name).create
     found = []
-    friend.search(Nb::Query.new(''), 0, 1).each do |m|
+    friend.search(Nb::Query.new(''), 0, 10).each do |m|
       found << m
     end
     assert_equal(0, found.size)
@@ -71,7 +71,21 @@ class Nb::SearchTest < Minitest::Test
     bout.post(test_name).flags.attach('small')
     bout.post(test_name).flags.attach('medium')
     found = []
-    human.search(Nb::Query.new('(#color=blue and $small+)'), 0, 1).each do |m|
+    human.search(Nb::Query.new('(#color=blue and $small+)'), 0, 10).each do |m|
+      found << m
+    end
+    assert_equal(1, found.size)
+  end
+
+  def test_group_by_message
+    human = Nb::Humans.new(test_pgsql).take(test_name).create
+    bouts = human.bouts
+    bout = bouts.start(test_name)
+    msg = bout.post(test_name)
+    msg.flags.attach('one')
+    msg.flags.attach('two')
+    found = []
+    human.search(Nb::Query.new(''), 0, 10).each do |m|
       found << m
     end
     assert_equal(1, found.size)

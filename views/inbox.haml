@@ -25,14 +25,14 @@
 - unless the_bout.nil?
   %p
     Tags:
-    %span.click{onclick: '$("#tags").toggle();'}
+    %span.click{onclick: '$("#tags").toggle(); $("#tags-name").focus();'}
       = '+'
     %br
     - bout.tags.each do |tag|
       %code= "#{tag.name}=#{tag.value}"
   %form{action: iri.cut('/b').append(the_bout).append('/tag'), method: 'post', id: 'tags', style: 'display: none;'}
     %fieldset
-      %input{name: 'name', type: 'text', required: true, size: 8, placeholder: 'Tag', tabindex: 3}
+      %input{name: 'name', type: 'text', required: true, size: 8, placeholder: 'Tag', tabindex: 3, id: 'tags-name'}
       %input{name: 'value', type: 'text', size: 20, placeholder: 'Value', tabindex: 4}
       %button{type: 'submit', tabindex: 5}
         Put
@@ -43,11 +43,11 @@
     Guests:
     - bout.guests.each do |guest|
       %code= "#{guest}"
-    %span.click{onclick: '$("#invite").toggle();'}
+    %span.click{onclick: '$("#invite").toggle(); $("#invite-human").focus();'}
       = '+'
   %form{action: iri.cut('/b').append(the_bout).append('/invite'), method: 'post', id: 'invite', style: 'display: none;'}
     %fieldset
-      %input{name: 'human', type: 'text', required: true, size: 12, placeholder: 'Identity', tabindex: 6}
+      %input{name: 'human', type: 'text', required: true, size: 12, placeholder: 'Identity', tabindex: 6, id: 'invite-human'}
       %button{type: 'submit', tabindex: 7}
         Invite
 
@@ -62,7 +62,7 @@
     %code= msg.author.identity
     on
     = msg.created
-    %span.click{onclick: "$('#flags-#{msg.id}').toggle();"}
+    %span.click{onclick: "$('#flags-#{msg.id}').toggle(); $('#flags-#{msg.id}-name').focus();"}
       +
     %br
     = msg.text
@@ -74,7 +74,7 @@
         %a.click{href: iri.cut('/m').append(msg.id).append('detach').add(name: flag.name)}= 'x'
     %form{action: iri.cut('/m').append(msg.id).append('/attach'), method: 'post', id: "flags-#{msg.id}", style: 'display: none;'}
       %fieldset
-        %input{name: 'name', type: 'text', required: true, size: 12, placeholder: 'Flag'}
+        %input{name: 'name', type: 'text', required: true, size: 12, placeholder: 'Flag', id: "flags-#{msg.id}-name"}
         %button{type: 'submit'}
           Flag
   - total += 1
