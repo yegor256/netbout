@@ -26,7 +26,9 @@ require_relative '../objects/query'
 
 get '/search' do
   query = params[:query] || ''
-  search = current_human.search(Nb::Query.new(query), 0, 10)
+  offset = [(params[:offset] || '0').to_i, 0].max
+  limit = (params[:limit] || '10').to_i
+  search = current_human.search(Nb::Query.new(query), offset, limit)
   content_type 'application/json'
   array = []
   search.each do |msg|

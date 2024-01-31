@@ -62,6 +62,15 @@ class Nb::ApiTest < Minitest::Test
     assert(json.first['id'].positive?)
   end
 
+  def test_search_with_offset
+    human = test_user
+    bout = human.bouts.start('foom')
+    bout.post('hey')
+    get('/search?offset=100')
+    json = JSON.parse(last_response.body)
+    assert(json.empty?)
+  end
+
   def test_bout
     human = test_user
     bout = human.bouts.start('hey, друг!')

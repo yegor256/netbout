@@ -36,6 +36,7 @@ class Nb::Search
     raise 'Query is NULL' if query.nil?
     @query = query
     @offset = offset
+    raise Urror::Nb, 'Limit can\'t be larger than 1024' if limit > 1024
     @limit = limit
   end
 
