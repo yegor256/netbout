@@ -251,6 +251,8 @@ class Nb::Query
         Lt.new(@left, @right)
       when '>'
         Gt.new(@left, @right)
+      else
+        raise Nb::Urror, "Unknown operator '#{@op}'"
       end
     end
   end
@@ -285,6 +287,8 @@ class Nb::Query
           'bout.created'
         when 'posted'
           'message.created'
+        when 'guest'
+          'guest.human'
         else
           raise Nb::Urror, "Unknown attribute '#{@name}'"
         end

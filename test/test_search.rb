@@ -95,4 +95,15 @@ class Nb::SearchTest < Minitest::Test
     assert_equal(1, friend.search(Nb::Query.new("(owner=#{human.identity})"), 0, 10).to_a.size)
     assert_equal(0, friend.search(Nb::Query.new("(owner=#{friend.identity})"), 0, 10).to_a.size)
   end
+
+  def test_finds_by_guests
+    human = Nb::Humans.new(test_pgsql).take(test_name).create
+    friend = Nb::Humans.new(test_pgsql).take(test_name).create
+    bouts = human.bouts
+    bout = bouts.start(test_name)
+    bout.post(test_name)
+    bout.guests.invite(friend.identity)
+    assert_equal(1, friend.search(Nb::Query.new("(guest=#{friend.identity})"), 0, 10).to_a.size)
+    assert_equal(0, friend.search(Nb::Query.new('(guest=somebody-else)'), 0, 10).to_a.size)
+  end
 end
