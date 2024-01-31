@@ -24,6 +24,13 @@
 
 require_relative '../objects/query'
 
+get '/self' do
+  content_type 'application/json'
+  {
+    identity: current_human.identity
+  }.to_json
+end
+
 get '/search' do
   query = params[:query] || ''
   offset = [(params[:offset] || '0').to_i, 0].max
