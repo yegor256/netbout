@@ -32,7 +32,7 @@ A user can (both via web interface and RESTful JSON API):
 
 A search string is similar to what GitHub uses:
 
-  * `title="Hello!"` --- the title of the bout is exactly `Hello!`
+  * `title=Hello!` --- the title of the bout is exactly `Hello!`
   * `owner=yegor256` --- the owner of the bout is `yegor256`
   * `started<2023-12-14` --- the bout was created before 14-Dec-23
   * `guest=:yegor256` --- `yegor256` is one of the participants of the bout
@@ -41,16 +41,16 @@ A search string is similar to what GitHub uses:
   * `#foo==bar` --- has `foo` tag with the value `bar`
   * `$green+` --- the message has `green` flag
   * `$green-` --- the message doesn't have `green` flag
-  * `body="Hello!"` --- the body of the message is exactly `Hello!`
-  * `body=~"the &quot;world&quot;!" --- the body of the message contains `the "world"!`
+  * `body=Hello!` --- the body of the message is exactly `Hello!`
+  * `body=~the&#x20;&quot;world&quot;!` --- the body of the message contains `the "world"!`
   * `author=yegor256` --- the author of the message is `yegor256`
   * `posted>2023-12-14` --- the message was posted after 14-Dec-23
 
 Predicates may be groupped using `or`, `and`, and brackets, for example:
 
 ```
-body="important" and (author=yegor256 or #hello+ or $bye+ or
-  (posted<2023-12-14 and title=~"something" and body=~"Hello"))
+body=important and (author=yegor256 or #hello+ or $bye+ or
+  (posted<2023-12-14 and title=~something and body=~Hello))
 ```
 
 ## How to Test

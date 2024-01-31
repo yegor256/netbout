@@ -40,6 +40,14 @@ class Nb::Search
     @limit = limit
   end
 
+  def to_a
+    array = []
+    each do |m|
+      array << m
+    end
+    array
+  end
+
   def each
     require_relative 'message'
     pred = @query.predicate.to_sql

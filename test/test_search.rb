@@ -39,10 +39,7 @@ class Nb::SearchTest < Minitest::Test
     bouts = human.bouts
     bout = bouts.start(test_name)
     msg = bout.post('Hey, you!')
-    found = []
-    human.search(Nb::Query.new('(text=~you)'), 0, 10).each do |m|
-      found << m
-    end
+    found = human.search(Nb::Query.new('(text=~you)'), 0, 10).to_a
     assert_equal(1, found.size)
     assert_equal(msg.id, found.first.id)
   end
@@ -53,11 +50,7 @@ class Nb::SearchTest < Minitest::Test
     bout = bouts.start(test_name)
     bout.post(test_name)
     friend = Nb::Humans.new(test_pgsql).take(test_name).create
-    found = []
-    friend.search(Nb::Query.new(''), 0, 10).each do |m|
-      found << m
-    end
-    assert_equal(0, found.size)
+    assert_equal(0, friend.search(Nb::Query.new(''), 0, 10).to_a.size)
   end
 
   def test_finds_by_tags_and_flags
@@ -70,11 +63,7 @@ class Nb::SearchTest < Minitest::Test
     bout.post(test_name).flags.attach('xxl')
     bout.post(test_name).flags.attach('small')
     bout.post(test_name).flags.attach('medium')
-    found = []
-    human.search(Nb::Query.new('(#color=blue and $small+)'), 0, 10).each do |m|
-      found << m
-    end
-    assert_equal(1, found.size)
+    assert_equal(1, human.search(Nb::Query.new('(#color=blue and $small+)'), 0, 10).to_a.size)
   end
 
   def test_group_by_message
@@ -84,10 +73,15 @@ class Nb::SearchTest < Minitest::Test
     msg = bout.post(test_name)
     msg.flags.attach('one')
     msg.flags.attach('two')
-    found = []
-    human.search(Nb::Query.new(''), 0, 10).each do |m|
-      found << m
-    end
-    assert_equal(1, found.size)
+    assert_equal(1, human.search(Nb::Query.new(''), 0, 10).to_a.size)
+  end
+
+  def test_finds_by_date_intervals
+    human = Nb::Humans.new(test_pgsql).take(test_name).create
+    bouts = human.bouts
+    bout = bouts.start(test_name)
+    bout.post(test_name)
+    assert_equal(1, human.search(Nb::Query.new("(posted<#{(DateTime.now + 1).iso8601(3)})"), 0, 10).to_a.size)
+    assert_equal(0, human.search(Nb::Query.new("(posted>#{DateTime.now.iso8601(3)})"), 0, 10).to_a.size)
   end
 end

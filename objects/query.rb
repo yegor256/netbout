@@ -137,7 +137,7 @@ class Nb::Query
     end
 
     def to_sql
-      "#{@left}<'#{@right}'"
+      "#{@left.to_sql}<'#{@right}'"
     end
   end
 
@@ -157,7 +157,7 @@ class Nb::Query
     end
 
     def to_sql
-      "#{@left}>'#{@right}'"
+      "#{@left.to_sql}>'#{@right}'"
     end
   end
 
@@ -281,6 +281,10 @@ class Nb::Query
           'bout.title'
         when 'owner'
           'bout.owner'
+        when 'started'
+          'bout.created'
+        when 'posted'
+          'message.created'
         else
           raise Nb::Urror, "Unknown attribute '#{@name}'"
         end
