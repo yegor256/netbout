@@ -75,4 +75,15 @@ class Nb::BoutTest < Minitest::Test
     assert(json[:tags].empty?)
     assert(json[:guests].empty?)
   end
+
+  def test_checks_permission
+    owner = Nb::Humans.new(test_pgsql).take(test_name).create
+    friend = Nb::Humans.new(test_pgsql).take(test_name).create
+    bouts = owner.bouts
+    bout = bouts.start('hi')
+    bout.post(test_name)
+    assert(!friend.bouts.take(bout.id).mine?)
+    bout.guests.invite(friend.identity)
+    assert(friend.bouts.take(bout.id).mine?)
+  end
 end

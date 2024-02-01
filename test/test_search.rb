@@ -117,4 +117,13 @@ class Nb::SearchTest < Minitest::Test
     assert_equal(3, human.search(Nb::Query.new(''), 0, 10).to_a.size)
     assert_equal(1, human.search(Nb::Query.new('($one-)'), 0, 10).to_a.size)
   end
+
+  def test_finds_only_my_bouts
+    owner = Nb::Humans.new(test_pgsql).take(test_name).create
+    bouts = owner.bouts
+    bout = bouts.start(test_name)
+    bout.post(test_name)
+    friend = Nb::Humans.new(test_pgsql).take(test_name).create
+    assert(friend.search(Nb::Query.new("(bout=#{bout.id})"), 0, 10).to_a.empty?)
+  end
 end
