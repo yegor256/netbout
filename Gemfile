@@ -25,7 +25,7 @@ gem 'glogin', '0.14.2'
 gem 'haml', '6.3.0'
 gem 'iri', '0.8.0'
 gem 'loog', '0.5.1'
-gem 'minitest', '5.22.0', require: false
+gem 'minitest', '5.22.1', require: false
 gem 'pgtk', '0.9.2'
 gem 'rack', '3.0.9'
 gem 'rack-ssl', '1.4.1'
