@@ -3,6 +3,7 @@ docker:
 readers:
   - "urn:github:526301"
 assets:
+  netrc: yegor256/home#assets/heroku-netrc
   config.yml: yegor256/home#assets/netbout/config.yml
   id_rsa: yegor256/home#assets/heroku-key
   id_rsa.pub: yegor256/home#assets/heroku-key.pub
@@ -17,6 +18,7 @@ release:
   sensitive:
     - config.yml
   script: |-
+    mv ../netrc ~/.netrc
     bundle exec rake
     git remote add dokku dokku@www.netbout.com:netbout
     rm -rf ~/.ssh
