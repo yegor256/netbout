@@ -117,7 +117,7 @@ GEM
       ast (~> 2.4.1)
       racc
     pg (1.5.6)
-    pgtk (0.9.3)
+    pgtk (0.9.5)
       backtrace (~> 0.3)
       loog (~> 0.2)
       pg (~> 1.1)
@@ -275,7 +275,7 @@ DEPENDENCIES
   iri (= 0.8.0)
   loog (= 0.5.1)
   minitest (= 5.22.2)
-  pgtk (= 0.9.3)
+  pgtk (= 0.9.5)
   rack (= 3.0.9.1)
   rack-ssl (= 1.4.1)
   rack-test (= 2.1.0)
