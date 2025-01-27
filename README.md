@@ -19,7 +19,7 @@ The original idea behind Netbout is explained in USPTO patent application [US 12
 ## Functionality
 
 A user can (both via web interface and RESTful JSON API):
- 
+
   * Login by email, by Github, by Facebook, etc.
   * Create a unique **identity**
   * Start a **bout** with an immutable **title**
