@@ -21,5 +21,6 @@ jobs:
       - uses: ruby/setup-ruby@v1
         with:
           ruby-version: 3.3
+          bundler-cache: true
       - run: bundle update
       - run: bundle exec rake
