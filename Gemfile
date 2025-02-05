@@ -35,6 +35,9 @@ gem 'relative_time', '1.1.0'
 gem 'rerun', '0.14.0', require: false
 gem 'rspec-rails', '7.0.0', require: false
 gem 'rubocop', '1.61.0', require: false
+gem 'rubocop-minitest', '>0', require: false
+gem 'rubocop-performance', '>0', require: false
+gem 'rubocop-rake', '>0', require: false
 gem 'rubocop-rspec', '3.0.3', require: false
 gem 'sass', '3.7.4'
 gem 'sentry-raven', '3.1.2'

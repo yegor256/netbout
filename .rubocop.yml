@@ -7,7 +7,6 @@ AllCops:
   TargetRubyVersion: 2.6.0
   NewCops: enable
   SuggestExtensions: false
-
 Layout/EndAlignment:
   Enabled: false
 Layout/IndentationWidth:
@@ -50,3 +49,7 @@ Layout/EmptyLineAfterGuardClause:
   Enabled: false
 Style/ClassAndModuleChildren:
   Enabled: false
+required:
+  - rubocop-rake
+  - rubocop-minitest
+  - rubocop-performance
