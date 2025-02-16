@@ -33,7 +33,7 @@ gem 'rack-test', '2.1.0'
 gem 'rake', '13.2.1', require: false
 gem 'relative_time', '1.1.0'
 gem 'rerun', '0.14.0', require: false
-gem 'rspec-rails', '7.0.0', require: false
+gem 'rspec-rails', '7.1.1', require: false
 gem 'rubocop', '1.61.0', require: false
 gem 'rubocop-minitest', '>0', require: false
 gem 'rubocop-performance', '>0', require: false
