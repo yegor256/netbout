@@ -5,7 +5,7 @@
 
 source 'https://rubygems.org'
 
-gem 'glogin', '0.14.2'
+gem 'glogin', '0.16.5'
 gem 'haml', '6.3.0'
 gem 'iri', '0.8.0'
 gem 'loog', '0.5.1'
