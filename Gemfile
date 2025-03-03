@@ -8,7 +8,7 @@ source 'https://rubygems.org'
 gem 'glogin', '0.14.2'
 gem 'haml', '6.3.0'
 gem 'iri', '0.8.0'
-gem 'loog', '0.5.1'
+gem 'loog', '0.6.0'
 gem 'minitest', '5.25.1', require: false
 gem 'pgtk', '0.9.6'
 gem 'rack', '3.0.9.1'
