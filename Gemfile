@@ -13,7 +13,7 @@ gem 'minitest', '5.25.1', require: false
 gem 'pgtk', '0.9.6'
 gem 'rack', '3.0.9.1'
 gem 'rack-ssl', '1.4.1'
-gem 'rack-test', '2.1.0'
+gem 'rack-test', '2.2.0'
 gem 'rake', '13.2.1', require: false
 gem 'relative_time', '1.1.0'
 gem 'rerun', '0.14.0', require: false
