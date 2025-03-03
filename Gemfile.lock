@@ -83,7 +83,7 @@ GEM
     ffi (1.17.1-x64-mingw-ucrt)
     ffi (1.17.1-x86_64-darwin)
     ffi (1.17.1-x86_64-linux-gnu)
-    glogin (0.14.2)
+    glogin (0.16.5)
       base58 (>= 0.2)
       openssl (>= 2.0)
     haml (6.3.0)
@@ -300,7 +300,7 @@ PLATFORMS
   x86_64-linux
 
 DEPENDENCIES
-  glogin (= 0.14.2)
+  glogin (= 0.16.5)
   haml (= 6.3.0)
   iri (= 0.8.0)
   loog (= 0.5.1)
