@@ -23,11 +23,13 @@ path = [
     "**/.pdd",
     "**/CNAME",
     "**/Gemfile.lock",
+    "**/Procfile",
     ".DS_Store",
     ".gitattributes",
     ".gitignore",
     ".pdd",
     "Gemfile.lock",
+    "Procfile",
     "README.md",
     "renovate.json",
 ]
