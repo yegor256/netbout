@@ -132,8 +132,7 @@ GEM
       ast (~> 2.4.1)
       racc
     pg (1.5.9)
-    pg (1.5.9-x64-mingw-ucrt)
-    pgtk (0.13.1)
+    pgtk (0.14.0)
       backtrace (> 0)
       loog (> 0)
       pg (~> 1.1)
