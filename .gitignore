@@ -1,8 +1,8 @@
-*.iml
-.DS_Store
 .bundle/
+.DS_Store
 .idea/
 .yardoc/
+*.iml
 coverage/
 doc/
 node_modules/
