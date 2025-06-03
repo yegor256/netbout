@@ -46,7 +46,6 @@ end
 
 require 'xcop/rake_task'
 Xcop::RakeTask.new(:xcop) do |task|
-  task.license = 'LICENSE.txt'
   task.includes = ['**/*.xml', '**/*.xsl', '**/*.xsd', '**/*.html']
   task.excludes = ['target/**/*', 'coverage/**/*']
 end
@@ -57,5 +56,5 @@ task(:config) do
 end
 
 task(run: %i[pgsql liquibase]) do
-  `rerun -b "RACK_ENV=test ruby netbout.rb"`
+  `rerun -b "RACK_ENV=test bundle exec ruby netbout.rb"`
 end

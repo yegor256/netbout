@@ -154,6 +154,6 @@ class Nb::AppTest < Minitest::Test
       { 'id' => name, 'login' => name },
       ''
     ).to_s
-    set_cookie("auth=#{enc}")
+    set_cookie("identity=#{enc}")
   end
 end

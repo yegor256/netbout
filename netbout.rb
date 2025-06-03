@@ -62,6 +62,7 @@ configure do
   set :config, config
   set :logging, true
   set :log, Loog::REGULAR
+  set :server, :webrick
   set :server_settings, timeout: 25
   set :glogin, GLogin::Auth.new(
     config['github']['client_id'],
