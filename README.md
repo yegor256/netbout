@@ -50,7 +50,7 @@ the body of the message contains `the "world"!`
 
 Predicates may be grouped using `or`, `and`, and brackets, for example:
 
-```
+```text
 body=important and (author=yegor256 or #hello+ or $bye+ or
   (posted<2023-12-14 and title=~something and body=~Hello))
 ```
