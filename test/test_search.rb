@@ -105,6 +105,6 @@ class Nb::SearchTest < Minitest::Test
     bout = bouts.start(test_name)
     bout.post(test_name)
     friend = Nb::Humans.new(test_pgsql).take(test_name).create
-    assert(friend.search(Nb::Query.new("(bout=#{bout.id})"), 0, 10).to_a.empty?)
+    assert_empty(friend.search(Nb::Query.new("(bout=#{bout.id})"), 0, 10).to_a)
   end
 end

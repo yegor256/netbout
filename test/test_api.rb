@@ -47,7 +47,7 @@ class Nb::ApiTest < Minitest::Test
     get('/search')
     json = JSON.parse(last_response.body)
     assert_equal(2, json.size)
-    assert(json.first['id'].positive?)
+    assert_predicate(json.first['id'], :positive?)
   end
 
   def test_search_with_offset
@@ -56,7 +56,7 @@ class Nb::ApiTest < Minitest::Test
     bout.post('hey')
     get('/search?offset=100')
     json = JSON.parse(last_response.body)
-    assert(json.empty?)
+    assert_empty(json)
   end
 
   def test_bout
@@ -65,11 +65,11 @@ class Nb::ApiTest < Minitest::Test
     get("/bout/#{bout.id}")
     json = JSON.parse(last_response.body)
     assert_equal(bout.id, json['id'])
-    assert(Time.parse(json['created']) < Time.now)
+    assert_operator(Time.parse(json['created']), :<, Time.now)
     assert_equal(human.identity, json['owner'])
-    assert(json['title'].include?('друг'))
-    assert(json['tags'].empty?)
-    assert(json['guests'].empty?)
+    assert_includes(json['title'], 'друг')
+    assert_empty(json['tags'])
+    assert_empty(json['guests'])
   end
 
   def test_message
@@ -80,10 +80,10 @@ class Nb::ApiTest < Minitest::Test
     json = JSON.parse(last_response.body)
     assert_equal(msg.id, json['id'])
     assert_equal(bout.id, json['bout'])
-    assert(Time.parse(json['created']) < Time.now)
+    assert_operator(Time.parse(json['created']), :<, Time.now)
     assert_equal(human.identity, json['author'])
-    assert(json['text'].include?('товарищ'))
-    assert(json['flags'].empty?)
+    assert_includes(json['text'], 'товарищ')
+    assert_empty(json['flags'])
   end
 
   def test_tags
@@ -109,7 +109,7 @@ class Nb::ApiTest < Minitest::Test
     msg.flags.detach('bar')
     get("/flags/#{msg.id}")
     json = JSON.parse(last_response.body)
-    assert(json.empty?)
+    assert_empty(json)
   end
 
   private

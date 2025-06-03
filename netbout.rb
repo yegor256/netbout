@@ -34,7 +34,7 @@ configure do
     'github' => {
       'client_id' => '?',
       'client_secret' => '',
-      'encryption_secret' => 'test-secret'
+      'encryption_secret' => ''
     },
     'sentry' => ''
   }
@@ -62,6 +62,7 @@ configure do
   set :config, config
   set :logging, true
   set :log, Loog::REGULAR
+  set :server, :webrick
   set :server_settings, timeout: 25
   set :glogin, GLogin::Auth.new(
     config['github']['client_id'],
@@ -71,7 +72,7 @@ configure do
   if File.exist?('target/pgsql-config.yml')
     set :pgsql, Pgtk::Pool.new(
       Pgtk::Wire::Yaml.new(File.join(__dir__, 'target/pgsql-config.yml')),
-      log: settings.log
+      log: Loog::NULL
     )
   else
     set :pgsql, Pgtk::Pool.new(
@@ -140,7 +141,7 @@ post '/b/{id}/invite' do
   bout = current_human.bouts.take(params[:id].to_i)
   identity = params[:human]
   bout.guests.invite(identity)
-  flash(iri.cut('/b').append(bout.id), "User @#{idenity}' invited to the bout ##{bout.id}")
+  flash(iri.cut('/b').append(bout.id), "User @#{identity}' invited to the bout ##{bout.id}")
 end
 
 post '/m/{id}/attach' do

@@ -22,7 +22,7 @@ class Nb::BoutTest < Minitest::Test
     id = bouts.start('hi').id
     owner.bouts.take(id).post('Hello!')
     bout = guest.bouts.take(id)
-    assert(!bout.mine?)
+    refute_predicate(bout, :mine?)
     assert_raises Nb::Urror do
       bout.post('I can see you :(')
     end
@@ -32,7 +32,7 @@ class Nb::BoutTest < Minitest::Test
     owner = Nb::Humans.new(test_pgsql).take(test_name).create
     bouts = owner.bouts
     id = bouts.start('hi').id
-    assert(owner.bouts.take(id).exists?)
+    assert_predicate(owner.bouts.take(id), :exists?)
   end
 
   def test_prohibits_existence_checking
@@ -41,8 +41,8 @@ class Nb::BoutTest < Minitest::Test
     bouts = owner.bouts
     id = bouts.start('hi').id
     bout = guest.bouts.take(id)
-    assert(!bout.mine?)
-    assert(bout.exists?)
+    refute_predicate(bout, :mine?)
+    assert_predicate(bout, :exists?)
   end
 
   def test_turns_into_json
@@ -50,11 +50,11 @@ class Nb::BoutTest < Minitest::Test
     bouts = owner.bouts
     bout = bouts.start('hi, друг!')
     json = bout.to_h
-    assert(json[:id].positive?)
-    assert(json[:title].include?('друг'))
-    assert(json[:created] < Time.now)
-    assert(json[:tags].empty?)
-    assert(json[:guests].empty?)
+    assert_predicate(json[:id], :positive?)
+    assert_includes(json[:title], 'друг')
+    assert_operator(json[:created], :<, Time.now)
+    assert_empty(json[:tags])
+    assert_empty(json[:guests])
   end
 
   def test_checks_permission
@@ -63,8 +63,8 @@ class Nb::BoutTest < Minitest::Test
     bouts = owner.bouts
     bout = bouts.start('hi')
     bout.post(test_name)
-    assert(!friend.bouts.take(bout.id).mine?)
+    refute_predicate(friend.bouts.take(bout.id), :mine?)
     bout.guests.invite(friend.identity)
-    assert(friend.bouts.take(bout.id).mine?)
+    assert_predicate(friend.bouts.take(bout.id), :mine?)
   end
 end

@@ -17,29 +17,29 @@ class Nb::HumansTest < Minitest::Test
     identity = test_name
     humans = Nb::Humans.new(test_pgsql)
     human = humans.take(identity)
-    assert(human.identity == identity)
-    assert(!human.exists?)
+    assert_equal(human.identity, identity)
+    refute_predicate(human, :exists?)
     human.create
-    assert(human.exists?)
+    assert_predicate(human, :exists?)
   end
 
   def test_adds_and_finds_by_github
     identity = test_name
     login = test_name
     humans = Nb::Humans.new(test_pgsql)
-    assert(!humans.github?(login))
+    refute(humans.github?(login))
     human = humans.take(identity)
     human.create
     human.github = login
     assert(humans.github?(login))
-    assert(humans.take_by_github(login).exists?)
+    assert_predicate(humans.take_by_github(login), :exists?)
   end
 
   def test_starts_bout
     human = Nb::Humans.new(test_pgsql).take(test_name)
     human.create
     bout = human.bouts.start('hello!')
-    assert(bout.id.positive?)
+    assert_predicate(bout.id, :positive?)
   end
 
   def test_finds_by_token

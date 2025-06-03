@@ -10,6 +10,7 @@ gem 'haml', '~>6.3'
 gem 'iri', '~>0.8'
 gem 'loog', '~>0.5'
 gem 'minitest', '~>5.25', require: false
+gem 'minitest-reporters', '~>1.7', require: false
 gem 'pgtk', '~>0.9'
 gem 'rack', '3.0.9.1'
 gem 'rack-ssl', '~>1.4'
@@ -31,4 +32,5 @@ gem 'sinatra', '~>4.0'
 gem 'sinatra-contrib', '~>4.0'
 gem 'sprockets', '~>4.2'
 gem 'telebot', '~>0.1'
+gem 'webrick', '>0'
 gem 'xcop', '~>0.7'

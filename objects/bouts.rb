@@ -14,7 +14,7 @@ class Nb::Bouts
   # When bout is not found by ID
   class BoutNotFound < Nb::Urror; end
 
-  # When title is not corrent
+  # When title is not current
   class WrongTitle < Nb::Urror; end
 
   def initialize(pgsql, human)

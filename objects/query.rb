@@ -330,8 +330,9 @@ class Nb::Query
   def to_terms(txt)
     list = []
     acc = ''
+    esc = [' ', ')']
     "#{txt} ".chars.each do |c|
-      if !acc.empty? && [' ', ')'].include?(c)
+      if !acc.empty? && esc.include?(c)
         list << if acc == 'and'
           Term.new(:AND)
         elsif acc == 'or'

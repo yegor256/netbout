@@ -23,8 +23,8 @@ before '/*' do
         cookies[:identity],
         settings.config['github']['encryption_secret']
       ).to_user
-      identity = user[:login]
-      identity = user[:id] if identity.nil?
+      identity = user['login']
+      identity = user['id'] if identity.nil?
     rescue GLogin::Codec::DecodingError
       cookies.delete(:identity)
     end

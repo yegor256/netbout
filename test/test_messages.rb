@@ -20,6 +20,6 @@ class Nb::MessagesTest < Minitest::Test
     bout = bouts.start('hi')
     m1 = bout.post('Hey, you!')
     m2 = human.messages.take(m1.id)
-    assert(m2.exists?)
+    assert_predicate(m2, :exists?)
   end
 end

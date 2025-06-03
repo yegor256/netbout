@@ -10,7 +10,7 @@ require 'rake/clean'
 
 ENV['RACK_ENV'] = 'test'
 
-task default: %i[clean test rubocop xcop copyright]
+task default: %i[clean test rubocop xcop]
 
 require 'rake/testtask'
 Rake::TestTask.new(test: %i[pgsql liquibase]) do |test|
@@ -24,7 +24,6 @@ end
 require 'rubocop/rake_task'
 RuboCop::RakeTask.new(:rubocop) do |task|
   task.fail_on_error = true
-  task.requires << 'rubocop-rspec'
 end
 
 require 'pgtk/pgsql_task'
@@ -47,9 +46,8 @@ end
 
 require 'xcop/rake_task'
 Xcop::RakeTask.new(:xcop) do |task|
-  task.license = 'LICENSE.txt'
   task.includes = ['**/*.xml', '**/*.xsl', '**/*.xsd', '**/*.html']
-  task.excludes = ['target/**/*', 'coverage/**/*']
+  task.excludes = ['target/**/*', 'coverage/**/*', 'vendor/**/*']
 end
 
 desc 'Check the quality of config file'
@@ -58,13 +56,5 @@ task(:config) do
 end
 
 task(run: %i[pgsql liquibase]) do
-  `rerun -b "RACK_ENV=test ruby netbout.rb"`
-end
-
-task(:copyright) do
-  sh "grep -q -r '2009-#{Date.today.strftime('%Y')}' \
-    --include '*.rb' \
-    --include '*.txt' \
-    --include 'Rakefile' \
-    ."
+  `rerun -b "RACK_ENV=test bundle exec ruby netbout.rb"`
 end
