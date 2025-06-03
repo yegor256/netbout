@@ -19,9 +19,9 @@ class Nb::MessageTest < Minitest::Test
     bout = bouts.start('hi, друг!')
     msg = bout.post('how are you, друг?')
     json = msg.to_h
-    assert(json[:id].positive?)
-    assert(json[:text].include?('друг'))
-    assert(json[:created] < Time.now)
-    assert(json[:flags].empty?)
+    assert_predicate(json[:id], :positive?)
+    assert_includes(json[:text], 'друг')
+    assert_operator(json[:created], :<, Time.now)
+    assert_empty(json[:flags])
   end
 end

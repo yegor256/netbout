@@ -18,10 +18,7 @@ get '/search' do
   limit = (params[:limit] || '10').to_i
   search = current_human.search(Nb::Query.new(query), offset, limit)
   content_type 'application/json'
-  array = []
-  search.each do |msg|
-    array << msg.to_h
-  end
+  array = search.map(&:to_h)
   array.to_json
 end
 

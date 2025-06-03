@@ -6,13 +6,31 @@
 ENV['RACK_ENV'] = 'test'
 
 require 'simplecov'
-SimpleCov.start
-
 require 'simplecov-cobertura'
-SimpleCov.formatter = SimpleCov::Formatter::CoberturaFormatter
+unless SimpleCov.running || ENV['PICKS']
+  SimpleCov.command_name('test')
+  SimpleCov.formatter = SimpleCov::Formatter::MultiFormatter.new(
+    [
+      SimpleCov::Formatter::HTMLFormatter,
+      SimpleCov::Formatter::CoberturaFormatter
+    ]
+  )
+  SimpleCov.minimum_coverage 90
+  SimpleCov.minimum_coverage_by_file 80
+  SimpleCov.start do
+    add_filter 'test/'
+    add_filter 'vendor/'
+    add_filter 'target/'
+    track_files 'lib/**/*.rb'
+    track_files '*.rb'
+  end
+end
+
+require 'minitest/autorun'
+require 'minitest/reporters'
+Minitest::Reporters.use! [Minitest::Reporters::SpecReporter.new]
 
 require 'yaml'
-require 'minitest/autorun'
 require 'pgtk/pool'
 require 'loog'
 require 'securerandom'
@@ -23,7 +41,7 @@ module Minitest
       # rubocop:disable Style/ClassVars
       @@test_pgsql ||= Pgtk::Pool.new(
         Pgtk::Wire::Yaml.new(File.join(__dir__, '../target/pgsql-config.yml')),
-        log: Loog::VERBOSE
+        log: Loog::NULL
       ).start
       # rubocop:enable Style/ClassVars
     end

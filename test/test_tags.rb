@@ -21,10 +21,10 @@ class Nb::TagsTest < Minitest::Test
     key = 'a6364'
     bout.tags.put(key, 'Hello, друг!')
     tag = bout.tags.take(key)
-    assert(tag.exists?)
+    assert_predicate(tag, :exists?)
     assert(tag.value.start_with?('Hello'))
     bout.tags.each do |t|
-      assert(t.exists?)
+      assert_predicate(t, :exists?)
     end
   end
 end

@@ -19,12 +19,11 @@ class Nb::GuestsTest < Minitest::Test
     friend = Nb::Humans.new(test_pgsql).take(test_name).create
     id = human.bouts.start('hi').id
     human.bouts.take(id).guests.invite(friend.identity)
-    assert(human.bouts.take(id).mine?)
+    assert_predicate(human.bouts.take(id), :mine?)
     bout = friend.bouts.take(id)
-    assert(bout.mine?)
-    found = []
-    bout.guests.each do |t|
-      found << t
+    assert_predicate(bout, :mine?)
+    found = bout.guests.to_a.map do |t|
+      t
     end
     assert_equal(1, found.size)
     assert_equal(friend.identity, found.first)

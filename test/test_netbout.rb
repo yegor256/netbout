@@ -41,7 +41,7 @@ class Nb::AppTest < Minitest::Test
     ]
     pages.each do |p|
       get(p)
-      assert(last_response.ok?, last_response.body)
+      assert_predicate(last_response, :ok?, last_response.body)
     end
   end
 
@@ -69,7 +69,7 @@ class Nb::AppTest < Minitest::Test
     post('/start', 'title=hello+world!')
     assert_equal(302, last_response.status, last_response.body)
     id = last_response.headers['X-Netbout-Bout'].to_i
-    assert(id.positive?)
+    assert_predicate(id, :positive?)
     get("/bout/#{id}")
     assert_equal(200, last_response.status, last_response.body)
     json = JSON.parse(last_response.body)
@@ -84,7 +84,7 @@ class Nb::AppTest < Minitest::Test
     post('/start', 'title=hello+world!')
     assert_equal(302, last_response.status, last_response.body)
     id = last_response.headers['X-Netbout-Bout'].to_i
-    assert(id.positive?)
+    assert_predicate(id, :positive?)
     get("/tags/#{id}")
     assert_equal(200, last_response.status, last_response.body)
     json = JSON.parse(last_response.body)
@@ -96,11 +96,11 @@ class Nb::AppTest < Minitest::Test
     post('/start', 'title=hello+world!')
     assert_equal(302, last_response.status, last_response.body)
     id = last_response.headers['X-Netbout-Bout'].to_i
-    assert(id.positive?)
+    assert_predicate(id, :positive?)
     post("/b/#{id}/post", 'text=how+are+you')
     assert_equal(302, last_response.status, last_response.body)
     msg = last_response.headers['X-Netbout-Message'].to_i
-    assert(msg.positive?)
+    assert_predicate(msg, :positive?)
     get("/message/#{msg}")
     assert_equal(200, last_response.status, last_response.body)
     json = JSON.parse(last_response.body)
@@ -116,11 +116,11 @@ class Nb::AppTest < Minitest::Test
     post('/start', 'title=hello+world!')
     assert_equal(302, last_response.status, last_response.body)
     id = last_response.headers['X-Netbout-Bout'].to_i
-    assert(id.positive?)
+    assert_predicate(id, :positive?)
     post("/b/#{id}/post", 'text=how+are+you')
     assert_equal(302, last_response.status, last_response.body)
     msg = last_response.headers['X-Netbout-Message'].to_i
-    assert(msg.positive?)
+    assert_predicate(msg, :positive?)
     name = 'some-flag'
     post("/m/#{msg}/attach", "name=#{name}")
     assert_equal(302, last_response.status, last_response.body)
@@ -144,7 +144,7 @@ class Nb::AppTest < Minitest::Test
     header('X-Netbout-Token', token)
     post('/start', 'title=hello+world!')
     assert_equal(302, last_response.status, last_response.body)
-    assert(!last_response.headers['X-Netbout-Bout'].nil?)
+    refute_nil(last_response.headers['X-Netbout-Bout'])
   end
 
   private
@@ -152,8 +152,8 @@ class Nb::AppTest < Minitest::Test
   def login(name = test_name)
     enc = GLogin::Cookie::Open.new(
       { 'id' => name, 'login' => name },
-      'test-secret'
+      ''
     ).to_s
-    set_cookie("identity=#{enc}")
+    set_cookie("auth=#{enc}")
   end
 end

@@ -20,9 +20,9 @@ class Nb::FlagsTest < Minitest::Test
     bout = bouts.start('hi')
     msg = bout.post('How are you?')
     flag = msg.flags.attach('hey')
-    assert(flag.exists?)
+    assert_predicate(flag, :exists?)
     msg.flags.each do |f|
-      assert(f.exists?)
+      assert_predicate(f, :exists?)
     end
   end
 
@@ -33,8 +33,8 @@ class Nb::FlagsTest < Minitest::Test
     msg = bout.post('hey you')
     key = 'the-flag'
     flag = msg.flags.attach(key)
-    assert(flag.exists?)
+    assert_predicate(flag, :exists?)
     flag.detach
-    assert(!flag.exists?)
+    refute_predicate(flag, :exists?)
   end
 end

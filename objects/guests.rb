@@ -43,7 +43,7 @@ class Nb::Guests
   def to_a
     raise Nb::Urror, "#{@human} can't serialize guests in bout ##{@id}" unless @bout.mine?
     array = []
-    each { |g| array << g.to_h }
+    each { |g| array << g }
     array
   end
 end

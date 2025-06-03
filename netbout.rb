@@ -34,7 +34,7 @@ configure do
     'github' => {
       'client_id' => '?',
       'client_secret' => '',
-      'encryption_secret' => 'test-secret'
+      'encryption_secret' => ''
     },
     'sentry' => ''
   }
@@ -71,7 +71,7 @@ configure do
   if File.exist?('target/pgsql-config.yml')
     set :pgsql, Pgtk::Pool.new(
       Pgtk::Wire::Yaml.new(File.join(__dir__, 'target/pgsql-config.yml')),
-      log: settings.log
+      log: Loog::NULL
     )
   else
     set :pgsql, Pgtk::Pool.new(
