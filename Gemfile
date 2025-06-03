@@ -18,7 +18,7 @@ gem 'rack-test', '~>2.1'
 gem 'rake', '~>13.2', require: false
 gem 'relative_time', '~>1.1'
 gem 'rerun', '~>0.14', require: false
-gem 'rspec-rails', '~>7.0', require: false
+gem 'rspec-rails', '~>8.0', require: false
 gem 'rubocop', '~>1.61', require: false
 gem 'rubocop-minitest', '>0', require: false
 gem 'rubocop-performance', '>0', require: false
