@@ -3,46 +3,13 @@
 ---
 # yamllint disable rule:line-length
 docker:
-  image: yegor256/rultor-image:1.24.0
+  image: yegor256/java
 readers:
   - "urn:github:526301"
-assets:
-  netrc: yegor256/home#assets/heroku-netrc
-  config.yml: yegor256/home#assets/netbout/config.yml
-  id_rsa: yegor256/home#assets/heroku-key
-  id_rsa.pub: yegor256/home#assets/heroku-key.pub
 install: |-
-  export PATH=$PATH:/usr/lib/postgresql/10/bin
-  sudo apt-get -y update
-  sudo apt-get install --yes libpq-dev
+  sudo /usr/bin/install-postgres.sh
   pdd -f /dev/null
   bundle install --no-color
-release:
-  pre: false
-  sensitive:
-    - config.yml
-  script: |-
-    mv ../netrc ~/.netrc
-    bundle exec rake
-    git remote add heroku https://git.heroku.com/netbout.git
-    rm -rf ~/.ssh
-    mkdir ~/.ssh
-    mv ../id_rsa ../id_rsa.pub ~/.ssh
-    chmod -R 600 ~/.ssh/*
-    echo -e "Host *\n  StrictHostKeyChecking no\n  UserKnownHostsFile=/dev/null" > ~/.ssh/config
-    sed -i "s/0\.0\.0/${tag}/g" ./objects/version.rb
-    git add ./objects/version.rb
-    git commit -m 'build number set'
-    cp ../config.yml config.yml
-    bundle exec rake config
-    git add config.yml
-    git commit -m 'config.yml'
-    git push -f heroku $(git symbolic-ref --short HEAD):master
-    git reset HEAD~1
-    rm -f target/pgsql-config.yml
-    bundle exec rake liquibase
-    rm -rf config.yml
-    curl -f --connect-timeout 15 --retry 5 --retry-delay 30 https://www.netbout.com > /dev/null
 merge:
   script: |-
     bundle exec rake
