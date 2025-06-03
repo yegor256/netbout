@@ -48,7 +48,7 @@ the body of the message contains `the "world"!`
 * `author=yegor256` --- the author of the message is `yegor256`
 * `posted>2023-12-14` --- the message was posted after 14-Dec-23
 
-Predicates may be groupped using `or`, `and`, and brackets, for example:
+Predicates may be grouped using `or`, `and`, and brackets, for example:
 
 ```
 body=important and (author=yegor256 or #hello+ or $bye+ or
