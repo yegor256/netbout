@@ -28,7 +28,7 @@ gem 'rubocop-rspec', '~>3.0', require: false
 gem 'sass', '~>3.7'
 gem 'sentry-raven', '~>3.1'
 gem 'simplecov', '~>0.22'
-gem 'simplecov-cobertura', '~> 2.1'
+gem 'simplecov-cobertura', '~> 3.0'
 gem 'sinatra', '~>4.0'
 gem 'sinatra-contrib', '~>4.0'
 gem 'sprockets', '~>4.2'
