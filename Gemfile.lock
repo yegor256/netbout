@@ -315,7 +315,7 @@ GEM
       axiom-types (~> 0.1)
       coercible (~> 1.0)
       descendants_tracker (~> 0.0, >= 0.0.3)
-    webrick (1.9.1)
+    webrick (1.9.2)
     xcop (0.8.0)
       differ (~> 0.1.2)
       nokogiri (~> 1.10)
