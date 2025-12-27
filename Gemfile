@@ -4,7 +4,7 @@
 # SPDX-License-Identifier: MIT
 
 source 'https://rubygems.org'
-ruby '~>3.3'
+ruby '~>4.0'
 
 gem 'glogin', '~>0.14'
 gem 'haml', '~>6.3'
