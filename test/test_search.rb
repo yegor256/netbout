@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-# SPDX-FileCopyrightText: Copyright (c) 2009-2025 Yegor Bugayenko
+# SPDX-FileCopyrightText: Copyright (c) 2009-2026 Yegor Bugayenko
 # SPDX-License-Identifier: MIT
 
 require 'minitest/autorun'
@@ -12,7 +12,7 @@ require_relative '../objects/query'
 
 # Test of Search.
 # Author:: Yegor Bugayenko (yegor256@gmail.com)
-# Copyright:: Copyright (c) 2009-2025 Yegor Bugayenko
+# Copyright:: Copyright (c) 2009-2026 Yegor Bugayenko
 # License:: MIT
 class Nb::SearchTest < Minitest::Test
   def test_finds_messages
