@@ -57,6 +57,7 @@ GEM
     elapsed (0.0.1)
       loog (> 0)
       tago (> 0)
+    ellipsized (0.3.0)
     erb (5.0.2)
     erubi (1.13.1)
     faraday (1.10.4)
@@ -116,7 +117,8 @@ GEM
     loofah (2.24.1)
       crass (~> 1.0.2)
       nokogiri (>= 1.12.0)
-    loog (0.6.1)
+    loog (0.7.2)
+      ellipsized
       logger (~> 1.0)
     minitest (6.0.1)
       prism (~> 1.5)
