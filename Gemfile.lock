@@ -105,7 +105,7 @@ GEM
       pp (>= 0.6.0)
       rdoc (>= 4.0.0)
       reline (>= 0.4.2)
-    iri (0.11.6)
+    iri (0.11.8)
     joined (0.3.0)
     json (2.18.0)
     language_server-protocol (3.17.0.5)
