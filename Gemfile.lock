@@ -93,7 +93,7 @@ GEM
       base58 (>= 0.2)
       base64 (>= 0.2)
       openssl (>= 2.0)
-    haml (7.2.0)
+    haml (7.2.2)
       temple (>= 0.8.2)
       thor
       tilt
