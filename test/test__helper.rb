@@ -43,7 +43,7 @@ module Minitest
       @@test_pgsql ||= Pgtk::Pool.new(
         Pgtk::Wire::Yaml.new(File.join(__dir__, '../target/pgsql-config.yml')),
         log: Loog::NULL
-      ).start
+      ).tap(&:start!)
       # rubocop:enable Style/ClassVars
     end
 
