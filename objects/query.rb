@@ -43,7 +43,7 @@ class Nb::Query
     end
 
     def to_s
-      "(#{@preds.map(&:to_s).join(' and ')})"
+      "(#{@preds.join(' and ')})"
     end
 
     def to_sql
@@ -68,7 +68,7 @@ class Nb::Query
     end
 
     def to_s
-      "(#{@preds.map(&:to_s).join(' or ')})"
+      "(#{@preds.join(' or ')})"
     end
 
     def to_sql
