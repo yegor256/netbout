@@ -40,8 +40,8 @@ require 'pgtk/liquibase_task'
 Pgtk::LiquibaseTask.new(:liquibase) do |t|
   t.master = 'liquibase/master.xml'
   t.yaml = ['target/pgsql-config.yml', 'config.yml']
-  t.postgresql_version = '42.7.1'
-  t.liquibase_version = '4.25.1'
+  t.postgresql = '42.7.1'
+  t.liquibase = '4.25.1'
 end
 
 require 'xcop/rake_task'
