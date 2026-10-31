@@ -7,7 +7,7 @@ ENV['RACK_ENV'] = 'test'
 
 require 'simplecov'
 require 'simplecov-cobertura'
-unless SimpleCov.running || ENV['PICKS']
+unless Coverage.running? || ENV['PICKS']
   SimpleCov.command_name('test')
   SimpleCov.formatter = SimpleCov::Formatter::MultiFormatter.new(
     [
@@ -16,11 +16,11 @@ unless SimpleCov.running || ENV['PICKS']
     ]
   )
   SimpleCov.minimum_coverage 10
-  SimpleCov.minimum_coverage_by_file 10
+  SimpleCov.coverage(:line) { minimum 10, per: :file }
   SimpleCov.start do
-    add_filter 'test/'
-    add_filter 'vendor/'
-    add_filter 'target/'
+    skip 'test/'
+    skip 'vendor/'
+    skip 'target/'
     track_files 'lib/**/*.rb'
     track_files '*.rb'
   end
