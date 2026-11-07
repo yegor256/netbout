@@ -107,4 +107,126 @@ class Nb::SearchTest < Minitest::Test
     friend = Nb::Humans.new(test_pgsql).take(test_name).create
     assert_empty(friend.search(Nb::Query.new("(bout=#{bout.id})"), 0, 10).to_a)
   end
+
+  def test_searches_apostrophes
+    human, bout = search_fixture
+    msg = bout.post("O'Reilly")
+    bout.post('Unrelated')
+    ["(text=O'Reilly)", "(text=~O'Reilly)", "O'Reilly", '(text=O&apos;Reilly)', '(text=~O&#39;Reilly)'].each do |q|
+      assert_equal([msg.id], search_ids(human, q), q)
+    end
+  end
+
+  def test_searches_backslashes_with_equality
+    human, bout = search_fixture
+    msg = bout.post('C:\\tmp\\file')
+    bout.post('C:tmpfile')
+    ['(text=C:\\tmp\\file)', '(text=C:&#92;tmp&#92;file)'].each do |q|
+      assert_equal([msg.id], search_ids(human, q), q)
+    end
+  end
+
+  def test_preserves_like_patterns
+    human, bout = search_fixture
+    literal = bout.post('a_b 100% C:\\tmp')
+    wildcard = bout.post('axb 100x C:tmp')
+    {
+      'a_b' => [literal.id, wildcard.id],
+      'a\\_b' => [literal.id],
+      '100%' => [literal.id, wildcard.id],
+      '100\\%' => [literal.id],
+      'C:\\\\tmp' => [literal.id],
+      'C:\\tmp' => [wildcard.id]
+    }.each do |pattern, ids|
+      assert_equal(ids.sort, search_ids(human, "(text=~#{pattern})"), pattern)
+    end
+  end
+
+  def test_decodes_html_once_for_equality_and_contains
+    human, bout = search_fixture
+    msg = bout.post("O'Reilly & <notes>")
+    encoded = 'O&apos;Reilly&#x20;&amp;&#x20;&lt;notes&gt;'
+    assert_equal([msg.id], search_ids(human, "(text=#{encoded})"))
+    assert_equal([msg.id], search_ids(human, "(text=~#{encoded})"))
+    literal = bout.post('&apos;')
+    assert_equal([literal.id], search_ids(human, '(text=&amp;apos;)'))
+  end
+
+  def test_compares_apostrophes_and_backslashes
+    human, bout = search_fixture
+    lower = bout.post('A')
+    upper = bout.post('Z')
+    ["O'Reilly", 'M\\iddle'].each do |value|
+      assert_equal([lower.id], search_ids(human, "(text<#{value})"))
+      assert_equal([upper.id], search_ids(human, "(text>#{value})"))
+    end
+  end
+
+  def test_preserves_raw_html_operands_for_comparisons
+    human, bout = search_fixture
+    bout.post('M&apos;')
+    assert_empty(search_ids(human, '(text<M&apos;)'))
+    assert_empty(search_ids(human, '(text>M&apos;)'))
+  end
+
+  def test_sql_shaped_values_cannot_change_predicates_or_access
+    human, bout = search_fixture
+    lower = bout.post('A')
+    upper = bout.post('Z')
+    _, foreign = search_fixture
+    foreign.post('A')
+    foreign.post('Z')
+    value = "M'OR'1'='1"
+    assert_empty(search_ids(human, "(text=#{value})"))
+    assert_empty(search_ids(human, "(text=~#{value})"))
+    assert_equal([lower.id], search_ids(human, "(text<#{value})"))
+    assert_equal([upper.id], search_ids(human, "(text>#{value})"))
+  end
+
+  def test_sql_shaped_values_can_be_found_as_data
+    human, bout = search_fixture
+    value = "M'OR'1'='1"
+    msg = bout.post(value)
+    bout.post('Unrelated')
+    ['=', '=~'].each do |operator|
+      assert_equal([msg.id], search_ids(human, "(text#{operator}#{value})"))
+    end
+  end
+
+  def test_owner_and_guest_access_with_nested_or
+    human, own = search_fixture
+    first = own.post('alpha')
+    _, shared = search_fixture
+    second = shared.post('beta')
+    shared.guests.invite(human.identity)
+    _, foreign = search_fixture
+    foreign.post('alpha')
+    foreign.post('beta')
+    query = "((text=alpha or text=beta) and (bout=#{own.id} or bout=#{shared.id} or bout=#{foreign.id}))"
+    assert_equal([first.id, second.id].sort, search_ids(human, query))
+    assert_empty(search_ids(human, "(bout=#{foreign.id})"))
+  end
+
+  def test_preserves_numeric_bout_equality_and_tag_absence
+    human, bout = search_fixture
+    msg = bout.post('123')
+    assert_equal([msg.id], search_ids(human, "(bout=00#{bout.id})"))
+    assert_empty(search_ids(human, '(bout=2147483648)'))
+    assert_empty(search_ids(human, '(bout=9223372036854775808)'))
+    assert_equal([msg.id], search_ids(human, '(#color-)'))
+    bout.tags.put('color', 'blue')
+    assert_empty(search_ids(human, '(#color-)'))
+    assert_equal([msg.id], search_ids(human, '(#color=blue)'))
+  end
+
+  private
+
+  def search_fixture
+    human = Nb::Humans.new(test_pgsql).take(test_name).create
+    [human, human.bouts.start(test_name)]
+  end
+
+  def search_ids(human, query)
+    human.search(Nb::Query.new(query), 0, 100).to_a.map(&:id).sort
+  end
 end
