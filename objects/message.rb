@@ -29,7 +29,7 @@ class Nb::Message
         'SELECT message.id FROM message',
         'LEFT JOIN bout ON message.bout=bout.id',
         'LEFT JOIN guest ON message.bout=guest.bout',
-        'WHERE bout.owner=$1 OR guest.human=$1 AND message.id=$2',
+        'WHERE (bout.owner=$1 OR guest.human=$1) AND message.id=$2',
         'LIMIT 1'
       ],
       [@human.identity, @id]
