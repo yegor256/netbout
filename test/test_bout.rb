@@ -28,6 +28,18 @@ class Nb::BoutTest < Minitest::Test
     end
   end
 
+  def test_denies_access_with_an_unrelated_invitation
+    owner = Nb::Humans.new(test_pgsql).take(test_name).create
+    guest = Nb::Humans.new(test_pgsql).take(test_name).create
+    shared = owner.bouts.start('Shared')
+    shared.guests.invite(guest.identity)
+    private_bout = owner.bouts.start('Private')
+    bout = guest.bouts.take(private_bout.id)
+    refute_predicate(bout, :mine?)
+    assert_raises(Nb::Urror) { bout.title }
+    assert_raises(Nb::Urror) { bout.post('Unauthorized') }
+  end
+
   def test_checks_existence
     owner = Nb::Humans.new(test_pgsql).take(test_name).create
     bouts = owner.bouts
@@ -62,9 +74,14 @@ class Nb::BoutTest < Minitest::Test
     friend = Nb::Humans.new(test_pgsql).take(test_name).create
     bouts = owner.bouts
     bout = bouts.start('hi')
+    assert_predicate(bout, :mine?)
+    assert_equal('hi', bout.title)
     bout.post(test_name)
     refute_predicate(friend.bouts.take(bout.id), :mine?)
     bout.guests.invite(friend.identity)
-    assert_predicate(friend.bouts.take(bout.id), :mine?)
+    invited = friend.bouts.take(bout.id)
+    assert_predicate(invited, :mine?)
+    assert_equal('hi', invited.title)
+    assert_equal('Guest message', invited.post('Guest message').text)
   end
 end
