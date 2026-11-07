@@ -17,6 +17,12 @@ class Nb::Query
     @text = text
   end
 
+  # Compile SQL and its bind values together. Existing values reserve placeholders.
+  def compile(values = [])
+    params = values.dup
+    [predicate.to_sql(params), params]
+  end
+
   def predicate
     q = @text
     unless @text.start_with?('(')
@@ -46,11 +52,11 @@ class Nb::Query
       "(#{@preds.join(' and ')})"
     end
 
-    def to_sql
+    def to_sql(params)
       if @preds.empty?
         '1=1'
       else
-        "(#{@preds.map(&:to_sql).join(' AND ')})"
+        "(#{@preds.map { |pred| pred.to_sql(params) }.join(' AND ')})"
       end
     end
   end
@@ -71,11 +77,11 @@ class Nb::Query
       "(#{@preds.join(' or ')})"
     end
 
-    def to_sql
+    def to_sql(params)
       if @preds.empty?
         '1=1'
       else
-        "(#{@preds.map(&:to_sql).join(' OR ')})"
+        "(#{@preds.map { |pred| pred.to_sql(params) }.join(' OR ')})"
       end
     end
   end
@@ -95,10 +101,16 @@ class Nb::Query
       "#{@left}=#{@right}"
     end
 
-    def to_sql
-      r = @right.to_sql
-      r = "'#{r}'" unless r.match?(/^[0-9]+$/)
-      "#{@left.to_sql} = #{r}"
+    def to_sql(params)
+      value = @right.value
+      params << value
+      # Bare numeric literals used to accept IDs beyond the SERIAL column's range.
+      cast = if @left.to_s == 'bout' && value.match?(/\A[0-9]+\z/) && value.to_i > 2_147_483_647
+        '::numeric'
+      else
+        ''
+      end
+      "#{@left.to_sql} = $#{params.length}#{cast}"
     end
   end
 
@@ -117,8 +129,10 @@ class Nb::Query
       "#{@left}<#{@right}"
     end
 
-    def to_sql
-      "#{@left.to_sql}<'#{@right}'"
+    def to_sql(params)
+      # Comparisons historically use the raw DSL operand, without HTML decoding.
+      params << @right.to_s
+      "#{@left.to_sql}<$#{params.length}"
     end
   end
 
@@ -137,8 +151,9 @@ class Nb::Query
       "#{@left}>#{@right}"
     end
 
-    def to_sql
-      "#{@left.to_sql}>'#{@right}'"
+    def to_sql(params)
+      params << @right.to_s
+      "#{@left.to_sql}>$#{params.length}"
     end
   end
 
@@ -157,8 +172,8 @@ class Nb::Query
       "#{@tag}#{@present ? '+' : '-'}"
     end
 
-    def to_sql
-      @tag.to_prabsent(@present)
+    def to_sql(params)
+      @tag.to_prabsent(@present, params)
     end
   end
 
@@ -177,8 +192,10 @@ class Nb::Query
       "#{@left}=~#{@right}"
     end
 
-    def to_sql
-      "#{@left.to_sql} LIKE '%#{@right.to_sql}%'"
+    def to_sql(params)
+      # Keep LIKE wildcards and its backslash escape semantics.
+      params << "%#{@right.value}%"
+      "#{@left.to_sql} LIKE $#{params.length}"
     end
   end
 
@@ -192,7 +209,7 @@ class Nb::Query
       ''
     end
 
-    def to_sql
+    def to_sql(_params)
       ''
     end
   end
@@ -282,12 +299,14 @@ class Nb::Query
       end
     end
 
-    def to_prabsent(present)
+    def to_prabsent(present, params)
+      params << @name
+      name = "$#{params.length}"
       if present
         head = if @prefix == '#'
-          "tag.name='#{@name}'"
+          "tag.name=#{name}"
         elsif @prefix == '$'
-          "flag.name='#{@name}'"
+          "flag.name=#{name}"
         else
           raise Nb::Urror, "Can't use prabsent on '#{@name}' attribute"
         end
@@ -301,9 +320,9 @@ class Nb::Query
         return "(#{head} AND #{tail})"
       end
       if @prefix == '#'
-        "(SELECT COUNT(*) FROM tag AS t WHERE t.bout=bout.id AND t.name='#{@name}') = 0"
+        "(SELECT COUNT(*) FROM tag AS t WHERE t.bout=bout.id AND t.name=#{name}) = 0"
       elsif @prefix == '$'
-        "(SELECT COUNT(*) FROM flag AS f WHERE f.message=message.id AND name='#{@name}') = 0"
+        "(SELECT COUNT(*) FROM flag AS f WHERE f.message=message.id AND name=#{name}) = 0"
       else
         raise Nb::Urror, "Can't use prabsent on '#{@name}' attribute"
       end
@@ -320,8 +339,8 @@ class Nb::Query
       @value
     end
 
-    def to_sql
-      CGI.unescapeHTML(@value).gsub("'", "\\\\'")
+    def value
+      CGI.unescapeHTML(@value)
     end
   end
 
