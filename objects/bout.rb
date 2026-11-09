@@ -29,7 +29,7 @@ class Nb::Bout
       [
         'SELECT id FROM bout',
         'LEFT JOIN guest ON bout.id=guest.bout',
-        'WHERE bout.id=$2 AND bout.owner=$1 OR guest.human=$1',
+        'WHERE bout.id=$2 AND (bout.owner=$1 OR guest.human=$1)',
         'LIMIT 1'
       ],
       [@human.identity, @id]
