@@ -98,7 +98,7 @@ class Nb::QueryTest < Minitest::Test
     values = ['alice'].freeze
     query = Nb::Query.new('(bout=3 and (text=~A&apos;B or (#kind=blue and $done-)))')
     sql = '(bout.id = $2 AND (message.text LIKE $3 OR (((tag.name=$4 AND tag.bout IS NOT NULL) ' \
-      'AND tag.value = $5) AND (SELECT COUNT(*) FROM flag AS f WHERE f.message=message.id AND name=$6) = 0)))'
+          'AND tag.value = $5) AND (SELECT COUNT(*) FROM flag AS f WHERE f.message=message.id AND name=$6) = 0)))'
     expected = [sql, ['alice', '3', "%A'B%", 'kind', 'blue', 'done']]
     assert_equal(expected, query.compile(values))
     assert_equal(expected, query.compile(values))
